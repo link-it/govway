@@ -35,6 +35,9 @@ public class Costanti {
 	public final static String LOCAL_NAME_SERVIZIO_APPLICATIVO = "servizio-applicativo";
 	public final static String TARGET_NAMESPACE = (new ProjectInfo()).getProjectNamespace();
 	
+	// IL TIPO DEVE ESSERE DEFINITO PER POTER POI COMPRENDERE IL PROTOCOLLO public final static String TIPO_SOGGETTO_DEFAULT = "@OPENSPCOOP2_TIPO_SOGGETTO_DEFAULT@";
+	public final static String NOME_SOGGETTO_DEFAULT = "@OPENSPCOOP2_NOME_SOGGETTO_DEFAULT@";
+	
 	// sinonimi
 	public final static String TIPO_SOGGETTO = "@OPENSPCOOP2_TIPO_SOGGETTO@";
 	public final static String NOME_SOGGETTO = "@OPENSPCOOP2_NOME_SOGGETTO@";

@@ -32,6 +32,7 @@ import org.openspcoop2.core.eccezione.details.Eccezione;
 import org.openspcoop2.core.eccezione.details.Eccezioni;
 import org.openspcoop2.core.eccezione.details.constants.TipoEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -41,7 +42,9 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -62,6 +65,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 	private org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory;
 	private ITraduttore traduttore;
 	private IProtocolManager protocolManager;
+	private ErroriProperties erroriProperties;
 
 	public DettaglioEccezioneOpenSPCoop2Builder(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		if(aLog!=null)
@@ -72,6 +76,8 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 		this.traduttore = this.protocolFactory.createTraduttore();
 
 		this.protocolManager = this.protocolFactory.createProtocolManager();
+		
+		this.erroriProperties = ErroriProperties.getInstance(this.log);
 	}
 
 	public org.openspcoop2.protocol.sdk.IProtocolFactory<?> getProtocolFactory(){
@@ -82,68 +88,95 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 
 
 
-//	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione codErrore,String msgErrore){
+//	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione codErrore,String msgErrore,
+//			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError)throws ProtocolException{
 //		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
 //				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
-//				false,msgErrore, null, false, false);
+//				false,msgErrore, null, false, false,
+//				returnConfig, functionError);
 //	}
 //	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione codErrore,String msgErrore,
-//			Exception eProcessamento){
+//			Exception eProcessamento,
+//			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError)throws ProtocolException{
 //		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
 //				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
-//				false,msgErrore, eProcessamento, false, false);
+//				false,msgErrore, eProcessamento, false, false,
+//				returnConfig, functionError);
 //	}
 //	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione codErrore,String msgErrore,
-//			Exception eProcessamento,boolean generaInformazioniGeneriche){
+//			Exception eProcessamento,boolean generaInformazioniGeneriche,
+//			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError)throws ProtocolException{
 //		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
 //				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
-//				false,msgErrore, eProcessamento, true, generaInformazioniGeneriche);
+//				false,msgErrore, eProcessamento, true, generaInformazioniGeneriche,
+//				returnConfig, functionError);
 //	}
 	
-	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore,String msgErrore){
+	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore,String msgErrore,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
 				this.traduttore.toCodiceErroreIntegrazioneAsString(errore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
-				false,msgErrore, null, false, false);
+				false,msgErrore, null, false, false,
+				returnConfig, functionError);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore,String msgErrore,
-			Exception eProcessamento){
+			Exception eProcessamento,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
 				this.traduttore.toCodiceErroreIntegrazioneAsString(errore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
-				false,msgErrore, eProcessamento, false, false);
+				false,msgErrore, eProcessamento, false, false,
+				returnConfig, functionError);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore,String msgErrore,
-			Exception eProcessamento,boolean generaInformazioniGeneriche){
+			Exception eProcessamento,boolean generaInformazioniGeneriche,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
 				this.traduttore.toCodiceErroreIntegrazioneAsString(errore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
-				false,msgErrore, eProcessamento, true, generaInformazioniGeneriche);
+				false,msgErrore, eProcessamento, true, generaInformazioniGeneriche,
+				returnConfig, functionError);
 	}
 
-	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreCooperazione codErrore,String msgErrore) throws ProtocolException{
-		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, this.protocolFactory.createTraduttore().toString(codErrore), true, msgErrore, null, false, false);
+	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreCooperazione codErrore,String msgErrore,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, this.protocolFactory.createTraduttore().toString(codErrore), true, msgErrore, null, false, false,
+				returnConfig, functionError);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreCooperazione codErrore,String msgErrore,
-			Exception eProcessamento) throws ProtocolException{
-		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, this.protocolFactory.createTraduttore().toString(codErrore), true, msgErrore, eProcessamento, false, false);
+			Exception eProcessamento,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, this.protocolFactory.createTraduttore().toString(codErrore), true, msgErrore, 
+				eProcessamento, false, false,
+				returnConfig, functionError);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreCooperazione codErrore,String msgErrore,
-			Exception eProcessamento,boolean generaInformazioniGeneriche) throws ProtocolException{
-		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, this.protocolFactory.createTraduttore().toString(codErrore), true, msgErrore, eProcessamento, true, generaInformazioniGeneriche);
+			Exception eProcessamento,boolean generaInformazioniGeneriche,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, this.protocolFactory.createTraduttore().toString(codErrore), true, msgErrore, 
+				eProcessamento, true, generaInformazioniGeneriche,
+				returnConfig, functionError);
 	}
 
-	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,String codErrore,String msgErrore,boolean isErroreProtocollo){
-		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, codErrore, isErroreProtocollo, msgErrore, null, false, false);
+	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,String codErrore,String msgErrore,boolean isErroreProtocollo,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, codErrore, isErroreProtocollo, msgErrore, null, false, false,
+				returnConfig, functionError);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,String codErrore,String msgErrore,boolean isErroreProtocollo,
-			Exception eProcessamento){
-		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, codErrore, isErroreProtocollo,msgErrore, eProcessamento, false, false);
+			Exception eProcessamento,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, codErrore, isErroreProtocollo,msgErrore, eProcessamento, false, false,
+				returnConfig, functionError);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,String codErrore,String msgErrore,boolean isErroreProtocollo,
-			Exception eProcessamento,boolean generaInformazioniGeneriche){
-		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, codErrore, isErroreProtocollo,msgErrore, eProcessamento, true, generaInformazioniGeneriche);
+			Exception eProcessamento,boolean generaInformazioniGeneriche,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, codErrore, isErroreProtocollo,msgErrore, eProcessamento, true, generaInformazioniGeneriche,
+				returnConfig, functionError);
 	}
 
 	private DettaglioEccezione buildDettaglioEccezione_engineBuildEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,String codErrore,boolean isErroreProtocollo,String msgErrore,
-			Exception eProcessamento,boolean isIntegrazione,boolean generaInformazioniGeneriche){
+			Exception eProcessamento,boolean isIntegrazione,boolean generaInformazioniGeneriche,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
 		org.openspcoop2.core.eccezione.details.Eccezione eccezione = new org.openspcoop2.core.eccezione.details.Eccezione();
 		if(isErroreProtocollo){
 			eccezione.setType(TipoEccezione.PROTOCOL);
@@ -153,25 +186,34 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 		eccezione.setCode(codErrore);
 		eccezione.setDescription(msgErrore);		
 		return buildDettaglioEccezione_engine(DateManager.getDate(), identitaPdD, tipoPdD , modulo, eccezione, null, 
-				eProcessamento, isIntegrazione, generaInformazioniGeneriche);
+				eProcessamento, isIntegrazione, generaInformazioniGeneriche,
+				returnConfig, functionError);
 	}
 
-	public DettaglioEccezione buildDettaglioEccezione(Date oraRegistrazione, IDSoggetto identitaPdD, TipoPdD tipoPdD,  String modulo, Eccezione eccezione, Dettaglio dettaglio){
-		return buildDettaglioEccezione_engine(oraRegistrazione, identitaPdD, tipoPdD, modulo, eccezione, dettaglio, null, false, false);
+	public DettaglioEccezione buildDettaglioEccezione(Date oraRegistrazione, IDSoggetto identitaPdD, TipoPdD tipoPdD,  String modulo, Eccezione eccezione, Dettaglio dettaglio,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engine(oraRegistrazione, identitaPdD, tipoPdD, modulo, eccezione, dettaglio, null, false, false,
+				returnConfig, functionError);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(Date oraRegistrazione, IDSoggetto identitaPdD,TipoPdD tipoPdD,  String modulo, Eccezione eccezione, Dettaglio dettaglio,
-			Exception eProcessamento){
-		return buildDettaglioEccezione_engine(oraRegistrazione, identitaPdD, tipoPdD, modulo, eccezione, dettaglio, eProcessamento, false, false);
+			Exception eProcessamento,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engine(oraRegistrazione, identitaPdD, tipoPdD, modulo, eccezione, dettaglio, eProcessamento, false, false,
+				returnConfig, functionError);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(Date oraRegistrazione, IDSoggetto identitaPdD,TipoPdD tipoPdD,  String modulo, Eccezione eccezione, Dettaglio dettaglio,
-			Exception eProcessamento,boolean generaInformazioniGeneriche){
-		return buildDettaglioEccezione_engine(oraRegistrazione, identitaPdD, tipoPdD, modulo, eccezione, dettaglio, eProcessamento, true, generaInformazioniGeneriche);
+			Exception eProcessamento,boolean generaInformazioniGeneriche,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
+		return buildDettaglioEccezione_engine(oraRegistrazione, identitaPdD, tipoPdD, modulo, eccezione, dettaglio, eProcessamento, true, generaInformazioniGeneriche,
+				returnConfig, functionError);
 	}
 
 	private DettaglioEccezione buildDettaglioEccezione_engine(Date oraRegistrazione, IDSoggetto identitaPdD,TipoPdD tipoPdD, String modulo, Eccezione eccezione, Dettaglio dettaglio,
-			Exception eProcessamento,boolean isIntegrazione,boolean generaInformazioniGeneriche){
+			Exception eProcessamento,boolean isIntegrazione,boolean generaInformazioniGeneriche,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError) throws ProtocolException{
 
-		DettaglioEccezione dettaglioEccezione = DaoBuilder.buildDettaglioEccezione(oraRegistrazione, identitaPdD, tipoPdD, modulo, eccezione, dettaglio);
+		DettaglioEccezione dettaglioEccezione = DaoBuilder.buildDettaglioEccezione(oraRegistrazione, identitaPdD, tipoPdD, modulo, eccezione, dettaglio,
+				returnConfig, functionError, this.erroriProperties);
 
 		if(eProcessamento!=null){
 			if(isIntegrazione){

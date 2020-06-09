@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.engine.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -31,6 +32,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -39,11 +41,15 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.config.ConfigurationRFC7807;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.utils.MessageUtilities;
+import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.basic.builder.CodeDetailsError;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
@@ -60,12 +66,14 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
@@ -432,21 +440,22 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 	public OpenSPCoop2Message buildFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo, 
 			ErroreIntegrazione errore,Throwable eProcessamento, 
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, 
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, String nomePorta, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			Context context){
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 			DettaglioEccezione dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, 
 						errore, // errore.getCodiceErrore(), 
-						this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
+						this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore),
+						returnConfig, functionError);
 			if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento()) {
 				if(eProcessamento!=null){
 					this.dettaglioEccezioneOpenSPCoop2Builder.gestioneDettaglioEccezioneProcessamento(eProcessamento, dettaglioEccezione);
 				}
 			}
 			return this.buildFaultProtocollo_processamento(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(), 
-					messageType, rfc7807, httpStatus, nomePorta, 
+					messageType, rfc7807, returnConfig, functionError, nomePorta, 
 					setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 					context);
 		}catch(Exception e){
@@ -455,74 +464,81 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
-			ErroreIntegrazione errore, MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, 
+			ErroreIntegrazione errore, MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, String nomePorta, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			Context context){
 		return buildFaultProtocollo_processamento(identitaPdD, tipoPdD, modulo, errore, null, 
-				messageType, rfc7807, httpStatus, nomePorta, 
+				messageType, rfc7807, returnConfig, functionError, nomePorta, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				context);
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_processamento(DettaglioEccezione dettaglioEccezione, boolean generazioneDettaglioEccezione,
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, 
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, String nomePorta, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			Context context){
 		return this.buildFaultProtocollo(false, dettaglioEccezione, generazioneDettaglioEccezione, 
-				messageType, rfc7807, httpStatus, nomePorta,
+				messageType, rfc7807, returnConfig, functionError, nomePorta,
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				context);	
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_intestazione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
 			CodiceErroreCooperazione codiceErrore,String msgErrore, 
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, String nomePorta,
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			Context context) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = 
 				this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, codiceErrore, 
-					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(codiceErrore,msgErrore));
+					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(codiceErrore,msgErrore),
+					returnConfig, functionError);
 		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(), 
-				messageType, rfc7807, httpStatus, nomePorta, 
+				messageType, rfc7807, returnConfig, functionError, nomePorta, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				context);
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_intestazione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
 			ErroreIntegrazione errore, 
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, String nomePorta,
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			Context context) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = 
 				this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, 
 					errore, // errore.getCodiceErrore(), 
-					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
+					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore),
+					returnConfig, functionError);
 		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(), 
-				messageType, rfc7807, httpStatus, nomePorta, 
+				messageType, rfc7807, returnConfig, functionError, nomePorta, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				context);
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_intestazione(DettaglioEccezione dettaglioEccezione, boolean generazioneDettaglioEccezione,
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, String nomePorta,
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			Context context)  {
 		return this.buildFaultProtocollo(true, dettaglioEccezione, generazioneDettaglioEccezione, 
-				messageType, rfc7807, httpStatus, nomePorta, 
+				messageType, rfc7807, returnConfig, functionError, nomePorta, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault, context);	
 	}
 
 	private OpenSPCoop2Message buildFaultProtocollo(boolean erroreValidazione,
 			DettaglioEccezione dettaglioEccezione, boolean generazioneDettaglioEccezione,
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, String nomePorta,
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, 
 			boolean useInternalFault,
 			Context context)  {
 
 		boolean useProblemRFC7807 = rfc7807!=null;
+		CodeDetailsError codeDetailsErrorWrapper = null;
+		OpenSPCoop2Message msg = null;
+		boolean addErroreProtocolloInMessaggio = false;
+		ErroriProperties erroriProperties = null;
+		
 		try{
-
-			boolean addErroreProtocolloInMessaggio = false;
+			erroriProperties = ErroriProperties.getInstance(this.log);
+			
 			if(erroreValidazione) { // non aggiungamo anche gli errori di processamento altrimenti vengono catalogati come errore di protocollo se avvengono prima della generazione della busta errore
 				if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO)) {
 					Object o = context.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO);
@@ -537,16 +553,30 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				}
 			}
 			
+			if(nomePorta==null) {
+				if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					Object o = context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					if(o!=null && o instanceof RequestInfo) {
+						RequestInfo requestInfo = (RequestInfo) o;
+						if(requestInfo.getProtocolContext()!=null) {
+							nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+						}
+					}
+				}
+			}
+			
 			OpenSPCoop2MessageFactory mf = this.errorFactory;
 			switch (messageType) {
-				case XML:
+				case XML: 					
 					if(dettaglioEccezione==null){
 						throw new Exception("Dettaglio eccezione non fornita");
 					}
 					byte [] xml = null;
 					String contentTypeXml = null;
 					if(rfc7807!=null) {
-						ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, this.idTransazione, dettaglioEccezione);
+						codeDetailsErrorWrapper = new CodeDetailsError();
+						ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(erroriProperties, codeDetailsErrorWrapper, 
+								rfc7807, returnConfig, functionError, nomePorta, this.idTransazione, dettaglioEccezione);
 						XmlSerializer xmlSerializer = new XmlSerializer();	
 						boolean omitXMLDeclaration = true;
 						xml = xmlSerializer.toByteArray(problemRFC7807, !omitXMLDeclaration);
@@ -557,22 +587,20 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						contentTypeXml = MessageUtilities.getDefaultContentType(messageType);
 					}
 					OpenSPCoop2MessageParseResult pr = mf.createMessage(messageType, MessageRole.FAULT, contentTypeXml, xml);
-					OpenSPCoop2Message msg = pr.getMessage_throwParseException();
-					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
-							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
-					if(addErroreProtocolloInMessaggio) {
-						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
-					}
+					msg = pr.getMessage_throwParseException();
 					return msg;
-
+				
 				case JSON:
 					if(dettaglioEccezione==null){
 						throw new Exception("Dettaglio eccezione non fornita");
 					}
 					byte [] json = null;
 					String contentTypeJson = null;
+					codeDetailsErrorWrapper = null;
 					if(rfc7807!=null) {
-						ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, this.idTransazione, dettaglioEccezione);
+						codeDetailsErrorWrapper = new CodeDetailsError();
+						ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(erroriProperties, codeDetailsErrorWrapper, 
+								rfc7807, returnConfig, functionError, nomePorta, this.idTransazione, dettaglioEccezione);
 						JsonSerializer jsonSerializer = new JsonSerializer();
 						json = jsonSerializer.toByteArray(problemRFC7807);
 						contentTypeJson = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
@@ -582,22 +610,12 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					}
 					pr = mf.createMessage(messageType, MessageRole.FAULT,contentTypeJson, json);
 					msg = pr.getMessage_throwParseException();
-					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
-							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
-					if(addErroreProtocolloInMessaggio) {
-						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
-					}
 					return msg;
 					
 				case BINARY:
 				case MIME_MULTIPART:
 					// Viene usato per l'opzione None dove viene ritornato solamente il return code
 					msg =  mf.createEmptyMessage(messageType, MessageRole.FAULT);
-					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
-							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
-					if(addErroreProtocolloInMessaggio) {
-						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
-					}
 					return msg;
 
 				default:
@@ -609,39 +627,101 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					SOAPBody bdy = env.getBody();
 					SOAPFault fault = bdy.addFault();
 
-					if(useInternalFault && dettaglioEccezione!=null &&
-							dettaglioEccezione.getExceptions()!=null && dettaglioEccezione.getExceptions().sizeExceptionList()>0
-							&& dettaglioEccezione.getExceptions().getException(0)!=null) {
+					if(useInternalFault) {
 						
-						org.openspcoop2.core.eccezione.details.Eccezione ecc = dettaglioEccezione.getExceptions().getException(0);
-						
-						String codiceEccezione = ecc.getCode();
-						String posizioneEccezione = ecc.getDescription();
+						// Esamino errore
+						codeDetailsErrorWrapper = new CodeDetailsError();
 						QName eccezioneName = null;
 						SOAPFaultCode code = null;
-						if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.INTEGRATION.equals(ecc.getType())){
-							eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneIntegrazione(codiceEccezione);
-						}else{
-							eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(codiceEccezione);
+						if(dettaglioEccezione!=null &&
+								dettaglioEccezione.getExceptions()!=null && dettaglioEccezione.getExceptions().sizeExceptionList()>0
+								&& dettaglioEccezione.getExceptions().getException(0)!=null) {
+						
+							org.openspcoop2.core.eccezione.details.Eccezione ecc = dettaglioEccezione.getExceptions().getException(0);
+							
+							String codiceEccezione = ecc.getCode();
+							String posizioneEccezione = ecc.getDescription();
+							if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.INTEGRATION.equals(ecc.getType())){
+								eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneIntegrazione(codiceEccezione);
+							}else{
+								eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(codiceEccezione);
+							}
+							
+							int codeInt = -1;
+							if(codiceEccezione.startsWith(org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE)) {
+								try {
+									String tmpCode = codiceEccezione.substring(org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE.length());
+									codeInt = Integer.valueOf(tmpCode);
+								}catch(Exception e) {}
+							}
+							if(codeInt>=400 && codeInt< 500) {
+								code = SOAPFaultCode.Sender;
+							} else {
+								code = SOAPFaultCode.Receiver;
+							}
+							
+							codeDetailsErrorWrapper.setCode(codiceEccezione);
+							codeDetailsErrorWrapper.setPrefixCode(eccezioneName.getPrefix());
+							codeDetailsErrorWrapper.setDetails(posizioneEccezione);
+							
+						}
+						else {
+							String soapFaultCodePrefix = this.getFaultCodePrefix(messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+							if(erroreValidazione){
+								codeDetailsErrorWrapper.setDetails(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString(this.protocolFactory));
+								QName qNameCode = SOAPFaultCode.Sender.toQName(messageType,soapFaultCodePrefix);
+								codeDetailsErrorWrapper.setCode(qNameCode.getLocalPart());
+								codeDetailsErrorWrapper.setPrefixCode(qNameCode.getPrefix());
+							}else{
+								codeDetailsErrorWrapper.setDetails(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO.toString(this.protocolFactory));
+								QName qNameCode = SOAPFaultCode.Receiver.toQName(messageType,soapFaultCodePrefix);
+								codeDetailsErrorWrapper.setCode(qNameCode.getLocalPart());
+								codeDetailsErrorWrapper.setPrefixCode(qNameCode.getPrefix());
+							}
 						}
 						
-						int codeInt = -1;
-						if(codiceEccezione.startsWith(org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE)) {
-							try {
-								String tmpCode = codiceEccezione.substring(org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE.length());
-								codeInt = Integer.valueOf(tmpCode);
-							}catch(Exception e) {}
+						boolean genericDetails = returnConfig.isGenericDetails();
+						if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+							genericDetails = true;
 						}
-						if(codeInt>=400 && codeInt< 500) {
-							code = SOAPFaultCode.Sender;
-						} else {
-							code = SOAPFaultCode.Receiver;
+						if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+							genericDetails = false;
+						}
+						if(codeDetailsErrorWrapper.getDetails()!=null && !genericDetails) {
+							fault.setFaultString(codeDetailsErrorWrapper.getDetails());
+						}
+						else {
+							String errorMsg = erroriProperties.getGenericDetails(functionError);
+							fault.setFaultString(errorMsg);
 						}
 						
-						msg.castAsSoap().setFaultCode(fault, code, eccezioneName);
+						if(Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE) {
+							msg.castAsSoap().setFaultCode(fault, code, eccezioneName);
+						}
+						else {
+							String codiceEccezioneGW = Costanti.getTransactionSoapFaultCode(returnConfig.getGovwayReturnCode(),erroriProperties.getErrorType(functionError));
+							// aggiorno code con codici govway
+							if(returnConfig.getGovwayReturnCode()<=499) {
+								code = SOAPFaultCode.Sender;
+							}
+							else {
+								code = SOAPFaultCode.Receiver;
+							}
+							if(MessageType.SOAP_11.equals(messageType)) {
+								codiceEccezioneGW = (SOAPFaultCode.Sender.equals(code) ? 
+										org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT :  org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER) +
+										org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+codiceEccezioneGW;
+							}
+							QName eccezioneNameGovway = this.erroreApplicativoBuilder.getQNameEccezioneIntegrazione(codiceEccezioneGW);
+							msg.castAsSoap().setFaultCode(fault, code, eccezioneNameGovway);
+						}
+						
+						if(Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE) {
+							msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_CODE(), returnConfig.getGovwayReturnCode()+"");
+						}
+						
 						fault.setFaultActor(this.actorInternalSoapFault); 
-						fault.setFaultString(posizioneEccezione);
-					}
+					}	
 					else {
 						String soapFaultCodePrefix = this.getFaultCodePrefix(messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 						if(erroreValidazione){
@@ -660,12 +740,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					else if(useProblemRFC7807 && dettaglioEccezione!=null) {
 						elementoDettaglio = true;
 					}
-					
+										
 					if(elementoDettaglio){
 						Detail d = fault.addDetail();
 						Element e = null;
 						if(rfc7807!=null) {
-							ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, this.idTransazione, dettaglioEccezione);
+							CodeDetailsError codeDetailsErrorWrapperNOP = new CodeDetailsError(); // uso quello del fault
+							ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(erroriProperties, codeDetailsErrorWrapperNOP, 
+									rfc7807, returnConfig, functionError, nomePorta, this.idTransazione, dettaglioEccezione);
 							XmlSerializer xmlSerializer = new XmlSerializer();	
 							e = xmlSerializer.toNode(problemRFC7807);
 						}
@@ -675,43 +757,99 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						d.appendChild(d.getOwnerDocument().importNode(e, true));
 					}
 					
-					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
-							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
-					if(addErroreProtocolloInMessaggio) {
-						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
-					}
 					return msg;
 			}
 			
 		} catch(Exception e) {
 			this.log.error("Build msgErrore non riuscito: " + e.getMessage(),e);
 			return this.errorFactory.createFaultMessage(messageType, useProblemRFC7807); // ritorno ErroreProcessamento per non far "uscire fuori" l'errore
+		} finally {
+			if(msg!=null) {
+				msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
+						org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+				if(codeDetailsErrorWrapper!=null) {
+					if(codeDetailsErrorWrapper.getPrefixCode()!=null) {
+						String prefixInternalErrorCode = codeDetailsErrorWrapper.getPrefixCode();
+						if(prefixInternalErrorCode.endsWith(":")) {
+							prefixInternalErrorCode = prefixInternalErrorCode.substring(0, prefixInternalErrorCode.length()-1);
+						}
+						msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_PREFIX_CODE, prefixInternalErrorCode );
+					}
+					if(codeDetailsErrorWrapper.getCode()!=null) {
+						msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE, codeDetailsErrorWrapper.getCode() );
+						if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+							String code = codeDetailsErrorWrapper.getCode();
+							if(codeDetailsErrorWrapper.getPrefixCode()!=null) {
+								if(codeDetailsErrorWrapper.getPrefixCode().endsWith(":")) {
+									code = codeDetailsErrorWrapper.getPrefixCode() + code;
+								}
+								else {
+									code = codeDetailsErrorWrapper.getPrefixCode() + ":" +code;
+								}
+							}
+							msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_STATUS(), code);
+						}
+					}
+					if(codeDetailsErrorWrapper.getDetails()!=null) {
+						msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_DETAILS, codeDetailsErrorWrapper.getDetails() );
+					}
+				}
+				if(addErroreProtocolloInMessaggio) {
+					msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+				}
+				
+				try {
+					if(erroriProperties!=null) {
+						msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_TYPE(), erroriProperties.getErrorType(functionError));
+					}
+				}catch(Exception e) {
+					this.log.error("Scrittura header http 'GovWayErrorType' non riuscita: "+e.getMessage(),e);
+				}
+				
+				if(returnConfig.isRetry()) {
+					int seconds = returnConfig.getRetryAfterSeconds();
+					if(seconds<0) {
+						seconds=0;
+					}
+					if(returnConfig.getRetryRandomBackoffSeconds()>0) {
+						seconds = seconds + new Random().nextInt(returnConfig.getRetryRandomBackoffSeconds());
+					}
+					msg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
+				}
+				
+				msg.setForcedResponseCode(returnConfig.getHttpReturnCode()+"");	
+			}
 		}
 
 
 	}
 	
-	private ProblemRFC7807 _buildProblemRFC7807(ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, String transactionId, DettaglioEccezione dettaglioEccezione)throws ProtocolException{
+	private ProblemRFC7807 _buildProblemRFC7807(ErroriProperties erroriProperties, CodeDetailsError codeDetailsErrorWrapper, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError,
+			String nomePorta, String transactionId, DettaglioEccezione dettaglioEccezione)throws ProtocolException{
 		
-		try{			
+		try{	
+			
+			// Problem builder
 			ProblemRFC7807Builder rfc7807ProblemBuilder = null;
-			if(rfc7807.isType()) {
+			String webSite = erroriProperties.getWebSite(functionError);
+			if(webSite!=null && !"".equals(webSite)) {
+				rfc7807ProblemBuilder = new ProblemRFC7807Builder(webSite);
+			}
+			else if(rfc7807.isType()) {
 				rfc7807ProblemBuilder = new ProblemRFC7807Builder(rfc7807.getTypeFormat());
 			}
 			else {
 				rfc7807ProblemBuilder = new ProblemRFC7807Builder(false);
 			}
-			ProblemRFC7807 problemRFC7807 = rfc7807ProblemBuilder.buildProblem(httpStatus);
-			if(rfc7807.isDetails() || rfc7807.isGovwayStatus()) {
-				org.openspcoop2.core.eccezione.details.Eccezione eccezione = null;
-				if(dettaglioEccezione.getExceptions()!=null && dettaglioEccezione.getExceptions().sizeExceptionList()>0) {
-					eccezione = dettaglioEccezione.getExceptions().getException(0); // prendo la prima
-				}
-				if(rfc7807.isDetails() && eccezione!=null) {
-					problemRFC7807.setDetail(eccezione.getDescription());
-				}
-				if(rfc7807.isGovwayStatus() && eccezione!=null &&
-						eccezione.getCode()!=null) {
+			
+			// Esamino errore
+			org.openspcoop2.core.eccezione.details.Eccezione eccezione = null;
+			if(dettaglioEccezione.getExceptions()!=null && dettaglioEccezione.getExceptions().sizeExceptionList()>0) {
+				eccezione = dettaglioEccezione.getExceptions().getException(0); // prendo la prima
+			}
+			if(eccezione!=null) {
+				codeDetailsErrorWrapper.setDetails(eccezione.getDescription());
+				if(eccezione.getCode()!=null) {
 					String code = eccezione.getCode();
 					String prefixCodeStatus = null;
 					if(eccezione.getType()!=null && 
@@ -721,18 +859,78 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					else {
 						prefixCodeStatus = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION;
 					}
-					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_CODE(), prefixCodeStatus+code);
+					codeDetailsErrorWrapper.setPrefixCode(prefixCodeStatus);
+					codeDetailsErrorWrapper.setCode(code);
 				}
 			}
-			if(rfc7807.isInstance()) {
+			
+			// Costruisco problem
+			ProblemRFC7807 problemRFC7807 = rfc7807ProblemBuilder.buildProblem(returnConfig.getGovwayReturnCode());
+			
+			// details
+			if(rfc7807.isDetails()) {
+				
+				boolean genericDetails = returnConfig.isGenericDetails();
+				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+					genericDetails = true;
+				}
+				if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+					genericDetails = false;
+				}
+				
+				if(codeDetailsErrorWrapper.getDetails()!=null && !genericDetails) {
+					problemRFC7807.setDetail(codeDetailsErrorWrapper.getDetails());
+				}
+				else {
+					problemRFC7807.setDetail(erroriProperties.getGenericDetails(functionError));
+				}
+			}
+			
+			// govway-type
+			if(rfc7807.isGovwayType()) {
+				String govwayType = erroriProperties.getErrorType(functionError);
+				
+				// title
+				if(Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE()) {
+					if(Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE()) {
+						problemRFC7807.setTitle(StringUtils.join(
+							     StringUtils.splitByCharacterTypeCamelCase(govwayType),
+							     ' '));
+					}
+					else {
+						problemRFC7807.setTitle(govwayType);
+					}
+					
+					if(Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM()) {
+						problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TYPE(), govwayType);
+					}
+				}
+				else {
+					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TYPE(), govwayType);
+				}
+			}
+			
+			// govway-status
+			if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO && rfc7807.isGovwayStatus()) {
+				if(codeDetailsErrorWrapper.getCode()!=null && codeDetailsErrorWrapper.getPrefixCode()!=null) {
+					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_CODE(), 
+							codeDetailsErrorWrapper.getPrefixCode()+codeDetailsErrorWrapper.getCode());
+				}
+			}
+			
+			// instance
+			if(Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO && rfc7807.isInstance()) {
 				problemRFC7807.setInstance(nomePorta);
 			}
+			
+			// govway-transactionId
 			if(rfc7807.isGovwayTransactionId()) {
 				problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(), transactionId);
 			}
+			
 			return problemRFC7807;
 		}catch(Exception e){
-			throw new ProtocolException("toProblemRFC7807 failed: "+e.getMessage());
+			throw new ProtocolException("toProblemRFC7807 failed: "+e.getMessage(),e);
 		}
 	}
 	
@@ -797,13 +995,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento, 
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, null, errori, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
-				eProcessamento, messageType, rfc7807, httpStatus, 
+				eProcessamento, messageType, rfc7807, returnConfig, functionError, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				tempiElaborazione);
 	}
@@ -817,13 +1015,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
-			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
+			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){ 
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, erroreCooperazione, null, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
-				eProcessamento, messageType, rfc7807, httpStatus, 
+				eProcessamento, messageType, rfc7807, returnConfig, functionError, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				tempiElaborazione);
 	}
@@ -834,13 +1032,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
-			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
+			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){ 
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, null, null, erroreIntegrazione,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
-				eProcessamento, messageType, rfc7807, httpStatus, 
+				eProcessamento, messageType, rfc7807, returnConfig, functionError, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				tempiElaborazione);
 	}
@@ -855,7 +1053,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext, long attesaAttiva, int checkInterval, String profiloGestione,
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
-			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
+			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){
 
@@ -905,7 +1103,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				if(erroreIntegrazione!=null){
 					dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezioneProcessamentoBusta(identitaPdD, tipoPdD, modulo, 
 							erroreIntegrazione, //erroreIntegrazione.getCodiceErrore(), 
-							erroreIntegrazione.getDescrizione(this.protocolFactory), eProcessamento);
+							erroreIntegrazione.getDescrizione(this.protocolFactory), eProcessamento,
+							returnConfig, functionError);
 				}else{
 					dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezioneFromBusta(identitaPdD, tipoPdD, modulo, null, busta, eProcessamento);
 				}
@@ -922,7 +1121,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			OpenSPCoop2Message responseMessage = 
 					this.buildFaultProtocollo_processamento(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(),
-							messageType, rfc7807, httpStatus, nomePorta, 
+							messageType, rfc7807, returnConfig, functionError, nomePorta, 
 							setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 							context);
 
@@ -983,7 +1182,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, 
-								messageType, rfc7807, httpStatus, 
+								messageType, rfc7807, returnConfig, functionError, 
 								setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 								tempiElaborazione);
 					}
@@ -1017,13 +1216,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni, 
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){
 		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, context,
 				modulo, busta, integrazione, idTransazione, null, errori,
 				messageSecurityPropertiesResponse,messageSecurityContext,attesaAttiva,checkInterval,
-				profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, rfc7807, httpStatus,
+				profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, rfc7807, returnConfig, functionError,
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				tempiElaborazione);
 	}
@@ -1043,13 +1242,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			int checkInterval, 
 			String profiloGestione,
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){
 		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, context,
 				modulo, busta, integrazione, idTransazione, erroreCooperazione,null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, 
-				profiloGestione, tipoTempo, generazioneListaTrasmissioni, messageType, rfc7807, httpStatus, 
+				profiloGestione, tipoTempo, generazioneListaTrasmissioni, messageType, rfc7807, returnConfig, functionError,
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 				tempiElaborazione);
 	}
@@ -1064,7 +1263,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext, long attesaAttiva, int checkInterval, String profiloGestione,
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
-			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
+			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){
 
@@ -1113,7 +1312,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			OpenSPCoop2Message responseMessage = 
 				this.buildFaultProtocollo_intestazione(dettaglioEccezione,this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(),
-						messageType, rfc7807, httpStatus, nomePorta, 
+						messageType, rfc7807, returnConfig, functionError, nomePorta, 
 						setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 						context);
 
@@ -1172,7 +1371,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, 
-								messageType, rfc7807, httpStatus, 
+								messageType, rfc7807, returnConfig, functionError, 
 								setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
 								tempiElaborazione);
 					}

@@ -26,6 +26,7 @@ import java.io.File;
 
 import org.apache.axis.AxisFault;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -34,8 +35,10 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
@@ -150,13 +153,54 @@ public class Utilities {
 	
 	public static void verificaFaultIntegrazione(AxisFault error, String identificativoPortaAtteso,String identificativoFunzioneAtteso,
 			String codiceEccezioneAtteso, String descrizioneEccezioneAttesa, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
-		verificaFaultIntegrazione(error, org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR, identificativoPortaAtteso, identificativoFunzioneAtteso, codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);
+		verificaFaultIntegrazione(error, identificativoPortaAtteso,identificativoFunzioneAtteso,
+				codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto, codiceEccezioneAtteso);
+	}
+	public static void verificaFaultIntegrazione(AxisFault error, String identificativoPortaAtteso,String identificativoFunzioneAtteso,
+			String codiceEccezioneAtteso, String descrizioneEccezioneAttesa, boolean checkDescrizioneTramiteMatchEsatto, String codiceEccezioneEgovAttesoParam) throws Exception{
+		verificaFaultIntegrazione(error, org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR, identificativoPortaAtteso, identificativoFunzioneAtteso, 
+				codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto, codiceEccezioneEgovAttesoParam);
 	}
 	public static void verificaFaultIntegrazione(AxisFault error,String actor, String identificativoPortaAtteso,String identificativoFunzioneAtteso,
-			String codiceEccezioneAtteso, String descrizioneEccezioneAttesa, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
+			String codiceEccezioneAttesoParam, String descrizioneEccezioneAttesa, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
+		verificaFaultIntegrazione(error, actor, identificativoPortaAtteso, identificativoFunzioneAtteso,
+				codiceEccezioneAttesoParam, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto, codiceEccezioneAttesoParam);
+	}
+	public static void verificaFaultIntegrazione(AxisFault error,String actor, String identificativoPortaAtteso,String identificativoFunzioneAtteso,
+			String codiceEccezioneAttesoParam, String descrizioneEccezioneAttesa, boolean checkDescrizioneTramiteMatchEsatto, String codiceEccezioneEgovAttesoParam) throws Exception{
 		Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 		Reporter.log("Controllo actor ["+actor+"]");
 		Assert.assertTrue(actor.equals(error.getFaultActor()));
+		String codiceEccezioneAtteso = codiceEccezioneAttesoParam;
+		try {
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(SPCoopTestsuiteLogger.getInstance()); 
+			IntegrationFunctionError integrationFunctionError = erroriProperties.convertToIntegrationFunctionError_noWrap(codiceEccezioneAtteso);
+			IntegrationError ir = erroriProperties.getIntegrationError_noWrap(integrationFunctionError);
+				
+			switch (ir) {
+				case AUTHENTICATION: 
+				case AUTHORIZATION:
+				case NOT_FOUND:
+				case BAD_REQUEST: 
+				case CONFLICT:
+				case LIMIT_EXCEEDED:
+				case TOO_MANY_REQUESTS:
+					codiceEccezioneAtteso = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+					org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+codiceEccezioneAtteso;
+					break;
+				case SERVICE_UNAVAILABLE:
+				case ENDPOINT_REQUEST_TIMED_OUT:
+				case BAD_RESPONSE:
+				case INTERNAL_REQUEST_ERROR:
+				case INTERNAL_RESPONSE_ERROR:
+				case DEFAULT:
+					codiceEccezioneAtteso = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+					org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+codiceEccezioneAtteso;
+					break;
+			}
+		}catch(Throwable t) {
+			//t.printStackTrace(System.out);
+		}
 		Reporter.log("Controllo fault code ["+codiceEccezioneAtteso+"]");
 		Assert.assertTrue(codiceEccezioneAtteso.equals(error.getFaultCode().getLocalPart()));
 		Reporter.log("Controllo fault string (match esatto:"+checkDescrizioneTramiteMatchEsatto+") ["+descrizioneEccezioneAttesa+"] ("+error.getFaultString()+")");
@@ -166,7 +210,7 @@ public class Utilities {
 			Assert.assertTrue(error.getFaultString().contains(descrizioneEccezioneAttesa));
 		Reporter.log("Controllo xml errore applicativo cnipa definito nei details");
 		Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,identificativoPortaAtteso,identificativoFunzioneAtteso,
-				codiceEccezioneAtteso,descrizioneEccezioneAttesa,checkDescrizioneTramiteMatchEsatto);	
+				codiceEccezioneEgovAttesoParam,descrizioneEccezioneAttesa,checkDescrizioneTramiteMatchEsatto);	
 	}
 	
 	public static void verificaFaultDetailsRispettoErroreApplicativoCnipa(AxisFault error,String identificativoPortaAtteso,String identificativoFunzioneAtteso,

@@ -157,6 +157,7 @@
         <azione nome="testConnettoreErratoApplicativo"/>
         <azione nome="testConnettoreReadTimeoutApplicativo"/>
         <azione nome="testConnettoreConnectTimedOutApplicativo"/>
+	<azione nome="testConnettoreConnectReadTimedOutApplicativo"/>
         <!-- Test Bug #18 -->
         <azione nome="WSSEncrypt_ClientMustUnderstand1_PdDActorMustUnderstand1"/> <!-- Test 1 -->
         <azione nome="WSSEncrypt_ClientMustUnderstand1_PdDActorOpenSPCoop"/> <!-- Test 2 -->
@@ -1531,6 +1532,24 @@
         <connettore tipo="http" nome="PdDMinisteroErogatore">
             <property nome="location"
                 valore="http://127.0.2.2:7777/govwayTestSuite/qualsiasiContest"/>
+	    <property nome="connectionTimeout" valore="100"/>
+        </connettore>
+
+        <!-- Profilo di collaborazione Sincrono -->
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
+            accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+        </accordo-servizio-parte-specifica>
+
+    </soggetto>
+
+    <!-- Soggetto che possiede un connettore che provoca un ConnectReadTimedOut-->
+    <soggetto tipo="spc" nome="SoggettoConnettoreErratoConnectReadTimedOut">
+
+        <connettore tipo="http" nome="PdDMinisteroErogatore">
+            <property nome="location"
+                valore="http://localhost:8080/govwayTestSuite/verificaReadTimeout"/>
+	    <property nome="readConnectionTimeout" valore="100"/>
         </connettore>
 
         <!-- Profilo di collaborazione Sincrono -->

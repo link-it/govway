@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.Servizio;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 
 /**
@@ -46,6 +47,8 @@ public class ValidazioneSemanticaResult {
 	private List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
 	private List<Eccezione> erroriProcessamento;
+	/** Errore Integrazione */
+	private IntegrationFunctionError errore_integrationFunctionError;
 	/** ServizioCorrelato */
 	private String servizioCorrelato;
 	/** Tipo ServizioCorrelato */
@@ -97,5 +100,13 @@ public class ValidazioneSemanticaResult {
 	
 	public Servizio getInfoServizio() {
 		return this.infoServizio;
+	}
+	
+	public IntegrationFunctionError getErrore_integrationFunctionError() {
+		return this.errore_integrationFunctionError;
+	}
+
+	public void setErrore_integrationFunctionError(IntegrationFunctionError errore_integrationFunctionError) {
+		this.errore_integrationFunctionError = errore_integrationFunctionError;
 	}
 }

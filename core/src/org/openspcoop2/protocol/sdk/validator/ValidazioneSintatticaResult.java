@@ -22,11 +22,11 @@ package org.openspcoop2.protocol.sdk.validator;
 
 import java.util.List;
 
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Wrapper per i risultati prodotti dal processo di validazione sintattica:
@@ -59,7 +59,7 @@ public class ValidazioneSintatticaResult<BustaRawType> {
 	private Busta busta;
 	/** Eventuale errore avvenuto durante il processo di validazione */
 	private ErroreCooperazione errore;
-	private IntegrationError errore_integrationError;
+	private IntegrationFunctionError errore_integrationFunctionError;
 	/** bustaErroreHeaderIntestazione: generata solo quando la busta arrivata non contiene gli elementi principali */
 	private Busta bustaErrore;
 	/** Elemento che raccoglie i dati di cooperazione */
@@ -119,11 +119,11 @@ public class ValidazioneSintatticaResult<BustaRawType> {
 	public ErroreCooperazione getErrore() {
 		return this.errore;
 	}
-	public IntegrationError getErrore_integrationError() {
-		return this.errore_integrationError;
+	public IntegrationFunctionError getErrore_integrationFunctionError() {
+		return this.errore_integrationFunctionError;
 	}
-	public void setErrore_integrationError(IntegrationError errore_integrationError) {
-		this.errore_integrationError = errore_integrationError;
+	public void setErrore_integrationFunctionError(IntegrationFunctionError errore_integrationFunctionError) {
+		this.errore_integrationFunctionError = errore_integrationFunctionError;
 	}
 
 	public Busta getBustaErrore() {

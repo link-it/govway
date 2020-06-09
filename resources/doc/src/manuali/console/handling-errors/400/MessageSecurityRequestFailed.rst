@@ -1,4 +1,4 @@
-.. _errori_503_MessageSecurityRequestFailed:
+.. _errori_400_MessageSecurityRequestFailed:
 
 MessageSecurityRequestFailed
 -----------------------------

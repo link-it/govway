@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -73,6 +74,8 @@ public class ValidazioneSemantica  {
 	protected java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
 	protected java.util.List<Eccezione> erroriProcessamento;
+	/** Dettaglio errore */
+	protected IntegrationFunctionError errore_integrationFunctionError;
 	/** Busta */
 	protected Busta busta;
 	/** Validazione ID completa */
@@ -150,6 +153,10 @@ public class ValidazioneSemantica  {
 		return this.erroriProcessamento;
 	}
 	
+	public IntegrationFunctionError getErrore_integrationFunctionError() {
+		return this.errore_integrationFunctionError;
+	}
+	
 	/**
 	 * Metodo che effettua la validazione dei soggetti di una busta, controllando la loro registrazione nel registro dei servizi. 
 	 *
@@ -178,6 +185,7 @@ public class ValidazioneSemantica  {
 			this.erroriValidazione = result.getErroriValidazione();
 			if(this.erroriValidazione == null) 
 				this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+			this.errore_integrationFunctionError = result.getErrore_integrationFunctionError();
 			
 			// Controllo correlazione alla richiesta per buste contenenti Risposte o ricevute 
 			//System.out.println("TIPO BUSTA ["+tipoBusta+"]");

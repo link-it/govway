@@ -66,6 +66,8 @@ public interface IRegistryReader {
 	
 	public IDSoggetto getIdSoggettoByCodiceIPA(String codiceIPA) throws RegistryNotFound,RegistryException;
 	
+	public IDSoggetto getIdSoggettoDefault(String tipoSoggettoDefault) throws RegistryNotFound,RegistryException;
+	
 	public String getCodiceIPA(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException;
 	
 	public String getDominio(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException;

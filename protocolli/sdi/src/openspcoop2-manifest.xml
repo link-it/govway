@@ -73,12 +73,88 @@
     		</integration>
    			<integrationError>
     			<internal problemType="rfc7807">
-    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
-	    			<default httpReturnCode="500" messageType="soap11" />
+    				<rfc7807 details="true" govwayStatus="true" govwayType="true" govwayTransactionId="true" instance="true" useAcceptHeader="true"/>
+    				<authentication messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="401"/>
+	    			</authentication>
+	    			<authorization messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="403"/>
+	    			</authorization>
+	    			<notFound messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="404"/>
+	    			</notFound>
+	    			<badRequest messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="400"/>
+	    			</badRequest>
+	    			<conflict messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="409"/>
+	    			</conflict>
+	    			<limitExceeded messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="429"/>
+	    			</limitExceeded>
+	    			<tooManyRequests messageType="soap11" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="429"/>
+	    			</tooManyRequests>
+	    			<serviceUnavailable messageType="soap11" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="503"/>
+	    			</serviceUnavailable>
+	    		    <endpointRequestTimedOut messageType="soap11" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="504"/>
+	    			</endpointRequestTimedOut>
+	    			<badResponse messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="502"/> <!-- equivalente a bad request, quindi no retry, senno si usa internal response error -->
+	    			</badResponse>
+	    			<internalRequestError messageType="soap11" retry="true" errorMessage="generic">
+	    				<errorCode http="500" govway="503"/>
+	    			</internalRequestError>
+	    			<internalResponseError messageType="soap11" retry="true" errorMessage="generic">
+	    				<errorCode http="500" govway="502"/>
+	    			</internalResponseError>
+	    			<default messageType="soap11" retry="false" errorMessage="generic">
+	    				<errorCode http="500" govway="503"/>
+	    			</default>
     			</internal>	
     			<external problemType="rfc7807" useInternalFault="true">
-    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
-	    			<default httpReturnCode="500" messageType="soap11" />
+    				<rfc7807 details="true" govwayStatus="true" govwayType="true" govwayTransactionId="true" instance="true" useAcceptHeader="true"/>
+    				<authentication messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="401"/>
+	    			</authentication>
+	    			<authorization messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="403"/>
+	    			</authorization>
+	    			<notFound messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="404"/>
+	    			</notFound>
+	    			<badRequest messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="400"/>
+	    			</badRequest>
+	    			<conflict messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="409"/>
+	    			</conflict>
+	    			<limitExceeded messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="429"/>
+	    			</limitExceeded>
+	    			<tooManyRequests messageType="soap11" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="429"/>
+	    			</tooManyRequests>
+	    			<serviceUnavailable messageType="soap11" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="503"/>
+	    			</serviceUnavailable>
+	    		    <endpointRequestTimedOut messageType="soap11" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="504"/>
+	    			</endpointRequestTimedOut>
+	    			<badResponse messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="502"/> <!-- equivalente a bad request, quindi no retry, senno si usa internal response error -->
+	    			</badResponse>
+	    			<internalRequestError messageType="soap11" retry="true" errorMessage="generic">
+	    				<errorCode http="500" govway="503"/>
+	    			</internalRequestError>
+	    			<internalResponseError messageType="soap11" retry="true" errorMessage="generic">
+	    				<errorCode http="500" govway="502"/>
+	    			</internalResponseError>
+	    			<default messageType="soap11" retry="false" errorMessage="generic">
+	    				<errorCode http="500" govway="503"/>
+	    			</default>
     			</external>	
     		</integrationError>
     		<mediaTypeCollection>

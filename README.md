@@ -45,6 +45,7 @@ Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce t
 * [Fatturazione Passiva](./resources/doc/govlet/Fatturazione/Govlet_FatturaPA_FatturazionePassiva.pdf)
 * [PagoPA](./resources/doc/govlet/pagoPA/Govlet_pagoPA.pdf)
 * [SIOPE+](./resources/doc/govlet/SiopePlus/Govlet_SiopePlus.pdf)
+* [ANPR](./resources/doc/govlet/ANPR/Govlet_ANPR.pdf)
 
 ## Contatti
 

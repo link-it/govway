@@ -34,6 +34,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
 
+import org.openspcoop2.message.config.FaultBuilderConfig;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -926,51 +927,141 @@ public abstract class OpenSPCoop2MessageFactory {
 	 * Messaggi di Errore
 	 */
 		
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807, FaultBuilderConfig faultBuilderConfig) {
+		return this.createFaultMessage(messageType, useProblemRFC7807, faultBuilderConfig, Costanti.DEFAULT_SOAP_FAULT_STRING,null);
+	}
 	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807) {
 		return this.createFaultMessage(messageType, useProblemRFC7807, Costanti.DEFAULT_SOAP_FAULT_STRING,null);
+	}
+	
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807, FaultBuilderConfig faultBuilderConfig, NotifierInputStreamParams notifierInputStreamParams) {
+		return createFaultMessage(messageType, useProblemRFC7807, faultBuilderConfig, Costanti.DEFAULT_SOAP_FAULT_STRING,notifierInputStreamParams);
 	}
 	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807, NotifierInputStreamParams notifierInputStreamParams) {
 		return createFaultMessage(messageType, useProblemRFC7807, Costanti.DEFAULT_SOAP_FAULT_STRING,notifierInputStreamParams);
 	}
 	
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, FaultBuilderConfig faultBuilderConfig, Throwable t) {
+		return this.createFaultMessage(messageType,useProblemRFC7807, faultBuilderConfig, t,null);
+	}
 	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, Throwable t) {
 		return this.createFaultMessage(messageType,useProblemRFC7807, t,null);
 	}
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, Throwable t,NotifierInputStreamParams notifierInputStreamParams) {
+	
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, FaultBuilderConfig faultBuilderConfig, 
+			Throwable t,NotifierInputStreamParams notifierInputStreamParams) {
+		return createFaultMessage(messageType, useProblemRFC7807, faultBuilderConfig, t.getMessage(),notifierInputStreamParams);
+	}
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, 
+			Throwable t,NotifierInputStreamParams notifierInputStreamParams) {
 		return createFaultMessage(messageType, useProblemRFC7807, t.getMessage(),notifierInputStreamParams);
 	}
 	
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807, String errore) {
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807, FaultBuilderConfig faultBuilderConfig, 
+			String errore) {
+		return this.createFaultMessage(messageType, useProblemRFC7807, faultBuilderConfig, errore,null);
+	}
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807, 
+			String errore) {
 		return this.createFaultMessage(messageType, useProblemRFC7807, errore,null);
 	}
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, String errore,NotifierInputStreamParams notifierInputStreamParams){
+	
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, 
+			String errore,NotifierInputStreamParams notifierInputStreamParams){
+		return this.createFaultMessage(messageType, useProblemRFC7807, null, errore, notifierInputStreamParams);
+	}
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, FaultBuilderConfig faultBuilderConfig, 
+			String erroreParam,NotifierInputStreamParams notifierInputStreamParams){ 
+	
+		if(faultBuilderConfig==null) {
+			faultBuilderConfig = new FaultBuilderConfig();
+		}
+		if(faultBuilderConfig.getHttpReturnCode()==null) {
+			faultBuilderConfig.setHttpReturnCode(503);
+		}
+		if(faultBuilderConfig.getGovwayReturnCode()==null) {
+			faultBuilderConfig.setGovwayReturnCode(faultBuilderConfig.getHttpReturnCode());
+		}
+		
+		String errore = erroreParam;
+		if(faultBuilderConfig.getDetails()!=null) {
+			errore = faultBuilderConfig.getDetails();
+		}
+		
 		try{
 			String fault = null;
 			String contentType = MessageUtilities.getDefaultContentType(messageType);
 			if(MessageType.SOAP_11.equals(messageType)){
 				fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
 						+"<SOAP-ENV:Header/><SOAP-ENV:Body>"
-						+"<SOAP-ENV:Fault>"
-						+"<faultcode>SOAP-ENV:Server</faultcode>"
-						+"<faultstring>" + errore + "</faultstring>"
-						+"<faultactor>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</faultactor>"
+						+"<SOAP-ENV:Fault>";
+				if(faultBuilderConfig.getErrorCode()!=null) {
+					fault = fault
+							+"<faultcode xmlns:"+faultBuilderConfig.getErrorCode().getPrefix()+"=\""+faultBuilderConfig.getErrorCode().getNamespaceURI()+
+									"\">"+faultBuilderConfig.getErrorCode().getPrefix()+":"+faultBuilderConfig.getErrorCode().getLocalPart()+"</faultcode>";
+				}
+				else {
+					fault = fault		
+							+"<faultcode>SOAP-ENV:"+Costanti.SOAP11_FAULT_CODE_SERVER+"</faultcode>";
+				}
+				fault = fault
+						+"<faultstring>" + errore + "</faultstring>";
+				if(faultBuilderConfig.getActor()!=null) {
+					fault = fault
+							+"<faultactor>"+faultBuilderConfig.getActor()+"</faultactor>";
+				}
+				else {
+					fault = fault
+							+"<faultactor>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</faultactor>";
+				}
+				fault = fault
 						+"</SOAP-ENV:Fault>"
 						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 			}
 			else if(MessageType.SOAP_12.equals(messageType)){
+				String code12 = Costanti.SOAP12_FAULT_CODE_SERVER;
+				if(faultBuilderConfig.getGovwayReturnCode()!=null) {
+					if(faultBuilderConfig.getGovwayReturnCode()<=499) {
+						code12 = Costanti.SOAP12_FAULT_CODE_CLIENT;
+					}
+				}
 				fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\">"
 						+"<SOAP-ENV:Header/><SOAP-ENV:Body>"
 						+"<SOAP-ENV:Fault>"
-						+"<SOAP-ENV:Code><SOAP-ENV:Value>SOAP-ENV:Server</SOAP-ENV:Value></SOAP-ENV:Code>"
-						+"<SOAP-ENV:Reason><SOAP-ENV:Text xml:lang=\"en-US\">" + errore + "</SOAP-ENV:Text></SOAP-ENV:Reason>"
-						+"<SOAP-ENV:Role>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</SOAP-ENV:Role>"
+						+"<SOAP-ENV:Code><SOAP-ENV:Value>SOAP-ENV:"+code12+"</SOAP-ENV:Value>";
+				if(faultBuilderConfig.getErrorCode()!=null) {
+					fault = fault
+							+"<env:Subcode><env:Value xmlns:"+faultBuilderConfig.getErrorCode().getPrefix()+"=\""+faultBuilderConfig.getErrorCode().getNamespaceURI()+
+								"\">"+faultBuilderConfig.getErrorCode().getPrefix()+":"+faultBuilderConfig.getErrorCode().getLocalPart()+"</env:Value></env:Subcode>";
+				}
+				fault = fault	
+						+"</SOAP-ENV:Code>"
+						+"<SOAP-ENV:Reason><SOAP-ENV:Text xml:lang=\"en-US\">" + errore + "</SOAP-ENV:Text></SOAP-ENV:Reason>";
+				if(faultBuilderConfig.getActor()!=null) {
+					fault = fault
+							+"<SOAP-ENV:Role>"+faultBuilderConfig.getActor()+"</SOAP-ENV:Role>";
+				}
+				else {
+					fault = fault
+							+"<SOAP-ENV:Role>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</SOAP-ENV:Role>";
+				}
+				fault = fault
 						+"</SOAP-ENV:Fault>"
 						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 			}
 			else if(MessageType.XML.equals(messageType)){
 				if(useProblemRFC7807) {
-					ProblemRFC7807Builder builder = new ProblemRFC7807Builder(true);
-					ProblemRFC7807 problemRFC7807 = builder.buildProblem(500);
+					ProblemRFC7807Builder builder = null;
+					if(faultBuilderConfig.getRfc7807WebSite()!=null) {
+						builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+					}
+					else {
+						builder = new ProblemRFC7807Builder(true);
+					}
+					ProblemRFC7807 problemRFC7807 = builder.buildProblem(faultBuilderConfig.getGovwayReturnCode());
+					if(faultBuilderConfig.getRfc7807Title()!=null) {
+						problemRFC7807.setTitle(faultBuilderConfig.getRfc7807Title());
+					}
 					if(errore!=null && !Costanti.DEFAULT_SOAP_FAULT_STRING.equals(errore)) {
 						problemRFC7807.setDetail(errore);
 					}
@@ -978,15 +1069,24 @@ public abstract class OpenSPCoop2MessageFactory {
 					fault = xmlSerializer.toString(problemRFC7807);
 					contentType = HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807;
 				}else {
-					fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
+					fault = "<op2:Fault xmlns:op2=\""+(faultBuilderConfig.getActor()!=null ? faultBuilderConfig.getActor() : Costanti.DEFAULT_SOAP_FAULT_ACTOR)+"\">"
 							+"<op2:Message>"+errore+"</op2:Message>"
 							+"</op2:Fault>";
 				}
 			}
 			else if(MessageType.JSON.equals(messageType)){
 				if(useProblemRFC7807) {
-					ProblemRFC7807Builder builder = new ProblemRFC7807Builder(true);
-					ProblemRFC7807 problemRFC7807 = builder.buildProblem(500);
+					ProblemRFC7807Builder builder = null;
+					if(faultBuilderConfig.getRfc7807WebSite()!=null) {
+						builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+					}
+					else {
+						builder = new ProblemRFC7807Builder(true);
+					}
+					ProblemRFC7807 problemRFC7807 = builder.buildProblem(faultBuilderConfig.getGovwayReturnCode());
+					if(faultBuilderConfig.getRfc7807Title()!=null) {
+						problemRFC7807.setTitle(faultBuilderConfig.getRfc7807Title());
+					}
 					if(errore!=null && !Costanti.DEFAULT_SOAP_FAULT_STRING.equals(errore)) {
 						problemRFC7807.setDetail(errore);
 					}
@@ -994,7 +1094,7 @@ public abstract class OpenSPCoop2MessageFactory {
 					fault = jsonSerializer.toString(problemRFC7807);
 					contentType = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
 				}else {
-					fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\" } }";
+					fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \""+(faultBuilderConfig.getActor()!=null ? faultBuilderConfig.getActor() : Costanti.DEFAULT_SOAP_FAULT_ACTOR)+"\" } }";
 				}
 			}
 			else{
@@ -1006,16 +1106,29 @@ public abstract class OpenSPCoop2MessageFactory {
 				
 				// modifica default in json
 				if(useProblemRFC7807) {
-					ProblemRFC7807Builder builder = new ProblemRFC7807Builder(true);
-					ProblemRFC7807 problemRFC7807 = builder.buildProblem(500);
+					ProblemRFC7807Builder builder = null;
+					if(faultBuilderConfig.getRfc7807WebSite()!=null) {
+						builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+					}
+					else {
+						builder = new ProblemRFC7807Builder(true);
+					}
+					ProblemRFC7807 problemRFC7807 = builder.buildProblem(faultBuilderConfig.getGovwayReturnCode());
+					if(faultBuilderConfig.getRfc7807Title()!=null) {
+						problemRFC7807.setTitle(faultBuilderConfig.getRfc7807Title());
+					}
 					if(errore!=null && !Costanti.DEFAULT_SOAP_FAULT_STRING.equals(errore)) {
 						problemRFC7807.setDetail(errore);
+					}
+					if(faultBuilderConfig.getRfc7807GovWayTypeHeaderErrorTypeName()!=null && faultBuilderConfig.getRfc7807GovWayTypeHeaderErrorTypeValue()!=null) {
+						problemRFC7807.getCustom().put(faultBuilderConfig.getRfc7807GovWayTypeHeaderErrorTypeName(), 
+								faultBuilderConfig.getRfc7807GovWayTypeHeaderErrorTypeValue());
 					}
 					JsonSerializer jsonSerializer = new JsonSerializer();
 					fault = jsonSerializer.toString(problemRFC7807);
 					contentType = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
 				}else {
-					fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\" } }";
+					fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \""+(faultBuilderConfig.getActor()!=null ? faultBuilderConfig.getActor() : Costanti.DEFAULT_SOAP_FAULT_ACTOR)+"\" } }";
 					contentType = MessageUtilities.getDefaultContentType(MessageType.JSON);
 				}
 			}
@@ -1030,8 +1143,26 @@ public abstract class OpenSPCoop2MessageFactory {
 				throw result.getParseException().getSourceException();
 			}
 			OpenSPCoop2Message msg = result.getMessage();
+			
 			msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 					org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+			
+			if(faultBuilderConfig.getErrorCode()!=null) {
+				if(faultBuilderConfig.getErrorCode().getPrefix()!=null) {
+					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_PREFIX_CODE, faultBuilderConfig.getErrorCode().getPrefix() );
+				}
+				if(faultBuilderConfig.getErrorCode().getLocalPart()!=null) {
+					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE, faultBuilderConfig.getErrorCode().getLocalPart() );
+				}
+				msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_DETAILS, errore );
+			}
+			
+			if(faultBuilderConfig.getHeaderErrorTypeName()!=null && faultBuilderConfig.getHeaderErrorTypeValue()!=null) {
+				msg.forceTransportHeader(faultBuilderConfig.getHeaderErrorTypeName(), faultBuilderConfig.getHeaderErrorTypeValue());
+			}
+			
+			msg.setForcedResponseCode(faultBuilderConfig.getHttpReturnCode()+"");
+			
 			return msg;
 		}
 		catch(Throwable e){

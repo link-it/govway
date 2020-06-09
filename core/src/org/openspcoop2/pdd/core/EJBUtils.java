@@ -51,7 +51,6 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseException;
@@ -90,6 +89,7 @@ import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.InoltroRisposteMessage;
 import org.openspcoop2.pdd.services.core.RicezioneBusteMessage;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiMessage;
+import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -109,6 +109,7 @@ import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -216,12 +217,26 @@ public class EJBUtils {
 	
 	/** RicezioneBusteExternalErrorGenerator */
 	private RicezioneBusteExternalErrorGenerator generatoreErrorePortaApplicativa = null;
-	private IntegrationError integrationErrorPortaApplicativa = IntegrationError.INTERNAL_ERROR; // default
+	private IntegrationFunctionError _integrationFunctionErrorPortaApplicativa;
+	private IntegrationFunctionError getIntegrationFunctionErrorPortaApplicativa(boolean erroreValidazione) {
+		if(this._integrationFunctionErrorPortaApplicativa!=null) {
+			return this._integrationFunctionErrorPortaApplicativa;
+		}
+		else {
+			IntegrationFunctionError ife = AbstractErrorGenerator.getIntegrationInternalError(this.pddContext); // default
+			if(erroreValidazione) {
+				ife = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR.equals(ife) ? 
+						IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_RESPONSE :
+						IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_REQUEST;
+			}
+			return ife;
+		}
+	}
 	public void setGeneratoreErrorePortaApplicativa(RicezioneBusteExternalErrorGenerator generatoreErrorePortaApplicativa) {
 		this.generatoreErrorePortaApplicativa = generatoreErrorePortaApplicativa;
 	}
-	public void setIntegrationErrorPortaApplicativa(IntegrationError integrationErrorPortaApplicativa) {
-		this.integrationErrorPortaApplicativa = integrationErrorPortaApplicativa;
+	public void setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError integrationErrorPortaApplicativa) {
+		this._integrationFunctionErrorPortaApplicativa = integrationErrorPortaApplicativa;
 	}
 
 	public synchronized void initializeNodeSender(OpenSPCoop2Properties propertiesReader,Logger logCore) throws EJBUtilsException{
@@ -2447,16 +2462,23 @@ public class EJBUtils {
 			if(errore==null) {
 				DettaglioEccezione dettaglioEccezione = this.dettaglioBuilder.buildDettaglioEccezioneFromBusta(this.identitaPdD,this.tipoPdD,this.idModulo, 
 						this.servizioApplicativoErogatore, busta, eProcessamento);
-				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.pddContext, this.integrationErrorPortaApplicativa, dettaglioEccezione);
+				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.pddContext, this.getIntegrationFunctionErrorPortaApplicativa(false), dettaglioEccezione);
 			}
 			else {
-				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.pddContext, this.integrationErrorPortaApplicativa, errore, eProcessamento);
+				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.pddContext, this.getIntegrationFunctionErrorPortaApplicativa(false), errore, eProcessamento);
 			}			
 			if(errorMsg == null){
 				throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
 			}
 		}
-		if(this.integrationErrorPortaApplicativa!=null && IntegrationError.SERVICE_UNAVAILABLE.equals(this.integrationErrorPortaApplicativa)) {
+		IntegrationFunctionError integrationFunctionErrorPortaApplicativa = getIntegrationFunctionErrorPortaApplicativa(false);
+		if(integrationFunctionErrorPortaApplicativa!=null && 
+				(
+						IntegrationFunctionError.SERVICE_UNAVAILABLE.equals(integrationFunctionErrorPortaApplicativa)
+						||
+						IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT.equals(integrationFunctionErrorPortaApplicativa)
+				)
+			) {
 			// Retry-After
 			boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed();
 			Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed();
@@ -2551,10 +2573,10 @@ public class EJBUtils {
 		//ErroreValidazioneProtocollo: Msg
 		OpenSPCoop2Message msg = null;
 		if(codiceErroreCooperazione!=null && descrizioneErroreCooperazione!=null) {
-			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.integrationErrorPortaApplicativa, codiceErroreCooperazione, descrizioneErroreCooperazione);
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.getIntegrationFunctionErrorPortaApplicativa(true), codiceErroreCooperazione, descrizioneErroreCooperazione);
 		}
 		else {
-			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.integrationErrorPortaApplicativa);
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.getIntegrationFunctionErrorPortaApplicativa(true));
 		}
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreValidazioneProtocollo error: Costruzione messaggio Errore Protocollo fallita.");
@@ -2613,10 +2635,10 @@ public class EJBUtils {
 		//ErroreValidazioneProtocollo: Msg
 		OpenSPCoop2Message msg = null;
 		if(codiceErroreCooperazione!=null && descrizioneErroreCooperazione!=null) {
-			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.integrationErrorPortaApplicativa, codiceErroreCooperazione, descrizioneErroreCooperazione);
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.getIntegrationFunctionErrorPortaApplicativa(false), codiceErroreCooperazione, descrizioneErroreCooperazione);
 		}
 		else {
-			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.integrationErrorPortaApplicativa);
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.getIntegrationFunctionErrorPortaApplicativa(false));
 		}
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProtocollo_BustaRispostaMalformata error: Costruzione Msg Errore Protocollo fallita.");

@@ -4824,7 +4824,246 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_dump.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL);
 		}
-
+		
+		
+		
+		
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			String[] labeles = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST_ABILITATO, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST_DISABILITATO };
+			de.setLabels(labeles);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST+")";
+			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST);
+		}
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias));
+			String value2 = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias));
+			boolean enable = "true".equals(value) && "true".equals(value2);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			String[] labeles = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE_ABILITATO, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE_DISABILITATO };
+			de.setLabels(labeles);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE+")";
+			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE);
+		}
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			String[] labeles = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR_ABILITATO, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR_DISABILITATO };
+			de.setLabels(labeles);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR+")";
+			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR);
+		}
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE+")";
+			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE);
+		}
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT+")";
+			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT);
+		}
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS+")";
+			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS);
+		}
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID+")";
+			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID);
+		}
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE+")";
+			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE);
+		}
+		
 		
 		
 		

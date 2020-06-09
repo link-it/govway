@@ -355,6 +355,124 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			log4j_dump = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		
+		String errorSpecificTypeProcessRequest = null;
+		try{
+			errorSpecificTypeProcessRequest = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorSpecificTypeProcessRequest = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String errorSpecificTypeProcessResponse_1 = null;
+		try{
+			errorSpecificTypeProcessResponse_1 = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorSpecificTypeProcessResponse_1 = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		String errorSpecificTypeProcessResponse_2 = null;
+		try{
+			errorSpecificTypeProcessResponse_2 = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorSpecificTypeProcessResponse_2 = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		String errorSpecificTypeProcessResponse = null;
+		if(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE.contentEquals(errorSpecificTypeProcessResponse_1)) {
+			errorSpecificTypeProcessResponse = errorSpecificTypeProcessResponse_1;
+		}
+		else if(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE.contentEquals(errorSpecificTypeProcessResponse_2)) {
+			errorSpecificTypeProcessResponse = errorSpecificTypeProcessResponse_2;
+		}
+		else {
+			errorSpecificTypeProcessResponse = ("true".equals(errorSpecificTypeProcessResponse_1) && "true".equals(errorSpecificTypeProcessResponse_2)) + ""; 
+		}
+		
+		String errorSpecificTypeInternalError = null;
+		try{
+			errorSpecificTypeInternalError = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorSpecificTypeInternalError = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String errorStatus = null;
+		try{
+			errorStatus = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorStatus = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String errorStatusInSoapFaultCode = null;
+		try{
+			errorStatusInSoapFaultCode = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorStatusInSoapFaultCode = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String errorSpecificDetails = null;
+		try{
+			errorSpecificDetails = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorSpecificDetails = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String errorInstanceId = null;
+		try{
+			errorInstanceId = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorInstanceId = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String errorGenerateHttpErrorCodeInSoap = null;
+		try{
+			errorGenerateHttpErrorCodeInSoap = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias));
+		}catch(Exception e){
+			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP+" ("+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE+")";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			errorGenerateHttpErrorCodeInSoap = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}		
+
 		String infoDatabase = null;
 		try{
 			infoDatabase = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -673,6 +791,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				"true".equals(log4j_diagnostica), "true".equals(log4j_openspcoop), "true".equals(log4j_integrationManager), 
 				"true".equals(tracciamento), "true".equals(dumpPD), "true".equals(dumpPA),
 				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
+				"true".equals(errorSpecificTypeProcessRequest), "true".equals(errorSpecificTypeProcessResponse), "true".equals(errorSpecificTypeInternalError),
+				"true".equals(errorStatus), "true".equals(errorStatusInSoapFaultCode),
+				"true".equals(errorSpecificDetails), "true".equals(errorInstanceId), "true".equals(errorGenerateHttpErrorCodeInSoap),
 				infoDatabase, infoConnessioneAltriDB , 
 				infoSSL, infoCryptographyKeyLength, 
 				infoCharset, infoInternazionalizzazione, infoTimeZone, 

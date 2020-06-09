@@ -206,6 +206,30 @@ public class RegistryReader implements IRegistryReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
+	
+	@Override
+	public IDSoggetto getIdSoggettoDefault(String tipoSoggettoDefault) throws RegistryNotFound,RegistryException{
+		try{
+			if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB){
+				List<IDSoggetto> list = ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getSoggettiDefault();
+				if(list!=null && !list.isEmpty()) {
+					for (IDSoggetto idSoggetto : list) {
+						if(idSoggetto.getTipo().equals(tipoSoggettoDefault)) {
+							return idSoggetto;
+						}
+					}
+				}
+				throw new DriverRegistroServiziNotFound("Soggetto di default per il tipo '"+tipoSoggettoDefault+"' non trovato");
+			}
+			else{
+				throw new RuntimeException("Not Implemented");
+			}
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
 
 	@Override
 	public String getCodiceIPA(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException {

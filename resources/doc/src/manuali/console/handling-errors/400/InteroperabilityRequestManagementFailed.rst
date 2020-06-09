@@ -1,4 +1,4 @@
-.. _errori_503_InteroperabilityRequestManagementFailed:
+.. _errori_400_InteroperabilityRequestManagementFailed:
 
 InteroperabilityRequestManagementFailed
 ---------------------------------------

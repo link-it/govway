@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -43,6 +44,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -169,6 +171,31 @@ public final class PorteApplicativeAbilitazione extends Action {
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 	
 				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+				
+				List<String> aliasJmx = porteApplicativeCore.getJmxPdD_aliases();
+				if(aliasJmx!=null && !aliasJmx.isEmpty()) {
+					for (String alias : aliasJmx) {
+						String metodo = StatoFunzionalita.ABILITATO.equals(pa.getStato()) ? 
+								porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(alias) :
+								porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(alias);
+						try{
+							String stato = porteApplicativeCore.invokeJMXMethod(porteApplicativeCore.getGestoreRisorseJMX(alias), alias, 
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+									metodo, 
+									pa.getNome());
+							if(stato==null) {
+								throw new ServletException("Aggiornamento fallito");
+							}
+							if(!JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)) {
+								throw new ServletException(stato);
+							}
+						}catch(Exception e){
+							String msgErrore = "Errore durante l'aggiornamento dello stato della PortaApplicativa '"+pa.getNome()+"' via jmx (jmxMethod '"+metodo+"') (node:"+alias+"): "+e.getMessage();
+							ControlStationCore.logError(msgErrore, e);
+						}
+					}
+				}
 			}
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

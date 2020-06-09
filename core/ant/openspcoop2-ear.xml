@@ -520,6 +520,7 @@
 		<if>
 			<or>
 				<matches string="${as}" pattern="wildfly18"/>
+				<matches string="${as}" pattern="wildfly19"/>
 			</or>
 			<then>
 				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build}/tmp/mailapi"/>

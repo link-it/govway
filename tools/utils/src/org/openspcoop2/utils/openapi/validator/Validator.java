@@ -899,7 +899,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		if(required) {
 			
 			if(httpEntity.getContent() == null) {
-				throw new ValidatorException("Body required ma non trovato");
+				throw new ValidatorException("Required body undefined");
 			}
 
 		}
@@ -932,7 +932,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							}
 						}
 						else {
-							throw new ValidatorException("Contenuto non presente");
+							throw new ValidatorException("Content undefined");
 						}
 						
 						if(!valid) {
@@ -987,7 +987,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 			
 		if(lst.isEmpty())
-			throw new ValidatorException("Nessun validatore trovato");
+			throw new ValidatorException("Validator not found");
 		
 		return lst;
 	}

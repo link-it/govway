@@ -38,7 +38,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -88,6 +87,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -145,7 +145,7 @@ public class RicezioneContenutiApplicativiService {
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+					IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
@@ -158,7 +158,7 @@ public class RicezioneContenutiApplicativiService {
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
@@ -176,7 +176,7 @@ public class RicezioneContenutiApplicativiService {
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
@@ -207,7 +207,7 @@ public class RicezioneContenutiApplicativiService {
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
@@ -222,7 +222,7 @@ public class RicezioneContenutiApplicativiService {
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
@@ -280,7 +280,7 @@ public class RicezioneContenutiApplicativiService {
 						cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
-								IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+									IntegrationFunctionError.INTERNAL_REQUEST_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 						// nel caso di wsdl request non emetto la transazione
 						//RicezioneContenutiApplicativiServiceUtils.emitTransaction(context,logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 					}
@@ -291,7 +291,7 @@ public class RicezioneContenutiApplicativiService {
 					logCore.error(msg);
 					ConnectorDispatcherErrorInfo cInfoError =  ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
 							ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErrore439_FunzionalitaNotSupportedByProtocol(msg, protocolFactory),
-							IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+							IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 					RicezioneContenutiApplicativiServiceUtils.emitTransaction(context,logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
 					return;
 				}
@@ -466,14 +466,14 @@ public class RicezioneContenutiApplicativiService {
 				if(HttpConstants.CONTENT_TYPE_NON_PRESENTE.equals(contentTypeReq)){
 					//ContentType del messaggio non presente
 					msgDiag.logPersonalizzato("contentType.notDefined");
-					responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
+					responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.CONTENT_TYPE_NOT_PROVIDED,
 							ErroriIntegrazione.ERRORE_433_CONTENT_TYPE_NON_PRESENTE.
 							getErrore433_ContentTypeNonPresente(supportedContentTypes),null,null);
 				}
 				else{
 					//ContentType del messaggio non supportato
 					msgDiag.logPersonalizzato("contentType.unsupported");
-					responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
+					responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.CONTENT_TYPE_NOT_SUPPORTED,
 							ErroriIntegrazione.ERRORE_429_CONTENT_TYPE_NON_SUPPORTATO.
 							getErrore429_ContentTypeNonSupportato(contentTypeReq,supportedContentTypes),null,null);
 				}
@@ -570,7 +570,7 @@ public class RicezioneContenutiApplicativiService {
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, mustUnderstandError);
 						msgDiag.logPersonalizzato("mustUnderstand.unknown");
-						responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
+						responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.SOAP_MUST_UNDERSTAND_UNKNOWN,
 								ErroriIntegrazione.ERRORE_427_MUSTUNDERSTAND_ERROR.
 								getErrore427_MustUnderstandHeaders(mustUnderstandError),null,null);
 					}
@@ -578,7 +578,7 @@ public class RicezioneContenutiApplicativiService {
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE, soapEnvelopeNamespaceVersionMismatch);
 						msgDiag.logPersonalizzato("soapEnvelopeNamespace.versionMismatch");
-						responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
+						responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.SOAP_VERSION_MISMATCH,
 								ErroriIntegrazione.ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.
 								getErrore430_SoapNamespaceNonSupportato(messageTypeReq, soapEnvelopeNamespaceVersionMismatch),null,null);
 					}
@@ -632,7 +632,7 @@ public class RicezioneContenutiApplicativiService {
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE, "Impossibile recuperare il valore del namespace");
 				msgDiag.logPersonalizzato("soapEnvelopeNamespace.versionMismatch");
-				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.SOAP_VERSION_MISMATCH,
 						ErroriIntegrazione.ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.
 						getErrore430_SoapNamespaceNonSupportato(messageTypeReq, "Impossibile recuperare il valore del namespace"),e,null);
 			} else if(tParsing!=null){
@@ -644,7 +644,7 @@ public class RicezioneContenutiApplicativiService {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRichiesta",e);
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
-				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 						getErrore432_MessaggioRichiestaMalformato(tParsing),tParsing,null);
 			} 
@@ -658,9 +658,9 @@ public class RicezioneContenutiApplicativiService {
 				if(errore==null) {
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Generale(richiesta)");
 				}
-				IntegrationError integrationError = he.getIntegrationError();
+				IntegrationFunctionError integrationError = he.getIntegrationFunctionError();
 				if(integrationError==null) {
-					integrationError = IntegrationError.BAD_REQUEST;
+					integrationError = IntegrationFunctionError.BAD_REQUEST;
 				}
 				responseMessage = this.generatoreErrore.build(pddContext,integrationError,errore,e,null);
 				he.customized(responseMessage);
@@ -668,7 +668,7 @@ public class RicezioneContenutiApplicativiService {
 			else {
 				logCore.error("ErroreGenerale",e);
 				msgDiag.logErroreGenerico(e, "Generale(richiesta)");
-				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.
 						getErrore426_ServletError(true, e),e,null);
 			}
@@ -692,7 +692,7 @@ public class RicezioneContenutiApplicativiService {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
-				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 						getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()),
 						parseException.getParseException(),null);
@@ -714,7 +714,7 @@ public class RicezioneContenutiApplicativiService {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRisposta",parseException.getSourceException());
 				msgDiag.logPersonalizzato("parsingExceptionRisposta");
-				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.INTERNAL_ERROR,
+				responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
 						ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
 						getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 						parseException.getParseException(),null);
@@ -1021,12 +1021,12 @@ public class RicezioneContenutiApplicativiService {
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 					logCore.error("parsingExceptionRisposta",parseException.getSourceException());
 					msgDiag.logPersonalizzato("parsingExceptionRisposta");
-					responseMessageError = this.generatoreErrore.build(pddContext,IntegrationError.INTERNAL_ERROR,
+					responseMessageError = this.generatoreErrore.build(pddContext, IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
 							ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
 							getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 							parseException.getParseException(),null);
 				} else{
-					responseMessageError = this.generatoreErrore.build(pddContext,IntegrationError.INTERNAL_ERROR,
+					responseMessageError = this.generatoreErrore.build(pddContext, IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
 							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.
 							getErrore426_ServletError(false, e),
 							e,null);
@@ -1039,7 +1039,12 @@ public class RicezioneContenutiApplicativiService {
 				// content type
 				ServicesUtils.setContentType(responseMessageError, res);
 				
-				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
+				// http status
+				if(responseMessageError!=null && responseMessageError.getForcedResponseCode()!=null) {
+					try{
+						statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
+					}catch(Exception eStatus){}
+				}
 				if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
 					SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
@@ -1066,7 +1071,7 @@ public class RicezioneContenutiApplicativiService {
 					res.sendResponse(responseMessageError, false); // può essere usato nel post out response handler
 				}
 																
-			}catch(Exception error){
+			}catch(Throwable error){
 				
 				if(!erroreConnessioneClient){
 					erroreConnessioneClient = ServicesUtils.isConnessioneClientNonDisponibile(error);
@@ -1075,17 +1080,27 @@ public class RicezioneContenutiApplicativiService {
 				logCore.error("Generazione di un risposta errore non riuscita",error);
 				statoServletResponse = 500;
 				try{
-					res.setStatus(500);
-				}catch(Exception eStatus){
-					logCore.error("Response.setStatus(500) error: "+eStatus.getMessage(),eStatus);
-				}
-				try{
-					responseMessageError = this.generatoreErrore.buildFault(error);
+					responseMessageError = this.generatoreErrore.buildFault(error, pddContext);
+					if(responseMessageError!=null && responseMessageError.getForcedResponseCode()!=null) {
+						try{
+							statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
+						}catch(Exception eStatus){}
+					}
+					
+					try{
+						res.setStatus(statoServletResponse);
+					}catch(Exception eStatus){
+						logCore.error("Response.setStatus("+statoServletResponse+") error: "+eStatus.getMessage(),eStatus);
+					}
+					
 					res.sendResponse(responseMessageError, false); // può essere usato nel post out response handler
-				}catch(Exception  eError){
+				}catch(Throwable  eError){
 					if(!erroreConnessioneClient){
 						erroreConnessioneClient = ServicesUtils.isConnessioneClientNonDisponibile(eError);
 					}
+					try {
+						res.setStatus(statoServletResponse);
+					}catch(Throwable t) {}
 					try{
 						res.sendResponse(error.toString().getBytes());
 					}catch(Exception erroreStreamChiuso){ 

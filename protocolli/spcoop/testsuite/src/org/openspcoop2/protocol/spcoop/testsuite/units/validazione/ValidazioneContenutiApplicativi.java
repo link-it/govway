@@ -67,6 +67,7 @@ import org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.Registrazio
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -75,6 +76,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
@@ -84,7 +86,9 @@ import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -99,10 +103,20 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ValidazioneContenutiApplicativi {
+public class ValidazioneContenutiApplicativi extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "ValidazioneContenutiApplicativi";
+	
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected ValidazioneContenutiApplicativi() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
@@ -150,28 +164,30 @@ public class ValidazioneContenutiApplicativi {
 	}
 
 	private void invocaServizioContenutoApplicativo(String fileTest,Repository repository,String portaDelegata,
-			String soapAction) throws Exception{
-		invocaServizioContenutoApplicativoEngine(fileTest,repository,portaDelegata,null,null,null,soapAction,null,true,false);
+			String soapAction, boolean genericCode, boolean unwrap) throws Exception{
+		invocaServizioContenutoApplicativoEngine(fileTest,repository,portaDelegata,null,null,null,soapAction,null,true,false, genericCode, unwrap);
 	}
 	private void invocaServizioContenutoApplicativoRispostaAsincronaSimmetrica(String fileTest,Repository repository,String portaDelegata,
-			String soapAction,String riferimentoMessaggio) throws Exception{
-		invocaServizioContenutoApplicativoEngine(fileTest,repository,portaDelegata,null,null,null,soapAction,riferimentoMessaggio,true,true);
+			String soapAction,String riferimentoMessaggio, boolean genericCode, boolean unwrap) throws Exception{
+		invocaServizioContenutoApplicativoEngine(fileTest,repository,portaDelegata,null,null,null,soapAction,riferimentoMessaggio,true,true, genericCode, unwrap);
 	}
 	private void invocaServizioContenutoApplicativoRispostaAsincronaAsimmetrica(String fileTest,Repository repository,String portaDelegata,
-			String soapAction,String riferimentoMessaggio) throws Exception{
-		invocaServizioContenutoApplicativoEngine(fileTest,repository,portaDelegata,null,null,null,soapAction,riferimentoMessaggio,true,false);
+			String soapAction,String riferimentoMessaggio, boolean genericCode, boolean unwrap) throws Exception{
+		invocaServizioContenutoApplicativoEngine(fileTest,repository,portaDelegata,null,null,null,soapAction,riferimentoMessaggio,true,false, genericCode, unwrap);
 	}
 	private void invocaServizioContenutoApplicativoErrato(String fileTest,Repository repository,String portaDelegata,
-			String actorClientAtteso,String faultCodeAtteso,String faultString,String soapAction) throws Exception{
+			String actorClientAtteso,String faultCodeAtteso,String faultString,String soapAction, boolean genericCode, boolean unwrap) throws Exception{
 		invocaServizioContenutoApplicativoEngine(fileTest,repository,portaDelegata,actorClientAtteso,faultCodeAtteso,faultString,
-				soapAction,null,false,false);
+				soapAction,null,false,false, genericCode, unwrap);
 	}
 	private void invocaServizioContenutoApplicativoEngine(String fileTest,Repository repository,String portaDelegata,
 			String actorClientAtteso,String faultCodeAtteso,String faultString,String soapAction,String riferimentoMessaggio,
-			boolean invocazioneOK,boolean rispostaAsincronaSimmetrica) throws Exception{
+			boolean invocazioneOK,boolean rispostaAsincronaSimmetrica, boolean genericCode, boolean unwrap) throws Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
+			super.lockForCode(genericCode, unwrap);
+			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getPathTestValidazioneContenutiApplicativi()+
 					File.separator+fileTest));
 
@@ -239,6 +255,8 @@ public class ValidazioneContenutiApplicativi {
 			try{
 				dbComponentFruitore.close();
 			}catch(Exception e){}
+			
+			super.unlockForCode(genericCode);
 		}
 	}
 	
@@ -346,155 +364,295 @@ public class ValidazioneContenutiApplicativi {
 				"ValidazioneOpenSPCoop_OperationEliminazione",false);
 		
 		// Test  identificazione contenuto applicativo non corretto secondo il wsdl definitorio (xsd) per Validazione WSDL
-		Date dataInizioTestA = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDLNonCorrettamenteFormato.xml",
-				this.repositoryGestioneUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"registrazioneUtenteWDL");
 		
-		Date dataFineTestA = DateManager.getDate();
-		ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
-		errA.setIntervalloInferiore(dataInizioTestA);
-		errA.setIntervalloSuperiore(dataFineTestA);
-		errA.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errA);
-		
-		ErroreAttesoOpenSPCoopLogCore errA2 = new ErroreAttesoOpenSPCoopLogCore();
-		errA2.setIntervalloInferiore(dataInizioTestA);
-		errA2.setIntervalloSuperiore(dataFineTestA);
-		errA2.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errA2);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by WSDL specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+			
+			Date dataInizioTestA = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDLNonCorrettamenteFormato.xml",
+					this.repositoryGestioneUtentiWrappedDocumentLiteral,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"registrazioneUtenteWDL", genericCode, unwrap);
+			
+			Date dataFineTestA = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
+			errA.setIntervalloInferiore(dataInizioTestA);
+			errA.setIntervalloSuperiore(dataFineTestA);
+			errA.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errA);
+			
+			ErroreAttesoOpenSPCoopLogCore errA2 = new ErroreAttesoOpenSPCoopLogCore();
+			errA2.setIntervalloInferiore(dataInizioTestA);
+			errA2.setIntervalloSuperiore(dataFineTestA);
+			errA2.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errA2);
+			
+		}
 				
 		// Test  identificazione contenuto applicativo non corretto secondo il wsdl definitorio (xsd) per Validazione OpenSPCoop
-		Date dataInizioTestB = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDLNonCorrettamenteFormato.xml",
-				this.repositoryGestioneUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"registrazioneUtenteWDL");
-		Date dataFineTestB = DateManager.getDate();
-		ErroreAttesoOpenSPCoopLogCore errB = new ErroreAttesoOpenSPCoopLogCore();
-		errB.setIntervalloInferiore(dataInizioTestB);
-		errB.setIntervalloSuperiore(dataFineTestB);
-		errB.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errB);
 		
-		ErroreAttesoOpenSPCoopLogCore errB2 = new ErroreAttesoOpenSPCoopLogCore();
-		errB2.setIntervalloInferiore(dataInizioTestB);
-		errB2.setIntervalloSuperiore(dataFineTestB);
-		errB2.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errB2);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by API specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}	
+		
+			Date dataInizioTestB = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDLNonCorrettamenteFormato.xml",
+					this.repositoryGestioneUtentiWrappedDocumentLiteral,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"registrazioneUtenteWDL", genericCode, unwrap);
+			Date dataFineTestB = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore errB = new ErroreAttesoOpenSPCoopLogCore();
+			errB.setIntervalloInferiore(dataInizioTestB);
+			errB.setIntervalloSuperiore(dataFineTestB);
+			errB.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errB);
+			
+			ErroreAttesoOpenSPCoopLogCore errB2 = new ErroreAttesoOpenSPCoopLogCore();
+			errB2.setIntervalloInferiore(dataInizioTestB);
+			errB2.setIntervalloSuperiore(dataFineTestB);
+			errB2.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errB2);
+			
+		}
 		
 		// Test contenuto corretto ma invocazione della porta delegata, con azione 'eliminazione' 
 		//              mentre contenuto applicativo dell'operation 'registrazione'. 
 		//              Viene riconosciuto che il contenuto e' di un'altra operation del port type
-		Date dataInizioTest1 = DateManager.getDate();
-		try{
-			invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL,
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-					"ValidazioneWSDL_OperationRegistrazione",false);	
-			throw new Exception("Invocazione azione con xml di una operation relativa ad un altra azione non ha dato errore");
-		} catch (AxisFault error) {
-			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-			Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
-			Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-			Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"418]");
-			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA).equals(error.getFaultCode().getLocalPart().trim()));
-			Reporter.log("Controllo fault string [Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro] con ["+error.getFaultString()+"]");
-			Assert.assertTrue(error.getFaultString().indexOf("Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro")>=0);
-		}
-		Date dataFineTest1 = DateManager.getDate();
-		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
-		err.setIntervalloInferiore(dataInizioTest1);
-		err.setIntervalloSuperiore(dataFineTest1);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(err);
 		
-		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
-		err2.setIntervalloInferiore(dataInizioTest1);
-		err2.setIntervalloSuperiore(dataFineTest1);
-		err2.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(err2);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by WSDL specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}	
+		
+			Date dataInizioTest1 = DateManager.getDate();
+			try{
+				super.lockForCode(genericCode, unwrap);
+				
+				invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL,
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
+						"ValidazioneWSDL_OperationRegistrazione",false);	
+				throw new Exception("Invocazione azione con xml di una operation relativa ad un altra azione non ha dato errore");
+			} catch (AxisFault error) {
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart().trim()));
+				Reporter.log("Controllo fault string ["+msgErrore+"] con ["+error.getFaultString()+"]");
+				Assert.assertTrue(error.getFaultString().indexOf(msgErrore)>=0);
+			}
+			finally {
+				super.unlockForCode(genericCode);
+			}
+			Date dataFineTest1 = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest1);
+			err.setIntervalloSuperiore(dataFineTest1);
+			err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(err);
+			
+			ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
+			err2.setIntervalloInferiore(dataInizioTest1);
+			err2.setIntervalloSuperiore(dataFineTest1);
+			err2.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(err2);
+			
+		}
 		
 		// Test contenuto corretto ma invocazione della porta delegata, con azione 'eliminazione' 
 		//              mentre contenuto applicativo dell'operation 'registrazione'. 
 		//              Viene riconosciuto che il contenuto e' di un'altra operation del port type
-		Date dataInizioTest2 = DateManager.getDate();
-		try{
-			invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL,
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-					"ValidazioneWSDL_OperationRegistrazione",false);
-			throw new Exception("Invocazione azione con xml di una operation relativa ad un altra azione non ha dato errore");
-		} catch (AxisFault error) {
-			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-			Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
-			Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-			Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"418]");
-			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA).equals(error.getFaultCode().getLocalPart().trim()));
-			Reporter.log("Controllo fault string [Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro] con ["+error.getFaultString()+"]");
-			Assert.assertTrue(error.getFaultString().indexOf("Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro")>=0);
-		}
-		Date dataFineTest2 = DateManager.getDate();
-		ErroreAttesoOpenSPCoopLogCore errW = new ErroreAttesoOpenSPCoopLogCore();
-		errW.setIntervalloInferiore(dataInizioTest2);
-		errW.setIntervalloSuperiore(dataFineTest2);
-		errW.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errW);
 		
-		ErroreAttesoOpenSPCoopLogCore errW2 = new ErroreAttesoOpenSPCoopLogCore();
-		errW2.setIntervalloInferiore(dataInizioTest2);
-		errW2.setIntervalloSuperiore(dataFineTest2);
-		errW2.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errW2);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by API specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}	
+		
+			Date dataInizioTest2 = DateManager.getDate();
+			try{
+				super.lockForCode(genericCode, unwrap);
+				
+				invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL,
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
+						"ValidazioneWSDL_OperationRegistrazione",false);
+				throw new Exception("Invocazione azione con xml di una operation relativa ad un altra azione non ha dato errore");
+			} catch (AxisFault error) {
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart().trim()));
+				Reporter.log("Controllo fault string ["+msgErrore+"] con ["+error.getFaultString()+"]");
+				Assert.assertTrue(error.getFaultString().indexOf(msgErrore)>=0);
+			}
+			finally {
+				super.unlockForCode(genericCode);
+			}
+			Date dataFineTest2 = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore errW = new ErroreAttesoOpenSPCoopLogCore();
+			errW.setIntervalloInferiore(dataInizioTest2);
+			errW.setIntervalloSuperiore(dataFineTest2);
+			errW.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errW);
+			
+			ErroreAttesoOpenSPCoopLogCore errW2 = new ErroreAttesoOpenSPCoopLogCore();
+			errW2.setIntervalloInferiore(dataInizioTest2);
+			errW2.setIntervalloSuperiore(dataFineTest2);
+			errW2.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errW2);
+			
+		}
 		
 		// Test contenuto corretto ma invocazione con una SOAPAction non conforme a quanto indicato nel wsdl per Validazione WSDL
-		Date dataInizioTest3 = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDL.xml",
-				this.repositoryGestioneUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"SOAP_ACTION_ERRATA");
-		Date dataFineTest3 = DateManager.getDate();
-		ErroreAttesoOpenSPCoopLogCore err3 = new ErroreAttesoOpenSPCoopLogCore();
-		err3.setIntervalloInferiore(dataInizioTest3);
-		err3.setIntervalloSuperiore(dataFineTest3);
-		err3.setMsgErrore("Validazione WSDL (true) fallita: Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
-		this.erroriAttesiOpenSPCoopCore.add(err3);
 		
-		ErroreAttesoOpenSPCoopLogCore err3a = new ErroreAttesoOpenSPCoopLogCore();
-		err3a.setIntervalloInferiore(dataInizioTest3);
-		err3a.setIntervalloSuperiore(dataFineTest3);
-		err3a.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
-		this.erroriAttesiOpenSPCoopCore.add(err3a);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid soap action"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+		
+			Date dataInizioTest3 = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDL.xml",
+					this.repositoryGestioneUtentiWrappedDocumentLiteral,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"SOAP_ACTION_ERRATA", genericCode, unwrap);
+			Date dataFineTest3 = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err3 = new ErroreAttesoOpenSPCoopLogCore();
+			err3.setIntervalloInferiore(dataInizioTest3);
+			err3.setIntervalloSuperiore(dataFineTest3);
+			err3.setMsgErrore("Validazione WSDL (true) fallita: Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
+			this.erroriAttesiOpenSPCoopCore.add(err3);
+			
+			ErroreAttesoOpenSPCoopLogCore err3a = new ErroreAttesoOpenSPCoopLogCore();
+			err3a.setIntervalloInferiore(dataInizioTest3);
+			err3a.setIntervalloSuperiore(dataFineTest3);
+			err3a.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
+			this.erroriAttesiOpenSPCoopCore.add(err3a);
+			
+		}
 		
 		// Test contenuto corretto ma invocazione con una SOAPAction non conforme a quanto indicato nel wsdl per Validazione OpenSPCoop
-		Date dataInizioTest4 = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDL.xml",
-				this.repositoryGestioneUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"SOAP_ACTION_ERRATA");
-		Date dataFineTest4 = DateManager.getDate();
-		ErroreAttesoOpenSPCoopLogCore err4 = new ErroreAttesoOpenSPCoopLogCore();
-		err4.setIntervalloInferiore(dataInizioTest4);
-		err4.setIntervalloSuperiore(dataFineTest4);
-		err4.setMsgErrore("Validazione WSDL (true) fallita: Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
-		this.erroriAttesiOpenSPCoopCore.add(err4);
 		
-		ErroreAttesoOpenSPCoopLogCore err4a = new ErroreAttesoOpenSPCoopLogCore();
-		err4a.setIntervalloInferiore(dataInizioTest4);
-		err4a.setIntervalloSuperiore(dataFineTest4);
-		err4a.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
-		this.erroriAttesiOpenSPCoopCore.add(err4a);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid soap action"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+		
+			Date dataInizioTest4 = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDL.xml",
+					this.repositoryGestioneUtentiWrappedDocumentLiteral,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"SOAP_ACTION_ERRATA", genericCode, unwrap);
+			Date dataFineTest4 = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err4 = new ErroreAttesoOpenSPCoopLogCore();
+			err4.setIntervalloInferiore(dataInizioTest4);
+			err4.setIntervalloSuperiore(dataFineTest4);
+			err4.setMsgErrore("Validazione WSDL (true) fallita: Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
+			this.erroriAttesiOpenSPCoopCore.add(err4);
+			
+			ErroreAttesoOpenSPCoopLogCore err4a = new ErroreAttesoOpenSPCoopLogCore();
+			err4a.setIntervalloInferiore(dataInizioTest4);
+			err4a.setIntervalloSuperiore(dataFineTest4);
+			err4a.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
+			this.erroriAttesiOpenSPCoopCore.add(err4a);
+			
+		}
 	}
 	@DataProvider (name="gestioneUtentiWrappedDocumentLiteral")
 	public Object[][]testGestioneUtentiWrappedDocumentLiteral()throws Exception{
@@ -549,31 +707,31 @@ public class ValidazioneContenutiApplicativi {
 					servizio = CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_WDL;
 					azione = CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_WDL;
 				}
-				else if(i==4){
+				else if(i==4 || i==5){
 					// Test  identificazione contenuto applicativo non corretto secondo il wsdl definitorio (xsd) per Validazione WSDL
 					isTraced = false;
 				}
-				else if(i==5){
+				else if(i==6 || i==7){
 					// Test  identificazione contenuto applicativo non corretto secondo il wsdl definitorio (xsd) per Validazione OpenSPCoop
 					isTraced = false;
 				}
-				else if(i==6){
+				else if(i==8 || i==9){
 					// Test contenuto corretto ma invocazione della porta delegata, con azione 'eliminazione' 
 					//              mentre contenuto applicativo dell'operation 'registrazione'. 
 					//              Viene riconosciuto che il contenuto e' di un'altra operation del port type
 					isTraced = false;
 				}
-				else if(i==7){
+				else if(i==10 || i==11){
 					// Test contenuto corretto ma invocazione della porta delegata, con azione 'eliminazione' 
 					//              mentre contenuto applicativo dell'operation 'registrazione'. 
 					//              Viene riconosciuto che il contenuto e' di un'altra operation del port type
 					isTraced = false;
 				}
-				else if(i==8){
+				else if(i==12 || i==13){
 					// Test contenuto corretto ma invocazione con una SOAPAction non conforme a quanto indicato nel wsdl per Validazione WSDL
 					isTraced = false;
 				}
-				else if(i==9){
+				else if(i==14 || i==15){
 					// Test contenuto corretto ma invocazione con una SOAPAction non conforme a quanto indicato nel wsdl per Validazione OpenSPCoop 
 					isTraced = false;
 				}
@@ -744,14 +902,14 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryAggiornamentoUtentiWrappedDocumentLiteral,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_AGGIORNAMENTO_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_NOTIFICA_AGGIORNAMENTO_UTENTE_WDL,
-					"notificaAggiornamentoUtenteWDL");
+					"notificaAggiornamentoUtenteWDL", false, false);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione notifica)
 		invocaServizioContenutoApplicativo("notificaAggiornamentoUtenteWDL.xml",
 				this.repositoryAggiornamentoUtentiWrappedDocumentLiteral,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_AGGIORNAMENTO_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_NOTIFICA_AGGIORNAMENTO_UTENTE_WDL,
-					"notificaAggiornamentoUtenteWDL");
+					"notificaAggiornamentoUtenteWDL", false, false);
 		
 		// Test contenuto corretto per Validazione WSDL (operazione aggiornamento)
 		invocaServizioAggiornamentoUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_AGGIORNAMENTO_UTENTI_WDL,
@@ -939,7 +1097,7 @@ public class ValidazioneContenutiApplicativi {
 		invocaServizioContenutoApplicativoRispostaAsincronaSimmetrica("esitoAggiornamentoUtenteAsincronoSimmetricoWDL.xml", 
 				this.repositoryAsincronoSimmetricoWrappedDocumentLiteral, 
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_RISPOSTA_ASINCRONA_SIMMETRICA, 
-				"esitoAggiornamentoUtenteAsincronoSimmetricoWDL", idEGovRichiesta);
+				"esitoAggiornamentoUtenteAsincronoSimmetricoWDL", idEGovRichiesta, false, false);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione richiesta)
 		invocaServizioAsincronoWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_RICHIESTA_ASINCRONA_SIMMETRICA,
@@ -959,7 +1117,7 @@ public class ValidazioneContenutiApplicativi {
 		invocaServizioContenutoApplicativoRispostaAsincronaSimmetrica("esitoAggiornamentoUtenteAsincronoSimmetricoWDL.xml", 
 				this.repositoryAsincronoSimmetricoWrappedDocumentLiteral, 
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_RISPOSTA_ASINCRONA_SIMMETRICA, 
-				"esitoAggiornamentoUtenteAsincronoSimmetricoWDL", idEGovRichiesta);
+				"esitoAggiornamentoUtenteAsincronoSimmetricoWDL", idEGovRichiesta, false, false);
 		
 	}
 	
@@ -1091,7 +1249,7 @@ public class ValidazioneContenutiApplicativi {
 		invocaServizioContenutoApplicativoRispostaAsincronaAsimmetrica("esitoAggiornamentoUtenteAsincronoAsimmetricoWDL.xml", 
 				this.repositoryAsincronoAsimmetricoWrappedDocumentLiteral, 
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_RICHIESTA_STATO_ASINCRONA_ASIMMETRICA, 
-				"esitoAggiornamentoUtenteAsincronoAsimmetricoWDL", idEGovRichiesta);
+				"esitoAggiornamentoUtenteAsincronoAsimmetricoWDL", idEGovRichiesta, false, false);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione richiesta)
 		invocaServizioAsincronoWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_RICHIESTA_ASINCRONA_ASIMMETRICA,
@@ -1111,7 +1269,7 @@ public class ValidazioneContenutiApplicativi {
 		invocaServizioContenutoApplicativoRispostaAsincronaAsimmetrica("esitoAggiornamentoUtenteAsincronoAsimmetricoWDL.xml", 
 				this.repositoryAsincronoAsimmetricoWrappedDocumentLiteral, 
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_RICHIESTA_STATO_ASINCRONA_ASIMMETRICA, 
-				"esitoAggiornamentoUtenteAsincronoAsimmetricoWDL", idEGovRichiesta);
+				"esitoAggiornamentoUtenteAsincronoAsimmetricoWDL", idEGovRichiesta, false, false);
 		
 	}
 	
@@ -1403,136 +1561,267 @@ public class ValidazioneContenutiApplicativi {
 		TestSuiteTransformer.sequentialForced = true;
 		
 		// Test N.1 con Validazione WSDL
-		Date dataInizioTest = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConTroppiParametriInput.xml",
-				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"registrazioneUtenteDL");
-		Date dataFineTest = DateManager.getDate();
-		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
-		err.setIntervalloInferiore(dataInizioTest);
-		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(err);
 		
-		ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
-		errA.setIntervalloInferiore(dataInizioTest);
-		errA.setIntervalloSuperiore(dataFineTest);
-		errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errA);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by WSDL specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+		
+			Date dataInizioTest = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConTroppiParametriInput.xml",
+					this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"registrazioneUtenteDL", genericCode, unwrap);
+			
+			Date dataFineTest = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(err);
+			
+			ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
+			errA.setIntervalloInferiore(dataInizioTest);
+			errA.setIntervalloSuperiore(dataFineTest);
+			errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errA);
+		}
+		
 		
 		// Test N.1 con Validazione OpenSPCoop
-		dataInizioTest = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConTroppiParametriInput.xml",
-				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"registrazioneUtenteDL");
-		dataFineTest = DateManager.getDate();
-		err = new ErroreAttesoOpenSPCoopLogCore();
-		err.setIntervalloInferiore(dataInizioTest);
-		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(err);
 		
-		errA = new ErroreAttesoOpenSPCoopLogCore();
-		errA.setIntervalloInferiore(dataInizioTest);
-		errA.setIntervalloSuperiore(dataFineTest);
-		errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errA);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by API specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+		
+			Date dataInizioTest = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConTroppiParametriInput.xml",
+					this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"registrazioneUtenteDL", genericCode, unwrap);
+			Date dataFineTest = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(err);
+			
+			ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
+			errA.setIntervalloInferiore(dataInizioTest);
+			errA.setIntervalloSuperiore(dataFineTest);
+			errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errA);
+			
+		}
 		
 		// Test N.2 con Validazione WSDL
-		dataInizioTest = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConPochiParametriInput.xml",
-				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"registrazioneUtenteDL");
-		dataFineTest = DateManager.getDate();
-		err = new ErroreAttesoOpenSPCoopLogCore();
-		err.setIntervalloInferiore(dataInizioTest);
-		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(err);
 		
-		errA = new ErroreAttesoOpenSPCoopLogCore();
-		errA.setIntervalloInferiore(dataInizioTest);
-		errA.setIntervalloSuperiore(dataFineTest);
-		errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errA);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by WSDL specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+		
+			Date dataInizioTest = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConPochiParametriInput.xml",
+					this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"registrazioneUtenteDL", genericCode, unwrap);
+			Date dataFineTest = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(err);
+			
+			ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
+			errA.setIntervalloInferiore(dataInizioTest);
+			errA.setIntervalloSuperiore(dataFineTest);
+			errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errA);
+			
+		}
 		
 		// Test N.2 con Validazione OpenSPCoop
-		dataInizioTest = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConPochiParametriInput.xml",
-				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"registrazioneUtenteDL");
-		dataFineTest = DateManager.getDate();
-		err = new ErroreAttesoOpenSPCoopLogCore();
-		err.setIntervalloInferiore(dataInizioTest);
-		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(err);
 		
-		errA = new ErroreAttesoOpenSPCoopLogCore();
-		errA.setIntervalloInferiore(dataInizioTest);
-		errA.setIntervalloSuperiore(dataFineTest);
-		errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errA);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by API specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+		
+			Date dataInizioTest = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConPochiParametriInput.xml",
+					this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"registrazioneUtenteDL", genericCode, unwrap);
+			Date dataFineTest = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(err);
+			
+			ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
+			errA.setIntervalloInferiore(dataInizioTest);
+			errA.setIntervalloSuperiore(dataFineTest);
+			errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errA);
+			
+		}
 		
 		// Test N.3 con Validazione WSDL
-		dataInizioTest = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConAlcuniParametriInputNonAttesi.xml",
-				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"registrazioneUtenteDL");
-		dataFineTest = DateManager.getDate();
-		err = new ErroreAttesoOpenSPCoopLogCore();
-		err.setIntervalloInferiore(dataInizioTest);
-		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(err);
 		
-		errA = new ErroreAttesoOpenSPCoopLogCore();
-		errA.setIntervalloInferiore(dataInizioTest);
-		errA.setIntervalloSuperiore(dataFineTest);
-		errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errA);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by WSDL specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+		
+			Date dataInizioTest = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConAlcuniParametriInputNonAttesi.xml",
+					this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"registrazioneUtenteDL", genericCode, unwrap);
+			Date dataFineTest = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(err);
+			
+			ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
+			errA.setIntervalloInferiore(dataInizioTest);
+			errA.setIntervalloSuperiore(dataFineTest);
+			errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errA);
+			
+		}
 		
 		// Test N.3 con Validazione OpenSPCoop
-		dataInizioTest = DateManager.getDate();
-		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConAlcuniParametriInputNonAttesi.xml",
-				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
-				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro",
-				"registrazioneUtenteDL");
-		dataFineTest = DateManager.getDate();
-		err = new ErroreAttesoOpenSPCoopLogCore();
-		err.setIntervalloInferiore(dataInizioTest);
-		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(err);
 		
-		errA = new ErroreAttesoOpenSPCoopLogCore();
-		errA.setIntervalloInferiore(dataInizioTest);
-		errA.setIntervalloSuperiore(dataFineTest);
-		errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
-		this.erroriAttesiOpenSPCoopCore.add(errA);
+		for (int i = 0; i < 2; i++) {
+			
+			boolean genericCode = false;
+			boolean unwrap = false;
+			String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+			String msgErrore = "Request content not conform to API specification: Invalid request by API specification"; 
+			
+			if(i==1) {
+				genericCode = true;
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+			Date dataInizioTest = DateManager.getDate();
+			invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConAlcuniParametriInputNonAttesi.xml",
+					this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
+					CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
+					org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,
+					codiceErrore,
+					msgErrore,
+					"registrazioneUtenteDL", genericCode, unwrap);
+			Date dataFineTest = DateManager.getDate();
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(err);
+			
+			ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
+			errA.setIntervalloInferiore(dataInizioTest);
+			errA.setIntervalloSuperiore(dataFineTest);
+			errA.setMsgErrore("Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop:1 style:document use:literal)");
+			this.erroriAttesiOpenSPCoopCore.add(errA);
+		}
 	}
 	@DataProvider (name="gestioneUtentiDocumentLiteralContenutiErrato")
 	public Object[][]testGestioneUtentiDocumentLiteralContenutiErrato()throws Exception{

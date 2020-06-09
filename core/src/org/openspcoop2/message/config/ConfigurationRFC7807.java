@@ -43,6 +43,8 @@ public class ConfigurationRFC7807 implements Serializable  {
 
 	protected boolean govwayStatus;
 	
+	protected boolean govwayType;
+
 	protected boolean govwayTransactionId;
 
 	protected boolean type = true;
@@ -101,6 +103,18 @@ public class ConfigurationRFC7807 implements Serializable  {
 		this.govwayStatus = govwayStatus;
 	}
 
+	public boolean isGovwayType() {
+		return this.govwayType;
+	}
+
+	public boolean getGovwayType() {
+		return this.govwayType;
+	}
+	
+	public void setGovwayType(boolean govwayType) {
+		this.govwayType = govwayType;
+	}
+	
 	public boolean isGovwayTransactionId() {
 		return this.govwayTransactionId;
 	}

@@ -31,9 +31,12 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.jmx.MonitoraggioRisorse;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.utils.jmx.CostantiJMX;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.DataProvider;
@@ -48,17 +51,16 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RisorseEsterne {
+public class RisorseEsterne extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "RisorseEsterne";
 	
 	
 	private UnitsDatabaseProperties unitsDatabaseProperties;
-	private UnitsTestSuiteProperties unitsTestsuiteProperties;
 	
 	public RisorseEsterne(UnitsTestSuiteProperties unitsTestsuiteProperties, UnitsDatabaseProperties unitsDatabaseProperties){
-		this.unitsTestsuiteProperties = unitsTestsuiteProperties;
+		super(unitsTestsuiteProperties);
 		this.unitsDatabaseProperties = unitsDatabaseProperties;
 	}
 	
@@ -152,71 +154,86 @@ public class RisorseEsterne {
 	
 	
 	
-	
+	public static MBeanServerConnection getMBeanServerConnection(UnitsTestSuiteProperties unitsTestsuiteProperties) throws Exception{
+		// Controllo JMX
+		
+		String version_jbossas = unitsTestsuiteProperties.getApplicationServerVersion();
+		//System.out.println("JBOSS_VERSIONE["+version_jbossas+"]");
+		
+		MBeanServerConnection jmxconn = null;
+		// eliminato supporto di jboss
+//		if("jboss7".equals(version_jbossas) || 
+//				(version_jbossas!=null && version_jbossas.startsWith("wildfly")) || 
+//				version_jbossas.startsWith("tomcat")){
+			
+		String as = version_jbossas;
+		if(version_jbossas.startsWith("tomcat")){
+			as = "tomcat";
+		}
+		
+		JMXServiceURL serviceURL = new JMXServiceURL(unitsTestsuiteProperties.getJMXServiceURL(as));   
+		Hashtable<String, Object> env = null;
+		if(unitsTestsuiteProperties.getJMXUsername()!=null && unitsTestsuiteProperties.getJMXPassword()!=null){
+			String[] creds = {unitsTestsuiteProperties.getJMXUsername(), unitsTestsuiteProperties.getJMXPassword()};
+			env = new Hashtable<String, Object>();
+			env.put(JMXConnector.CREDENTIALS, creds);
+		}
+		JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
+		jmxconn = jmxConnector.getMBeanServerConnection();	
+//		}else{
+//			Hashtable<String, Object> env = new Hashtable<String, Object>();
+//			env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, this.unitsTestsuiteProperties.getJMXFactory());
+//			env.put(javax.naming.Context.PROVIDER_URL, this.unitsTestsuiteProperties.getJMXServer());
+//			
+//			javax.naming.Context ctx = new javax.naming.InitialContext(env);
+//			jmxconn = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
+//			SecurityAssociation.setPrincipal(new SimplePrincipal(this.unitsTestsuiteProperties.getJMXUsername()));
+//			SecurityAssociation.setCredential(this.unitsTestsuiteProperties.getJMXPassword());
+//		}
+		
+		return jmxconn;
+	}
 	
 	@Test(groups={RisorseEsterne.ID_GRUPPO,RisorseEsterne.ID_GRUPPO+".RISORSE_JMX"})
 	public void testRisorseJMX() throws Exception{
 		try{
 			
-			
 			// Controllo JMX
-			
-			String version_jbossas = this.unitsTestsuiteProperties.getApplicationServerVersion();
-			//System.out.println("JBOSS_VERSIONE["+version_jbossas+"]");
-			
-			MBeanServerConnection jmxconn = null;
-			// eliminato supporto di jboss
-//			if("jboss7".equals(version_jbossas) || 
-//					(version_jbossas!=null && version_jbossas.startsWith("wildfly")) || 
-//					version_jbossas.startsWith("tomcat")){
-				
-			String as = version_jbossas;
-			if(version_jbossas.startsWith("tomcat")){
-				as = "tomcat";
-			}
-			
-			JMXServiceURL serviceURL = new JMXServiceURL(this.unitsTestsuiteProperties.getJMXServiceURL(as));   
-			Hashtable<String, Object> env = null;
-			if(this.unitsTestsuiteProperties.getJMXUsername()!=null && this.unitsTestsuiteProperties.getJMXPassword()!=null){
-				String[] creds = {this.unitsTestsuiteProperties.getJMXUsername(), this.unitsTestsuiteProperties.getJMXPassword()};
-				env = new Hashtable<String, Object>();
-				env.put(JMXConnector.CREDENTIALS, creds);
-			}
-			JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
-			jmxconn = jmxConnector.getMBeanServerConnection();	
-//			}else{
-//				Hashtable<String, Object> env = new Hashtable<String, Object>();
-//				env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, this.unitsTestsuiteProperties.getJMXFactory());
-//				env.put(javax.naming.Context.PROVIDER_URL, this.unitsTestsuiteProperties.getJMXServer());
-//				
-//				javax.naming.Context ctx = new javax.naming.InitialContext(env);
-//				jmxconn = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
-//				SecurityAssociation.setPrincipal(new SimplePrincipal(this.unitsTestsuiteProperties.getJMXUsername()));
-//				SecurityAssociation.setCredential(this.unitsTestsuiteProperties.getJMXPassword());
-//			}			
-
-			
-			ObjectName jmxname = new ObjectName("org.openspcoop2.pdd:type=MonitoraggioRisorse");
+			MBeanServerConnection jmxconn = RisorseEsterne.getMBeanServerConnection(this.unitsTestsuiteProperties);
 						
+			ObjectName jmxname = new ObjectName(CostantiJMX.JMX_DOMINIO+":"+CostantiJMX.JMX_TYPE+"="+CostantiPdD.JMX_MONITORAGGIO_RISORSE);
+			
 			Reporter.log("Controllo risorse jmx: connessioni database ...");
-			Object response = jmxconn.invoke(jmxname, "getUsedDBConnections", null, null);
+			Object response = jmxconn.invoke(jmxname, MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER, null, null);
 			Reporter.log("Controllo risorse jmx: connessioni database  ["+response+"]");
 			Assert.assertTrue("Nessuna connessione allocata".equals(response));
 			
 			Reporter.log("Controllo risorse jmx: connessioni jms ...");
-			response = jmxconn.invoke(jmxname, "getUsedQueueConnections", null, null);
+			response = jmxconn.invoke(jmxname, MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER, null, null);
 			Reporter.log("Controllo risorse jmx: connessioni jms  ["+response+"]");
 			Assert.assertTrue("Nessuna connessione allocata".equals(response));
 			
 			Reporter.log("Controllo risorse jmx: connessioni http PD ...");
-			response = jmxconn.invoke(jmxname, "getActivePDConnections", null, null);
+			response = jmxconn.invoke(jmxname, MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD, null, null);
 			Reporter.log("Controllo risorse jmx: connessioni http PD  ["+response+"]");
 			Assert.assertTrue("Nessuna connessione allocata".equals(response));
 			
 			Reporter.log("Controllo risorse jmx: connessioni http PA ...");
-			response = jmxconn.invoke(jmxname, "getActivePAConnections", null, null);
+			response = jmxconn.invoke(jmxname,  MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PA, null, null);
 			Reporter.log("Controllo risorse jmx: connessioni http PA  ["+response+"]");
 			Assert.assertTrue("Nessuna connessione allocata".equals(response));
+			
+			Reporter.log("Controllo risorse jmx: transazioni attive ...");
+			response = jmxconn.invoke(jmxname,  MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID, null, null);
+			Reporter.log("Controllo risorse jmx: transazioni attive  ["+response+"]");
+			Assert.assertTrue("Nessuna transazione attiva".equals(response));
+			
+			// ripristino sistema di default
+			super.disableGovWayStatus();
+			super.disableGovWayDetails();
+			super.disableGovWayRequestError();
+			super.disableGovWayResponseError();
+			super.disableGovWayInternalError();
 			
 		}catch(Exception e){
 			throw e;

@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.autenticazione.pd;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.pdd.core.autenticazione.EsitoAutenticazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Esito di un processo di autenticazione.
@@ -53,6 +54,15 @@ public class EsitoAutenticazionePortaDelegata extends EsitoAutenticazione {
 		this.idServizioApplicativo = idServizioApplicativo;
 	}
 
+	
+	/** IntegrationFunctionError */
+	private IntegrationFunctionError integrationFunctionError;
+	
+	public IntegrationFunctionError getIntegrationFunctionError() {
+		return this.integrationFunctionError;
+	}
+
+		
 
 	/** codice di errore */
 	private ErroreIntegrazione erroreIntegrazione;
@@ -61,7 +71,8 @@ public class EsitoAutenticazionePortaDelegata extends EsitoAutenticazione {
 		return this.erroreIntegrazione;
 	}
 
-	public void setErroreIntegrazione(ErroreIntegrazione erroreIntegrazione) {
+	public void setErroreIntegrazione(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione) {
+		this.integrationFunctionError = integrationFunctionError;
 		this.erroreIntegrazione = erroreIntegrazione;
 	}
 

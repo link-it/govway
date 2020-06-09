@@ -657,7 +657,7 @@ public class GestoreToken {
 			esitoGestioneToken = new EsitoGestioneTokenPortaApplicativa();
 		}
 		
-		esitoGestioneToken.setValido(false);
+		esitoGestioneToken.setTokenInternalError();
 		esitoGestioneToken.setToken(token);
 		
 		try{
@@ -706,11 +706,12 @@ public class GestoreToken {
     		}
     		  		
     		if(informazioniToken!=null && informazioniToken.isValid()) {
-    			esitoGestioneToken.setValido(true);
+    			esitoGestioneToken.setTokenValido();
     			esitoGestioneToken.setInformazioniToken(informazioniToken);
     			esitoGestioneToken.setNoCache(false);
 			}
     		else {
+    			esitoGestioneToken.setTokenValidazioneFallita();
     			if(policyGestioneToken.isValidazioneJWT_saveErrorInCache()) {
     				esitoGestioneToken.setNoCache(false);
     			}
@@ -731,10 +732,11 @@ public class GestoreToken {
     			else {
     				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));
-    			} 			
+    			}
     		}
     		
 		}catch(Exception e){
+			esitoGestioneToken.setTokenInternalError();
 			esitoGestioneToken.setDetails(e.getMessage());
 			esitoGestioneToken.setEccezioneProcessamento(e);
     	}
@@ -847,7 +849,7 @@ public class GestoreToken {
 			esitoGestioneToken = new EsitoGestioneTokenPortaApplicativa();
 		}
 		
-		esitoGestioneToken.setValido(false);
+		esitoGestioneToken.setTokenInternalError();
 		esitoGestioneToken.setToken(token);
 		
 		try{
@@ -882,11 +884,12 @@ public class GestoreToken {
 			}
     		  		
     		if(informazioniToken!=null && informazioniToken.isValid()) {
-    			esitoGestioneToken.setValido(true);
+    			esitoGestioneToken.setTokenValido();
     			esitoGestioneToken.setInformazioniToken(informazioniToken);
     			esitoGestioneToken.setNoCache(false);
 			}
     		else {
+    			esitoGestioneToken.setTokenValidazioneFallita();
     			if(policyGestioneToken.isIntrospection_saveErrorInCache()) {
     				esitoGestioneToken.setNoCache(false);
     			}
@@ -911,6 +914,7 @@ public class GestoreToken {
     		}
     		
 		}catch(Exception e){
+			esitoGestioneToken.setTokenInternalError();
 			esitoGestioneToken.setDetails(e.getMessage());
 			esitoGestioneToken.setEccezioneProcessamento(e);
     	}
@@ -1023,7 +1027,7 @@ public class GestoreToken {
 			esitoGestioneToken = new EsitoGestioneTokenPortaApplicativa();
 		}
 		
-		esitoGestioneToken.setValido(false);
+		esitoGestioneToken.setTokenInternalError();
 		esitoGestioneToken.setToken(token);
 		
 		try{
@@ -1058,11 +1062,12 @@ public class GestoreToken {
 			}
     		  		
     		if(informazioniToken!=null && informazioniToken.isValid()) {
-    			esitoGestioneToken.setValido(true);
+    			esitoGestioneToken.setTokenValido();
     			esitoGestioneToken.setInformazioniToken(informazioniToken);
     			esitoGestioneToken.setNoCache(false);
 			}
     		else {
+    			esitoGestioneToken.setTokenValidazioneFallita();
     			if(policyGestioneToken.isUserInfo_saveErrorInCache()) {
     				esitoGestioneToken.setNoCache(false);
     			}
@@ -1087,6 +1092,7 @@ public class GestoreToken {
     		}
     		
 		}catch(Exception e){
+			esitoGestioneToken.setTokenInternalError();
 			esitoGestioneToken.setDetails(e.getMessage());
 			esitoGestioneToken.setEccezioneProcessamento(e);
     	}
@@ -1897,7 +1903,7 @@ public class GestoreToken {
    				 *   MUST be before the expiration date/time listed in the "exp" claim.
 				 **/
 				if(!now.before(esitoGestioneToken.getInformazioniToken().getExp())){
-					esitoGestioneToken.setValido(false);
+					esitoGestioneToken.setTokenScaduto();
 					esitoGestioneToken.setDateValide(false);
 					esitoGestioneToken.setDetails("Token expired");
 					if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
@@ -1924,7 +1930,7 @@ public class GestoreToken {
 				 *   the not-before date/time listed in the "nbf" claim. 
 				 **/
 				if(!esitoGestioneToken.getInformazioniToken().getNbf().before(now)){
-					esitoGestioneToken.setValido(false);
+					esitoGestioneToken.setTokenNotUsableBefore();
 					esitoGestioneToken.setDateValide(false);
 					SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
 					esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
@@ -1954,7 +1960,7 @@ public class GestoreToken {
 				if(old!=null) {
 					Date oldMax = new Date((DateManager.getTimeMillis() - old.intValue()));
 					if(esitoGestioneToken.getInformazioniToken().getIat().before(oldMax)) {
-						esitoGestioneToken.setValido(false);
+						esitoGestioneToken.setTokenScaduto();
 						esitoGestioneToken.setDateValide(false);
 						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
 						esitoGestioneToken.setDetails("Token expired; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' too old");
@@ -2397,7 +2403,7 @@ public class GestoreToken {
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory) {
 		EsitoNegoziazioneToken esitoNegoziazioneToken = new EsitoNegoziazioneToken();
 		
-		esitoNegoziazioneToken.setValido(false);
+		esitoNegoziazioneToken.setTokenInternalError();
 		
 		try{
 			String detailsError = null;
@@ -2429,12 +2435,13 @@ public class GestoreToken {
 			}
     		  		
     		if(informazioniToken!=null && informazioniToken.isValid()) {
-    			esitoNegoziazioneToken.setValido(true);
+    			esitoNegoziazioneToken.setTokenValido();
     			esitoNegoziazioneToken.setInformazioniNegoziazioneToken(informazioniToken);
     			esitoNegoziazioneToken.setToken(informazioniToken.getAccessToken());
     			esitoNegoziazioneToken.setNoCache(false);
 			}
     		else {
+    			esitoNegoziazioneToken.setTokenValidazioneFallita();
     			if(policyNegoziazioneToken.isSaveErrorInCache()) {
     				esitoNegoziazioneToken.setNoCache(false);
     			}
@@ -2451,6 +2458,7 @@ public class GestoreToken {
     		}
     		
 		}catch(Exception e){
+			esitoNegoziazioneToken.setTokenInternalError();
 			esitoNegoziazioneToken.setDetails(e.getMessage());
 			esitoNegoziazioneToken.setEccezioneProcessamento(e);
     	}
@@ -2483,7 +2491,7 @@ public class GestoreToken {
 				 * If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value. 
 				 **/
 				if(!now.before(esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn())){
-					esitoNegoziazioneToken.setValido(false);
+					esitoNegoziazioneToken.setTokenScaduto();
 					esitoNegoziazioneToken.setDateValide(false);
 					esitoNegoziazioneToken.setDetails("AccessToken expired");	
 				}

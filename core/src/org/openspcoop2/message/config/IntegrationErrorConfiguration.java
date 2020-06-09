@@ -47,24 +47,27 @@ public class IntegrationErrorConfiguration implements java.io.Serializable {
 	private IntegrationErrorMessageType errorType;
 	private IntegrationErrorMessageType defaultErrorType;
 	private ConfigurationRFC7807 rfc7807;
-	private int httpReturnCode;
+	private IntegrationErrorReturnConfiguration errorReturnConfig;
 	private boolean useInternalFault; // in cooperazione
 		
-	public IntegrationErrorConfiguration(ConfigurationRFC7807 rfc7807, IntegrationErrorMessageType errorType, int httpReturnCode, boolean useInternalFault){
+	public IntegrationErrorConfiguration(ConfigurationRFC7807 rfc7807, IntegrationErrorMessageType errorType, 
+			IntegrationErrorReturnConfiguration errorReturnConfig,  
+			boolean useInternalFault){
 		this.rfc7807 = rfc7807;
 		this.errorType = errorType;
-		this.httpReturnCode = httpReturnCode;
+		this.errorReturnConfig = errorReturnConfig;
 		this.useInternalFault = useInternalFault;
 	}
 	
 	void setDefaultErrorType(IntegrationErrorMessageType defaultErrorType) {
 		this.defaultErrorType = defaultErrorType;
 	}
-	public int getHttpReturnCode() {
-		return this.httpReturnCode;
-	}
+
 	public ConfigurationRFC7807 getRfc7807() {
 		return this.rfc7807;
+	}
+	public IntegrationErrorReturnConfiguration getErrorReturnConfig() {
+		return this.errorReturnConfig;
 	}
 	public boolean isUseInternalFault() {
 		return this.useInternalFault;

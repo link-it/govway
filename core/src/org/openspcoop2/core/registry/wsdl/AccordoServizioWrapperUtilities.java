@@ -702,7 +702,8 @@ public class AccordoServizioWrapperUtilities {
 		
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())){
 				
-				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, false);
+				boolean addPrefixError = true;
+				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, false, addPrefixError);
 				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
 					PortType pt = this.accordoServizioWrapper.getPortType(i);
 					if(portType!=null){

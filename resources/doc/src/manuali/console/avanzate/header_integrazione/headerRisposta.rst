@@ -1,13 +1,12 @@
 .. _headerRisposta:
 
-Scambio di informazioni tra gateway e la risposta ritornata al client
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Informazioni restituite dal gateway nella risposta all'applicativo client
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Le informazioni fornite dal gateway all'applicativo fruitore, sia per
-quanto concerne fruizioni che per erogazioni, sono riassunte nella :numref:`headerGw2ClientTab`.
+Le informazioni restituite dal gateway all'applicativo client, sia per
+per le fruizioni che per le erogazioni, sono riassunte nella :numref:`headerGw2ClientTab`.
 
-
-.. table:: Scambio di informazioni tra gateway e la risposta ritornata al client
+.. table:: Header restituiti dal gateway nella risposta all'applicativo client
    :widths: 35 65
    :name: headerGw2ClientTab
 
@@ -21,11 +20,11 @@ quanto concerne fruizioni che per erogazioni, sono riassunte nella :numref:`head
    GovWay-Transaction-ID                      Identificativo della transazione assegnato da GovWay
    =========================================  ==============================================
 
-All'applicativo client vengono inoltre forniti ulteriori header http
-generati se l'applicativo erogatore non è disponibile o se sono stati
+All'applicativo client vengono inoltre restituiti ulteriori header http
+informativi se l'applicativo erogatore non è disponibile o se sono stati
 attivati meccanismi di Rate Limiting (sezione :ref:`rateLimiting`).
 
-.. table:: Scambio di informazioni tra gateway e la risposta ritornata al client
+.. table:: Ulteriori header restituiti dal gateway nella risposta all'applicativo client
    :class: longtable
    :widths: 30 30 40
    :name: headerGw2ClientExtraTab

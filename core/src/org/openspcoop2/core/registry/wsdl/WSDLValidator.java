@@ -94,12 +94,14 @@ public class WSDLValidator {
 	private QName rpcChildElementNamespaceAggiunto;
 	private QName rpcChildElementXSITypeAggiunto;
 	
-	
-	
-
-	
-	
-	
+	/** Prefix error */
+	private boolean addPrefixError = true;
+	public boolean isAddPrefixError() {
+		return this.addPrefixError;
+	}
+	public void setAddPrefixError(boolean addPrefixError) {
+		this.addPrefixError = addPrefixError;
+	}
 	
 	/* ------ Costruttore -------------- */
 	private static Element _getEnvelopeCatchException(OpenSPCoop2Message msg) throws WSDLException {
@@ -125,14 +127,14 @@ public class WSDLValidator {
 		}
 	}
 	public WSDLValidator(OpenSPCoop2Message msg,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
-			boolean gestioneXsiType_rpcLiteral)throws WSDLException{
-		this(msg.getMessageType(), _getEnvelopeCatchException(msg), xmlUtils, accordoServizioWrapper, log, gestioneXsiType_rpcLiteral);
+			boolean gestioneXsiType_rpcLiteral, boolean addPrefixError)throws WSDLException{
+		this(msg.getMessageType(), _getEnvelopeCatchException(msg), xmlUtils, accordoServizioWrapper, log, gestioneXsiType_rpcLiteral, addPrefixError);
 		this.openspcoop2Message = msg;
 	}
 	// Il costruttore sottostante non puo' sfruttare la funzionalita' addNamespaceXSITypeIfNotExists
 	// per questo e' stato reso privato, poiche' tale funzionalita' richiede openspcoop2Message
 	private WSDLValidator(MessageType messageType, Element element,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
-			boolean gestioneXsiType_rpcLiteral)throws WSDLException{
+			boolean gestioneXsiType_rpcLiteral, boolean addPrefixError)throws WSDLException{
 		
 		this.messageType = messageType;
 		
@@ -160,6 +162,8 @@ public class WSDLValidator {
 		this.accordoServizioWrapper = accordoServizioWrapper;
 		
 		this.gestioneXsiType_rpcLiteral = gestioneXsiType_rpcLiteral;
+		
+		this.addPrefixError = addPrefixError;
 	}
 	
 	
@@ -301,14 +305,22 @@ public class WSDLValidator {
 					validatoreBodyApplicativo.valida(n,true);
 				}catch(Exception e){
 					if(errorMsgValidazioneXSD.length()==0){
-						errorMsgValidazioneXSD.append("Riscontrata non conformità rispetto agli schemi XSD\n");
+						if(this.addPrefixError) {
+							if(isRichiesta) {
+								errorMsgValidazioneXSD.append("Request");
+							}
+							else {
+								errorMsgValidazioneXSD.append("Response");
+							}
+							errorMsgValidazioneXSD.append("content not conform to XSD specification\n");
+						}
 					}else{
 						errorMsgValidazioneXSD.append("\n");
 					}
 					if(namespaceElemento!=null){
 						nomeElemento = "{"+namespaceElemento+"}"+nomeElemento;
 					}
-					errorMsgValidazioneXSD.append("(elemento "+nomeElemento+"): "+e.getMessage());
+					errorMsgValidazioneXSD.append("(element "+nomeElemento+") "+e.getMessage());
 					String elementNonValidato = null;
 					try{
 						elementNonValidato = this.xmlUtils.toString(n);
@@ -341,7 +353,10 @@ public class WSDLValidator {
 				}
 				
 			}catch(Exception e){
-				errorMsgValidazioneXSD.append("Validazione fallita durante il riconoscimento del wsdl style rpc/document: "+e.getMessage());
+				if(errorMsgValidazioneXSD.length()>0){
+					errorMsgValidazioneXSD.append("\n");
+				}
+				errorMsgValidazioneXSD.append("Error in recognizing wsdl style rpc/document '"+e.getMessage()+"'");
 				this.logger.error("Validazione fallita durante il riconoscimento del wsdl style rpc/document: "+e.getMessage(),e);
 			}
 				
@@ -359,7 +374,10 @@ public class WSDLValidator {
 				}
 
 			}catch(Exception e){
-				errorMsgValidazioneXSD.append("Validazione fallita durante il riconoscimento del wsdl use literal/encoded: "+e.getMessage());
+				if(errorMsgValidazioneXSD.length()>0){
+					errorMsgValidazioneXSD.append("\n");
+				}
+				errorMsgValidazioneXSD.append("Error in recognizing wsdl use literal/encoded '"+e.getMessage()+"'");
 				this.logger.error("Validazione fallita durante il riconoscimento del wsdl style literal/encoded: "+e.getMessage(),e);
 			}
 			
@@ -395,7 +413,7 @@ public class WSDLValidator {
 					}
 					
 					if(children>1){
-						errorMsgValidazioneXSD.append("Operation ["+azione+"] (style RPC) con piu' di un root element nel contenuto applicativo"); 
+						errorMsgValidazioneXSD.append("Operation '"+azione+"' (style RPC) bring more than one root element"); 
 					}
 				}
 
@@ -456,14 +474,22 @@ public class WSDLValidator {
 							
 						}catch(Exception e){
 							if(errorMsgValidazioneXSD.length()==0){
-								errorMsgValidazioneXSD.append("Riscontrata non conformità rispetto agli schemi XSD\n");
+								if(this.addPrefixError) {
+									if(isRichiesta) {
+										errorMsgValidazioneXSD.append("Request");
+									}
+									else {
+										errorMsgValidazioneXSD.append("Response");
+									}
+									errorMsgValidazioneXSD.append("content not conform to XSD specification\n");
+								}
 							}else{
 								errorMsgValidazioneXSD.append("\n");
 							}
 							if(namespaceElemento!=null){
 								nomeElemento = "{"+namespaceElemento+"}"+nomeElemento;
 							}
-							errorMsgValidazioneXSD.append("(elemento "+nomeElemento+"): "+e.getMessage());
+							errorMsgValidazioneXSD.append("(element "+nomeElemento+") "+e.getMessage());
 							
 							String elementNonValidato = null;
 							try{
@@ -541,7 +567,7 @@ public class WSDLValidator {
 			
 			// l'azione busta deve essere obbligatoriamente presente.
 			if(operationName==null){
-				throw new WSDLValidatorException("operationName non definita");
+				throw new WSDLValidatorException("Operation name undefined");
 			}
 			
 			this.logger.info("WSDL, effettuo validazione wsdlConformanceCheck ottimale sia con port type che operation ...");
@@ -580,9 +606,9 @@ public class WSDLValidator {
 						IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 						String uriAccordo = idAccordoFactory.getUriFromIDAccordo(this.accordoServizioWrapper.getIdAccordoServizio());
 						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-							throw new WSDLValidatorException("Operation ["+operationName+"] non trovata in alcun port-type esistente nei wsdl registrati all'interno dell'accordo di servizio "+uriAccordo);
+							throw new WSDLValidatorException("Operation '"+operationName+"' undefined in the WSDL specification '"+uriAccordo+"'");
 						}else{
-							throw new WSDLValidatorException("Azione ["+operationName+"] non trovata in alcun Servizio esistente nell'accordo di servizio "+uriAccordo);
+							throw new WSDLValidatorException("Operation '"+operationName+"' undefined in the API specification '"+uriAccordo+"'");
 						}
 					}catch(DriverRegistroServiziException de){
 						String msgErrore = "Errore durante la registrazione del messaggio di errore Operation ["+operationName+"] non trovata in alcun port-type esistente nei wsdl registrati all'interno dell'accordo di servizio";
@@ -592,9 +618,9 @@ public class WSDLValidator {
 							this.logger.error(msgErrore,de);
 						}
 						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-							throw new WSDLValidatorException("Operation ["+operationName+"] non trovata in alcun port-type esistente nei wsdl registrati all'interno dell'accordo di servizio");
+							throw new WSDLValidatorException("Operation '"+operationName+"' undefined in the WSDL specification");
 						}else{
-							throw new WSDLValidatorException("Azione ["+operationName+"] non trovata in alcun Servizio esistente nell'accordo di servizio");
+							throw new WSDLValidatorException("Operation '"+operationName+"' undefined in the API specification");
 						}
 					}
 				}
@@ -631,9 +657,9 @@ public class WSDLValidator {
 			PortType [] pts = this.accordoServizioWrapper.getPortTypeList();
 			if(pts==null || pts.length<=0){
 				if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-					throw new WSDLValidatorException("Port-Types non esistenti nei wsdl registrati all'interno dell'accordo di servizio "+uriAccordo);
+					throw new WSDLValidatorException("PortTypes undefined in the WSDL specification '"+uriAccordo+"'");
 				}else{
-					throw new WSDLValidatorException("Servizi non esistenti nell'accordo di servizio "+uriAccordo);
+					throw new WSDLValidatorException("PortTypes undefined in the API specification '"+uriAccordo+"'");
 				}
 			}
 			boolean operationFound = false;
@@ -642,9 +668,9 @@ public class WSDLValidator {
 				List<Operation> ops = pt.getAzioneList();
 				if(ops==null || ops.size()<=0){
 					if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-						throw new WSDLValidatorException("Operations non esistenti nel Port-Type ["+pt.getNome()+"] nei wsdl registrati all'interno dell'accordo di servizio "+uriAccordo);
+						throw new WSDLValidatorException("Operations undefined in PortType '"+pt.getNome()+"' of the WSDL specification '"+uriAccordo+"'");
 					}else{
-						throw new WSDLValidatorException("Azioni non esistenti nel Servizio ["+pt.getNome()+"] dell'accordo di servizio "+uriAccordo);
+						throw new WSDLValidatorException("Operations undefined in Service '"+pt.getNome()+"' of the API specification '"+uriAccordo+"'");
 					}
 				}
 				boolean validazioneCompletataConSuccesso = false;
@@ -704,7 +730,7 @@ public class WSDLValidator {
 			}else{
 				this.logger.error(msgErrore,e);
 			}
-			throw new WSDLValidatorException("Validazione WSDL 'all' ("+isRichiesta+") fallita: "+e.getMessage(),e);
+			throw new WSDLValidatorException("WSDL Validation 'all-"+(isRichiesta?"request":"response")+"' failed: "+e.getMessage(),e);
 		}
 	}
 	
@@ -739,9 +765,9 @@ public class WSDLValidator {
 			PortType portTypeAS = this.accordoServizioWrapper.getPortType(portType);
 			if(portTypeAS==null){
 				if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-					throw new WSDLValidatorException("Port-Type ["+portType+"] non esistente nei wsdl registrati all'interno dell'accordo di servizio "+uriAccordo);
+					throw new WSDLValidatorException("PortType ["+portType+"] undefined in the WSDL specification '"+uriAccordo+"'");
 				}else{
-					throw new WSDLValidatorException("Servizio ["+portType+"] non esistente nell'accordo di servizio "+uriAccordo);
+					throw new WSDLValidatorException("Service ["+portType+"] undefined in the API specification '"+uriAccordo+"'");
 				}
 			}
 			if(portTypeAS.getStyle()!=null && ("".equals(portTypeAS.getStyle())==false) && 
@@ -850,7 +876,7 @@ public class WSDLValidator {
 						if(eccezioneActionMatch.length()>0){
 							eccezioneActionMatch.append("\n");
 						}
-						eccezioneActionMatch.append("Parametri trovati (size:"+nodiContenutoApplicativoLength+"): ");
+						eccezioneActionMatch.append("Found "+nodiContenutoApplicativoLength+" parameter"+(nodiContenutoApplicativoLength>1?"s":"")+": ");
 						eccezioneActionMatch.append(nodiMessaggioErrore.toString());
 						
 						this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"]: Argomenti attesi["+sizeArgumentsOperation+"], trovati nel body["+nodiContenutoApplicativo.getLength()+"]");
@@ -986,7 +1012,7 @@ public class WSDLValidator {
 									}
 								}
 								if(error){
-									eccezioni.append("\nParametro di "+tipo+" '"+argomentoAtteso+"' richiesto nel wsdl ma non trovato nei root-element ("+numeroBodyElements+") presenti nel body: "+bodyElements);
+									eccezioni.append("\nRequired "+tipo+" parameter '"+argomentoAtteso+"' undefined in "+numeroBodyElements+" body root-element("+(numeroBodyElements>1?"s":"")+") founded: "+bodyElements);
 									this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"]: Atteso "+argomentoAtteso+" body "+bodyElements);
 									break;
 								}
@@ -1006,9 +1032,9 @@ public class WSDLValidator {
 				if (matchingNameOperation) {
 					if(eccezioni.length()>0){
 						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Operation ["+operation+"] del port-type ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+"): "+eccezioni.toString());
+							throw new WSDLValidatorException("Invalid "+(isRichiesta?"request":"response")+" by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+", style:"+style+", use:"+use+"): "+eccezioni.toString());
 						}else{
-							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Azione ["+operation+"] del Servizio ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+"): "+eccezioni.toString());
+							throw new WSDLValidatorException("Invalid "+(isRichiesta?"request":"response")+" by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+", style:"+style+", use:"+use+"): "+eccezioni.toString());
 						}
 					}
 					else if(eccezioneActionMatch.length()>0){
@@ -1022,7 +1048,7 @@ public class WSDLValidator {
 									length = argumentsOperation.getPartList().size();
 								}
 								bfMessage.append("\n");
-								bfMessage.append("Parametri attesi (size:"+length+"): ");
+								bfMessage.append("Expected "+length+" parameter"+(length>1?"s":"")+": ");
 								if(length>0){
 									for (int j = 0; j < length; j++) {
 										MessagePart argument = argumentsOperation.getPart(j);
@@ -1051,24 +1077,24 @@ public class WSDLValidator {
 						bfMessage.append("\n").append(eccezioneActionMatch.toString());
 
 						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Operation ["+operation+"] del port-type ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+"): "+bfMessage.toString());
+							throw new WSDLValidatorException("Invalid "+(isRichiesta?"request":"response")+" by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+", style:"+style+", use:"+use+"): "+bfMessage.toString());
 						}else{
-							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Azione ["+operation+"] del Servizio ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+"): "+bfMessage.toString());
+							throw new WSDLValidatorException("Invalid "+(isRichiesta?"request":"response")+" by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+", style:"+style+", use:"+use+"): "+bfMessage.toString());
 						}
 
 					}
 					else{
 						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Operation ["+operation+"] del port-type ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+")");
+							throw new WSDLValidatorException("Invalid "+(isRichiesta?"request":"response")+" by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+", style:"+style+", use:"+use+")");
 						}else{
-							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Azione ["+operation+"] del Servizio ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+")");
+							throw new WSDLValidatorException("Invalid "+(isRichiesta?"request":"response")+" by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+", style:"+style+", use:"+use+")");
 						}
 					}
 				} else {
 					if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-						throw new WSDLValidatorException("Operation ["+operation+"] del port-type ["+portType+"] non esistente nei wsdl registrati all'interno dell'accordo di servizio "+uriAccordo);
+						throw new WSDLValidatorException("Operation '"+operation+"' undefined in PortType '"+portType+"' of the WSDL specification '"+uriAccordo+"'");
 					}else{
-						throw new WSDLValidatorException("Azione ["+operation+"] del Servizio ["+portType+"] non esistente nell'accordo di servizio "+uriAccordo);
+						throw new WSDLValidatorException("Operation '"+operation+"' undefined in Service '"+portType+"' of the API specification '"+uriAccordo+"'");
 					}
 				}
 			}
@@ -1094,7 +1120,11 @@ public class WSDLValidator {
 					}
 					// Validazione SOAPAction
 					if(tmpThrowSOAPActionException){
-						throw new WSDLValidatorException("Operazione ["+operation+"] del port-type ["+portType+"] con soap action ["+soapActionRipulita+"] che non rispetta quella indicata nel wsdl: "+soapActionWSDL);
+						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
+							throw new WSDLValidatorException("Invalid soap action '"+soapActionRipulita+"' by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+", soap action:"+soapActionWSDL+")");
+						}else{
+							throw new WSDLValidatorException("Invalid soap action '"+soapActionRipulita+"' by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+", soap action:"+soapActionWSDL+")");
+						}
 					}
 				}
 			}
@@ -1104,10 +1134,18 @@ public class WSDLValidator {
 			if(namespaceRPC!=null && rpcElement!=null){
 				this.logger.debug("CheckRPCNamespace");
 				if(rpcElement.getNamespaceURI()==null){
-					throw new WSDLValidatorException("Operazione ["+operation+"] del port-type ["+portType+"] possiede un rpc element non conforme a quanto dichiarato nel wsdl: non qualificato tramite namespace");
+					if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
+						throw new WSDLValidatorException("Unqualified rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+")");
+					}else{
+						throw new WSDLValidatorException("Unqualified rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+")");
+					}
 				}
 				if(!rpcElement.getNamespaceURI().equals(namespaceRPC)){
-					throw new WSDLValidatorException("Operazione ["+operation+"] del port-type ["+portType+"] possiede un rpc element non conforme a quanto dichiarato nel wsdl: trovato["+rpcElement.getNamespaceURI()+"] atteso["+namespaceRPC+"]");
+					if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
+						throw new WSDLValidatorException("Invalid rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by WSDL specification '"+uriAccordo+"' (port-type:"+portType+", operation:"+operation+"): expected namespace '"+namespaceRPC+"'; found namespace '"+rpcElement.getNamespaceURI()+"'");
+					}else{
+						throw new WSDLValidatorException("Invalid rpc "+(isRichiesta?"request":"response")+" element '"+rpcElement.getLocalName()+"' by API specification '"+uriAccordo+"' (service:"+portType+", operation:"+operation+"): expected namespace '"+namespaceRPC+"'; found namespace '"+rpcElement.getNamespaceURI()+"'");
+					}
 				}
 			}
 			
@@ -1120,7 +1158,19 @@ public class WSDLValidator {
 			}
 			if( (e instanceof WSDLValidatorException)==false )
 				this.logger.debug("Validazione WSDL fallita",e);
-			errorMsgValidazioneXSD = "Riscontrata non conformità rispetto all'interfaccia WSDL; "+e.getMessage();
+			// è gia nella definizione dell'error
+			StringBuilder errorMsgValidazioneXSDBuilder = new StringBuilder();
+			if(this.addPrefixError) {
+				if(isRichiesta) {
+					errorMsgValidazioneXSDBuilder.append("Request");
+				}
+				else {
+					errorMsgValidazioneXSDBuilder.append("Response");
+				}
+				errorMsgValidazioneXSDBuilder.append("content not conform to ").append(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()?"WSDL":"API").append(" specification; ");
+			}
+			errorMsgValidazioneXSDBuilder.append(e.getMessage());
+			errorMsgValidazioneXSD = errorMsgValidazioneXSDBuilder.toString();
 		}
 		if(errorMsgValidazioneXSD!=null){
 			throw new WSDLValidatorException(errorMsgValidazioneXSD);

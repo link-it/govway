@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazioneContenutiBui
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Esempio di AutorizzazioneContenutoBuiltIn
@@ -90,7 +91,7 @@ public class AutorizzazioneContenutoBuiltIn extends AbstractAutorizzazioneConten
         		
         		String errore = mittente+" non è autorizzato ad invocare l'API";
     			
-        		esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+        		esito.setErroreCooperazione(IntegrationFunctionError.CONTENT_AUTHORIZATION_DENY, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);
     			esito.setDetails(gestore.getErrorMessage());
     		}

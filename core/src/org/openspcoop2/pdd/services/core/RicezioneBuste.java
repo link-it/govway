@@ -69,7 +69,6 @@ import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
@@ -153,6 +152,7 @@ import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
+import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.service.RicezioneBusteServiceUtils;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
@@ -171,6 +171,7 @@ import org.openspcoop2.protocol.engine.driver.History;
 import org.openspcoop2.protocol.engine.driver.IFiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
+import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
 import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -201,6 +202,7 @@ import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
@@ -387,6 +389,9 @@ public class RicezioneBuste {
 
 		// ------------- dati generali -----------------------------
 
+		// Context
+		PdDContext context = this.msgContext.getPddContext();
+		
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null){
@@ -399,7 +404,7 @@ public class RicezioneBuste {
 		// Messaggio
 		OpenSPCoop2Message requestMessage = this.msgContext.getMessageRequest();
 		if(requestMessage==null){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore, msgDiag, new Exception("Request message is null"), "LetturaMessaggioRichiesta");
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore, msgDiag, new Exception("Request message is null"), "LetturaMessaggioRichiesta");
 		}
 
 		
@@ -411,9 +416,9 @@ public class RicezioneBuste {
 		
 		IProtocolFactory<?> protocolFactory = null;
 		try{
-			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)context.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore, msgDiag, e, "ProtocolFactoryInstance");
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, logCore, msgDiag, e, "ProtocolFactoryInstance");
 			return;
 		}
 		InRequestContext inRequestContext = new InRequestContext(logCore,protocolFactory,null);
@@ -436,11 +441,11 @@ public class RicezioneBuste {
 						String tipoClass = className.getRealmContainerCustom(tipo);
 						IAutorizzazioneSecurityContainer authEngine = (IAutorizzazioneSecurityContainer) loader.newInstance(tipoClass);
 						authEngine.init(this.msgContext.getUrlProtocolContext().getHttpServletRequest(), 
-								this.msgContext.getPddContext(), protocolFactory);
+								context, protocolFactory);
 						AutorizzazioneHttpServletRequest httpServletRequestAuth = new AutorizzazioneHttpServletRequest(this.msgContext.getUrlProtocolContext().getHttpServletRequest(), authEngine);
 						this.msgContext.getUrlProtocolContext().updateHttpServletRequest(httpServletRequestAuth);					
 					}catch(Exception e){
-						setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore, msgDiag, e, "AutorizzazioneSecurityContainerInstance");
+						setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore, msgDiag, e, "AutorizzazioneSecurityContainerInstance");
 						return;
 					}
 				}
@@ -451,7 +456,7 @@ public class RicezioneBuste {
 			try{
 				connettore.setSoapAction(requestMessage.castAsSoap().getSoapAction());
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "LetturaSoapAction");
+				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore,msgDiag, e, "LetturaSoapAction");
 				return;
 			}
 		}
@@ -462,17 +467,17 @@ public class RicezioneBuste {
 		// Data ingresso richiesta
 		inRequestContext.setDataElaborazioneMessaggio(this.msgContext.getDataIngressoRichiesta());
 		// PddContext
-		inRequestContext.setPddContext(this.msgContext.getPddContext());
+		inRequestContext.setPddContext(context);
 		// Dati Messaggio
 		inRequestContext.setMessaggio(requestMessage);
 		// Invoke handler
 		try{
 			GestoreHandlers.inRequest(inRequestContext, msgDiag, logCore);
 		}catch(HandlerException e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, e.getIdentitaHandler());
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore,msgDiag, e, e.getIdentitaHandler());
 			return;
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "InvocazioneInRequestHandler");
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore,msgDiag, e, "InvocazioneInRequestHandler");
 			return;
 		}
 
@@ -487,37 +492,37 @@ public class RicezioneBuste {
 		try{
 			process_engine(inRequestContext,internalObjects,params);
 		} catch(TracciamentoException tracciamentoException){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, tracciamentoException, "TracciamentoNonRiuscito");
+			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, tracciamentoException, "TracciamentoNonRiuscito");
 			return;
 		} catch(DumpException e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "DumpNonRiuscito");
+			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "DumpNonRiuscito");
 			return;
 		} catch(ProtocolException protocolException){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, protocolException, "ProtocolFactoryNonInstanziata");
+			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, protocolException, "ProtocolFactoryNonInstanziata");
 			return;
 		}
 		
 		try{
-			if(this.msgContext.getPddContext()!=null  && this.msgContext.getIntegrazione()!=null){
-				if(this.msgContext.getPddContext().containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
+			if(context!=null  && this.msgContext.getIntegrazione()!=null){
+				if(context.containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
 					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRichiesta(
-							(String)this.msgContext.getPddContext().getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
+							(String)context.getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
 				}
-				if(this.msgContext.getPddContext().containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
+				if(context.containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
 					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRisposta(
-							(String)this.msgContext.getPddContext().getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
+							(String)context.getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
 				}
-				if(this.msgContext.getPddContext().containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
+				if(context.containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
 					this.msgContext.getIntegrazione().setTipoMessageSecurityRichiesta(
-							(String)this.msgContext.getPddContext().getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
+							(String)context.getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
 				}
-				if(this.msgContext.getPddContext().containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
+				if(context.containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
 					this.msgContext.getIntegrazione().setTipoMessageSecurityRisposta(
-							(String)this.msgContext.getPddContext().getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
+							(String)context.getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
 				}
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "FinalizeIntegrationContextRicezioneBuste");
+			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "FinalizeIntegrationContextRicezioneBuste");
 			return;
 		}
 		
@@ -554,7 +559,7 @@ public class RicezioneBuste {
 								inRequestContext.getConnettore().getUrlProtocolContext());
 					}
 				}catch(DumpException dumpException){
-					setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, dumpException, "DumpNonRiuscito");
+					setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, dumpException, "DumpNonRiuscito");
 					return;
 				}catch(Exception e){
 					// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
@@ -590,10 +595,10 @@ public class RicezioneBuste {
 		try{
 			GestoreHandlers.outResponse(outResponseContext, msgDiag, logCore);
 		}catch(HandlerException e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, e.getIdentitaHandler());
+			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, e.getIdentitaHandler());
 			return;
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "InvocazioneOutResponseHandler");
+			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "InvocazioneOutResponseHandler");
 			return;
 		}
 		
@@ -618,7 +623,7 @@ public class RicezioneBuste {
 				msgRisposta = null;
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "FineGestioneRicezioneBuste");
+			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "FineGestioneRicezioneBuste");
 			return;
 		}
 	
@@ -648,7 +653,7 @@ public class RicezioneBuste {
 							outResponseContext.getPropertiesRispostaTrasporto());
 				}
 			}catch(DumpException dumpException){
-				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, dumpException, "DumpNonRiuscito");
+				setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, dumpException, "DumpNonRiuscito");
 				return;
 			}catch(Exception e){
 				logCore.error(e.getMessage(),e);
@@ -745,29 +750,29 @@ public class RicezioneBuste {
 	}
 	
 	// processamento quando non sono disponibili le risorse (es. MsgDiagnostico)
-	private void setSOAPFault_processamento(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione){
-		setSOAPFault_engine(integrationError, null, null, null, null, erroreIntegrazione, null, false);
+	private void setSOAPFault_processamento(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione){
+		setSOAPFault_engine(integrationFunctionError, null, null, null, null, erroreIntegrazione, null, false);
 	}
-	private void setSOAPFault_processamento(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, Exception e){
-		setSOAPFault_engine(integrationError, null, null, e, null, erroreIntegrazione, null, false);
+	private void setSOAPFault_processamento(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione, Exception e){
+		setSOAPFault_engine(integrationFunctionError, null, null, e, null, erroreIntegrazione, null, false);
 	}
 	// processamento
-	private void setSOAPFault_processamento(IntegrationError integrationError, Logger logCore, MsgDiagnostico msgDiag, Exception e, String posizione){
-		setSOAPFault_engine(integrationError, logCore, msgDiag, e, null, null, posizione, false);
+	private void setSOAPFault_processamento(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, Exception e, String posizione){
+		setSOAPFault_engine(integrationFunctionError, logCore, msgDiag, e, null, null, posizione, false);
 	}
-	private void setSOAPFault_processamento(IntegrationError integrationError, Logger logCore, MsgDiagnostico msgDiag, ErroreIntegrazione erroreIntegrazione, Exception e, String posizione){
-		setSOAPFault_engine(integrationError, logCore, msgDiag, e, null, erroreIntegrazione, posizione, false);
+	private void setSOAPFault_processamento(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, ErroreIntegrazione erroreIntegrazione, Exception e, String posizione){
+		setSOAPFault_engine(integrationFunctionError, logCore, msgDiag, e, null, erroreIntegrazione, posizione, false);
 	}
 	// intestazione
-	private void setSOAPFault_intestazione(IntegrationError integrationError, ErroreCooperazione erroreCooperazione){
-		setSOAPFault_engine(integrationError, null, null, null, erroreCooperazione, null, null, true);
+	private void setSOAPFault_intestazione(IntegrationFunctionError integrationFunctionError, ErroreCooperazione erroreCooperazione){
+		setSOAPFault_engine(integrationFunctionError, null, null, null, erroreCooperazione, null, null, true);
 	}
 	@SuppressWarnings("unused")
-	private void setSOAPFault_intestazione(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione){
-		setSOAPFault_engine(integrationError, null, null, null, null, erroreIntegrazione, null, true);
+	private void setSOAPFault_intestazione(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione){
+		setSOAPFault_engine(integrationFunctionError, null, null, null, null, erroreIntegrazione, null, true);
 	}
 	
-	private void setSOAPFault_engine(IntegrationError integrationError, Logger logCore, MsgDiagnostico msgDiag, Exception e, 
+	private void setSOAPFault_engine(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, Exception e, 
 			ErroreCooperazione erroreCooperazione, ErroreIntegrazione erroreIntegrazione, String posizioneErrore, 
 			boolean validazione) {
 				
@@ -824,35 +829,39 @@ public class RicezioneBuste {
 					String descrizioneErrore = null;
 					try{
 						descrizioneErrore = erroreCooperazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
-						messageFault = this.generatoreErrore.buildErroreIntestazione(context, integrationError, 
+						messageFault = this.generatoreErrore.buildErroreIntestazione(context, integrationFunctionError, 
 								erroreCooperazione.getCodiceErrore(), descrizioneErrore);
 					}catch(Exception eP){
-						messageFault = this.generatoreErrore.buildFault(eP);
+						messageFault = this.generatoreErrore.buildFault(eP, context);
 					}
 				}else{
-					messageFault = this.generatoreErrore.buildErroreIntestazione(context,integrationError, 
+					messageFault = this.generatoreErrore.buildErroreIntestazione(context,integrationFunctionError, 
 							erroreIntegrazione);
 				}
 			}else{
 				if(erroreIntegrazione!=null){
-					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationFunctionError, 
 							erroreIntegrazione,e);
 				}
 				else if(e!=null){
+					IntegrationFunctionError ifError = integrationFunctionError;
 					ErroreIntegrazione erroreIntegrazioneGenerato = null;
 					if(he!=null){
 						erroreIntegrazioneGenerato = he.convertToErroreIntegrazione();
+						if(he.getIntegrationFunctionError()!=null) {
+							ifError = he.getIntegrationFunctionError();
+						}
 					}
 					if(erroreIntegrazioneGenerato==null) {
 						erroreIntegrazioneGenerato = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore);
 					}
-					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(context,ifError, 
 							erroreIntegrazioneGenerato,e);
 					if(he!=null){
 						he.customized(messageFault);
 					}
 				}else{
-					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationFunctionError, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore));
 				}
 			}
@@ -898,7 +907,7 @@ public class RicezioneBuste {
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazionePdD");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
 			return;
@@ -912,7 +921,7 @@ public class RicezioneBuste {
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorsePdD");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI));
 			return;
@@ -926,7 +935,7 @@ public class RicezioneBuste {
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorsePdD");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO));
 			return;
@@ -940,7 +949,7 @@ public class RicezioneBuste {
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Tracciamento");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE));
 			return;
@@ -954,7 +963,7 @@ public class RicezioneBuste {
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Diagnostica");
 				}
 			}catch(Throwable t){logCore.debug("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE));
 			return;
@@ -968,7 +977,7 @@ public class RicezioneBuste {
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Dump");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE));
 			return;
@@ -986,7 +995,7 @@ public class RicezioneBuste {
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazionePdD");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e);
 			return;
@@ -1004,7 +1013,7 @@ public class RicezioneBuste {
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckRegistroServizi");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE),e);
 			return;
@@ -1072,7 +1081,7 @@ public class RicezioneBuste {
 				RicezioneBuste.initializeService(configurazionePdDReader, className, propertiesReader,logCore);
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),e,
 					"InizializzazioneRisorseServizioRicezioneBuste");
@@ -1085,7 +1094,7 @@ public class RicezioneBuste {
 		try{
 			utilitiesHttpRisposta.setInfoProductTransportProperties(headerRisposta);
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e),e,
 					"InizializzazioneHeaderRisposta");
@@ -1113,7 +1122,7 @@ public class RicezioneBuste {
 			openspcoopstate = new OpenSPCoopStateful();
 			openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(),idTransazione);
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),e,
 					"initDatabaseResource");
@@ -1143,7 +1152,7 @@ public class RicezioneBuste {
 		try{
 			transaction = TransactionContext.getTransaction(idTransazione);
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),e,
 					"getTransaction");
@@ -1290,6 +1299,7 @@ public class RicezioneBuste {
 				
 				ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
 				if(bindingConfig.existsContextUrlMapping()==false){
+					IntegrationFunctionError integrationFunctionError = null;
 					if(idServizio!=null){
 						msgDiag.addKeywords(idServizio);
 						if(idServizio.getAzione()==null){
@@ -1298,14 +1308,16 @@ public class RicezioneBuste {
 						msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBusta!=null ? idBusta : "-");
 						msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, profiloBusta!=null ? profiloBusta : "-");
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente.identificazionePerServizio");
+						integrationFunctionError = IntegrationFunctionError.NOT_FOUND;
 					}
 					else{
 						msgDiag.addKeywordErroreProcessamento(e);
-						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
+						integrationFunctionError = IntegrationFunctionError.API_IN_UNKNOWN;
 					}
 					
 					// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
-					setSOAPFault_processamento(IntegrationError.NOT_FOUND,logCore,null,
+					setSOAPFault_processamento(integrationFunctionError,logCore,null,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),e,
 							"comprensioneIDServizio");
 					openspcoopstate.releaseResource();
@@ -1321,7 +1333,7 @@ public class RicezioneBuste {
 				pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA);
 				// NOTA: la pa potra' essere null nei casi di profili asincroni
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 							"getPA");
@@ -1352,7 +1364,7 @@ public class RicezioneBuste {
 				existsSoggetto = configurazionePdDReader.existsSoggetto(idServizio.getSoggettoErogatore());
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"existsSoggetto("+idServizio.getSoggettoErogatore().toString()+")");
@@ -1368,7 +1380,7 @@ public class RicezioneBuste {
 			try{
 				routerFunctionActive = configurazionePdDReader.routerFunctionActive();
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR),e,
 						"ErroreCheckFunzionalitaRouterAttiva");
@@ -1380,7 +1392,7 @@ public class RicezioneBuste {
 				try{
 					identitaPdD = configurazionePdDReader.getRouterIdentity(protocolFactory);
 				}catch(Exception e){
-					setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR),e,
 							"ErroreRiconoscimentoIdentitaRouter");
@@ -1399,7 +1411,7 @@ public class RicezioneBuste {
 					throw new Exception("Dominio is null");
 				}
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 						"ErroreRiconoscimentoIdentitaPdD");
@@ -1455,7 +1467,7 @@ public class RicezioneBuste {
 					try {
 						tipiIntegrazionePA = configurazionePdDReader.getTipiIntegrazione(pa);
 					} catch (Exception e) {
-						setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+						setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 								"configurazionePdDReader.getTipiIntegrazione(pa)");
@@ -1569,7 +1581,7 @@ public class RicezioneBuste {
 				cors.setStato(StatoFunzionalita.DISABILITATO);
 			}
 		} catch (Exception e) {
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"configurazionePdDReader.getConfigurazioneCORS(pa)");
@@ -1605,9 +1617,15 @@ public class RicezioneBuste {
 			}
 			if(throwFault) {
 			
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
+				IntegrationFunctionError integrationFunctinError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+				if(e instanceof IdentificazioneDinamicaException) {
+					
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
+										
+					integrationFunctinError = IntegrationFunctionError.OPERATION_UNDEFINED;
+				}
 				
-				setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
+				setSOAPFault_processamento(integrationFunctinError,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_403_AZIONE_NON_IDENTIFICATA.getErroreIntegrazione(),e,
 						"identificazioneDinamicaAzionePortaAplicativa");
 				openspcoopstate.releaseResource();
@@ -1665,13 +1683,13 @@ public class RicezioneBuste {
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
 				
 				// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
-				IntegrationError integrationError = null;
+				IntegrationFunctionError integrationFunctionError = null;
 				if(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE.equals(identificazione.getErroreIntegrazione().getCodiceErrore())){
-					integrationError = IntegrationError.NOT_FOUND;
+					integrationFunctionError = IntegrationFunctionError.API_IN_UNKNOWN;
 				}else{
-					integrationError = IntegrationError.INTERNAL_ERROR;
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 				}
-				setSOAPFault_processamento(integrationError,logCore,null,
+				setSOAPFault_processamento(integrationFunctionError,logCore,null,
 						identificazione.getErroreIntegrazione(),null,
 						"comprensionePASpecificaPerAzione");
 				openspcoopstate.releaseResource();
@@ -1707,7 +1725,7 @@ public class RicezioneBuste {
 			internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
 		} 
 		catch (Exception e) {
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"readDumpConfigurazione");
@@ -1861,7 +1879,7 @@ public class RicezioneBuste {
 				
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
 				
-				setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
+				setSOAPFault_processamento(IntegrationFunctionError.OPERATION_UNDEFINED,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA.
 						getErrore423_ServizioConAzioneScorretta(azione+ e.getMessage()),e,
 						"readProtocolInfo");
@@ -1875,7 +1893,7 @@ public class RicezioneBuste {
 			
 		}
 		catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"readProtocolInfo");
@@ -1940,7 +1958,7 @@ public class RicezioneBuste {
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
 				}catch(Exception e) {
 					// un eccezione non dovrebbe succedere
-					setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 							"gestioneCORS");
@@ -2000,7 +2018,7 @@ public class RicezioneBuste {
 			}
 			bustaURLMapping.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"bustaURLMapping");
@@ -2163,6 +2181,13 @@ public class RicezioneBuste {
 					parametriGenerazioneBustaErrore.setTracciamento(tracciamento);
 					parametriGenerazioneBustaErrore.setBusta(erroreIntestazione);
 					parametriGenerazioneBustaErrore.setError(erroreIntestazione.cloneListaEccezioni());
+					
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					if(validatore.getErrore_integrationFunctionError()!=null) {
+						integrationFunctionError = validatore.getErrore_integrationFunctionError();
+					}
+					parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+					
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreValidazione
@@ -2173,9 +2198,9 @@ public class RicezioneBuste {
 				}
 			}else{
 				
-				IntegrationError integrationError = IntegrationError.BAD_REQUEST;
-				if(validatore.getErrore_integrationError()!=null) {
-					integrationError = validatore.getErrore_integrationError();
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+				if(validatore.getErrore_integrationFunctionError()!=null) {
+					integrationFunctionError = validatore.getErrore_integrationFunctionError();
 				}
 				try{
 					msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(protocolFactory));
@@ -2184,7 +2209,7 @@ public class RicezioneBuste {
 				}
 				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, "sintattica");
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita");
-				setSOAPFault_intestazione(integrationError, validatore.getErrore());
+				setSOAPFault_intestazione(integrationFunctionError, validatore.getErrore());
 			}
 			openspcoopstate.releaseResource();
 			return;
@@ -2242,7 +2267,7 @@ public class RicezioneBuste {
 				datoPA = requestInfo.getIdServizio().getSoggettoErogatore().getNome();
 			}
 			if(oggetto!=null){
-				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+				setSOAPFault_processamento(IntegrationFunctionError.BAD_REQUEST,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA.
 							getErrore455DatiBustaDifferentiDatiPAInvocata(oggetto, datoBusta, datoPA, locationPA),null,
 						"ConfrontoDatiBustaConDatiInvocazionePortaApplicativa");
@@ -2391,7 +2416,7 @@ public class RicezioneBuste {
 				if(  !(e instanceof DriverConfigurazioneNotFound) ) {
 					msgDiag.logErroreGenerico(e,"letturaPorta");
 					
-					setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,
+					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento("LetturaPorta",CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e);
 					return;
@@ -2490,7 +2515,8 @@ public class RicezioneBuste {
 					msgDiag.logPersonalizzato("gestoreCredenziali.errore");
 					ErroreIntegrazione msgErroreIntegrazione = null;
 					if(e instanceof GestoreCredenzialiConfigurationException){
-						parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST);
+						GestoreCredenzialiConfigurationException ge = (GestoreCredenzialiConfigurationException) e;
+						parametriGenerazioneBustaErrore.setIntegrationFunctionError(ge.getIntegrationFunctionError());
 						msgErroreIntegrazione = 
 								ErroriIntegrazione.ERRORE_431_GESTORE_CREDENZIALI_ERROR.
 									getErrore431_ErroreGestoreCredenziali(RicezioneBuste.tipiGestoriCredenziali[i],e);
@@ -2571,6 +2597,7 @@ public class RicezioneBuste {
 				OpenSPCoop2Message errorMessageGestioneToken = null;
 				String wwwAuthenticateErrorHeader = null;
 				boolean fineGestione = false;
+				IntegrationFunctionError integrationFunctionError = null;
 				try {
 					
 					PolicyGestioneToken policyGestioneToken = null;
@@ -2674,6 +2701,7 @@ public class RicezioneBuste {
 									eGestioneToken = esitoValidazioneToken.getEccezioneProcessamento();
 									errorMessageGestioneToken = esitoValidazioneToken.getErrorMessage();
 									wwwAuthenticateErrorHeader = esitoValidazioneToken.getWwwAuthenticateErrorHeader();
+									integrationFunctionError = esitoValidazioneToken.getIntegrationFunctionError();
 									
 								}
 							}
@@ -2733,6 +2761,7 @@ public class RicezioneBuste {
 									eGestioneToken = esitoIntrospectionToken.getEccezioneProcessamento();
 									errorMessageGestioneToken = esitoIntrospectionToken.getErrorMessage();
 									wwwAuthenticateErrorHeader = esitoIntrospectionToken.getWwwAuthenticateErrorHeader();
+									integrationFunctionError = esitoValidazioneToken.getIntegrationFunctionError();
 									
 								}
 							}
@@ -2791,6 +2820,7 @@ public class RicezioneBuste {
 									eGestioneToken = esitoUserInfoToken.getEccezioneProcessamento();
 									errorMessageGestioneToken = esitoUserInfoToken.getErrorMessage();
 									wwwAuthenticateErrorHeader = esitoUserInfoToken.getWwwAuthenticateErrorHeader();
+									integrationFunctionError = esitoValidazioneToken.getIntegrationFunctionError();
 									
 								}
 							}
@@ -2824,6 +2854,7 @@ public class RicezioneBuste {
 							eGestioneToken = esitoPresenzaToken.getEccezioneProcessamento();
 							errorMessageGestioneToken = esitoPresenzaToken.getErrorMessage();
 							wwwAuthenticateErrorHeader = esitoPresenzaToken.getWwwAuthenticateErrorHeader();
+							integrationFunctionError = IntegrationFunctionError.TOKEN_NOT_FOUND;
 							
 						}
 					}
@@ -2887,6 +2918,8 @@ public class RicezioneBuste {
 									CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN);
 					eGestioneToken = e;
 					
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					
 					fineGestione = true;
 					
 				}
@@ -2918,20 +2951,35 @@ public class RicezioneBuste {
 							}
 		
 							OpenSPCoop2Message errorOpenSPCoopMsg = null;
+														
 							if(erroreCooperazione!=null){
 								if(CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE.equals(erroreCooperazione.getCodiceErrore())) {
-									parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST); // per generare 400 in REST
+									if(integrationFunctionError==null) {
+										integrationFunctionError = IntegrationFunctionError.TOKEN_NOT_FOUND;
+									}
+									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 									errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 								}
 								else if(CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO.equals(erroreCooperazione.getCodiceErrore())) {
-									parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHENTICATION); // per generare 401 in REST
+									if(integrationFunctionError==null) {
+										integrationFunctionError = IntegrationFunctionError.TOKEN_INVALID;
+									}
+									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 									errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 								}
 								else {
+									if(integrationFunctionError==null) {
+										integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+									}
+									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 									errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eGestioneToken);
 								}
 							}
 							else {
+								if(integrationFunctionError==null) {
+									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+								}
+								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 								errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eGestioneToken);
 							}	
 							
@@ -3032,6 +3080,7 @@ public class RicezioneBuste {
 						OpenSPCoop2Message errorMessageAutenticazione = null;
 						String wwwAuthenticateErrorHeader = null;
 						boolean detailsSet = false;
+						IntegrationFunctionError integrationFunctionError = null;
 						try {						
 							EsitoAutenticazionePortaApplicativa esito = 
 									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione,
@@ -3057,6 +3106,7 @@ public class RicezioneBuste {
 								eAutenticazione = esito.getEccezioneProcessamento();
 								errorMessageAutenticazione = esito.getErrorMessage();
 								wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
+								integrationFunctionError = esito.getIntegrationFunctionError();
 								msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, credenziali.toString(Credenziali.SHOW_BASIC_PASSWORD,
 										!Credenziali.SHOW_ISSUER,
 										!Credenziali.SHOW_DIGEST_CLIENT_CERT,
@@ -3091,6 +3141,7 @@ public class RicezioneBuste {
 									eAutenticazione = esito.getEccezioneProcessamento();
 									errorMessageAutenticazione = esito.getErrorMessage();
 									wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
+									integrationFunctionError = esito.getIntegrationFunctionError();
 									
 									// evito comunque di ripresentarle nei successivi diagnostici, l'informazione l'ho gia' visualizzata nei diagnostici dell'autenticazione
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
@@ -3114,6 +3165,7 @@ public class RicezioneBuste {
 							eAutenticazione = e;
 							logCore.error("processo di autenticazione ["
 									+ tipoAutenticazione + "] fallito, " + e.getMessage(),e);
+							integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 						}
 						if (erroreIntegrazione != null || erroreCooperazione!=null) {
 							if(!detailsSet) {
@@ -3178,19 +3230,36 @@ public class RicezioneBuste {
 			
 										OpenSPCoop2Message errorOpenSPCoopMsg = null;
 										if(erroreCooperazione!=null){
-											if(CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.equals(erroreCooperazione.getCodiceErrore()) ||
-													CodiceErroreCooperazione.MITTENTE_NON_VALIDO.equals(erroreCooperazione.getCodiceErrore()) ||
-													CodiceErroreCooperazione.MITTENTE_NON_PRESENTE.equals(erroreCooperazione.getCodiceErrore()) ||
+											if(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE.equals(erroreCooperazione.getCodiceErrore()) ||
 													CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO.equals(erroreCooperazione.getCodiceErrore()) ||
 													CodiceErroreCooperazione.MITTENTE.equals(erroreCooperazione.getCodiceErrore())) {
-												parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHENTICATION);
+												if(integrationFunctionError==null) {
+													integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND;
+												}
+												parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+												errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+											}
+											else if(CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.equals(erroreCooperazione.getCodiceErrore()) ||
+													CodiceErroreCooperazione.MITTENTE_NON_VALIDO.equals(erroreCooperazione.getCodiceErrore())) {
+												if(integrationFunctionError==null) {
+													integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS;
+												}
+												parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 												errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 											}
 											else {
+												if(integrationFunctionError==null) {
+													integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+												}
+												parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 												errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
 											}
 										}
 										else {
+											if(integrationFunctionError==null) {
+												integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+											}
+											parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 											errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
 										}	
 										
@@ -3248,6 +3317,7 @@ public class RicezioneBuste {
 					OpenSPCoop2Message errorMessageAutenticazione = null;
 					String wwwAuthenticateErrorHeader = null;
 					String errorMessage = null;
+					IntegrationFunctionError integrationFunctionError = null;
 					try {
 						EsitoAutenticazionePortaApplicativa	esito = 
 								GestoreAutenticazione.verificaAutenticazioneTokenPortaApplicativa(gestioneTokenAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage);
@@ -3259,6 +3329,7 @@ public class RicezioneBuste {
 							errorMessageAutenticazione = esito.getErrorMessage();
 							wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
 							errorMessage = esito.getDetails();
+							integrationFunctionError = esito.getIntegrationFunctionError();
 						}
 						
 						if (erroreIntegrazione != null || erroreCooperazione!=null) {
@@ -3275,6 +3346,7 @@ public class RicezioneBuste {
 						eAutenticazione = e;
 						logCore.error("processo di autenticazione token ["
 								+ checkAuthnToken + "] fallito, " + e.getMessage(),e);
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 					}
 					if (erroreIntegrazione != null || erroreCooperazione!=null) {
 						String descrizioneErrore = null;
@@ -3329,14 +3401,25 @@ public class RicezioneBuste {
 								OpenSPCoop2Message errorOpenSPCoopMsg = null;
 								if(erroreCooperazione!=null){
 									if(CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA.equals(erroreCooperazione.getCodiceErrore())) {
-										parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHENTICATION);
+										if(integrationFunctionError==null) {
+											integrationFunctionError = IntegrationFunctionError.TOKEN_REQUIRED_CLAIMS_NOT_FOUND;
+										}
+										parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 										errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 									}
 									else {
+										if(integrationFunctionError==null) {
+											integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+										}
+										parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 										errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
 									}
 								}
 								else {
+									if(integrationFunctionError==null) {
+										integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+									}
+									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 									errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
 								}	
 								
@@ -3561,13 +3644,13 @@ public class RicezioneBuste {
 		if (!serviceIsEnabled || !portaEnabled || serviceIsEnabledExceptionProcessamento!=null) {
 			ErroreIntegrazione errore = null;
 			String esito = null;
-			IntegrationError integrationError = IntegrationError.SERVICE_UNAVAILABLE;
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_SUSPEND;
 			if(serviceIsEnabledExceptionProcessamento!=null){
 				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] Comprensione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
 				msgDiag.logErroreGenerico("Comprensione stato servizio di ricezione buste non riuscita", "PA");
 				esito = "["+ RicezioneBuste.ID_MODULO+ "] Comprensione stato servizio di ricezione buste non riuscita";
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
-				integrationError = IntegrationError.INTERNAL_ERROR;
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 			}else{
 				
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOSPENSIONE, "true");
@@ -3602,11 +3685,11 @@ public class RicezioneBuste {
 
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);							
 				parametriGenerazioneBustaErrore.setErroreIntegrazione(errore);
-				parametriGenerazioneBustaErrore.setIntegrationError(integrationError);
+				parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 
 				OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,serviceIsEnabledExceptionProcessamento);
 				
-				if(IntegrationError.SERVICE_UNAVAILABLE.equals(integrationError) &&
+				if(IntegrationFunctionError.API_SUSPEND.equals(integrationFunctionError) &&
 						propertiesReader.isEnabledServiceUnavailableRetryAfter_pa_suspend() && 
 						propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_suspend()!=null &&
 						propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_suspend()>0) {
@@ -4084,7 +4167,7 @@ public class RicezioneBuste {
 			}
 			if(this.msgContext.isGestioneRisposta()){
 				
-				parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST);
+				parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 				parametriGenerazioneBustaErrore.
 				setErroreIntegrazione(ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
@@ -4248,7 +4331,7 @@ public class RicezioneBuste {
 			GestoreHandlers.inRequestProtocol(inRequestProtocolContext, msgDiag, logCore);
 		}catch(Exception e){		
 			ErroreIntegrazione erroreIntegrazione = null;
-			IntegrationError integrationError = null; 
+			IntegrationFunctionError integrationFunctionError = null; 
 			if(e instanceof HandlerException){
 				HandlerException he = (HandlerException) e;
 				if(he.isEmettiDiagnostico()){
@@ -4257,7 +4340,7 @@ public class RicezioneBuste {
 				logCore.error("Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
 				if(this.msgContext.isGestioneRisposta()){
 					erroreIntegrazione = he.convertToErroreIntegrazione();
-					integrationError = he.getIntegrationError();
+					integrationFunctionError = he.getIntegrationFunctionError();
 				}
 			}else{
 				msgDiag.logErroreGenerico(e,"InvocazioneInRequestHandler");
@@ -4269,11 +4352,11 @@ public class RicezioneBuste {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST);
 				}
-				if(integrationError==null) {
-					integrationError = IntegrationError.INTERNAL_ERROR;
+				if(integrationFunctionError==null) {
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 				}
 				
-				parametriGenerazioneBustaErrore.setIntegrationError(integrationError);
+				parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 				parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
 				OpenSPCoop2Message errorMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
@@ -4395,6 +4478,7 @@ public class RicezioneBuste {
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR));
+					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED);
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -4440,6 +4524,9 @@ public class RicezioneBuste {
 						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
+						if(validatore.getErrore_integrationFunctionError()!=null) {
+							parametriGenerazioneBustaErrore.setIntegrationFunctionError(validatore.getErrore_integrationFunctionError());
+						}
 						OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -4468,7 +4555,8 @@ public class RicezioneBuste {
 						
 						StringBuilder bfErroreSecurity = new StringBuilder();
 						presenzaRichiestaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity,
-								transaction!=null ? transaction.getTempiElaborazione() : null);
+								transaction!=null ? transaction.getTempiElaborazione() : null,
+										true);
 						
 						if(bfErroreSecurity.length()>0){
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , bfErroreSecurity.toString() );
@@ -4523,6 +4611,9 @@ public class RicezioneBuste {
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO));
+					if(validatore.getErrore_integrationFunctionError()!=null) {
+						parametriGenerazioneBustaErrore.setIntegrationFunctionError(validatore.getErrore_integrationFunctionError());
+					}
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,validatore.getEccezioneProcessamentoValidazioneSemantica());
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -4558,6 +4649,7 @@ public class RicezioneBuste {
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR));
+					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED);
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -4574,6 +4666,7 @@ public class RicezioneBuste {
 		}
 		java.util.List<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
 		java.util.List<Eccezione> erroriProcessamento =validatore.getEccezioniProcessamento();
+		IntegrationFunctionError integrationFunctionErrorValidazione = validatore.getErrore_integrationFunctionError(); 
 		SecurityInfo securityInfoRequest = validatore.getSecurityInfo();
 		
 		boolean isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
@@ -4638,9 +4731,11 @@ public class RicezioneBuste {
 				if(this.msgContext.isGestioneRisposta()){
 					
 					ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_442_RIFERIMENTO_ID_MESSAGGIO.getErroreIntegrazione();
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.CORRELATION_INFORMATION_NOT_FOUND;
 					
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 					parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
+					parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore, null);
 
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -4703,8 +4798,9 @@ public class RicezioneBuste {
 				bustaDiServizio==false &&
 				pa!=null && pa.getCorrelazioneApplicativa()!=null){
 		
+			GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = null;
 			try {
-				GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = 
+				gestoreCorrelazioneApplicativa = 
 					new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, soggettoFruitore,
 							idServizio,servizioApplicativoFruitore,protocolFactory,
 							transaction);
@@ -4733,9 +4829,25 @@ public class RicezioneBuste {
 				
 				if(this.msgContext.isGestioneRisposta()){
 					
+					ErroreIntegrazione errore = null;
+					if(gestoreCorrelazioneApplicativa!=null){
+						errore = gestoreCorrelazioneApplicativa.getErrore();
+					}
+					if(errore==null){
+						errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
+					}
+					
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA));
+					parametriGenerazioneBustaErrore.setErroreIntegrazione(errore);
+					IntegrationFunctionError integrationFunctionError = null;
+					if(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.equals(errore.getCodiceErrore())){
+						integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					}
+					else{
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -4981,6 +5093,9 @@ public class RicezioneBuste {
 				}else{
 
 					parametriGenerazioneBustaErrore.setError(erroriValidazione);
+					if(integrationFunctionErrorValidazione!=null) {
+						parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionErrorValidazione);
+					}
 					errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 
 				}
@@ -5133,8 +5248,14 @@ public class RicezioneBuste {
 					}
 					parametriGenerazioneBustaErrore.setError(errs);
 					
-					if(CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(er.getCodiceEccezione())) {
-						parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHORIZATION);
+					if(integrationFunctionErrorValidazione!=null) {
+						parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionErrorValidazione);
+					}
+					else if(CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(er.getCodiceEccezione())) {
+						parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.AUTHORIZATION);
+					}
+					else {
+						parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_REQUEST);
 					}
 					
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
@@ -5340,27 +5461,42 @@ public class RicezioneBuste {
 						
 							OpenSPCoop2Message errorOpenSPCoopMsg = null;
 							parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+							IntegrationFunctionError integrationFunctionError = esito.getIntegrationFunctionError();
 							if(esito.getErroreCooperazione()!=null){
 								parametriGenerazioneBustaErrore.setErroreCooperazione(esito.getErroreCooperazione());
 								if(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreCooperazione().getCodiceErrore()) || 
 										CodiceErroreCooperazione.SICUREZZA_FALSIFICAZIONE_MITTENTE.equals(esito.getErroreCooperazione().getCodiceErrore()) ||
 										CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreCooperazione().getCodiceErrore())){
-									parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHORIZATION);
+									if(integrationFunctionError==null) {
+										integrationFunctionError = IntegrationFunctionError.AUTHORIZATION;
+									}
+									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 									errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 								}
 								// Else necessario per Certificazione DigitPA tramite Router
 								else if(CodiceErroreCooperazione.SERVIZIO_SCONOSCIUTO.equals(esito.getErroreCooperazione().getCodiceErrore())){
 									parametriGenerazioneBustaErrore.setErroreCooperazione(
 											ErroriCooperazione.SERVIZIO_SCONOSCIUTO.getErroreCooperazione()); // in modo da utilizzare la posizione standard.
-									parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST);
+									if(integrationFunctionError==null) {
+										integrationFunctionError = IntegrationFunctionError.NOT_FOUND;
+									}
+									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 									errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 								}
 								else{
+									if(integrationFunctionError==null) {
+										integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+									}
+									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 									errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore, esito.getEccezioneProcessamento());
 								}
 							}
 							else{
 								parametriGenerazioneBustaErrore.setErroreIntegrazione(esito.getErroreIntegrazione());
+								if(integrationFunctionError==null) {
+									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+								}
+								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 								errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore, esito.getEccezioneProcessamento());
 							}
 							
@@ -5427,19 +5563,19 @@ public class RicezioneBuste {
 		// Nota: se qualche informazione e' null verranno segnalati altri errori
 		if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && 
 				tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())==false){
-			parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST);
+			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_MITTENTE_NON_VALIDO.getErroreCooperazione();
 		}
 		else if(idServizio!=null && idServizio.getSoggettoErogatore()!=null && idServizio.getSoggettoErogatore().getTipo()!=null &&
 				tipiSoggettiSupportatiCanale.contains(idServizio.getSoggettoErogatore().getTipo())==false){
-			parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST);
+			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.erogatore.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_DESTINATARIO_NON_VALIDO.getErroreCooperazione();
 		}
 		else if(idServizio!=null && idServizio.getTipo()!=null && 
 				tipiServiziSupportatiCanale.contains(idServizio.getTipo())==false){
-			parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST);
+			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
 			msgDiag.logPersonalizzato("protocolli.tipoServizio.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_SERVIZIO_NON_VALIDO.getErroreCooperazione();
 		}
@@ -5501,13 +5637,13 @@ public class RicezioneBuste {
 
 						//	Richiesta Asincrona
 						if(bustaRichiesta.getRiferimentoMessaggio()==null){
-							validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
+							validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
 							proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
 							tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
 						}else{
 							//	Risposta Asincrona
 							if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
-								validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
+								validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
 								proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
 								// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
 								tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
@@ -5518,7 +5654,7 @@ public class RicezioneBuste {
 								if( configurazionePdDReader.ricevutaAsincronaSimmetricaAbilitata(pd))	{
 									isRicevutaAsincrona_modalitaAsincrona = true;	
 								}else{
-									validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
+									validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
 									proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
 									// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
 									tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
@@ -5531,13 +5667,13 @@ public class RicezioneBuste {
 
 						//	Richiesta Asincrona
 						if(bustaRichiesta.getRiferimentoMessaggio()==null){
-							validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
+							validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
 							proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
 							tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
 						}else{
 							//	Risposta Asincrona
 							if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
-								validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
+								validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
 								proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
 								tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
 							}
@@ -5547,7 +5683,7 @@ public class RicezioneBuste {
 								if( configurazionePdDReader.ricevutaAsincronaAsimmetricaAbilitata(pd))	{
 									isRicevutaAsincrona_modalitaAsincrona = true;	
 								}else{
-									validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
+									validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
 									proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
 									// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
 									tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
@@ -5559,7 +5695,7 @@ public class RicezioneBuste {
 					((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
 				}else{
 					msgDiag.mediumDebug("Controllo abilitazione validazione dei contenuti applicativi della richiesta...");
-					validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
+					validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
 					proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
 					tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
 				}
@@ -5697,7 +5833,19 @@ public class RicezioneBuste {
 							// validazione abilitata
 							if(this.msgContext.isGestioneRisposta()){
 								
-								parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST);
+								IntegrationFunctionError integrationFunctionError = null;
+								if(ex.getErrore()!=null &&
+										(
+												//CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.equals(ex.getErrore().getCodiceErrore()) ||
+												CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.equals(ex.getErrore().getCodiceErrore()) 
+										)
+									){
+									integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+								}
+								else{
+									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+								}
+								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 								parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 								parametriGenerazioneBustaErrore.setErroreIntegrazione(ex.getErrore());
 								OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,ex);
@@ -5858,12 +6006,20 @@ public class RicezioneBuste {
 							OpenSPCoop2Message errorMsg = null;
 							parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 							parametriGenerazioneBustaErrore.setErroreCooperazione(esito.getErroreCooperazione());
+							IntegrationFunctionError integrationFunctionError = esito.getIntegrationFunctionError();
 							if(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreCooperazione().getCodiceErrore()) 
 									|| CodiceErroreCooperazione.SICUREZZA_FALSIFICAZIONE_MITTENTE.equals(esito.getErroreCooperazione().getCodiceErrore())){
-								parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHORIZATION);
+								if(integrationFunctionError==null) {
+									integrationFunctionError = IntegrationFunctionError.CONTENT_AUTHORIZATION_DENY;
+								}
+								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 								errorMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 							}
 							else{
+								if(integrationFunctionError==null) {
+									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+								}
+								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 								errorMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,esito.getEccezioneProcessamento());
 							}
 
@@ -6072,6 +6228,7 @@ public class RicezioneBuste {
 								
 								parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 								parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_537_BUSTA_GIA_RICEVUTA.get537_BustaGiaRicevuta(idMessageRequest));
+								parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.CONFLICT_IN_QUEUE);
 								OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,null);
 								
 								// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -6117,7 +6274,7 @@ public class RicezioneBuste {
 													identitaPdD,idTransazione,loader,oneWayVersione11,implementazionePdDMittente,
 													tracciamento,messageSecurityContext,
 													correlazioneApplicativa,
-													pddContext));
+													pddContext, IntegrationFunctionError.CONFLICT));
 										}
 										openspcoopstate.releaseResource();
 										return;
@@ -6165,6 +6322,7 @@ public class RicezioneBuste {
 									
 									parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 									parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_537_BUSTA_GIA_RICEVUTA.get537_BustaGiaRicevuta(idMessageRequest));
+									parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.CONFLICT_IN_QUEUE);
 									OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,null);
 									
 									// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -6372,7 +6530,7 @@ public class RicezioneBuste {
 				richiestaApplicativa.setIdentitaServizioApplicativoFruitore(servizioApplicativoFruitore);
 				sbustamentoMSG.setRichiestaApplicativa(richiestaApplicativa);
 				sbustamentoMSG.setBusta(bustaRichiesta);
-				sbustamentoMSG.setErrors(erroriValidazione);
+				sbustamentoMSG.setErrors(erroriValidazione, integrationFunctionErrorValidazione);
 				sbustamentoMSG.setMessaggioErroreProtocollo(isMessaggioErroreProtocollo);
 				sbustamentoMSG.setIsBustaDiServizio(bustaDiServizio);
 				sbustamentoMSG.setServizioCorrelato(validatore.getServizioCorrelato());
@@ -6847,7 +7005,7 @@ public class RicezioneBuste {
 						msgDiag.mediumDebug("Richiesta connessione al database per la gestione della risposta...");
 						openspcoopstate.updateResource(idTransazione);
 					}catch(Exception eDB){
-						setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+						setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,logCore,msgDiag,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),eDB,
 								"openspcoopstate.updateDatabaseResource");
@@ -6902,7 +7060,7 @@ public class RicezioneBuste {
 					msgDiag.mediumDebug("Richiesta connessione al database per la gestione della risposta...");
 					openspcoopstate.updateResource(idTransazione);
 				}catch(Exception e){
-					setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,logCore,msgDiag,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),e,
 							"openspcoopstate.updateDatabaseResource");
@@ -7119,7 +7277,8 @@ public class RicezioneBuste {
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO));
-
+					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
+					
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -7162,7 +7321,8 @@ public class RicezioneBuste {
 						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR));
-
+						parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED);
+						
 						OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -7207,6 +7367,8 @@ public class RicezioneBuste {
 								parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 								parametriGenerazioneBustaErrore.setErroreCooperazione(ErroriCooperazione.MESSAGE_SECURITY.
 										getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()));
+								parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.MESSAGE_SECURITY_RESPONSE_FAILED);
+								
 								OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 								
 								// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -7258,7 +7420,8 @@ public class RicezioneBuste {
 						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR));
-
+						parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED);
+						
 						OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -7318,6 +7481,7 @@ public class RicezioneBuste {
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO));
+					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
 
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 					
@@ -7657,19 +7821,20 @@ public class RicezioneBuste {
 	private OpenSPCoop2Message generaBustaErroreProcessamento(RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore,Exception e){
 		parametriGenerazioneBustaErrore.setErroreProcessamento(true);
 		parametriGenerazioneBustaErrore.setEccezioneProcessamento(e);
-		return generaBustaErrore(parametriGenerazioneBustaErrore);
+		return generaBustaErrore(parametriGenerazioneBustaErrore, false);
 	}
 
 	private OpenSPCoop2Message generaBustaErroreValidazione(RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore){
 		parametriGenerazioneBustaErrore.setErroreProcessamento(false);
-		return generaBustaErrore(parametriGenerazioneBustaErrore);
+		return generaBustaErrore(parametriGenerazioneBustaErrore, true);
 	}
 
-	private OpenSPCoop2Message generaBustaErrore(RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore){
-		String idTransazione = (String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+	private OpenSPCoop2Message generaBustaErrore(RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore, boolean erroreValidazione){
+		PdDContext pddContext = this.msgContext.getPddContext();
+		String idTransazione = (String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		
 		try{
-			IntegrationError integrationError = parametriGenerazioneBustaErrore.getIntegrationError();
+			IntegrationFunctionError integrationFunctionError = parametriGenerazioneBustaErrore.getIntegrationFunctionError(pddContext, erroreValidazione);
 			
 			OpenSPCoop2Message responseErrorMessage = null;
 		
@@ -7706,7 +7871,7 @@ public class RicezioneBuste {
 			if(parametriGenerazioneBustaErrore.isErroreProcessamento()){
 				if(erroreCooperazione!=null){
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Processamento(
-							integrationError,
+							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, erroreCooperazione,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -7718,7 +7883,7 @@ public class RicezioneBuste {
 				}
 				else if(erroreIntegrazione!=null){
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Processamento(
-							integrationError,
+							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, erroreIntegrazione,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -7729,7 +7894,7 @@ public class RicezioneBuste {
 							this.msgContext.getPddContext());
 				}else{
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Processamento(
-							integrationError,
+							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, error,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -7742,7 +7907,7 @@ public class RicezioneBuste {
 			}else{
 				if(erroreCooperazione!=null){
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Intestazione(
-							integrationError,
+							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione,erroreCooperazione,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -7756,7 +7921,7 @@ public class RicezioneBuste {
 				}
 				else {
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Intestazione(
-							integrationError,
+							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione,error,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -7820,7 +7985,7 @@ public class RicezioneBuste {
 			return responseErrorMessage;
 
 		}catch(Exception e){
-			return this.generatoreErrore.buildFault(e);
+			return this.generatoreErrore.buildFault(e,pddContext);
 		}
 	}
 
@@ -7933,9 +8098,10 @@ public class RicezioneBuste {
 
 
 		}catch (Exception e) {
+			IntegrationFunctionError integrationFunctionError = AbstractErrorGenerator.getIntegrationInternalError(pddContext); // default
 			msgDiag.logErroreGenerico(e, "sendRispostaBustaErrore");
 			this.msgContext.setMessageResponse(this.generatoreErrore.buildErroreProcessamento(pddContext,
-					IntegrationError.INTERNAL_ERROR,
+					integrationFunctionError,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e));
 		}  	
 
@@ -8638,7 +8804,7 @@ public class RicezioneBuste {
 			String implementazionePdDSoggettoMittente,
 			Tracciamento tracciamento,MessageSecurityContext messageSecurityContext,
 			String idCorrelazioneApplicativa,
-			PdDContext pddContext) throws ProtocolException, TracciamentoException{
+			PdDContext pddContext, IntegrationFunctionError integrationFunctionError) throws ProtocolException, TracciamentoException{
 
 		RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopstate.getStatoRichiesta(), true,protocolFactory);
 		History historyBuste = new History(openspcoopstate.getStatoRichiesta(), log);
@@ -8827,7 +8993,7 @@ public class RicezioneBuste {
 						requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
 			}
 			else{
-				msg = this.generatoreErrore.buildErroreIntestazione(pddContext,IntegrationError.INTERNAL_ERROR);
+				msg = this.generatoreErrore.buildErroreIntestazione(pddContext,integrationFunctionError);
 			}
 			
 			

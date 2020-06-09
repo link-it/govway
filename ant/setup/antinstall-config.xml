@@ -93,7 +93,7 @@
         <large-select defaultValue="wildfly18" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly18" text="WildFly 18"/>
+		<option value="wildfly18" text="WildFly 18-19"/>
 		<!--
 			Deprecati: 10, 11, 12, 13, 14, 15, 15, 17
 			<option value="wildfly10" text="WildFly 10-17"/>
@@ -157,7 +157,7 @@
         <large-select defaultValue="wildfly18" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly18" text="WildFly 18"/>
+		<option value="wildfly18" text="WildFly 18-19"/>
 		<!--
 			Deprecati: 10, 11, 12, 13, 14, 15, 16, 17
 			<option value="wildfly10" text="WildFly 10-17"/>

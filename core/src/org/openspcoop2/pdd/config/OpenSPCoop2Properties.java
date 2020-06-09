@@ -881,9 +881,28 @@ public class OpenSPCoop2Properties {
 				return false;
 			}
 			
+			// Errori http
+			getErroriHttpHeaderGovWayStatus();
+			getErroriHttpHeaderGovWayType();
+			getErroriHttpHeaderGovWayCode();
+			
+			// Errori soap
+			this.isErroriSoapUseGovWayStatusAsFaultCode();
+			this.isErroriSoapHttpHeaderGovWayCodeEnabled();
+			
+			// Errori			
+			this.isErroriGovWayStatusEnabled();
+			this.isErroriGovWayInstanceEnabled();
+			this.isErroriGovWayForceSpecificDetails();
+			this.isErroriGovWayFaultDetailsWithProblemRFC7807();
+			
 			// Problem RFC 7807
+			this.isProblemRFC7807_enrichTitleAsGovWayType();
+			this.isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode();
+			this.isProblemRFC7807_enrichTitleAsGovWayType_customClaim();
 			this.getProblemRFC7807_transactionId_claim();
 			this.getProblemRFC7807_code_claim();
+			this.getProblemRFC7807_type_claim();
 
 			// IdentitaPdD
 			if( this.getIdentitaPortaDefault() == null  ){
@@ -1793,6 +1812,10 @@ public class OpenSPCoop2Properties {
 			}
 			
 			// Service Unavailable
+			this.getServiceUnavailableRetryAfterSeconds_pd();
+			this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd();
+			this.getServiceUnavailableRetryAfterSeconds_pa();
+			this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa();
 			if(this.isEnabledServiceUnavailableRetryAfter_pd_suspend()) {
 				this.getServiceUnavailableRetryAfterSeconds_pd_suspend();
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend();
@@ -1809,6 +1832,7 @@ public class OpenSPCoop2Properties {
 				this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed();
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed();
 			}
+			this.isServiceUnavailable_ReadTimedOut("");
 			
 			// Statistiche
 			if(this.isStatisticheGenerazioneEnabled()) {
@@ -6164,6 +6188,295 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
+	
+	
+	
+	private static String getErroriHttpHeaderGovWayStatus = null;
+	public String getErroriHttpHeaderGovWayStatus(){
+		
+		String pName = "org.openspcoop2.pdd.errori.http.govwayStatus";
+		if(OpenSPCoop2Properties.getErroriHttpHeaderGovWayStatus==null){
+			try{  
+				String name = this.reader.getValue_convertEnvProperties(pName); 
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayStatus = name;
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_STATUS()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayStatus = org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_STATUS();
+			}
+		}
+
+		return OpenSPCoop2Properties.getErroriHttpHeaderGovWayStatus;
+	}
+	
+	private static String getErroriHttpHeaderGovWayType = null;
+	public String getErroriHttpHeaderGovWayType(){
+		
+		String pName = "org.openspcoop2.pdd.errori.http.govwayType";
+		if(OpenSPCoop2Properties.getErroriHttpHeaderGovWayType==null){
+			try{  
+				String name = this.reader.getValue_convertEnvProperties(pName); 
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayType = name;
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_TYPE()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayType = org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_TYPE();
+			}
+		}
+
+		return OpenSPCoop2Properties.getErroriHttpHeaderGovWayType;
+	}
+	
+	private static String getErroriHttpHeaderGovWayCode = null;
+	public String getErroriHttpHeaderGovWayCode(){
+		
+		String pName = "org.openspcoop2.pdd.errori.http.govwayCode";
+		if(OpenSPCoop2Properties.getErroriHttpHeaderGovWayCode==null){
+			try{  
+				String name = this.reader.getValue_convertEnvProperties(pName); 
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayCode = name;
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_CODE()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayCode = org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_CODE();
+			}
+		}
+
+		return OpenSPCoop2Properties.getErroriHttpHeaderGovWayCode;
+	}
+	
+	
+	
+	private static Boolean isErroriSoapUseGovWayStatusAsFaultCode = null;
+	public boolean isErroriSoapUseGovWayStatusAsFaultCode(){
+		if(OpenSPCoop2Properties.isErroriSoapUseGovWayStatusAsFaultCode==null){
+			String pName = "org.openspcoop2.pdd.errori.soap.useGovWayStatusAsFaultCode";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isErroriSoapUseGovWayStatusAsFaultCode = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isErroriSoapUseGovWayStatusAsFaultCode = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isErroriSoapUseGovWayStatusAsFaultCode = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isErroriSoapUseGovWayStatusAsFaultCode;
+	}
+	
+	private static Boolean isErroriSoapHttpHeaderGovWayCodeEnabled = null;
+	public boolean isErroriSoapHttpHeaderGovWayCodeEnabled(){
+		if(OpenSPCoop2Properties.isErroriSoapHttpHeaderGovWayCodeEnabled==null){
+			String pName = "org.openspcoop2.pdd.errori.soap.HttpHeaderGovWayCode.enabled";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isErroriSoapHttpHeaderGovWayCodeEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isErroriSoapHttpHeaderGovWayCodeEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isErroriSoapHttpHeaderGovWayCodeEnabled = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isErroriSoapHttpHeaderGovWayCodeEnabled;
+	}
+	
+	private static Boolean isErroriGovWayStatusEnabled = null;
+	public boolean isErroriGovWayStatusEnabled(){
+		if(OpenSPCoop2Properties.isErroriGovWayStatusEnabled==null){
+			String pName = "org.openspcoop2.pdd.errori.status";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isErroriGovWayStatusEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isErroriGovWayStatusEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isErroriGovWayStatusEnabled = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isErroriGovWayStatusEnabled;
+	}
+	
+	private static Boolean isErroriGovWayInstanceEnabled = null;
+	public boolean isErroriGovWayInstanceEnabled(){
+		if(OpenSPCoop2Properties.isErroriGovWayInstanceEnabled==null){
+			String pName = "org.openspcoop2.pdd.errori.instance";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isErroriGovWayInstanceEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isErroriGovWayInstanceEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isErroriGovWayInstanceEnabled = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isErroriGovWayInstanceEnabled;
+	}
+	
+	private static Boolean isErroriGovWayForceSpecificDetails = null;
+	public boolean isErroriGovWayForceSpecificDetails(){
+		if(OpenSPCoop2Properties.isErroriGovWayForceSpecificDetails==null){
+			String pName = "org.openspcoop2.pdd.errori.forceSpecificDetails";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isErroriGovWayForceSpecificDetails = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isErroriGovWayForceSpecificDetails = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isErroriGovWayForceSpecificDetails = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isErroriGovWayForceSpecificDetails;
+	}
+	
+	private static Boolean isErroriGovWayFaultDetailsWithProblemRFC7807 = null;
+	public boolean isErroriGovWayFaultDetailsWithProblemRFC7807(){
+		if(OpenSPCoop2Properties.isErroriGovWayFaultDetailsWithProblemRFC7807==null){
+			String pName = "org.openspcoop2.pdd.errori.faultDetailsWithProblemRFC7807";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isErroriGovWayFaultDetailsWithProblemRFC7807 = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isErroriGovWayFaultDetailsWithProblemRFC7807 = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isErroriGovWayFaultDetailsWithProblemRFC7807 = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isErroriGovWayFaultDetailsWithProblemRFC7807;
+	}
+	
+	
+	
+	
+	private static Boolean isProblemRFC7807_enrichTitleAsGovWayType = null;
+	public boolean isProblemRFC7807_enrichTitleAsGovWayType(){
+		if(OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType==null){
+			String pName = "org.openspcoop2.pdd.problemRFC7807.enrichTitleAsGovWayType";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType;
+	}
+	
+	
+	private static Boolean isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode = null;
+	public boolean isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode(){
+		if(OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode==null){
+			String pName = "org.openspcoop2.pdd.problemRFC7807.enrichTitleAsGovWayType.camelCaseDecode";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode;
+	}
+	
+	
+	private static Boolean isProblemRFC7807_enrichTitleAsGovWayType_customClaim = null;
+	public boolean isProblemRFC7807_enrichTitleAsGovWayType_customClaim(){
+		if(OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_customClaim==null){
+			String pName = "org.openspcoop2.pdd.problemRFC7807.enrichTitleAsGovWayType.customClaim";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_customClaim = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_customClaim = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_customClaim = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isProblemRFC7807_enrichTitleAsGovWayType_customClaim;
+	}
+	
 
 	private static String getProblemRFC7807_transactionId_claim = null;
 	public String getProblemRFC7807_transactionId_claim(){
@@ -6205,6 +6518,27 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getProblemRFC7807_code_claim;
+	}
+	
+	private static String getProblemRFC7807_type_claim = null;
+	public String getProblemRFC7807_type_claim(){
+		
+		String pName = "org.openspcoop2.pdd.problemRFC7807.type.claim";
+		if(OpenSPCoop2Properties.getProblemRFC7807_type_claim==null){
+			try{  
+				String fault = this.reader.getValue_convertEnvProperties(pName); 
+				if(fault==null)
+					throw new Exception("non definita");
+				fault = fault.trim();
+				OpenSPCoop2Properties.getProblemRFC7807_type_claim = fault;
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TYPE()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getProblemRFC7807_type_claim = org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TYPE();
+			}
+		}
+
+		return OpenSPCoop2Properties.getProblemRFC7807_type_claim;
 	}
 
 
@@ -19805,6 +20139,96 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- Service Unavailable ---------------------*/
 	
+	private static Integer getServiceUnavailableRetryAfterSeconds_pd = null;
+	public Integer getServiceUnavailableRetryAfterSeconds_pd() {	
+		if(OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_pd==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_pd = Integer.parseInt(name);
+				}
+				else {
+					throw new Exception("Proprietà non definita");
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds', default:60 : "+e.getMessage(),e);
+				OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_pd = 60;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_pd;
+	}
+	
+	private static Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = null;
+	public Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pd() {	
+		if(OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = Integer.parseInt(name);
+				}
+				else {
+					OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = 0;
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = 0;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd;
+	}
+	
+	private static Integer getServiceUnavailableRetryAfterSeconds_pa = null;
+	public Integer getServiceUnavailableRetryAfterSeconds_pa() {	
+		if(OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_pa==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_pa = Integer.parseInt(name);
+				}
+				else {
+					throw new Exception("Proprietà non definita");
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds', default:60 : "+e.getMessage(),e);
+				OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_pa = 60;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_pa;
+	}
+	
+	private static Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = null;
+	public Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pa() {	
+		if(OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = Integer.parseInt(name);
+				}
+				else {
+					OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = 0;
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = 0;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa;
+	}
+	
+	
+	
 	private static Boolean isEnabledServiceUnavailableRetryAfter_pd_suspend = null;
 	public boolean isEnabledServiceUnavailableRetryAfter_pd_suspend() {	
 		if(OpenSPCoop2Properties.isEnabledServiceUnavailableRetryAfter_pd_suspend==null){
@@ -20065,6 +20489,39 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed;
 	}
 	
+	
+	private static List<String> isReadTimedOut = null;
+	public boolean isServiceUnavailable_ReadTimedOut(String msg) {	
+		if(OpenSPCoop2Properties.isReadTimedOut==null){
+			try{ 
+				Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.readTimedOut.");
+				isReadTimedOut = new ArrayList<String>();
+				if(p!=null && !p.isEmpty()) {
+					Iterator<Object> it = p.values().iterator();
+					while (it.hasNext()) {
+						Object o = (Object) it.next();
+						if(o!=null && o instanceof String) {
+							String s = (String) o;
+							isReadTimedOut.add(s);
+						}
+					}
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.error.': "+e.getMessage(),e);
+				isReadTimedOut = new ArrayList<String>();
+			}    
+		}
+
+		if(isReadTimedOut!=null && !isReadTimedOut.isEmpty()) {
+			for (String s : isReadTimedOut) {
+				if(msg.contains(s)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 	
 	
 	/* ------------- Statistiche ---------------------*/

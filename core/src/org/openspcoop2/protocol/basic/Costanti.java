@@ -45,6 +45,72 @@ public class Costanti {
 	public static final String ERRORE_PROTOCOLLO_PREFIX = "protocol";
 	public final static String ERRORE_PROTOCOLLO_PREFIX_CODE = ERRORE_INTEGRAZIONE_PREFIX_CODE; // e' stato deciso di usare lo stesso dell'integrazione. Viene differenziato per namespace
 	
+	
+	
+	private static final Boolean PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE = true;
+	private static Boolean valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE = null;
+	public static Boolean isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE() {
+		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE==null) {
+			initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE(null);
+		}
+		return valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE;
+	}
+	public static synchronized void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE(Boolean v) {
+		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE==null) {
+			if(v!=null){
+				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE = v;
+			}
+			else {
+				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE;
+			}
+		}
+	}
+	
+	
+	
+	private static final Boolean PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE = true;
+	private static Boolean valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE = null;
+	public static Boolean isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE() {
+		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE==null) {
+			initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE(null);
+		}
+		return valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE;
+	}
+	public static synchronized void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE(Boolean v) {
+		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE==null) {
+			if(v!=null){
+				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE = v;
+			}
+			else {
+				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE;
+			}
+		}
+	}
+	
+	
+	
+	private static final Boolean PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM = true;
+	private static Boolean valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM = null;
+	public static Boolean isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM() {
+		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM==null) {
+			initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM(null);
+		}
+		return valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM;
+	}
+	public static synchronized void initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM(Boolean v) {
+		if(valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM==null) {
+			if(v!=null){
+				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM = v;
+			}
+			else {
+				valuePROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM = PROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM;
+			}
+		}
+	}
+	
+	
+	
+	
 	private static final String PROBLEM_RFC7807_GOVWAY_CODE = "govway_status";
 	public static String _getPROBLEM_RFC7807_GOVWAY_CODE() {
 		return PROBLEM_RFC7807_GOVWAY_CODE;
@@ -63,6 +129,28 @@ public class Costanti {
 			}
 			else {
 				valuePROBLEM_RFC7807_GOVWAY_CODE = PROBLEM_RFC7807_GOVWAY_CODE;
+			}
+		}
+	}
+	
+	private static final String PROBLEM_RFC7807_GOVWAY_TYPE = "govway_type";
+	public static String _getPROBLEM_RFC7807_GOVWAY_TYPE() {
+		return PROBLEM_RFC7807_GOVWAY_TYPE;
+	}
+	private static String valuePROBLEM_RFC7807_GOVWAY_TYPE = null;
+	public static String getPROBLEM_RFC7807_GOVWAY_TYPE() {
+		if(valuePROBLEM_RFC7807_GOVWAY_TYPE==null) {
+			initPROBLEM_RFC7807_GOVWAY_TYPE(null);
+		}
+		return valuePROBLEM_RFC7807_GOVWAY_TYPE;
+	}
+	public static synchronized void initPROBLEM_RFC7807_GOVWAY_TYPE(String name) {
+		if(valuePROBLEM_RFC7807_GOVWAY_TYPE==null) {
+			if(name!=null && !"".equals(name)){
+				valuePROBLEM_RFC7807_GOVWAY_TYPE = name;
+			}
+			else {
+				valuePROBLEM_RFC7807_GOVWAY_TYPE = PROBLEM_RFC7807_GOVWAY_TYPE;
 			}
 		}
 	}
@@ -91,6 +179,113 @@ public class Costanti {
 			}
 		}
 	}
+	
+	
+	
+	
+	private static final String HTTP_HEADER_GOVWAY_ERROR_STATUS = "GovWay-Transaction-ErrorStatus";
+	public static String _getHTTP_HEADER_GOVWAY_ERROR_STATUS() {
+		return HTTP_HEADER_GOVWAY_ERROR_STATUS;
+	}
+	private static String valueHTTP_HEADER_GOVWAY_ERROR_STATUS = null;
+	public static String getHTTP_HEADER_GOVWAY_ERROR_STATUS() {
+		if(valueHTTP_HEADER_GOVWAY_ERROR_STATUS==null) {
+			initHTTP_HEADER_GOVWAY_ERROR_STATUS(null);
+		}
+		return valueHTTP_HEADER_GOVWAY_ERROR_STATUS;
+	}
+	public static synchronized void initHTTP_HEADER_GOVWAY_ERROR_STATUS(String name) {
+		if(valueHTTP_HEADER_GOVWAY_ERROR_STATUS==null) {
+			if(name!=null && !"".equals(name)){
+				valueHTTP_HEADER_GOVWAY_ERROR_STATUS = name;
+			}
+			else {
+				valueHTTP_HEADER_GOVWAY_ERROR_STATUS = HTTP_HEADER_GOVWAY_ERROR_STATUS;
+			}
+		}
+	}
+	
+	
+	
+	
+	private static final String HTTP_HEADER_GOVWAY_ERROR_TYPE = "GovWay-Transaction-ErrorType";
+	public static String _getHTTP_HEADER_GOVWAY_ERROR_TYPE() {
+		return HTTP_HEADER_GOVWAY_ERROR_TYPE;
+	}
+	private static String valueHTTP_HEADER_GOVWAY_ERROR_TYPE = null;
+	public static String getHTTP_HEADER_GOVWAY_ERROR_TYPE() {
+		if(valueHTTP_HEADER_GOVWAY_ERROR_TYPE==null) {
+			initHTTP_HEADER_GOVWAY_ERROR_TYPE(null);
+		}
+		return valueHTTP_HEADER_GOVWAY_ERROR_TYPE;
+	}
+	public static synchronized void initHTTP_HEADER_GOVWAY_ERROR_TYPE(String name) {
+		if(valueHTTP_HEADER_GOVWAY_ERROR_TYPE==null) {
+			if(name!=null && !"".equals(name)){
+				valueHTTP_HEADER_GOVWAY_ERROR_TYPE = name;
+			}
+			else {
+				valueHTTP_HEADER_GOVWAY_ERROR_TYPE = HTTP_HEADER_GOVWAY_ERROR_TYPE;
+			}
+		}
+	}
+	
+	
+	
+	
+	private static final String HTTP_HEADER_GOVWAY_ERROR_CODE = "GovWay-Transaction-ErrorCode";
+	public static String _getHTTP_HEADER_GOVWAY_ERROR_CODE() {
+		return HTTP_HEADER_GOVWAY_ERROR_CODE;
+	}
+	private static String valueHTTP_HEADER_GOVWAY_ERROR_CODE = null;
+	public static String getHTTP_HEADER_GOVWAY_ERROR_CODE() {
+		if(valueHTTP_HEADER_GOVWAY_ERROR_CODE==null) {
+			initHTTP_HEADER_GOVWAY_ERROR_CODE(null);
+		}
+		return valueHTTP_HEADER_GOVWAY_ERROR_CODE;
+	}
+	public static synchronized void initHTTP_HEADER_GOVWAY_ERROR_CODE(String name) {
+		if(valueHTTP_HEADER_GOVWAY_ERROR_CODE==null) {
+			if(name!=null && !"".equals(name)){
+				valueHTTP_HEADER_GOVWAY_ERROR_CODE = name;
+			}
+			else {
+				valueHTTP_HEADER_GOVWAY_ERROR_CODE = HTTP_HEADER_GOVWAY_ERROR_CODE;
+			}
+		}
+	}
+	
+	
+	
+	
+	public static boolean TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE = false;
+	
+	public static boolean TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = false;
+	
+	private static final String TRANSACTION_ERROR_SOAP_HTTP_CODE_SEPARATOR = "-";
+	private static final boolean TRANSACTION_ERROR_SOAP_HTTP_CODE_USE = false;
+	public static final String getTransactionSoapFaultCode(int govwayReturnCode, String govwayErrorType) {
+		if(TRANSACTION_ERROR_SOAP_HTTP_CODE_USE) {
+			return govwayReturnCode+Costanti.TRANSACTION_ERROR_SOAP_HTTP_CODE_SEPARATOR+govwayErrorType;
+		}
+		else {
+			return govwayErrorType;
+		}
+	}
+	
+	
+	public static boolean TRANSACTION_ERROR_STATUS_ABILITATO = false;
+	
+	public static boolean TRANSACTION_ERROR_INSTANCE_ID_ABILITATO = false;
+	
+	public static boolean TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS = false;
+	
+	public static boolean TRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807 = false;
+	
+
+	
+	
+	
 	
     /** Ora di creazione di un tracciamento. Il token 'locale' indica il tempo locale
     non sincronizzato da sistema che lo imposta*/

@@ -1,3 +1,32 @@
+2020-06-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1007
+	Aggiunto supporto per wildfly 19.
+
+2020-06-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1003
+	Revisione dei codici di errore ritornati.
+
+2020-06-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Revisione delle govlet per gestire correttamente il soggetto referente di 'default' per il Profilo API Gateway.
+	Aggiunta govlet per ANPR.
+
+2020-06-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	La sospensione di una API (erogazione/fruizione), o la successiva riattivazione, non necessita più un'operazione di reset delle cache per l'effettiva applicazione sul runtime di GovWay.
+	L'operazione effettuata tramite console è immediatamente applicata sul runtime.
+
+2020-06-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	La funzionalità di validazione dei contenuti applicativi è adesso "disattivabile" sulla fase di richiesta o risposta utilizzando le proprietà dell'API.
+
 2020-05-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

@@ -27,8 +27,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.builder.DateBuilder;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -39,6 +42,10 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.utils.ErroriProperties;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * <p>Java class for IntegrationManagerException complex type.
@@ -109,46 +116,145 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	private CodiceErroreCooperazione codiceErroreCooperazione;
 	private ProprietaErroreApplicativo proprietaErroreAppl;
     
+	
+	private void _setCode(String codErrore, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException {
+		if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO){
+			this.codiceEccezione = codErrore;
+		}
+		else {
+			String govwayType = erroriProperties.getErrorType(functionError);
+			this.codiceEccezione = govwayType;
+		}
+	}
+	private static String _getDescription(String descrErrore, IntegrationFunctionError functionError, ErroriProperties erroriProperties) {
+		try {
+			boolean genericDetails = false;
+			if(erroriProperties.isForceGenericDetails(functionError)) {
+				genericDetails = true;
+			}
+			if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+				genericDetails = false;
+			}
+			
+			if(genericDetails){
+				String govwayDetails = erroriProperties.getGenericDetails(functionError);
+				return govwayDetails;
+			}
+			else {
+				return descrErrore;
+			}
+		}catch(ProtocolException pExc) {
+			return descrErrore; // errore non dovrebbe succedere
+		}
+	}
+	private void _setDescription(String descrErrore, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException {
+		this.descrizioneEccezione = _getDescription(descrErrore, functionError, erroriProperties);
+	}
+	
+	public IntegrationManagerException(OpenSPCoop2SoapMessage message, String faultCode, String faultString, IDSoggetto identitaPdD, String identificativoFunzione) throws Exception {
+		
+		Object govwayPrefixCodeInContextProperty = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_PREFIX_CODE);
+		Object govwayCodeInContextProperty = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE);
+		//Object govwayDetailsInContextProperty = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_DETAILS);
+		
+		String govwayPrefixInternalErrorCode = null;
+		String govwayInternalErrorCode = null;
+		if(govwayPrefixCodeInContextProperty!=null && govwayCodeInContextProperty!=null){
+			govwayPrefixInternalErrorCode = (String) govwayPrefixCodeInContextProperty;
+			govwayInternalErrorCode = (String) govwayCodeInContextProperty;
+		
+			if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO){
+				this.codiceEccezione = govwayInternalErrorCode;
+			}
+			else {
+				if(faultCode.startsWith(org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT+org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR)) {
+					this.codiceEccezione = faultCode.substring((org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT+org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR).length());
+				}
+				else if(faultCode.startsWith(org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER+org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR)) {
+					this.codiceEccezione = faultCode.substring((org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER+org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR).length());
+				}
+				else {
+					this.codiceEccezione = faultCode;
+				}
+			}
+			
+			if(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL.equals(govwayPrefixInternalErrorCode)){
+				this.setTipoEccezione(IntegrationManagerException.ECCEZIONE_PROTOCOLLO);
+			}
+			else {
+				this.setTipoEccezione(IntegrationManagerException.ECCEZIONE_INTEGRAZIONE);
+			}
+			
+			this.setDescrizioneEccezione(faultString);
+			
+			this.setOraRegistrazione(DateUtils.getSimpleDateFormatMs().format(DateManager.getDate()));
+			
+			this.setIdentificativoPorta(identitaPdD.getCodicePorta());
+			
+			this.setIdentificativoFunzione(identificativoFunzione);
+		}
+		else {
+			throw new Exception("Not exists internal error code");
+		}
 
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore) {
-		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_INTEGRAZIONE,null);
 	}
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,IDServizioApplicativo servizioApplicativo) {
-		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_INTEGRAZIONE,servizioApplicativo);
+	
+
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) {
+		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_INTEGRAZIONE,null, 
+				functionError, erroriProperties);
 	}
-	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,String tipo,IDServizioApplicativo servizioApplicativo) {
-		super(errore.getDescrizioneRawValue());
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,IDServizioApplicativo servizioApplicativo, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) {
+		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_INTEGRAZIONE,servizioApplicativo, 
+				functionError, erroriProperties);
+	}
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,String tipo,IDServizioApplicativo servizioApplicativo, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) {
+		super( _getDescription(errore.getDescrizioneRawValue(), functionError, erroriProperties) );
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
 			this.codiceErroreIntegrazione = errore.getCodiceErrore();
+			String cod = null;
+			String desc = null;
 			if(protocolFactory!=null){
-				this.codiceEccezione = protocolFactory.createTraduttore().toString(errore.getCodiceErrore(), 
+				cod = protocolFactory.createTraduttore().toString(errore.getCodiceErrore(), 
 						this.proprietaErroreAppl.getFaultPrefixCode(), this.proprietaErroreAppl.isFaultAsGenericCode());
-				this.descrizioneEccezione = errore.getDescrizione(protocolFactory);
+				desc = errore.getDescrizione(protocolFactory);
 			}
 			else{
-				this.codiceEccezione = errore.getCodiceErrore().getCodice()+"";
-				this.descrizioneEccezione = errore.getDescrizioneRawValue();
+				cod = errore.getCodiceErrore().getCodice()+"";
+				desc = errore.getDescrizioneRawValue();
 			}
+			this._setCode(cod, functionError, erroriProperties);
+			this._setDescription(desc, functionError, erroriProperties);
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 	
 
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore) {
-		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,null);
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) {
+		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,null, 
+				functionError, erroriProperties);
 	}
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,IDServizioApplicativo servizioApplicativo) {
-		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,servizioApplicativo);
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,IDServizioApplicativo servizioApplicativo, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) {
+		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,servizioApplicativo, 
+				functionError, erroriProperties);
 	}
-	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,String tipo,IDServizioApplicativo servizioApplicativo)  {
-		super(errore.getDescrizioneRawValue());
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,String tipo,IDServizioApplicativo servizioApplicativo, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties)  {
+		super( _getDescription(errore.getDescrizioneRawValue(), functionError, erroriProperties) );
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
 			this.codiceErroreCooperazione = errore.getCodiceErrore();
-			this.codiceEccezione = protocolFactory.createTraduttore().toString(errore.getCodiceErrore());
-			this.descrizioneEccezione = errore.getDescrizione(protocolFactory);
+			String cod = protocolFactory.createTraduttore().toString(errore.getCodiceErrore());
+			String desc = errore.getDescrizione(protocolFactory);
+			this._setCode(cod, functionError, erroriProperties);
+			this._setDescription(desc, functionError, erroriProperties);
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -156,19 +262,26 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	
 	
 	
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore)  {
-		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,null);
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties)  {
+		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,null, 
+				functionError, erroriProperties);
 	}
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,IDServizioApplicativo servizioApplicativo) {
-		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,servizioApplicativo);
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,IDServizioApplicativo servizioApplicativo, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) {
+		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,servizioApplicativo, 
+				functionError, erroriProperties);
 	}
-	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,String tipo,IDServizioApplicativo servizioApplicativo) {
-		super(getDescrizione(errore,protocolFactory));
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,String tipo,IDServizioApplicativo servizioApplicativo, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) {
+		super( _getDescription(getDescrizione(errore,protocolFactory), functionError, erroriProperties) );
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
 			this.codiceErroreCooperazione = errore.getCodiceEccezione();
-			this.codiceEccezione = protocolFactory.createTraduttore().toString(errore.getCodiceEccezione());
-			this.descrizioneEccezione = errore.getDescrizione(protocolFactory);
+			String cod = protocolFactory.createTraduttore().toString(errore.getCodiceEccezione());
+			String desc = errore.getDescrizione(protocolFactory);
+			this._setCode(cod, functionError, erroriProperties);
+			this._setDescription(desc, functionError, erroriProperties);
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(), e);
 		}

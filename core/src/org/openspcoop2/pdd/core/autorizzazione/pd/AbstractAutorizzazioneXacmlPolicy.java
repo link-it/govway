@@ -33,6 +33,7 @@ import org.openspcoop2.pdd.core.autorizzazione.XACMLPolicyUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.xacml.MarshallUtilities;
 import org.openspcoop2.utils.xacml.ResultCombining;
 import org.openspcoop2.utils.xacml.ResultUtilities;
@@ -128,7 +129,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     		initDatiPolicy(datiInvocazione,true);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (init XACML-Policy)",e);
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setAutorizzato(false);
 			esito.setEccezioneProcessamento(e);
@@ -151,7 +152,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     		XACMLPolicyUtilities.loadPolicy(xacmlPolicyPorta, idServizio, this.policyKey, true, fruitore, this.log);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (load XACML-Policy)",e);
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setAutorizzato(false);
 			esito.setEccezioneProcessamento(e);
@@ -168,7 +169,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 	    	xacmlRequest = this.getXacmlRequest(datiInvocazione, this.log);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (create XACML-Request)",e);
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setAutorizzato(false);
 			esito.setEccezioneProcessamento(e);
@@ -185,7 +186,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 			results = ResultUtilities.evaluate(xacmlRequest, this.log, this.policyKey, XACMLPolicyUtilities.getPolicyDecisionPoint(this.log));
 		}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (evaluate XACML-Request)",e);
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setAutorizzato(false);
 			esito.setEccezioneProcessamento(e);
@@ -206,18 +207,18 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     			String resultAsString = ResultUtilities.toString(results, decision);
     			esito.setAutorizzato(false);
         		if(servizioApplicativo!=null){
-        			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+        			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_POLICY_DENY, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
         					getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativo,resultAsString));
     			}
     			else{
-    				esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+    				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_POLICY_DENY, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
     						getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo(resultAsString));
     			}
     			return esito;
         		
     		}catch(Exception e){
         		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") fallita (read XACML-Results)",e);
-        		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+        		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
         				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
     			esito.setAutorizzato(false);
     			esito.setEccezioneProcessamento(e);

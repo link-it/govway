@@ -19,16 +19,21 @@
  */
 package org.openspcoop2.protocol.trasparente.testsuite.units.soap.mtom;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Vector;
 
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.trasparente.testsuite.core.TrasparenteTestsuiteLogger;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.MTOMThread;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.MTOMUtilities;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -40,10 +45,19 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MTOMPortaDelegata {
+public class MTOMPortaDelegata extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "MTOMPortaDelegata";
+	
+	
+	@SuppressWarnings("unused")
+	private Logger log = TrasparenteTestsuiteLogger.getInstance();
+	
+	protected MTOMPortaDelegata() {
+		super(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
 	
 	private static boolean addIDUnivoco = true;
 
@@ -345,7 +359,43 @@ public class MTOMPortaDelegata {
 	
 	
 	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP11_VERIFY_KO_REQUEST"})
-	public void testMTOM_Soap11_verifyKo_request() throws Exception{
+	public void testMTOM_Soap11_verifyKo_request_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap11_verifyKo_request(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP11_VERIFY_KO_REQUEST"})
+	public void testMTOM_Soap11_verifyKo_request_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap11_verifyKo_request(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP11_VERIFY_KO_REQUEST"})
+	public void testMTOM_Soap11_verifyKo_request_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap11_verifyKo_request(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testMTOM_Soap11_verifyKo_request(boolean genericCode, boolean unwrap) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -359,6 +409,7 @@ public class MTOMPortaDelegata {
         				MTOMUtilities.OTHER_ATTACHMENTS_ENABLED,
         				CostantiTestSuite.PROXY_SERVIZIO_MTOM_AZIONE_ECHO,
         				3,3,
+        				true, genericCode, unwrap,
         				true,"Processamento MTOM (verify) della richiesta fallito: "+msgErrore,true,dataInizioTest);
 		
 		Date dataFineTest = DateManager.getDate();
@@ -373,7 +424,43 @@ public class MTOMPortaDelegata {
 	
 	
 	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP12_VERIFY_KO_REQUEST"})
-	public void testMTOM_Soap12_verifyKo_request() throws Exception{
+	public void testMTOM_Soap12_verifyKo_request_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap12_verifyKo_request(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP12_VERIFY_KO_REQUEST"})
+	public void testMTOM_Soap12_verifyKo_request_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap12_verifyKo_request(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP12_VERIFY_KO_REQUEST"})
+	public void testMTOM_Soap12_verifyKo_request_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap12_verifyKo_request(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testMTOM_Soap12_verifyKo_request(boolean genericCode, boolean unwrap) throws Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -387,6 +474,7 @@ public class MTOMPortaDelegata {
         				MTOMUtilities.OTHER_ATTACHMENTS_ENABLED,
         				CostantiTestSuite.PROXY_SERVIZIO_MTOM_AZIONE_ECHO,
         				3,3,
+        				true, genericCode, unwrap,
         				true,"Processamento MTOM (verify) della richiesta fallito: "+msgErrore,true,dataInizioTest);
 		
 		Date dataFineTest = DateManager.getDate();
@@ -407,7 +495,43 @@ public class MTOMPortaDelegata {
 	
 	
 	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP11_VERIFY_KO_RESPONSE"})
-	public void testMTOM_Soap11_verifyKo_response() throws Exception{
+	public void testMTOM_Soap11_verifyKo_response_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap11_verifyKo_response(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP11_VERIFY_KO_RESPONSE"})
+	public void testMTOM_Soap11_verifyKo_response_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap11_verifyKo_response(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP11_VERIFY_KO_RESPONSE"})
+	public void testMTOM_Soap11_verifyKo_response_request_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap11_verifyKo_response(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testMTOM_Soap11_verifyKo_response(boolean genericCode, boolean unwrap) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -421,6 +545,7 @@ public class MTOMPortaDelegata {
         				MTOMUtilities.OTHER_ATTACHMENTS_ENABLED,
         				CostantiTestSuite.PROXY_SERVIZIO_MTOM_AZIONE_ECHO,
         				3,3,
+        				false, genericCode, unwrap,
         				true,msgErrore,false,dataInizioTest);
 		
 		Date dataFineTest = DateManager.getDate();
@@ -435,7 +560,43 @@ public class MTOMPortaDelegata {
 	
 	
 	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP12_VERIFY_KO_RESPONSE"})
-	public void testMTOM_Soap12_verifyKo_response() throws Exception{
+	public void testMTOM_Soap12_verifyKo_response_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap12_verifyKo_response(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP12_VERIFY_KO_RESPONSE"})
+	public void testMTOM_Soap12_verifyKo_response_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap12_verifyKo_response(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={MTOMPortaDelegata.ID_GRUPPO,MTOMPortaDelegata.ID_GRUPPO+".SOAP12_VERIFY_KO_RESPONSE"})
+	public void testMTOM_Soap12_verifyKo_response_request_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testMTOM_Soap12_verifyKo_response(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testMTOM_Soap12_verifyKo_response(boolean genericCode, boolean unwrap) throws Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -449,6 +610,7 @@ public class MTOMPortaDelegata {
         				MTOMUtilities.OTHER_ATTACHMENTS_ENABLED,
         				CostantiTestSuite.PROXY_SERVIZIO_MTOM_AZIONE_ECHO,
         				3,3,
+        				false, genericCode, unwrap,
         				true,msgErrore,false,dataInizioTest);
 		
 		Date dataFineTest = DateManager.getDate();

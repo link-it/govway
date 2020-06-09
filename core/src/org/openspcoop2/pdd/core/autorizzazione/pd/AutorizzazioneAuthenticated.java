@@ -29,6 +29,7 @@ import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Classe che implementa una autorizzazione basata sui servizi applicativi autenticati.
@@ -54,18 +55,18 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     	try{
     		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
     				autorizzazione(datiInvocazione.getPd(),servizioApplicativo) == false ){
-    			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+    			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
     					getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativo));
     			esito.setAutorizzato(false);
     			return esito;
     		}
     	}catch(DriverConfigurazioneNotFound e){
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.getErrore401_PortaInesistente(e.getMessage(), servizioApplicativo));
+    		esito.setErroreIntegrazione(IntegrationFunctionError.NOT_FOUND, ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.getErrore401_PortaInesistente(e.getMessage(), servizioApplicativo));
 			esito.setAutorizzato(false);
 			return esito;
     	}catch(DriverConfigurazioneException e){
     		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutorizzazioneOpenSPCoop non riuscita",e);
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setAutorizzato(false);
 			esito.setEccezioneProcessamento(e);

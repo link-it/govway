@@ -102,7 +102,7 @@ public class ClassNameProperties {
 	 *
 	 * 
 	 */
-	public ClassNameProperties() throws Exception {
+	public ClassNameProperties(boolean logError) throws Exception {
 
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -119,7 +119,9 @@ public class ClassNameProperties {
 			}
 		    propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'govway.classRegistry.properties': \n\n"+e.getMessage());
+			if(logError) {
+				this.log.error("Riscontrato errore durante la lettura del file 'govway.classRegistry.properties': \n\n"+e.getMessage());
+			}
 		    throw new Exception("ClassName initialize error: "+e.getMessage());
 		}finally{
 		    try{
@@ -147,10 +149,10 @@ public class ClassNameProperties {
 	 *
 	 * 
 	 */
-	public static boolean initialize(){
+	public static boolean initialize(boolean logError){
 
 		try {
-		    ClassNameProperties.classNameProperties = new ClassNameProperties();	
+		    ClassNameProperties.classNameProperties = new ClassNameProperties(logError);	
 		    return true;
 		}
 		catch(Exception e) {
@@ -166,7 +168,7 @@ public class ClassNameProperties {
 	 */
 	public static ClassNameProperties getInstance(){
 	    if(ClassNameProperties.classNameProperties==null)
-	    	ClassNameProperties.initialize();
+	    	ClassNameProperties.initialize(false);
 	    return ClassNameProperties.classNameProperties;
 	}
     

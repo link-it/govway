@@ -41,9 +41,14 @@ import java.io.Serializable;
  * 			&lt;element name="authorization" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="notFound" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="badRequest" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="conflict" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="limitExceeded" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="tooManyRequests" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
- * 			&lt;element name="internalError" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="serviceUnavailable" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="endpointRequestTimedOut" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="badResponse" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="internalRequestError" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="internalResponseError" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/manifest}DefaultIntegrationError" minOccurs="1" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="problemType" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorProblemType" use="required"/&gt;
@@ -65,9 +70,14 @@ import java.io.Serializable;
   	"authorization",
   	"notFound",
   	"badRequest",
+  	"conflict",
+  	"limitExceeded",
   	"tooManyRequests",
-  	"internalError",
   	"serviceUnavailable",
+  	"endpointRequestTimedOut",
+  	"badResponse",
+  	"internalRequestError",
+  	"internalResponseError",
   	"_default"
   }
 )
@@ -118,6 +128,22 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
     this.badRequest = badRequest;
   }
 
+  public IntegrationError getConflict() {
+    return this.conflict;
+  }
+
+  public void setConflict(IntegrationError conflict) {
+    this.conflict = conflict;
+  }
+
+  public IntegrationError getLimitExceeded() {
+    return this.limitExceeded;
+  }
+
+  public void setLimitExceeded(IntegrationError limitExceeded) {
+    this.limitExceeded = limitExceeded;
+  }
+
   public IntegrationError getTooManyRequests() {
     return this.tooManyRequests;
   }
@@ -126,20 +152,44 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
     this.tooManyRequests = tooManyRequests;
   }
 
-  public IntegrationError getInternalError() {
-    return this.internalError;
-  }
-
-  public void setInternalError(IntegrationError internalError) {
-    this.internalError = internalError;
-  }
-
   public IntegrationError getServiceUnavailable() {
     return this.serviceUnavailable;
   }
 
   public void setServiceUnavailable(IntegrationError serviceUnavailable) {
     this.serviceUnavailable = serviceUnavailable;
+  }
+
+  public IntegrationError getEndpointRequestTimedOut() {
+    return this.endpointRequestTimedOut;
+  }
+
+  public void setEndpointRequestTimedOut(IntegrationError endpointRequestTimedOut) {
+    this.endpointRequestTimedOut = endpointRequestTimedOut;
+  }
+
+  public IntegrationError getBadResponse() {
+    return this.badResponse;
+  }
+
+  public void setBadResponse(IntegrationError badResponse) {
+    this.badResponse = badResponse;
+  }
+
+  public IntegrationError getInternalRequestError() {
+    return this.internalRequestError;
+  }
+
+  public void setInternalRequestError(IntegrationError internalRequestError) {
+    this.internalRequestError = internalRequestError;
+  }
+
+  public IntegrationError getInternalResponseError() {
+    return this.internalResponseError;
+  }
+
+  public void setInternalResponseError(IntegrationError internalResponseError) {
+    this.internalResponseError = internalResponseError;
   }
 
   public DefaultIntegrationError getDefault() {
@@ -201,14 +251,29 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="badRequest",required=false,nillable=false)
   protected IntegrationError badRequest;
 
+  @XmlElement(name="conflict",required=false,nillable=false)
+  protected IntegrationError conflict;
+
+  @XmlElement(name="limitExceeded",required=false,nillable=false)
+  protected IntegrationError limitExceeded;
+
   @XmlElement(name="tooManyRequests",required=false,nillable=false)
   protected IntegrationError tooManyRequests;
 
-  @XmlElement(name="internalError",required=false,nillable=false)
-  protected IntegrationError internalError;
-
   @XmlElement(name="serviceUnavailable",required=false,nillable=false)
   protected IntegrationError serviceUnavailable;
+
+  @XmlElement(name="endpointRequestTimedOut",required=false,nillable=false)
+  protected IntegrationError endpointRequestTimedOut;
+
+  @XmlElement(name="badResponse",required=false,nillable=false)
+  protected IntegrationError badResponse;
+
+  @XmlElement(name="internalRequestError",required=false,nillable=false)
+  protected IntegrationError internalRequestError;
+
+  @XmlElement(name="internalResponseError",required=false,nillable=false)
+  protected IntegrationError internalResponseError;
 
   @XmlElement(name="default",required=true,nillable=false)
   protected DefaultIntegrationError _default;

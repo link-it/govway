@@ -52,16 +52,19 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.information_missing.ReplaceFruitoreMatchType;
 import org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType;
 import org.openspcoop2.protocol.information_missing.ReplaceMatchType;
 import org.openspcoop2.protocol.information_missing.Soggetto;
 import org.openspcoop2.protocol.information_missing.constants.Costanti;
 import org.openspcoop2.protocol.information_missing.constants.ReplaceKeywordType;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 /**
  * ImporterInformationMissingSetter
@@ -72,6 +75,39 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
  */
 public class ImporterInformationMissingSetter {
 
+	public static void setInformationMissingReferenteAPI(Archive archive, IRegistryReader registryReader) throws ProtocolException {
+		// Accordi di Servizio Parte Comune 
+		if(archive.getAccordiServizioParteComune()!=null && archive.getAccordiServizioParteComune().size()>0) {
+			for (int i = 0; i < archive.getAccordiServizioParteComune().size(); i++) {
+				AccordoServizioParteComune as = archive.getAccordiServizioParteComune().get(i).getAccordoServizioParteComune();
+				IdSoggetto soggettoReferente = as.getSoggettoReferente();
+				String tipoSoggettoReferente = null;
+				String nomeSoggettoReferente = null;
+				if(soggettoReferente!=null){
+					tipoSoggettoReferente = soggettoReferente.getTipo();
+					nomeSoggettoReferente = soggettoReferente.getNome();
+				}
+				if(tipoSoggettoReferente!=null && !"".equals(tipoSoggettoReferente) && 
+						(nomeSoggettoReferente==null || "".equals(nomeSoggettoReferente))){
+					
+					ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance(); 
+					IProtocolFactory<?> protocol = protocolFactoryManager.getProtocolFactoryByOrganizationType(tipoSoggettoReferente);
+					boolean referente = protocol.createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+					if(!referente) {
+						String tipoSoggettoDefault = protocolFactoryManager.getDefaultOrganizationTypes().get(protocol.getProtocol());
+						IDSoggetto idSoggettoDefault = null;
+						try {
+							idSoggettoDefault = registryReader.getIdSoggettoDefault(tipoSoggettoDefault);
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
+						as.getSoggettoReferente().setNome(idSoggettoDefault.getNome());						
+					}
+				}
+			}
+		}
+	}
+	
 	public static void setInformationMissingSoggetto(Archive archive, Soggetto soggetto, IDSoggetto idSoggetto, Connettore connettore) throws ProtocolException{
 		
 		switch (soggetto.getTipo()) {
@@ -1121,7 +1157,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* REPLACE NAME **********
 	
-	protected static String replaceSoggettoProprietario(String original, String tipoSoggetto, String nomeSoggetto){
+	protected static String replaceSoggettoProprietarioOrDefault(IRegistryReader registryReader, String original, String tipoSoggetto, String nomeSoggetto) throws ProtocolException{
 		
 		if(original==null){
 			return null;
@@ -1132,6 +1168,21 @@ public class ImporterInformationMissingSetter {
 		if(tipoSoggetto!=null && !"".equals(tipoSoggetto)){
 			returnValue = returnValue.replace(Costanti.TIPO_SOGGETTO, tipoSoggetto);
 			returnValue = returnValue.replace(Costanti.TIPO_SOGGETTO_PROPRIETARIO, tipoSoggetto);
+			
+			if(original.contains(Costanti.NOME_SOGGETTO_DEFAULT)) {
+				
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance(); 
+				IProtocolFactory<?> protocol = protocolFactoryManager.getProtocolFactoryByOrganizationType(tipoSoggetto);
+				String tipoSoggettoDefault = protocolFactoryManager.getDefaultOrganizationTypes().get(protocol.getProtocol());
+				IDSoggetto idSoggettoDefault = null;
+				try {
+					idSoggettoDefault = registryReader.getIdSoggettoDefault(tipoSoggettoDefault);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				returnValue = returnValue.replace(Costanti.NOME_SOGGETTO_DEFAULT, idSoggettoDefault.getNome());
+				
+			}
 		}
 		
 		if(nomeSoggetto!=null && !"".equals(nomeSoggetto)){
@@ -1214,7 +1265,7 @@ public class ImporterInformationMissingSetter {
 		return returnValue;
 	}
 	
-	public static void replaceTemplatesNames(Archive archive) throws ProtocolException{
+	public static void replaceTemplatesNames(Archive archive, IRegistryReader registryReader) throws ProtocolException{
 			
 		// Soggetti
 		for (int i = 0; i < archive.getSoggetti().size(); i++) {
@@ -1224,38 +1275,38 @@ public class ImporterInformationMissingSetter {
 					if(soggetto.getConnettore().sizePropertyList()>0){
 						for (int j = 0; j < soggetto.getConnettore().sizePropertyList(); j++) {
 							org.openspcoop2.core.registry.Property p = soggetto.getConnettore().getProperty(j);
-							p.setNome(replaceSoggettoProprietario(p.getNome(), 
+							p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
 									soggetto.getTipo(),soggetto.getNome()));
-							p.setValore(replaceSoggettoProprietario(p.getValore(), 
+							p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
 									soggetto.getTipo(),soggetto.getNome()));
 						}
 					}
 				}
 				if(soggetto.getIdentificativoPorta()!=null) {
-					soggetto.setIdentificativoPorta(replaceSoggettoProprietario(soggetto.getIdentificativoPorta(), 
+					soggetto.setIdentificativoPorta(replaceSoggettoProprietarioOrDefault(registryReader,soggetto.getIdentificativoPorta(), 
 									soggetto.getTipo(),soggetto.getNome()));
 				}
 				if(soggetto.getPortaDominio()!=null) {
-					soggetto.setPortaDominio(replaceSoggettoProprietario(soggetto.getPortaDominio(), 
-									soggetto.getTipo(),soggetto.getNome()));
+					soggetto.setPortaDominio(replaceSoggettoProprietarioOrDefault(registryReader,soggetto.getPortaDominio(), 
+							soggetto.getTipo(),soggetto.getNome()));
 				}
 			}
 		}
 		
 		// ServiziApplicativi
 		for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
-			ServizioApplicativo sa = archive.getServiziApplicativi().get(i).getServizioApplicativo();
-			sa.setNome(replaceSoggettoProprietario(sa.getNome(), 
-					sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+			ServizioApplicativo sa = archive.getServiziApplicativi().get(i).getServizioApplicativo();			
+			sa.setNome(replaceSoggettoProprietarioOrDefault(registryReader,sa.getNome(), 
+					sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));			
 			if(sa.getInvocazionePorta()!=null){
 				if(sa.getInvocazionePorta().sizeCredenzialiList()>0){
 					for (int j = 0; j < sa.getInvocazionePorta().sizeCredenzialiList(); j++) {
 						Credenziali c  = sa.getInvocazionePorta().getCredenziali(j);
-						c.setUser(replaceSoggettoProprietario(c.getUser(), 
+						c.setUser(replaceSoggettoProprietarioOrDefault(registryReader,c.getUser(), 
 								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-						c.setPassword(replaceSoggettoProprietario(c.getPassword(), 
+						c.setPassword(replaceSoggettoProprietarioOrDefault(registryReader,c.getPassword(), 
 								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-						c.setSubject(replaceSoggettoProprietario(c.getSubject(), 
+						c.setSubject(replaceSoggettoProprietarioOrDefault(registryReader,c.getSubject(), 
 								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 					}
 				}
@@ -1263,18 +1314,18 @@ public class ImporterInformationMissingSetter {
 			if(sa.getInvocazioneServizio()!=null){
 				if(sa.getInvocazioneServizio().getCredenziali()!=null){
 					InvocazioneCredenziali c  = sa.getInvocazioneServizio().getCredenziali();
-					c.setUser(replaceSoggettoProprietario(c.getUser(), 
+					c.setUser(replaceSoggettoProprietarioOrDefault(registryReader,c.getUser(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-					c.setPassword(replaceSoggettoProprietario(c.getPassword(), 
+					c.setPassword(replaceSoggettoProprietarioOrDefault(registryReader,c.getPassword(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 				}
 				if(sa.getInvocazioneServizio().getConnettore()!=null){
 					if(sa.getInvocazioneServizio().getConnettore().sizePropertyList()>0){
 						for (int j = 0; j < sa.getInvocazioneServizio().getConnettore().sizePropertyList(); j++) {
 							org.openspcoop2.core.config.Property p = sa.getInvocazioneServizio().getConnettore().getProperty(j);
-							p.setNome(replaceSoggettoProprietario(p.getNome(), 
+							p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
 									sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-							p.setValore(replaceSoggettoProprietario(p.getValore(), 
+							p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
 									sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 						}
 					}
@@ -1283,18 +1334,18 @@ public class ImporterInformationMissingSetter {
 			if(sa.getRispostaAsincrona()!=null){
 				if(sa.getRispostaAsincrona().getCredenziali()!=null){
 					InvocazioneCredenziali c  = sa.getRispostaAsincrona().getCredenziali();
-					c.setUser(replaceSoggettoProprietario(c.getUser(), 
+					c.setUser(replaceSoggettoProprietarioOrDefault(registryReader,c.getUser(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-					c.setPassword(replaceSoggettoProprietario(c.getPassword(), 
+					c.setPassword(replaceSoggettoProprietarioOrDefault(registryReader,c.getPassword(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 				}
 				if(sa.getRispostaAsincrona().getConnettore()!=null){
 					if(sa.getRispostaAsincrona().getConnettore().sizePropertyList()>0){
 						for (int j = 0; j < sa.getRispostaAsincrona().getConnettore().sizePropertyList(); j++) {
 							org.openspcoop2.core.config.Property p = sa.getRispostaAsincrona().getConnettore().getProperty(j);
-							p.setNome(replaceSoggettoProprietario(p.getNome(), 
+							p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
 									sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-							p.setValore(replaceSoggettoProprietario(p.getValore(), 
+							p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
 									sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 						}
 					}
@@ -1306,7 +1357,7 @@ public class ImporterInformationMissingSetter {
 		for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
 			PortaDelegata pd = archive.getPorteDelegate().get(i).getPortaDelegata();
 						
-			pd.setNome(replaceSoggettoProprietario(pd.getNome(), 
+			pd.setNome(replaceSoggettoProprietarioOrDefault(registryReader,pd.getNome(), 
 					pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 			if(pd.getSoggettoErogatore()!=null && 
 					pd.getSoggettoErogatore().getNome()!=null && 
@@ -1328,7 +1379,7 @@ public class ImporterInformationMissingSetter {
 			}
 			
 			if(pd.getDescrizione()!=null && !"".equals(pd.getDescrizione())){
-				pd.setDescrizione(replaceSoggettoProprietario(pd.getDescrizione(), 
+				pd.setDescrizione(replaceSoggettoProprietarioOrDefault(registryReader,pd.getDescrizione(), 
 						pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 				if(pd.getSoggettoErogatore()!=null && 
 						pd.getSoggettoErogatore().getNome()!=null && 
@@ -1353,7 +1404,7 @@ public class ImporterInformationMissingSetter {
 			if(pd.getAzione()!=null){
 				if(pd.getAzione().getPattern()!=null &&
 						!"".equals(pd.getAzione().getPattern())){
-					pd.getAzione().setPattern(replaceSoggettoProprietario(pd.getAzione().getPattern(), 
+					pd.getAzione().setPattern(replaceSoggettoProprietarioOrDefault(registryReader,pd.getAzione().getPattern(), 
 							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 					if(pd.getSoggettoErogatore()!=null && 
 							pd.getSoggettoErogatore().getNome()!=null && 
@@ -1377,13 +1428,13 @@ public class ImporterInformationMissingSetter {
 			if(pd.getAzione()!=null) {
 				if(pd.getAzione().getNomePortaDelegante()!=null &&
 						!"".equals(pd.getAzione().getNomePortaDelegante())){
-					pd.getAzione().setNomePortaDelegante(replaceSoggettoProprietario(pd.getAzione().getNomePortaDelegante(), 
+					pd.getAzione().setNomePortaDelegante(replaceSoggettoProprietarioOrDefault(registryReader,pd.getAzione().getNomePortaDelegante(), 
 							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 				}
 			}
 			
 			for (int j = 0; j < pd.sizeServizioApplicativoList(); j++) {
-				pd.getServizioApplicativo(j).setNome(replaceSoggettoProprietario(pd.getServizioApplicativo(j).getNome(), 
+				pd.getServizioApplicativo(j).setNome(replaceSoggettoProprietarioOrDefault(registryReader,pd.getServizioApplicativo(j).getNome(), 
 					pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 				if(pd.getSoggettoErogatore()!=null && 
 						pd.getSoggettoErogatore().getNome()!=null && 
@@ -1408,7 +1459,7 @@ public class ImporterInformationMissingSetter {
 			if(pd.getCorrelazioneApplicativa()!=null && pd.getCorrelazioneApplicativa().sizeElementoList()>0) {
 				for (CorrelazioneApplicativaElemento elemento : pd.getCorrelazioneApplicativa().getElementoList()) {
 					if(elemento.getNome()!=null && !"".equals(elemento.getNome())){
-						elemento.setNome(replaceSoggettoProprietario(elemento.getNome(), 
+						elemento.setNome(replaceSoggettoProprietarioOrDefault(registryReader,elemento.getNome(), 
 								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 						if(pd.getSoggettoErogatore()!=null && 
 								pd.getSoggettoErogatore().getNome()!=null && 
@@ -1430,7 +1481,7 @@ public class ImporterInformationMissingSetter {
 						}
 					}
 					if(elemento.getPattern()!=null && !"".equals(elemento.getPattern())){
-						elemento.setPattern(replaceSoggettoProprietario(elemento.getPattern(), 
+						elemento.setPattern(replaceSoggettoProprietarioOrDefault(registryReader,elemento.getPattern(), 
 								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 						if(pd.getSoggettoErogatore()!=null && 
 								pd.getSoggettoErogatore().getNome()!=null && 
@@ -1456,7 +1507,7 @@ public class ImporterInformationMissingSetter {
 			if(pd.getCorrelazioneApplicativaRisposta()!=null && pd.getCorrelazioneApplicativaRisposta().sizeElementoList()>0) {
 				for (CorrelazioneApplicativaRispostaElemento elemento : pd.getCorrelazioneApplicativaRisposta().getElementoList()) {
 					if(elemento.getNome()!=null && !"".equals(elemento.getNome())){
-						elemento.setNome(replaceSoggettoProprietario(elemento.getNome(), 
+						elemento.setNome(replaceSoggettoProprietarioOrDefault(registryReader,elemento.getNome(), 
 								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 						if(pd.getSoggettoErogatore()!=null && 
 								pd.getSoggettoErogatore().getNome()!=null && 
@@ -1478,7 +1529,7 @@ public class ImporterInformationMissingSetter {
 						}
 					}
 					if(elemento.getPattern()!=null && !"".equals(elemento.getPattern())){
-						elemento.setPattern(replaceSoggettoProprietario(elemento.getPattern(), 
+						elemento.setPattern(replaceSoggettoProprietarioOrDefault(registryReader,elemento.getPattern(), 
 								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 						if(pd.getSoggettoErogatore()!=null && 
 								pd.getSoggettoErogatore().getNome()!=null && 
@@ -1509,7 +1560,7 @@ public class ImporterInformationMissingSetter {
 			PortaApplicativa pa = archive.getPorteApplicative().get(i).getPortaApplicativa();
 			
 			if(pa.getDescrizione()!=null && !"".equals(pa.getDescrizione())){
-				pa.setDescrizione(replaceSoggettoProprietario(pa.getDescrizione(), 
+				pa.setDescrizione(replaceSoggettoProprietarioOrDefault(registryReader,pa.getDescrizione(), 
 						pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 				if(pa.getServizio()!=null && 
 						pa.getServizio().getNome()!=null && 
@@ -1525,7 +1576,7 @@ public class ImporterInformationMissingSetter {
 				}
 			}
 			
-			pa.setNome(replaceSoggettoProprietario(pa.getNome(), 
+			pa.setNome(replaceSoggettoProprietarioOrDefault(registryReader,pa.getNome(), 
 					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 			if(pa.getServizio()!=null && 
 					pa.getServizio().getNome()!=null && 
@@ -1543,13 +1594,13 @@ public class ImporterInformationMissingSetter {
 			if(pa.getAzione()!=null) {
 				if(pa.getAzione().getNomePortaDelegante()!=null &&
 						!"".equals(pa.getAzione().getNomePortaDelegante())){
-					pa.getAzione().setNomePortaDelegante(replaceSoggettoProprietario(pa.getAzione().getNomePortaDelegante(), 
+					pa.getAzione().setNomePortaDelegante(replaceSoggettoProprietarioOrDefault(registryReader,pa.getAzione().getNomePortaDelegante(), 
 							pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 				}
 			}
 			
 			for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
-				pa.getServizioApplicativo(j).setNome(replaceSoggettoProprietario(pa.getServizioApplicativo(j).getNome(), 
+				pa.getServizioApplicativo(j).setNome(replaceSoggettoProprietarioOrDefault(registryReader,pa.getServizioApplicativo(j).getNome(), 
 					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 				if(pa.getServizio()!=null && 
 						pa.getServizio().getNome()!=null && 
@@ -1568,7 +1619,7 @@ public class ImporterInformationMissingSetter {
 			if(pa.getCorrelazioneApplicativa()!=null && pa.getCorrelazioneApplicativa().sizeElementoList()>0) {
 				for (CorrelazioneApplicativaElemento elemento : pa.getCorrelazioneApplicativa().getElementoList()) {
 					if(elemento.getNome()!=null && !"".equals(elemento.getNome())){
-						elemento.setNome(replaceSoggettoProprietario(elemento.getNome(), 
+						elemento.setNome(replaceSoggettoProprietarioOrDefault(registryReader,elemento.getNome(), 
 								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 						if(pa.getServizio()!=null && 
 								pa.getServizio().getNome()!=null && 
@@ -1584,7 +1635,7 @@ public class ImporterInformationMissingSetter {
 						}
 					}
 					if(elemento.getPattern()!=null && !"".equals(elemento.getPattern())){
-						elemento.setPattern(replaceSoggettoProprietario(elemento.getPattern(), 
+						elemento.setPattern(replaceSoggettoProprietarioOrDefault(registryReader,elemento.getPattern(), 
 								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 						if(pa.getServizio()!=null && 
 								pa.getServizio().getNome()!=null && 
@@ -1604,7 +1655,7 @@ public class ImporterInformationMissingSetter {
 			if(pa.getCorrelazioneApplicativaRisposta()!=null && pa.getCorrelazioneApplicativaRisposta().sizeElementoList()>0) {
 				for (CorrelazioneApplicativaRispostaElemento elemento : pa.getCorrelazioneApplicativaRisposta().getElementoList()) {
 					if(elemento.getNome()!=null && !"".equals(elemento.getNome())){
-						elemento.setNome(replaceSoggettoProprietario(elemento.getNome(), 
+						elemento.setNome(replaceSoggettoProprietarioOrDefault(registryReader,elemento.getNome(), 
 								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 						if(pa.getServizio()!=null && 
 								pa.getServizio().getNome()!=null && 
@@ -1620,7 +1671,7 @@ public class ImporterInformationMissingSetter {
 						}
 					}
 					if(elemento.getPattern()!=null && !"".equals(elemento.getPattern())){
-						elemento.setPattern(replaceSoggettoProprietario(elemento.getPattern(), 
+						elemento.setPattern(replaceSoggettoProprietarioOrDefault(registryReader,elemento.getPattern(), 
 								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 						if(pa.getServizio()!=null && 
 								pa.getServizio().getNome()!=null && 
@@ -1646,15 +1697,15 @@ public class ImporterInformationMissingSetter {
 			AccordoServizioParteSpecifica as = archiveAS.getAccordoServizioParteSpecifica();
 			
 			if(as.getAccordoServizioParteComune()!=null) {
-				as.setAccordoServizioParteComune(replaceSoggettoProprietario(as.getAccordoServizioParteComune(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+				as.setAccordoServizioParteComune(replaceSoggettoProprietarioOrDefault(registryReader,as.getAccordoServizioParteComune(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
 				as.setAccordoServizioParteComune(replaceSoggettoErogatore(as.getAccordoServizioParteComune(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
 			}
 			
 			if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
 				for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {
 					Property p = as.getConfigurazioneServizio().getConnettore().getProperty(j);
-					p.setNome(replaceSoggettoProprietario(p.getNome(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
-					p.setValore(replaceSoggettoProprietario(p.getValore(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+					p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+					p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
 				}
 			}
 			if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
@@ -1708,7 +1759,7 @@ public class ImporterInformationMissingSetter {
 			if(archiveAS.getMappingPorteApplicativeAssociate()!=null && !archiveAS.getMappingPorteApplicativeAssociate().isEmpty()) {
 				for (MappingErogazionePortaApplicativa mappingPA : archiveAS.getMappingPorteApplicativeAssociate()) {
 					if(mappingPA.getIdPortaApplicativa()!=null && mappingPA.getIdPortaApplicativa().getNome()!=null) {
-						mappingPA.getIdPortaApplicativa().setNome(replaceSoggettoProprietario(mappingPA.getIdPortaApplicativa().getNome(), 
+						mappingPA.getIdPortaApplicativa().setNome(replaceSoggettoProprietarioOrDefault(registryReader,mappingPA.getIdPortaApplicativa().getNome(), 
 								as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
 						mappingPA.getIdPortaApplicativa().setNome(replaceSoggettoErogatore(mappingPA.getIdPortaApplicativa().getNome(), 
 								as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
@@ -1716,7 +1767,7 @@ public class ImporterInformationMissingSetter {
 								as.getTipo(),as.getNome()));
 					}
 					if(mappingPA.getIdServizio()!=null) {
-						replaceTemplatesNames(mappingPA.getIdServizio(),
+						replaceTemplatesNames(registryReader, mappingPA.getIdServizio(),
 								as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore(),
 								as.getTipo(),as.getNome(),
 								true);
@@ -1750,8 +1801,8 @@ public class ImporterInformationMissingSetter {
 				}
 				for (int j = 0; j < fr.getConnettore().sizePropertyList(); j++) {
 					Property p = fr.getConnettore().getProperty(j);
-					p.setNome(replaceSoggettoProprietario(p.getNome(), fr.getTipo(), fr.getNome()));
-					p.setValore(replaceSoggettoProprietario(p.getValore(), fr.getTipo(), fr.getNome()));
+					p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), fr.getTipo(), fr.getNome()));
+					p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), fr.getTipo(), fr.getNome()));
 				}
 				if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null){
 					for (int j = 0; j < fr.getConnettore().sizePropertyList(); j++) {
@@ -1773,14 +1824,14 @@ public class ImporterInformationMissingSetter {
 							mappingPD.getIdPortaDelegata().setNome(replaceServizio(mappingPD.getIdPortaDelegata().getNome(), 
 									tipoServizio,nomeServizio));
 						}
-						mappingPD.getIdPortaDelegata().setNome(replaceSoggettoProprietario(mappingPD.getIdPortaDelegata().getNome(), 
+						mappingPD.getIdPortaDelegata().setNome(replaceSoggettoProprietarioOrDefault(registryReader,mappingPD.getIdPortaDelegata().getNome(), 
 								fr.getTipo(), fr.getNome()));
 						mappingPD.getIdPortaDelegata().setNome(replaceFruitore(mappingPD.getIdPortaDelegata().getNome(), 
 								fr.getTipo(), fr.getNome()));
 					}
 					if(mappingPD.getIdServizio()!=null) {
 						if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null && tipoServizio!=null && nomeServizio!=null){
-							replaceTemplatesNames(mappingPD.getIdServizio(),
+							replaceTemplatesNames(registryReader,mappingPD.getIdServizio(),
 									tipoSoggettoErogatore,nomeSoggettoErogatore,
 									tipoServizio,nomeServizio,
 									false);
@@ -1788,13 +1839,13 @@ public class ImporterInformationMissingSetter {
 					}
 					if(mappingPD.getIdFruitore()!=null) {
 						if(mappingPD.getIdFruitore().getTipo()!=null) {
-							mappingPD.getIdFruitore().setTipo(replaceSoggettoProprietario(mappingPD.getIdFruitore().getTipo(), 
+							mappingPD.getIdFruitore().setTipo(replaceSoggettoProprietarioOrDefault(registryReader,mappingPD.getIdFruitore().getTipo(), 
 									fr.getTipo(), fr.getNome()));
 							mappingPD.getIdFruitore().setTipo(replaceFruitore(mappingPD.getIdFruitore().getTipo(), 
 									fr.getTipo(), fr.getNome()));
 						}
 						if(mappingPD.getIdFruitore().getNome()!=null) {
-							mappingPD.getIdFruitore().setNome(replaceSoggettoProprietario(mappingPD.getIdFruitore().getNome(), 
+							mappingPD.getIdFruitore().setNome(replaceSoggettoProprietarioOrDefault(registryReader,mappingPD.getIdFruitore().getNome(), 
 									fr.getTipo(), fr.getNome()));
 							mappingPD.getIdFruitore().setNome(replaceFruitore(mappingPD.getIdFruitore().getNome(), 
 									fr.getTipo(), fr.getNome()));
@@ -1806,14 +1857,14 @@ public class ImporterInformationMissingSetter {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private static void replaceTemplatesNames(IDServizio idServizio, 
+	private static void replaceTemplatesNames(IRegistryReader registryReader, IDServizio idServizio, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore, 
 			String tipoServizio, String nomeServizio,
-			boolean replaceProprietario) {
+			boolean replaceProprietario) throws ProtocolException {
 		if(idServizio.getSoggettoErogatore()!=null) {
 			if(idServizio.getSoggettoErogatore().getTipo()!=null) {
 				if(replaceProprietario) {
-					idServizio.getSoggettoErogatore().setTipo(replaceSoggettoProprietario(idServizio.getSoggettoErogatore().getTipo(), 
+					idServizio.getSoggettoErogatore().setTipo(replaceSoggettoProprietarioOrDefault(registryReader,idServizio.getSoggettoErogatore().getTipo(), 
 							tipoSoggettoErogatore,nomeSoggettoErogatore));
 				}
 				idServizio.getSoggettoErogatore().setTipo(replaceSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo(), 
@@ -1821,7 +1872,7 @@ public class ImporterInformationMissingSetter {
 			}
 			if(idServizio.getSoggettoErogatore().getNome()!=null) {
 				if(replaceProprietario) {
-					idServizio.getSoggettoErogatore().setNome(replaceSoggettoProprietario(idServizio.getSoggettoErogatore().getNome(), 
+					idServizio.getSoggettoErogatore().setNome(replaceSoggettoProprietarioOrDefault(registryReader,idServizio.getSoggettoErogatore().getNome(), 
 							tipoSoggettoErogatore,nomeSoggettoErogatore));
 				}
 				idServizio.getSoggettoErogatore().setNome(replaceSoggettoErogatore(idServizio.getSoggettoErogatore().getNome(), 

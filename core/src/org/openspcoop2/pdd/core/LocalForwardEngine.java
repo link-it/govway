@@ -39,7 +39,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.utils.MessageUtilities;
@@ -57,6 +56,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.mdb.Imbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
+import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -70,6 +70,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -108,7 +109,15 @@ public class LocalForwardEngine {
 	private ServizioApplicativo sa = null;
 	private OpenSPCoop2Properties propertiesReader = null;
 	private RequestInfo requestInfo = null;
-	private IntegrationError integrationError = IntegrationError.INTERNAL_ERROR; // default
+	private IntegrationFunctionError _integrationFunctionError;
+	private IntegrationFunctionError getIntegrationFunctionError(PdDContext pddContext) {
+		if(this._integrationFunctionError!=null) {
+			return this._integrationFunctionError;
+		}
+		else {
+			return AbstractErrorGenerator.getIntegrationInternalError(pddContext); // default
+		}
+	}
 	
 	
 	/* ***** COSTRUTTORE ******** */
@@ -231,8 +240,8 @@ public class LocalForwardEngine {
 		this.localForwardParameter = localForwardParameter;
 	}
 	
-	public void setIntegrationError(IntegrationError integrationError) {
-		this.integrationError = integrationError;
+	public void setIntegrationFunctionError(IntegrationFunctionError integrationError) {
+		this._integrationFunctionError = integrationError;
 	}
 	
 	private Transaction getTransactionNullable() {
@@ -292,6 +301,7 @@ public class LocalForwardEngine {
 			String posizione = null;
 			MTOMProcessor mtomProcessor = null;
 			boolean logDiagnosticError = true;
+			IntegrationFunctionError integrationFunctionError = null;
 			try{
 				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPD_MessageSecurityForSender(this.pd, this.localForwardParameter.getLog(), requestMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext());
 			}catch(Exception e){
@@ -299,6 +309,7 @@ public class LocalForwardEngine {
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 				configException = e;
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 			}
 			if(erroreIntegrazione==null){
 				try{
@@ -308,6 +319,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 				}
 			}		
 			if(erroreIntegrazione==null){
@@ -327,6 +339,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED;
 				}
 			}
 			
@@ -385,6 +398,7 @@ public class LocalForwardEngine {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
+						integrationFunctionError = IntegrationFunctionError.MESSAGE_SECURITY_REQUEST_FAILED;
 					}
 				}
 				else{
@@ -408,6 +422,7 @@ public class LocalForwardEngine {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR);
 						configException = e;
+						integrationFunctionError = IntegrationFunctionError.MESSAGE_SECURITY_REQUEST_FAILED;
 					}
 				}
 			}
@@ -423,17 +438,21 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED;
 				}
 			}
 			
 			/* *** Gestione eventuale errore  *** */
 			if(erroreIntegrazione!=null || codiceErroreCooperazione!= null){
+				if(integrationFunctionError==null) {
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+				}
 				if(erroreIntegrazione!=null){
 					if(logDiagnosticError){
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,
 							erroreIntegrazione,configException,null);
 				}else{
 					Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),
@@ -442,7 +461,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 				if(logDiagnosticError==false){
@@ -477,6 +496,7 @@ public class LocalForwardEngine {
 			posizione = null;
 			messageSecurityContext = null;
 			logDiagnosticError = true;
+			integrationFunctionError = null;
 			try{
 				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPA_MessageSecurityForReceiver(this.pa, this.localForwardParameter.getLog(), requestMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext());
 			}catch(Exception e){
@@ -484,6 +504,7 @@ public class LocalForwardEngine {
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 				configException = e;
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 			}
 			if(erroreIntegrazione==null){
 				try{
@@ -493,6 +514,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 				}
 			}		
 			if(erroreIntegrazione==null){
@@ -512,6 +534,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED;
 				}
 			}
 			
@@ -559,6 +582,7 @@ public class LocalForwardEngine {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 					}
 				}
 			}
@@ -579,6 +603,7 @@ public class LocalForwardEngine {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR);
 						configException = e;
+						integrationFunctionError = IntegrationFunctionError.MESSAGE_SECURITY_REQUEST_FAILED;
 					}
 				}
 			}
@@ -630,6 +655,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.MESSAGE_SECURITY_REQUEST_FAILED;
 				}
 			}
 			else{
@@ -649,17 +675,21 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED;
 				}
 			}
 			
 			/* *** Gestione eventuale errore  *** */
 			if(erroreIntegrazione!=null || eccezioniSicurezza.size()>0){
+				if(integrationFunctionError==null) {
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+				}
 				if(erroreIntegrazione!=null){
 					if(logDiagnosticError){
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,
 							erroreIntegrazione,configException,null);
 				}else{
 					Eccezione ecc = eccezioniSicurezza.get(0); // prendo la prima disponibile.
@@ -667,7 +697,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 				if(logDiagnosticError==false){
@@ -795,6 +825,7 @@ public class LocalForwardEngine {
 			String posizione = null;
 			MTOMProcessor mtomProcessor = null;
 			boolean logDiagnosticError = true;
+			IntegrationFunctionError integrationFunctionError = null;
 			try{
 				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPA_MessageSecurityForSender(this.pa);
 			}catch(Exception e){
@@ -802,6 +833,7 @@ public class LocalForwardEngine {
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 				configException = e;
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
 			}
 			if(erroreIntegrazione==null){
 				try{
@@ -811,6 +843,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
 				}
 			}		
 			if(erroreIntegrazione==null){
@@ -830,6 +863,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED;
 				}
 			}
 			
@@ -858,6 +892,7 @@ public class LocalForwardEngine {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
 					}
 				}
 			}
@@ -878,6 +913,7 @@ public class LocalForwardEngine {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR);
 						configException = e;
+						integrationFunctionError = IntegrationFunctionError.MESSAGE_SECURITY_RESPONSE_FAILED;
 					}
 				}
 			}
@@ -912,6 +948,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.MESSAGE_SECURITY_RESPONSE_FAILED;
 				}
 			}
 			else{
@@ -931,17 +968,21 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED;
 				}
 			}
 			
 			/* *** Gestione eventuale errore  *** */
 			if(erroreIntegrazione!=null || codiceErroreCooperazione!= null){
+				if(integrationFunctionError==null) {
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+				}
 				if(erroreIntegrazione!=null){
 					if(logDiagnosticError){
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,
 							erroreIntegrazione,configException,
 							(responseMessage!=null ? responseMessage.getParseException() : null));
 				}else{
@@ -951,7 +992,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 				if(logDiagnosticError==false){
@@ -983,6 +1024,7 @@ public class LocalForwardEngine {
 			posizione = null;
 			messageSecurityContext = null;
 			logDiagnosticError = true;
+			integrationFunctionError = null;
 			try{
 				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPD_MessageSecurityForReceiver(this.pd);
 			}catch(Exception e){
@@ -990,6 +1032,7 @@ public class LocalForwardEngine {
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 				configException = e;
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
 			}
 			if(erroreIntegrazione==null){
 				try{
@@ -999,6 +1042,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
 				}
 			}		
 			if(erroreIntegrazione==null){
@@ -1018,6 +1062,7 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED;
 				}
 			}
 			
@@ -1085,6 +1130,7 @@ public class LocalForwardEngine {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
+						integrationFunctionError = IntegrationFunctionError.MESSAGE_SECURITY_RESPONSE_FAILED;
 					}
 				}
 				else{
@@ -1108,6 +1154,7 @@ public class LocalForwardEngine {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR);
 						configException = e;
+						integrationFunctionError = IntegrationFunctionError.MESSAGE_SECURITY_RESPONSE_FAILED;
 					}
 				}
 			}
@@ -1123,17 +1170,21 @@ public class LocalForwardEngine {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
+					integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED;
 				}
 			}
 			
 			/* *** Gestione eventuale errore  *** */
 			if(erroreIntegrazione!=null || codiceErroreCooperazione!= null){
+				if(integrationFunctionError==null) {
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+				}
 				if(erroreIntegrazione!=null){
 					if(logDiagnosticError){
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,
 							erroreIntegrazione,configException,
 							(responseMessage!=null ? responseMessage.getParseException() : null));
 				}else{
@@ -1143,7 +1194,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 				if(logDiagnosticError==false){
@@ -1183,11 +1234,19 @@ public class LocalForwardEngine {
 	
 		try{
 		
+			IntegrationFunctionError integrationFunctionError = getIntegrationFunctionError(pddContext);
+			
 			OpenSPCoop2Message responseMessageError = 
-					this.generatoreErrorePortaDelegata.build(pddContext, this.integrationError,errore,eErrore,parseException);
+					this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,errore,eErrore,parseException);
 			
 			// Retry-After
-			if(this.integrationError!=null && IntegrationError.SERVICE_UNAVAILABLE.equals(this.integrationError)) {
+			if(integrationFunctionError!=null && 
+					(
+							IntegrationFunctionError.SERVICE_UNAVAILABLE.equals(integrationFunctionError)
+							||
+							IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT.equals(integrationFunctionError)
+					)
+					) {
 				boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed();
 				Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed();
 				Integer retryAfterBackOffSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed();
@@ -1216,8 +1275,10 @@ public class LocalForwardEngine {
 		
 		try{
 		
+			IntegrationFunctionError integrationFunctionError = getIntegrationFunctionError(pddContext);
+			
 			OpenSPCoop2Message responseMessageError = 
-					this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,errore,dominio,parseException);
+					this.generatoreErrorePortaDelegata.build(pddContext, integrationFunctionError,errore,dominio,parseException);
 			this.sendErrore(responseMessageError);
 			
 		}catch(Exception e){

@@ -182,6 +182,12 @@ public class ImporterInformationMissingUtils {
 					break;
 				}
 			
+				
+				// -------- Accordi di Servizio Parte Comune (Gestione Referente nei protocolli che non lo supportano) --------
+				ImporterInformationMissingSetter.setInformationMissingReferenteAPI(this.archive, this.registryReader);
+				
+				
+				
 				// -------- soggetto --------------
 				
 				if(!throwException && archiveInformationMissing.sizeSoggettoList()>0){
@@ -1537,7 +1543,7 @@ public class ImporterInformationMissingUtils {
 					
 					// Il riferimento potrebbe contenere un nome dinamico rispetto all'erogatore
 					if(uriAPC!=null) {
-						uriAPC = ImporterInformationMissingSetter.replaceSoggettoProprietario(uriAPC, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
+						uriAPC = ImporterInformationMissingSetter.replaceSoggettoProprietarioOrDefault(this.registryReader, uriAPC, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 						uriAPC = ImporterInformationMissingSetter.replaceSoggettoErogatore(uriAPC, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 					}
 					
@@ -1981,8 +1987,16 @@ public class ImporterInformationMissingUtils {
 			
 			// *** Verifica riferimento Parte Comune ***
 			AccordoServizioParteComune aspc = null;
+			String uriAPC = null;
 			try{
-				aspc = this.registryReader.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(accordoAsps.getAccordoServizioParteComune()));
+				// Il riferimento potrebbe contenere un nome dinamico rispetto all'erogatore
+				uriAPC = accordoAsps.getAccordoServizioParteComune();
+				if(uriAPC!=null) {
+					uriAPC = ImporterInformationMissingSetter.replaceSoggettoProprietarioOrDefault(this.registryReader, uriAPC, asps.getSoggettoErogatore().getTipo(), asps.getSoggettoErogatore().getNome());
+					uriAPC = ImporterInformationMissingSetter.replaceSoggettoErogatore(uriAPC, asps.getSoggettoErogatore().getTipo(), asps.getSoggettoErogatore().getNome());
+				}
+				
+				aspc = this.registryReader.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(uriAPC));
 				if(aspc==null){
 					throw new Exception("getAccordoServizioParteComune return null"); 
 				}
@@ -1994,7 +2008,7 @@ public class ImporterInformationMissingUtils {
 					for (int i = 0; i < this.archive.getAccordiServizioParteComune().size(); i++) {
 						ArchiveAccordoServizioParteComune archiveAccordo = this.archive.getAccordiServizioParteComune().get(i);
 						IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(archiveAccordo.getAccordoServizioParteComune());
-						if(idAccordo.equals(this.idAccordoFactory.getIDAccordoFromUri(accordoAsps.getAccordoServizioParteComune()))){
+						if(idAccordo.equals(this.idAccordoFactory.getIDAccordoFromUri(uriAPC))){
 							found = true;
 							aspc = archiveAccordo.getAccordoServizioParteComune();
 							break;
@@ -2006,7 +2020,7 @@ public class ImporterInformationMissingUtils {
 						for (int i = 0; i < this.archive.getAccordiServizioComposto().size(); i++) {
 							ArchiveAccordoServizioParteComune archiveAccordo = this.archive.getAccordiServizioComposto().get(i);
 							IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(archiveAccordo.getAccordoServizioParteComune());
-							if(idAccordo.equals(this.idAccordoFactory.getIDAccordoFromUri(accordoAsps.getAccordoServizioParteComune()))){
+							if(idAccordo.equals(this.idAccordoFactory.getIDAccordoFromUri(uriAPC))){
 								found = true;
 								aspc = archiveAccordo.getAccordoServizioParteComune();
 								break;
@@ -2015,7 +2029,7 @@ public class ImporterInformationMissingUtils {
 					}
 				}
 				if(!found){
-					throw new ProtocolException("Accordo di Servizio Parte Comune ["+accordoAsps.getAccordoServizioParteComune()+
+					throw new ProtocolException("Accordo di Servizio Parte Comune ["+uriAPC+
 							"], riferito dall'accordo parte specifica dell'archivio fruitore, non esiste",notFound);
 				}
 			}

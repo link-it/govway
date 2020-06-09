@@ -22,6 +22,8 @@
 
 package org.openspcoop2.pdd.core.credenziali;
 
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+
 /**	
  * Contiene la definizione di una eccezione lanciata dalle classi del package org.openspcoop.pdd.core.handlers
  *
@@ -41,27 +43,34 @@ public class GestoreCredenzialiConfigurationException extends Exception {
 	protected void setIdentitaHandler(String identitaHandler) {
 		this.identitaHandler = identitaHandler;
 	}
+
+	private IntegrationFunctionError integrationFunctionError;
+	public IntegrationFunctionError getIntegrationFunctionError() {
+		return this.integrationFunctionError;
+	}
 	
-	 public GestoreCredenzialiConfigurationException(String message, Throwable cause)
-		{
-			super(message, cause);
-			// TODO Auto-generated constructor stub
-		}
-		public GestoreCredenzialiConfigurationException(Throwable cause)
-		{
-			super(cause);
-			// TODO Auto-generated constructor stub
-		}
-		/**
-		 * serialVersionUID
-		 */
-		private static final long serialVersionUID = 1L;
-		
-		public GestoreCredenzialiConfigurationException() {
-			super();
-	    }
-		public GestoreCredenzialiConfigurationException(String msg) {
-	        super(msg);
-	    }
+	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, String message, Throwable cause)
+	{
+		super(message, cause);
+		this.integrationFunctionError = integrationFunctionError;
+	}
+	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, Throwable cause)
+	{
+		super(cause);
+		this.integrationFunctionError = integrationFunctionError;
+	}
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError) {
+		super();
+		this.integrationFunctionError = integrationFunctionError;
+	}
+	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, String msg) {
+		super(msg);
+		this.integrationFunctionError = integrationFunctionError;
+	}
 
 }

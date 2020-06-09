@@ -33,18 +33,24 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.message.MessageElement;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiTest;
+import org.openspcoop2.pdd.mdb.Imbustamento;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.services.axis14.IntegrationManagerException;
 import org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage;
+import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiHTTPtoSOAPConnector;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.protocol.spcoop.testsuite.units.integration_manager.IntegrationManager;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
@@ -52,13 +58,12 @@ import org.openspcoop2.testsuite.core.SOAPEngine;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+
 
 /**
  * Test su richieste applicative malformate indirizzate alla Porta di Dominio
@@ -68,21 +73,38 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RichiesteApplicativeScorrette {
+public class RichiesteApplicativeScorrette extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "RichiesteApplicativeScorrette";
+	
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	private boolean genericCode = false;
+	
+	protected RichiesteApplicativeScorrette(boolean genericCode) {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+		this.genericCode = genericCode;
+	}
 
-
+	private void _lock() throws Exception {
+		this._lock(false);
+	}
+	private void _lock(boolean unwrap) throws Exception {
+		super.lockForCode(this.genericCode, unwrap);
+	}
+	private void _unlock() throws Exception {
+		super.unlockForCode(this.genericCode);
+	}
 	
 	private Date dataAvvioGruppoTest = null;
-	@BeforeGroups (alwaysRun=true , groups=ID_GRUPPO)
-	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
+	protected void _testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
 	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
-	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
-	public void testOpenspcoopCoreLog() throws Exception{
+	protected void _testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
 			FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest,
 					this.erroriAttesiOpenSPCoopCore.toArray(new ErroreAttesoOpenSPCoopLogCore[1]));
@@ -105,8 +127,7 @@ public class RichiesteApplicativeScorrette {
 	 * Porta delegata non esistente
 	 * "401";
 	 */
-	@DataProvider (name="porteDelegateInesistenti")
-	public Object[][] porteDelegateInesistenti(){
+	protected Object[][] _porteDelegateInesistenti(){
 		return new Object[][]{{"HelloWorl"},
 				{"Helloworld"},
 				{""},
@@ -114,14 +135,16 @@ public class RichiesteApplicativeScorrette {
 				{"/"},
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".401"},dataProvider="porteDelegateInesistenti")
-	public void testPorteDelegateInesistenti(String portaDelegata) throws Exception{
+	protected void _testPorteDelegateInesistenti(String portaDelegata) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
-		Date dataInizioTest = DateManager.getDate();
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
-
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -147,10 +170,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_OUT_UNKNOWN;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+	
 				Utilities.verificaFaultIntegrazione(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE), 
-						CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);				
+						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -160,8 +195,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		Date dataFineTest = DateManager.getDate();
 		
 		// Aggiungo errori attesi
 //		if("HelloWorl".equals(portaDelegata) ||
@@ -196,8 +233,7 @@ public class RichiesteApplicativeScorrette {
 	 * 
 	 * messaggio: credenziali non fornite
 	 */
-	@DataProvider(name="credenzialiNonFornite")
-	public Object[][] credenzialiNonFornite(){
+	protected Object[][] _credenzialiNonFornite(){
 		return new Object[][]{
 				{null,null},//username e password null
 				{"adminSilX",null},//username corretto, password null
@@ -208,14 +244,16 @@ public class RichiesteApplicativeScorrette {
 				{"adminSilX",""}//user corretto, password vuoto
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".402"},dataProvider="credenzialiNonFornite")
-	public void testAutenticazioneCredenzialiNonFornite(String username,String password) throws Exception{
+	protected void _testAutenticazioneCredenzialiNonFornite(String username,String password) throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
-		Date dataInizioTest = DateManager.getDate();
-		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
@@ -242,10 +280,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA),
-						CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -255,9 +305,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -273,22 +324,22 @@ public class RichiesteApplicativeScorrette {
 	 * 
 	 * messaggio: credenziali fornite non corrette
 	 */
-	@DataProvider(name="credenzialiScorrette")
-	public Object[][] credenzialiScorrette(){
+	protected Object[][] _credenzialiScorrette(){
 		return new Object[][]{
 				{"admi","123456"},//password corretta, user errato
 				{"adminSilX","121213"},//user corretto , password errata
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".402"},dataProvider="credenzialiScorrette",
-			dependsOnMethods="testAutenticazioneCredenzialiNonFornite")
-	public void testAutenticazioneCredenzialiScorrette(String username,String password) throws Exception{
+	protected void _testAutenticazioneCredenzialiScorrette(String username,String password) throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
-		Date dataInizioTest = DateManager.getDate();
-		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
@@ -315,10 +366,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA), 
-						CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -328,9 +391,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -346,13 +410,13 @@ public class RichiesteApplicativeScorrette {
 	 * 
 	 * messaggio: identità del servizio applicativo fornita non esiste nella configurazione
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".402"},
-			dependsOnMethods="testAutenticazioneCredenzialiScorrette")
-	public void testAutenticazioneSANonEsistente() throws Exception{
+	protected void _testAutenticazioneSANonEsistente() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
@@ -380,11 +444,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA_IDENTITA_SERVIZIO_APPLICATIVO_ERRATA.replace("SERVIZIO_APPLICATIVO", "ServizioApplicativoNonEsistente");
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA), 
-						CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA_IDENTITA_SERVIZIO_APPLICATIVO_ERRATA.replace("SERVIZIO_APPLICATIVO", "ServizioApplicativoNonEsistente"), 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);					
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -394,6 +469,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -413,12 +490,13 @@ public class RichiesteApplicativeScorrette {
 	 */
 	
 	// CONTENT-BASED
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".403"})
-	public void testParametriIdentificazionePortaDelegataNonValidi_contentBased() throws Exception{
+	protected void _testParametriIdentificazionePortaDelegataNonValidi_contentBased() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONTENT_BASED_EXAMPLE1);
@@ -444,11 +522,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
-						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA, 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);			
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -458,17 +547,19 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
 	// URL-BASED
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".403"},
-			dependsOnMethods="testParametriIdentificazionePortaDelegataNonValidi_contentBased")
-	public void testParametriIdentificazionePortaDelegataNonValidi_urlBased() throws Exception{
+	protected void _testParametriIdentificazionePortaDelegataNonValidi_urlBased() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_URL_BASED_EXAMPLE1);
@@ -494,11 +585,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
-						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA, 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);			
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -508,17 +610,19 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
 	// URL-FORM-BASED
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".403"},
-			dependsOnMethods="testParametriIdentificazionePortaDelegataNonValidi_urlBased")
-	public void testParametriIdentificazionePortaDelegataNonValidi_urlFormBased() throws Exception{
+	protected void _testParametriIdentificazionePortaDelegataNonValidi_urlFormBased() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_URL_FORM_BASED_EXAMPLE1);
@@ -544,11 +648,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
-						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA, 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);			
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -558,17 +673,19 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
 	// INPUT-BASED
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".403"},
-			dependsOnMethods="testParametriIdentificazionePortaDelegataNonValidi_urlFormBased")
-	public void testParametriIdentificazionePortaDelegataNonValidi_inputBased() throws Exception{
+	protected void _testParametriIdentificazionePortaDelegataNonValidi_inputBased() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_INPUT_BASED_EXAMPLE1);
@@ -594,11 +711,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
-						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA, 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);			
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -608,6 +736,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -623,14 +753,16 @@ public class RichiesteApplicativeScorrette {
 	 * Autorizzazione Fallita
 	 * "404";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".404"})
-	public void testAutorizzazioneFallita() throws Exception{
+	protected void _testAutorizzazioneFallita() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
-		Date dataInizioTest = DateManager.getDate();
-		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_EXAMPLE);
@@ -656,11 +788,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_404_AUTORIZZAZIONE_FALLITA.replace("SERVIZIO_APPLICATIVO", "silY");
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHORIZATION_DENY;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA), 
-						CostantiErroriIntegrazione.MSG_404_AUTORIZZAZIONE_FALLITA.replace("SERVIZIO_APPLICATIVO", "silY"), 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -670,9 +813,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -692,12 +836,13 @@ public class RichiesteApplicativeScorrette {
 	 * Servizio SPCoop abbinato alla Porta Delegata Inesistente
 	 * "405";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".405"})
-	public void testServizioSPCoopNonEsistente() throws Exception{
+	protected void _testServizioSPCoopNonEsistente() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_INESISTENTE);
@@ -722,10 +867,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_405_SERVIZIO_NON_TROVATO);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_405_SERVIZIO_NON_TROVATO;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_OUT_UNKNOWN;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_405_SERVIZIO_NON_TROVATO), 
-						CostantiErroriIntegrazione.MSG_405_SERVIZIO_NON_TROVATO, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -735,6 +892,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
 		}
 	}
 
@@ -753,58 +912,73 @@ public class RichiesteApplicativeScorrette {
 	 * Nessun Messaggio disponibile per il Servizio Applicativo (Integration Manager)
 	 * "406";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".406"})
-	public void testIM_messaggiNonDisponibili() throws Exception{
-		org.openspcoop2.pdd.services.axis14.MessageBox_PortType im = 
-			IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
-				"sil01","SIL_01");
+	protected void _testIM_messaggiNonDisponibili() throws Exception{
+		
 		try{
-			im.getAllMessagesId();
-			throw new Exception("Metodo getAllMessagesId non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_406(e);
+			_lock();
+		
+			org.openspcoop2.pdd.services.axis14.MessageBox_PortType im = 
+				IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
+					"sil01","SIL_01");
+			try{
+				im.getAllMessagesId();
+				throw new Exception("Metodo getAllMessagesId non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_406(e);
+			}
+			try{
+				im.getAllMessagesIdByService("SSS", "SSS", "AAA");
+				throw new Exception("Metodo getAllMessagesIdByService non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_406(e);
+			}
+			try{
+				im.getMessagesIdArray(0, 2);
+				throw new Exception("Metodo getMessagesIdArray non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_406(e);
+			}
+			try{
+				im.getMessagesIdArrayByService(0, 2, "sss", "ssss", "aaa");
+				throw new Exception("Metodo getMessagesIdArray non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_406(e);
+			}
+			try{
+				im.getNextMessagesId(30);
+				throw new Exception("Metodo getNextMessagesId non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_406(e);
+			}
+			try{
+				im.getNextMessagesIdByService(30, "sss", "sss", "aaaa");
+				throw new Exception("Metodo getNextMessagesId non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_406(e);
+			}
+			try{
+				im.deleteAllMessages();
+				throw new Exception("Metodo deleteAllMessages non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_406(e);
+			}
 		}
-		try{
-			im.getAllMessagesIdByService("SSS", "SSS", "AAA");
-			throw new Exception("Metodo getAllMessagesIdByService non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_406(e);
-		}
-		try{
-			im.getMessagesIdArray(0, 2);
-			throw new Exception("Metodo getMessagesIdArray non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_406(e);
-		}
-		try{
-			im.getMessagesIdArrayByService(0, 2, "sss", "ssss", "aaa");
-			throw new Exception("Metodo getMessagesIdArray non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_406(e);
-		}
-		try{
-			im.getNextMessagesId(30);
-			throw new Exception("Metodo getNextMessagesId non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_406(e);
-		}
-		try{
-			im.getNextMessagesIdByService(30, "sss", "sss", "aaaa");
-			throw new Exception("Metodo getNextMessagesId non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_406(e);
-		}
-		try{
-			im.deleteAllMessages();
-			throw new Exception("Metodo deleteAllMessages non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_406(e);
+		finally{
+			this._unlock();
 		}
 	}
 	private void verificaSPCoopException_406(IntegrationManagerException e) throws Exception{
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+		IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.IM_MESSAGES_NOT_FOUND;
+		
+		String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+		if(this.genericCode) {
+			codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+		}
 		Reporter.log("Codice errore ["+e.getCodiceEccezione()+"]");
-		Reporter.log("confronto con ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI)+"]");
-		Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+		Reporter.log("confronto con ["+codiceErrore+"]");
+		Assert.assertTrue(codiceErrore.equals(e.getCodiceEccezione()));
 		
 		Reporter.log("ID Porta ["+e.getIdentificativoPorta()+"]");
 		Reporter.log("confronto con [OpenSPCoopSPCoopIT]");
@@ -818,9 +992,15 @@ public class RichiesteApplicativeScorrette {
 		Reporter.log("confronto con [EccezioneIntegrazione]");
 		Assert.assertTrue("EccezioneIntegrazione".equals(e.getTipoEccezione()));
 		
+		String descrizioneErrore = CostantiErroriIntegrazione.MSG_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI;
+		if(this.genericCode) {
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				descrizioneErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+			}
+		}
 		Reporter.log("MessaggioErrore ["+e.getDescrizioneEccezione()+"]");
-		Reporter.log("confronto con ["+CostantiErroriIntegrazione.MSG_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI+"]");
-		Assert.assertTrue(CostantiErroriIntegrazione.MSG_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.equals(e.getDescrizioneEccezione()));
+		Reporter.log("confronto con ["+descrizioneErrore+"]");
+		Assert.assertTrue(descrizioneErrore.equals(e.getDescrizioneEccezione()));
 	}
 	
 	
@@ -836,41 +1016,55 @@ public class RichiesteApplicativeScorrette {
 	 * Messaggio Richiesto Inesistente (Integration Manager)
 	 * "407";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".407"})
-	public void testIM_messaggioNonEsistente() throws Exception{
-		org.openspcoop2.pdd.services.axis14.MessageBox_PortType im = 
-			IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
-				"sil01","SIL_01");
-		try{
-			im.getMessage("ID_EGOV_XXX");
-			throw new Exception("Metodo getMessage non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_407(e);
-		}
-		try{
-			im.getMessageByReference("ID_EGOV_XXX");
-			throw new Exception("Metodo getMessageByReference non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_407(e);
-		}
-		try{
-			im.deleteMessage("ID_EGOV_XXX");
-			throw new Exception("Metodo deleteMessage non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_407(e);
-		}
-		try{
-			im.deleteMessageByReference("ID_EGOV_XXX");
-			throw new Exception("Metodo deleteMessageByReference non ha causato errori");
-		}catch(IntegrationManagerException e){
-			verificaSPCoopException_407(e);
-		}
+	protected void _testIM_messaggioNonEsistente() throws Exception{
 		
+		try{
+			_lock();
+		
+			org.openspcoop2.pdd.services.axis14.MessageBox_PortType im = 
+				IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
+					"sil01","SIL_01");
+			try{
+				im.getMessage("ID_EGOV_XXX");
+				throw new Exception("Metodo getMessage non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_407(e);
+			}
+			try{
+				im.getMessageByReference("ID_EGOV_XXX");
+				throw new Exception("Metodo getMessageByReference non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_407(e);
+			}
+			try{
+				im.deleteMessage("ID_EGOV_XXX");
+				throw new Exception("Metodo deleteMessage non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_407(e);
+			}
+			try{
+				im.deleteMessageByReference("ID_EGOV_XXX");
+				throw new Exception("Metodo deleteMessageByReference non ha causato errori");
+			}catch(IntegrationManagerException e){
+				verificaSPCoopException_407(e);
+			}
+		
+		}finally{
+			this._unlock();
+		}
 	}
 	private void verificaSPCoopException_407(IntegrationManagerException e) throws Exception{
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+		IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.IM_MESSAGE_NOT_FOUND;
+		
+		String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+		if(this.genericCode) {
+			codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+		}
 		Reporter.log("Codice errore ["+e.getCodiceEccezione()+"]");
-		Reporter.log("confronto con ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO)+"]");
-		Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getCodiceEccezione()));
+		Reporter.log("confronto con ["+codiceErrore+"]");
+		Assert.assertTrue(codiceErrore.equals(e.getCodiceEccezione()));
 		
 		Reporter.log("ID Porta ["+e.getIdentificativoPorta()+"]");
 		Reporter.log("confronto con [OpenSPCoopSPCoopIT]");
@@ -884,9 +1078,15 @@ public class RichiesteApplicativeScorrette {
 		Reporter.log("confronto con [EccezioneIntegrazione]");
 		Assert.assertTrue("EccezioneIntegrazione".equals(e.getTipoEccezione()));
 		
+		String descrizioneErrore = CostantiErroriIntegrazione.MSG_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO;
+		if(this.genericCode) {
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				descrizioneErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+			}
+		}
 		Reporter.log("MessaggioErrore ["+e.getDescrizioneEccezione()+"]");
-		Reporter.log("confronto con ["+CostantiErroriIntegrazione.MSG_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO+"]");
-		Assert.assertTrue(CostantiErroriIntegrazione.MSG_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.equals(e.getDescrizioneEccezione()));
+		Reporter.log("confronto con ["+descrizioneErrore+"]");
+		Assert.assertTrue(descrizioneErrore.equals(e.getDescrizioneEccezione()));
 	}
 	
 	
@@ -903,12 +1103,13 @@ public class RichiesteApplicativeScorrette {
 	 * Servizio Correlato associato ad un Servizio Asincrono non esistente
 	 * "408";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".408"})
-	public void testServizioCorrelatoNonEsistenteAS() throws Exception{
+	protected void _testServizioCorrelatoNonEsistenteAS(boolean unwrap) throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock(unwrap);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_CORRELATO_NON_ESISTENTE);
@@ -934,10 +1135,25 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_408_SERVIZIO_CORRELATO_NON_TROVATO);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_408_SERVIZIO_CORRELATO_NON_TROVATO;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						"TestRichiesteScorretteSPCoopIT","RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_408_SERVIZIO_CORRELATO_NON_TROVATO), 
-						CostantiErroriIntegrazione.MSG_408_SERVIZIO_CORRELATO_NON_TROVATO, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						"TestRichiesteScorretteSPCoopIT",RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -947,16 +1163,18 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			_unlock();
 		}
 	}
 	
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".408"}, 
-			dependsOnMethods="testServizioCorrelatoNonEsistenteAS")
-	public void testServizioCorrelatoNonEsistenteAA() throws Exception{
+	protected void _testServizioCorrelatoNonEsistenteAA(boolean unwrap) throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock(unwrap);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_ASIMMETRICO_CORRELATO_NON_ESISTENTE);
@@ -982,10 +1200,25 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_408_SERVIZIO_CORRELATO_NON_TROVATO);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_408_SERVIZIO_CORRELATO_NON_TROVATO;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						"TestRichiesteScorretteSPCoopIT","RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_408_SERVIZIO_CORRELATO_NON_TROVATO), 
-						CostantiErroriIntegrazione.MSG_408_SERVIZIO_CORRELATO_NON_TROVATO, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						"TestRichiesteScorretteSPCoopIT",RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -995,6 +1228,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -1010,14 +1245,16 @@ public class RichiesteApplicativeScorrette {
 	 * Risposta/RichiestaStato asincrona non correlata ad una precedente richiesta
 	 * "409";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".409"})
-	public void testRispostaAsincronaSimmetricaNonGenerabile() throws Exception{
+	protected void _testRispostaAsincronaSimmetricaNonGenerabile() throws Exception{
 		
-		Date dataInizioTest = DateManager.getDate();
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
 			
 			TestSuiteProperties testsuiteProperties = TestSuiteProperties.getInstance();
 			
@@ -1046,11 +1283,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.CORRELATION_INFORMATION_NOT_FOUND;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE.getCodicePorta(),
-						"Imbustamento", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA), 
-						CostantiErroriIntegrazione.MSG_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE.getCodicePorta(), Imbustamento.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1060,9 +1308,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -1083,15 +1332,17 @@ public class RichiesteApplicativeScorrette {
 		this.erroriAttesiOpenSPCoopCore.add(err3);
 	}
 	
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".409"},
-			dependsOnMethods="testRispostaAsincronaSimmetricaNonGenerabile")
-	public void testRispostaAsincronaAsimmetricaNonGenerabile() throws Exception{
+	protected void _testRispostaAsincronaAsimmetricaNonGenerabile() throws Exception{
 		
-		Date dataInizioTest = DateManager.getDate();
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			TestSuiteProperties testsuiteProperties = TestSuiteProperties.getInstance();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -1119,10 +1370,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.CORRELATION_INFORMATION_NOT_FOUND;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"Imbustamento", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA), 
-						CostantiErroriIntegrazione.MSG_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(), Imbustamento.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1132,9 +1395,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -1166,12 +1430,13 @@ public class RichiesteApplicativeScorrette {
 	 * Autenticazione richiesta per l'invocazione della Porta Delegata
 	 * "410";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".410"})
-	public void testAutenticazioneRichiestaServizioApplicativoAsincronoSimmetrico() throws Exception{
+	protected void _testAutenticazioneRichiestaServizioApplicativoAsincronoSimmetrico() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_PD_SENZA_AUTENTICAZIONE);
@@ -1196,10 +1461,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_410_AUTENTICAZIONE_RICHIESTA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_410_AUTENTICAZIONE_RICHIESTA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"Imbustamento", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_410_AUTENTICAZIONE_RICHIESTA), 
-						CostantiErroriIntegrazione.MSG_410_AUTENTICAZIONE_RICHIESTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),Imbustamento.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1209,6 +1486,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -1227,12 +1506,13 @@ public class RichiesteApplicativeScorrette {
 	 * Elemento Risposta Asincrona richiesto per l'invocazione della Porta Delegata
 	 * "411";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".411"})
-	public void testElementoRispostaAsincronaNonPresente() throws Exception{
+	protected void _testElementoRispostaAsincronaNonPresente(boolean unwrap) throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock(unwrap);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA);
@@ -1258,10 +1538,25 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"Imbustamento", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA), 
-						CostantiErroriIntegrazione.MSG_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),Imbustamento.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1271,6 +1566,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -1288,12 +1585,13 @@ public class RichiesteApplicativeScorrette {
 	 * Porta Delegata invocabile dal servizio applicativo solo per riferimento
 	 * "412";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".412"})
-	public void testInvioPerRiferimento() throws Exception{
+	protected void _testInvioPerRiferimento() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_MESSAGE_BOX_INVOCAZIONE_PER_RIFERIMENTO);
@@ -1319,10 +1617,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO), 
-						CostantiErroriIntegrazione.MSG_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1332,6 +1642,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -1353,12 +1665,12 @@ public class RichiesteApplicativeScorrette {
 	 * Porta Delegata invocabile dal servizio applicativo solo senza riferimento
 	 * "413";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".413"})
-	public void testInvioPerRiferimentoNonAutorizzato() throws Exception{
+	protected void _testInvioPerRiferimentoNonAutorizzato() throws Exception{
 		
 		DatabaseComponent db = null;
 		String idEGov = null;
 		try{
+			_lock();
 			
 			Reporter.log("Pubblico un messaggio");
 			SOAPEngine utility = new SOAPEngine(null);
@@ -1387,13 +1699,23 @@ public class RichiesteApplicativeScorrette {
 			try{
 				db.close();
 			}catch(Exception e){}
+
+			this._unlock();
 		}
 			
 	}
 	private void verificaSPCoopException_413(IntegrationManagerException e) throws Exception{
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+		IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+		
+		String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO);
+		if(this.genericCode) {
+			codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+		}
 		Reporter.log("Codice errore ["+e.getCodiceEccezione()+"]");
-		Reporter.log("confronto con ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO)+"]");
-		Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO).equals(e.getCodiceEccezione()));
+		Reporter.log("confronto con ["+codiceErrore+"]");
+		Assert.assertTrue(codiceErrore.equals(e.getCodiceEccezione()));
 			
 		Reporter.log("ID Porta ["+e.getIdentificativoPorta()+"]");
 		Reporter.log("confronto con [MinisteroFruitoreSPCoopIT]");
@@ -1408,8 +1730,12 @@ public class RichiesteApplicativeScorrette {
 		Assert.assertTrue("EccezioneIntegrazione".equals(e.getTipoEccezione()));
 			
 		Reporter.log("MessaggioErrore ["+e.getDescrizioneEccezione()+"]");
-		Reporter.log("confronto con ["+CostantiErroriIntegrazione.MSG_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO+"]");
-		Assert.assertTrue(CostantiErroriIntegrazione.MSG_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO.equals(e.getDescrizioneEccezione()));
+		String detail = CostantiErroriIntegrazione.MSG_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO;
+		if(this.genericCode && erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+			detail = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+		}
+		Reporter.log("confronto con ["+detail+"]");
+		Assert.assertTrue(detail.equals(e.getDescrizioneEccezione()));
 	}
 	
 	
@@ -1430,12 +1756,13 @@ public class RichiesteApplicativeScorrette {
 	 * Consegna in ordine utilizzabile sono con profilo Oneway
 	 * "414";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".414"})
-	public void testConsegnaOrdineProfiloSincrono() throws Exception{
+	protected void _testConsegnaOrdineProfiloSincrono() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_PROFILO_SINCRONO);
@@ -1460,10 +1787,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"Imbustamento", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY), 
-						CostantiErroriIntegrazione.MSG_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),Imbustamento.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1473,6 +1812,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -1496,12 +1837,13 @@ public class RichiesteApplicativeScorrette {
 	 * Consegna in ordine non utilizzabile per mancanza di dati necessari
 	 * "415";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".415"})
-	public void testConsegnaOrdineConfigurazioneErrata_confermaRicezioneMancante() throws Exception{
+	protected void _testConsegnaOrdineConfigurazioneErrata_confermaRicezioneMancante() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_CONFERMA_RICEZIONE);
@@ -1526,10 +1868,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"Imbustamento", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI), 
-						CostantiErroriIntegrazione.MSG_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),Imbustamento.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);		
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1539,16 +1893,18 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".415"},
-			dependsOnMethods="testConsegnaOrdineConfigurazioneErrata_confermaRicezioneMancante")
-	public void testConsegnaOrdineConfigurazioneErrata_filtroDuplicatiMancante() throws Exception{
+	protected void _testConsegnaOrdineConfigurazioneErrata_filtroDuplicatiMancante() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_FILTRO_DUPLICATI);
@@ -1573,10 +1929,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"Imbustamento", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI), 
-						CostantiErroriIntegrazione.MSG_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),Imbustamento.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1586,16 +1954,18 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".415"},
-			dependsOnMethods="testConsegnaOrdineConfigurazioneErrata_filtroDuplicatiMancante")
-	public void testConsegnaOrdineConfigurazioneErrata_idCollaborazioneMancante() throws Exception{
+	protected void _testConsegnaOrdineConfigurazioneErrata_idCollaborazioneMancante() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_ID_COLLABORAZIONE);
@@ -1620,10 +1990,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"Imbustamento", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI), 
-						CostantiErroriIntegrazione.MSG_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),Imbustamento.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1633,6 +2015,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -1657,15 +2041,17 @@ public class RichiesteApplicativeScorrette {
 	 * Correlazione Applicativa non riuscita
 	 * "416";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".416"})
-	public void testCorrelazioneApplicativaErrata() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testCorrelazioneApplicativaErrata() throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_URL_BASED);
@@ -1690,10 +2076,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE), 
-						CostantiErroriIntegrazione.MSG_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1703,9 +2101,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -1734,15 +2133,17 @@ public class RichiesteApplicativeScorrette {
 	 * Impossibile istanziare un validatore: XSD non valido o mancante
 	 * "417";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".417"})
-	public void testValidazioneApplicativaSenzaXsd_tipoXSD() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testValidazioneApplicativaSenzaXsd_tipoXSD(boolean unwrap) throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock(unwrap);
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_XSD);
@@ -1767,10 +2168,25 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi");
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA), 
-						CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1780,9 +2196,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -1791,16 +2208,17 @@ public class RichiesteApplicativeScorrette {
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".417"},
-			dependsOnMethods="testValidazioneApplicativaSenzaXsd_tipoXSD")
-	public void testValidazioneApplicativaSenzaXsd_tipoWSDL() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testValidazioneApplicativaSenzaXsd_tipoWSDL(boolean unwrap) throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock(unwrap);
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_WSDL);
@@ -1825,10 +2243,25 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi");
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA), 
-						CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1838,9 +2271,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -1849,16 +2283,17 @@ public class RichiesteApplicativeScorrette {
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".417"},
-			dependsOnMethods="testValidazioneApplicativaSenzaXsd_tipoWSDL")
-	public void testValidazioneApplicativaSenzaXsd_tipoOPENSPCOOP() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testValidazioneApplicativaSenzaXsd_tipoOPENSPCOOP(boolean unwrap) throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock(unwrap);
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_OPENSPCOOP);
@@ -1883,10 +2318,25 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi");
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA), 
-						CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1896,9 +2346,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -1925,10 +2376,7 @@ public class RichiesteApplicativeScorrette {
 	 * Validazione del messaggio di richiesta fallita
 	 * "418";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".418"})
-	public void testValidazioneApplicativaRichiestaFallita() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testValidazioneApplicativaRichiestaFallita() throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
@@ -1936,7 +2384,11 @@ public class RichiesteApplicativeScorrette {
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 			CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL;
 		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -1963,10 +2415,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA);
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_REQUEST_CONTENT;
+				String descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError)+": Invalid request by WSDL specification";
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA), 
-						CostantiErroriIntegrazione.MSG_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.replace("TIPO_WSDL", "Wsdl erogatore"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1976,9 +2440,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
-		}
 
-		Date dataFineTest = DateManager.getDate();
+			this._unlock();
+			dataFineTest = DateManager.getDate();
+		}
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -2008,17 +2473,18 @@ public class RichiesteApplicativeScorrette {
 	 * Validazione del messaggio di risposta fallita
 	 * "419";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".419"})
-	public void testValidazioneApplicativaRispostaFallita() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testValidazioneApplicativaRispostaFallita(boolean unwrap) throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_RISPOSTA_FALLITA;
 		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock(unwrap);
+			dataInizioTest = DateManager.getDate();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -2045,10 +2511,27 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA);
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INVALID_RESPONSE_CONTENT;
+				String descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError)+
+						": (element {http://schemas.xmlsoap.org/soap/envelope/}AlterazioneMessaggio) cvc-elt.1.a: Cannot find the declaration of element 'soapenv:AlterazioneMessaggio'.";
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					if(!unwrap) {
+						integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+						descrizioneEccezioneAttesa =  erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"InoltroBuste", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA), 
-						CostantiErroriIntegrazione.MSG_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),InoltroBuste.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2058,9 +2541,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
-		}
 
-		Date dataFineTest = DateManager.getDate();
+			this._unlock();
+			dataFineTest = DateManager.getDate();
+		}
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -2099,8 +2583,7 @@ public class RichiesteApplicativeScorrette {
 	 * Busta E-Gov presente nel messaggio di richiesta
 	 * "420";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".420"})
-	public void TestBustaEGovInviataVersoPortaDelegata() throws Exception{
+	protected void _testBustaEGovInviataVersoPortaDelegata() throws Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2126,6 +2609,8 @@ public class RichiesteApplicativeScorrette {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY);
@@ -2150,10 +2635,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_REQUEST_ALREADY_EXISTS;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA), 
-						CostantiErroriIntegrazione.MSG_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2163,6 +2660,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 
@@ -2182,10 +2681,10 @@ public class RichiesteApplicativeScorrette {
 	 * Il messaggio di richiesta utilizzato con IM per invocare la Porta Delegata non rispetta il formato SOAP
 	 * "421";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".421"})
-	public void testInvioMessaggioNonSOAPConXML() throws Exception{
+	protected void _testInvioMessaggioNonSOAPConXML() throws Exception{
 		
 		try{
+			_lock();
 			
 			Reporter.log("Effettuo invocazione per riferimento");
 			org.openspcoop2.pdd.services.axis14.PD_PortType im = 
@@ -2199,12 +2698,23 @@ public class RichiesteApplicativeScorrette {
 		}catch(IntegrationManagerException e){
 			verificaSPCoopException_421(e);
 		}
+		finally {
+			this._unlock();
+		}
 			
 	}
 	private void verificaSPCoopException_421(IntegrationManagerException e) throws Exception{
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+		IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+		
+		String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA);
+		if(this.genericCode) {
+			codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+		}
 		Reporter.log("Codice errore ["+e.getCodiceEccezione()+"]");
-		Reporter.log("confronto con ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA)+"]");
-		Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA).equals(e.getCodiceEccezione()));
+		Reporter.log("confronto con ["+codiceErrore+"]");
+		Assert.assertTrue(codiceErrore.equals(e.getCodiceEccezione()));
 			
 		Reporter.log("ID Porta ["+e.getIdentificativoPorta()+"]");
 		Reporter.log("confronto con [OpenSPCoopSPCoopIT]");
@@ -2219,8 +2729,16 @@ public class RichiesteApplicativeScorrette {
 		Assert.assertTrue("EccezioneIntegrazione".equals(e.getTipoEccezione()));
 			
 		Reporter.log("MessaggioErrore ["+e.getDescrizioneEccezione()+"]");
-		Reporter.log("confronto con ["+CostantiErroriIntegrazione.MSG_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA+"]");
-		Assert.assertTrue(e.getDescrizioneEccezione().contains(CostantiErroriIntegrazione.MSG_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA));
+		String detail = CostantiErroriIntegrazione.MSG_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA;
+		if(this.genericCode && erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+			detail = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+			Reporter.log("confronto con ["+detail+"]");
+			Assert.assertTrue(detail.equals(e.getDescrizioneEccezione()));
+		}
+		else {
+			Reporter.log("confronto con ["+detail+"]");
+			Assert.assertTrue(e.getDescrizioneEccezione().startsWith(detail));
+		}
 	}
 	
 	
@@ -2242,17 +2760,18 @@ public class RichiesteApplicativeScorrette {
 	 * Il messaggio di richiesta utilizzato con il tunnel SOAP e  con IM per invocare la Porta Delegata non e' imbustabile
 	 * "422";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".422"})
-	public void testInvioMessaggioTramiteTunnelSOAP_nonImbustabileInSOAP() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testInvioMessaggioTramiteTunnelSOAP_nonImbustabileInSOAP() throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO;
 		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
@@ -2277,10 +2796,22 @@ public class RichiesteApplicativeScorrette {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo),
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiHTTP", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA), 
-						CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativiHTTPtoSOAPConnector.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 				
 			}finally{
 				dbComponentFruitore.close();
@@ -2291,9 +2822,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
-		}
 
-		Date dataFineTest = DateManager.getDate();
+			this._unlock();
+			dataFineTest = DateManager.getDate();
+		}
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -2314,11 +2846,10 @@ public class RichiesteApplicativeScorrette {
 		this.erroriAttesiOpenSPCoopCore.add(err3);
 	}
 	
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".422"},
-			dependsOnMethods="testInvioMessaggioTramiteTunnelSOAP_nonImbustabileInSOAP")
-	public void testInvioMessaggioTramiteIM_nonImbustabileInSOAP() throws Exception{
+	protected void _testInvioMessaggioTramiteIM_nonImbustabileInSOAP() throws Exception{
 		
 		try{
+			_lock();
 			
 			Reporter.log("Effettuo invocazione per riferimento");
 			org.openspcoop2.pdd.services.axis14.PD_PortType im = 
@@ -2333,12 +2864,23 @@ public class RichiesteApplicativeScorrette {
 		}catch(IntegrationManagerException e){
 			verificaSPCoopException_422(e);
 		}
+		finally{
+			this._unlock();
+		}
 			
 	}
 	private void verificaSPCoopException_422(IntegrationManagerException e) throws Exception{
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+		IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+		
+		String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA);
+		if(this.genericCode) {
+			codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+		}
 		Reporter.log("Codice errore ["+e.getCodiceEccezione()+"]");
-		Reporter.log("confronto con ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA)+"]");
-		Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA).equals(e.getCodiceEccezione()));
+		Reporter.log("confronto con ["+codiceErrore+"]");
+		Assert.assertTrue(codiceErrore.equals(e.getCodiceEccezione()));
 			
 		Reporter.log("ID Porta ["+e.getIdentificativoPorta()+"]");
 		Reporter.log("confronto con [OpenSPCoopSPCoopIT]");
@@ -2353,8 +2895,16 @@ public class RichiesteApplicativeScorrette {
 		Assert.assertTrue("EccezioneIntegrazione".equals(e.getTipoEccezione()));
 			
 		Reporter.log("MessaggioErrore ["+e.getDescrizioneEccezione()+"]");
-		Reporter.log("confronto con ["+CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA+"]");
-		Assert.assertTrue(e.getDescrizioneEccezione().contains(CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA));
+		String detail = CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA;
+		if(this.genericCode && erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+			detail = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+			Reporter.log("confronto con ["+detail+"]");
+			Assert.assertTrue(detail.equals(e.getDescrizioneEccezione()));
+		}
+		else {
+			Reporter.log("confronto con ["+detail+"]");
+			Assert.assertTrue(e.getDescrizioneEccezione().startsWith(detail));
+		}
 	}
 	
 	
@@ -2377,12 +2927,13 @@ public class RichiesteApplicativeScorrette {
 	 * Servizio SPCoop invocato con azione non corretta
 	 * "423";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".423"})
-	public void testInvocazioneServizioSenzaAzione() throws Exception{
+	protected void _testInvocazioneServizioSenzaAzione() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_NON_INVOCABILE_SENZA_AZIONE);
@@ -2407,11 +2958,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_SCORRETTA.replace(CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_API_TEMPLATE, "ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"); 
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA), 
-						CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_SCORRETTA.replace(CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_API_TEMPLATE, "ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"), 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2421,6 +2983,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -2441,12 +3005,13 @@ public class RichiesteApplicativeScorrette {
 	 * Funzione "Allega Body" non riuscita sul messaggio di richiesta
 	 * "424";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".424"})
-	public void testAllegaBodyNonRiuscito() throws Exception{
+	protected void _testAllegaBodyNonRiuscito() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ALLEGA_BODY);
@@ -2471,10 +3036,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_424_ALLEGA_BODY);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_424_ALLEGA_BODY; 
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_424_ALLEGA_BODY), 
-						CostantiErroriIntegrazione.MSG_424_ALLEGA_BODY, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2484,6 +3061,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -2504,12 +3083,13 @@ public class RichiesteApplicativeScorrette {
 	 * Funzione "Scarta Body" non riuscita sul messaggio di richiesta
 	 * "425";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".425"})
-	public void testScartaBodyNonRiuscito() throws Exception{
+	protected void _testScartaBodyNonRiuscito() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_SCARTA_BODY);
@@ -2534,10 +3114,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_425_SCARTA_BODY);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_425_SCARTA_BODY; 
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_425_SCARTA_BODY), 
-						CostantiErroriIntegrazione.MSG_425_SCARTA_BODY, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2547,6 +3139,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -2566,15 +3160,17 @@ public class RichiesteApplicativeScorrette {
 	 * Errore di processamento SOAP del messaggio di richiesta 
 	 * "426";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".426"})
-	public void testSoapEngineFallito_errore_processamento() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testSoapEngineFallito_errore_processamento() throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
@@ -2601,10 +3197,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR; 
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR), 
-						CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2614,9 +3222,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -2658,12 +3267,13 @@ public class RichiesteApplicativeScorrette {
 	 * Impossibile processare header SOAP in messaggio con opzione mustUnderstand
 	 * "427";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".427"})
-	public void testMustUnderstad() throws Exception{
+	protected void _testMustUnderstad() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
@@ -2688,10 +3298,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR; 
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SOAP_MUST_UNDERSTAND_UNKNOWN;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR), 
-						CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2701,6 +3323,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -2717,12 +3341,13 @@ public class RichiesteApplicativeScorrette {
 	 * Autorizzazione basata sul contenuto fallita
 	 * "428";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".428"})
-	public void testAutorizzazioneContenutoKO() throws Exception{
+	protected void _testAutorizzazioneContenutoKO() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO);
@@ -2747,10 +3372,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_428_AUTORIZZAZIONE_CONTENUTO_FALLITA; 
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.CONTENT_AUTHORIZATION_DENY;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA), 
-						CostantiErroriIntegrazione.MSG_428_AUTORIZZAZIONE_CONTENUTO_FALLITA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2760,6 +3397,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -2777,12 +3416,13 @@ public class RichiesteApplicativeScorrette {
 	 * L'header HTTP riporta un Content-Type non previsto in SOAP 1.1
 	 * "429";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".429"})
-	public void testContentTypeErrato() throws Exception{
+	protected void _testContentTypeErrato() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
@@ -2808,11 +3448,22 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_429_CONTENT_TYPE_NON_SUPPORTATO);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_NON_SUPPORTATO.replace(CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_KEY, "application/soap+xml");
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.CONTENT_TYPE_NOT_SUPPORTED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_429_CONTENT_TYPE_NON_SUPPORTATO), 
-						CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_NON_SUPPORTATO.replace(CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_KEY, "application/soap+xml"), 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2822,6 +3473,8 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			this._unlock();
 		}
 	}
 	
@@ -2837,15 +3490,17 @@ public class RichiesteApplicativeScorrette {
 	 * Envelope con Namespace non previsto in SOAP 1.1
 	 * "430";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".430"})
-	public void testNamespaceEnvelopeErrato() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testNamespaceEnvelopeErrato() throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			String xml = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 			xml = xml.replace("http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/2003/05/soap-envelope"); // imposto namespace di SOAP 1.2
 			Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
@@ -2878,20 +3533,44 @@ public class RichiesteApplicativeScorrette {
 				
 				try{
 					Reporter.log("Verifica con [http://www.w3.org/2003/05/soap-envelope] ...");
+					
+					String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR);
+					String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "http://www.w3.org/2003/05/soap-envelope");
+					boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					if(this.genericCode) {
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SOAP_VERSION_MISMATCH;
+						ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+						codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+						if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+							descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+							checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+						}
+					}
+					
 					Utilities.verificaFaultIntegrazione(error, 
-							CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-							Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR), 
-							CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "http://www.w3.org/2003/05/soap-envelope"), 
-								Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+							CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+							codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 				}catch(Throwable e){
 					// Provo a vedere se sono in un caso dove il framework non e' riuscito a comprendere il namespace del soap envelope
 					Reporter.log("Verifica con [http://www.w3.org/2003/05/soap-envelope] fallita: "+e.getMessage());
 					Reporter.log("Verifica con [Impossibile recuperare il valore del namespace] ...");
+					
+					String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR);
+					String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "Impossibile recuperare il valore del namespace");
+					boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					if(this.genericCode) {
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SOAP_VERSION_MISMATCH;
+						ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+						codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+						if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+							descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+							checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+						}
+					}
+					
 					Utilities.verificaFaultIntegrazione(error, 
-							CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-							Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR), 
-							CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "Impossibile recuperare il valore del namespace"), 
-								Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+							CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+							codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 				}
 			}finally{
 				dbComponentFruitore.close();
@@ -2902,10 +3581,11 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
 		
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		// Altro framework
 		
@@ -2938,16 +3618,18 @@ public class RichiesteApplicativeScorrette {
 	 **/
 	Repository repositoryLetturaCredenzialeERRORE_CONFIGURAZIONE_PD=new Repository();
 	Date dataLetturaCredenzialeERRORE_CONFIGURAZIONE_PD = null;
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".431"})
-	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD() throws TestSuiteException, Exception{
+	protected void _testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD() throws TestSuiteException, Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		this.dataLetturaCredenzialeERRORE_CONFIGURAZIONE_PD = new Date();
 		
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
@@ -2975,16 +3657,25 @@ public class RichiesteApplicativeScorrette {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
-				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR).equals(error.getFaultCode().getLocalPart()));
 				
-				String msgErrore = CostantiErroriIntegrazione.MSG_431_GESTORE_CREDENZIALI_ERROR.replace(CostantiErroriIntegrazione.MSG_431_TIPO_GESTORE_CREDENZIALI_KEY, "testOpenSPCoop2");
-				msgErrore = msgErrore+ "Eccezione, di configurazione, richiesta dalla testsuite";
-				Reporter.log("Controllo fault string ["+msgErrore+"]");
-				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_431_GESTORE_CREDENZIALI_ERROR.replace(CostantiErroriIntegrazione.MSG_431_TIPO_GESTORE_CREDENZIALI_KEY, "testOpenSPCoop2");
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
+				Utilities.verificaFaultIntegrazione(error, 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 				
 			}finally{
 				dbComponentFruitore.close();
@@ -2999,9 +3690,10 @@ public class RichiesteApplicativeScorrette {
 			try{
 				dbComponentFruitore.close();
 			}catch(Exception e){}
-		}
 
-		Date dataFineTest = DateManager.getDate();
+			this._unlock();
+			dataFineTest = DateManager.getDate();
+		}
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -3031,15 +3723,17 @@ public class RichiesteApplicativeScorrette {
 	 * Errore di processamento SOAP del messaggio di richiesta 
 	 * "432";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".432"})
-	public void testSoapEngineFallito_ricostruzioneMessaggioNonRiuscito() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testSoapEngineFallito_ricostruzioneMessaggioNonRiuscito() throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock();
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
@@ -3066,12 +3760,23 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
-				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA).equals(error.getFaultCode().getLocalPart()))
-					Utilities.verificaFaultIntegrazione(error, 
-							CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
-							Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA), 
-							CostantiErroriIntegrazione.MSG_432_MESSAGGIO_XML_MALFORMATO_RICHIESTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
-				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (432): " + error.getFaultCode().getLocalPart());
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_432_MESSAGGIO_XML_MALFORMATO_RICHIESTA;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
+				Utilities.verificaFaultIntegrazione(error, 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
+
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -3081,9 +3786,10 @@ public class RichiesteApplicativeScorrette {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -3131,61 +3837,71 @@ public class RichiesteApplicativeScorrette {
 	 * "433";
 	 */
 	// LA LIBRERIA CLIENT HTTP GENERICO NON PERMETTE UNA INVOCAZIONE SENZA CONTENT TYPE
-//	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".433"})
-//	public void testContentTypeNonPresente() throws Exception{
-//		
-//		
-//		DatabaseComponent dbComponentFruitore = null;
-//		DatabaseComponent dbComponentErogatore = null;
-//
-//		try{
-//			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
-//			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-//			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
-//			client.connectToSoapEngine();
-//			// NOTA: invio un messaggio malformato forzando il test in modo da mangare un soap with attachments come fosse un messaggio senza attachments
-//			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
-//			//client.setMessaggioXMLRichiesta("CONTENTUO_ERRATO".getBytes()); QUESTO non rilancia il soap fault
-//			client.setRispostaDaGestire(true);
-//			// AttesaTerminazioneMessaggi
-//			
-//			client.setContentType("");
-//			
-//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-//				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
-//				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
-//
-//				client.setAttesaTerminazioneMessaggi(true);
-//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
-//			}
-//			try {
-//				client.run();
-//
-//				Reporter.log("Invocazione porta delegata (433) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-//				throw new TestSuiteException("Invocazione porta delegata (433) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-//			} catch (AxisFault error) {
-//				
-//				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-//				
-//				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_433_CONTENT_TYPE_NON_PRESENTE).equals(error.getFaultCode().getLocalPart()))
-//					Utilities.verificaFaultIntegrazione(error, 
-//							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
-//							Utilities.toString(CodiceErroreIntegrazione.CODICE_433_CONTENT_TYPE_NON_PRESENTE), 
-//							CostantiErroriIntegrazione.MSG_433_CONTENT_TYPE_NON_PRESENTE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
-//				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (433): " + error.getFaultCode().getLocalPart());
-//			}finally{
-//				dbComponentFruitore.close();
-//				dbComponentErogatore.close();
-//			}
-//		}catch(Exception e){
-//			throw e;
-//		}finally{
-//			dbComponentFruitore.close();
-//			dbComponentErogatore.close();
-//		}
-//		
-//	}
+	protected void _testContentTypeNonPresente() throws Exception{
+		
+		
+		DatabaseComponent dbComponentFruitore = null;
+		DatabaseComponent dbComponentErogatore = null;
+
+		try{
+			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
+			client.connectToSoapEngine();
+			// NOTA: invio un messaggio malformato forzando il test in modo da mangare un soap with attachments come fosse un messaggio senza attachments
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
+			//client.setMessaggioXMLRichiesta("CONTENTUO_ERRATO".getBytes()); QUESTO non rilancia il soap fault
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			
+			client.setContentType("");
+			
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			try {
+				client.run();
+
+				Reporter.log("Invocazione porta delegata (433) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (433) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+			} catch (AxisFault error) {
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_433_CONTENT_TYPE_NON_PRESENTE);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_433_CONTENT_TYPE_NON_PRESENTE;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.CONTENT_TYPE_NOT_PROVIDED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
+				Utilities.verificaFaultIntegrazione(error, 
+						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),RicezioneContenutiApplicativi.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);		
+
+			}finally{
+				dbComponentFruitore.close();
+				dbComponentErogatore.close();
+			}
+		}catch(Exception e){
+			throw e;
+		}finally{
+			dbComponentFruitore.close();
+			dbComponentErogatore.close();
+		}
+		
+	}
 	
 	
 	
@@ -3202,16 +3918,18 @@ public class RichiesteApplicativeScorrette {
 	 * Errore di processamento correlazione applicativa risposta
 	 * "434";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".434"})
-	public void testCorrelazioneApplicativaRispostaErrata() throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testCorrelazioneApplicativaRispostaErrata(boolean unwrap) throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		java.io.FileInputStream fin = null;
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock(unwrap);
+			dataInizioTest = DateManager.getDate();
+			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
@@ -3250,11 +3968,26 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
-				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE).equals(error.getFaultCode().getLocalPart()))
-					Utilities.verificaFaultIntegrazione(error, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE,InoltroBuste.ID_MODULO, 
-							Utilities.toString(CodiceErroreIntegrazione.CODICE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE), 
-							CostantiErroriIntegrazione.MSG_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
-				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (434): " + error.getFaultCode().getLocalPart());
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE);
+				String descrizioneEccezioneAttesa = CostantiErroriIntegrazione.MSG_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_RESPONSE_FAILED;
+					}
+					
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
+				Utilities.verificaFaultIntegrazione(error, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE,InoltroBuste.ID_MODULO, 
+						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);		
+
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -3267,10 +4000,10 @@ public class RichiesteApplicativeScorrette {
 			}catch(Exception e){}
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+
+			this._unlock();
+			dataFineTest = DateManager.getDate();
 		}
-		
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -3293,12 +4026,12 @@ public class RichiesteApplicativeScorrette {
 	 * LocalForward configErrata
 	 * "435";
 	 */
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".435"})
-	public void localForward_invokePD_ASINCRONI() throws TestSuiteException, Exception{
+	protected void _localForward_invokePD_ASINCRONI(boolean unwrap) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			_lock(unwrap);
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -3326,16 +4059,31 @@ public class RichiesteApplicativeScorrette {
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-				
+
 				String infoServizio = "( Servizio spc/MinisteroErogatore:spc/RichiestaStatoAvanzamentoAsincronoAsimmetrico:1 )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" profilo di collaborazione AsincronoAsimmetrico non supportato";
 				
-				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))
-					Utilities.verificaFaultIntegrazione(error, 
-							 CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE,"RicezioneContenutiApplicativi", 
-							Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
-							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
-				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR);
+				String descrizioneEccezioneAttesa = msgErrore;
+				boolean checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrizioneEccezioneAttesa = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						checkDescrizioneTramiteMatchEsatto = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+					}
+				}
+				
+				Utilities.verificaFaultIntegrazione(error, 
+						 CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE,RicezioneContenutiApplicativi.ID_MODULO, 
+						 codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);		
+			
 			}
 			
 		}catch(Exception e){
@@ -3347,6 +4095,8 @@ public class RichiesteApplicativeScorrette {
 			try{
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
+			
+			this._unlock();
 		}
 	}
 	
@@ -3366,19 +4116,25 @@ public class RichiesteApplicativeScorrette {
 	
 	*/
 	
-	
-	Repository repositoryStrutturaXMLBodyRispostaPdDErrato=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".440"})
-	public void strutturaXMLRispostaErrata()throws TestSuiteException,SOAPException, Exception{
-		Date dataInizioTest = DateManager.getDate();
-
+	/***
+	 * PARSING_EXCEPTION_RISPOSTA
+	 * "440";
+	 */
+	private Repository repositoryStrutturaXMLBodyRispostaPdDErrato=new Repository();
+	protected void _strutturaXMLRispostaErrata(boolean unwrap)throws TestSuiteException,SOAPException, Exception{
+		
 		// costruzione busta
 		String xml = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
 
 		DatabaseComponent dbComponentErogatore = null;
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			_lock(unwrap);
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLBodyRispostaPdDErrato);
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_XML_ERRATO_BODY_RISPOSTA_PDD);
@@ -3398,19 +4154,41 @@ public class RichiesteApplicativeScorrette {
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT con Busta codice["+error.getFaultCode().getLocalPart()+"] actor ["+error.getFaultActor()+"]: "+error.getFaultString());
-				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA).equals(error.getFaultCode().getLocalPart())){
-					Reporter.log("Controllo fault code. Atteso ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA)
-						+"] - Trovato [" + error.getFaultCode().getLocalPart() + "]");
-					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA).equals(error.getFaultCode().getLocalPart()));
-					String msgErrore = "Unexpected close tag </soapenv:Envelope>; expected </soapenv:Body>";
-					String msgErrore2 = "Unexpected close tag";
-					String msgErrore3 = "The element type \"soapenv:Body\" must be terminated by the matching end-tag \"</soapenv:Body>\"";
-					Reporter.log("Controllo fault string. Trovato [" + error.getFaultString() + "]");
-					Assert.assertTrue(error.getFaultString().contains(msgErrore) || error.getFaultString().contains(msgErrore2) || error.getFaultString().contains(msgErrore3));
-				} else {
-					Assert.assertTrue(false, "FaultCode non atteso");
+				
+				String codiceEccezioneAtteso = Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA);
+				String msgErrore = "Unexpected close tag </soapenv:Envelope>; expected </soapenv:Body>";
+				String msgErrore2 = "Unexpected close tag";
+				String msgErrore3 = "The element type \"soapenv:Body\" must be terminated by the matching end-tag \"</soapenv:Body>\"";
+				boolean multiMessageOptions = true;
+				
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT;
+					}
+					
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log); 
+					codiceEccezioneAtteso = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					codiceEccezioneAtteso = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+codiceEccezioneAtteso;
+					
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
 				}
-
+				
+				Reporter.log("Controllo fault code. Atteso ["+codiceEccezioneAtteso
+					+"] - Trovato [" + error.getFaultCode().getLocalPart() + "]");
+				Assert.assertTrue(codiceEccezioneAtteso.equals(error.getFaultCode().getLocalPart()));
+				
+				Reporter.log("Controllo fault string. Trovato [" + error.getFaultString() + "] (multiMessageOptions:"+multiMessageOptions+")");
+				if(multiMessageOptions) {
+					Assert.assertTrue(error.getFaultString().contains(msgErrore) || error.getFaultString().contains(msgErrore2) || error.getFaultString().contains(msgErrore3));
+				}
+				else {
+					Assert.assertTrue(error.getFaultString().equals(msgErrore));
+				}
+				
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
@@ -3421,9 +4199,10 @@ public class RichiesteApplicativeScorrette {
 			throw e;
 		}finally{
 			dbComponentErogatore.close();
-		}
 
-		Date dataFineTest = DateManager.getDate();
+			this._unlock();
+			dataFineTest = DateManager.getDate();
+		}
 
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);

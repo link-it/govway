@@ -29,6 +29,7 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationException;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.certificate.CertificateDecodeConfig;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
@@ -164,9 +165,9 @@ public class GestoreCredenzialiEngine {
 			if( ! ( usernameGateway.equals(credenzialiTrasporto.getUsername()) && passwordGateway.equals(credenzialiTrasporto.getPassword()) ) ){
 				String credenzialiPresenti = credenzialiTrasporto.toString();
 				if(credenzialiPresenti==null || credenzialiPresenti.equals("")){
-					throw new GestoreCredenzialiConfigurationException("Autenticazione basic del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, "Autenticazione basic del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
 				}else{
-					throw new GestoreCredenzialiConfigurationException("Autenticazione basic del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, "Autenticazione basic del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
 				}
 			}
 		}
@@ -191,15 +192,15 @@ public class GestoreCredenzialiEngine {
 				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject fornito non valido: "+e.getMessage());
 			}
 			if(credenzialiTrasporto.getSubject()==null){
-				throw new GestoreCredenzialiConfigurationException("Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali ssl riscontrata nel trasporto");
+				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, "Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali ssl riscontrata nel trasporto");
 			}
 			try{
 				if( ! org.openspcoop2.utils.certificate.CertificateUtils.sslVerify(subjectGateway, credenzialiTrasporto.getSubject(), PrincipalType.subject, OpenSPCoop2Logger.getLoggerOpenSPCoopCore()) ){
 					String credenzialiPresenti = credenzialiTrasporto.toString();
 					if(credenzialiPresenti==null || credenzialiPresenti.equals("")){
-						throw new GestoreCredenzialiConfigurationException("Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
+						throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, "Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
 					}else{
-						throw new GestoreCredenzialiConfigurationException("Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
+						throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, "Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
 					}
 				}
 			}catch(Exception e){
@@ -224,9 +225,9 @@ public class GestoreCredenzialiEngine {
 			if( ! ( principalGateway.equals(credenzialiTrasporto.getPrincipal()) ) ){
 				String credenzialiPresenti = credenzialiTrasporto.toString();
 				if(credenzialiPresenti==null || credenzialiPresenti.equals("")){
-					throw new GestoreCredenzialiConfigurationException("Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, "Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
 				}else{
-					throw new GestoreCredenzialiConfigurationException("Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, "Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
 				}
 			}
 		}
@@ -368,10 +369,12 @@ public class GestoreCredenzialiEngine {
 			String username = getProperty(headerTrasporto, 	headerNameBasicUsername );
 			String password = getProperty(headerTrasporto, 	headerNameBasicPassword );
 			if(username==null || "".equals(username)){
-				throw new GestoreCredenzialiConfigurationException("Username value non fornito nell'header del trasporto "+headerNameBasicUsername);
+				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+						"Username value non fornito nell'header del trasporto "+headerNameBasicUsername);
 			}
 			if(password==null || "".equals(password)){
-				throw new GestoreCredenzialiConfigurationException("Password value non fornito nell'header del trasporto "+headerNameBasicPassword);
+				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+						"Password value non fornito nell'header del trasporto "+headerNameBasicPassword);
 			}
 			c.setUsername(username);
 			c.setPassword(password);
@@ -383,7 +386,8 @@ public class GestoreCredenzialiEngine {
 				
 				String subject = getProperty(headerTrasporto, 	headerNameSSLSubject );
 				if(subject==null || "".equals(subject)){
-					throw new GestoreCredenzialiConfigurationException("Subject value non fornito nell'header del trasporto "+headerNameSSLSubject);
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+							"Subject value non fornito nell'header del trasporto "+headerNameSSLSubject);
 				}
 				try{
 					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(subject, PrincipalType.subject);
@@ -399,7 +403,8 @@ public class GestoreCredenzialiEngine {
 				
 				String issuer = getProperty(headerTrasporto, 	headerNameSSLIssuer );
 				if(issuer==null || "".equals(issuer)){
-					throw new GestoreCredenzialiConfigurationException("Issuer value non fornito nell'header del trasporto "+headerNameSSLIssuer);
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+							"Issuer value non fornito nell'header del trasporto "+headerNameSSLIssuer);
 				}
 				try{
 					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer);
@@ -415,7 +420,8 @@ public class GestoreCredenzialiEngine {
 				
 				String certificate = getProperty(headerTrasporto, 	headerNameSSLCertificate );
 				if(certificate==null || "".equals(certificate)){
-					throw new GestoreCredenzialiConfigurationException("Certificate non fornito nell'header del trasporto "+headerNameSSLCertificate);
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+							"Certificate non fornito nell'header del trasporto "+headerNameSSLCertificate);
 				}
 				
 				CertificateDecodeConfig config = new CertificateDecodeConfig();
@@ -453,7 +459,8 @@ public class GestoreCredenzialiEngine {
 			
 			String principal = getProperty(headerTrasporto, 	headerNamePrincipal );
 			if(principal==null || "".equals(principal)){
-				throw new GestoreCredenzialiConfigurationException("Principal value non fornito nell'header del trasporto "+headerNamePrincipal);
+				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+						"Principal value non fornito nell'header del trasporto "+headerNamePrincipal);
 			}
 			c.setPrincipal(principal);
 		}

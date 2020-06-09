@@ -20,19 +20,25 @@
 
 package org.openspcoop2.protocol.trasparente.testsuite.units.soap.authn;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Vector;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.trasparente.testsuite.core.TrasparenteTestsuiteLogger;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.AuthUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.CredenzialiInvocazione;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -47,10 +53,19 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AutenticazionePortaDelegata {
+public class AutenticazionePortaDelegata extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "AutenticazionePortaDelegata";
+	
+	
+	@SuppressWarnings("unused")
+	private Logger log = TrasparenteTestsuiteLogger.getInstance();
+	
+	protected AutenticazionePortaDelegata() {
+		super(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
 	
 	private static boolean addIDUnivoco = true;
 
@@ -78,21 +93,49 @@ public class AutenticazionePortaDelegata {
 	public Object[][] basicProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazioneDisabilitata(), 
+					IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND,
 					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(),true, 500},// nessuna credenziale
-				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic", "123456"), 
+				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic", "123456"),
+						null,
 						null, -1,true, 200}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic2", "123456"), 
-							null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneBasic("credenzialeErrata", "credenzialeErrata"), 
+						null,
+						null, -1,true, 200}, // crendeziali corrette
+				{CredenzialiInvocazione.getAutenticazioneBasic("credenzialeErrata", "credenzialeErrata"),
+					IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS,
 					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(), true, 500} // credenziali errate
 		};
 	}
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".BASIC"},dataProvider="basicProvider")
-	public void testBasic(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testBasic_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testBasic(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".BASIC"},dataProvider="basicProvider")
+	public void testBasic_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testBasic(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testBasic(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_BASIC, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -106,20 +149,45 @@ public class AutenticazionePortaDelegata {
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".BASIC_OPTIONAL"},dataProvider="basicProvider")
-	public void testBasicOptional(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testBasicOptional(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		boolean genericCode = false;
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_BASIC, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),  
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),  
 				200);
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".BASIC_FORWARD_AUTHORIZATION"},dataProvider="basicProvider")
-	public void testBasicForwardAuthorization(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testBasicForwardAuthorization_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testBasicForwardAuthorization(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".BASIC_FORWARD_AUTHORIZATION"},dataProvider="basicProvider")
+	public void testBasicForwardAuthorization_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testBasicForwardAuthorization(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testBasicForwardAuthorization(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_BASIC_FORWARD_AUTHORIZATION, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -142,35 +210,43 @@ public class AutenticazionePortaDelegata {
 	public Object[][] sslProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazioneDisabilitata(), 
+					IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND,
 					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(),true, 500,
 					null,null},// nessuna credenziale
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client1_trasparente.jks", "openspcoopjks", "openspcoop"), 
+						null,
 						null, -1,true, 200,
 						new String[] {"CN=client, OU=trasparente, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it"},
 						"EsempioFruitoreTrasparenteSsl"}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client2_trasparente.jks", "openspcoopjks", "openspcoop"), 
+						null, 
 						null, -1,true, 200,
 						new String[] {"CN=client2, OU=trasparente, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it"},
 						"EsempioFruitoreTrasparenteSsl2"}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client3_trasparente.jks", "openspcoopjks", "openspcoop"), 
+						null, 
 						null,-1, true, 200,
 						new String[] {"CN=client3, OU=trasparente, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it"},
 						null}, // credenziali corrette (anche se non registrate sul registro)
 				
 				// Credenziali corrette con caricamento certificato
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo1_multipleOU.jks", "123456", "123456"), 
+						null, 
 						null, -1,true, 200,
 						new String[] {"CN=applicativo1_multipleOU","OU=\" Piano=2, Scala=B, porta=3\""},
 						"EsempioFruitoreTrasparenteCert1"},
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo1_multipleOU_serialNumberDifferente.jks", "123456", "123456"), 
+						null, 
 						null, -1,true, 200,
 						new String[] {"CN=applicativo1_multipleOU","OU=\" Piano=2, Scala=B, porta=3\""},
 						"EsempioFruitoreTrasparenteCert1_serialNumberDifferente"},
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo2_multipleOU.jks", "123456", "123456"), 
+						null, 
 						null, -1,true, 200,
 						new String[] {"CN=applicativo2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
 						"EsempioFruitoreTrasparenteCert2"},
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo2_multipleOU_serialNumberDifferente.jks", "123456", "123456"), 
+						null, 
 						null, -1,true, 200,
 						new String[] {"CN=applicativo2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
 						"EsempioFruitoreTrasparenteCert2_serialNumberDifferente"},
@@ -179,13 +255,50 @@ public class AutenticazionePortaDelegata {
 
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".SSL"},dataProvider="sslProvider")
-	public void testSsl(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso,
+	public void testSsl_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso, 
+			String [] credenziale, 
+			String nomeServizioApplicativo) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testSsl(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso,
+					credenziale,
+					nomeServizioApplicativo);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".SSL"},dataProvider="sslProvider")
+	public void testSsl_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso, 
+			String [] credenziale, 
+			String nomeServizioApplicativo) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testSsl(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso,
+					credenziale,
+					nomeServizioApplicativo);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testSsl(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso,
 			String [] credenziale, 
 			String nomeServizioApplicativo) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_SSL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
 				30000); // readTimeout);
 		
 		if(erroreAtteso!=null) {
@@ -221,7 +334,8 @@ public class AutenticazionePortaDelegata {
 		}
 	}
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".SSL_OPTIONAL"},dataProvider="sslProvider")
-	public void testSslOptional(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso,
+	public void testSslOptional(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso,
 			String [] credenziale, 
 			String nomeServizioApplicativo ) throws Exception{
 		
@@ -229,8 +343,9 @@ public class AutenticazionePortaDelegata {
 				
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		boolean genericCode = false; // il dettaglio finisce nel diagnostico
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_SSL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),  
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),  
 				200);
 		
 		if(credenziale!=null || nomeServizioApplicativo!=null) {
@@ -266,26 +381,61 @@ public class AutenticazionePortaDelegata {
 	public Object[][] principalProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazioneDisabilitata(), 
+					IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND,
 					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(),true, 500},// nessuna credenziale
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
+						null,
 						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-							null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparentePrincipal1", "Op3nSPC@@p2"), 
-					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(),true, 500},// nessuna credenziale (non si passa tramite il container e il principal non viene valorizzato)
-				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal3", "Op3nSPC@@p2"), 
-					null,-1, true, 200}, // credenziali corrette (anche se non registrate sul registro)
-				{CredenzialiInvocazione.getAutenticazionePrincipal("credenzialeErrata", "credenzialeErrata"), 
+				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"),
+						null,
+						null, -1,true, 200}, // crendeziali corrette
+				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparentePrincipal1", "Op3nSPC@@p2"),
+						IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND,
+						CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(),true, 500},// nessuna credenziale (non si passa tramite il container e il principal non viene valorizzato)
+				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal3", "Op3nSPC@@p2"),
+						null,
+						null,-1, true, 200}, // credenziali corrette (anche se non registrate sul registro)
+				{CredenzialiInvocazione.getAutenticazionePrincipal("credenzialeErrata", "credenzialeErrata"),
+						null,
 						null, -1,true, 401} // credenziali errate (non registrate nel container)
 		};
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL"},dataProvider="principalProvider")
-	public void testPrincipal(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipal_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipal(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL"},dataProvider="principalProvider")
+	public void testPrincipal_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipal(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testPrincipal(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
 				returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
@@ -300,7 +450,8 @@ public class AutenticazionePortaDelegata {
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_OPTIONAL"},dataProvider="principalProvider")
-	public void testPrincipalOptional(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalOptional(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo
 		// Fatta eccezione per le credenziali non riconosciute dal container ssl
 		int stato = 200;
@@ -308,14 +459,44 @@ public class AutenticazionePortaDelegata {
 			stato = 401;
 		}
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		boolean genericCode = false; // il dettaglio finisce nel diagnostico
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(), 
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(), 
 				stato,
 				30000); // readTimeout);
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_HEADER_CLEAN"},dataProvider="principalProvider")
-	public void testPrincipalHeaderClean(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalHeaderClean_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalHeaderClean(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_HEADER_CLEAN"},dataProvider="principalProvider")
+	public void testPrincipalHeaderClean_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalHeaderClean(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testPrincipalHeaderClean(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		String header = null;
@@ -327,7 +508,7 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_HEADER_CLEAN,
 				credenzialiInvocazione, header, null, 
 				addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
 				returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
@@ -341,7 +522,36 @@ public class AutenticazionePortaDelegata {
 		}
 	}
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_HEADER_NOT_CLEAN"},dataProvider="principalProvider")
-	public void testPrincipalHeaderNotClean(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalHeaderNotClean_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalHeaderNotClean(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_HEADER_NOT_CLEAN"},dataProvider="principalProvider")
+	public void testPrincipalHeaderNotClean_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalHeaderNotClean(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testPrincipalHeaderNotClean(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		String header = null;
@@ -353,7 +563,7 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_HEADER_NOT_CLEAN,
 				credenzialiInvocazione, header, null, 
 				addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
 				returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
@@ -368,7 +578,8 @@ public class AutenticazionePortaDelegata {
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_HEADER_OPTIONAL"},dataProvider="principalProvider")
-	public void testPrincipalHeaderOptional(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalHeaderOptional(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
 		// Fatta eccezione per le credenziali non riconosciute dal container ssl
 		int stato = 200;
@@ -376,6 +587,7 @@ public class AutenticazionePortaDelegata {
 			stato = 401;
 		}
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		boolean genericCode = false; // il dettaglio finisce nel diagnostico
 		
 		String header = null;
 		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
@@ -386,12 +598,41 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_HEADER,
 				credenzialiInvocazione, header, null, 
 				addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
 				stato);
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_QUERY_CLEAN"},dataProvider="principalProvider")
-	public void testPrincipalQueryClean(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalQueryClean_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalQueryClean(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_QUERY_CLEAN"},dataProvider="principalProvider")
+	public void testPrincipalQueryClean_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalQueryClean(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testPrincipalQueryClean(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		String query = null;
@@ -403,7 +644,7 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_QUERY_CLEAN,
 				credenzialiInvocazione, null, query, 
 				addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
 				returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
@@ -417,7 +658,36 @@ public class AutenticazionePortaDelegata {
 		}
 	}
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_QUERY_NOT_CLEAN"},dataProvider="principalProvider")
-	public void testPrincipalQueryNotClean(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalQueryNotClean_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalQueryNotClean(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_QUERY_NOT_CLEAN"},dataProvider="principalProvider")
+	public void testPrincipalQueryNotClean_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalQueryNotClean(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testPrincipalQueryNotClean(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		String query = null;
@@ -429,7 +699,7 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_QUERY_NOT_CLEAN,
 				credenzialiInvocazione, null, query, 
 				addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
 				returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
@@ -444,7 +714,8 @@ public class AutenticazionePortaDelegata {
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_QUERY_OPTIONAL"},dataProvider="principalProvider")
-	public void testPrincipalQueryOptional(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalQueryOptional(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
 		// Fatta eccezione per le credenziali non riconosciute dal container ssl
 		int stato = 200;
@@ -452,6 +723,7 @@ public class AutenticazionePortaDelegata {
 			stato = 401;
 		}
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		boolean genericCode = false; // il dettaglio finisce nel diagnostico
 		
 		String query = null;
 		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
@@ -462,12 +734,41 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_QUERY,
 				credenzialiInvocazione, null, query, 
 				addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
 				stato);
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_URL"},dataProvider="principalProvider")
-	public void testPrincipalUrl(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalUrl_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalUrl(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_URL"},dataProvider="principalProvider")
+	public void testPrincipalUrl_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalUrl(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testPrincipalUrl(CredenzialiInvocazione credenzialiInvocazione,boolean genericCode, IntegrationFunctionError integrationFunctionError,  
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		String query = null;
@@ -479,7 +780,7 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_URL,
 				credenzialiInvocazione, null, query, 
 				addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest,
 				returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
@@ -494,7 +795,8 @@ public class AutenticazionePortaDelegata {
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_URL_OPTIONAL"},dataProvider="principalProvider")
-	public void testPrincipalUrlOptional(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testPrincipalUrlOptional(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
 		// Fatta eccezione per le credenziali non riconosciute dal container ssl
 		int stato = 200;
@@ -502,6 +804,7 @@ public class AutenticazionePortaDelegata {
 			stato = 401;
 		}
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		boolean genericCode = false; // il dettaglio finisce nel diagnostico		
 		
 		String query = null;
 		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
@@ -512,7 +815,7 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_URL,
 				credenzialiInvocazione, null, query, 
 				addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
 				stato);
 	}
 	
@@ -523,7 +826,7 @@ public class AutenticazionePortaDelegata {
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_IP,
 				CredenzialiInvocazione.getAutenticazioneDisabilitata(), null, null, 
 				addIDUnivoco, 
-				null, null, true, dataInizioTest,
+				true, null, null, null, true, dataInizioTest,
 				200);
 		
 	}

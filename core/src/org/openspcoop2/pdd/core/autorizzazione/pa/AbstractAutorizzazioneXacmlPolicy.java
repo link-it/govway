@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.xacml.MarshallUtilities;
 import org.openspcoop2.utils.xacml.ResultCombining;
 import org.openspcoop2.utils.xacml.ResultUtilities;
@@ -138,7 +139,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     		initDatiPolicy(datiInvocazione,true);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (init XACML-Policy)",e);
-    		esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
+    		esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
     		esito.setAutorizzato(false);
     		esito.setEccezioneProcessamento(e);
 			return esito;
@@ -161,7 +162,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     		XACMLPolicyUtilities.loadPolicy(xacmlPolicyPorta, idServizio, this.policyKey, false, null, this.log);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (load XACML-Policy)",e);
-			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
+			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
     		esito.setAutorizzato(false);
     		esito.setEccezioneProcessamento(e);
 			return esito;
@@ -177,7 +178,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 	    	xacmlRequest = this.getXacmlRequest(datiInvocazione, this.log);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (create XACML-Request)",e);
-			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
+			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
     		esito.setAutorizzato(false);
     		esito.setEccezioneProcessamento(e);
 			return esito;
@@ -193,7 +194,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 			results = ResultUtilities.evaluate(xacmlRequest, this.log, this.policyKey, XACMLPolicyUtilities.getPolicyDecisionPoint(this.log));
 		}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (evaluate XACML-Request)",e);
-			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
+			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
     		esito.setAutorizzato(false);
     		esito.setEccezioneProcessamento(e);
 			return esito;
@@ -215,15 +216,15 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
         			errore = errore + " ";
         		}
     			errore = errore + "("+resultAsString+")";
-    			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+    			esito.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_POLICY_DENY, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
         		esito.setAutorizzato(false);
     			return esito;
         		
     		}catch(Exception e){
         		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") fallita (read XACML-Results)",e);
-        		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+        		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
         				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
-    			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
+    			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
         		esito.setAutorizzato(false);
         		esito.setEccezioneProcessamento(e);
     			return esito;

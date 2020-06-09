@@ -49,11 +49,13 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -86,6 +88,7 @@ public class GestoreTrasformazioni {
 	private ErroreIntegrazione errore;
 	private MsgDiagnostico msgDiag;
 	private TipoPdD tipoPdD;
+	private AbstractErrorGenerator errorGenerator;
 
 	private OpenSPCoop2Properties op2Properties;
 	
@@ -107,7 +110,8 @@ public class GestoreTrasformazioni {
 			Transaction transaction,
 			PdDContext pddContext,
 			RequestInfo requestInfo,
-			TipoPdD tipoPdD){
+			TipoPdD tipoPdD,
+			AbstractErrorGenerator errorGenerator){
 		if(alog!=null){
 			this.log = alog;
 		}else{
@@ -123,6 +127,7 @@ public class GestoreTrasformazioni {
 		this.requestInfo = requestInfo;
 		this.op2Properties = OpenSPCoop2Properties.getInstance();
 		this.tipoPdD = tipoPdD;
+		this.errorGenerator = errorGenerator;
 	}
 
 
@@ -380,7 +385,7 @@ public class GestoreTrasformazioni {
 		
 		this.log.debug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
-		ErrorHandler errorHandler = new ErrorHandler();
+		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 				message,
 				element, elementJson, 
@@ -426,7 +431,12 @@ public class GestoreTrasformazioni {
 		if(errorHandler.isError()) {
 			String msgErrore = "Trasformazione richiesta terminata con errore: "+errorHandler.getDetail();
 			this.log.error(msgErrore);
-			throw new GestoreTrasformazioniException(msgErrore,errorHandler.getMessage());
+			if(errorHandler.getMessage()!=null) {
+				throw new GestoreTrasformazioniException(msgErrore,errorHandler.getMessage());
+			}
+			else {
+				throw new GestoreTrasformazioniException(msgErrore,errorHandler.getOp2Message(), errorHandler.getOp2IntegrationFunctionError());
+			}
 		}
 		
 		try {	
@@ -708,7 +718,7 @@ public class GestoreTrasformazioni {
 		
 		this.log.debug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
-		ErrorHandler errorHandler = new ErrorHandler();
+		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
 				message,
 				element, elementJson, busta, parametriTrasporto,
@@ -752,7 +762,12 @@ public class GestoreTrasformazioni {
 		if(errorHandler.isError()) {
 			String msgErrore = "Trasformazione risposta terminata con errore: "+errorHandler.getDetail();
 			this.log.error(msgErrore);
-			throw new GestoreTrasformazioniException(msgErrore,errorHandler.getMessage());
+			if(errorHandler.getMessage()!=null) {
+				throw new GestoreTrasformazioniException(msgErrore,errorHandler.getMessage());
+			}
+			else {
+				throw new GestoreTrasformazioniException(msgErrore,errorHandler.getOp2Message(), errorHandler.getOp2IntegrationFunctionError());
+			}
 		}
 		
 		try {

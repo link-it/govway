@@ -45,6 +45,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -54,6 +55,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
@@ -65,7 +67,9 @@ import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -81,10 +85,19 @@ import org.w3c.dom.Document;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Integrazione {
+public class Integrazione extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "Integrazione";
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected Integrazione() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
@@ -1926,8 +1939,32 @@ public class Integrazione {
 	 * Test URL Based, input mancanti
 	 */
 	Repository repositorySincronoURLBasedInputMancanti=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".URL_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoUrlBasedInputMancanti() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".URL_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoUrlBasedInputMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoUrlBasedInputMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".URL_BASED_DATI_MANCANTI"},
+		description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoUrlBasedInputMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoUrlBasedInputMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoUrlBasedInputMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -1954,11 +1991,24 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						msgErrore2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
 				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -1986,8 +2036,19 @@ public class Integrazione {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".URL_BASED_DATI_MANCANTI"},dataProvider="SincronoUrlBasedInputMancanti",dependsOnMethods={"sincronoUrlBasedInputMancanti"})
-	public void testSincronoUrlBasedInputMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".URL_BASED_DATI_MANCANTI"},dataProvider="SincronoUrlBasedInputMancanti",dependsOnMethods={"sincronoUrlBasedInputMancanti_genericCode"})
+	public void testSincronoUrlBasedInputMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".URL_BASED_DATI_MANCANTI"},dataProvider="SincronoUrlBasedInputMancanti",dependsOnMethods={"sincronoUrlBasedInputMancanti_specificCode"})
+	public void testSincronoUrlBasedInputMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -2191,8 +2252,32 @@ public class Integrazione {
 	 * Test Content Based, input mancanti
 	 */
 	Repository repositorySincronoContentBasedInputMancanti=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoContentBasedInputMancanti() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoContentBasedInputMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoContentBasedInputMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoContentBasedInputMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoContentBasedInputMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoContentBasedInputMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -2219,11 +2304,24 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						msgErrore2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
 				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -2251,8 +2349,19 @@ public class Integrazione {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_DATI_MANCANTI"},dataProvider="SincronoContentBasedInputMancanti",dependsOnMethods={"sincronoContentBasedInputMancanti"})
-	public void testSincronoContentBasedInputMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_DATI_MANCANTI"},dataProvider="SincronoContentBasedInputMancanti",dependsOnMethods={"sincronoContentBasedInputMancanti_genericCode"})
+	public void testSincronoContentBasedInputMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_DATI_MANCANTI"},dataProvider="SincronoContentBasedInputMancanti",dependsOnMethods={"sincronoContentBasedInputMancanti_specificCode"})
+	public void testSincronoContentBasedInputMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -2379,8 +2488,31 @@ public class Integrazione {
 	 * ServizioNotFound invece di correlazioneApplicativaNonRiuscita
 	 */
 	Repository repositorySincronoContentBasedConcatErroreIdentificazione=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_ERRORE_IDENTIFICAZIONE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoContentBasedConcatErroreIdentificazione() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_ERRORE_IDENTIFICAZIONE"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoContentBasedConcatErroreIdentificazione_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoContentBasedConcatErroreIdentificazione(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_ERRORE_IDENTIFICAZIONE"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoContentBasedConcatErroreIdentificazione_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoContentBasedConcatErroreIdentificazione(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _sincronoContentBasedConcatErroreIdentificazione(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -2403,10 +2535,22 @@ public class Integrazione {
 			try {
 				client.run();
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"423]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA);
 				String msgErrore = "Azione richiesta non corretta: (azione:BEGIN-ID__END-ID) Azione 'BEGIN-ID__END-ID' non trovata nell'API ASRichiestaStatoAvanzamento:1";
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -2438,8 +2582,20 @@ public class Integrazione {
 		};
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_ERRORE_IDENTIFICAZIONE"},
-			dataProvider="SincronoContentBasedConcatErroreIdentificazione",dependsOnMethods={"sincronoContentBasedConcatErroreIdentificazione"})
-	public void testSincronoContentBasedConcatErroreIdentificazione(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+			dataProvider="SincronoContentBasedConcatErroreIdentificazione",dependsOnMethods={"sincronoContentBasedConcatErroreIdentificazione_genericCode"})
+	public void testSincronoContentBasedConcatErroreIdentificazione_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_ERRORE_IDENTIFICAZIONE"},
+			dataProvider="SincronoContentBasedConcatErroreIdentificazione",dependsOnMethods={"sincronoContentBasedConcatErroreIdentificazione_specificCode"})
+	public void testSincronoContentBasedConcatErroreIdentificazione_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -2559,8 +2715,32 @@ public class Integrazione {
 	 * quindi si deve sollevare una eccezione di IdentificazioneServizioNonRiuscita
 	 */
 	Repository repositorySincronoContentBasedConcatOpenSPCoopErroreIdentificazione=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoContentBasedConcatOpenSPCoopErroreIdentificazione() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoContentBasedConcatOpenSPCoopErroreIdentificazione_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoContentBasedConcatOpenSPCoopErroreIdentificazione(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoContentBasedConcatOpenSPCoopErroreIdentificazione_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoContentBasedConcatOpenSPCoopErroreIdentificazione(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+		
+	private void _sincronoContentBasedConcatOpenSPCoopErroreIdentificazione(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -2583,11 +2763,24 @@ public class Integrazione {
 			try {
 				client.run();
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]:  faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						msgErrore2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]:  faultString["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
 				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -2619,8 +2812,20 @@ public class Integrazione {
 		};
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},
-			dataProvider="SincronoContentBasedConcatOpenSPCoopErroreIdentificazione",dependsOnMethods={"sincronoContentBasedConcatOpenSPCoopErroreIdentificazione"})
-	public void testSincronoContentBasedConcatOpenSPCoopErroreIdentificazione(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+			dataProvider="SincronoContentBasedConcatOpenSPCoopErroreIdentificazione",dependsOnMethods={"sincronoContentBasedConcatOpenSPCoopErroreIdentificazione_genericCode"})
+	public void testSincronoContentBasedConcatOpenSPCoopErroreIdentificazione_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},
+			dataProvider="SincronoContentBasedConcatOpenSPCoopErroreIdentificazione",dependsOnMethods={"sincronoContentBasedConcatOpenSPCoopErroreIdentificazione_specificCode"})
+	public void testSincronoContentBasedConcatOpenSPCoopErroreIdentificazione_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -3071,8 +3276,32 @@ public class Integrazione {
 	 * Test Input Based, input mancanti
 	 */
 	Repository repositorySincronoInputBasedInputMancanti=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".INPUT_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoInputBasedInputMancanti() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".INPUT_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoInputBasedInputMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoInputBasedInputMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".INPUT_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoInputBasedInputMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoInputBasedInputMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoInputBasedInputMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -3099,11 +3328,24 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						msgErrore2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
 				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -3131,8 +3373,19 @@ public class Integrazione {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".INPUT_BASED_DATI_MANCANTI"},dataProvider="SincronoInputBasedInputMancanti",dependsOnMethods={"sincronoInputBasedInputMancanti"})
-	public void testSincronoInputBasedInputMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".INPUT_BASED_DATI_MANCANTI"},dataProvider="SincronoInputBasedInputMancanti",dependsOnMethods={"sincronoInputBasedInputMancanti_genericCode"})
+	public void testSincronoInputBasedInputMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".INPUT_BASED_DATI_MANCANTI"},dataProvider="SincronoInputBasedInputMancanti",dependsOnMethods={"sincronoInputBasedInputMancanti_specificCode"})
+	public void testSincronoInputBasedInputMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -3330,8 +3583,32 @@ public class Integrazione {
 	 * Test URL Based, input mancanti: soap action con valore http://...
 	 */
 	Repository repositorySincronoSoapActionBasedInputMancanti_1=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_1"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoSoapActionBasedInputMancanti_1() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_1"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoSoapActionBasedInputMancanti_1_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoSoapActionBasedInputMancanti_1(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_1"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoSoapActionBasedInputMancanti_1_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoSoapActionBasedInputMancanti_1(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoSoapActionBasedInputMancanti_1(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		String soapActionTest = "http://soapActionWSBasicProfile2";
 		DatabaseComponent dbComponentFruitore = null;
@@ -3359,14 +3636,26 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"423] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"423]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA);
 				String msgErrore = MSG_ERRORE_SERVIZIO_ERRATO;
 				// Ci sono 2 occorrenze di azione
 				msgErrore = msgErrore.replace("@AZIONE@", soapActionTest);
 				msgErrore = msgErrore.replace("@AZIONE@", soapActionTest);
 				msgErrore = msgErrore.replace("@ACCORDO_SERVIZIO@", "ASRichiestaStatoAvanzamento:1");
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo faultString ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -3394,8 +3683,19 @@ public class Integrazione {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_1"},dataProvider="SincronoSoapActionBasedInputMancanti_1",dependsOnMethods={"sincronoSoapActionBasedInputMancanti_1"})
-	public void testSincronoSoapActionBasedInputMancanti_1(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_1"},dataProvider="SincronoSoapActionBasedInputMancanti_1",dependsOnMethods={"sincronoSoapActionBasedInputMancanti_1_genericCode"})
+	public void testSincronoSoapActionBasedInputMancanti_1_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_1"},dataProvider="SincronoSoapActionBasedInputMancanti_1",dependsOnMethods={"sincronoSoapActionBasedInputMancanti_1_specificCode"})
+	public void testSincronoSoapActionBasedInputMancanti_1_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -3512,8 +3812,32 @@ public class Integrazione {
 	 * Test URL Based, input mancanti: soap action "\"\""
 	 */
 	Repository repositorySincronoSoapActionBasedInputMancanti_3=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_3"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoSoapActionBasedInputMancanti_3() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_3"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoSoapActionBasedInputMancanti_3_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoSoapActionBasedInputMancanti_3(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_3"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoSoapActionBasedInputMancanti_3_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoSoapActionBasedInputMancanti_3(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoSoapActionBasedInputMancanti_3(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -3540,11 +3864,24 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA);
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						msgErrore2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
 				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -3572,8 +3909,19 @@ public class Integrazione {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_3"},dataProvider="SincronoSoapActionBasedInputMancanti_3",dependsOnMethods={"sincronoSoapActionBasedInputMancanti_3"})
-	public void testSincronoSoapActionBasedInputMancanti_3(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_3"},dataProvider="SincronoSoapActionBasedInputMancanti_3",dependsOnMethods={"sincronoSoapActionBasedInputMancanti_3_genericCode"})
+	public void testSincronoSoapActionBasedInputMancanti_3_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED_DATI_MANCANTI_3"},dataProvider="SincronoSoapActionBasedInputMancanti_3",dependsOnMethods={"sincronoSoapActionBasedInputMancanti_3_specificCode"})
+	public void testSincronoSoapActionBasedInputMancanti_3_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);

@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -45,6 +46,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -193,6 +195,31 @@ public final class PorteDelegateAbilitazione extends Action {
 	            }
 	            String userLogin = ServletUtils.getUserLoginFromSession(session);
 				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+				
+				List<String> aliasJmx = porteDelegateCore.getJmxPdD_aliases();
+				if(aliasJmx!=null && !aliasJmx.isEmpty()) {
+					for (String alias : aliasJmx) {
+						String metodo = StatoFunzionalita.ABILITATO.equals(portaDelegata.getStato()) ? 
+								porteDelegateCore.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(alias) :
+									porteDelegateCore.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(alias);
+						try{
+							String stato = porteDelegateCore.invokeJMXMethod(porteDelegateCore.getGestoreRisorseJMX(alias), alias, 
+									porteDelegateCore.getJmxPdD_configurazioneSistema_type(alias),
+									porteDelegateCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+									metodo, 
+									portaDelegata.getNome());
+							if(stato==null) {
+								throw new ServletException("Aggiornamento fallito");
+							}
+							if(!JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)) {
+								throw new ServletException(stato);
+							}
+						}catch(Exception e){
+							String msgErrore = "Errore durante l'aggiornamento dello stato della PortaDelegata '"+portaDelegata.getNome()+"' via jmx (jmxMethod '"+metodo+"') (node:"+alias+"): "+e.getMessage();
+							ControlStationCore.logError(msgErrore, e);
+						}
+					}
+				}
 			}
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

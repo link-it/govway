@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.spcoop.testsuite.units.soap;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,20 +35,25 @@ import org.apache.axis.Message;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -62,10 +68,19 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SOAPAction {
+public class SOAPAction extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "SOAPAction";
+	
+	
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected SOAPAction() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
 	
 	
 	
@@ -121,7 +136,31 @@ public class SOAPAction {
 
 	Repository repositorySoapActionNonPresentePD=new Repository();
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonPresente_PD"})
-	public void soapActionNonPresente_PD()throws TestSuiteException,SOAPException, Exception{
+	public void soapActionNonPresente_PD_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionNonPresente_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonPresente_PD"})
+	public void soapActionNonPresente_PD_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionNonPresente_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _soapActionNonPresente_PD(boolean genericCode)throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -152,10 +191,23 @@ public class SOAPAction {
 				client.run();
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
 				String msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 			}finally{
@@ -186,7 +238,31 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionNonPresentePA=new Repository();
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonPresente_PA"})
-	public void soapActionNonPresente_PA()throws TestSuiteException,SOAPException, Exception{
+	public void soapActionNonPresente_PA_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionNonPresente_PA(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonPresente_PA"})
+	public void soapActionNonPresente_PA_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionNonPresente_PA(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _soapActionNonPresente_PA(boolean genericCode)throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -216,6 +292,19 @@ public class SOAPAction {
 				client.run();
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
+				String descrErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Assert.assertTrue(SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals(error.getFaultCode().getLocalPart()) ||
 						SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals("soap:"+error.getFaultCode().getLocalPart()) ||
@@ -227,8 +316,8 @@ public class SOAPAction {
 				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
 					new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
-				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
-				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente");
+				ecc.setCodice(codiceErrore);
+				ecc.setDescrizione(descrErrore);
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 				
@@ -272,7 +361,31 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionValueNonPresentePD=new Repository();
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionValueNonPresente_PD"})
-	public void soapActionValueNonPresente_PD()throws TestSuiteException,SOAPException, Exception{
+	public void soapActionValueNonPresente_PD_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionValueNonPresente_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionValueNonPresente_PD"})
+	public void soapActionValueNonPresente_PD_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionValueNonPresente_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _soapActionValueNonPresente_PD(boolean genericCode)throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -312,14 +425,28 @@ public class SOAPAction {
 				}
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
 				String msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente";
 				if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
 					// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
 					msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
 				}
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+				
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 			}finally{
@@ -355,7 +482,31 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionValueNonPresentePA=new Repository();
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionValueNonPresente_PA"})
-	public void soapActionValueNonPresente_PA()throws TestSuiteException,SOAPException, Exception{
+	public void soapActionValueNonPresente_PA_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionValueNonPresente_PA(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionValueNonPresente_PA"})
+	public void soapActionValueNonPresente_PA_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionValueNonPresente_PA(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _soapActionValueNonPresente_PA(boolean genericCode)throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -394,6 +545,25 @@ public class SOAPAction {
 				}
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
+				String descrErrore = null;
+				if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
+					// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
+					descrErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
+				}else{
+					descrErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente";
+				}
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Assert.assertTrue(SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals(error.getFaultCode().getLocalPart()) ||
 						SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals("soap:"+error.getFaultCode().getLocalPart()) ||
@@ -405,13 +575,8 @@ public class SOAPAction {
 				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
 					new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
-				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
-				if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
-					// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
-					ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
-				}else{
-					ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente");
-				}
+				ecc.setCodice(codiceErrore);
+				ecc.setDescrizione(descrErrore);
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 				
@@ -467,7 +632,31 @@ public class SOAPAction {
 
 	Repository repositorySoapActionStringVuotaNonQuotataPD=new Repository();
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringVuotaNonQuotata_PD"})
-	public void SoapActionStringVuotaNonQuotata_PD()throws TestSuiteException,SOAPException, Exception{
+	public void SoapActionStringVuotaNonQuotata_PD_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_SoapActionStringVuotaNonQuotata_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringVuotaNonQuotata_PD"})
+	public void SoapActionStringVuotaNonQuotata_PD_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_SoapActionStringVuotaNonQuotata_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _SoapActionStringVuotaNonQuotata_PD(boolean genericCode)throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -498,10 +687,24 @@ public class SOAPAction {
 				client.run();
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
 				String msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
+				
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 			}finally{
@@ -532,7 +735,31 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionStringVuotaNonQuotataPA=new Repository();
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringVuotaNonQuotata_PA"})
-	public void SoapActionStringVuotaNonQuotata_PA()throws TestSuiteException,SOAPException, Exception{
+	public void SoapActionStringVuotaNonQuotata_PA_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_SoapActionStringVuotaNonQuotata_PA(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringVuotaNonQuotata_PA"})
+	public void SoapActionStringVuotaNonQuotata_PA_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_SoapActionStringVuotaNonQuotata_PA(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+
+	private void _SoapActionStringVuotaNonQuotata_PA(boolean genericCode)throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -562,6 +789,19 @@ public class SOAPAction {
 				client.run();
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
+				String descrErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Assert.assertTrue(SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals(error.getFaultCode().getLocalPart()) ||
 						SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals("soap:"+error.getFaultCode().getLocalPart()) ||
@@ -573,8 +813,8 @@ public class SOAPAction {
 				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
 					new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
-				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
-				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
+				ecc.setCodice(codiceErrore);
+				ecc.setDescrizione(descrErrore);
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 				
@@ -629,7 +869,31 @@ public class SOAPAction {
 
 	Repository repositorySoapActionNonQuotataPD=new Repository();
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonQuotata_PD"})
-	public void soapActionNonQuotata_PD()throws TestSuiteException,SOAPException, Exception{
+	public void soapActionNonQuotata_PD_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionNonQuotata_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonQuotata_PD"})
+	public void soapActionNonQuotata_PD_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionNonQuotata_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _soapActionNonQuotata_PD(boolean genericCode)throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -660,10 +924,23 @@ public class SOAPAction {
 				client.run();
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
 				String msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 			}finally{
@@ -694,7 +971,31 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionNonQuotataPA=new Repository();
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonQuotata_PA"})
-	public void soapActionNonQuotata_PA()throws TestSuiteException,SOAPException, Exception{
+	public void soapActionNonQuotata_PA_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionNonQuotata_PA(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonQuotata_PA"})
+	public void soapActionNonQuotata_PA_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_soapActionNonQuotata_PA(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _soapActionNonQuotata_PA(boolean genericCode)throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -724,6 +1025,19 @@ public class SOAPAction {
 				client.run();
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
+				String descrErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						descrErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Assert.assertTrue(SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals(error.getFaultCode().getLocalPart()) ||
 						SPCoopCostanti.FAULT_CODE_PROCESSAMENTO_SPCOOP.equals("soap:"+error.getFaultCode().getLocalPart()) ||
@@ -735,8 +1049,8 @@ public class SOAPAction {
 				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
 					new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
-				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
-				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
+				ecc.setCodice(codiceErrore);
+				ecc.setDescrizione(descrErrore);
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 				

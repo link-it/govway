@@ -808,8 +808,12 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     
-   protected void postOutRequest() throws Exception{
+    protected void postOutRequest() throws Exception{
     	
+    	if(this.getPddContext()!=null) {
+    		this.getPddContext().addObject(Costanti.RICHIESTA_INOLTRATA_BACKEND, Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE);
+    	}
+	   
     	if(this.msgDiagnostico!=null && this.outRequestContext!=null){
     		
     		this.postOutRequestContext = new PostOutRequestContext(this.outRequestContext);

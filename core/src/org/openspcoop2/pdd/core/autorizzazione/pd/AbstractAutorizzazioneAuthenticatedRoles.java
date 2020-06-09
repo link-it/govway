@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.autorizzazione.pd;
 
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 
 /**
@@ -77,7 +78,7 @@ abstract class AbstractAutorizzazioneAuthenticatedRoles extends AbstractAutorizz
     	}
     	
     	// Se non è autorizzato in nessuno dei due modi ritorno l'errore del tipo authenticated
-    	if(esitoAuth!=null){
+    	if(esitoAuth!=null && !CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(datiInvocazione.getIdServizioApplicativo().getNome())){
     		return esitoAuth;
     	}
     	else{

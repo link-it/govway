@@ -44,6 +44,8 @@ import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -217,7 +219,8 @@ public class ValidatoreMessaggiApplicativi {
 		}
 		
 		try{
-			this.wsdlValidator = new WSDLValidator(this.message, this.xmlUtils, this.accordoServizioWrapper, this.logger, gestioneXsiType_rpcLiteral);
+			boolean addPrefixError = false; // utilizzo il prefisso indicato in error.properties
+			this.wsdlValidator = new WSDLValidator(this.message, this.xmlUtils, this.accordoServizioWrapper, this.logger, gestioneXsiType_rpcLiteral, addPrefixError);
 		}catch(Exception e){
 			this.logger.error("WSDLValidator initialized failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
@@ -269,10 +272,19 @@ public class ValidatoreMessaggiApplicativi {
 		}catch(Exception e){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 			= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
+			
+			String messaggioErrore = e.getMessage();
+			boolean overwriteMessageError = false;
+			try {
+				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+				messaggioErrore = messaggioErrore+": "+e.getMessage();
+				overwriteMessageError = true;
+			}catch(Exception excp) {}
+			
 			if(isRichiesta){
-				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, e.getMessage()));
+				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, messaggioErrore, overwriteMessageError));
 			}else{
-				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, e.getMessage()));
+				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, messaggioErrore, overwriteMessageError));
 			}
 			throw ex;
 		}
@@ -303,16 +315,30 @@ public class ValidatoreMessaggiApplicativi {
 		}catch(Exception e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
+			
+			String messaggioErrore = e.getMessage();
+			boolean overwriteMessageError = false;
+			try {
+				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio())) {
+					messaggioErrore = messaggioErrore+" 'response service': "+e.getMessage();
+				}
+				else {
+					messaggioErrore = messaggioErrore+": "+e.getMessage();
+				}
+				overwriteMessageError = true;
+			}catch(Exception excp) {}
+			
 			if(isRichiesta){
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
-					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, e.getMessage()));
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, messaggioErrore, overwriteMessageError));
 				else
-					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE, e.getMessage()));
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE, messaggioErrore, overwriteMessageError));
 			}else{
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
-					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, e.getMessage()));
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, messaggioErrore, overwriteMessageError));
 				else
-					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE, e.getMessage()));
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE, messaggioErrore, overwriteMessageError));
 			}
 			throw ex;
 		}
@@ -326,16 +352,30 @@ public class ValidatoreMessaggiApplicativi {
 		}catch(Exception e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
+			
+			String messaggioErrore = e.getMessage();
+			boolean overwriteMessageError = false;
+			try {
+				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio())) {
+					messaggioErrore = messaggioErrore+" 'response service': "+e.getMessage();
+				}
+				else {
+					messaggioErrore = messaggioErrore+": "+e.getMessage();
+				}
+				overwriteMessageError = true;
+			}catch(Exception excp) {}
+			
 			if(isRichiesta){
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
-					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, e.getMessage()));
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, messaggioErrore, overwriteMessageError));
 				else
-					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE, e.getMessage()));
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE, messaggioErrore, overwriteMessageError));
 			}else{
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
-					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, e.getMessage()));
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE, messaggioErrore, overwriteMessageError));
 				else
-					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE, e.getMessage()));
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE, messaggioErrore, overwriteMessageError));
 			}
 			throw ex;
 		}

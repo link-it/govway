@@ -77,6 +77,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -669,7 +670,7 @@ public class GestoreAutenticazione {
       	
       	esito = (EsitoAutenticazionePortaDelegata) autenticazioneToken(tipoAutenticazione, esito, pddContext, datiInvocazione);
       	if(esito.isClientAuthenticated()==false) {
-      		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
+      		esito.setErroreIntegrazione(IntegrationFunctionError.TOKEN_REQUIRED_CLAIMS_NOT_FOUND, ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
     	}
       	return esito;
     }
@@ -682,7 +683,7 @@ public class GestoreAutenticazione {
       	
       	esito = (EsitoAutenticazionePortaApplicativa) autenticazioneToken(tipoAutenticazione, esito, pddContext, datiInvocazione);
       	if(esito.isClientAuthenticated()==false) {
-      		esito.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
+      		esito.setErroreCooperazione(IntegrationFunctionError.TOKEN_REQUIRED_CLAIMS_NOT_FOUND, ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
     	}
       	return esito;
     	

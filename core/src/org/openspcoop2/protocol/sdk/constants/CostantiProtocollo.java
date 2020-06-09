@@ -35,6 +35,13 @@ public class CostantiProtocollo {
     public final static String OPENSPCOOP2_ESITI_LOCAL_PATH = "esiti_local.properties";
     public final static String OPENSPCOOP2_ESITI_PROPERTIES = "OPENSPCOOP2_ESITI_PROPERTIES";
     
+	/** Errori properties */
+    public final static String OPENSPCOOP2_ERRORI_LOCAL_PATH = "errori_local.properties";
+    public final static String OPENSPCOOP2_ERRORI_PROPERTIES = "OPENSPCOOP2_ERRORI_PROPERTIES";
+    public final static String OPENSPCOOP2_ERRORI_TEMPLATE_HTTP_CODE = "HTTP_CODE";
+    public final static String OPENSPCOOP2_ERRORI_TEMPLATE_ERROR_CODE = "ERROR_CODE";
+    public final static String OPENSPCOOP2_ERRORI_TEMPLATE_ERROR_TYPE = "ERROR_TYPE";
+    
     /** Context */
     public final static String ESITO_TRANSACTION_CONTEXT_STANDARD = "standard";
     public final static String ESITO_TRANSACTION_CONTEXT_SISTEMA = "sistema";

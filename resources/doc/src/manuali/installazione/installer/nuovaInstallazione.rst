@@ -34,7 +34,7 @@ come si sviluppa il processo di installazione:
       PostgreSQL, MySQL, Oracle, HyperSQL, SQLServer.
 
    -  *Application Server*: Application server utilizzato selezionato
-      tra: WildFly (versione 18) e Apache Tomcat (versione 9).
+      tra: WildFly (versione 18 o 19) e Apache Tomcat (versione 9).
 
 #. Al passo successivo si dovranno inserire tutti i dati per l'accesso
    al database ed in particolare:

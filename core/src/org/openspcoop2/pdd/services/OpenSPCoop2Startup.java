@@ -146,6 +146,7 @@ import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.security.utils.ExternalPWCallback;
@@ -315,13 +316,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 
+
+			
+					
 			
 			
 			
 			
 
 			/* ------------- Inizializzo ClassNameProperties di OpenSPCoop --------------- */
-			if( ClassNameProperties.initialize() == false){
+			if( ClassNameProperties.initialize(true) == false){
 				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.classRegistry.properties'");
 				return;
 			}
@@ -419,6 +423,21 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			Loader loader = Loader.getInstance();
 
 
+			
+			
+			
+			
+			
+			
+			
+			/* ------------- Inizializzo Errori di OpenSPCoop --------------- */
+			try {
+				ErroriProperties.initialize(propertiesReader.getRootDirectory(), log, loader);
+			}catch(Exception e) {
+				this.logError("Riscontrato errore durante l'inizializzazione del reader 'errori.properties'");
+				return;
+			}
+			
 			
 			
 			
@@ -1399,8 +1418,26 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				configPdD.setCheckIntervalJDBC(propertiesReader.getGestioneSerializableDB_CheckInterval());
 				configPdD.setTipoDatabase(TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType()));
 				configPdD.setLog(logCore);
+				
+				Costanti.initHTTP_HEADER_GOVWAY_ERROR_STATUS(propertiesReader.getErroriHttpHeaderGovWayStatus());
+				Costanti.initHTTP_HEADER_GOVWAY_ERROR_TYPE(propertiesReader.getErroriHttpHeaderGovWayType());
+				Costanti.initHTTP_HEADER_GOVWAY_ERROR_CODE(propertiesReader.getErroriHttpHeaderGovWayCode());
+				
+				Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE = propertiesReader.isErroriSoapUseGovWayStatusAsFaultCode();
+				Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = propertiesReader.isErroriSoapHttpHeaderGovWayCodeEnabled();
+								
+				Costanti.TRANSACTION_ERROR_STATUS_ABILITATO = propertiesReader.isErroriGovWayStatusEnabled();
+				Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO = propertiesReader.isErroriGovWayInstanceEnabled();
+				Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS = propertiesReader.isErroriGovWayForceSpecificDetails();
+				Costanti.TRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807 = propertiesReader.isErroriGovWayFaultDetailsWithProblemRFC7807();
+				
+				Costanti.initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE(propertiesReader.isProblemRFC7807_enrichTitleAsGovWayType());
+				Costanti.initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE(propertiesReader.isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode());
+				Costanti.initPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM(propertiesReader.isProblemRFC7807_enrichTitleAsGovWayType_customClaim());
 				Costanti.initPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(propertiesReader.getProblemRFC7807_transactionId_claim());
 				Costanti.initPROBLEM_RFC7807_GOVWAY_CODE(propertiesReader.getProblemRFC7807_code_claim());
+				Costanti.initPROBLEM_RFC7807_GOVWAY_TYPE(propertiesReader.getProblemRFC7807_type_claim());
+								
 				ProtocolFactoryManager.initialize(OpenSPCoop2Startup.log, configPdD, propertiesReader.getDefaultProtocolName());
 				// forzo update logger. (viene caricato dopo il log della console)
 				ProtocolFactoryManager.updateLogger(logCore);
@@ -2181,6 +2218,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						configurazionePdDManager.tracciamentoBuste(), 
 						configurazionePdDManager.dumpBinarioPD(), configurazionePdDManager.dumpBinarioPA(),
 						OpenSPCoop2Logger.loggerTracciamentoAbilitato, OpenSPCoop2Logger.loggerDumpAbilitato,
+						ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST(), 
+						(ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE() && ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR()),
+						ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR(),
+						Costanti.TRANSACTION_ERROR_STATUS_ABILITATO, Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE,
+						Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS, Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO, Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE,
 						infoConfigSistema.getInformazioniDatabase(), infoConfigSistema.getInformazioniAltriDatabase(),
 						infoConfigSistema.getInformazioniSSL(true,true),
 						infoConfigSistema.getInformazioniCryptographyKeyLength(),

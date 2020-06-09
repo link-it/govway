@@ -44,6 +44,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -51,6 +52,8 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.YAMLUtils;
@@ -277,10 +280,19 @@ public class ValidatoreMessaggiApplicativiRest {
 		}catch(Exception e){ 
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
+			
+			String messaggioErrore = e.getMessage();
+			boolean overwriteMessageError = false;
+			try {
+				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+				messaggioErrore = messaggioErrore+": "+e.getMessage();
+				overwriteMessageError = true;
+			}catch(Exception excp) {}
+			
 			if(isRichiesta){
-				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, e.getMessage()));
+				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, messaggioErrore, overwriteMessageError));
 			}else{
-				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, e.getMessage()));
+				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD, messaggioErrore, overwriteMessageError));
 			}
 			throw ex;
 		}
@@ -499,10 +511,19 @@ public class ValidatoreMessaggiApplicativiRest {
 		}catch(Throwable e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
+			
+			String messaggioErrore = e.getMessage();
+			boolean overwriteMessageError = false;
+			try {
+				messaggioErrore = ErroriProperties.getInstance(this.logger).getGenericDetails_noWrap(isRichiesta ? IntegrationFunctionError.INVALID_REQUEST_CONTENT : IntegrationFunctionError.INVALID_RESPONSE_CONTENT);
+				messaggioErrore = messaggioErrore+": "+e.getMessage();
+				overwriteMessageError = true;
+			}catch(Exception excp) {}
+			
 			if(isRichiesta){
-				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(interfaceType,e.getMessage()));
+				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(interfaceType,messaggioErrore, overwriteMessageError));
 			}else{
-				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(interfaceType, e.getMessage()));
+				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(interfaceType, messaggioErrore, overwriteMessageError));
 			}
 			throw ex;
 		}finally {
@@ -584,13 +605,12 @@ public class ValidatoreMessaggiApplicativiRest {
 			return;
 		}
 		
-		String prefix = "openApi4j.";
-		String useOpenApi4j = this.readValue(proprieta, prefix+"enable");
+		String useOpenApi4j = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_ENABLED);
 		if(useOpenApi4j!=null && !StringUtils.isEmpty(useOpenApi4j)) {
-			if("true".equals(useOpenApi4j.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(useOpenApi4j.trim())) {
 				configOpenApi4j.setUseOpenApi4J(true);
 			}
-			else if("false".equals(useOpenApi4j.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(useOpenApi4j.trim())) {
 				configOpenApi4j.setUseOpenApi4J(false);
 			}
 		}
@@ -599,82 +619,82 @@ public class ValidatoreMessaggiApplicativiRest {
 			return;
 		}
 		
-		String mergeAPISpec = this.readValue(proprieta, prefix+"mergeAPISpec");
+		String mergeAPISpec = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_MERGE_API_SPEC);
 		if(mergeAPISpec!=null && !StringUtils.isEmpty(mergeAPISpec)) {
-			if("true".equals(mergeAPISpec.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(mergeAPISpec.trim())) {
 				configOpenApi4j.setMergeAPISpec(true);
 			}
-			else if("false".equals(mergeAPISpec.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(mergeAPISpec.trim())) {
 				configOpenApi4j.setMergeAPISpec(false);
 			}
 		}
 		
-		String validateAPISpec = this.readValue(proprieta, prefix+"validateAPISpec");
+		String validateAPISpec = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_API_SPEC);
 		if(validateAPISpec!=null && !StringUtils.isEmpty(validateAPISpec)) {
-			if("true".equals(validateAPISpec.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateAPISpec.trim())) {
 				configOpenApi4j.setValidateAPISpec(true);
 			}
-			else if("false".equals(validateAPISpec.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateAPISpec.trim())) {
 				configOpenApi4j.setValidateAPISpec(false);
 			}
 		}
 		
-		String validateRequestQuery = this.readValue(proprieta, prefix+"validateRequestQuery");
+		String validateRequestQuery = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_QUERY);
 		if(validateRequestQuery!=null && !StringUtils.isEmpty(validateRequestQuery)) {
-			if("true".equals(validateRequestQuery.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateRequestQuery.trim())) {
 				configOpenApi4j.setValidateRequestQuery(true);
 			}
-			else if("false".equals(validateRequestQuery.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateRequestQuery.trim())) {
 				configOpenApi4j.setValidateRequestQuery(false);
 			}
 		}
 		
-		String validateRequestHeaders = this.readValue(proprieta, prefix+"validateRequestHeaders");
+		String validateRequestHeaders = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_HEADERS);
 		if(validateRequestHeaders!=null && !StringUtils.isEmpty(validateRequestHeaders)) {
-			if("true".equals(validateRequestHeaders.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateRequestHeaders.trim())) {
 				configOpenApi4j.setValidateRequestHeaders(true);
 			}
-			else if("false".equals(validateRequestHeaders.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateRequestHeaders.trim())) {
 				configOpenApi4j.setValidateRequestHeaders(false);
 			}
 		}
 		
-		String validateRequestCookie = this.readValue(proprieta, prefix+"validateRequestCookie");
+		String validateRequestCookie = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_COOKIES);
 		if(validateRequestCookie!=null && !StringUtils.isEmpty(validateRequestCookie)) {
-			if("true".equals(validateRequestCookie.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateRequestCookie.trim())) {
 				configOpenApi4j.setValidateRequestCookie(true);
 			}
-			else if("false".equals(validateRequestCookie.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateRequestCookie.trim())) {
 				configOpenApi4j.setValidateRequestCookie(false);
 			}
 		}
 		
-		String validateRequestBody = this.readValue(proprieta, prefix+"validateRequestBody");
+		String validateRequestBody = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_BODY);
 		if(validateRequestBody!=null && !StringUtils.isEmpty(validateRequestBody)) {
-			if("true".equals(validateRequestBody.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateRequestBody.trim())) {
 				configOpenApi4j.setValidateRequestBody(true);
 			}
-			else if("false".equals(validateRequestBody.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateRequestBody.trim())) {
 				configOpenApi4j.setValidateRequestBody(false);
 			}
 		}
 		
-		String validateResponseHeaders = this.readValue(proprieta, prefix+"validateResponseHeaders");
+		String validateResponseHeaders = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_HEADERS);
 		if(validateResponseHeaders!=null && !StringUtils.isEmpty(validateResponseHeaders)) {
-			if("true".equals(validateResponseHeaders.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateResponseHeaders.trim())) {
 				configOpenApi4j.setValidateResponseHeaders(true);
 			}
-			else if("false".equals(validateResponseHeaders.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateResponseHeaders.trim())) {
 				configOpenApi4j.setValidateResponseHeaders(false);
 			}
 		}
 		
-		String validateResponseBody = this.readValue(proprieta, prefix+"validateResponseBody");
+		String validateResponseBody = this.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_BODY);
 		if(validateResponseBody!=null && !StringUtils.isEmpty(validateResponseBody)) {
-			if("true".equals(validateResponseBody.trim())) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateResponseBody.trim())) {
 				configOpenApi4j.setValidateResponseBody(true);
 			}
-			else if("false".equals(validateResponseBody.trim())) {
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateResponseBody.trim())) {
 				configOpenApi4j.setValidateResponseBody(false);
 			}
 		}

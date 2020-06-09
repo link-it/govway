@@ -26,7 +26,6 @@ import javax.xml.soap.SOAPHeader;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
@@ -37,6 +36,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -83,7 +83,7 @@ public class ValidazioneSintattica {
 	protected Boolean isRichiesta;
 	/** Eventuale errore avvenuto durante il processo di validazione */
 	protected ErroreCooperazione errore;
-	protected IntegrationError errore_integrationError;
+	protected IntegrationFunctionError errore_integrationFunctionError;
 	/** Indicazione se leggere gli attributi qualificati */
 	protected boolean readQualifiedAttribute;
 
@@ -220,8 +220,8 @@ public class ValidazioneSintattica {
 	public ErroreCooperazione getErrore(){
 		return this.errore;
 	}
-	public IntegrationError getErrore_integrationError() {
-		return this.errore_integrationError;
+	public IntegrationFunctionError getErrore_integrationFunctionError() {
+		return this.errore_integrationFunctionError;
 	}
 
 
@@ -241,6 +241,7 @@ public class ValidazioneSintattica {
 		
 		ValidazioneSintatticaResult<?> result = null;
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<?> validazioneSintattica = null;
+		boolean protocolException = false;
 		try {
 			validazioneSintattica = this.protocolFactory.createValidazioneSintattica(this.state);
 			validazioneSintattica.setContext(this.context);
@@ -254,6 +255,7 @@ public class ValidazioneSintattica {
 			}
 			
 		} catch (ProtocolException e) {
+			protocolException = true;
 			return false;
 		} finally {
 			if(result != null){
@@ -264,7 +266,7 @@ public class ValidazioneSintattica {
 					this.bustaErroreHeaderIntestazione = result.getBustaErrore();
 				
 				this.errore = result.getErrore();
-				this.errore_integrationError = result.getErrore_integrationError();
+				this.errore_integrationFunctionError = result.getErrore_integrationFunctionError();
 				
 				this.erroriProcessamento = result.getErroriProcessamento();
 				if(this.erroriProcessamento == null) 
@@ -283,6 +285,16 @@ public class ValidazioneSintattica {
 					this.headerProtocollo = result.getBustaRawContent();
 				
 				return result.isValido();
+			}
+			else {
+				if(protocolException) {
+					if(this.isRichiesta==null || this.isRichiesta){
+						this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					else {
+						this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+					}
+				}
 			}
 		}
 		

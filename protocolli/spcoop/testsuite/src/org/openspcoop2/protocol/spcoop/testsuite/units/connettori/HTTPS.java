@@ -36,6 +36,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -44,6 +45,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
@@ -53,7 +55,9 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -68,10 +72,20 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class HTTPS {
+public class HTTPS extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "HTTPS";
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected HTTPS() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
+	
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
@@ -291,7 +305,43 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSWithClientAuthError=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_ERROR"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsWithClientAuthError() throws TestSuiteException, IOException, Exception{
+	public void httpsWithClientAuthError_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsWithClientAuthError(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_ERROR"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsWithClientAuthError_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsWithClientAuthError(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_ERROR"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsWithClientAuthError_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsWithClientAuthError(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _httpsWithClientAuthError(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -321,12 +371,25 @@ public class HTTPS {
 				client.run();
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
+				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msg2+"]");
 				Assert.assertTrue(msg2.equals(error.getFaultString()));
 				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
@@ -376,8 +439,20 @@ public class HTTPS {
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false}
 		};
 	}
-	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_ERROR"},dataProvider="httpsWithClientAuthError",dependsOnMethods={"httpsWithClientAuthError"})
-	public void testHttpsWithClientAuthError(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_ERROR"},dataProvider="httpsWithClientAuthError",dependsOnMethods={"httpsWithClientAuthError_genericCode_wrap"})
+	public void testHttpsWithClientAuthError_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsWithClientAuthError(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_ERROR"},dataProvider="httpsWithClientAuthError",dependsOnMethods={"httpsWithClientAuthError_genericCode_unwrap"})
+	public void testHttpsWithClientAuthError_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsWithClientAuthError(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_ERROR"},dataProvider="httpsWithClientAuthError",dependsOnMethods={"httpsWithClientAuthError_specificCode"})
+	public void testHttpsWithClientAuthError_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsWithClientAuthError(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testHttpsWithClientAuthError(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		
 		try{
 			
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
@@ -501,7 +576,43 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSCANonPresente=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CA_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsCANonPresente() throws TestSuiteException, IOException, Exception{
+	public void httpsCANonPresente_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsCANonPresente(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CA_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsCANonPresente_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsCANonPresente(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CA_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsCANonPresente_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsCANonPresente(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _httpsCANonPresente(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -531,12 +642,25 @@ public class HTTPS {
 				client.run();
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
+				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msg2+"]");
 				Assert.assertTrue(msg2.equals(error.getFaultString()));
 				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
@@ -571,8 +695,19 @@ public class HTTPS {
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false}
 		};
 	}
-	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CA_NON_PRESENTE"},dataProvider="httpsCANonPresente",dependsOnMethods={"httpsCANonPresente"})
-	public void testHttpsCANonPresente(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CA_NON_PRESENTE"},dataProvider="httpsCANonPresente",dependsOnMethods={"httpsCANonPresente_genericCode_wrap"})
+	public void testHttpsCANonPresente_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsCANonPresente(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CA_NON_PRESENTE"},dataProvider="httpsCANonPresente",dependsOnMethods={"httpsCANonPresente_genericCode_unwrap"})
+	public void testHttpsCANonPresente_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsCANonPresente(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CA_NON_PRESENTE"},dataProvider="httpsCANonPresente",dependsOnMethods={"httpsCANonPresente_specificCode"})
+	public void testHttpsCANonPresente_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsCANonPresente(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testHttpsCANonPresente(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
@@ -620,7 +755,43 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSHostnameVerifier=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".HOSTNAME_VERIFIER"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsHostnameVerifier() throws TestSuiteException, IOException, Exception{
+	public void httpsHostnameVerifier_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsHostnameVerifier(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".HOSTNAME_VERIFIER"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsHostnameVerifier_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsHostnameVerifier(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".HOSTNAME_VERIFIER"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsHostnameVerifier_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_httpsHostnameVerifier(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _httpsHostnameVerifier(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -650,12 +821,25 @@ public class HTTPS {
 				client.run();
 				throw new Exception("Atteso errore di hostname verifier");
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
+				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msg2+"]");
 				Assert.assertTrue(msg2.equals(error.getFaultString()));
 				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
@@ -691,8 +875,19 @@ public class HTTPS {
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false}
 		};
 	}
-	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".HOSTNAME_VERIFIER"},dataProvider="httpsHostnameVerifier",dependsOnMethods={"httpsHostnameVerifier"})
-	public void testHttpsHostnameVerifier(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".HOSTNAME_VERIFIER"},dataProvider="httpsHostnameVerifier",dependsOnMethods={"httpsHostnameVerifier_genericCode_wrap"})
+	public void testHttpsHostnameVerifier_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsHostnameVerifier(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".HOSTNAME_VERIFIER"},dataProvider="httpsHostnameVerifier",dependsOnMethods={"httpsHostnameVerifier_genericCode_unwrap"})
+	public void testHttpsHostnameVerifier_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsHostnameVerifier(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".HOSTNAME_VERIFIER"},dataProvider="httpsHostnameVerifier",dependsOnMethods={"httpsHostnameVerifier_specificCode"})
+	public void testHttpsHostnameVerifier_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testHttpsHostnameVerifier(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testHttpsHostnameVerifier(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
@@ -753,7 +948,43 @@ public class HTTPS {
 	}
 	Repository repositoryHTTPSautenticazioneSSL=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_CORRETTE"},dataProvider="credenzialiScorrette")
-	public void TestAutenticazioneCredenzialiScorrette(String location,String passwordKeystore,String passwordKey) throws Exception{
+	public void testAutenticazioneCredenzialiScorrette_genericCode_wrap(String location,String passwordKeystore,String passwordKey) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testAutenticazioneCredenzialiScorrette(location,passwordKeystore, passwordKey, genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_CORRETTE"},dataProvider="credenzialiScorrette")
+	public void testAutenticazioneCredenzialiScorrette_genericCode_unwrap(String location,String passwordKeystore,String passwordKey) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testAutenticazioneCredenzialiScorrette(location,passwordKeystore, passwordKey, genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_CORRETTE"},dataProvider="credenzialiScorrette")
+	public void testAutenticazioneCredenzialiScorrette_specificCode(String location,String passwordKeystore,String passwordKey) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testAutenticazioneCredenzialiScorrette(location,passwordKeystore, passwordKey, genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testAutenticazioneCredenzialiScorrette(String location,String passwordKeystore,String passwordKey, boolean genericCode, boolean unwrap) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -814,18 +1045,44 @@ public class HTTPS {
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				
 				if(location!=null){
-					// cmq autenticazione ssl poich' ci sono credenziali ssl. Poi l'identificazione di un sa non porta a riconoscerne alcuno.
-					Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA)+"]");
-					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
-				
+					
+					String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA);
 					String msg2 = AUTORIZZAZIONE_FALLITA.replace("@SILNAME@", "Anonimo");
+					
+					if(genericCode) {
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHORIZATION_DENY;
+						ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+						codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+								org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+						if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+							msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						}
+					}
+					
+					// cmq autenticazione ssl poich' ci sono credenziali ssl. Poi l'identificazione di un sa non porta a riconoscerne alcuno.
+					Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+					Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+				
 					Reporter.log("Controllo fault string non corrette ["+msg2+"]");
 					Assert.assertTrue(msg2.equals(error.getFaultString()));
 				}else{
-					Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
-										
+					
+					String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
 					String msg2 =  CREDENZIALI_NON_FORNITE;
+					
+					if(genericCode) {
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND;
+						ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+						codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+								org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+						if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+							msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						}
+					}
+					
+					Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+					Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+										
 					Reporter.log("Controllo fault string non fornite ["+msg2+"]");
 					Assert.assertTrue(msg2.equals(error.getFaultString()));
 				}
@@ -1125,7 +1382,43 @@ public class HTTPS {
 	}
 	Repository repositoryHTTPSautorizzazioneFallita=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_FALLITA"},dataProvider="autorizzazioneFallita")
-	public void testAutorizzazioneFallita(String location,String passwordKeystore,String passwordKey) throws Exception{
+	public void testAutorizzazioneFallita_genericCode_wrap(String location,String passwordKeystore,String passwordKey) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testAutorizzazioneFallita(location, passwordKeystore, passwordKey,genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_FALLITA"},dataProvider="autorizzazioneFallita")
+	public void testAutorizzazioneFallita_genericCode_unwrap(String location,String passwordKeystore,String passwordKey) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testAutorizzazioneFallita(location, passwordKeystore, passwordKey,genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_FALLITA"},dataProvider="autorizzazioneFallita")
+	public void testAutorizzazioneFallita_specificCode(String location,String passwordKeystore,String passwordKey) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testAutorizzazioneFallita(location, passwordKeystore, passwordKey,genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testAutorizzazioneFallita(String location,String passwordKeystore,String passwordKey, boolean genericCode, boolean unwrap) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1175,15 +1468,28 @@ public class HTTPS {
 				client.run();
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
-				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
 				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA);
 				String msg2 = AUTORIZZAZIONE_FALLITA.replace("@SILNAME@", "sil2HTTPS");
 				msg2 = msg2.replace("@SILNAME@", "sil2HTTPS");
 				msg2 = msg2.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL);
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHORIZATION_DENY;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+								
 				Reporter.log("Controllo fault string ["+msg2+"]");
 				Assert.assertTrue(msg2.equals(error.getFaultString()));
 
@@ -1310,7 +1616,43 @@ public class HTTPS {
 	 */
 	Repository repositoryFruitoreNonPresente=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void FruitoreNonPresente() throws TestSuiteException, IOException, Exception{
+	public void fruitoreNonPresente_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_fruitoreNonPresente(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void fruitoreNonPresente_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_fruitoreNonPresente(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void fruitoreNonPresente_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_fruitoreNonPresente(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _fruitoreNonPresente(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 						
@@ -1343,16 +1685,32 @@ public class HTTPS {
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
-					Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
-					Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-					Reporter.log("Controllo fault code [EGOV_IT_201]");
-					Assert.assertTrue("EGOV_IT_201".equals(error.getFaultCode().getLocalPart()));
 					
 					String msg2 = SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA_SUBJECT_NON_PRESENTE.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getNome());
 					msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getNome());
 					msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
 					msg2 = msg2.replace("_@AZIONE@", "");
-									
+					
+					String codiceErrore = "EGOV_IT_201";
+					
+					if(genericCode) {
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+						if(unwrap) {
+							integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+						}
+						ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+						codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+								org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+						if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+							msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						}
+					}
+					
+					Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+					Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+					Reporter.log("Controllo fault code ["+codiceErrore+"]");
+					Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+														
 					String test = error.getFaultString();
 					Reporter.log("Controllo fault string ["+msg2+"]["+test+"]");
 					Reporter.log("length ["+msg2.length()+"] ["+test.length()+"]");
@@ -1405,8 +1763,20 @@ public class HTTPS {
 				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}
 		};
 	}
-	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},dataProvider="FruitoreNonPresente",dependsOnMethods={"FruitoreNonPresente"})
-	public void testFruitoreNonPresente(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},dataProvider="FruitoreNonPresente",dependsOnMethods={"fruitoreNonPresente_genericCode_wrap"})
+	public void testFruitoreNonPresente_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testFruitoreNonPresente(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},dataProvider="FruitoreNonPresente",dependsOnMethods={"fruitoreNonPresente_genericCode_unwrap"})
+	public void testFruitoreNonPresente_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testFruitoreNonPresente(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},dataProvider="FruitoreNonPresente",dependsOnMethods={"fruitoreNonPresente_specificCode"})
+	public void testFruitoreNonPresente_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testFruitoreNonPresente(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testFruitoreNonPresente(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		
 		try{
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
@@ -1510,7 +1880,42 @@ public class HTTPS {
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	Repository repositorySpoofingRilevato=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void SpoofingRilevato() throws TestSuiteException, IOException, Exception{
+	public void spoofingRilevato_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevato_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevato_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _spoofingRilevato(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1540,17 +1945,33 @@ public class HTTPS {
 				client.run();
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
-				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code [EGOV_IT_201]");
-				Assert.assertTrue("EGOV_IT_201".equals(error.getFaultCode().getLocalPart()));
 				
 				String msg2 = SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA_SUBJECT_NON_PRESENTE.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto2.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto2.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("_@AZIONE@", "");
-								
+				
+				String codiceErrore = "EGOV_IT_201";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+												
 				String test = error.getFaultString();
 				Reporter.log("Controllo fault string ["+msg2+"]["+test+"]");
 				Reporter.log("length ["+msg2.length()+"] ["+test.length()+"]");
@@ -1596,8 +2017,19 @@ public class HTTPS {
 				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}
 		};
 	}
-	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},dataProvider="SpoofingRilevato",dependsOnMethods={"SpoofingRilevato"})
-	public void testSpoofingRilevato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},dataProvider="SpoofingRilevato",dependsOnMethods={"spoofingRilevato_genericCode_wrap"})
+	public void testSpoofingRilevato_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevato(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},dataProvider="SpoofingRilevato",dependsOnMethods={"spoofingRilevato_genericCode_unwrap"})
+	public void testSpoofingRilevato_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevato(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},dataProvider="SpoofingRilevato",dependsOnMethods={"spoofingRilevato_specificCode"})
+	public void testSpoofingRilevato_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevato(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testSpoofingRilevato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));

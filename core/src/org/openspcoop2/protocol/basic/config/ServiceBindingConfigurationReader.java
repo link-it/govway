@@ -34,6 +34,7 @@ import org.openspcoop2.message.config.ConfigurationServiceBindingRest;
 import org.openspcoop2.message.config.ConfigurationServiceBindingSoap;
 import org.openspcoop2.message.config.ContextUrlCollection;
 import org.openspcoop2.message.config.IntegrationErrorCollection;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.message.config.RestBinding;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.config.SoapBinding;
@@ -42,6 +43,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.protocol.manifest.EmptySubContextMapping;
+import org.openspcoop2.protocol.manifest.IntegrationErrorCode;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.RFC7807;
 import org.openspcoop2.protocol.manifest.RestConfiguration;
@@ -57,6 +59,7 @@ import org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping;
 import org.openspcoop2.protocol.manifest.SubContextMapping;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.manifest.constants.DefaultIntegrationErrorMessageType;
+import org.openspcoop2.protocol.manifest.constants.IntegrationErrorMessageDetailType;
 import org.openspcoop2.protocol.manifest.constants.IntegrationErrorMessageType;
 import org.openspcoop2.protocol.manifest.constants.IntegrationErrorProblemType;
 import org.openspcoop2.protocol.manifest.constants.RestMessageType;
@@ -545,6 +548,15 @@ public class ServiceBindingConfigurationReader  {
 		return null;
 	}
 	
+	private static IntegrationErrorReturnConfiguration to(IntegrationErrorCode errorCode, boolean retry, IntegrationErrorMessageDetailType errorMessage) {
+		IntegrationErrorReturnConfiguration conf = new IntegrationErrorReturnConfiguration();
+		conf.setHttpReturnCode(errorCode.getHttp());
+		conf.setGovwayReturnCode(errorCode.getGovway());
+		conf.setRetry(retry);
+		conf.setGenericDetails(IntegrationErrorMessageDetailType.GENERIC.equals(errorMessage));
+		return conf;
+	}
+	
 	private static IntegrationErrorCollection readIntegrationErrorConfiguration(org.openspcoop2.protocol.manifest.IntegrationErrorCollection config) throws MessageException{
 		IntegrationErrorCollection integrationErrorConfiguration = new IntegrationErrorCollection();
 		
@@ -556,6 +568,7 @@ public class ServiceBindingConfigurationReader  {
 			rfc7807.setTypeFormat(rfc7807_protocolManifest.getTypeFormat());
 			rfc7807.setUseAcceptHeader(rfc7807_protocolManifest.getUseAcceptHeader());
 			rfc7807.setInstance(rfc7807_protocolManifest.getInstance());
+			rfc7807.setGovwayType(rfc7807_protocolManifest.getGovwayType());
 			rfc7807.setGovwayStatus(rfc7807_protocolManifest.getGovwayStatus());
 			rfc7807.setGovwayTransactionId(rfc7807_protocolManifest.getGovwayTransactionId());
 			rfc7807.setDetails(rfc7807_protocolManifest.getDetails());
@@ -563,44 +576,83 @@ public class ServiceBindingConfigurationReader  {
 		
 		if(config.getDefault()!=null){
 			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.DEFAULT, 
-					convertToMessageType(config.getDefault().getMessageType()), config.getDefault().getHttpReturnCode(),
+					convertToMessageType(config.getDefault().getMessageType()), 
+					to(config.getDefault().getErrorCode(), config.getDefault().getRetry(), config.getDefault().getErrorMessage()),
 					config.isUseInternalFault());
 		}
 		if(config.getAuthentication()!=null){
 			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.AUTHENTICATION, 
-					convertToMessageType(config.getAuthentication().getMessageType()), config.getAuthentication().getHttpReturnCode(),
+					convertToMessageType(config.getAuthentication().getMessageType()), 
+					to(config.getAuthentication().getErrorCode(), config.getAuthentication().getRetry(), config.getAuthentication().getErrorMessage()),
 					config.isUseInternalFault());
 		}
 		if(config.getAuthorization()!=null){
 			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.AUTHORIZATION, 
-					convertToMessageType(config.getAuthorization().getMessageType()), config.getAuthorization().getHttpReturnCode(),
+					convertToMessageType(config.getAuthorization().getMessageType()), 
+					to(config.getAuthorization().getErrorCode(), config.getAuthorization().getRetry(), config.getAuthorization().getErrorMessage()),
 					config.isUseInternalFault());
 		}
 		if(config.getNotFound()!=null){
 			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.NOT_FOUND, 
-					convertToMessageType(config.getNotFound().getMessageType()), config.getNotFound().getHttpReturnCode(),
+					convertToMessageType(config.getNotFound().getMessageType()), 
+					to(config.getNotFound().getErrorCode(), config.getNotFound().getRetry(), config.getNotFound().getErrorMessage()),
 					config.isUseInternalFault());
 		}
 		if(config.getBadRequest()!=null){
 			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.BAD_REQUEST, 
-					convertToMessageType(config.getBadRequest().getMessageType()), config.getBadRequest().getHttpReturnCode(),
+					convertToMessageType(config.getBadRequest().getMessageType()), 
+					to(config.getBadRequest().getErrorCode(), config.getBadRequest().getRetry(), config.getBadRequest().getErrorMessage()),
+					config.isUseInternalFault());
+		}
+		if(config.getConflict()!=null){
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.CONFLICT, 
+					convertToMessageType(config.getConflict().getMessageType()), 
+					to(config.getConflict().getErrorCode(), config.getConflict().getRetry(), config.getConflict().getErrorMessage()),
+					config.isUseInternalFault());
+		}
+		if(config.getLimitExceeded()!=null){
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.LIMIT_EXCEEDED, 
+					convertToMessageType(config.getLimitExceeded().getMessageType()), 
+					to(config.getLimitExceeded().getErrorCode(), config.getLimitExceeded().getRetry(), config.getLimitExceeded().getErrorMessage()),
 					config.isUseInternalFault());
 		}
 		if(config.getTooManyRequests()!=null){
 			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.TOO_MANY_REQUESTS, 
-					convertToMessageType(config.getTooManyRequests().getMessageType()), config.getTooManyRequests().getHttpReturnCode(),
-					config.isUseInternalFault());
-		}
-		if(config.getInternalError()!=null){
-			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.INTERNAL_ERROR, 
-					convertToMessageType(config.getInternalError().getMessageType()), config.getInternalError().getHttpReturnCode(),
+					convertToMessageType(config.getTooManyRequests().getMessageType()), 
+					to(config.getTooManyRequests().getErrorCode(), config.getTooManyRequests().getRetry(), config.getTooManyRequests().getErrorMessage()),
 					config.isUseInternalFault());
 		}
 		if(config.getServiceUnavailable()!=null){
 			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.SERVICE_UNAVAILABLE, 
-					convertToMessageType(config.getServiceUnavailable().getMessageType()), config.getServiceUnavailable().getHttpReturnCode(),
+					convertToMessageType(config.getServiceUnavailable().getMessageType()), 
+					to(config.getServiceUnavailable().getErrorCode(), config.getServiceUnavailable().getRetry(), config.getServiceUnavailable().getErrorMessage()),
 					config.isUseInternalFault());
 		}
+		if(config.getEndpointRequestTimedOut()!=null){
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.ENDPOINT_REQUEST_TIMED_OUT, 
+					convertToMessageType(config.getEndpointRequestTimedOut().getMessageType()), 
+					to(config.getEndpointRequestTimedOut().getErrorCode(), config.getEndpointRequestTimedOut().getRetry(), config.getEndpointRequestTimedOut().getErrorMessage()),
+					config.isUseInternalFault());
+		}
+		if(config.getBadResponse()!=null){
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.BAD_RESPONSE, 
+					convertToMessageType(config.getBadResponse().getMessageType()), 
+					to(config.getBadResponse().getErrorCode(), config.getBadResponse().getRetry(), config.getBadResponse().getErrorMessage()),
+					config.isUseInternalFault());
+		}
+		if(config.getInternalRequestError()!=null){
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.INTERNAL_REQUEST_ERROR, 
+					convertToMessageType(config.getInternalRequestError().getMessageType()), 
+					to(config.getInternalRequestError().getErrorCode(), config.getInternalRequestError().getRetry(), config.getInternalRequestError().getErrorMessage()),
+					config.isUseInternalFault());
+		}
+		if(config.getInternalResponseError()!=null){
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.INTERNAL_RESPONSE_ERROR, 
+					convertToMessageType(config.getInternalResponseError().getMessageType()), 
+					to(config.getInternalResponseError().getErrorCode(), config.getInternalResponseError().getRetry(), config.getInternalResponseError().getErrorMessage()),
+					config.isUseInternalFault());
+		}
+
 		return integrationErrorConfiguration;
 	}
 	

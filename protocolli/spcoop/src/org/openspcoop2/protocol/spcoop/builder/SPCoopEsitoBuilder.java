@@ -50,7 +50,7 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 	
 	@Override
 	public EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
-			ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway) throws ProtocolException{
+			ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway, String internalErrorCodeGovWay) throws ProtocolException{
 		Node childNode = body.getFirstChild();
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){
@@ -78,7 +78,16 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 													if(prefixFaultCode==null){
 														prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
 													}
-													if(value.startsWith(prefixFaultCode)){
+													boolean prefixOpv2 = value.startsWith(prefixFaultCode);
+													
+													if(!prefixOpv2 && internalErrorCodeGovWay!=null) {
+														if(internalErrorCodeGovWay.startsWith(prefixFaultCode)) {
+															prefixOpv2 = true;
+															value = internalErrorCodeGovWay;
+														}									
+													}
+
+													if(prefixOpv2){
 														value = value.substring(prefixFaultCode.length());
 														int valueInt = Integer.parseInt(value);
 														if(valueInt>=400 && valueInt<=499){

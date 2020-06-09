@@ -163,6 +163,11 @@ public class CachedRegistryReader implements IRegistryReader {
 	public String getCodiceIPA(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException {
 		throw new RuntimeException("Not Implemented");
 	}
+	
+	@Override
+	public IDSoggetto getIdSoggettoDefault(String tipoSoggettoDefault) throws RegistryNotFound,RegistryException{
+		throw new RuntimeException("Not Implemented");
+	}
 
 	@Override
 	public String getDominio(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException{

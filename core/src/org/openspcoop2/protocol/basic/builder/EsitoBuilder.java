@@ -350,6 +350,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					erroreGovway = (String) erroreGovwayObject;
 				}
 				
+				Object internalErrorCodeGovWayObject = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE);
+				String internalErrorCodeGovWay = null;
+				if(internalErrorCodeGovWayObject!=null){
+					internalErrorCodeGovWay = (String) internalErrorCodeGovWayObject;
+				}
+				
 				if(erroreGovway!=null && !"".equals(erroreGovway)) {
 					// verifico se fosse stato registrato un errore di protocollo
 					boolean erroreProtocolloInContext = false;
@@ -378,7 +384,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						if(checkElementSeContieneFaultPdD) {
 							if(soapBody!=null) {
 								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
-										erroreApplicativo, soapBody, tipoContext, erroreGovway);
+										erroreApplicativo, soapBody, tipoContext, erroreGovway, internalErrorCodeGovWay);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}
@@ -395,7 +401,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						if(checkElementSeContieneFaultPdD) {
 							if(message.castAsRestXml().hasContent()) {
 								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
-										erroreApplicativo, message.castAsRestXml().getContent(), tipoContext, erroreGovway);
+										erroreApplicativo, message.castAsRestXml().getContent(), tipoContext, erroreGovway, internalErrorCodeGovWay);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}
@@ -411,7 +417,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
 						if(checkElementSeContieneFaultPdD) {
 							if(message.castAsRestJson().hasContent()) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestJson().getContent(), tipoContext, erroreGovway);
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestJson().getContent(), tipoContext, erroreGovway, internalErrorCodeGovWay);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}
@@ -528,11 +534,25 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				}
 				boolean prefixBackwardCompatibility = (backwardCompatibilityPrefix!=null && codice.startsWith(backwardCompatibilityPrefix));
 				
-				if(prefixOpv2 || prefixBackwardCompatibility){
+				boolean genericErrorGovWay = false;
+				Object govwayCodeInContextProperty = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE);
+				String govwayInternalErrorCode = null;
+				if(govwayCodeInContextProperty!=null){
+					String internalErrorCode = (String) govwayCodeInContextProperty;
+					genericErrorGovWay = internalErrorCode.startsWith(prefixFaultCode);
+					if(genericErrorGovWay) {
+						govwayInternalErrorCode = internalErrorCode;
+					}
+				}
+				
+				if(prefixOpv2 || prefixBackwardCompatibility || genericErrorGovWay){
 					// EccezioneProcessamento
 					String value = null;
 					if(prefixOpv2){
 						value = codice.substring(prefixFaultCode.length());
+					}
+					else if(genericErrorGovWay){
+						value = govwayInternalErrorCode.substring(prefixFaultCode.length());
 					}
 					else{
 						value = codice.substring(backwardCompatibilityPrefix.length());
@@ -659,11 +679,11 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	}
 	
 	protected EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
-			ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway) throws ProtocolException{
+			ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway, String internalErrorCodeGovWay) throws ProtocolException{
 		if(erroreApplicativo!=null){
 			Node childNode = body.getFirstChild();
 			if(childNode!=null){
-				return getEsitoMessaggioApplicativo(messageFactory, erroreApplicativo, childNode, tipoContext, erroreGovway);
+				return getEsitoMessaggioApplicativo(messageFactory, erroreApplicativo, childNode, tipoContext, erroreGovway, internalErrorCodeGovWay);
 			}
 		}
 
@@ -672,7 +692,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	}
 	
 	protected EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
-			ProprietaErroreApplicativo erroreApplicativo,Node childNode,String tipoContext, String erroreGovway) throws ProtocolException{
+			ProprietaErroreApplicativo erroreApplicativo,Node childNode,String tipoContext, String erroreGovway, String internalErrorCodeGovWay) throws ProtocolException{
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){
 				
@@ -721,7 +741,16 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 								if(prefixFaultCode==null){
 									prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
 								}
-								if(value.startsWith(prefixFaultCode)){
+								boolean prefixOpv2 = value.startsWith(prefixFaultCode);
+								
+								if(!prefixOpv2 && internalErrorCodeGovWay!=null) {
+									if(internalErrorCodeGovWay.startsWith(prefixFaultCode)) {
+										prefixOpv2 = true;
+										value = internalErrorCodeGovWay;
+									}									
+								}
+
+								if(prefixOpv2){
 									value = value.substring(prefixFaultCode.length());
 									int valueInt = Integer.parseInt(value);
 									if(valueInt>=400 && valueInt<=499){
@@ -759,7 +788,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 
 	}
 	
-	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,String jsonBody,String tipoContext, String erroreGovway) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,String jsonBody,String tipoContext, String erroreGovway, String internalErrorCodeGovWay) throws ProtocolException{
 		
 		if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway)) {
 			try{
@@ -806,7 +835,16 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					if(prefixFaultCode==null){
 						prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
 					}
-					if(value.startsWith(prefixFaultCode)){
+					boolean prefixOpv2 = value.startsWith(prefixFaultCode);
+					
+					if(!prefixOpv2 && internalErrorCodeGovWay!=null) {
+						if(internalErrorCodeGovWay.startsWith(prefixFaultCode)) {
+							prefixOpv2 = true;
+							value = internalErrorCodeGovWay;
+						}									
+					}
+
+					if(prefixOpv2){
 						value = value.substring(prefixFaultCode.length());
 						int valueInt = Integer.parseInt(value);
 						if(valueInt>=400 && valueInt<=499){

@@ -531,6 +531,11 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test sulla gestione degli errori per il profilo sincrono stateless: connect timed out */
 	public static final String PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS_CONNECT_TIMED_OUT="ConnettoreSAErratoConnectTimedOut";
 	
+	/** Porte Delegate per il test sulla gestione degli errori per il profilo sincrono stateless: connect read timed out */
+	public static final String PORTA_DELEGATA_CONNETTORE_ERRATO_PDD_SINCRONO_STATELESS_CONNECT_READ_TIMED_OUT="ConnettorePdDErratoConnectReadTimedOut";
+	/** Porte Delegate per il test sulla gestione degli errori per il profilo sincrono stateless: connect read timed out */
+	public static final String PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS_CONNECT_READ_TIMED_OUT="ConnettoreSAErratoConnectReadTimedOut";
+	
 	/** Porte Delegate per il test sulla gestione degli errori per il profilo sincrono stateless: connection read timed out */
 	public static final String PORTA_DELEGATA_CONNETTORE_ERRATO_PDD_SINCRONO_STATELESS_CONNECTION_READ_TIMEOUT="ConnettorePdDErratoReadTimeout";
 	/** Porte Delegate per il test sulla gestione degli errori per il profilo sincrono stateless: connection read out */

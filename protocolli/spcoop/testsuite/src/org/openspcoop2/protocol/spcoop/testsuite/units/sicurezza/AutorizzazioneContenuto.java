@@ -31,6 +31,7 @@ import org.apache.axis.Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -40,6 +41,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.core.Repository;
@@ -48,7 +50,9 @@ import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -64,10 +68,19 @@ import org.testng.annotations.Test;
  * @version $Rev$, $Date$
  */
 
-public class AutorizzazioneContenuto {
+public class AutorizzazioneContenuto extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "AutorizzazioneContenuto";
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected AutorizzazioneContenuto() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
@@ -138,7 +151,29 @@ public class AutorizzazioneContenuto {
 	 * Test per il profilo di collaborazione sincronoPD_KO
 	 */
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,AutorizzazioneContenuto.ID_GRUPPO,AutorizzazioneContenuto.ID_GRUPPO+".SINCRONO_PD_KO"})
-	public void testsincronoPD_KO() throws Exception{
+	public void testsincronoPD_KO_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_testsincronoPD_KO(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,AutorizzazioneContenuto.ID_GRUPPO,AutorizzazioneContenuto.ID_GRUPPO+".SINCRONO_PD_KO"})
+	public void testsincronoPD_KO_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_testsincronoPD_KO(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testsincronoPD_KO(boolean genericCode) throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -163,11 +198,28 @@ public class AutorizzazioneContenuto {
 				Reporter.log("Invocazione porta delegata con autorizzazione contenuto sincrono KO (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO+") non ha causato errori.");
 				throw new TestSuiteException("Invocazione porta delegata con autorizzazione contenuto sincrono KO (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO+") non ha causato errori.");
 			} catch (AxisFault error) {
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA);
+				String msgErrore = null;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.CONTENT_AUTHORIZATION_DENY;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA).equals(error.getFaultCode().getLocalPart()));
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();

@@ -3,7 +3,7 @@
 Errori 404 (NotFound)
 ---------------------
 
-In questa sezione vengono raccolti tutti i possibili codici di errore generati da GovWay riguardanti richieste verso API o risorse non trovate.
+In questa sezione vengono riportati tutti i possibili codici di errore generati da GovWay relativi a richieste verso API o risorse inesistenti.
 
 .. toctree::
         :maxdepth: 2

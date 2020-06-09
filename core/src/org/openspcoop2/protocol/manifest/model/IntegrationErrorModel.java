@@ -40,8 +40,10 @@ public class IntegrationErrorModel extends AbstractModel<IntegrationError> {
 	
 		super();
 	
-		this.HTTP_RETURN_CODE = new Field("httpReturnCode",int.class,"IntegrationError",IntegrationError.class);
+		this.ERROR_CODE = new org.openspcoop2.protocol.manifest.model.IntegrationErrorCodeModel(new Field("errorCode",org.openspcoop2.protocol.manifest.IntegrationErrorCode.class,"IntegrationError",IntegrationError.class));
 		this.MESSAGE_TYPE = new Field("messageType",java.lang.String.class,"IntegrationError",IntegrationError.class);
+		this.RETRY = new Field("retry",boolean.class,"IntegrationError",IntegrationError.class);
+		this.ERROR_MESSAGE = new Field("errorMessage",java.lang.String.class,"IntegrationError",IntegrationError.class);
 	
 	}
 	
@@ -49,16 +51,22 @@ public class IntegrationErrorModel extends AbstractModel<IntegrationError> {
 	
 		super(father);
 	
-		this.HTTP_RETURN_CODE = new ComplexField(father,"httpReturnCode",int.class,"IntegrationError",IntegrationError.class);
+		this.ERROR_CODE = new org.openspcoop2.protocol.manifest.model.IntegrationErrorCodeModel(new ComplexField(father,"errorCode",org.openspcoop2.protocol.manifest.IntegrationErrorCode.class,"IntegrationError",IntegrationError.class));
 		this.MESSAGE_TYPE = new ComplexField(father,"messageType",java.lang.String.class,"IntegrationError",IntegrationError.class);
+		this.RETRY = new ComplexField(father,"retry",boolean.class,"IntegrationError",IntegrationError.class);
+		this.ERROR_MESSAGE = new ComplexField(father,"errorMessage",java.lang.String.class,"IntegrationError",IntegrationError.class);
 	
 	}
 	
 	
 
-	public IField HTTP_RETURN_CODE = null;
+	public org.openspcoop2.protocol.manifest.model.IntegrationErrorCodeModel ERROR_CODE = null;
 	 
 	public IField MESSAGE_TYPE = null;
+	 
+	public IField RETRY = null;
+	 
+	public IField ERROR_MESSAGE = null;
 	 
 
 	@Override

@@ -145,6 +145,7 @@
 			</lib>
 			<lib dir="${required_lib}/jackson">
 				<include name="${jackson_jar}"/>
+				<include name="jackson-datatype-joda-2.10.2.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>

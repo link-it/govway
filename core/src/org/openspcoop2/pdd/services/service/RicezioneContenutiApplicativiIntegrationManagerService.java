@@ -87,6 +87,8 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -107,7 +109,14 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			IProtocolFactory<?> protocolFactory, Date dataAccettazioneRichiesta, Date dataIngressoRichiesta) throws IntegrationManagerException {
 
 		String idModulo = RicezioneContenutiApplicativi.ID_MODULO+IntegrationManager.ID_MODULO;
-				
+		
+		ErroriProperties erroriProperties = null;
+		try {
+			erroriProperties = ErroriProperties.getInstance(logCore);
+		}catch(Exception Ignoree) {
+			// non succede
+		}
+		
 		// Proprieta' OpenSPCoop
 		OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
 		if (openSPCoopProperties == null) {
@@ -115,7 +124,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			logCore.error(msgError);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msgError,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
+						get5XX_ErroreProcessamento(msgError,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, erroriProperties);
 			}catch(Throwable eError){
 				logCore.error("Errore generazione SOAPFault",eError);
 				throw new RuntimeException(eError); // errore che non dovrebbe accadare
@@ -132,7 +142,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			String msgError = "Lettura RequestInfo non riuscita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msgError);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(msgError));
+					get5XX_ErroreProcessamento(msgError),
+					IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 		}
 		
 		// Configurazione Reader
@@ -147,7 +158,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			logCore.error(msgError,e);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msgError,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
+						get5XX_ErroreProcessamento(msgError,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, erroriProperties);
 			}catch(Throwable eError){
 				logCore.error("Errore generazione SOAPFault",eError);
 				throw new RuntimeException(eError); // errore che non dovrebbe accadare
@@ -165,7 +177,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			logCore.error(msgError,e);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msgError,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
+						get5XX_ErroreProcessamento(msgError,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, erroriProperties);
 			}catch(Throwable eError){
 				logCore.error("Errore generazione SOAPFault",eError);
 				throw new RuntimeException(eError); // errore che non dovrebbe accadare
@@ -183,7 +196,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			logCore.error(msgError,e);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msgError));
+						get5XX_ErroreProcessamento(msgError),
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, erroriProperties);
 			}catch(Throwable eError){
 				logCore.error("Errore generazione SOAPFault",eError);
 				throw new RuntimeException(eError); // errore che non dovrebbe accadare
@@ -222,7 +236,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			String msgError = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			msgDiag.logErroreGenerico(e,"Inizializzazione Generatore Errore");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(msgError));
+					get5XX_ErroreProcessamento(msgError),
+					IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, erroriProperties);
 		}
 		
 		// Aggiorno RequestInfo
@@ -234,7 +249,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			if(cInfo!=null){
 				try{
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							getErroreIntegrazione());
+							getErroreIntegrazione(),
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 				}catch(Throwable eError){
 					logCore.error("Errore generazione SOAPFault",eError);
 					throw new RuntimeException(eError); // errore che non dovrebbe accadare
@@ -245,7 +261,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			logCore.error(msgError,e);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msgError));
+						get5XX_ErroreProcessamento(msgError),
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 			}catch(Throwable eError){
 				logCore.error("Errore generazione SOAPFault",eError);
 				throw new RuntimeException(eError); // errore che non dovrebbe accadare
@@ -289,7 +306,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			}
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e,"invocaPortaDelegata_engine("+tipoOperazione+").newRicezioneContenutiApplicativiContext()");
-			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),
+					IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 		}
 		
 		try{
@@ -379,7 +397,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				if(msg==null || msg.getMessage()==null){
 					msgDiag.logPersonalizzato("invocazionePortaDelegata.contenutoApplicativoNonPresente");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),
+							IntegrationFunctionError.BAD_REQUEST, erroriProperties);
 				}
 			}
 			else if("invocaPortaDelegataPerRiferimento".equals(tipoOperazione)){
@@ -387,7 +406,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				if(idInvocazionePerRiferimento==null){
 					msgDiag.logPersonalizzato("invocazionePortaDelegataPerRiferimento.riferimentoMessaggioNonPresente");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),
+							IntegrationFunctionError.BAD_REQUEST, erroriProperties);
 				}
 			}
 			else if("sendRispostaAsincronaSimmetrica".equals(tipoOperazione)){
@@ -395,13 +415,15 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				if(msg==null || msg.getMessage()==null){
 					msgDiag.logPersonalizzato("invocazionePortaDelegata.contenutoApplicativoNonPresente");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),
+							IntegrationFunctionError.BAD_REQUEST, erroriProperties);
 				}
 				//	check presenza id di correlazione asincrona
 				if(msg.getProtocolHeaderInfo()==null || msg.getProtocolHeaderInfo().getRiferimentoMessaggio()==null){
 					msgDiag.logPersonalizzato("invocazionePortaDelegata.profiloAsincrono.riferimentoMessaggioNonPresente");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),
+							IntegrationFunctionError.CORRELATION_INFORMATION_NOT_FOUND, erroriProperties);
 				}
 			}
 			else if("sendRichiestaStatoAsincronaAsimmetrica".equals(tipoOperazione)){
@@ -409,13 +431,15 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				if(msg==null || msg.getMessage()==null){
 					msgDiag.logPersonalizzato("invocazionePortaDelegata.contenutoApplicativoNonPresente");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),
+							IntegrationFunctionError.BAD_REQUEST, erroriProperties);
 				}
 				//	check presenza id di correlazione asincrona
 				if(msg.getProtocolHeaderInfo()==null || msg.getProtocolHeaderInfo().getRiferimentoMessaggio()==null){
 					msgDiag.logPersonalizzato("invocazionePortaDelegata.profiloAsincrono.riferimentoMessaggioNonPresente");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),
+							IntegrationFunctionError.CORRELATION_INFORMATION_NOT_FOUND, erroriProperties);
 				}
 			}
 			else{
@@ -501,7 +525,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggio.getMessagePerRiferimento("+idInvocazionePerRiferimento+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 				}
 
 				// Rilascio Connessione DB
@@ -593,12 +618,14 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 						msgDiag.logPersonalizzato("buildMsg.nonRiuscito");
 						throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_421_MSG_SOAP_NON_COSTRUIBILE_TRAMITE_RICHIESTA_APPLICATIVA.
-								getErrore421_MessaggioSOAPNonGenerabile(msgErrore));
+								getErrore421_MessaggioSOAPNonGenerabile(msgErrore),
+								IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT, erroriProperties);
 					} else {
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 						msgDiag.logPersonalizzato("buildMsg.imbustamentoSOAP.nonRiuscito");
 						throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA.
-								getErrore422_MessaggioSOAPNonGenerabileTramiteImbustamentoSOAP(msgErrore));
+								getErrore422_MessaggioSOAPNonGenerabileTramiteImbustamentoSOAP(msgErrore),
+								IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT, erroriProperties);
 					}
 				}
 			}
@@ -714,7 +741,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				// Per l'IntegrationManager esiste un codice specifico
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER,"buildMsg.nonRiuscito");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_421_MSG_SOAP_NON_COSTRUIBILE_TRAMITE_RICHIESTA_APPLICATIVA.
-						getErrore421_MessaggioSOAPNonGenerabile(msgErrore));
+						getErrore421_MessaggioSOAPNonGenerabile(msgErrore),
+						IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT, erroriProperties);
 			}
 			
 			// Raccolgo l'eventuale header di integrazione
@@ -767,12 +795,26 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 								if(context.getProprietaErroreAppl().getFaultPrefixCode()!=null){
 									prefix = context.getProprietaErroreAppl().getFaultPrefixCode();
 								}
-								if(openSPCoopProperties.isErroreApplicativoIntoDetails() && fault.getDetail()!=null){
-									exc = IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,fault.getDetail().getFirstChild(),
-											prefix);
-								}else{
-									exc = IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,fault.getFaultString(),
-											prefix);
+								
+								String faultCode = null;
+								if(fault.getFaultCodeAsQName()!=null) {
+									faultCode = fault.getFaultCodeAsQName().getLocalPart();
+								}
+								else {
+									faultCode = fault.getFaultCode();
+								}
+								exc = IntegrationManagerUtility.mapMessageIntoProtocolException(soapMessage, faultCode, fault.getFaultString(), 
+												requestInfo.getIdentitaPdD(), idModulo);
+								if(exc==null) {// non si dovrebbe arrivare a questo if
+									if(openSPCoopProperties.isErroreApplicativoIntoDetails() && fault.getDetail()!=null){
+										exc = IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,fault.getDetail().getFirstChild(),
+												prefix, 
+												IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
+									}else{
+										exc = IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,fault.getFaultString(),
+												prefix, 
+												IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
+									}
 								}
 								if(exc== null)
 									throw new Exception("Costruzione Eccezione fallita: null");
@@ -799,12 +841,14 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 							logCore.error("parsingExceptionRisposta",parseException.getSourceException());
 							msgDiag.logPersonalizzato("parsingExceptionRisposta");
 							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
-									getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
+									getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
+									IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT, erroriProperties);
 						}
 						else{
 							msgDiag.logErroreGenerico(e,"buildProtocolException("+tipoOperazione+")");
 							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_524_CREAZIONE_PROTOCOL_EXCEPTION));
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_524_CREAZIONE_PROTOCOL_EXCEPTION),
+									IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 						}
 					}finally{
 						// ricalcolo esito
@@ -842,12 +886,14 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 							logCore.error("parsingExceptionRisposta",parseException.getSourceException());
 							msgDiag.logPersonalizzato("parsingExceptionRisposta");
 							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
-									getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
+									getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
+									IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT, erroriProperties);
 						}
 						else{
 							msgDiag.logErroreGenerico(e,"buildMessage_response("+tipoOperazione+")");
 							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE));
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE),
+									IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 						}
 					}finally{
 						// ricalcolo esito
@@ -949,7 +995,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA,errore);
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"integrationManager.consegnaRispostaApplicativaFallita");
 				
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 			}
 			
 		}finally{

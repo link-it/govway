@@ -30,6 +30,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Interfaccia che definisce un processo di autorizzazione sui ruoli
@@ -79,7 +80,7 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     						this.getPddContext(),
     						this.checkRuoloRegistro, this.checkRuoloEsterno,
     						detailsBuffer)==false){
-    			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+    			esito.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);
     			if(detailsBuffer.length()>0) {
     				esito.setDetails(detailsBuffer.toString());
@@ -92,12 +93,12 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     			errore = errore + " ";
     		}
 			errore = errore + "("+e.getMessage()+")";
-			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+			esito.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     		esito.setAutorizzato(false);
     		esito.setEccezioneProcessamento(e);
     	}catch(Exception e){
     		errore = "Errore durante l'autorizzazione di tipo '"+this.nomeAutorizzazione+"': "+e.getMessage();
-    		esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
+    		esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
     		esito.setAutorizzato(false);
     		esito.setEccezioneProcessamento(e);
     	}

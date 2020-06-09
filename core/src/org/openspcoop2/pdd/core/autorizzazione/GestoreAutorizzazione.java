@@ -58,6 +58,7 @@ import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -341,7 +342,7 @@ public class GestoreAutorizzazione {
     	if(authScope!=null && authScope.sizeScopeList()>0) {
     		EsitoAutorizzazionePortaDelegata esitoNew = (EsitoAutorizzazionePortaDelegata) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
     		if(esitoNew.isAutorizzato()==false) {
-    			esitoNew.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
+    			esitoNew.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_SCOPE, ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
     			return esitoNew;
         	}
     	}
@@ -355,7 +356,7 @@ public class GestoreAutorizzazione {
     						esito, pddContext, datiInvocazione,
     						log, msg);
     		if(esitoNew.isAutorizzato()==false) {
-    			esitoNew.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
+    			esitoNew.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_TOKEN_DENY, ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
     			return esitoNew;
         	}
     	}
@@ -465,7 +466,7 @@ public class GestoreAutorizzazione {
     	if(authScope!=null && authScope.sizeScopeList()>0) {
     		EsitoAutorizzazionePortaApplicativa esitoNew = (EsitoAutorizzazionePortaApplicativa) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
     		if(esitoNew.isAutorizzato()==false) {
-    			esitoNew.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
+    			esitoNew.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_MISSING_SCOPE, ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
     			return esitoNew;
         	}
     	}
@@ -491,7 +492,7 @@ public class GestoreAutorizzazione {
     						esito, pddContext, datiInvocazione,
     						log, msg);
     		if(esitoNew.isAutorizzato()==false) {
-    			esitoNew.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
+    			esitoNew.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_TOKEN_DENY, ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
     			return esitoNew;
         	}
     	}

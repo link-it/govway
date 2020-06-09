@@ -26,6 +26,7 @@ import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.config.ConfigurationRFC7807;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -42,6 +43,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -82,23 +84,23 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 
 	}
 	
-	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione) {
-		return this.buildErroreProcessamento(context, integrationError, erroreIntegrazione, null);
+	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione) {
+		return this.buildErroreProcessamento(context, integrationFunctionError, erroreIntegrazione, null);
 	}
-	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, Throwable eProcessamento) {
+	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione, Throwable eProcessamento) {
 		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
-		try{		
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+		try{
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_processamento(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					erroreIntegrazione,eProcessamento,
-					msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(), 
+					msgTypeErrorResponse,rfc7807, returnConfig, integrationFunctionError, this.getInterfaceName(), 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					context);			
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					context);	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -106,19 +108,20 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		}
 	}
 	
-	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationError integrationError, DettaglioEccezione dettaglioEccezione){	
+	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationFunctionError integrationFunctionError, DettaglioEccezione dettaglioEccezione){	
+		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{		
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_processamento(dettaglioEccezione,
 					this.protocolFactory.createProtocolManager().isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(),
-					msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(),
+					msgTypeErrorResponse,rfc7807, returnConfig, integrationFunctionError, this.getInterfaceName(),
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					context);			
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					context);
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -126,20 +129,21 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		}
 	}
 	
-	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationError integrationError)  {
+	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationFunctionError integrationFunctionError)  {
+
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{		
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_intestazione(
 					this.identitaPdD,this.tipoPdD,this.idModulo, 
-					erroreIntegrazione, msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(),
+					erroreIntegrazione, msgTypeErrorResponse,rfc7807, returnConfig, integrationFunctionError, this.getInterfaceName(),
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					context);			
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					context);	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -147,39 +151,39 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		}
 	}
 	
-	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione) {
+	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione) {
 		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{		
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_intestazione(this.identitaPdD,this.tipoPdD,this.idModulo, 
-					erroreIntegrazione,msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(),
+					erroreIntegrazione,msgTypeErrorResponse,rfc7807, returnConfig, integrationFunctionError, this.getInterfaceName(),
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					context);			
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					context);	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
 			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 	}
-	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationError integrationError, CodiceErroreCooperazione codiceErroreCooperazione, String descrizione) {
+	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationFunctionError integrationFunctionError, CodiceErroreCooperazione codiceErroreCooperazione, String descrizione) {
 		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{		
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_intestazione(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					codiceErroreCooperazione,descrizione,
-					msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(),
+					msgTypeErrorResponse,rfc7807, returnConfig, integrationFunctionError, this.getInterfaceName(),
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					context);			
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					context);	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -189,7 +193,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 	
 	
 	
-	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationError integrationError,
+	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationFunctionError integrationFunctionError,
 			Busta busta,Integrazione integrazione, String idTransazione,
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -197,6 +201,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento,
 			PdDContext pddContext){
 		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
@@ -208,7 +213,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 				// puo' non essere presente in comunicazioni stateful
 			}
 			
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
@@ -216,10 +221,9 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					eProcessamento, msgTypeErrorResponse, rfc7807, httpReturnCode, 
+					eProcessamento, msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -228,7 +232,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 	}
 	
-	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationError integrationError,
+	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationFunctionError integrationFunctionError,
 			Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreCooperazione erroreCooperazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -237,6 +241,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			Exception eProcessamento,
 			PdDContext pddContext){ 
 		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
@@ -248,7 +253,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 				// puo' non essere presente in comunicazioni stateful
 			}
 			
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
@@ -256,10 +261,9 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					eProcessamento, msgTypeErrorResponse, rfc7807, httpReturnCode, 
+					eProcessamento, msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -268,7 +272,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 	}
 	
-	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationError integrationError,
+	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationFunctionError integrationFunctionError,
 			Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreIntegrazione erroreIntegrazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -277,6 +281,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			Exception eProcessamento,
 			PdDContext pddContext){ 
 		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
@@ -288,7 +293,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 				// puo' non essere presente in comunicazioni stateful
 			}
 			
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
@@ -296,10 +301,9 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					eProcessamento, msgTypeErrorResponse, rfc7807, httpReturnCode, 
+					eProcessamento, msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -308,7 +312,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 	}
 	
-	public  OpenSPCoop2Message buildErroreProtocollo_Intestazione(IntegrationError integrationError,
+	public  OpenSPCoop2Message buildErroreProtocollo_Intestazione(IntegrationFunctionError integrationFunctionError,
 			Busta busta,Integrazione integrazione, String idTransazione,		
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -316,6 +320,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
 			PdDContext pddContext){
 		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
@@ -327,7 +332,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 				// puo' non essere presente in comunicazioni stateful
 			}
 			
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
@@ -335,10 +340,9 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					msgTypeErrorResponse, rfc7807, httpReturnCode, 
+					msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -346,7 +350,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		}
 	}
 	
-	public OpenSPCoop2Message buildErroreProtocollo_Intestazione(IntegrationError integrationError,
+	public OpenSPCoop2Message buildErroreProtocollo_Intestazione(IntegrationFunctionError integrationFunctionError,
 			Busta busta,Integrazione integrazione, 
 			String idTransazione,
 			ErroreCooperazione erroreCooperazione,
@@ -358,6 +362,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni,
 			PdDContext pddContext){
 		
+		IntegrationError integrationError = convertToIntegrationError(integrationFunctionError);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
@@ -369,7 +374,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 				// puo' non essere presente in comunicazioni stateful
 			}
 			
-			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
@@ -377,10 +382,9 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					msgTypeErrorResponse, rfc7807, httpReturnCode, 
+					msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
-			msg.setForcedResponseCode(httpReturnCode+"");	
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);

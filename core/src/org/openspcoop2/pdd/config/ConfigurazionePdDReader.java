@@ -1112,6 +1112,10 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected void updateStatoPortaDelegata(Connection connectionPdD,IDPortaDelegata idPD, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		this.configurazionePdD.updateStatoPortaDelegata(connectionPdD, idPD, stato);
+	}
+	
 	protected Map<String, String> getProprietaConfigurazione(PortaDelegata pd) throws DriverConfigurazioneException {
 		if (pd == null) {
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
@@ -1159,7 +1163,7 @@ public class ConfigurazionePdDReader {
 
 	protected String getAzione(RegistroServiziManager registroServiziManager,PortaDelegata pd,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
-			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 
 		try{
 
@@ -1485,7 +1489,7 @@ public class ConfigurazionePdDReader {
 		return !CostantiConfigurazione.DISABILITATO.equals(pd.getRicevutaAsincronaAsimmetrica());
 	}
 
-	protected ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(Connection connectionPdD, PortaDelegata pd,String implementazionePdDSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(Connection connectionPdD, PortaDelegata pd,String implementazionePdDSoggetto, boolean request) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// default in configurazione
 		ValidazioneContenutiApplicativi val = this.getTipoValidazioneContenutoApplicativo(connectionPdD,implementazionePdDSoggetto);
 
@@ -1514,7 +1518,49 @@ public class ConfigurazionePdDReader {
 		else if( CostantiConfigurazione.DISABILITATO.equals(pd.getValidazioneContenutiApplicativi().getAcceptMtomMessage())  )
 			valPD.setAcceptMtomMessage(CostantiConfigurazione.DISABILITATO);
 
+		refreshByProperties(pd.getProprietaList(), request, valPD);
+			
 		return valPD;
+	}
+	
+	private void refreshByProperties(List<Proprieta> list, boolean request, ValidazioneContenutiApplicativi val) {
+		if(list!=null && !list.isEmpty()) {
+			String pName = request? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RICHIESTA_ENABLED : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RISPOSTA_ENABLED;
+			String pNameType = request? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RICHIESTA_TIPO : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RISPOSTA_TIPO;
+			String pNameMtom = request? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RICHIESTA_ACCEPT_MTOM_MESSAGE : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RISPOSTA_ACCEPT_MTOM_MESSAGE;
+			for (Proprieta p : list) {
+				if(pName.equals(p.getNome())) {
+					if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_ENABLED.equals(p.getValore())) {
+						val.setStato(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO);
+					}
+					else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_DISABLED.equals(p.getValore())) {
+						val.setStato(CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO);
+					}
+					else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_WARNING_ONLY.equals(p.getValore())) {
+						val.setStato(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY);
+					}
+				}
+				else if(pNameType.equals(p.getNome())) {
+					if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(p.getValore())) {
+						val.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP);
+					}
+					else if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(p.getValore())) {
+						val.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE);
+					}
+					else if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(p.getValore())) {
+						val.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD);
+					}
+				}
+				else if(pNameMtom.equals(p.getNome())) {
+					if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_ENABLED.equals(p.getValore())) {
+						val.setAcceptMtomMessage(CostantiConfigurazione.ABILITATO);
+					}
+					else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_DISABLED.equals(p.getValore())) {
+						val.setAcceptMtomMessage(CostantiConfigurazione.DISABILITATO);
+					}
+				}
+			}
+		}
 	}
 
 	protected CorrelazioneApplicativa getCorrelazioneApplicativa(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -1781,6 +1827,10 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected void updateStatoPortaApplicativa(Connection connectionPdD,IDPortaApplicativa idPA, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		this.configurazionePdD.updateStatoPortaApplicativa(connectionPdD, idPA, stato);
+	}
+	
 	public Map<String, String> getProprietaConfigurazione(PortaApplicativa pa) throws DriverConfigurazioneException {
 		if (pa == null) {
 			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
@@ -1828,7 +1878,7 @@ public class ConfigurazionePdDReader {
 
 	protected String getAzione(RegistroServiziManager registroServiziManager,PortaApplicativa pa,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
-			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 
 		try{
 
@@ -2214,7 +2264,7 @@ public class ConfigurazionePdDReader {
 		return !CostantiConfigurazione.DISABILITATO.equals(pa.getRicevutaAsincronaAsimmetrica());
 	}
 
-	protected ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(Connection connectionPdD, PortaApplicativa pa,String implementazionePdDSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(Connection connectionPdD, PortaApplicativa pa,String implementazionePdDSoggetto, boolean request) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// default in configurazione
 		ValidazioneContenutiApplicativi val = this.getTipoValidazioneContenutoApplicativo(connectionPdD,implementazionePdDSoggetto);
@@ -2244,6 +2294,8 @@ public class ConfigurazionePdDReader {
 		else if( CostantiConfigurazione.DISABILITATO.equals(pa.getValidazioneContenutiApplicativi().getAcceptMtomMessage())  )
 			valPA.setAcceptMtomMessage(CostantiConfigurazione.DISABILITATO);
 
+		refreshByProperties(pa.getProprietaList(), request, valPA);
+		
 		return valPA;
 	}
 

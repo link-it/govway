@@ -36,7 +36,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
@@ -84,6 +83,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.utils.date.DateManager;
@@ -170,6 +170,7 @@ public class Sbustamento extends GenericLib{
 		IDServizio idServizio = richiestaApplicativa.getIDServizio();
 		IDSoggetto idSoggettoFruitore = richiestaApplicativa.getSoggettoFruitore();
 		java.util.List<Eccezione> errors = sbustamentoMsg.getErrors();
+		IntegrationFunctionError validazione_integrationFunctionError = sbustamentoMsg.getIntegrationFunctionErrorValidazione();
 		boolean isMessaggioErroreProtocollo = sbustamentoMsg.isMessaggioErroreProtocollo();
 		boolean bustaDiServizio = sbustamentoMsg.getIsBustaDiServizio();
 		IDSoggetto identitaPdD = sbustamentoMsg.getRichiestaApplicativa().getDominio();
@@ -438,6 +439,7 @@ public class Sbustamento extends GenericLib{
 			}catch(Exception e){	
 				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("protocolli.funzionalita.unsupported");
+				ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
 						getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), protocolFactory),
@@ -572,10 +574,21 @@ public class Sbustamento extends GenericLib{
 					}
 				}
 
+				IntegrationFunctionError integrationFunctionError = validazione_integrationFunctionError;
+				if(integrationFunctionError==null) {
+					if( ruoloBustaRicevuta!=null && RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString()) ){
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+					}
+					else {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+				}
+				
 				gestioneErroreProtocollo(configurazionePdDManager,ejbUtils,profiloCollaborazione,repositoryBuste,
 						bustaRichiesta,identitaPdD,eccezioneDaInviareServizioApplicativo,erroreIntegrazioneDaInviareServizioApplicativo,
 						new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente()),
-						dettaglioEccezione, protocolFactory, protocolManager, pddContext);
+						dettaglioEccezione, protocolFactory, protocolManager, pddContext,
+						integrationFunctionError);
 
 				// Commit modifiche
 				openspcoopstate.commit();
@@ -646,7 +659,16 @@ public class Sbustamento extends GenericLib{
 							ejbUtils.setRollbackRichiestaInCasoErrore(false); // viene effettuato da gestioneErrore
 							if(mittenteRegistrato){
 								msgDiag.mediumDebug("Invio segnalazione di errore ...");
-								ejbUtils.setIntegrationErrorPortaApplicativa(IntegrationError.BAD_REQUEST);
+								IntegrationFunctionError integrationFunctionError = validazione_integrationFunctionError;
+								if(integrationFunctionError==null) {
+									if( ruoloBustaRicevuta!=null && RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString()) ){
+										integrationFunctionError = IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_RESPONSE;
+									}
+									else {
+										integrationFunctionError = IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_REQUEST;
+									}
+								}
+								ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
 								ejbUtils.sendAsRispostaBustaErroreValidazione(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,errorsClone,
 										idCorrelazioneApplicativa,null,servizioApplicativoFruitore);
 							}
@@ -677,9 +699,21 @@ public class Sbustamento extends GenericLib{
 
 							// GESTIONE ERRORE INTERNO
 							msgDiag.mediumDebug("Invio eventuale messaggio di errore al servizio applicativo (gestione errore)...");
+							IntegrationFunctionError integrationFunctionError = validazione_integrationFunctionError;
+							if(integrationFunctionError==null) {
+								if( ruoloBustaRicevuta!=null && RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString()) ){
+									integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+								}
+								else {
+									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+								}
+							}
+							if(validazione_integrationFunctionError!=null) {
+								integrationFunctionError = validazione_integrationFunctionError;
+							}
 							gestioneErroreProtocollo(configurazionePdDManager, ejbUtils, profiloCollaborazione, repositoryBuste,
 									bustaNonValida, identitaPdD, eccezioneDaInviareServizioApplicativo,null,
-									identitaPdD, null, protocolFactory, protocolManager, pddContext);
+									identitaPdD, null, protocolFactory, protocolManager, pddContext, integrationFunctionError);
 
 							// Commit modifiche
 							openspcoopstate.commit();
@@ -939,6 +973,7 @@ public class Sbustamento extends GenericLib{
 								( protocolManager.isGenerazioneErroreMessaggioOnewayDuplicato() || this.propertiesReader.isGenerazioneErroreProtocolloFiltroDuplicati(implementazionePdDMittente))){
 							//System.out.println("CASO 1b");
 							ejbUtils.setRollbackRichiestaInCasoErrore_rollbackHistory(false); // non devo cancellare l'history
+							ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.CONFLICT);
 							ejbUtils.sendAsRispostaBustaErroreValidazione(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 									Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory),
 									idCorrelazioneApplicativa,servizioApplicativoFruitore);
@@ -953,6 +988,7 @@ public class Sbustamento extends GenericLib{
 						else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())){
 							//System.out.println("CASO 2");
 							ejbUtils.setRollbackRichiestaInCasoErrore_rollbackHistory(false); // non devo cancellare l'history
+							ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.CONFLICT);
 							ejbUtils.sendAsRispostaBustaErroreValidazione(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 									Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory),
 									idCorrelazioneApplicativa,servizioApplicativoFruitore);
@@ -1002,6 +1038,7 @@ public class Sbustamento extends GenericLib{
 								}else{
 									//System.out.println("CASO 3 Asincrono Simmetrico con ricevuta sincrona");
 									ejbUtils.setRollbackRichiestaInCasoErrore_rollbackHistory(false); // non devo cancellare l'history
+									ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.CONFLICT);
 									ejbUtils.sendAsRispostaBustaErroreValidazione(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 											Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory),
 											idCorrelazioneApplicativa,servizioApplicativoFruitore);
@@ -1029,6 +1066,7 @@ public class Sbustamento extends GenericLib{
 								}else{
 									//System.out.println("CASO 3 Asincrono Asimmetrico con ricevuta sincrona");
 									ejbUtils.setRollbackRichiestaInCasoErrore_rollbackHistory(false); // non devo cancellare l'history
+									ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.CONFLICT);
 									ejbUtils.sendAsRispostaBustaErroreValidazione(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 											Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory),
 											idCorrelazioneApplicativa,servizioApplicativoFruitore);
@@ -1076,6 +1114,7 @@ public class Sbustamento extends GenericLib{
 							if( protocolManager.isGenerazioneErroreMessaggioOnewayDuplicato() || this.propertiesReader.isGenerazioneErroreProtocolloFiltroDuplicati(implementazionePdDMittente)){
 								//System.out.println("Caso 4, spedizione errore di segnalazione id duplicato");
 								ejbUtils.setRollbackRichiestaInCasoErrore_rollbackHistory(false); // non devo cancellare l'history
+								ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.CONFLICT);
 								ejbUtils.sendAsRispostaBustaErroreValidazione(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 										Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory),
 										idCorrelazioneApplicativa,servizioApplicativoFruitore);
@@ -1231,6 +1270,7 @@ public class Sbustamento extends GenericLib{
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
 					msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
+					ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.API_IN_UNKNOWN);
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
 							idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
@@ -1322,6 +1362,7 @@ public class Sbustamento extends GenericLib{
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
 					msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
+					ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.API_IN_UNKNOWN);
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
 							idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
@@ -1385,6 +1426,7 @@ public class Sbustamento extends GenericLib{
 						}
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
 						msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.API_IN_UNKNOWN);
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
 								idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
@@ -1587,6 +1629,7 @@ public class Sbustamento extends GenericLib{
 						msgDiag.logPersonalizzato("(Richiesta) "+msgDiag.getMessaggio("portaApplicativaNonEsistente"), 
 								msgDiag.getLivello("portaApplicativaNonEsistente"),
 								msgDiag.getCodice("portaApplicativaNonEsistente"));
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.API_IN_UNKNOWN);
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
 								idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
@@ -1842,6 +1885,7 @@ public class Sbustamento extends GenericLib{
 							msgDiag.logPersonalizzato("(RichiestaStato) "+msgDiag.getMessaggio("portaApplicativaNonEsistente"), 
 									msgDiag.getLivello("portaApplicativaNonEsistente"),
 									msgDiag.getCodice("portaApplicativaNonEsistente"));
+							ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.API_IN_UNKNOWN);
 							ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 									ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
 									idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
@@ -2381,7 +2425,8 @@ public class Sbustamento extends GenericLib{
 	 */
 	private void gestioneErroreProtocollo(ConfigurazionePdDManager configurazionePdDManager, EJBUtils ejbUtils, ProfiloDiCollaborazione profiloCollaborazione, RepositoryBuste repositoryBuste,
 			Busta busta, IDSoggetto identitaPdD, Eccezione eccezioneProtocollo, ErroreIntegrazione erroreIntegrazione, IDSoggetto soggettoProduttoreEccezione, DettaglioEccezione dettaglioEccezione, 
-			IProtocolFactory<?> protocolFactory, IProtocolManager protocolManager, PdDContext pddContext) throws Exception{
+			IProtocolFactory<?> protocolFactory, IProtocolManager protocolManager, PdDContext pddContext,
+			IntegrationFunctionError integrationFunctionError) throws Exception{
 
 		// Gestione ERRORE
 		if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(busta.getProfiloDiCollaborazione()) && busta.getRiferimentoMessaggio()!=null){
@@ -2451,11 +2496,11 @@ public class Sbustamento extends GenericLib{
 						
 						OpenSPCoop2Message responseMessageError = null;
 						if(eccezioneProtocollo!=null){
-							responseMessageError = this.generatoreErrore.build(pddContext, IntegrationError.INTERNAL_ERROR,
+							responseMessageError = this.generatoreErrore.build(pddContext, integrationFunctionError,
 									eccezioneProtocollo,soggettoProduttoreEccezione,dettaglioEccezione,
 									null);
 						}else{
-							responseMessageError = this.generatoreErrore.build(pddContext, IntegrationError.INTERNAL_ERROR,erroreIntegrazione,null,null);
+							responseMessageError = this.generatoreErrore.build(pddContext, integrationFunctionError,erroreIntegrazione,null,null);
 						}
 						//	Aggiorno l'id di sessione al riferimento Messaggio, id utilizzato dal servizio
 						// RicezioneContenutiApplicativi per l'attesa di una risposta

@@ -137,7 +137,7 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "[profiloRefInLineByStatus] with value [APIGatewayERRATO] not valid (expected type [string]): Uncorrect enum value, expected: 'APIGateway,SPCoop,FatturaPA,eDelivery'";
+							String msgErroreAtteso = "Invalid value 'APIGatewayERRATO' in query parameter 'profiloRefInLineByStatus' (expected type 'string'): Uncorrect enum value, expected: 'APIGateway,SPCoop,FatturaPA,eDelivery'";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 							}
@@ -156,7 +156,7 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "[soggettoInLineByStatus] with value [PROVA_PROVA] not valid (expected type [string]): Pattern match failed ('^[0-9A-Za-z]+$')";
+							String msgErroreAtteso = "Invalid value 'PROVA_PROVA' in query parameter 'soggettoInLineByStatus' (expected type 'string'): Pattern match failed ('^[0-9A-Za-z]+$')";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 							}
@@ -175,7 +175,7 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "[soggettoInLineByStatus] with value [P] not valid (expected type [string]): Too short, expected min length '2'";
+							String msgErroreAtteso = "Invalid value 'P' in query parameter 'soggettoInLineByStatus' (expected type 'string'): Too short, expected min length '2'";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 							}
@@ -187,14 +187,15 @@ public class Test {
 					
 					System.out.println("["+testName+"] Test #3-d (Richiesta GET con parametri query errati)");
 					httpEntity3.getParametersQuery().remove("soggettoRef");
-					parametersQuery.put("soggettoRef", "P12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+					String pLongValue = "P12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+					parametersQuery.put("soggettoRef", pLongValue);
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "not valid (expected type [string]): Too big, expected max length '255'";
+							String msgErroreAtteso = "Invalid value '"+pLongValue+"' in query parameter 'soggettoRef' (expected type 'string'): Too big, expected max length '255'";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 							}
@@ -213,7 +214,7 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "[esempioNumerico] with value [23] not valid (expected type [int32]): Value lowest than the minimum '100'";
+							String msgErroreAtteso = "Invalid value '23' in query parameter 'esempioNumerico' (expected type 'int32'): Value lowest than the minimum '100'"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 							}
@@ -232,7 +233,7 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "[esempioNumerico] with value [600] not valid (expected type [int32]): Value equals to the maximum '600' and exclusive maximum is enabled";
+							String msgErroreAtteso = "Invalid value '600' in query parameter 'esempioNumerico' (expected type 'int32'): Value equals to the maximum '600' and exclusive maximum is enabled"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 							}
@@ -251,7 +252,7 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "[esempioNumerico] with value [800] not valid (expected type [int32]): Value higher than the maximum '600'";
+							String msgErroreAtteso = "Invalid value '800' in query parameter 'esempioNumerico' (expected type 'int32'): Value higher than the maximum '600'"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 							}
@@ -270,7 +271,7 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "[esempioNumerico] with value [55GG33] not valid (expected type [int32]): For input string: \"55GG33\"";
+							String msgErroreAtteso = "Invalid value '55GG33' in query parameter 'esempioNumerico' (expected type 'int32'): For input string: \"55GG33\""; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 							}
@@ -302,7 +303,7 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					String msgErroreAtteso = "Body required ma non trovato";
+					String msgErroreAtteso = "Required body undefined"; 
 					if(!e.getMessage().equals(msgErroreAtteso)) {
 						throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 					}
@@ -327,7 +328,7 @@ public class Test {
 						}
 					}
 					else {
-						String msgErroreAtteso = "Content-Type [application/ERRORE] unsupported";
+						String msgErroreAtteso = "Content-Type 'application/ERRORE' unsupported"; 
 						if(!e.getMessage().equals(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 						}
@@ -415,7 +416,7 @@ public class Test {
 					apiValidator.validate(httpEntity6_empty);	
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					String msgErroreAtteso = "Body required ma non trovato";
+					String msgErroreAtteso = "Required body undefined"; 
 					if(!e.getMessage().equals(msgErroreAtteso)) {
 						throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 					}
@@ -440,7 +441,7 @@ public class Test {
 						}
 					}
 					else {
-						String msgErroreAtteso = "Content-Type [application/ERRORE] (http response with status '200') unsupported";
+						String msgErroreAtteso = "Content-Type 'application/ERRORE' (http response status '200') unsupported"; 
 						if(!e.getMessage().equals(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 						}
@@ -483,7 +484,7 @@ public class Test {
 					apiValidator.validate(httpEntity6_error_empty);	
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					String msgErroreAtteso = "Body required ma non trovato";
+					String msgErroreAtteso = "Required body undefined"; 
 					if(!e.getMessage().equals(msgErroreAtteso)) {
 						throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
 					}

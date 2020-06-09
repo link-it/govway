@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.handler.TestContext;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
@@ -47,7 +48,9 @@ import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -62,12 +65,17 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Handlers {
+public class Handlers extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "Handlers";
 	
-
+	@SuppressWarnings("unused")
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected Handlers() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
 
 
 	// TODO:
@@ -90,8 +98,15 @@ public class Handlers {
 	@BeforeGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
-		verificaInstallazioneHandler();
 		
+		try {
+			this.lockForCode(false, false);
+			
+			verificaInstallazioneHandler();
+		}finally {
+			this.unlockForCode(false);
+		}
+			
 		String version_jbossas = Utilities.readApplicationServerVersion();
 		if(version_jbossas.startsWith("tomcat")){
 			System.out.println("WARNING: Verifiche Stateful disabilitate per Tomcat");

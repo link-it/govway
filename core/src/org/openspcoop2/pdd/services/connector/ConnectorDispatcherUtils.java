@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -46,6 +45,7 @@ import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -242,12 +242,12 @@ public class ConnectorDispatcherUtils {
 	
 	public static void doError(RequestInfo requestInfo,
 			RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore, ErroreIntegrazione erroreIntegrazione,
-			IntegrationError integrationError, Throwable e, HttpServletResponse res, Logger log){
+			IntegrationFunctionError integrationFunctionError, Throwable e, HttpServletResponse res, Logger log){
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 				
 		if(generatoreErrore!=null){
-			OpenSPCoop2Message msgErrore = generatoreErrore.build(null, integrationError, erroreIntegrazione, e, null);
+			OpenSPCoop2Message msgErrore = generatoreErrore.build(null, integrationFunctionError, erroreIntegrazione, e, null);
 			if(msgErrore.getForcedResponseCode()!=null){
 				res.setStatus(Integer.parseInt(msgErrore.getForcedResponseCode()));
 			}
@@ -274,16 +274,16 @@ public class ConnectorDispatcherUtils {
 	
 	public static ConnectorDispatcherErrorInfo doError(RequestInfo requestInfo,
 			RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore, ErroreIntegrazione erroreIntegrazione,
-			IntegrationError integrationError, Throwable e, ParseException parseException,
+			IntegrationFunctionError integrationFunctionError, Throwable e, ParseException parseException,
 			ConnectorOutMessage res, Logger log, boolean clientError) throws ConnectorException{
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		
 		if(generatoreErrore!=null){
 			
-			OpenSPCoop2Message msgErrore = generatoreErrore.build(null, integrationError, erroreIntegrazione, e, parseException);
+			OpenSPCoop2Message msgErrore = generatoreErrore.build(null, integrationFunctionError, erroreIntegrazione, e, parseException);
 			
-			return _doError(requestInfo, res, log, true, erroreIntegrazione, integrationError, e, parseException, msgErrore, clientError);
+			return _doError(requestInfo, res, log, true, erroreIntegrazione, integrationFunctionError, e, parseException, msgErrore, clientError);
 			
 		}
 		else{
@@ -299,12 +299,12 @@ public class ConnectorDispatcherUtils {
 	
 	public static void doError(RequestInfo requestInfo,
 			RicezioneBusteExternalErrorGenerator generatoreErrore, ErroreIntegrazione erroreIntegrazione,
-			IntegrationError integrationError, Throwable e, HttpServletResponse res, Logger log){
+			IntegrationFunctionError integrationFunctionError, Throwable e, HttpServletResponse res, Logger log){
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 				
 		if(generatoreErrore!=null){
-			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(null, integrationError, erroreIntegrazione, e);
+			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(null, integrationFunctionError, erroreIntegrazione, e);
 			if(msgErrore.getForcedResponseCode()!=null){
 				res.setStatus(Integer.parseInt(msgErrore.getForcedResponseCode()));
 			}
@@ -331,16 +331,16 @@ public class ConnectorDispatcherUtils {
 	
 	public static ConnectorDispatcherErrorInfo doError(RequestInfo requestInfo,
 			RicezioneBusteExternalErrorGenerator generatoreErrore, ErroreIntegrazione erroreIntegrazione,
-			IntegrationError integrationError, Throwable e, ParseException parseException,
+			IntegrationFunctionError integrationFunctionError, Throwable e, ParseException parseException,
 			ConnectorOutMessage res, Logger log, boolean clientError) throws ConnectorException{
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 				
 		if(generatoreErrore!=null){
 		
-			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(null, integrationError, erroreIntegrazione, e);
+			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(null, integrationFunctionError, erroreIntegrazione, e);
 			
-			return _doError(requestInfo, res, log, false, erroreIntegrazione, integrationError, e, parseException, msgErrore, clientError);
+			return _doError(requestInfo, res, log, false, erroreIntegrazione, integrationFunctionError, e, parseException, msgErrore, clientError);
 			
 		}
 		else{
@@ -358,7 +358,7 @@ public class ConnectorDispatcherUtils {
 	
 	private static ConnectorDispatcherErrorInfo _doError(RequestInfo requestInfo,ConnectorOutMessage res,Logger log,boolean portaDelegata,
 			ErroreIntegrazione erroreIntegrazione,
-			IntegrationError integrationError, Throwable e, ParseException parseException,
+			IntegrationFunctionError integrationFunctionError, Throwable e, ParseException parseException,
 			OpenSPCoop2Message msg, boolean clientError) throws ConnectorException{
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();

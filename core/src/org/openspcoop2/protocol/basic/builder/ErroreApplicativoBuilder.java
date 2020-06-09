@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.basic.builder;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
+import java.util.Random;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -30,6 +31,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione;
@@ -51,6 +53,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.config.ConfigurationRFC7807;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SOAPFaultCode;
@@ -71,8 +74,10 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoErroreApplicativo;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.rest.problem.JsonSerializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
@@ -91,7 +96,7 @@ import org.w3c.dom.Node;
  */
 
 public class ErroreApplicativoBuilder extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder {
-
+	
 	protected ITraduttore traduttore;
 	protected OpenSPCoop2MessageFactory errorFactory = null;
 	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
@@ -183,21 +188,25 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 
 	@Override
 	public SOAPElement toSoapElement(EccezioneProtocolloBuilderParameters parameters) throws ProtocolException{
-		return this._buildErroreApplicativo_SoapElement(parameters, null);
+		CodeDetailsError nop = new CodeDetailsError();
+		return this._buildErroreApplicativo_SoapElement(nop, parameters, null);
 	}
 	@Override
 	public SOAPElement toSoapElement(EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException{
-		return this._buildErroreApplicativo_SoapElement(null,parameters);
+		CodeDetailsError nop = new CodeDetailsError();
+		return this._buildErroreApplicativo_SoapElement(nop, null,parameters);
 	}
 	
 
 	@Override
 	public Element toElement(EccezioneProtocolloBuilderParameters parameters) throws ProtocolException{
-		return this._buildErroreApplicativo_Element(parameters, null);
+		CodeDetailsError nop = new CodeDetailsError();
+		return this._buildErroreApplicativo_Element(nop, parameters, null);
 	}
 	@Override
 	public Element toElement(EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException{
-		return this._buildErroreApplicativo_Element(null,parameters);
+		CodeDetailsError nop = new CodeDetailsError();
+		return this._buildErroreApplicativo_Element(nop, null,parameters);
 	}
 	
 	
@@ -205,13 +214,15 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	public String toString(TipoErroreApplicativo tipoErroreApplicativo, 
 			EccezioneProtocolloBuilderParameters parameters)
 			throws ProtocolException {
-		return this._buildErroreApplicativo_String(tipoErroreApplicativo, this.omitXMLDeclaration, parameters, null);
+		CodeDetailsError nop = new CodeDetailsError();
+		return this._buildErroreApplicativo_String(tipoErroreApplicativo, this.omitXMLDeclaration, nop, parameters, null);
 	}
 	@Override
 	public String toString(TipoErroreApplicativo tipoErroreApplicativo, 
 			EccezioneIntegrazioneBuilderParameters parameters)
 			throws ProtocolException {
-		return this._buildErroreApplicativo_String(tipoErroreApplicativo, this.omitXMLDeclaration, null,parameters);
+		CodeDetailsError nop = new CodeDetailsError();
+		return this._buildErroreApplicativo_String(tipoErroreApplicativo, this.omitXMLDeclaration, nop, null,parameters);
 	}
 	
 	
@@ -219,13 +230,15 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	public byte[] toByteArray(TipoErroreApplicativo tipoErroreApplicativo, 
 			EccezioneProtocolloBuilderParameters parameters)
 			throws ProtocolException {
-		return this._buildErroreApplicativo_ByteArray(tipoErroreApplicativo, this.omitXMLDeclaration, parameters, null);
+		CodeDetailsError nop = new CodeDetailsError();
+		return this._buildErroreApplicativo_ByteArray(tipoErroreApplicativo, this.omitXMLDeclaration, nop, parameters, null);
 	}
 	@Override
 	public byte[] toByteArray(TipoErroreApplicativo tipoErroreApplicativo, 
 			EccezioneIntegrazioneBuilderParameters parameters)
 			throws ProtocolException {
-		return this._buildErroreApplicativo_ByteArray(tipoErroreApplicativo, this.omitXMLDeclaration, null,parameters);
+		CodeDetailsError nop = new CodeDetailsError();
+		return this._buildErroreApplicativo_ByteArray(tipoErroreApplicativo, this.omitXMLDeclaration, nop, null,parameters);
 	}
 
 
@@ -315,11 +328,11 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	
 	/** BUILDER UTILITIES */
 	
-	protected SOAPElement _buildErroreApplicativo_SoapElement(
+	protected SOAPElement _buildErroreApplicativo_SoapElement(CodeDetailsError codeDetailsErrorWrapper,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
-		Element elementErroreApplicativo = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+		Element elementErroreApplicativo = this._buildErroreApplicativo_Element(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 		
 		try{
 		
@@ -343,11 +356,10 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			
 	}
 	
-	protected Element _buildErroreApplicativo_Element(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+	protected Element _buildErroreApplicativo_Element(CodeDetailsError codeDetailsErrorWrapper,
+			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 	
-		ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
-		
 		try{
 			ConfigurationRFC7807 rfc7807 = null;
 			if(eccezioneIntegrazione!=null){
@@ -356,12 +368,14 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				rfc7807 = eccezioneProtocollo.getRfc7807();
 			}
 			if(rfc7807!=null) {
-				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(eccezioneProtocollo, eccezioneIntegrazione);
+				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 				XmlSerializer xmlSerializer = new XmlSerializer();	
 				return xmlSerializer.toNode(problemRFC7807);
 			}
 			else {
 				// il passaggio da XMLUtils forza anche la validazione dell'oggetto
+				ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(false, codeDetailsErrorWrapper,
+						eccezioneProtocollo, eccezioneIntegrazione);
 				byte[]xmlErroreApplicativo = org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativo(erroreApplicativo);
 				Element elementErroreApplicativo = this.xmlUtils.newElement(xmlErroreApplicativo);
 				ErroreApplicativoMessageUtils.addPrefixToElement(elementErroreApplicativo,"op2ErrAppl");
@@ -375,6 +389,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	}
 	
 	protected String _buildErroreApplicativo_String(TipoErroreApplicativo tipoErroreApplicativo, boolean omitXMLDeclaration,
+			CodeDetailsError codeDetailsErrorWrapper,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
@@ -386,7 +401,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				rfc7807 = eccezioneProtocollo.getRfc7807();
 			}
 			if(rfc7807!=null) {
-				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(eccezioneProtocollo, eccezioneIntegrazione);
+				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 				if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
 					JsonSerializer jsonSerializer = new JsonSerializer();
 					return jsonSerializer.toString(problemRFC7807);
@@ -398,21 +413,23 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			}
 			else {
 				if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
-					ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+					ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(false, codeDetailsErrorWrapper,
+							eccezioneProtocollo, eccezioneIntegrazione);
 					return org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo);
 				}
 				else{
-					Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+					Element element = this._buildErroreApplicativo_Element(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 					return this.xmlUtils.toString(element, omitXMLDeclaration);
 				}
 			}
 		
 		}catch(Exception e){
-			throw new ProtocolException("toString failed: "+e.getMessage());
+			throw new ProtocolException("toString failed: "+e.getMessage(),e);
 		}
 	}
 	
 	protected byte[] _buildErroreApplicativo_ByteArray(TipoErroreApplicativo tipoErroreApplicativo, boolean omitXMLDeclaration,
+			CodeDetailsError codeDetailsErrorWrapper,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
@@ -424,7 +441,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				rfc7807 = eccezioneProtocollo.getRfc7807();
 			}
 			if(rfc7807!=null) {
-				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(eccezioneProtocollo, eccezioneIntegrazione);
+				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 				if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
 					JsonSerializer jsonSerializer = new JsonSerializer();
 					return jsonSerializer.toByteArray(problemRFC7807);
@@ -436,84 +453,158 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			}
 			else {
 				if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
-					ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+					ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(false, codeDetailsErrorWrapper,
+							eccezioneProtocollo, eccezioneIntegrazione);
 					return org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo).getBytes();
 				}
 				else{
-					Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+					Element element = this._buildErroreApplicativo_Element(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 					return this.xmlUtils.toByteArray(element, omitXMLDeclaration);
 				}
 			}
 		
 		}catch(Exception e){
-			throw new ProtocolException("toByteArray failed: "+e.getMessage());
+			throw new ProtocolException("toByteArray failed: "+e.getMessage(),e);
 		}
 	}
 	
-	private ProblemRFC7807 _buildErroreApplicativo_problemRFC7807(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+	private ProblemRFC7807 _buildErroreApplicativo_problemRFC7807(CodeDetailsError codeDetailsErrorWrapper,
+			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
 		try{
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			
 			ConfigurationRFC7807 rfc7807 = null;
-			int httpStatus; 
+			int govwayCode; 
 			String nomePorta;
 			String transactionId;
+			IntegrationFunctionError functionError;
+			boolean genericDetails = true;
 			if(eccezioneIntegrazione!=null){
 				rfc7807 = eccezioneIntegrazione.getRfc7807();
-				httpStatus = eccezioneIntegrazione.getHttpStatus();
+				govwayCode = eccezioneIntegrazione.getReturnConfig().getGovwayReturnCode();
 				nomePorta = eccezioneIntegrazione.getNomePorta();
 				transactionId = eccezioneIntegrazione.getTransactionId();
+				functionError = eccezioneIntegrazione.getFunctionError();
+				genericDetails = eccezioneIntegrazione.getReturnConfig().isGenericDetails();
 			}else{
 				rfc7807 = eccezioneProtocollo.getRfc7807();
-				httpStatus = eccezioneProtocollo.getHttpStatus();
+				govwayCode = eccezioneProtocollo.getReturnConfig().getGovwayReturnCode();
 				nomePorta = eccezioneProtocollo.getNomePorta();
 				transactionId = eccezioneProtocollo.getTransactionId();
+				functionError = eccezioneProtocollo.getFunctionError();
+				genericDetails = eccezioneProtocollo.getReturnConfig().isGenericDetails();
+			}
+			if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+				genericDetails = true;
+			}
+			if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+				genericDetails = false;
 			}
 			
+			// Problem builder
 			ProblemRFC7807Builder rfc7807ProblemBuilder = null;
-			if(rfc7807.isType()) {
+			String webSite = erroriProperties.getWebSite(functionError);
+			if(webSite!=null && !"".equals(webSite)) {
+				rfc7807ProblemBuilder = new ProblemRFC7807Builder(webSite);
+			}
+			else if(rfc7807.isType()) {
 				rfc7807ProblemBuilder = new ProblemRFC7807Builder(rfc7807.getTypeFormat());
 			}
 			else {
 				rfc7807ProblemBuilder = new ProblemRFC7807Builder(false);
 			}
-			ProblemRFC7807 problemRFC7807 = rfc7807ProblemBuilder.buildProblem(httpStatus);
-			if(rfc7807.isDetails() || rfc7807.isGovwayStatus()) {
-				ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
-				if(rfc7807.isDetails() && erroreApplicativo.getException()!=null) {
-					problemRFC7807.setDetail(erroreApplicativo.getException().getDescription());
+			
+			// Esamino errore
+			ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(true, null,
+					eccezioneProtocollo, eccezioneIntegrazione);
+			if(erroreApplicativo.getException()!=null) {
+				codeDetailsErrorWrapper.setDetails(erroreApplicativo.getException().getDescription());
+			}
+			if(erroreApplicativo.getException()!=null &&
+					erroreApplicativo.getException().getCode()!=null &&
+					erroreApplicativo.getException().getCode().getBase()!=null) {
+				String prefixCodeStatus = null;
+				if(erroreApplicativo.getException().getType()!=null && 
+						org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.PROTOCOL.equals(erroreApplicativo.getException().getType())) {
+					prefixCodeStatus = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL;
 				}
-				if(rfc7807.isGovwayStatus() && erroreApplicativo.getException()!=null &&
-						erroreApplicativo.getException().getCode()!=null &&
-						erroreApplicativo.getException().getCode().getBase()!=null) {
-					String prefixCodeStatus = null;
-					if(erroreApplicativo.getException().getType()!=null && 
-							org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.PROTOCOL.equals(erroreApplicativo.getException().getType())) {
-						prefixCodeStatus = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL;
+				else {
+					prefixCodeStatus = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION;
+				}
+				String code = erroreApplicativo.getException().getCode().getBase();
+				codeDetailsErrorWrapper.setPrefixCode(prefixCodeStatus);
+				codeDetailsErrorWrapper.setCode(code);
+			}
+			
+			// Costruisco problem
+			ProblemRFC7807 problemRFC7807 = rfc7807ProblemBuilder.buildProblem(govwayCode);
+						
+			// details
+			if(rfc7807.isDetails()) {
+				if(codeDetailsErrorWrapper.getDetails()!=null && !genericDetails) {
+					problemRFC7807.setDetail(codeDetailsErrorWrapper.getDetails());
+				}
+				else {
+					problemRFC7807.setDetail(erroriProperties.getGenericDetails(functionError));
+				}
+			}
+			
+			// govway-type
+			if(rfc7807.isGovwayType()) {
+				String govwayType = erroriProperties.getErrorType(functionError);
+				
+				// title
+				if(Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE()) {
+					if(Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE()) {
+						problemRFC7807.setTitle(StringUtils.join(
+							     StringUtils.splitByCharacterTypeCamelCase(govwayType),
+							     ' '));
 					}
 					else {
-						prefixCodeStatus = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION;
+						problemRFC7807.setTitle(govwayType);
 					}
-					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_CODE(), 
-							prefixCodeStatus+erroreApplicativo.getException().getCode().getBase());
+					
+					if(Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM()) {
+						problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TYPE(), govwayType);
+					}
+				}
+				else {
+					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TYPE(), govwayType);
 				}
 			}
-			if(rfc7807.isInstance()) {
+			
+			// govway-status
+			if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO && rfc7807.isGovwayStatus()) {
+				if(codeDetailsErrorWrapper.getCode()!=null && codeDetailsErrorWrapper.getPrefixCode()!=null) {
+					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_CODE(), 
+							codeDetailsErrorWrapper.getPrefixCode()+codeDetailsErrorWrapper.getCode());
+				}
+			}
+			
+			// instance
+			if(Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO && rfc7807.isInstance()) {
 				problemRFC7807.setInstance(nomePorta);
 			}
+			
+			// govway-transactionId
 			if(rfc7807.isGovwayTransactionId()) {
 				problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(), transactionId);
 			}
+			
 			return problemRFC7807;
 		}catch(Exception e){
 			throw new ProtocolException("toProblemRFC7807 failed: "+e.getMessage());
 		}
 	}
 	
-	private ErroreApplicativo _buildErroreApplicativo_engine(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+	private ErroreApplicativo _buildErroreApplicativo_engine(boolean ignoreIntegrationFunctionErroreDirective, CodeDetailsError codeDetailsErrorWrapper,
+			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		try{
-
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+						
 			ErroreApplicativo erroreApplicativo = new ErroreApplicativo();
 			
 			IDSoggetto idDominio = null;
@@ -530,6 +621,10 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			Date oraRegistrazione = null;
 			@SuppressWarnings("unused")
 			MessageType messageType = null;
+			
+			IntegrationFunctionError functionError = null;
+			boolean genericDetails = true;
+			int govwayCode = 500; 
 			
 			if(eccezioneProtocollo!=null){
 				idDominio = eccezioneProtocollo.getDominioPorta();
@@ -548,6 +643,19 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				tipoEccezione = TipoEccezione.PROTOCOL;
 				oraRegistrazione = eccezioneProtocollo.getOraRegistrazione();
 				messageType = eccezioneProtocollo.getMessageType();
+				
+				if(!ignoreIntegrationFunctionErroreDirective) {
+					functionError = eccezioneProtocollo.getFunctionError();
+					if(eccezioneProtocollo.getReturnConfig()!=null) {
+						genericDetails = eccezioneProtocollo.getReturnConfig().isGenericDetails();
+						govwayCode = eccezioneProtocollo.getReturnConfig().getGovwayReturnCode();
+					}
+					
+					codeDetailsErrorWrapper.setPrefixCode(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL);
+					codeDetailsErrorWrapper.setCode(codiceEccezione);
+					
+					codeDetailsErrorWrapper.setDetails(descrizioneEccezione);
+				}
 			}
 			else{
 				idDominio = eccezioneIntegrazione.getDominioPorta();
@@ -563,6 +671,28 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				tipoEccezione = TipoEccezione.INTEGRATION;
 				oraRegistrazione = eccezioneIntegrazione.getOraRegistrazione();
 				messageType = eccezioneIntegrazione.getMessageType();
+				
+				if(!ignoreIntegrationFunctionErroreDirective) {
+					functionError = eccezioneIntegrazione.getFunctionError();
+					if(eccezioneIntegrazione.getReturnConfig()!=null) {
+						genericDetails = eccezioneIntegrazione.getReturnConfig().isGenericDetails();
+						govwayCode = eccezioneIntegrazione.getReturnConfig().getGovwayReturnCode();
+					}
+					
+					codeDetailsErrorWrapper.setPrefixCode(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION);
+					codeDetailsErrorWrapper.setCode(codiceEccezione);
+					
+					codeDetailsErrorWrapper.setDetails(descrizioneEccezione);
+				}
+			}
+			
+			if(!ignoreIntegrationFunctionErroreDirective) {
+				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+					genericDetails = true;
+				}
+				if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+					genericDetails = false;
+				}
 			}
 			
 			org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD idFunzione = null;
@@ -642,12 +772,26 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			// eccezioni
 			Eccezione eccezione = new Eccezione();
 			CodiceEccezione codice = new CodiceEccezione();
-			codice.setBase(codiceEccezione);
-			codice.setType(codiceEccezioneOpenSPCoop);
-			if(subCodiceEccezioneOpenSPCoop!=null)
-				codice.setSubtype(subCodiceEccezioneOpenSPCoop);
+			if(ignoreIntegrationFunctionErroreDirective || Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+				codice.setBase(codiceEccezione);
+				codice.setType(codiceEccezioneOpenSPCoop);
+				if(subCodiceEccezioneOpenSPCoop!=null)
+					codice.setSubtype(subCodiceEccezioneOpenSPCoop);
+			}
+			else {
+				String govwayType = erroriProperties.getErrorType(functionError);
+				codice.setBase(govwayType);
+				codice.setType(govwayCode);
+			}
 			eccezione.setCode(codice);
-			eccezione.setDescription(descrizioneEccezione);
+			
+			if(ignoreIntegrationFunctionErroreDirective || !genericDetails) {
+				eccezione.setDescription(descrizioneEccezione);
+			}
+			else {
+				eccezione.setDescription(erroriProperties.getGenericDetails(functionError));
+			}
+			
 			eccezione.setType(tipoEccezione);
 			erroreApplicativo.setException(eccezione);
 			
@@ -670,17 +814,28 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 		MessageType messageType = null;
 		ConfigurationRFC7807 rfc7807= null;
 		boolean useProblemRFC7807 = false;
+		CodeDetailsError codeDetailsErrorWrapper = null;
+		OpenSPCoop2Message msg = null;
+		boolean addErroreProtocolloInMessaggio = false;
+		IntegrationFunctionError functionError = null;
+		IntegrationErrorReturnConfiguration returnConfig = null;
+		ErroriProperties erroriProperties = null;
+		
 		try{
+			erroriProperties = ErroriProperties.getInstance(this.log);
 
 			Context context = null;
 			if(eccezioneIntegrazione!=null){
 				context = eccezioneIntegrazione.getContext();
+				functionError = eccezioneIntegrazione.getFunctionError();
+				returnConfig = eccezioneIntegrazione.getReturnConfig();
 			}
 			else {
 				context = eccezioneProtocollo.getContext();
+				functionError = eccezioneProtocollo.getFunctionError();
+				returnConfig = eccezioneProtocollo.getReturnConfig();
 			}
 			
-			boolean addErroreProtocolloInMessaggio = false;
 			if(eccezioneProtocollo!=null) { // non aggiungamo anche gli errori di processamento altrimenti vengono catalogati come errore di protocollo se avvengono prima della generazione della busta errore
 				if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO)) {
 					Object o = context.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO);
@@ -719,25 +874,22 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			
 				case XML:
 				
-					byte[] bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.XML, !omitXMLDeclaration, eccezioneProtocollo, eccezioneIntegrazione);
+					codeDetailsErrorWrapper = new CodeDetailsError();
+					byte[] bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.XML, !omitXMLDeclaration, codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 					OpenSPCoop2MessageParseResult pr = this.errorFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_XML, bytes);
-					OpenSPCoop2Message msg = pr.getMessage_throwParseException();
+					msg = pr.getMessage_throwParseException();
 					if(useProblemRFC7807) {
 						msg.setContentType(HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807);
 					}
 					else {
 						msg.setContentType(HttpConstants.CONTENT_TYPE_XML);
 					}
-					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
-							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
-					if(addErroreProtocolloInMessaggio) {
-						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
-					}
 					return msg;
 
 				case JSON:
 				
-					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, !omitXMLDeclaration, eccezioneProtocollo, eccezioneIntegrazione);
+					codeDetailsErrorWrapper = new CodeDetailsError();
+					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, !omitXMLDeclaration, codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 					pr = this.errorFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, bytes);
 					msg = pr.getMessage_throwParseException();
 					if(useProblemRFC7807) {
@@ -746,22 +898,12 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					else {
 						msg.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 					}
-					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
-							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
-					if(addErroreProtocolloInMessaggio) {
-						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
-					}
 					return msg;
 					
 				case BINARY:
 				case MIME_MULTIPART:
 					// Viene usato per l'opzione None dove viene ritornato solamente il return code
 					msg = this.errorFactory.createEmptyMessage(messageType, MessageRole.FAULT);
-					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
-							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
-					if(addErroreProtocolloInMessaggio) {
-						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
-					}
 					return msg;
 
 				default:
@@ -806,10 +948,11 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					}
 										
 					// ELEMENT RISPOSTA APPLICATIVA ERRORE			
-					SOAPElement rispostaApplicativaElement = this._buildErroreApplicativo_SoapElement(eccezioneProtocollo, eccezioneIntegrazione);
+					CodeDetailsError codeDetailsErrorWrapperNOP = new CodeDetailsError(); // uso quello del fault
+					SOAPElement rispostaApplicativaElement = this._buildErroreApplicativo_SoapElement(codeDetailsErrorWrapperNOP, eccezioneProtocollo, eccezioneIntegrazione);
 
-					OpenSPCoop2Message responseMessageError = this.errorFactory.createEmptyMessage(messageType,MessageRole.FAULT);
-					OpenSPCoop2SoapMessage soapMessageError = responseMessageError.castAsSoap();
+					msg = this.errorFactory.createEmptyMessage(messageType,MessageRole.FAULT);
+					OpenSPCoop2SoapMessage soapMessageError = msg.castAsSoap();
 					SOAPBody soapBody = soapMessageError.getSOAPBody();
 					SOAPFaultCode code = null;
 					
@@ -824,6 +967,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					}
 					
 					// Genero FAULT O ERRORE XML
+					
 					if(proprieta.isFaultAsXML()){
 						soapBody.appendChild(soapBody.getOwnerDocument().importNode(rispostaApplicativaElement,true));
 			
@@ -833,10 +977,55 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					else{
 						soapBody.addFault();
 						SOAPFault fault = soapBody.getFault();
-						soapMessageError.setFaultCode(fault, code, eccezioneName);
+						
+						codeDetailsErrorWrapper = new CodeDetailsError();
+						
+						// fault code
+						codeDetailsErrorWrapper.setPrefixCode(eccezioneName.getPrefix());
+						codeDetailsErrorWrapper.setCode(eccezioneName.getLocalPart());
+						if(Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE) {
+							soapMessageError.setFaultCode(fault, code, eccezioneName);
+						}
+						else {
+							String codiceEccezioneGW = Costanti.getTransactionSoapFaultCode(returnConfig.getGovwayReturnCode(),erroriProperties.getErrorType(functionError));
+							// aggiorno code con codici govway
+							if(returnConfig.getGovwayReturnCode()<=499) {
+								code = SOAPFaultCode.Sender;
+							}
+							else {
+								code = SOAPFaultCode.Receiver;
+							}
+							if(MessageType.SOAP_11.equals(messageType)) {
+								codiceEccezioneGW = (SOAPFaultCode.Sender.equals(code) ? 
+										org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT :  org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER) +
+										org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+codiceEccezioneGW;
+							}
+							QName eccezioneNameGovway = this.getQNameEccezioneIntegrazione(codiceEccezioneGW);
+							msg.castAsSoap().setFaultCode(fault, code, eccezioneNameGovway);
+						}
+						
+						// fault actor
 						fault.setFaultActor(proprieta.getFaultActor());
+						
+						// fault string
 						if(proprieta.isInsertAsDetails()){
-							fault.setFaultString(posizioneEccezione);
+							
+							codeDetailsErrorWrapper.setDetails(posizioneEccezione);
+							
+							boolean genericDetails = returnConfig.isGenericDetails();
+							if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+								genericDetails = true;
+							}
+							if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+								genericDetails = false;
+							}
+							if(codeDetailsErrorWrapper.getDetails()!=null && !genericDetails) {
+								fault.setFaultString(codeDetailsErrorWrapper.getDetails());
+							}
+							else {
+								String errorMsg = erroriProperties.getGenericDetails(functionError);
+								fault.setFaultString(errorMsg);
+							}
 						
 							Detail d = fault.getDetail();
 							if(d==null){
@@ -852,10 +1041,12 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						
 						// DettaglioEccezione
 						DettaglioEccezione dettaglioEccezione = null;
-						if(eccezioneIntegrazione!=null){
-							dettaglioEccezione = eccezioneIntegrazione.getDettaglioEccezionePdD();
-						}else{
-							dettaglioEccezione = eccezioneProtocollo.getDettaglioEccezionePdD();
+						if(Costanti.TRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807 || !useProblemRFC7807) {
+							if(eccezioneIntegrazione!=null){
+								dettaglioEccezione = eccezioneIntegrazione.getDettaglioEccezionePdD();
+							}else{
+								dettaglioEccezione = eccezioneProtocollo.getDettaglioEccezionePdD();
+							}
 						}
 						if(dettaglioEccezione!=null){
 							Detail d = fault.getDetail();
@@ -869,24 +1060,75 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					}
 					
 					if(eccezioneProtocollo!=null){
-						responseMessageError.setParseException(eccezioneProtocollo.getParseException());
+						msg.setParseException(eccezioneProtocollo.getParseException());
 					}
 					else if(eccezioneIntegrazione!=null){
-						responseMessageError.setParseException(eccezioneIntegrazione.getParseException());
+						msg.setParseException(eccezioneIntegrazione.getParseException());
 					}
 					
-					responseMessageError.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
-							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
-					if(addErroreProtocolloInMessaggio) {
-						responseMessageError.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
-					}
-					return responseMessageError;
+					return msg;
 					
 			}
 
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di errore applicativo",e);
 			return this.errorFactory.createFaultMessage(messageType,useProblemRFC7807,"ErroreDiProcessamento");
+		}finally {
+			if(msg!=null) {
+				msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
+						org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+				if(codeDetailsErrorWrapper!=null) {
+					if(codeDetailsErrorWrapper.getPrefixCode()!=null) {
+						String prefixInternalErrorCode = codeDetailsErrorWrapper.getPrefixCode();
+						if(prefixInternalErrorCode.endsWith(":")) {
+							prefixInternalErrorCode = prefixInternalErrorCode.substring(0, prefixInternalErrorCode.length()-1);
+						}
+						msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_PREFIX_CODE, prefixInternalErrorCode);
+					}
+					if(codeDetailsErrorWrapper.getCode()!=null) {
+						msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE, codeDetailsErrorWrapper.getCode() );
+						if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+							String code = codeDetailsErrorWrapper.getCode();
+							if(codeDetailsErrorWrapper.getPrefixCode()!=null) {
+								if(codeDetailsErrorWrapper.getPrefixCode().endsWith(":")) {
+									code = codeDetailsErrorWrapper.getPrefixCode() + code;
+								}
+								else {
+									code = codeDetailsErrorWrapper.getPrefixCode() + ":" +code;
+								}
+							}
+							msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_STATUS(), code);
+						}
+					}
+					if(codeDetailsErrorWrapper.getDetails()!=null) {
+						msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_DETAILS, codeDetailsErrorWrapper.getDetails() );
+					}
+				}
+				if(addErroreProtocolloInMessaggio) {
+					msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+				}
+				
+				try {
+					if(erroriProperties!=null) {
+						msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_TYPE(), erroriProperties.getErrorType(functionError));
+					}
+				}catch(Exception e) {
+					this.log.error("Scrittura header http 'GovWayErrorType' non riuscita: "+e.getMessage(),e);
+				}
+				
+				if(returnConfig.isRetry()) {
+					int seconds = returnConfig.getRetryAfterSeconds();
+					if(seconds<0) {
+						seconds=0;
+					}
+					if(returnConfig.getRetryRandomBackoffSeconds()>0) {
+						seconds = seconds + new Random().nextInt(returnConfig.getRetryRandomBackoffSeconds());
+					}
+					msg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
+				}
+				
+				msg.setForcedResponseCode(returnConfig.getHttpReturnCode()+"");
+			}
 		}
 	}
 	

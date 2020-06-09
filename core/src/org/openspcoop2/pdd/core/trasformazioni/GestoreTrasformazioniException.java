@@ -27,6 +27,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.dynamic.ErrorMessage;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**	
  * Contiene la definizione di una eccezione lanciata dalla classe GestoreTrasformazioni
@@ -45,6 +46,8 @@ public class GestoreTrasformazioniException extends Exception  {
 	private static final long serialVersionUID = 1L;
 
 	private ErrorMessage errorMessage = null;
+	private OpenSPCoop2Message errorOp2Message = null;
+	private IntegrationFunctionError op2IntegrationFunctionError;
 	
 	public GestoreTrasformazioniException(String message, Throwable cause)
 	{
@@ -69,10 +72,16 @@ public class GestoreTrasformazioniException extends Exception  {
         this.errorMessage = errorMessage;
     }
 	
-	public ErrorMessage getErrorMessage() {
-		return this.errorMessage;
-	}
+	public GestoreTrasformazioniException(String detail, OpenSPCoop2Message errorOp2Message, IntegrationFunctionError op2IntegrationFunctionError) {
+        super(detail);
+        this.errorOp2Message = errorOp2Message;
+        this.op2IntegrationFunctionError = op2IntegrationFunctionError;
+    }
+	
 	public OpenSPCoop2Message getOpenSPCoop2ErrorMessage() {
+		if(this.errorOp2Message!=null) {
+			return this.errorOp2Message;
+		}
 		if(this.errorMessage==null) {
 			return null;
 		}
@@ -80,7 +89,8 @@ public class GestoreTrasformazioniException extends Exception  {
 		op2ErrorMessage.forceResponse(this.errorMessage);
 		return op2ErrorMessage;
 	}
-	public void setErrorMessage(ErrorMessage errorMessage) {
-		this.errorMessage = errorMessage;
+	public IntegrationFunctionError getOp2IntegrationFunctionError() {
+		return this.op2IntegrationFunctionError;
 	}
+
 }

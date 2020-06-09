@@ -32,19 +32,20 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 
 /**
@@ -54,21 +55,32 @@ import org.w3c.dom.Element;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class OpenSPCoopDetail {
+public class OpenSPCoopDetail extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "OpenSPCoopDetail";
 
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	private boolean genericCode = false;
+	private boolean unwrap = false;
+	
+	protected OpenSPCoopDetail(boolean genericCode, boolean unwrap) {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+		this.genericCode = genericCode;
+		this.unwrap = unwrap;
+	}
+	
 
 	
 	private Date dataAvvioGruppoTest = null;
-	@BeforeGroups (alwaysRun=true , groups=ID_GRUPPO)
-	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
+	protected void _testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
 	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
-	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
-	public void testOpenspcoopCoreLog() throws Exception{
+	protected void _testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
 			FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest,
 					this.erroriAttesiOpenSPCoopCore.toArray(new ErroreAttesoOpenSPCoopLogCore[1]));
@@ -92,8 +104,7 @@ public class OpenSPCoopDetail {
 	
 	/** ERRORI 4XX */
 	
-	@DataProvider (name="personalizzazioniErroriApplicativi4XX")
-	public Object[][] personalizzazioniErroriApplicativi4XX(){
+	protected Object[][] _personalizzazioniErroriApplicativi4XX(){
 		return new Object[][]{
 				{null,null,"PORTA_DELEGATA_NON_ESISTENTE"},
 				{"erroreApplicativoAsSoapFaultDefault","123456",CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_CNIPA},
@@ -103,12 +114,11 @@ public class OpenSPCoopDetail {
 		};
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,OpenSPCoopDetail.ID_GRUPPO,OpenSPCoopDetail.ID_GRUPPO+".ErroriApplicativi4XX"},dataProvider="personalizzazioniErroriApplicativi4XX")
-	public void testErroriApplicativi4XX(String username,String password,String portaDelegata) throws Exception{
+	protected void _testErroriApplicativi4XX(String username,String password,String portaDelegata) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
-		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA();
-		Object o = erroreApplicativoCNIPA.testErroriApplicativi4XX_engine(username, password, portaDelegata);
+		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA(this.genericCode, this.unwrap);
+		Object o = erroreApplicativoCNIPA._testErroriApplicativi4XX(username, password, portaDelegata);
 		Assert.assertTrue(o!=null);
 		Reporter.log("Response: "+o.getClass().getName());
 		
@@ -116,6 +126,16 @@ public class OpenSPCoopDetail {
 		String codice = ""+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"405";
 		String msg = CostantiErroriIntegrazione.MSG_405_SERVIZIO_NON_TROVATO;
 		boolean equalsMatch = true;
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+		if(this.genericCode) {
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+			codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				equalsMatch = true;
+			}
+		}
 		
 		// detail OpenSPCoop
 		
@@ -134,13 +154,23 @@ public class OpenSPCoopDetail {
 			codice = ""+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"401";
 			msg = CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE;
 			equalsMatch = false;
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_OUT_UNKNOWN;
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
 		}
 		else if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
-			codice = "PREFIX_PERSONALIZZATO_405";
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", true));
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 1", true));
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 2", true));
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 3", true));
+			if(!this.genericCode) {
+				codice = "PREFIX_PERSONALIZZATO_405";
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", true));
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 1", true));
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 2", true));
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 3", true));
+			}
 		}
 	
 		
@@ -188,8 +218,7 @@ public class OpenSPCoopDetail {
 	
 	/** ERRORI 5XX */
 	
-	@DataProvider (name="personalizzazioniErroriApplicativi5XX")
-	public Object[][] personalizzazioniErroriApplicativi5XX(){
+	protected Object[][] _personalizzazioniErroriApplicativi5XX(){
 		return new Object[][]{
 				{"erroreApplicativoAsSoapFaultDefault","123456",CostantiTestSuite.PORTA_DELEGATA_VERIFICA_ERRORE_PROCESSAMENTO_5XX},
 				{"erroreApplicativoAsSoapFaultRidefinito","123456",CostantiTestSuite.PORTA_DELEGATA_VERIFICA_ERRORE_PROCESSAMENTO_5XX},
@@ -198,13 +227,12 @@ public class OpenSPCoopDetail {
 		};
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,OpenSPCoopDetail.ID_GRUPPO,OpenSPCoopDetail.ID_GRUPPO+".ErroriApplicativi5XX"},dataProvider="personalizzazioniErroriApplicativi5XX")
-	public void testErroriApplicativi5XX(String username,String password,String portaDelegata) throws Exception{
+	protected void _testErroriApplicativi5XX(String username,String password,String portaDelegata) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
-		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA();
-		Object o = erroreApplicativoCNIPA.testErroriApplicativi5XX_engine(username, password, portaDelegata);
+		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA(this.genericCode, this.unwrap);
+		Object o = erroreApplicativoCNIPA._testErroriApplicativi5XX(username, password, portaDelegata);
 		Assert.assertTrue(o!=null);
 		Reporter.log("Response: "+o.getClass().getName());
 		
@@ -214,10 +242,26 @@ public class OpenSPCoopDetail {
 		String msg = CostantiErroriIntegrazione.MSG_5XX_SISTEMA_NON_DISPONIBILE;
 		boolean equalsMatch = true;
 		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+		if(this.genericCode) {
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+			if(this.unwrap) {
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+			}
+			codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				equalsMatch = true;
+			}
+		}
+		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
-			codice = "PREFIX_PERSONALIZZATO_504";
-			//msg = "Autorizzazione non concessa al servizio applicativo ["+username+"] di utilizzare la porta delegata [TestErroreProcessamento5XX]: processo di autorizzazione [testOpenSPCoop2] fallito, Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)";
-			msg = "processo di autorizzazione [testOpenSPCoop2] fallito, Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)";
+			
+			if(!this.genericCode) {
+				codice = "PREFIX_PERSONALIZZATO_504";
+				//	msg = "Autorizzazione non concessa al servizio applicativo ["+username+"] di utilizzare la porta delegata [TestErroreProcessamento5XX]: processo di autorizzazione [testOpenSPCoop2] fallito, Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)";
+				msg = "processo di autorizzazione [testOpenSPCoop2] fallito, Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)";
+			}
 		}
 		
 		// detail OpenSPCoop
@@ -234,10 +278,12 @@ public class OpenSPCoopDetail {
 			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", true));
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 1", true));
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 2", true));
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 3", true));
+			if(!this.genericCode) {
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", true));
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 1", true));
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 2", true));
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 3", true));
+			}
 		}
 		
 		if("erroreApplicativoAsSoapFaultDefault".equals(username) ||
@@ -251,6 +297,7 @@ public class OpenSPCoopDetail {
 			OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 					dominio,TipoPdD.DELEGATA,"RicezioneContenutiApplicativi", 
 					eccezioni, dettagli);
+			
 		}
 		else{
 			
@@ -281,8 +328,7 @@ public class OpenSPCoopDetail {
 	
 	/** SOAP FAULT APPLICATIVO ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniFaultApplicativi")
-	public Object[][] personalizzazioniFaultApplicativi(){
+	protected Object[][] _personalizzazioniFaultApplicativi(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -290,11 +336,10 @@ public class OpenSPCoopDetail {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,OpenSPCoopDetail.ID_GRUPPO,OpenSPCoopDetail.ID_GRUPPO+".SOAP_FAULT_APPLICATIVO"},dataProvider="personalizzazioniFaultApplicativi")
-	public void testFaultApplicativoArricchitoFAULTCNIPA_Default_engine(String servizioApplicativoFruitore) throws Exception{
+	protected void _testFaultApplicativoArricchitoFAULTCNIPA_Default(String servizioApplicativoFruitore) throws Exception{
 		
-		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA();
-		Object o = erroreApplicativoCNIPA.testFaultApplicativoArricchitoFAULTCNIPA_Default_engine(servizioApplicativoFruitore);
+		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA(this.genericCode, this.unwrap);
+		Object o = erroreApplicativoCNIPA._testFaultApplicativoArricchitoFAULTCNIPA_Default(servizioApplicativoFruitore);
 		Assert.assertTrue(o!=null);
 		Reporter.log("Response: "+o.getClass().getName());
 		
@@ -305,6 +350,16 @@ public class OpenSPCoopDetail {
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 			codice = "PREFIX_PERSONALIZZATO_516";
+		}
+								
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+		if(this.genericCode) {
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+			codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				equalsMatch = true;
+			}
 		}
 		
 		// detail OpenSPCoop
@@ -345,8 +400,7 @@ public class OpenSPCoopDetail {
 	
 	/** SOAP FAULT PDD ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniFaultApplicativiPdD")
-	public Object[][] personalizzazioniFaultApplicativiPdD(){
+	protected Object[][] _personalizzazioniFaultApplicativiPdD(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -354,11 +408,10 @@ public class OpenSPCoopDetail {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,OpenSPCoopDetail.ID_GRUPPO,OpenSPCoopDetail.ID_GRUPPO+".SOAP_FAULT_PDD"},dataProvider="personalizzazioniFaultApplicativiPdD")
-	public void testFaultPddArricchitoFAULTCNIPA_Default(String servizioApplicativoFruitore) throws Exception{
+	protected void _testFaultPddArricchitoFAULTCNIPA_Default(String servizioApplicativoFruitore) throws Exception{
 		
-		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA();
-		Object o = erroreApplicativoCNIPA.testFaultPddArricchitoFAULTCNIPA_Default_engine(servizioApplicativoFruitore);
+		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA(this.genericCode, this.unwrap);
+		Object o = erroreApplicativoCNIPA._testFaultPddArricchitoFAULTCNIPA_Default(servizioApplicativoFruitore);
 		Assert.assertTrue(o!=null);
 		Reporter.log("Response: "+o.getClass().getName());
 		
@@ -369,6 +422,16 @@ public class OpenSPCoopDetail {
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 			codice = "PREFIX_PERSONALIZZATO_516";
+		}
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+		if(this.genericCode) {
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+			codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				equalsMatch = true;
+			}
 		}
 		
 		// detail OpenSPCoop
@@ -412,8 +475,7 @@ public class OpenSPCoopDetail {
 	
 	/** ERRORE CONNETTORE PDD: connection refused ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectionRefused")
-	public Object[][] personalizzazioniErroreConnectionRefused(){
+	protected Object[][] _personalizzazioniErroreConnectionRefused(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -421,13 +483,12 @@ public class OpenSPCoopDetail {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,OpenSPCoopDetail.ID_GRUPPO,OpenSPCoopDetail.ID_GRUPPO+".CONNECTION_REFUSED_PDD"},dataProvider="personalizzazioniErroreConnectionRefused")
-	public void testServizioApplicativoConnectionRefused(String servizioApplicativoFruitore) throws Exception{
+	protected void _testServizioApplicativoConnectionRefused(String servizioApplicativoFruitore) throws Exception{
 	
 		Date dataInizioTest = DateManager.getDate();
 		
-		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA();
-		Object o = erroreApplicativoCNIPA.testServizioApplicativoConnectionRefused_engine(servizioApplicativoFruitore);
+		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA(this.genericCode, this.unwrap);
+		Object o = erroreApplicativoCNIPA._testServizioApplicativoConnectionRefused(servizioApplicativoFruitore);
 		Assert.assertTrue(o!=null);
 		Reporter.log("Response: "+o.getClass().getName());
 		
@@ -441,6 +502,17 @@ public class OpenSPCoopDetail {
 			codice = "PREFIX_PERSONALIZZATO_516";
 		}
 		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+		if(this.genericCode) {
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+			codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				equalsMatch = true;
+			}
+		}
+		
+		
 		// detail OpenSPCoop
 		
 		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
@@ -453,7 +525,9 @@ public class OpenSPCoopDetail {
 		
 		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
 			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
-		dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connection refused", true));
+		if(!this.genericCode) {
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connection refused", true));
+		}
 			
 		if(servizioApplicativoFruitore==null ||
 				"erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
@@ -501,8 +575,7 @@ public class OpenSPCoopDetail {
 	
 	/** ERRORE CONNETTORE SA: connection refused ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectionRefusedServizioApplicativo")
-	public Object[][] personalizzazioniErroreConnectionRefusedServizioApplicativo(){
+	protected Object[][] _personalizzazioniErroreConnectionRefusedServizioApplicativo(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -510,13 +583,12 @@ public class OpenSPCoopDetail {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,OpenSPCoopDetail.ID_GRUPPO,OpenSPCoopDetail.ID_GRUPPO+".CONNECTION_REFUSED_SA"},dataProvider="personalizzazioniErroreConnectionRefusedServizioApplicativo")
-	public void testServizioApplicativoConnectionRefusedServizioApplicativo(String servizioApplicativoFruitore) throws Exception{
+	protected void _testServizioApplicativoConnectionRefusedServizioApplicativo(String servizioApplicativoFruitore) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
-		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA();
-		Object o = erroreApplicativoCNIPA.testServizioApplicativoConnectionRefusedServizioApplicativo_engine(servizioApplicativoFruitore);
+		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA(this.genericCode, this.unwrap);
+		Object o = erroreApplicativoCNIPA._testServizioApplicativoConnectionRefusedServizioApplicativo(servizioApplicativoFruitore);
 		Assert.assertTrue(o!=null);
 		Reporter.log("Response: "+o.getClass().getName());
 		
@@ -528,6 +600,16 @@ public class OpenSPCoopDetail {
 		boolean equalsMatch = true;
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
+		}
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+		if(this.genericCode) {
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+			codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				equalsMatch = true;
+			}
 		}
 		
 		// detail OpenSPCoop
@@ -542,7 +624,9 @@ public class OpenSPCoopDetail {
 		
 		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
 			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
-		dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connection refused", true));
+		if(!this.genericCode) {
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connection refused", true));
+		}
 		
 		
 		if(servizioApplicativoFruitore==null ||
@@ -597,8 +681,7 @@ public class OpenSPCoopDetail {
 	
 	/** ERRORE CONNETTORE PDD: Connect Timed Out ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectTimedOut")
-	public Object[][] personalizzazioniErroreConnectTimedOut(){
+	protected Object[][] _personalizzazioniErroreTimedOut(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -606,24 +689,37 @@ public class OpenSPCoopDetail {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,OpenSPCoopDetail.ID_GRUPPO,OpenSPCoopDetail.ID_GRUPPO+".CONNECT_TIMED_OUT_PDD"},dataProvider="personalizzazioniErroreConnectTimedOut")
-	public void testServizioApplicativoConnectTimedOut(String servizioApplicativoFruitore) throws Exception{
+	protected void _testServizioApplicativoTimedOut(String servizioApplicativoFruitore, boolean readTimedOut) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
-		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA();
-		Object o = erroreApplicativoCNIPA.testServizioApplicativoConnectTimedOut_engine(servizioApplicativoFruitore);
+		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA(this.genericCode, this.unwrap);
+		Object o = erroreApplicativoCNIPA._testServizioApplicativoTimedOut(servizioApplicativoFruitore, readTimedOut);
 		Assert.assertTrue(o!=null);
 		Reporter.log("Response: "+o.getClass().getName());
 		
 		// dati generali
 		IDSoggetto dominio = CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE;
 		String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-		String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErratoConnectTimedOut");
+		String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
+				readTimedOut ? "spc-SoggettoConnettoreErratoConnectReadTimedOut" : "spc-SoggettoConnettoreErratoConnectTimedOut");
 		boolean equalsMatch = true;
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 			codice = "PREFIX_PERSONALIZZATO_516";
+		}
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+		if(this.genericCode) {
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+			if(readTimedOut) {
+				integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+			}
+			codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				equalsMatch = true;
+			}
 		}
 		
 		// detail OpenSPCoop
@@ -637,11 +733,13 @@ public class OpenSPCoopDetail {
 		eccezioni.add(ecc);
 		
 		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
-			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
-		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "connect timed out", true));
-		}else{
-			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connect timed out", true));
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		if(!this.genericCode) {
+			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", readTimedOut ? "read timed out" : "connect timed out", true));
+			}else{
+				dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", readTimedOut ? "Read timed out" : "Connect timed out", true));
+			}
 		}
 		
 		if(servizioApplicativoFruitore==null ||
@@ -672,7 +770,12 @@ public class OpenSPCoopDetail {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+		if(readTimedOut) {
+			err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Read timed out");
+		}
+		else {
+			err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");	
+		}
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
@@ -690,8 +793,7 @@ public class OpenSPCoopDetail {
 	
 	/** ERRORE CONNETTORE SA: Connect Timed Out ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectTimedOutServizioApplicativo")
-	public Object[][] personalizzazioniErroreConnectTimedOutServizioApplicativo(){
+	protected Object[][] _personalizzazioniErroreTimedOutServizioApplicativo(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -699,13 +801,12 @@ public class OpenSPCoopDetail {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,OpenSPCoopDetail.ID_GRUPPO,OpenSPCoopDetail.ID_GRUPPO+".CONNECT_TIMED_OUT_SA"},dataProvider="personalizzazioniErroreConnectTimedOutServizioApplicativo")
-	public void testServizioApplicativoConnectTimedOutServizioApplicativo(String servizioApplicativoFruitore) throws Exception{
+	protected void _testServizioApplicativoTimedOutServizioApplicativo(String servizioApplicativoFruitore, boolean readTimedOut) throws Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
-		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA();
-		Object o = erroreApplicativoCNIPA.testServizioApplicativoConnectTimedOutServizioApplicativo_engine(servizioApplicativoFruitore);
+		ErroreApplicativoCNIPA erroreApplicativoCNIPA = new ErroreApplicativoCNIPA(this.genericCode, this.unwrap);
+		Object o = erroreApplicativoCNIPA._testServizioApplicativoTimedOutServizioApplicativo(servizioApplicativoFruitore, readTimedOut);
 		Assert.assertTrue(o!=null);
 		Reporter.log("Response: "+o.getClass().getName());
 		
@@ -717,6 +818,19 @@ public class OpenSPCoopDetail {
 		boolean equalsMatch = true;
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
+		}
+		
+		ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+		if(this.genericCode) {
+			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+			if(readTimedOut) {
+				integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+			}
+			codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+			if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+				msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				equalsMatch = true;
+			}
 		}
 		
 		// detail OpenSPCoop
@@ -731,7 +845,9 @@ public class OpenSPCoopDetail {
 		
 		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
 			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
-		dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connect timed out", true));
+		if(!this.genericCode) {
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", readTimedOut ? "Read timed out" : "Connect timed out", true));
+		}
 		
 		
 		if(servizioApplicativoFruitore==null ||
@@ -762,7 +878,12 @@ public class OpenSPCoopDetail {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+		if(readTimedOut) {
+			err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Read timed out");
+		}
+		else {
+			err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+		}
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 }

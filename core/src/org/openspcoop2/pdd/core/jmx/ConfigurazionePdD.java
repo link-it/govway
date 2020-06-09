@@ -43,10 +43,16 @@ import javax.management.ReflectionException;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.utils.ErroriProperties;
+import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
 
@@ -72,12 +78,25 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String LOG4J_INTEGRATION_MANAGER_ABILITATO = "log4jLogFileIntegrationManagerAbilitato";
 	public final static String LOG4J_TRACCIAMENTO_ABILITATO = "log4jLogFileTracciamentoAbilitato";
 	public final static String LOG4J_DUMP_ABILITATO = "log4jLogFileDumpAbilitato";
+	public final static String ERRORI_STATUS_CODE_ABILITATO = "transactionErrorStatusAbilitato";
+	public final static String ERRORI_INSTANCE_ID_ABILITATO = "transactionErrorInstanceIdAbilitato";
+	public final static String ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST = "transactionErrorForceSpecificTypeInternalBadRequest";
+	public final static String ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE = "transactionErrorForceSpecificTypeBadResponse";
+	public final static String ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR = "transactionErrorForceSpecificTypeInternalResponseError";
+	public final static String ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR= "transactionErrorForceSpecificTypeInternalError";
+	public final static String ERRORI_FORCE_SPECIFIC_DETAILS = "transactionErrorForceSpecificDetails";
+	public final static String ERRORI_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE = "transactionErrorUseGovWayStatusAsSoapFaultCode";
+	public final static String ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = "transactionErrorGenerateHttpHeaderGovWayCode";
 		
 	/** Nomi metodi' */
 	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
 	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
+	public final static String ABILITA_PORTA_DELEGATA = "enablePortaDelegata";
+	public final static String DISABILITA_PORTA_DELEGATA = "disablePortaDelegata";
+	public final static String ABILITA_PORTA_APPLICATIVA = "enablePortaApplicativa";
+	public final static String DISABILITA_PORTA_APPLICATIVA = "disablePortaApplicativa";
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;
@@ -139,6 +158,33 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		if(attributeName.equals(ConfigurazionePdD.LOG4J_DUMP_ABILITATO))
 			return this.log4jDumpAbilitato;
+		
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_STATUS_CODE_ABILITATO))
+			return Costanti.TRANSACTION_ERROR_STATUS_ABILITATO;
+		
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_INSTANCE_ID_ABILITATO))
+			return Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO;
+		
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST))
+			return ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST();
+		
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE))
+			return ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE();
+		
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR))
+			return ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR();
+						
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR))
+			return ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR();
+		
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_DETAILS))
+			return Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS;
+
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE))
+			return Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE;
+		
+		if(attributeName.equals(ConfigurazionePdD.ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE))
+			return Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE;
 		
 		throw new AttributeNotFoundException("Attributo "+attributeName+" non trovato");
 	}
@@ -204,6 +250,33 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TRACCIAMENTO_APPENDER))
 				this.tracciamentoAppender = (String[]) attribute.getValue();
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_STATUS_CODE_ABILITATO))
+				Costanti.TRANSACTION_ERROR_STATUS_ABILITATO = (Boolean) attribute.getValue();
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_INSTANCE_ID_ABILITATO))
+				Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO = (Boolean) attribute.getValue();
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST))
+				this.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST( (Boolean) attribute.getValue() );
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE))
+				this.setFORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE( (Boolean) attribute.getValue() );
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR))
+				this.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR( (Boolean) attribute.getValue() );
+						
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR))
+				this.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR( (Boolean) attribute.getValue() );
+
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_DETAILS))
+				Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS = (Boolean) attribute.getValue();
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE))
+				Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE = (Boolean) attribute.getValue();
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE))
+				Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = (Boolean) attribute.getValue();
 			
 			else
 				throw new AttributeNotFoundException("Attributo "+attribute.getName()+" non trovato");
@@ -387,6 +460,54 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.getCertificatiConnettoreByNome(param1);
 		}
 		
+		if(actionName.equals(ABILITA_PORTA_DELEGATA)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+ABILITA_PORTA_DELEGATA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.updateStatoPortaDelegata(param1, true);
+		}
+		
+		if(actionName.equals(DISABILITA_PORTA_DELEGATA)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+DISABILITA_PORTA_DELEGATA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.updateStatoPortaDelegata(param1, false);
+		}
+		
+		if(actionName.equals(ABILITA_PORTA_APPLICATIVA)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+ABILITA_PORTA_APPLICATIVA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.updateStatoPortaApplicativa(param1, true);
+		}
+		
+		if(actionName.equals(DISABILITA_PORTA_APPLICATIVA)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+DISABILITA_PORTA_APPLICATIVA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.updateStatoPortaApplicativa(param1, false);
+		}
+		
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -473,6 +594,60 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 						"Indicazione se è abilitato il logging su file openspcoop2_dump.log",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
+		// MetaData per l'attributo erroriStatusCodeAbilitatoVAR
+		MBeanAttributeInfo erroriStatusCodeAbilitatoVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_STATUS_CODE_ABILITATO,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione dello status code negli errori generati dal Gateway",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo erroriInstanceIdAbilitatoVAR
+		MBeanAttributeInfo erroriInstanceIdAbilitatoVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_INSTANCE_ID_ABILITATO,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione dell'identificativo dell'API invocata (instance) negli errori generati dal Gateway",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+
+		// MetaData per l'attributo erroriForceSpecificErrorTypeInternalBadRequestVAR
+		MBeanAttributeInfo erroriForceSpecificErrorTypeInternalBadRequestVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione di uno specifico tipo di errore per la gestione fallita di una richiesta, dovuta ad una errata configurazione del Gateway",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo erroriForceSpecificErrorTypeBadResponseVAR
+		MBeanAttributeInfo erroriForceSpecificErrorTypeBadResponseVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione di uno specifico tipo di errore per la gestione fallita di una risposta, dovuta alla risposta ritornata dal backend",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo erroriForceSpecificErrorTypeInternalResponseErrorVAR
+		MBeanAttributeInfo erroriForceSpecificErrorTypeInternalResponseErrorVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione di uno specifico tipo di errore per la gestione fallita di una risposta, dovuta ad una errata configurazione del Gateway",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+			
+		// MetaData per l'attributo erroriForceSpecificErrorTypeInternalErrorVAR
+		MBeanAttributeInfo erroriForceSpecificErrorTypeInternalErrorVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione di uno specifico tipo di errore per la gestione fallita di una richiesta, dovuta ad un malfunzionamento del Gateway",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+
+		// MetaData per l'attributo erroriForceSpecificDetailsVAR
+		MBeanAttributeInfo erroriForceSpecificDetailsVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_DETAILS,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione di un dettaglio specifico negli errori generati dal Gateway",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo erroriSoapUseGovWayStatusAsFaultCodeVAR
+		MBeanAttributeInfo erroriSoapUseGovWayStatusAsFaultCodeVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione di un codice di errore di dettaglio GovWay come FaultCode negli errori SOAP generati dal Gateway",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo erroriSoapGenerateHttpHeaderGovWayCodeVAR
+		MBeanAttributeInfo erroriSoapGenerateHttpHeaderGovWayCodeVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE,boolean.class.getName(),
+						"Indicazione se è abilitato la generazione del codice http di errore in un header http negli errori SOAP generati dal Gateway",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
 		// MetaData per l'operazione resetCache
 		MBeanOperationInfo resetCacheOP = JMXUtils.MBEAN_OPERATION_RESET_CACHE;
 				
@@ -533,6 +708,42 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione enablePortaDelegata
+		MBeanOperationInfo enablePortaDelegata 
+		= new MBeanOperationInfo(ABILITA_PORTA_DELEGATA,"Abilita lo stato della porta con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disablePortaDelegata
+		MBeanOperationInfo disablePortaDelegata 
+		= new MBeanOperationInfo(DISABILITA_PORTA_DELEGATA,"Disabilita lo stato della porta con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione enablePortaApplicativa
+		MBeanOperationInfo enablePortaApplicativa 
+		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo stato della porta con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disablePortaApplicativa
+		MBeanOperationInfo disablePortaApplicativa
+		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo stato della porta con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
@@ -542,7 +753,13 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				dumpBinarioPDAbilitatoVAR,dumpBinarioPAAbilitatoVAR,
 				tracciamentoAppenderVAR,
 				log4jDiagnosticaAbilitatoVAR, log4jOpenSPCoopAbilitatoVAR, log4jIntegrationManagerAbilitatoVAR,
-				log4jTracciamentoAbilitatoVAR, log4jDumpAbilitatoVAR};
+				log4jTracciamentoAbilitatoVAR, log4jDumpAbilitatoVAR,
+				erroriStatusCodeAbilitatoVAR, erroriInstanceIdAbilitatoVAR, 
+				erroriForceSpecificErrorTypeInternalBadRequestVAR,
+				erroriForceSpecificErrorTypeBadResponseVAR, erroriForceSpecificErrorTypeInternalResponseErrorVAR,
+				erroriForceSpecificErrorTypeInternalErrorVAR,
+				erroriForceSpecificDetailsVAR,
+				erroriSoapUseGovWayStatusAsFaultCodeVAR, erroriSoapGenerateHttpHeaderGovWayCodeVAR};
 		
 		// Lista Costruttori
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
@@ -563,6 +780,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(checkConnettoreByNome);
 		listOperation.add(getCertificatiConnettoreById);
 		listOperation.add(getCertificatiConnettoreByNome);
+		listOperation.add(enablePortaDelegata);
+		listOperation.add(disablePortaDelegata);
+		listOperation.add(enablePortaApplicativa);
+		listOperation.add(disablePortaApplicativa);
 		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -796,6 +1017,46 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		ConfigurazionePdDReader.dumpBinarioPAJMX = v;
 	}
 	
+	public void setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST(boolean value) {
+		try{
+			ErroriProperties.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST( 
+					value,
+					this.openspcoopProperties.getRootDirectory(), this.log, Loader.getInstance());
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+		}
+	}
+	
+	public void setFORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE(boolean value) {
+		try{
+			ErroriProperties.setFORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE( 
+					value,
+					this.openspcoopProperties.getRootDirectory(), this.log, Loader.getInstance());
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+		}
+	}
+	
+	public void setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR(boolean value) {
+		try{
+			ErroriProperties.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR( 
+					value,
+					this.openspcoopProperties.getRootDirectory(), this.log, Loader.getInstance());
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+		}
+	}
+		
+	public void setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR(boolean value) {
+		try{
+			ErroriProperties.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR( 
+					value,
+					this.openspcoopProperties.getRootDirectory(), this.log, Loader.getInstance());
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+		}
+	}
+
 	public String checkConnettoreById(long idConnettore) {
 		try{
 			ConnettoreCheck.check(idConnettore, false);
@@ -833,4 +1094,29 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
+	
+	public String updateStatoPortaDelegata(String nomePorta, boolean enable) {
+		try{
+			IDPortaDelegata idPD = new IDPortaDelegata();
+			idPD.setNome(nomePorta);
+			this.configReader.updateStatoPortaDelegata(idPD, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String updateStatoPortaApplicativa(String nomePorta, boolean enable) {
+		try{
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+			this.configReader.updateStatoPortaApplicativa(idPA, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
 }

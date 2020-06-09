@@ -23,13 +23,15 @@ package org.openspcoop2.pdd.services.core;
 
 import java.util.List;
 
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.exception.ParseException;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.Tracciamento;
+import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.security.message.MessageSecurityContext;
 
 /**
@@ -41,7 +43,7 @@ import org.openspcoop2.security.message.MessageSecurityContext;
  */
 public class RicezioneBusteParametriGenerazioneBustaErrore  extends RicezioneBusteParametriGestioneBustaErrore{
 
-	private IntegrationError integrationError = IntegrationError.INTERNAL_ERROR; // default
+	private IntegrationFunctionError integrationFunctionError = null;
 	
 	private ParseException parseException;
 	
@@ -57,11 +59,22 @@ public class RicezioneBusteParametriGenerazioneBustaErrore  extends RicezioneBus
 	private Exception eccezioneProcessamento;
 	private Integrazione integrazione;
 	
-	public IntegrationError getIntegrationError() {
-		return this.integrationError;
+	public IntegrationFunctionError getIntegrationFunctionError(PdDContext context, boolean erroreValidazione) {
+		if(this.integrationFunctionError!=null) {
+			return this.integrationFunctionError;
+		}
+		else {
+			IntegrationFunctionError ife = AbstractErrorGenerator.getIntegrationInternalError(context); // default
+			if(erroreValidazione) {
+				ife = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR.equals(ife) ? 
+						IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_RESPONSE :
+						IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_REQUEST;
+			}
+			return ife;
+		}
 	}
-	public void setIntegrationError(IntegrationError integrationError) {
-		this.integrationError = integrationError;
+	public void setIntegrationFunctionError(IntegrationFunctionError integrationFunctionError) {
+		this.integrationFunctionError = integrationFunctionError;
 	}
 	public Tracciamento getTracciamento() {
 		return this.tracciamento;

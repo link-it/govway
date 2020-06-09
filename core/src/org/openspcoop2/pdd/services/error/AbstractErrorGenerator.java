@@ -19,21 +19,31 @@
  */
 package org.openspcoop2.pdd.services.error;
 
+import javax.xml.namespace.QName;
+
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.config.ConfigurationRFC7807;
+import org.openspcoop2.message.config.FaultBuilderConfig;
 import org.openspcoop2.message.config.IntegrationErrorCollection;
 import org.openspcoop2.message.config.IntegrationErrorConfiguration;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.slf4j.Logger;
 
 
@@ -146,9 +156,19 @@ public abstract class AbstractErrorGenerator {
 		return config.getMessageType(this.requestInfo.getProtocolContext(), this.serviceBinding, this.requestMessageType);
 	}
 
-	protected int getReturnCodeForError(IntegrationError integrationError){
+	protected IntegrationErrorReturnConfiguration getReturnConfigForError(IntegrationError integrationError){
 		IntegrationErrorConfiguration config = this.getConfigurationForError(integrationError);
-		return config.getHttpReturnCode();
+		IntegrationErrorReturnConfiguration configR = config.getErrorReturnConfig();
+		boolean portaDelegata = (this instanceof RicezioneContenutiApplicativiInternalErrorGenerator);
+		if(portaDelegata) {
+			configR.setRetryAfterSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSeconds_pd());
+			configR.setRetryRandomBackoffSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd());
+		}
+		else {
+			configR.setRetryAfterSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSeconds_pa());
+			configR.setRetryRandomBackoffSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa());
+		}
+		return configR;
 	}
 	
 	protected boolean isUseInternalFault(IntegrationError integrationError){
@@ -187,16 +207,161 @@ public abstract class AbstractErrorGenerator {
 		return rfc7807;
 	}
 	
-	public OpenSPCoop2Message buildFault(Exception e){
-		//this.log.error(e.getMessage(),e);
-		boolean useProblemRFC7807 = this.getRfc7807ForErrorSafeMode(IntegrationError.INTERNAL_ERROR)!=null;
-		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(IntegrationError.INTERNAL_ERROR);
-		return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+	public static IntegrationFunctionError getIntegrationInternalError(Context context) {
+		IntegrationFunctionError integrationError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+		if(context!=null && context.containsKey(Costanti.RICHIESTA_INOLTRATA_BACKEND)) {
+			Object o = context.getObject(Costanti.RICHIESTA_INOLTRATA_BACKEND);
+			if(o!=null && o instanceof String) {
+				String s = (String) o;
+				if(Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE.equals(s)) {
+					integrationError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+				}
+			}
+		}
+		return integrationError;
 	}
-	public OpenSPCoop2Message buildFault(String errore){
+	
+	private FaultBuilderConfig getFaultBuilderConfig(ErroriProperties erroriProperties, IntegrationFunctionError integrationFunctionError, 
+			MessageType msgTypeErrorResponse, boolean useProblemRFC7807, String errore) {
+		try {
+			FaultBuilderConfig config = new FaultBuilderConfig();
+			IntegrationError integrationError = erroriProperties.getIntegrationError(integrationFunctionError);
+			IntegrationErrorReturnConfiguration returnConfig = this.getReturnConfigForError(integrationError);
+			
+			config.setHttpReturnCode(returnConfig.getHttpReturnCode());
+			config.setGovwayReturnCode(returnConfig.getGovwayReturnCode());
+			
+			config.setRfc7807WebSite(erroriProperties.getWebSite(integrationFunctionError));
+			
+			if(MessageType.SOAP_11.equals(msgTypeErrorResponse) || MessageType.SOAP_12.equals(msgTypeErrorResponse) || !useProblemRFC7807) {
+				config.setActor(this.openspcoopProperties.getProprietaGestioneErrorePD(this.protocolFactory.createProtocolManager()).getFaultActor());
+			}
+			
+			String codiceEccezioneGW = org.openspcoop2.protocol.basic.Costanti.getTransactionSoapFaultCode(returnConfig.getGovwayReturnCode(),erroriProperties.getErrorType(integrationFunctionError));
+			if(MessageType.SOAP_11.equals(msgTypeErrorResponse) || MessageType.SOAP_12.equals(msgTypeErrorResponse)) {
+				if(MessageType.SOAP_11.equals(msgTypeErrorResponse)) {
+					String code11 = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER;
+					if(returnConfig.getGovwayReturnCode()<=499) {
+						code11 = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT;
+					}
+					codiceEccezioneGW = code11 +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+codiceEccezioneGW;
+				}
+				QName eccezioneNameGovway = this.getProtocolFactory().createErroreApplicativoBuilder().getQNameEccezioneIntegrazione(codiceEccezioneGW);
+				config.setErrorCode(eccezioneNameGovway);
+			}
+			
+			boolean genericDetails = returnConfig.isGenericDetails();
+			if(!genericDetails && erroriProperties.isForceGenericDetails(integrationFunctionError)) {
+				genericDetails = true;
+			}
+			if (org.openspcoop2.protocol.basic.Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+				genericDetails = false;
+			}
+			if(errore!=null && !"null".equals(errore) && !genericDetails) {
+				config.setDetails(errore);
+			}
+			else {
+				config.setDetails(erroriProperties.getGenericDetails(integrationFunctionError));
+			}
+			
+			String govwayType = erroriProperties.getErrorType(integrationFunctionError);
+			config.setHeaderErrorTypeName(this.openspcoopProperties.getErroriHttpHeaderGovWayType());
+			config.setHeaderErrorTypeValue(govwayType);
+			
+			if(org.openspcoop2.protocol.basic.Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE()) {
+				if(org.openspcoop2.protocol.basic.Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CAMEL_CASE_DECODE()) {
+					config.setRfc7807Title(StringUtils.join(
+						     StringUtils.splitByCharacterTypeCamelCase(govwayType),
+						     ' '));
+				}
+				else {
+					config.setRfc7807Title(govwayType);
+				}
+				
+				if(org.openspcoop2.protocol.basic.Costanti.isPROBLEM_RFC7807_ENRICH_TITLE_AS_GOVWAY_TYPE_CUSTOM_CLAIM()) {
+					config.setRfc7807GovWayTypeHeaderErrorTypeName(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TYPE());
+					config.setRfc7807GovWayTypeHeaderErrorTypeValue(govwayType);
+				}
+			}
+			else {
+				config.setRfc7807GovWayTypeHeaderErrorTypeName(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TYPE());
+				config.setRfc7807GovWayTypeHeaderErrorTypeValue(govwayType);
+			}
+			
+			return config;
+		}catch(Throwable t) {
+			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("FaultBuilderConfig non costruibile: "+t.getMessage(),t);
+			return null;
+		}
+	}
+	
+	protected IntegrationError convertToIntegrationError(IntegrationFunctionError integrationFunctionError) {
+		ErroriProperties erroriProperties = null;
+		IntegrationError integrationError = null;
+		try {
+			erroriProperties = ErroriProperties.getInstance(this.log);
+			integrationError = erroriProperties.getIntegrationError(integrationFunctionError);
+		}catch(Throwable t) {
+			integrationError = IntegrationError.INTERNAL_REQUEST_ERROR;
+		}
+		return integrationError;
+	}
+	
+	public OpenSPCoop2Message buildFault(Throwable e, Context context){
+		IntegrationFunctionError integrationFunctionError = getIntegrationInternalError(context);
+		return _buildFault(e, context, integrationFunctionError);
+	}
+	public OpenSPCoop2Message buildFault(Throwable e, Context context, IntegrationFunctionError integrationFunctionError){
+		return _buildFault(e, context, integrationFunctionError);
+	}
+	public OpenSPCoop2Message _buildFault(Throwable e, Context context, IntegrationFunctionError integrationFunctionError){
+		//this.log.error(e.getMessage(),e);
+		ErroriProperties erroriProperties = null;
+		IntegrationError integrationError = null;
+		try {
+			erroriProperties = ErroriProperties.getInstance(this.log);
+			integrationError = erroriProperties.getIntegrationError(integrationFunctionError);
+		}catch(Throwable t) {
+			integrationError = IntegrationError.INTERNAL_REQUEST_ERROR;
+		}
+		boolean useProblemRFC7807 = this.getRfc7807ForErrorSafeMode(integrationError)!=null;
+		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
+		FaultBuilderConfig config = null;
+		if(erroriProperties!=null) {
+			config = getFaultBuilderConfig(erroriProperties, integrationFunctionError, msgTypeErrorResponse, useProblemRFC7807, e!=null ? e.getMessage() : null);
+		}
+		OpenSPCoop2Message msgFault = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, config, e);
+		return msgFault;
+	}
+	
+
+	public OpenSPCoop2Message buildFault(String errore, Context context){
+		IntegrationFunctionError integrationFunctionError = getIntegrationInternalError(context);
+		return _buildFault(errore, context, integrationFunctionError);
+	}
+	public OpenSPCoop2Message buildFault(String errore, Context context, IntegrationFunctionError integrationFunctionError){
+		return _buildFault(errore, context, integrationFunctionError);
+	}
+	
+	private OpenSPCoop2Message _buildFault(String errore, Context context, IntegrationFunctionError integrationFunctionError){
 		//this.log.error(errore);
-		boolean useProblemRFC7807 = this.getRfc7807ForErrorSafeMode(IntegrationError.INTERNAL_ERROR)!=null;
-		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(IntegrationError.INTERNAL_ERROR);
-		return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, errore);
+		ErroriProperties erroriProperties = null;
+		IntegrationError integrationError = null;
+		try {
+			erroriProperties = ErroriProperties.getInstance(this.log);
+			integrationError = erroriProperties.getIntegrationError(integrationFunctionError);
+		}catch(Throwable t) {
+			integrationError = IntegrationError.INTERNAL_REQUEST_ERROR;
+			integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+		}
+		boolean useProblemRFC7807 = this.getRfc7807ForErrorSafeMode(integrationError)!=null;
+		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
+		FaultBuilderConfig config = null;
+		if(erroriProperties!=null) {
+			config = getFaultBuilderConfig(erroriProperties, integrationFunctionError, msgTypeErrorResponse, useProblemRFC7807, errore);
+		}
+		OpenSPCoop2Message msgFault = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, config, errore);
+		return msgFault;
 	}
 }

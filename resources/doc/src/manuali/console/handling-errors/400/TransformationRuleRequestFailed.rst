@@ -1,4 +1,4 @@
-.. _errori_503_TransformationRuleRequestFailed:
+.. _errori_400_TransformationRuleRequestFailed:
 
 TransformationRuleRequestFailed
 --------------------------------

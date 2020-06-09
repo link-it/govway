@@ -29,6 +29,7 @@ import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 
 /**
@@ -58,6 +59,7 @@ public class SbustamentoMessage implements GenericMessage {
 	/** Eventuali errori riscontrati durante la validazione della Busta ricevuta. 
         Se non sono presenti errori, questa variabile conterra' un List vuoto (size = 0) */
 	private List<Eccezione> errors;
+	private IntegrationFunctionError integrationFunctionErrorValidazione;
 	/** Indicazione se la busta associata a questo messaggio e' un messaggio od un messaggioErrore */
 	private boolean isMessaggioErroreProtocollo;
 	/** Indicazione se la busta associata a questo messaggio e' un messaggio senza carico applicativo */
@@ -137,8 +139,9 @@ public class SbustamentoMessage implements GenericMessage {
 	 * @param aErrors Errori riscontrati durante la validazione della busta.
 	 * 
 	 */
-	public void setErrors(List<Eccezione> aErrors){
+	public void setErrors(List<Eccezione> aErrors, IntegrationFunctionError integrationFunctionError){
 		this.errors = aErrors;
+		this.integrationFunctionErrorValidazione = integrationFunctionError;
 	}
 	/**
 	 * Imposta l'indicazione se la busta associata a questo messaggio e' un messaggio od un messaggioErrore
@@ -231,6 +234,9 @@ public class SbustamentoMessage implements GenericMessage {
 	 */
 	public List<Eccezione> getErrors(){
 		return this.errors;
+	}
+	public IntegrationFunctionError getIntegrationFunctionErrorValidazione() {
+		return this.integrationFunctionErrorValidazione;
 	}
 	/**
 	 * Ritorna l'indicazione se la busta associata a questo messaggio e' un messaggio od un messaggioErrore

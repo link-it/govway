@@ -22,6 +22,8 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+
 /**
  * Esito di un processo di validazione token.
  *
@@ -38,6 +40,7 @@ public abstract class AbstractEsitoValidazioneToken extends EsitoToken implement
 	private static final long serialVersionUID = 1L;
 
 	private boolean valido;
+	private IntegrationFunctionError integrationFunctionError;
 	
 	private boolean dateValide;
 	
@@ -46,8 +49,28 @@ public abstract class AbstractEsitoValidazioneToken extends EsitoToken implement
 	public boolean isValido() {
 		return this.valido;
 	}
-	public void setValido(boolean valido) {
-		this.valido = valido;
+	public IntegrationFunctionError getIntegrationFunctionError() {
+		return this.integrationFunctionError;
+	}
+	public void setTokenValido() {
+		this.valido = true;
+		this.integrationFunctionError = null;
+	}
+	public void setTokenInternalError() {
+		this.valido = false;
+		this.integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+	}
+	public void setTokenValidazioneFallita() {
+		this.valido = false;
+		this.integrationFunctionError = IntegrationFunctionError.TOKEN_INVALID;
+	}
+	public void setTokenScaduto() {
+		this.valido = false;
+		this.integrationFunctionError = IntegrationFunctionError.TOKEN_EXPIRED;
+	}
+	public void setTokenNotUsableBefore() {
+		this.valido = false;
+		this.integrationFunctionError = IntegrationFunctionError.TOKEN_NOT_USABLE_BEFORE;
 	}
 	
 	public boolean isInCache() {

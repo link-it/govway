@@ -1,4 +1,4 @@
-.. _errori_503_AttachmentsRequestFailed:
+.. _errori_400_AttachmentsRequestFailed:
 
 AttachmentsRequestFailed
 -------------------------

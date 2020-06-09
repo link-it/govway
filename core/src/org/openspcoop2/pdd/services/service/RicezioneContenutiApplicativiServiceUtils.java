@@ -38,7 +38,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
@@ -69,6 +68,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -134,7 +134,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			msgDiag.addKeywordErroreProcessamento(notFound);
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 			ConnectorDispatcherInfo c = ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
-					IntegrationError.NOT_FOUND, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+					IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
 			try {
 				EsitoTransazione esito = requestInfo.getProtocolFactory().createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),EsitoTransazioneName.API_NON_INDIVIDUATA);
 				c.setEsitoTransazione(esito);
@@ -172,7 +172,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					msgDiag.addKeywordErroreProcessamento(notFound);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
-							IntegrationError.NOT_FOUND, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+							IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
 				}
 			}
 			
@@ -254,14 +254,14 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_405_SERVIZIO_NON_TROVATO.getErroreIntegrazione(),
-							IntegrationError.NOT_FOUND, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+							IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
 				}catch(Exception error){
 					logCore.error("Lettura ServiceBinding fallita: "+error.getMessage(),error);
 					msgDiag.addKeywordErroreProcessamento(error);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Lettura ServiceBinding fallita"),
-							IntegrationError.INTERNAL_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 				}
 				
 				// Aggiorno service binding configuration rispetto al servizio localizzato
@@ -274,14 +274,14 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_405_SERVIZIO_NON_TROVATO.getErroreIntegrazione(),
-							IntegrationError.NOT_FOUND, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+							IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
 				}catch(Exception error){
 					logCore.error("Lettura Configurazione Servizio fallita: "+error.getMessage(),error);
 					msgDiag.addKeywordErroreProcessamento(error);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Lettura Configurazione Servizio fallita"),
-							IntegrationError.INTERNAL_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 				}
 				
 				// Aggiorno message type
@@ -301,7 +301,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Comprensione MessageType fallita"),
-							IntegrationError.INTERNAL_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 				}
 				
 				// Controllo Service Binding rispetto alla url e al tipo di servizio
@@ -312,7 +312,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 						msgDiag.logErroreGenerico("L'API invocata possiede un service binding '"+integrationServiceBinding+"' non abilitato sul contesto utilizzato", "CheckServiceBinding");
 						return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, 
 								ErroriIntegrazione.ERRORE_447_API_NON_INVOCABILE_CONTESTO_UTILIZZATO.getErroreIntegrazione(),
-								IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+								IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL, null, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
 					}
 					return null;
 				}
@@ -322,7 +322,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 						msgDiag.logErroreGenerico("L'API invocata possiede un service binding '"+integrationServiceBinding+"' non abilitato per il tipo di servizio '"+idServizio.getTipo(), "CheckServiceBinding");
 						return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, 
 								ErroriIntegrazione.ERRORE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO.getErroreIntegrazione(),
-								IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+								IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL, null, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
 					}
 					return null;
 				}
@@ -418,7 +418,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Gestione CORS fallita"),
-							IntegrationError.INTERNAL_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 				}
 				return null;
 				

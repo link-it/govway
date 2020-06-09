@@ -22,6 +22,7 @@
 		<module>wildfly16</module>
 		<module>wildfly17</module>
 		<module>wildfly18</module>
+		<module>wildfly19</module>
 	</modules>
 
 	<parent>

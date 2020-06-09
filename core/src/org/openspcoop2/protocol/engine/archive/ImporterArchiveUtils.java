@@ -1014,8 +1014,8 @@ public class ImporterArchiveUtils {
 								c = "X.509";
 							}
 							else {
-								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCnSubject(), credenziali.getCnIssuer());
-								c = credenziali.getCnSubject();
+								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+								c = credenziali.getSubject();
 							}
 							break;
 						case PRINCIPAL:
@@ -1248,8 +1248,8 @@ public class ImporterArchiveUtils {
 								c = "X.509";
 							}
 							else {
-								saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCnSubject(), credenziali.getCnIssuer());
-								c = credenziali.getCnSubject();
+								saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+								c = credenziali.getSubject();
 							}
 							break;
 						case PRINCIPAL:

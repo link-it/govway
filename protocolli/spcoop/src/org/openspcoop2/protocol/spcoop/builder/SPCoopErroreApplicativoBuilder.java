@@ -26,6 +26,8 @@ import java.io.ByteArrayInputStream;
 import java.util.Date;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.basic.builder.CodeDetailsError;
 import org.openspcoop2.protocol.basic.builder.ErroreApplicativoBuilder;
 import org.openspcoop2.protocol.basic.builder.ErroreApplicativoMessageUtils;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
@@ -37,8 +39,10 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.TipoErroreApplicativo;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.date.DateManager;
 import org.w3c.dom.Element;
 
@@ -93,10 +97,10 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 	/** BUILDER UTILITIES */
 		
 	@Override
-	protected Element _buildErroreApplicativo_Element(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+	protected Element _buildErroreApplicativo_Element(CodeDetailsError codeDetailsErrorWrapper, EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 	
-		MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+		MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 		
 		try{
 			// il passaggio da XMLUtils forza anche la validazione dell'oggetto
@@ -113,16 +117,17 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 	
 	@Override
 	protected String _buildErroreApplicativo_String(TipoErroreApplicativo tipoErroreApplicativo, boolean omitXMLDeclaration,
+			CodeDetailsError codeDetailsErrorWrapper,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
 		try{
 			if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
-				MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+				MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 				return XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo);
 			}
 			else{
-				Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+				Element element = this._buildErroreApplicativo_Element(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 				return this.xmlUtils.toString(element, omitXMLDeclaration);
 			}
 		
@@ -133,16 +138,17 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 	
 	@Override
 	protected byte[] _buildErroreApplicativo_ByteArray(TipoErroreApplicativo tipoErroreApplicativo, boolean omitXMLDeclaration,
+			CodeDetailsError codeDetailsErrorWrapper,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
 		try{
 			if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
-				MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+				MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 				return XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo).getBytes();
 			}
 			else{
-				Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+				Element element = this._buildErroreApplicativo_Element(codeDetailsErrorWrapper, eccezioneProtocollo, eccezioneIntegrazione);
 				return this.xmlUtils.toByteArray(element, omitXMLDeclaration);
 			}
 		
@@ -151,10 +157,12 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 		}
 	}
 	
-	private MessaggioDiErroreApplicativo _buildErroreApplicativo_engine(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+	private MessaggioDiErroreApplicativo _buildErroreApplicativo_engine(CodeDetailsError codeDetailsErrorWrapper,
+			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		try{
-
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			
 			MessaggioDiErroreApplicativo erroreApplicativo = new MessaggioDiErroreApplicativo();
 			
 			String idPorta = null;
@@ -162,6 +170,10 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			String codiceEccezione = null;
 			String descrizioneEccezione = null;
 			Date oraRegistrazione = null;
+			
+			IntegrationFunctionError functionError = null;
+			boolean genericDetails = true;
+			
 			if(eccezioneProtocollo!=null){
 				idPorta = eccezioneProtocollo.getDominioPorta().getCodicePorta();
 				idFunzione = eccezioneProtocollo.getIdFunzione();
@@ -169,6 +181,17 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 						eccezioneProtocollo.getEccezioneProtocollo().getSubCodiceEccezione());
 				descrizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory);
 				oraRegistrazione = eccezioneProtocollo.getOraRegistrazione();
+				
+				functionError = eccezioneProtocollo.getFunctionError();
+				if(eccezioneProtocollo.getReturnConfig()!=null) {
+					genericDetails = eccezioneProtocollo.getReturnConfig().isGenericDetails();
+				}
+				
+				codeDetailsErrorWrapper.setPrefixCode(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL);
+				codeDetailsErrorWrapper.setCode(codiceEccezione);
+				
+				codeDetailsErrorWrapper.setDetails(descrizioneEccezione);
+				
 			}else{
 				idPorta = eccezioneIntegrazione.getDominioPorta().getCodicePorta();
 				idFunzione = eccezioneIntegrazione.getIdFunzione();
@@ -177,6 +200,23 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 						eccezioneIntegrazione.getProprieta().isFaultAsGenericCode());
 				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.protocolFactory);
 				oraRegistrazione = eccezioneIntegrazione.getOraRegistrazione();
+				
+				functionError = eccezioneIntegrazione.getFunctionError();
+				if(eccezioneIntegrazione.getReturnConfig()!=null) {
+					genericDetails = eccezioneIntegrazione.getReturnConfig().isGenericDetails();
+				}
+				
+				codeDetailsErrorWrapper.setPrefixCode(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION);
+				codeDetailsErrorWrapper.setCode(codiceEccezione);
+				
+				codeDetailsErrorWrapper.setDetails(descrizioneEccezione);
+			}
+			
+			if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+				genericDetails = true;
+			}
+			if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+				genericDetails = false;
 			}
 			
 			if(oraRegistrazione==null){
@@ -191,14 +231,43 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			it.cnipa.schemas._2003.egovit.exception1_0.Eccezione eccezione = new it.cnipa.schemas._2003.egovit.exception1_0.Eccezione();
 			if(eccezioneProtocollo!=null){
 				EccezioneBusta eccezioneBusta = new EccezioneBusta();
+				
+				//if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+				// Il pacchetto CNIPA prevede un codice egov sempre
 				eccezioneBusta.setCodiceEccezione(codiceEccezione);
-				eccezioneBusta.setDescrizioneEccezione(descrizioneEccezione);
+				/*}
+				else {
+					String govwayType = erroriProperties.getErrorType(functionError);
+					eccezioneBusta.setCodiceEccezione(govwayType);
+				}*/
+				
+				if(!genericDetails) {
+					eccezioneBusta.setDescrizioneEccezione(descrizioneEccezione);
+				}
+				else {
+					eccezioneBusta.setDescrizioneEccezione(erroriProperties.getGenericDetails(functionError));
+				}
+				
 				eccezione.setEccezioneBusta(eccezioneBusta);
 			}
 			else{
 				EccezioneProcessamento eccezioneProcessamento = new EccezioneProcessamento();
-				eccezioneProcessamento.setCodiceEccezione(codiceEccezione);
-				eccezioneProcessamento.setDescrizioneEccezione(descrizioneEccezione);
+				
+				if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+					eccezioneProcessamento.setCodiceEccezione(codiceEccezione);
+				}
+				else {
+					String govwayType = erroriProperties.getErrorType(functionError);
+					eccezioneProcessamento.setCodiceEccezione(govwayType);
+				}
+				
+				if(!genericDetails) {
+					eccezioneProcessamento.setDescrizioneEccezione(descrizioneEccezione);
+				}
+				else {
+					eccezioneProcessamento.setDescrizioneEccezione(erroriProperties.getGenericDetails(functionError));
+				}
+				
 				eccezione.setEccezioneProcessamento(eccezioneProcessamento);
 			}
 			erroreApplicativo.setEccezione(eccezione);

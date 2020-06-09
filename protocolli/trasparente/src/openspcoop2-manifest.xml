@@ -84,26 +84,90 @@
     		</integration>
     		<integrationError>
     			<internal problemType="rfc7807">
-    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
-	    			<authentication httpReturnCode="500" messageType="soapAsRequest" />
-	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
-	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
-	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
-	    			<tooManyRequests httpReturnCode="500" messageType="soapAsRequest" />
-	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
-	    			<serviceUnavailable httpReturnCode="500" messageType="soapAsRequest" />
-	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
+    				<rfc7807 details="true" govwayStatus="true" govwayType="true" govwayTransactionId="true" instance="true" useAcceptHeader="true"/>
+    				<authentication messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="401"/>
+	    			</authentication>
+	    			<authorization messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="403"/>
+	    			</authorization>
+	    			<notFound messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="404"/>
+	    			</notFound>
+	    			<badRequest messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="400"/>
+	    			</badRequest>
+	    			<conflict messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="409"/>
+	    			</conflict>
+	    			<limitExceeded messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="429"/>
+	    			</limitExceeded>
+	    			<tooManyRequests messageType="soapAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="429"/>
+	    			</tooManyRequests>
+	    			<serviceUnavailable messageType="soapAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="503"/>
+	    			</serviceUnavailable>
+	    		    <endpointRequestTimedOut messageType="soapAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="504"/>
+	    			</endpointRequestTimedOut>
+	    			<badResponse messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="502"/> <!-- equivalente a bad request, quindi no retry, senno si usa internal response error -->
+	    			</badResponse>
+	    			<internalRequestError messageType="soapAsRequest" retry="true" errorMessage="generic">
+	    				<errorCode http="500" govway="503"/>
+	    			</internalRequestError>
+	    			<internalResponseError messageType="soapAsRequest" retry="true" errorMessage="generic">
+	    				<errorCode http="500" govway="502"/>
+	    			</internalResponseError>
+	    			<default messageType="none"  
+	    				retry="false" errorMessage="generic"> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
+	    				<errorCode http="500" govway="503"/>
+	    			</default>
     			</internal>	
     			<external problemType="rfc7807" useInternalFault="true">
-    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
-	    			<authentication httpReturnCode="500" messageType="soapAsRequest" />
-	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
-	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
-	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
-	    			<tooManyRequests httpReturnCode="500" messageType="soapAsRequest" />
-	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
-	    			<serviceUnavailable httpReturnCode="500" messageType="soapAsRequest" />
-	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
+    				<rfc7807 details="true" govwayStatus="true" govwayType="true" govwayTransactionId="true" instance="true" useAcceptHeader="true"/>
+    				<authentication messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="401"/>
+	    			</authentication>
+	    			<authorization messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="403"/>
+	    			</authorization>
+	    			<notFound messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="404"/>
+	    			</notFound>
+	    			<badRequest messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="400"/>
+	    			</badRequest>
+	    			<conflict messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="409"/>
+	    			</conflict>
+	    			<limitExceeded messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="429"/>
+	    			</limitExceeded>
+	    			<tooManyRequests messageType="soapAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="429"/>
+	    			</tooManyRequests>
+	    			<serviceUnavailable messageType="soapAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="503"/>
+	    			</serviceUnavailable>
+	    		    <endpointRequestTimedOut messageType="soapAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="500" govway="504"/>
+	    			</endpointRequestTimedOut>
+	    			<badResponse messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="502"/> <!-- equivalente a bad request, quindi no retry, senno si usa internal response error -->
+	    			</badResponse>
+	    			<internalRequestError messageType="soapAsRequest" retry="true" errorMessage="generic">
+	    				<errorCode http="500" govway="503"/>
+	    			</internalRequestError>
+	    			<internalResponseError messageType="soapAsRequest" retry="true" errorMessage="generic">
+	    				<errorCode http="500" govway="502"/>
+	    			</internalResponseError>
+	    			<default messageType="none"  
+	    				retry="false" errorMessage="generic"> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
+	    				<errorCode http="500" govway="503"/>
+	    			</default>
     			</external>	
     		</integrationError>
     		<mediaTypeCollection>
@@ -169,26 +233,88 @@
     		</integration>
     		<integrationError>
     			<internal problemType="rfc7807">
-    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
-	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
-	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
-	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
-	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
-	    			<tooManyRequests httpReturnCode="429" messageType="sameAsRequest" />
-	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
-	    			<serviceUnavailable httpReturnCode="503" messageType="sameAsRequest" />
-	    			<default httpReturnCode="500" messageType="json" />
+    				<rfc7807 details="true" govwayStatus="true" govwayType="true" govwayTransactionId="true" instance="true" useAcceptHeader="true"/>
+	    			<authentication messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="401" govway="401"/>
+	    			</authentication>
+	    			<authorization messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="403" govway="403"/>
+	    			</authorization>
+	    			<notFound messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="404" govway="404"/>
+	    			</notFound>
+	    			<badRequest messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="400" govway="400"/>
+	    			</badRequest>
+	    			<conflict messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="409" govway="409"/>
+	    			</conflict>
+	    			<limitExceeded messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="429" govway="429"/>
+	    			</limitExceeded>
+	    			<tooManyRequests messageType="sameAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="429" govway="429"/>
+	    			</tooManyRequests>
+	    			<serviceUnavailable messageType="sameAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="503" govway="503"/>
+	    			</serviceUnavailable>
+	    		    <endpointRequestTimedOut messageType="sameAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="504" govway="504"/>
+	    			</endpointRequestTimedOut>
+	    			<badResponse messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="502" govway="502"/> <!-- equivalente a bad request, quindi no retry, senno si usa internal response error -->
+	    			</badResponse>
+	    			<internalRequestError messageType="sameAsRequest" retry="true" errorMessage="generic">
+	    				<errorCode http="503" govway="503"/>
+	    			</internalRequestError>
+	    			<internalResponseError messageType="sameAsRequest" retry="true" errorMessage="generic">
+	    				<errorCode http="502" govway="502"/>
+	    			</internalResponseError>
+	    			<default messageType="json" retry="false" errorMessage="generic">
+	    				<errorCode http="503" govway="503"/>
+	    			</default>
     			</internal>
     			<external problemType="rfc7807">
-    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
-	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
-	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
-	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
-	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
-	    			<tooManyRequests httpReturnCode="429" messageType="sameAsRequest" />
-	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
-	    			<serviceUnavailable httpReturnCode="503" messageType="sameAsRequest" />
-	    			<default httpReturnCode="500" messageType="json" />
+    				<rfc7807 details="true" govwayStatus="true" govwayType="true" govwayTransactionId="true" instance="true" useAcceptHeader="true"/>
+	    			<authentication messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="401" govway="401"/>
+	    			</authentication>
+	    			<authorization messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="403" govway="403"/>
+	    			</authorization>
+	    			<notFound messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="404" govway="404"/>
+	    			</notFound>
+	    			<badRequest messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="400" govway="400"/>
+	    			</badRequest>
+	    			<conflict messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="409" govway="409"/>
+	    			</conflict>
+	    			<limitExceeded messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="429" govway="429"/>
+	    			</limitExceeded>
+	    			<tooManyRequests messageType="sameAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="429" govway="429"/>
+	    			</tooManyRequests>
+	    			<serviceUnavailable messageType="sameAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="503" govway="503"/>
+	    			</serviceUnavailable>
+	    		    <endpointRequestTimedOut messageType="sameAsRequest" retry="true" errorMessage="specific">
+	    				<errorCode http="504" govway="504"/>
+	    			</endpointRequestTimedOut>
+	    			<badResponse messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="502" govway="502"/> <!-- equivalente a bad request, quindi no retry, senno si usa internal response error -->
+	    			</badResponse>
+	    			<internalRequestError messageType="sameAsRequest" retry="true" errorMessage="generic">
+	    				<errorCode http="503" govway="503"/>
+	    			</internalRequestError>
+	    			<internalResponseError messageType="sameAsRequest" retry="true" errorMessage="generic">
+	    				<errorCode http="502" govway="503"/>
+	    			</internalResponseError>
+	    			<default messageType="json" retry="false" errorMessage="generic">
+	    				<errorCode http="503" govway="503"/>
+	    			</default>
     			</external>
     		</integrationError>
     		<mediaTypeCollection>

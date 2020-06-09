@@ -31,6 +31,7 @@ import org.openspcoop2.protocol.registry.EsitoAutorizzazioneRegistro;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Interfaccia che definisce un processo di autorizzazione per i soggetti.
@@ -75,7 +76,7 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     		
     		if(!autorizzazioneSoggettiMittenti && !autorizzazioneApplicativiMittenti) {
     			String errore = this.getErrorString(idSoggetto, idServizio);
-    			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+    			esito.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);
     		}
     		else {
@@ -98,7 +99,7 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
 		    			if(esitoAutorizzazione.getDetails()!=null){
 		    				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
 		    			}
-		    			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+		    			esito.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
 		    			esito.setAutorizzato(false);
 		    		}else{
 		    			esito.setAutorizzato(true);
@@ -110,13 +111,13 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
 	    		
     		}
     	}catch(DriverRegistroServiziServizioNotFound e){
-    		esito.setErroreCooperazione(ErroriCooperazione.SERVIZIO_SCONOSCIUTO.
+    		esito.setErroreCooperazione(IntegrationFunctionError.NOT_FOUND, ErroriCooperazione.SERVIZIO_SCONOSCIUTO.
     				getErroreCooperazione("Errore durante il processo di autorizzazione (ServizioNotFound): "+e.getMessage()));
     		esito.setAutorizzato(false);
     		esito.setEccezioneProcessamento(e);
     	}catch(Exception e){
     		String errore = "Errore durante il processo di autorizzazione: "+e.getMessage();
-    		esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
+    		esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
     		esito.setAutorizzato(false);
     		esito.setEccezioneProcessamento(e);
     	}

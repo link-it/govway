@@ -29,6 +29,7 @@ import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Classe che implementa una autorizzazione basata sui ruoli
@@ -70,11 +71,11 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     						this.checkRuoloRegistro, this.checkRuoloEsterno,
     						detailsBuffer)==false){
     			if(servizioApplicativo!=null){
-	    			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+	    			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
 	    					getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativo));
     			}
     			else{
-    				esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+    				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
     						getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo());
     			}
     			esito.setAutorizzato(false);
@@ -85,11 +86,11 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     		}
     	}catch(DriverConfigurazioneNotFound e){
     		if(servizioApplicativo!=null){
-    			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+    			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
     					getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativo,e.getMessage()));
 			}
 			else{
-				esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
 						getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo(e.getMessage()));
 			}
 			esito.setAutorizzato(false);
@@ -97,7 +98,7 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
 			return esito;
     	}catch(DriverConfigurazioneException e){
     		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Autorizzazione "+this.nomeAutorizzazione+" non riuscita",e);
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setAutorizzato(false);
 			esito.setEccezioneProcessamento(e);

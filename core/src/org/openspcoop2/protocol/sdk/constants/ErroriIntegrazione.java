@@ -578,7 +578,12 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(String tipoInterfaccia, String errorMsg) {
+	public ErroreIntegrazione getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(String tipoInterfaccia, String errorMsg, boolean overwriteMessageError) {
+		
+		if(overwriteMessageError) {
+			return new ErroreIntegrazione(errorMsg, this.codiceErrore);
+		}
+		
 		if(!this.equals(ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.name());
 		}
@@ -594,7 +599,12 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(String tipoInterfaccia, String errorMsg) {
+	public ErroreIntegrazione getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(String tipoInterfaccia, String errorMsg, boolean overwriteMessageError) {
+		
+		if(overwriteMessageError) {
+			return new ErroreIntegrazione(errorMsg, this.codiceErrore);
+		}
+		
 		if(!this.equals(ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.name());
 		}

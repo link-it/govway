@@ -29,10 +29,11 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.utils.ErroriProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.rest.problem.ProblemConstants;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.w3c.dom.Element;
@@ -117,37 +118,17 @@ public class ProblemUtilities {
 	}
 	
 	public static void verificaProblem(AxisFault error,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String identificativoModuloAtteso,
-			CodiceErroreIntegrazione codiceErroreIntegrazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto,
-			int httpStatus) throws Exception{
+			ExceptionCodeExpected exceptionCodeExpected, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
 		String[] identificativiFunzioneAttesi = new String[1];
 		identificativiFunzioneAttesi[0] = identificativoModuloAtteso;
 		verificaProblem(getProblem(error), dominioAtteso, tipoPdDAtteso, identificativiFunzioneAttesi, 
-				null, codiceErroreIntegrazione, descrizione, checkDescrizioneTramiteMatchEsatto,
-				httpStatus);
-	}
-	public static void verificaProblem(AxisFault error,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String identificativoModuloAtteso,
-			CodiceErroreCooperazione codiceErroreCooperazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto,
-			int httpStatus) throws Exception{
-		String[] identificativiFunzioneAttesi = new String[1];
-		identificativiFunzioneAttesi[0] = identificativoModuloAtteso;
-		verificaProblem(getProblem(error), dominioAtteso, tipoPdDAtteso, identificativiFunzioneAttesi, 
-				codiceErroreCooperazione, null, descrizione, checkDescrizioneTramiteMatchEsatto,
-				httpStatus);
+				exceptionCodeExpected, descrizione, checkDescrizioneTramiteMatchEsatto);
 	}
 	
 	public static void verificaProblem(AxisFault error,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreIntegrazione codiceErroreIntegrazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto,
-			int httpStatus) throws Exception{
+			ExceptionCodeExpected exceptionCodeExpected, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
 		verificaProblem(getProblem(error), dominioAtteso, tipoPdDAtteso, identificativoModuloAtteso, 
-				null, codiceErroreIntegrazione, descrizione, checkDescrizioneTramiteMatchEsatto,
-				httpStatus);
-	}
-	public static void verificaProblem(AxisFault error,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreCooperazione codiceErroreCooperazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto,
-			int httpStatus) throws Exception{
-		verificaProblem(getProblem(error), dominioAtteso, tipoPdDAtteso, identificativoModuloAtteso, 
-				codiceErroreCooperazione, null, descrizione, checkDescrizioneTramiteMatchEsatto,
-				httpStatus);
+				exceptionCodeExpected, descrizione, checkDescrizioneTramiteMatchEsatto);
 	}
 	
 	private static Node getProblem(AxisFault error){
@@ -173,28 +154,15 @@ public class ProblemUtilities {
 		return dettaglioOpenSPCoop;
 	}
 	
-	public static void verificaProblem(Node erroreApplicativoNode,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreIntegrazione codiceErroreIntegrazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto,
-			int httpStatus) throws Exception{
-		verificaProblem(erroreApplicativoNode, dominioAtteso, tipoPdDAtteso, identificativoModuloAtteso, 
-				null, codiceErroreIntegrazione, descrizione, checkDescrizioneTramiteMatchEsatto,
-				httpStatus);
-	}
-	public static void verificaProblem(Node erroreApplicativoNode,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreCooperazione codiceErroreCooperazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto,
-			int httpStatus) throws Exception{
-		verificaProblem(erroreApplicativoNode, dominioAtteso, tipoPdDAtteso, identificativoModuloAtteso, 
-				codiceErroreCooperazione, null, descrizione, checkDescrizioneTramiteMatchEsatto,
-				httpStatus);
-	}
-	private static void verificaProblem(Node problemNode,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreCooperazione codiceErroreCooperazione, CodiceErroreIntegrazione codiceErroreIntegrazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto,
-			int httpStatus) throws Exception{
-		
+	public static void verificaProblem(Node problemNode,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
+			ExceptionCodeExpected exceptionCodeExpected, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
+
 		String xml = null;
 		
 		try{
 
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(LoggerWrapperFactory.getLogger(ProblemUtilities.class));
+			
 			Assert.assertTrue(problemNode!=null);
 			xml = XMLUtils.DEFAULT.toString(problemNode);
 			Reporter.log("Namespace Problem ("+problemNode.getNamespaceURI()+"): "+xml);
@@ -203,38 +171,20 @@ public class ProblemUtilities {
 			XmlDeserializer deserializer = new XmlDeserializer();
 			ProblemRFC7807 problemRFC7807 = deserializer.fromNode(problemNode);
 			
+			int httpStatus = exceptionCodeExpected.getGovWayReturnCode();
 			Reporter.log("Controllo stato presente["+problemRFC7807.getStatus()+"] atteso["+httpStatus+"]");
 			Assert.assertTrue(problemRFC7807.getStatus()!=null && problemRFC7807.getStatus().intValue() == httpStatus);
 			
-			String typeAtteso = "https://httpstatuses.com/"+httpStatus;
+			//String typeAtteso = "https://httpstatuses.com/"+httpStatus;
+			String typeAtteso = erroriProperties.getWebSite_noWrap(exceptionCodeExpected.getIntegrationFunctionError());
 			Reporter.log("Controllo type presente["+problemRFC7807.getType()+"] atteso["+typeAtteso+"]");
 			Assert.assertTrue(problemRFC7807.getType()!=null && problemRFC7807.getType().equals(typeAtteso));
 			
-			String titleAtteso = HttpUtilities.getHttpReason(httpStatus);
+			//String titleAtteso = HttpUtilities.getHttpReason(httpStatus);
+			String titleAtteso = erroriProperties.getErrorType_noWrap(exceptionCodeExpected.getIntegrationFunctionError());
 			Reporter.log("Controllo title presente["+problemRFC7807.getTitle()+"] atteso["+titleAtteso+"]");
 			Assert.assertTrue(problemRFC7807.getTitle()!=null && problemRFC7807.getTitle().equals(titleAtteso));
-			
-			Reporter.log("Controllo esistenza govway status");
-			String govwayStatus = null;
-			if(problemRFC7807.getCustom()!=null) {
-				govwayStatus = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_CODE());
-			}
-			Assert.assertTrue(govwayStatus!=null);
-			
-			String codiceGovWayStatusAtteso = null;
-			String code = null;
-			if(codiceErroreCooperazione!=null) {
-				codiceGovWayStatusAtteso = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL;
-				code = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE+codiceErroreCooperazione.getCodice();
-			}
-			else {
-				codiceGovWayStatusAtteso = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION;
-				code = org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+codiceErroreIntegrazione.getCodice();
-			}
-			codiceGovWayStatusAtteso = codiceGovWayStatusAtteso + code;
-			Reporter.log("Controllo govwayStatus presente["+govwayStatus+"] atteso["+codiceGovWayStatusAtteso+"]");
-			Assert.assertTrue(govwayStatus!=null && govwayStatus.equals(codiceGovWayStatusAtteso));
-			
+						
 			String value = problemRFC7807.getDetail();
 			String atteso = descrizione;
 			Reporter.log("Controllo description presente["+value+"] atteso["+atteso+"] checkDescrizioneTramiteMatchEsatto["+checkDescrizioneTramiteMatchEsatto+"]");
@@ -243,6 +193,36 @@ public class ProblemUtilities {
 			}
 			else {
 				Assert.assertTrue(value.contains(atteso));
+			}
+			
+			Reporter.log("Controllo esistenza govway id");
+			String govwayTransactionId = null;
+			if(problemRFC7807.getCustom()!=null) {
+				govwayTransactionId = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID());
+			}
+			Assert.assertTrue(govwayTransactionId!=null);
+			
+			if(exceptionCodeExpected.isGenericCode()==false) {
+				Reporter.log("Controllo esistenza govway status");
+				String govwayStatus = null;
+				if(problemRFC7807.getCustom()!=null) {
+					govwayStatus = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_CODE());
+				}
+				Assert.assertTrue(govwayStatus!=null);
+				
+				String codiceGovWayStatusAtteso = null;
+				String code = null;
+				if(exceptionCodeExpected.isProtocolException()) {
+					codiceGovWayStatusAtteso = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL;
+					code = exceptionCodeExpected.getCodiceErroreSpecifico();
+				}
+				else {
+					codiceGovWayStatusAtteso = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION;
+					code = exceptionCodeExpected.getCodiceErroreSpecifico();
+				}
+				codiceGovWayStatusAtteso = codiceGovWayStatusAtteso + code;
+				Reporter.log("Controllo govwayStatus presente["+govwayStatus+"] atteso["+codiceGovWayStatusAtteso+"]");
+				Assert.assertTrue(govwayStatus!=null && govwayStatus.equals(codiceGovWayStatusAtteso));
 			}
 			
 		}catch(Exception e){

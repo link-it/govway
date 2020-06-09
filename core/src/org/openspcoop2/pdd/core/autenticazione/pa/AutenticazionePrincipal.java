@@ -37,6 +37,7 @@ import org.openspcoop2.pdd.core.autenticazione.PrincipalUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Classe che implementa una autenticazione BASIC.
@@ -150,13 +151,13 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     				datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true);
     	}catch(Exception e) {
     		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
-    		esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
+    		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
     	}
     	if( principal==null || "".equals(principal) ){
-    		esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
+    		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
     		esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
@@ -175,7 +176,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		}
 		catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
-			esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);
 			return esito;
@@ -200,7 +201,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		}
 		catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Applicativi) non riuscita",e);
-			esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);

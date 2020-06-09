@@ -63,7 +63,6 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -74,10 +73,10 @@ import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
-import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -144,6 +143,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
@@ -1060,8 +1060,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 		}
 		
+		RicezioneBusteExternalErrorGenerator generatoreErrorePA = null;
 		try{
-			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log,
+			generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log,
 					this.idModulo, requestInfo, openspcoopstate.getStatoRichiesta());
 			generatoreErrorePA.updateInformazioniCooperazione(soggettoFruitore, idServizio);
 			generatoreErrorePA.updateInformazioniCooperazione(servizioApplicativoFruitore);
@@ -1153,7 +1154,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
-				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
+				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, false);
 				proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				consegnaPerRiferimento = configurazionePdDManager.consegnaRispostaAsincronaPerRiferimento(sa);
@@ -1179,7 +1180,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [AsincronoAsimmetricoPolling]...");
-				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
+				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, false);
 				proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [AsincronoAsimmetricoPolling]...");
 				consegnaPerRiferimento = configurazionePdDManager.consegnaRispostaAsincronaPerRiferimento(sa);
@@ -1202,7 +1203,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = configurazionePdDManager.invocazioneServizioConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo)...");
-				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
+				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, false);
 				proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
 				consegnaPerRiferimento = configurazionePdDManager.invocazioneServizioPerRiferimento(sa);
@@ -1582,7 +1583,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			if(trasformazioni!=null) {
 				try {
 					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
-							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD);
+							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD,
+							generatoreErrorePA);
 					consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(consegnaMessagePrimaTrasformazione, bustaRichiesta);
 				}
 				catch(GestoreTrasformazioniException e) {
@@ -1600,6 +1602,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					
 					String msgErrore = e.getMessage();					
 					if(existsModuloInAttesaRispostaApplicativa) {
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED;
+						if(e.getOp2IntegrationFunctionError()!=null) {
+							integrationFunctionError = e.getOp2IntegrationFunctionError();
+						}
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
+						if(localForwardEngine!=null) {
+							localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
+						}
 						if(e.getOpenSPCoop2ErrorMessage()!=null) {
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									e.getOpenSPCoop2ErrorMessage(), msgErrore,
@@ -1953,6 +1963,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					}
 				}
 				ErroreIntegrazione erroreIntegrazione = null;
+				IntegrationFunctionError integrationFunctionError = null;
 				if(e instanceof HandlerException){
 					HandlerException he = (HandlerException) e;
 					if(he.isEmettiDiagnostico()){
@@ -1961,6 +1972,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
 					if(existsModuloInAttesaRispostaApplicativa) {
 						erroreIntegrazione = he.convertToErroreIntegrazione();
+						integrationFunctionError = he.getIntegrationFunctionError();
 					}
 				}else{
 					msgDiag.logErroreGenerico(e, "OutRequestHandler");
@@ -1973,6 +1985,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST);
 					}
 					
+					if(integrationFunctionError!=null) {
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
+						if(localForwardEngine!=null) {
+							localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
+						}
+					}
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							erroreIntegrazione,
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
@@ -2335,6 +2353,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					String msgErrore = e.getMessage();					
 					if(existsModuloInAttesaRispostaApplicativa) {
 						
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED;
+						if(e instanceof GestoreTrasformazioniException && (((GestoreTrasformazioniException)e).getOp2IntegrationFunctionError()!=null)) {
+							integrationFunctionError = ((GestoreTrasformazioniException)e).getOp2IntegrationFunctionError();
+						}
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
+						if(localForwardEngine!=null) {
+							localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
+						}
+						
 						if(e instanceof GestoreTrasformazioniException && (((GestoreTrasformazioniException)e).getOpenSPCoop2ErrorMessage()!=null)) {
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									((GestoreTrasformazioniException)e).getOpenSPCoop2ErrorMessage(), msgErrore,
@@ -2466,6 +2493,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						}
 					}
 					ErroreIntegrazione erroreIntegrazione = null;
+					IntegrationFunctionError integrationFunctionError = null;
 					if(e instanceof HandlerException){
 						HandlerException he = (HandlerException) e;
 						if(he.isEmettiDiagnostico()){
@@ -2474,6 +2502,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
 						if(existsModuloInAttesaRispostaApplicativa) {
 							erroreIntegrazione = he.convertToErroreIntegrazione();
+							integrationFunctionError = he.getIntegrationFunctionError();
 						}
 					}else{
 						msgDiag.logErroreGenerico(e, "InResponseHandler");
@@ -2486,6 +2515,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE);
 						}
 						
+						if(integrationFunctionError!=null) {
+							ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
+							if(localForwardEngine!=null) {
+								localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
+							}
+						}
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								erroreIntegrazione,
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
@@ -2528,6 +2563,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				this.log.error("CheckProtocolPresence",e);
 				if(existsModuloInAttesaRispostaApplicativa) {
 					
+					ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ALREADY_EXISTS);
+					if(localForwardEngine!=null) {
+						localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ALREADY_EXISTS);
+					}
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							ErroriIntegrazione.ERRORE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA.getErroreIntegrazione(),
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
@@ -2676,6 +2715,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								String msgErroreSituazioneAnomale = msgDiag.getMessaggio_replaceKeywords("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
 								if(existsModuloInAttesaRispostaApplicativa) {
 									
+									ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.BAD_RESPONSE);
+									if(localForwardEngine!=null) {
+										localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.BAD_RESPONSE);
+									}
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.
 												get559_RicevutaRispostaConErroreTrasporto(msgErroreSituazioneAnomale),
@@ -2703,6 +2746,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					if(connettoreMsgRequest.getParseException() != null){
 						
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT);
+						if(localForwardEngine!=null) {
+							localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT);
+						}
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(connettoreMsgRequest.getParseException().getParseException()),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
@@ -2716,10 +2763,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					} else if(responseMessage==null && 
 							!pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
 						// Genero una risposta di errore
-						
-						ejbUtils.setIntegrationErrorPortaApplicativa(IntegrationError.SERVICE_UNAVAILABLE);
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+						if(eccezioneProcessamentoConnettore!=null && motivoErroreConsegna!=null) {
+							if(this.propertiesReader.isServiceUnavailable_ReadTimedOut(motivoErroreConsegna)){
+								integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+							}
+						}
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
 						if(localForwardEngine!=null) {
-							localForwardEngine.setIntegrationError(IntegrationError.SERVICE_UNAVAILABLE);
+							localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
 						}
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.get516_ServizioApplicativoNonDisponibile(),
@@ -2743,6 +2795,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						}
 						
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT);
+						if(localForwardEngine!=null) {
+							localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT);
+						}
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
@@ -3023,6 +3079,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								msgDiag.logPersonalizzato("consegnaConErrore.mittenteAnonimo");
 							}
 							
+							ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.EXPECTED_RESPONSE_NOT_FOUND);
+							if(localForwardEngine!=null) {
+								localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.EXPECTED_RESPONSE_NOT_FOUND);
+							}
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA),
@@ -3184,9 +3244,27 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								}
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 									
+									// validazione abilitata
+									
 									pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RISPOSTA, "true");
 									
-									// validazione abilitata
+									IntegrationFunctionError integrationFunctionError = null;
+									if(ex.getErrore()!=null &&
+											(
+													//CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.equals(ex.getErrore().getCodiceErrore()) ||
+													CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.equals(ex.getErrore().getCodiceErrore()) 
+											)
+										){
+										integrationFunctionError = IntegrationFunctionError.INVALID_RESPONSE_CONTENT;
+									}
+									else{
+										integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+									}
+									
+									ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
+									if(localForwardEngine!=null) {
+										localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
+									}
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ex.getErrore(),
@@ -3333,7 +3411,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_553_CORRELAZIONE_APPLICATIVA_RISPOSTA_NON_RIUSCITA);
 								}
-											
+								
+								ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_RESPONSE_FAILED);
+								if(localForwardEngine!=null) {
+									localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_RESPONSE_FAILED);
+								}
+								
 								this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 										errore,
 										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
@@ -3388,9 +3471,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						// Funzionalita' necessaria solo per la consegna di un servizio
 						if(richiestaApplicativa!=null){
 							if(scartaBody){
+								IntegrationFunctionError integrationFunctionError = null;
 								try{
 									if(responseMessage!=null){
 										if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())==false){
+											integrationFunctionError = IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL;
 											throw new Exception("Funzionalita 'ScartaBody' valida solamente per Service Binding SOAP");
 										}
 										
@@ -3402,6 +3487,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								}catch(Exception e){
 									msgDiag.addKeywordErroreProcessamento(e);
 									msgDiag.logPersonalizzato("funzionalitaScartaBodyNonRiuscita");
+																		
+									if(integrationFunctionError==null) {
+										integrationFunctionError = IntegrationFunctionError.BAD_RESPONSE;
+									}
+									ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
+									if(localForwardEngine!=null) {
+										localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
+									}
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_425_SCARTA_BODY.getErrore425_ScartaBody(e.getMessage()),
@@ -3424,6 +3517,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								}catch(Exception e){
 									msgDiag.addKeywordErroreProcessamento(e);
 									msgDiag.logPersonalizzato("funzionalitaAllegaBodyNonRiuscita");
+									
+									ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.BAD_RESPONSE);
+									if(localForwardEngine!=null) {
+										localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.BAD_RESPONSE);
+									}
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_424_ALLEGA_BODY.getErrore424_AllegaBody(e.getMessage()),
@@ -3523,6 +3621,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									pddContext);
 							
 						} else {
+							
+							ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT);
+							if(localForwardEngine!=null) {
+								localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT);
+							}
 							
 							pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 

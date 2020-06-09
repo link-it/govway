@@ -602,11 +602,50 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jDump(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jDump");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorStatusCode");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorInstanceId");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeBadResponse");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalResponseError");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalRequestError");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalError");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorDetails");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorUseStatusCodeAsFaultCode");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorGenerateHttpHeaderGovWayCode");
+	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreById");
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreById");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaDelegata");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaDelegata");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaApplicativa");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaApplicativa");
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaAccessoRegistroServizi");

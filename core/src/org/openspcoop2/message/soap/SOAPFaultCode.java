@@ -24,6 +24,7 @@ import java.io.Serializable;
 
 import javax.xml.namespace.QName;
 
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -60,13 +61,13 @@ public enum SOAPFaultCode implements Serializable {
 		case MustUnderstand: 
 			return "MustUnderstand";
 		case Receiver: 
-			return messageType.equals(MessageType.SOAP_11) ? "Server" : "Receiver";
+			return messageType.equals(MessageType.SOAP_11) ? Costanti.SOAP11_FAULT_CODE_SERVER : Costanti.SOAP12_FAULT_CODE_SERVER;
 		case Sender: 
-			return messageType.equals(MessageType.SOAP_11) ? "Client" : "Sender";
+			return messageType.equals(MessageType.SOAP_11) ? Costanti.SOAP11_FAULT_CODE_CLIENT : Costanti.SOAP12_FAULT_CODE_CLIENT;
 		case VersionMismatch: 
 			return "VersionMismatch";
 		default:
-			return messageType.equals(MessageType.SOAP_11) ? "Server" : "Receiver";
+			return messageType.equals(MessageType.SOAP_11) ? Costanti.SOAP11_FAULT_CODE_SERVER : Costanti.SOAP12_FAULT_CODE_SERVER;
 		}
 	}
 }

@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.manifest.SoapMediaTypeMapping;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeCollection;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping;
+import org.openspcoop2.protocol.manifest.IntegrationErrorCode;
 import org.openspcoop2.protocol.manifest.Integration;
 import org.openspcoop2.protocol.manifest.RestConfiguration;
 import org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration;
@@ -838,6 +839,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public SoapMediaTypeUndefinedMapping readSoapMediaTypeUndefinedMappingFromString(String in) throws DeserializerException {
 		return (SoapMediaTypeUndefinedMapping) this.xmlToObj(in.getBytes(), SoapMediaTypeUndefinedMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: IntegrationErrorCode
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCode readIntegrationErrorCode(String fileName) throws DeserializerException {
+		return (IntegrationErrorCode) this.xmlToObj(fileName, IntegrationErrorCode.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCode readIntegrationErrorCode(File file) throws DeserializerException {
+		return (IntegrationErrorCode) this.xmlToObj(file, IntegrationErrorCode.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCode readIntegrationErrorCode(InputStream in) throws DeserializerException {
+		return (IntegrationErrorCode) this.xmlToObj(in, IntegrationErrorCode.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCode readIntegrationErrorCode(byte[] in) throws DeserializerException {
+		return (IntegrationErrorCode) this.xmlToObj(in, IntegrationErrorCode.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCode readIntegrationErrorCodeFromString(String in) throws DeserializerException {
+		return (IntegrationErrorCode) this.xmlToObj(in.getBytes(), IntegrationErrorCode.class);
 	}	
 	
 	

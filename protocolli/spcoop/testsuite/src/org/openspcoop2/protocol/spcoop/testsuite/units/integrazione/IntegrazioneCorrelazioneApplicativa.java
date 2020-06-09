@@ -39,6 +39,7 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -47,6 +48,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
@@ -58,7 +60,9 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -74,10 +78,19 @@ import org.w3c.dom.Document;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class IntegrazioneCorrelazioneApplicativa {
+public class IntegrazioneCorrelazioneApplicativa extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "IntegrazioneCorrelazioneApplicativa";
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected IntegrazioneCorrelazioneApplicativa() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
@@ -365,8 +378,34 @@ public class IntegrazioneCorrelazioneApplicativa {
 	 * Test Correlazione Applicativa Url Based, input mancanti
 	 */
 	Repository repositorySincronoCorrelazioneApplicativaUrlBasedDatiMancanti=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaUrlBasedDatiMancanti() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaUrlBasedDatiMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaUrlBasedDatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaUrlBasedDatiMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaUrlBasedDatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaUrlBasedDatiMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -396,10 +435,22 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
 				String msgVerifica="identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione urlBased (Pattern:.+correlazioneApplicativa=([^&]*).*): nessun match trovato";
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgVerifica = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgVerifica+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgVerifica));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -434,8 +485,19 @@ public class IntegrazioneCorrelazioneApplicativa {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaUrlBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaUrlBasedDatiMancanti"})
-	public void testSincronoCorrelazioneApplicativaUrlBasedDatiMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaUrlBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaUrlBasedDatiMancanti_genericCode"})
+	public void testSincronoCorrelazioneApplicativaUrlBasedDatiMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaUrlBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaUrlBasedDatiMancanti_specificCode"})
+	public void testSincronoCorrelazioneApplicativaUrlBasedDatiMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -862,8 +924,34 @@ public class IntegrazioneCorrelazioneApplicativa {
 	 * Test Correlazione Applicativa Content Based, input mancanti
 	 */
 	Repository repositorySincronoCorrelazioneApplicativaContentBasedDatiMancanti=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedDatiMancanti() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaContentBasedDatiMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaContentBasedDatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaContentBasedDatiMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaContentBasedDatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaContentBasedDatiMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -893,15 +981,29 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
-								   
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
 				String msgCheck = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): org.openspcoop2.utils.xml.XPathNotFoundException: Espressione XPATH non applicabile al messaggio: javax.xml.transform.TransformerException: Prefix must resolve to a namespace: test";
 				String msgCheck2 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): org.openspcoop2.utils.xml.XPathNotFoundException: Espressione XPATH non applicabile al messaggio: javax.xml.xpath.XPathExpressionException: org.apache.xpath.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test";
 				String msgCheck3 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): org.openspcoop2.utils.xml.XPathNotFoundException: Espressione XPATH non applicabile al messaggio: org.apache.xpath.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test"; 
 				String msgCheck4 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): org.openspcoop2.utils.xml.XPathNotFoundException: Espressione XPATH non applicabile al messaggio: com.sun.org.apache.xpath.internal.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test";
-				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgCheck = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						msgCheck2 = msgCheck;
+						msgCheck3 = msgCheck;
+						msgCheck4 = msgCheck;
+					}
+				}
+								
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+								   
 				Reporter.log("Controllo fault string 1["+msgCheck+"]");
 				Reporter.log("Controllo fault string 2["+msgCheck2+"]");
 				Reporter.log("Controllo fault string 3["+msgCheck3+"]");
@@ -962,8 +1064,19 @@ public class IntegrazioneCorrelazioneApplicativa {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaContentBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaContentBasedDatiMancanti"})
-	public void testSincronoCorrelazioneApplicativaContentBasedDatiMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaContentBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaContentBasedDatiMancanti_genericCode"})
+	public void testSincronoCorrelazioneApplicativaContentBasedDatiMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaContentBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaContentBasedDatiMancanti_specificCode"})
+	public void testSincronoCorrelazioneApplicativaContentBasedDatiMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -1786,7 +1899,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	 * Test Correlazione Applicativa Content Based con concat_openspcoop
 	 */
 		
-	private String runClientCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione(String idUnivoco) throws Exception{
+	private String runClientCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione(String idUnivoco, boolean genericCode) throws Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -1817,10 +1930,22 @@ public class IntegrazioneCorrelazioneApplicativa {
 			try {
 				client.run();
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
 				String msgErrore = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"BEGIN-ID_\",//test:idApplicativo/text(),\"_END-ID\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -1845,16 +1970,41 @@ public class IntegrazioneCorrelazioneApplicativa {
 	
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcatOpenSPCoop_erroreIdentificazione=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione() throws TestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcatOpenSPCoop_erroreIdentificazione.add(idUnivoco);
 		
-		runClientCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione(idUnivoco);
+		runClientCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione(idUnivoco, genericCode);
 		
 		Date dataFineTest = DateManager.getDate();
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
@@ -2981,8 +3131,34 @@ public class IntegrazioneCorrelazioneApplicativa {
 	 * Test Correlazione Applicativa Input Based, input mancanti
 	 */
 	Repository repositorySincronoCorrelazioneApplicativaInputBasedDatiMancanti=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedDatiMancanti() throws TestSuiteException, IOException, Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaInputBasedDatiMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaInputBasedDatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaInputBasedDatiMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaInputBasedDatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaInputBasedDatiMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3012,10 +3188,22 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
 				String msgErrore = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa per l'elemento [*] con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione";
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -3050,8 +3238,19 @@ public class IntegrazioneCorrelazioneApplicativa {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaInputBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaInputBasedDatiMancanti"})
-	public void testSincronoCorrelazioneApplicativaInputBasedDatiMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaInputBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaInputBasedDatiMancanti_genericCode"})
+	public void testSincronoCorrelazioneApplicativaInputBasedDatiMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaInputBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaInputBasedDatiMancanti_specificCode"})
+	public void testSincronoCorrelazioneApplicativaInputBasedDatiMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -3405,7 +3604,31 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_1"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso1"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti() throws TestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_1"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
+			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso1"})
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3439,10 +3662,22 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
 				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [testNome1] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME1_\",//test:idApplicativo/text(),\"_NOME1\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -3478,8 +3713,20 @@ public class IntegrazioneCorrelazioneApplicativa {
 		};
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_1"},
-			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti"})
-	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti_genericCode"})
+	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_1"},
+			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti_specificCode"})
+	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -4079,7 +4326,31 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_4"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso4"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti() throws TestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_4"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
+			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso4"})
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4113,10 +4384,22 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
 				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [test:testNome4] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOMEXPATH1_\",//test:idApplicativo/text(),\"_NOMEXPATH1\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -4152,8 +4435,20 @@ public class IntegrazioneCorrelazioneApplicativa {
 		};
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_4"},
-			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti"})
-	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti_genericCode"})
+	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_4"},
+			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti_specificCode"})
+	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -4310,7 +4605,31 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_5"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso5"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti() throws TestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_5"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
+			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso5"})
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 	
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4344,10 +4663,22 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
 				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [testNome5] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME5_\",//test:idApplicativo/text(),\"_NOME5\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -4383,8 +4714,20 @@ public class IntegrazioneCorrelazioneApplicativa {
 		};
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_5"},
-			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti"})
-	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti_genericCode"})
+	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_5"},
+			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti_specificCode"})
+	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -4542,7 +4885,31 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_6"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso6"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti() throws TestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_6"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
+			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso6"})
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti(boolean genericCode) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4576,10 +4943,22 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
 				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"ALL_\",//test:idApplicativo/text(),\"_ALL\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
@@ -4615,8 +4994,20 @@ public class IntegrazioneCorrelazioneApplicativa {
 		};
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_6"},
-			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti"})
-	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti_genericCode"})
+	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_6"},
+			dataProvider="SincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti_specificCode"})
+	public void testSincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
@@ -4831,9 +5222,50 @@ public class IntegrazioneCorrelazioneApplicativa {
 	 * Test Correlazione Applicativa Content Based, input mancanti lato PortaApplicativa
 	 */
 	Repository repositorySincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa=new Repository();
-	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI_PA"},
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI_PA"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa() throws TestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI_PA"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_genericCode_nowrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI_PA"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4874,9 +5306,29 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 				throw new Exception("Errore atteso [] non si e' verificato...");
 			} catch (AxisFault error) {
+				
+				String codiceEccezione = "EGOV_IT_300";
+				String msgErrore = null;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [EGOV_IT_300]");
-				Assert.assertTrue("EGOV_IT_300".equals(error.getFaultCode().getLocalPart()));
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(error.getFaultString().contains(msgErrore));
+				}
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
@@ -4918,8 +5370,24 @@ public class IntegrazioneCorrelazioneApplicativa {
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI_PA"},
 			dataProvider="SincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa",
-			dependsOnMethods={"sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa"})
-	public void testSincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+			dependsOnMethods={"sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_genericCode_wrap"})
+	public void testSincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_genericCode_wrap(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		this._testSincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(data, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI_PA"},
+			dataProvider="SincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa",
+			dependsOnMethods={"sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_genericCode_nowrap"})
+	public void testSincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_genericCode_nowrap(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		this._testSincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(data, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI_PA"},
+			dataProvider="SincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa",
+			dependsOnMethods={"sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_specificCode"})
+	public void testSincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		this._testSincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(data, id, checkServizioApplicativo);
+	}
+	
+	private void _testSincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));

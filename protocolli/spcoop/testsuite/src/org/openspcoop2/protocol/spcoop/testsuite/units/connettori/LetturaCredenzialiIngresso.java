@@ -23,6 +23,7 @@
 package org.openspcoop2.protocol.spcoop.testsuite.units.connettori;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -34,6 +35,7 @@ import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiTest;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
@@ -43,6 +45,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
@@ -51,7 +54,9 @@ import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -69,10 +74,18 @@ import org.w3c.dom.NodeList;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class LetturaCredenzialiIngresso {
+public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "LetturaCredenzialiIngresso";
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected LetturaCredenzialiIngresso() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
@@ -129,8 +142,8 @@ public class LetturaCredenzialiIngresso {
 	private final static String MSG_COMPRENSIONE_FALLITO_IM_SSL_CREDENZIALI_NON_CORRETTE = "(Autenticazione ssl) non ha identificato alcun servizio applicativo";	
 	private final static String MSG_COMPRENSIONE_FALLITO_IM_SSL_CREDENZIALI_NON_FORNITE = "(Autenticazione ssl) Autenticazione fallita, credenziali non fornite";	
 	
-	private boolean checkFaultCode(CodiceErroreIntegrazione faultCodeIntegrazione,Element[] faults) throws ProtocolException{
-		String faultCode = Utilities.toString(faultCodeIntegrazione);
+	private boolean checkFaultCode(String faultCode,Element[] faults) throws ProtocolException{
+		Reporter.log("check...["+faults.length+"]");
 		for(int i=0; i<faults.length; i++){
 			Reporter.log("Ricevuto details ["+faults[i].getLocalName()+"] ["+faults[i].getNamespaceURI()+"]");
 			if("IntegrationManagerException".equals(faults[i].getLocalName()) && "http://services.pdd.openspcoop2.org".equals(faults[i].getNamespaceURI())){
@@ -141,6 +154,7 @@ public class LetturaCredenzialiIngresso {
 						if("codiceEccezione".equals(f.getLocalName())){
 							String codice = f.getTextContent();
 							//System.out.println("CODE ["+codice+"]");
+							Reporter.log("Trovato codice eccezione ["+codice+"]");
 							if(codice.equals(faultCode)){
 								return true;
 							}
@@ -1064,7 +1078,31 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeERRORE_CONFIGURAZIONE_PD=new Repository();
 	Date dataLetturaCredenzialeERRORE_CONFIGURAZIONE_PD = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_CONFIGURAZIONE_PD"})
-	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_CONFIGURAZIONE_PD"})
+	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD(boolean genericCode) throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1100,14 +1138,260 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR);
+				String msgErrore = CostantiErroriIntegrazione.MSG_431_GESTORE_CREDENZIALI_ERROR.replace(CostantiErroriIntegrazione.MSG_431_TIPO_GESTORE_CREDENZIALI_KEY, "testOpenSPCoop2");
+				msgErrore = msgErrore+ "Eccezione, di configurazione, richiesta dalla testsuite";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR).equals(error.getFaultCode().getLocalPart()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+				Reporter.log("Controllo fault string ["+msgErrore+"]");
+				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+
+		Date dataFineTest = DateManager.getDate();
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore("Errore durante l'identificazione delle credenziali [testOpenSPCoop2]: Eccezione, di configurazione, richiesta dalla testsuite");
+		this.erroriAttesiOpenSPCoopCore.add(err);
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Test Errore Proxy Credentials Not Found
+	 **/
+	Repository repositoryLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD=new Repository();
+	Date dataLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD = null;
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_NOT_FOUND_PD"})
+	public void testLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_NOT_FOUND_PD"})
+	public void testLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD(boolean genericCode) throws TestSuiteException, Exception{
+
+		Date dataInizioTest = DateManager.getDate();
+		
+		this.dataLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD = new Date();
+		
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+		
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeNOT_FOUND_CONFIGURAZIONE_PD);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
+			client.connectToSoapEngine();
+			client.setAutenticazione("adminSilX", "123456");
+			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "username");
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+	
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+				throw new Exception("Atteso errore");
+				
+			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR);
+				String msgErrore = CostantiErroriIntegrazione.MSG_431_GESTORE_CREDENZIALI_ERROR.replace(CostantiErroriIntegrazione.MSG_431_TIPO_GESTORE_CREDENZIALI_KEY, "testOpenSPCoop2");
+				msgErrore = msgErrore+ "Password value non fornito";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+				Reporter.log("Controllo fault string ["+msgErrore+"]");
+				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+
+		Date dataFineTest = DateManager.getDate();
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore("Errore durante l'identificazione delle credenziali [testOpenSPCoop2]: Eccezione, di configurazione, richiesta dalla testsuite");
+		this.erroriAttesiOpenSPCoopCore.add(err);
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Test Errore Forward
+	 **/
+	Repository repositoryLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD=new Repository();
+	Date dataLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD = null;
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_FORWARD_PD"})
+	public void testLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_FORWARD_PD"})
+	public void testLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD(boolean genericCode) throws TestSuiteException, Exception{
+
+		Date dataInizioTest = DateManager.getDate();
+		
+		this.dataLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD = new Date();
+		
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+		
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeFORWARD_CONFIGURAZIONE_PD);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
+			client.connectToSoapEngine();
+			client.setAutenticazione("adminSilX", "123456");
+			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_FORWARD, "errore");
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+	
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+				throw new Exception("Atteso errore");
+				
+			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR);
 				String msgErrore = CostantiErroriIntegrazione.MSG_431_GESTORE_CREDENZIALI_ERROR.replace(CostantiErroriIntegrazione.MSG_431_TIPO_GESTORE_CREDENZIALI_KEY, "testOpenSPCoop2");
 				msgErrore = msgErrore+ "Eccezione, di configurazione, richiesta dalla testsuite";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				
@@ -1141,17 +1425,49 @@ public class LetturaCredenzialiIngresso {
 	
 	
 	
-	
-	
-	
-	
 	/**
 	 * Test Errore Generico
 	 **/
 	Repository repositoryLetturaCredenzialeERRORE_GENERALE_PD=new Repository();
 	Date dataLetturaCredenzialeERRORE_GENERALE_PD = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_PD"})
-	public void testLetturaCredenzialeERRORE_GENERALE_PD() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeERRORE_GENERALE_PD_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeERRORE_GENERALE_PD(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_PD"})
+	public void testLetturaCredenzialeERRORE_GENERALE_PD_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeERRORE_GENERALE_PD(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_PD"})
+	public void testLetturaCredenzialeERRORE_GENERALE_PD_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeERRORE_GENERALE_PD(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeERRORE_GENERALE_PD(boolean genericCode, boolean unwrap) throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1187,13 +1503,28 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String msgErrore = CostantiErroriIntegrazione.MSG_5XX_SISTEMA_NON_DISPONIBILE;
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO);
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO).equals(error.getFaultCode().getLocalPart()));
-				
-				String msgErrore = CostantiErroriIntegrazione.MSG_5XX_SISTEMA_NON_DISPONIBILE;
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				
@@ -2255,7 +2586,30 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_IM"})
-	public void testLetturaCredenzialeNONEtoBASIC_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoBASIC_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_IM"})
+	public void testLetturaCredenzialeNONEtoBASIC_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoBASIC_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _testLetturaCredenzialeNONEtoBASIC_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_IM = new Date();
 		
@@ -2305,11 +2659,30 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
 				
 			}finally{
 				dbComponentErogatore.close();
@@ -2340,8 +2713,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_IM"},
 			dataProvider="providerLetturaCredenzialeNONEtoBASIC_IM",
-			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_IM"})
-	public void verificaDBLetturaCredenzialeNONEtoBASIC_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeNONEtoBASIC_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeNONEtoBASIC_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_IM"},
+			dataProvider="providerLetturaCredenzialeNONEtoBASIC_IM",
+			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeNONEtoBASIC_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeNONEtoBASIC_IM(dataMsg, id);
+	}
+	private void _verificaDBLetturaCredenzialeNONEtoBASIC_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_BASIC.replace("@ID1@", "IdentitaInesistenteY");
@@ -2381,7 +2763,31 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoSSL_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoSSL_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoSSL_IM"})
-	public void testLetturaCredenzialeNONEtoSSL_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoSSL_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoSSL_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoSSL_IM"})
+	public void testLetturaCredenzialeNONEtoSSL_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoSSL_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeNONEtoSSL_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoSSL_IM = new Date();
 		
@@ -2430,12 +2836,31 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
-				
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
+								
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -2465,8 +2890,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoSSL_IM"},
 			dataProvider="providerLetturaCredenzialeNONEtoSSL_IM",
-			dependsOnMethods={"testLetturaCredenzialeNONEtoSSL_IM"})
-	public void verificaDBLetturaCredenzialeNONEtoSSL_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeNONEtoSSL_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeNONEtoSSL_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeNONEtoSSL_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoSSL_IM"},
+			dataProvider="providerLetturaCredenzialeNONEtoSSL_IM",
+			dependsOnMethods={"testLetturaCredenzialeNONEtoSSL_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeNONEtoSSL_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeNONEtoSSL_IM(dataMsg, id);
+	}
+	private void _verificaDBLetturaCredenzialeNONEtoSSL_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_SSL.replace("@ID1@", "CN=IdentitaInesistente");
@@ -2507,7 +2941,31 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeBASICtoBASIC_IM=new Repository();
 	Date dataLetturaCredenzialeBASICtoBASIC_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoBASIC_IM"})
-	public void testLetturaCredenzialeBASICtoBASIC_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeBASICtoBASIC_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeBASICtoBASIC_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoBASIC_IM"})
+	public void testLetturaCredenzialeBASICtoBASIC_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeBASICtoBASIC_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeBASICtoBASIC_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeBASICtoBASIC_IM = new Date();
 		
@@ -2558,12 +3016,31 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
-				
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
+								
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -2593,8 +3070,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoBASIC_IM"},
 			dataProvider="providerLetturaCredenzialeBASICtoBASIC_IM",
-			dependsOnMethods={"testLetturaCredenzialeBASICtoBASIC_IM"})
-	public void verificaDBLetturaCredenzialeBASICtoBASIC_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeBASICtoBASIC_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeBASICtoBASIC_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeBASICtoBASIC_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoBASIC_IM"},
+			dataProvider="providerLetturaCredenzialeBASICtoBASIC_IM",
+			dependsOnMethods={"testLetturaCredenzialeBASICtoBASIC_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeBASICtoBASIC_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeBASICtoBASIC_IM(dataMsg, id);
+	}
+	private void _verificaDBLetturaCredenzialeBASICtoBASIC_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_BASIC.replace("@ID1@", "IdentitaInesistenteY");
@@ -2635,7 +3121,31 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeBASICtoSSL_IM=new Repository();
 	Date dataLetturaCredenzialeBASICtoSSL_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoSSL_IM"})
-	public void testLetturaCredenzialeBASICtoSSL_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeBASICtoSSL_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeBASICtoSSL_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoSSL_IM"})
+	public void testLetturaCredenzialeBASICtoSSL_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeBASICtoSSL_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeBASICtoSSL_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeBASICtoSSL_IM = new Date();
 		
@@ -2685,11 +3195,30 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
 				
 			}finally{
 				dbComponentErogatore.close();
@@ -2720,8 +3249,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoSSL_IM"},
 			dataProvider="providerLetturaCredenzialeBASICtoSSL_IM",
-			dependsOnMethods={"testLetturaCredenzialeBASICtoSSL_IM"})
-	public void verificaDBLetturaCredenzialeBASICtoSSL_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeBASICtoSSL_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeBASICtoSSL_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeBASICtoSSL_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoSSL_IM"},
+			dataProvider="providerLetturaCredenzialeBASICtoSSL_IM",
+			dependsOnMethods={"testLetturaCredenzialeBASICtoSSL_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeBASICtoSSL_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeBASICtoSSL_IM(dataMsg, id);
+	}
+	private void _verificaDBLetturaCredenzialeBASICtoSSL_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_SSL.replace("@ID1@", "CN=IdentitaInesistente");
@@ -2764,7 +3302,30 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeSSLtoBASIC_IM=new Repository();
 	Date dataLetturaCredenzialeSSLtoBASIC_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoBASIC_IM"})
-	public void testLetturaCredenzialeSSLtoBASIC_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeSSLtoBASIC_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeSSLtoBASIC_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoBASIC_IM"})
+	public void testLetturaCredenzialeSSLtoBASIC_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeSSLtoBASIC_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _testLetturaCredenzialeSSLtoBASIC_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeSSLtoBASIC_IM = new Date();
 		
@@ -2824,11 +3385,30 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
 				
 			}finally{
 				dbComponentFruitore.close();
@@ -2859,8 +3439,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoBASIC_IM"},
 			dataProvider="providerLetturaCredenzialeSSLtoBASIC_IM",
-			dependsOnMethods={"testLetturaCredenzialeSSLtoBASIC_IM"})
-	public void verificaDBLetturaCredenzialeSSLtoBASIC_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeSSLtoBASIC_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeSSLtoBASIC_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		verificaDBLetturaCredenzialeSSLtoBASIC_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoBASIC_IM"},
+			dataProvider="providerLetturaCredenzialeSSLtoBASIC_IM",
+			dependsOnMethods={"testLetturaCredenzialeSSLtoBASIC_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeSSLtoBASIC_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		verificaDBLetturaCredenzialeSSLtoBASIC_IM(dataMsg, id);
+	}
+	private void verificaDBLetturaCredenzialeSSLtoBASIC_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_BASIC.replace("@ID1@", "IdentitaInesistenteY");
@@ -2901,7 +3490,31 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeSSLtoSSL_IM=new Repository();
 	Date dataLetturaCredenzialeSSLtoSSL_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoSSL_IM"})
-	public void testLetturaCredenzialeSSLtoSSL_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeSSLtoSSL_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeSSLtoSSL_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoSSL_IM"})
+	public void testLetturaCredenzialeSSLtoSSL_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeSSLtoSSL_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeSSLtoSSL_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeSSLtoSSL_IM = new Date();
 		
@@ -2960,11 +3573,30 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
 				
 			}finally{
 				dbComponentFruitore.close();
@@ -2995,8 +3627,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoSSL_IM"},
 			dataProvider="providerLetturaCredenzialeSSLtoSSL_IM",
-			dependsOnMethods={"testLetturaCredenzialeSSLtoSSL_IM"})
-	public void verificaDBLetturaCredenzialeSSLtoSSL_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeSSLtoSSL_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeSSLtoSSL_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeSSLtoSSL_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoSSL_IM"},
+			dataProvider="providerLetturaCredenzialeSSLtoSSL_IM",
+			dependsOnMethods={"testLetturaCredenzialeSSLtoSSL_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeSSLtoSSL_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeSSLtoSSL_IM(dataMsg, id);
+	}
+	private void _verificaDBLetturaCredenzialeSSLtoSSL_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_SSL.replace("@ID1@", "CN=IdentitaInesistente");
@@ -3042,7 +3683,30 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeErroreConfigurazione_IM=new Repository();
 	Date dataLetturaCredenzialeErroreConfigurazione_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_CONFIGURAZIONE_IM"})
-	public void testLetturaCredenzialeErroreConfigurazione_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeErroreConfigurazione_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeErroreConfigurazione_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_CONFIGURAZIONE_IM"})
+	public void testLetturaCredenzialeErroreConfigurazione_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeErroreConfigurazione_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _testLetturaCredenzialeErroreConfigurazione_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3093,11 +3757,29 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR, faults));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
 				
 			}finally{
 				dbComponentFruitore.close();
@@ -3131,7 +3813,42 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeErroreGenerale_IM=new Repository();
 	Date dataLetturaCredenzialeErroreGenerale_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_IM"})
-	public void testLetturaCredenzialeErroreGenerale_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeErroreGenerale_IM_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeErroreGenerale_IM(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_IM"})
+	public void testLetturaCredenzialeErroreGenerale_IM_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeErroreGenerale_IM(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_IM"})
+	public void testLetturaCredenzialeErroreGenerale_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeErroreGenerale_IM(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _testLetturaCredenzialeErroreGenerale_IM(boolean genericCode, boolean unwrap) throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3182,10 +3899,26 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String msgErrore = CostantiErroriIntegrazione.MSG_5XX_SISTEMA_NON_DISPONIBILE;
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO);
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Utilities.verificaIntegrationManagerException(error, Utilities.testSuiteProperties.getIdentitaDefault_dominio(), "IntegrationManager", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO), 
-						CostantiErroriIntegrazione.MSG_5XX_SISTEMA_NON_DISPONIBILE, true);				
+						codiceErrore, 
+						msgErrore, true);				
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -3226,7 +3959,31 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationGetMessage_IM"})
-	public void testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationGetMessage_IM"})
+	public void testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM = new Date();
 		
@@ -3276,11 +4033,29 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
 				
 			}finally{
 				dbComponentErogatore.close();
@@ -3311,8 +4086,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationGetMessage_IM"},
 			dataProvider="providerLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM",
-			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM"})
-	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		verificaDBLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationGetMessage_IM"},
+			dataProvider="providerLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM",
+			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		verificaDBLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM(dataMsg, id);
+	}
+	private void verificaDBLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_BASIC.replace("@ID1@", "IdentitaInesistenteY");
@@ -3356,7 +4140,30 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteMessage_IM"})
-	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteMessage_IM"})
+	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM = new Date();
 		
@@ -3406,11 +4213,30 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
+
 				
 			}finally{
 				dbComponentErogatore.close();
@@ -3441,8 +4267,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteMessage_IM"},
 			dataProvider="providerLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM",
-			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM"})
-	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteMessage_IM"},
+			dataProvider="providerLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM",
+			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM(dataMsg, id);
+	}
+	private void _verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_BASIC.replace("@ID1@", "IdentitaInesistenteY");
@@ -3491,7 +4326,31 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM = null;
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteAllMessages_IM"})
-	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM() throws TestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteAllMessages_IM"})
+	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM(boolean genericCode) throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM = new Date();
 		
@@ -3541,11 +4400,29 @@ public class LetturaCredenzialiIngresso {
 				throw new Exception("Atteso errore");
 				
 			} catch (AxisFault error) {
+				
+				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				String msgErrore = null;
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
+					
 				Element [] faults = error.getFaultDetails();
 				Assert.assertTrue(faults!=null);
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(checkFaultCode(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA, faults));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(checkFaultCode(codiceErrore, faults));
 				
 			}finally{
 				dbComponentErogatore.close();
@@ -3576,8 +4453,17 @@ public class LetturaCredenzialiIngresso {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteAllMessages_IM"},
 			dataProvider="providerLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM",
-			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM"})
-	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM_genericCode"})
+	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM_genericCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM(dataMsg, id);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteAllMessages_IM"},
+			dataProvider="providerLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM",
+			dependsOnMethods={"testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM_specificCode"})
+	public void verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM_specificCode(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
+		_verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM(dataMsg, id);
+	}
+	private void _verificaDBLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM(DatabaseMsgDiagnosticiComponent dataMsg,String id) throws Exception{
 		try{
 
 			String msg1 = MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_BASIC.replace("@ID1@", "IdentitaInesistenteY");

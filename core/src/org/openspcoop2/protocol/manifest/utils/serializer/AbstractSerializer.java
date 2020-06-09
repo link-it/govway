@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.manifest.SoapMediaTypeMapping;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeCollection;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping;
+import org.openspcoop2.protocol.manifest.IntegrationErrorCode;
 import org.openspcoop2.protocol.manifest.Integration;
 import org.openspcoop2.protocol.manifest.RestConfiguration;
 import org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration;
@@ -1574,6 +1575,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(SoapMediaTypeUndefinedMapping soapMediaTypeUndefinedMapping,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(SoapMediaTypeUndefinedMapping.class, soapMediaTypeUndefinedMapping, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: IntegrationErrorCode
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>integrationErrorCode</var>
+	 * @param integrationErrorCode Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,IntegrationErrorCode integrationErrorCode) throws SerializerException {
+		this.objToXml(fileName, IntegrationErrorCode.class, integrationErrorCode, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>integrationErrorCode</var>
+	 * @param integrationErrorCode Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,IntegrationErrorCode integrationErrorCode,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, IntegrationErrorCode.class, integrationErrorCode, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param file Xml file to serialize the object <var>integrationErrorCode</var>
+	 * @param integrationErrorCode Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,IntegrationErrorCode integrationErrorCode) throws SerializerException {
+		this.objToXml(file, IntegrationErrorCode.class, integrationErrorCode, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param file Xml file to serialize the object <var>integrationErrorCode</var>
+	 * @param integrationErrorCode Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,IntegrationErrorCode integrationErrorCode,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, IntegrationErrorCode.class, integrationErrorCode, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param out OutputStream to serialize the object <var>integrationErrorCode</var>
+	 * @param integrationErrorCode Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,IntegrationErrorCode integrationErrorCode) throws SerializerException {
+		this.objToXml(out, IntegrationErrorCode.class, integrationErrorCode, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param out OutputStream to serialize the object <var>integrationErrorCode</var>
+	 * @param integrationErrorCode Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,IntegrationErrorCode integrationErrorCode,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, IntegrationErrorCode.class, integrationErrorCode, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param integrationErrorCode Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(IntegrationErrorCode integrationErrorCode) throws SerializerException {
+		return this.objToXml(IntegrationErrorCode.class, integrationErrorCode, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param integrationErrorCode Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(IntegrationErrorCode integrationErrorCode,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(IntegrationErrorCode.class, integrationErrorCode, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param integrationErrorCode Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(IntegrationErrorCode integrationErrorCode) throws SerializerException {
+		return this.objToXml(IntegrationErrorCode.class, integrationErrorCode, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>integrationErrorCode</var> of type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCode}
+	 * 
+	 * @param integrationErrorCode Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(IntegrationErrorCode integrationErrorCode,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(IntegrationErrorCode.class, integrationErrorCode, prettyPrint).toString();
 	}
 	
 	

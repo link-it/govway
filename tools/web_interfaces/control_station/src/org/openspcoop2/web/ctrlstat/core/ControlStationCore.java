@@ -1002,8 +1002,21 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = new Hashtable<String, String>();
@@ -1224,11 +1237,50 @@ public class ControlStationCore {
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump.get(alias);
 	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode.get(alias);
+	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.get(alias);
@@ -1892,8 +1944,21 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = core.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata;
@@ -2283,8 +2348,21 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jIntegrationManager(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jTracciamento(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jDump(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));

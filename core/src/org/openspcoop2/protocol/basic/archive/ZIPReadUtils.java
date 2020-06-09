@@ -2552,6 +2552,12 @@ public class ZIPReadUtils  {
 				IdentificativoDocumento identificativoDocumento = new IdentificativoDocumento();
 				identificativoDocumento.tipo = tmp.split(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR)[0]; 
 				identificativoDocumento.nome = tmp.substring(identificativoDocumento.tipo.length()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR.length());
+				// fix file editati a mano
+				identificativoDocumento.tipo = identificativoDocumento.tipo.trim();
+				identificativoDocumento.nome = identificativoDocumento.nome.trim();
+				if(identificativoDocumento.nome.endsWith("\n") && identificativoDocumento.nome.length()>1) {
+					identificativoDocumento.nome = identificativoDocumento.nome.substring(0, identificativoDocumento.nome.length()-1);
+				}
 				mapKeyDocumenti.put(keyDocumento, identificativoDocumento);
 			}
 			else if(nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT)){

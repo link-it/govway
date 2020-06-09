@@ -652,7 +652,14 @@ public class ProtocolFactoryManager {
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getAuthorization(),"authorization");
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getNotFound(),"notFound");
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getBadRequest(),"badRequest");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getInternalError(),"internalError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getConflict(),"conflict");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getLimitExceeded(),"limitExceeded");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getTooManyRequests(),"tooManyRequests");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getServiceUnavailable(),"serviceUnavailable");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getEndpointRequestTimedOut(),"endpointRequestTimedOut");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getBadResponse(),"badResponse");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getInternalRequestError(),"internalRequestError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getInternalResponseError(),"internalResponseError");
 				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal()==null){
 					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the configuration for external error handling");
 				}
@@ -664,7 +671,14 @@ public class ProtocolFactoryManager {
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getAuthorization(),"authorization");
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getNotFound(),"notFound");
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getBadRequest(),"badRequest");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getInternalError(),"internalError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getConflict(),"conflict");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getLimitExceeded(),"limitExceeded");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getTooManyRequests(),"tooManyRequests");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getServiceUnavailable(),"serviceUnavailable");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getEndpointRequestTimedOut(),"endpointRequestTimedOut");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getBadResponse(),"badResponse");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getInternalRequestError(),"internalRequestError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getInternalResponseError(),"internalResponseError");
 				
 				if(manifestOpenspcoop2.getBinding().getSoap().getMediaTypeCollection()==null){
 					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: media type collection undefined");
@@ -701,7 +715,14 @@ public class ProtocolFactoryManager {
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getAuthorization(),"authorization");
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getNotFound(),"notFound");
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getBadRequest(),"badRequest");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getInternalError(),"internalError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getConflict(),"conflict");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getLimitExceeded(),"limitExceeded");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getTooManyRequests(),"tooManyRequests");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getServiceUnavailable(),"serviceUnavailable");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getEndpointRequestTimedOut(),"endpointRequestTimedOut");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getBadResponse(),"badResponse");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getInternalRequestError(),"internalRequestError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getInternalResponseError(),"internalResponseError");
 				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal()==null){
 					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the configuration for external error handling");
 				}
@@ -713,7 +734,14 @@ public class ProtocolFactoryManager {
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getAuthorization(),"authorization");
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getNotFound(),"notFound");
 				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getBadRequest(),"badRequest");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getInternalError(),"internalError");		
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getConflict(),"conflict");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getLimitExceeded(),"limitExceeded");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getTooManyRequests(),"tooManyRequests");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getServiceUnavailable(),"serviceUnavailable");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getEndpointRequestTimedOut(),"endpointRequestTimedOut");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getBadResponse(),"badResponse");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getInternalRequestError(),"internalRequestError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getInternalResponseError(),"internalResponseError");	
 				
 				if(manifestOpenspcoop2.getBinding().getRest().getMediaTypeCollection()==null){
 					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: media type collection undefined");
@@ -997,14 +1025,20 @@ public class ProtocolFactoryManager {
 	
 	private void checkHttpReturnCode(DefaultIntegrationError ir,String function) throws ProtocolException {
 		if(ir!=null){
-			int httpReturnCode = ir.getHttpReturnCode();
-			this.checkHttpReturnCode(httpReturnCode, function);
+			int httpReturnCode = ir.getErrorCode().getHttp();
+			this.checkHttpReturnCode(httpReturnCode, function+".http");
+			
+			int govwayReturnCode = ir.getErrorCode().getGovway();
+			this.checkHttpReturnCode(govwayReturnCode, function+".govway");
 		}
 	}
 	private void checkHttpReturnCode(IntegrationError ir,String function) throws ProtocolException {
 		if(ir!=null){
-			int httpReturnCode = ir.getHttpReturnCode();
-			this.checkHttpReturnCode(httpReturnCode, function);
+			int httpReturnCode = ir.getErrorCode().getHttp();
+			this.checkHttpReturnCode(httpReturnCode, function+".http");
+			
+			int govwayReturnCode = ir.getErrorCode().getGovway();
+			this.checkHttpReturnCode(govwayReturnCode, function+".rfc7807");
 		}
 	}
 	private void checkHttpReturnCode(int httpReturnCode,String function) throws ProtocolException {
@@ -1015,7 +1049,7 @@ public class ProtocolFactoryManager {
 		if(httpReturnCode>=300 && httpReturnCode<400){
 			throw new ProtocolException(msgError);
 		}
-		if(httpReturnCode>600){
+		if(httpReturnCode>=600){
 			throw new ProtocolException(msgError);
 		}
 	}

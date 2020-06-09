@@ -297,6 +297,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			if(nomeParametroPostBack!=null && !"".equals(nomeParametroPostBack)){
 			
 				String nomeAttributo = null;
+				String nomeAttributo_2 = null;
 				String nomeMetodoJmx = null;
 				Object nuovoStato = null;
 				String tipo = null;
@@ -326,6 +327,53 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA));
 						tipo = "stato del dump binario della Porta Applicativa";
 					}
+					
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE));
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE+"'";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT));
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT+"'";
+					}
+					
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST));
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST+"'";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias);
+						nomeAttributo_2 = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE));
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE+"'";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR));
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR+"'";
+					}
+					
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS));
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS+"'";
+					}
+					
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID));
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID+"'";
+					}
+	
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE));
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE+"'";
+					}
+					
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD.equals(nomeParametroPostBack)){
 						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
 						if(CostantiConfigurazione.ABILITATO.getValue().equals(nuovoStato)){
@@ -362,6 +410,12 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 							nomeAttributo, 
 							nuovoStato);
+						if(nomeAttributo_2!=null) {
+							confCore.setJMXAttribute(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+									confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+									nomeAttributo_2, 
+									nuovoStato);
+						}
 						String tmp = "Configurazione aggiornata con successo ("+tipo+"): "+nuovoStato;
 						tmp += ConfigurazioneCostanti.TEMPORANEE;
 						if(messagePerOperazioneEffettuata!=null){

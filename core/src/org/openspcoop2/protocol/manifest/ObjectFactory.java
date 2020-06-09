@@ -220,6 +220,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IntegrationErrorCode }
+     */
+    public IntegrationErrorCode createIntegrationErrorCode() {
+        return new IntegrationErrorCode();
+    }
+
+    /**
      * Create an instance of {@link Protocol }
      */
     public Protocol createProtocol() {

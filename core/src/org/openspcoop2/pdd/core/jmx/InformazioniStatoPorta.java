@@ -42,6 +42,9 @@ public class InformazioniStatoPorta {
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
+			boolean errorSpecificTypeProcessRequest, boolean errorSpecificTypeProcessResponse, boolean errorSpecificTypeInternalError,
+			boolean errorStatus, boolean errorStatusInSoapFaultCode,
+			boolean errorSpecificDetails, boolean errorInstanceId, boolean errorGenerateHttpErrorCodeInSoap,
 			String infoDatabase, Map<String, String> infoConnessioneAltriDB,
 			String infoSSL, String infoCryptographyKeyLength, 
 			String infoCharset, String infoInternazionalizzazione, String infoTimeZone,  
@@ -57,6 +60,9 @@ public class InformazioniStatoPorta {
 				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
 				tracciamento, dumpPD, dumpPA,
 				log4j_tracciamento, log4j_dump,
+				errorSpecificTypeProcessRequest, errorSpecificTypeProcessResponse, errorSpecificTypeInternalError,
+				errorStatus, errorStatusInSoapFaultCode,
+				errorSpecificDetails, errorInstanceId, errorGenerateHttpErrorCodeInSoap,
 				infoDatabase, infoConnessioneAltriDB,
 				infoSSL, infoCryptographyKeyLength, 
 				infoCharset, infoInternazionalizzazione, infoTimeZone,
@@ -80,6 +86,9 @@ public class InformazioniStatoPorta {
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpPD, boolean dumpPA, 
 			boolean log4j_tracciamento, boolean log4j_dump,
+			boolean errorSpecificTypeProcessRequest, boolean errorSpecificTypeProcessResponse, boolean errorSpecificTypeInternalError,
+			boolean errorStatus, boolean errorStatusInSoapFaultCode,
+			boolean errorSpecificDetails, boolean errorInstanceId, boolean errorGenerateHttpErrorCodeInSoap,
 			String infoDatabase, Map<String, String> infoConnessioneAltriDB, 
 			String infoSSL, String infoCryptographyKeyLength, 
 			String infoCharset, String infoInternazionalizzazione, String infoTimeZone, 
@@ -154,6 +163,20 @@ public class InformazioniStatoPorta {
 		format(bf, dumpPA ? "abilitato" : "disabilitato", "Dump Binario Porta Applicativa");
 		format(bf, log4j_tracciamento ? "abilitato" : "disabilitato", "Log4J govway_tracciamento.log");
 		format(bf, log4j_dump ? "abilitato" : "disabilitato", "Log4J openspcoop2_dump.log");
+		bf.append("\n");
+
+		bf.append("===========================\n");
+		bf.append("Errori generati dal Gateway\n");
+		bf.append("===========================\n");
+		bf.append("\n");
+		format(bf, errorSpecificTypeProcessRequest ? "abilitato" : "disabilitato", "GovWay-Transaction-ErrorType Gestione Richiesta");
+		format(bf, errorSpecificTypeProcessResponse ? "abilitato" : "disabilitato", "GovWay-Transaction-ErrorType Gestione Risposta");
+		format(bf, errorSpecificTypeInternalError ? "abilitato" : "disabilitato", "GovWay-Transaction-ErrorType Errore Interno");
+		format(bf, errorStatus ? "abilitato" : "disabilitato", "GovWay-Transaction-ErrorStatus Http/Problem");
+		format(bf, errorStatusInSoapFaultCode ? "abilitato" : "disabilitato", "GovWay-Transaction-ErrorStatus SOAP Fault Code");
+		format(bf, errorSpecificDetails ? "abilitato" : "disabilitato", "Dettaglio errore puntuale");
+		format(bf, errorInstanceId ? "abilitato" : "disabilitato", "Generazione claim 'instance' nei Problem");
+		format(bf, errorGenerateHttpErrorCodeInSoap ? "abilitato" : "disabilitato", "Http header 'GovWay-Transaction-ErrorCode' su protocollo SOAP");
 		bf.append("\n");
 		
 		bf.append("=============================\n");

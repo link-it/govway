@@ -22,6 +22,11 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.util.Map;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
+import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+
 /**
  * ErrorHandler
  *
@@ -31,10 +36,24 @@ import java.util.Map;
  */
 public class ErrorHandler {
 
-	private boolean error = false;
-	private ErrorMessage message = null;
-	private String detail = null;
+	public ErrorHandler() {} // per funzionalità dove la gestione dell'errore non serve
+	public ErrorHandler(AbstractErrorGenerator errorGenerator, IntegrationFunctionError functionErrorDefault, Context context) {
+		this.errorGenerator = errorGenerator;
+		this.functionErrorDefault = functionErrorDefault;
+		this.context = context;
+	}
+
+	private AbstractErrorGenerator errorGenerator;
+	private IntegrationFunctionError functionErrorDefault;
+	private Context context;
 	
+	private boolean error = false;
+	private String detail = null;
+	private ErrorMessage message = null;
+	private OpenSPCoop2Message op2Message = null;
+	private IntegrationFunctionError op2IntegrationFunctionError;
+	
+		
 	public String getDetail() {
 		return this.detail;
 	}
@@ -44,6 +63,12 @@ public class ErrorHandler {
 
 	public ErrorMessage getMessage() {
 		return this.message;
+	}
+	public OpenSPCoop2Message getOp2Message() {
+		return this.op2Message;
+	}
+	public IntegrationFunctionError getOp2IntegrationFunctionError() {
+		return this.op2IntegrationFunctionError;
 	}
 	
 	public void setMessage(String detail, int responseCode) {
@@ -85,6 +110,22 @@ public class ErrorHandler {
 		this._setMessage(detail, content, contentType, responseCode, headers);
 	}
 	
+	public void setError(String detail) throws DynamicException {
+		this.setError(detail, this.functionErrorDefault);
+	}
+	public void setError(String detail, String integrationFunctionError) throws DynamicException {
+		this.setError(detail, IntegrationFunctionError.valueOf(integrationFunctionError));
+	}
+	public void setError(String detail, IntegrationFunctionError integrationFunctionError) throws DynamicException {
+		if(this.errorGenerator==null) {
+			throw new DynamicException("Funzionalità non supportata");
+		}
+		this.detail = detail;
+		this.op2Message = this.errorGenerator.buildFault(detail, this.context, integrationFunctionError);
+		this.op2IntegrationFunctionError = integrationFunctionError;
+		this.error = true;
+	}
+	
 	private void _setMessage(String detail, byte[] content, String contentType, String responseCode, Map<String, String> headers) {	
 		ErrorMessage messageError = new ErrorMessage();
 		messageError.setContent(content);
@@ -104,4 +145,7 @@ public class ErrorHandler {
 		}
 	}
 	
+	
+	
+
 }

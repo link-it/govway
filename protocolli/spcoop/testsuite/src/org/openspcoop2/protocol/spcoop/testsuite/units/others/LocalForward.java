@@ -53,7 +53,9 @@ import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -71,11 +73,20 @@ import org.w3c.dom.NodeList;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class LocalForward {
+public class LocalForward extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "LocalForward";
 
+	
+	@SuppressWarnings("unused")
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected LocalForward() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
@@ -469,67 +480,75 @@ public class LocalForward {
 					"gop3","123456");
 		}
 
-		// Clean
-		if(use_axis14_engine){
-			try{
-				imSilGop1_axis14.deleteAllMessages();
-			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
-				Reporter.log("Pulizia repository SilGop1 MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+		try {
+			super.lockForCode(false, false);
+		
+		
+			// Clean
+			if(use_axis14_engine){
+				try{
+					imSilGop1_axis14.deleteAllMessages();
+				}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
+					Reporter.log("Pulizia repository SilGop1 MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
+					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				}
+				try{
+					imSilGop3_axis14.deleteAllMessages();
+				}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
+					Reporter.log("Pulizia repository SilGop3 MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
+					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				}
 			}
-			try{
-				imSilGop3_axis14.deleteAllMessages();
-			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
-				Reporter.log("Pulizia repository SilGop3 MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+			else if(use_cxf_engine){
+				try{
+					imSilGop1_cxf.deleteAllMessages();
+				}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
+					Reporter.log("Pulizia repository SilGop1 MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
+					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				}
+				try{
+					imSilGop3_cxf.deleteAllMessages();
+				}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
+					Reporter.log("Pulizia repository SilGop3 MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
+					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				}
 			}
-		}
-		else if(use_cxf_engine){
+	
+	
+			//		DatabaseComponent dbComponentFruitore = null;
+			//		DatabaseComponent dbComponentErogatore = null;
+	
 			try{
-				imSilGop1_cxf.deleteAllMessages();
-			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
-				Reporter.log("Pulizia repository SilGop1 MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				// Creazione client OneWay
+				ClientOneWay client=new ClientOneWay(this.repositoryONEWAY_INTEGRATION_MANAGER);
+				client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+				client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ONEWAY_INTEGRATION_MANAGER);
+				client.connectToSoapEngine();
+				client.setMessageFromFile(Utilities.testSuiteProperties.getLocalForwardFileName(), false,addIDUnivoco);
+	
+				// AttesaTerminazioneMessaggi
+				//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				//				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+				//				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+	
+				//				client.setAttesaTerminazioneMessaggi(true);
+				//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+				//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+				//			}
+				client.run();
+			}catch(Exception e){
+				throw e;
+			}finally{
+				//			try{
+				//				dbComponentFruitore.close();
+				//			}catch(Exception eClose){}
+				//			try{
+				//				dbComponentErogatore.close();
+				//			}catch(Exception eClose){}
 			}
-			try{
-				imSilGop3_cxf.deleteAllMessages();
-			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
-				Reporter.log("Pulizia repository SilGop3 MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
-			}
-		}
-
-
-		//		DatabaseComponent dbComponentFruitore = null;
-		//		DatabaseComponent dbComponentErogatore = null;
-
-		try{
-			// Creazione client OneWay
-			ClientOneWay client=new ClientOneWay(this.repositoryONEWAY_INTEGRATION_MANAGER);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ONEWAY_INTEGRATION_MANAGER);
-			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getLocalForwardFileName(), false,addIDUnivoco);
-
-			// AttesaTerminazioneMessaggi
-			//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-			//				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
-			//				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
-
-			//				client.setAttesaTerminazioneMessaggi(true);
-			//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-			//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
-			//			}
-			client.run();
-		}catch(Exception e){
-			throw e;
-		}finally{
-			//			try{
-			//				dbComponentFruitore.close();
-			//			}catch(Exception eClose){}
-			//			try{
-			//				dbComponentErogatore.close();
-			//			}catch(Exception eClose){}
+			
+		}finally {
+			super.unlockForCode(false);
 		}
 	}
 	@DataProvider (name="Provider_ONEWAY_INTEGRATION_MANAGER")
@@ -668,7 +687,8 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI);
@@ -715,6 +735,8 @@ public class LocalForward {
 			try{
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
+			
+			super.unlockForCode(false);
 		}
 	}
 
@@ -737,7 +759,8 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SINCRONO_STATEFUL);
@@ -785,6 +808,8 @@ public class LocalForward {
 			try{
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
+			
+			super.unlockForCode(false);
 		}
 	}
 
@@ -802,7 +827,8 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOGGETTO_NON_LOCALE);
@@ -862,6 +888,8 @@ public class LocalForward {
 			try{
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
+			
+			super.unlockForCode(false);
 		}
 	}
 
@@ -1038,7 +1066,8 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_DECRYPT_REQUEST);
@@ -1085,6 +1114,8 @@ public class LocalForward {
 			try{
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
+			
+			super.unlockForCode(false);
 		}
 	}
 
@@ -1426,6 +1457,7 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
+			super.lockForCode(false, false);
 
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -1473,6 +1505,8 @@ public class LocalForward {
 			try{
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
+			
+			super.unlockForCode(false);
 		}
 	}
 
@@ -1766,7 +1800,8 @@ public class LocalForward {
 		Date dataInizioTest = DateManager.getDate();
 
 		try{
-
+			super.lockForCode(false, false);
+			
 			Repository r = new Repository();
 
 			ClientHttpGenerico client=new ClientHttpGenerico(r);
@@ -1835,6 +1870,8 @@ public class LocalForward {
 			try{
 				msgDiag.close();
 			}catch(Exception eClose){}
+			
+			super.unlockForCode(false);
 		}
 
 

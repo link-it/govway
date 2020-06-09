@@ -147,7 +147,7 @@ public class ArchiveValidator {
 		}
 			
 		// Templates Names
-		ImporterInformationMissingSetter.replaceTemplatesNames(archive);
+		ImporterInformationMissingSetter.replaceTemplatesNames(archive, this.registryReader);
 	}
 	
 }

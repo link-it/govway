@@ -60,6 +60,7 @@ import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.RuoloContesto;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -217,7 +218,8 @@ public class ConfigurazionePdDManager {
 		this.configurazionePdDReader.verificaConsistenzaConfigurazione();
 	}
 
-	private void resolveDynamicValue(String oggetto, MessageSecurityConfig config, Logger log, OpenSPCoop2Message message, Busta busta, RequestInfo requestInfo, PdDContext pddContext) {
+	private void resolveDynamicValue(String oggetto, MessageSecurityConfig config, Logger log, OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext) {
 		if (config != null && config.getFlowParameters() != null && !config.getFlowParameters().isEmpty()) {
 			Enumeration<String> keys = config.getFlowParameters().keys();
 			ArrayList<String> valuesForReplace = new ArrayList<>();
@@ -395,6 +397,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getPortaDelegata_SafeMethod(this.getConnection(), idPD);		
 	}
 	
+	public void updateStatoPortaDelegata(IDPortaDelegata idPD, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		this.configurazionePdDReader.updateStatoPortaDelegata(this.getConnection(), idPD, stato);
+	}
+	
 	public Map<String, String> getProprietaConfigurazione(PortaDelegata pd) throws DriverConfigurazioneException {
 		return this.configurazionePdDReader.getProprietaConfigurazione(pd);
 	}
@@ -476,8 +482,8 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.ricevutaAsincronaAsimmetricaAbilitata(pd);
 	}
 
-	public ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(PortaDelegata pd,String implementazionePdDSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.getConnection(), pd, implementazionePdDSoggetto);
+	public ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(PortaDelegata pd,String implementazionePdDSoggetto, boolean request) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.getConnection(), pd, implementazionePdDSoggetto, request);
 	}
 
 	public CorrelazioneApplicativa getCorrelazioneApplicativa(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -601,6 +607,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getPortaApplicativa_SafeMethod(this.getConnection(), idPA);
 	}
 	
+	public void updateStatoPortaApplicativa(IDPortaApplicativa idPA, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		this.configurazionePdDReader.updateStatoPortaApplicativa(this.getConnection(), idPA, stato);
+	}
+	
 	public Map<String, String> getProprietaConfigurazione(PortaApplicativa pa) throws DriverConfigurazioneException {
 		return this.configurazionePdDReader.getProprietaConfigurazione(pa);
 	}
@@ -615,7 +625,7 @@ public class ConfigurazionePdDManager {
 
 	public String getAzione(PortaApplicativa pa,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
-			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 		return this.configurazionePdDReader.getAzione(this.registroServiziManager, pa, urlProtocolContext, 
 				message, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
 	}
@@ -694,8 +704,8 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.ricevutaAsincronaAsimmetricaAbilitata(pa);
 	}
 
-	public ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(PortaApplicativa pa,String implementazionePdDSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.getConnection(), pa, implementazionePdDSoggetto);
+	public ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(PortaApplicativa pa,String implementazionePdDSoggetto, boolean request) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.getConnection(), pa, implementazionePdDSoggetto, request);
 	}
 
 	public CorrelazioneApplicativa getCorrelazioneApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

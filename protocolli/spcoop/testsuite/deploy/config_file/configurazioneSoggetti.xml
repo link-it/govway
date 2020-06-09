@@ -553,6 +553,17 @@
             <soggetto-erogatore tipo="spc" nome="SoggettoConnettoreErratoConnectTimedOut" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
+
+        <!-- Connettore errato che provoca un ConnectReadTimedOut -->
+        <porta-delegata gestione-manifest="abilitato" nome="ConnettoreSAErratoConnectReadTimedOut"  autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testConnettoreConnectReadTimedOutApplicativo" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="ConnettorePdDErratoConnectReadTimedOut" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="SoggettoConnettoreErratoConnectReadTimedOut" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+        </porta-delegata>
         
         <!-- SOAPFault provocato dal servizio applicativo -->
         <porta-delegata gestione-manifest="abilitato" nome="testSOAPFaultApplicativoOneway" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
@@ -7698,6 +7709,16 @@
 	    </soggetti> 
         </porta-applicativa>
 
+	<!-- Connettore Errato ConnectReadTimedOut -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoConnectReadTimedOut">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testConnettoreConnectReadTimedOutApplicativo" />
+            <servizio-applicativo nome="ConnettoreErratoApplicativoConnectReadTimedOut" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
+        </porta-applicativa>
+
 	<!-- FaultErrati -->
         <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_FaultErrati_soapFaultSAConPrefixErrato" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
@@ -9176,6 +9197,17 @@
             <invocazione-servizio>
                 <connettore tipo="http" nome="ConnettoreErratoApplicativoConnectTimedOut">
                     <property nome="location" valore="http://127.0.2.2:7777/govwayTestSuite/qualsiasiContest"/>
+        	    <property nome="connectionTimeout" valore="100"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+
+        <!-- Connettore per ConnectReadTimedOut -->
+        <servizio-applicativo nome="ConnettoreErratoApplicativoConnectReadTimedOut" >
+            <invocazione-servizio>
+                <connettore tipo="http" nome="ConnettoreErratoApplicativoConnectReadTimedOut">
+                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/verificaReadTimeout"/>
+		    <property nome="readConnectionTimeout" valore="100"/>
                 </connettore>
             </invocazione-servizio>
         </servizio-applicativo>

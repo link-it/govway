@@ -1,13 +1,17 @@
 .. _codiciErroreSpecifici:
 
-Codici di Errore Specifici
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Attivazione di Codici di Errore Specifici
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Nella configurazione di default di GovWay, eventuali errori emersi durante la gestione di una richiesta, vengono segnalati al chiamante tramite uno dei codici di errore descritti nella sezione :ref:`gestioneErrori`. Questi codici rappresentano della categorie di errori che consentono al chiamante di decidere una eventuale schedulazione di un nuovo invio senza però fornirgli informazioni di dettaglio specifiche dell'errore avvenuto. Lo scopo è quello di evitare disclosure di informazioni riguardanti il domino interno.
+Nella configurazione di default di GovWay, gli errori restituiti ai
+client non contengono dettagli che possano causare disclosure di
+informazioni relative al dominio interno. In alcuni casi, per
+facilitare il supporto alla risoluzione di problemi, è comunque possibile
+abilitare la generazione di codici più specifici di errore ritornati
+al client nell'header http 'GovWay-Transaction-ErrorStatus'
+e nel claim 'govway_status' del :ref:`rfc7807`.
 
-Quanto premesso, in ambienti di collaudo o dove lo si ritiene opportuno per motivi di supporto alla risoluzione di problemi, è possibile abilitare la generazione di un codice specifico dell'errore che viene ritornato al client nell'header http 'GovWay-Transaction-ErrorStatus' e nel claim 'govway_status' del :ref:`rfc7807`.
-
-È possibile abilitare temporaneamente la generazione dei codici specifici accendendo alla voce 'Strumenti - Runtime' della console di gestione e abilitando 'Http Header / Problem Detail' nella sezione "Codici di errore 'GovWay-Transaction-ErrorStatus' (:numref:`govwayStatusSpecifici`)".
+È possibile abilitare temporaneamente la generazione dei codici specifici accendendo alla voce 'Strumenti - Runtime' della console di gestione e abilitando 'Http Header / Problem Detail' nella sezione "Codici di errore specifici 'GovWay-Transaction-ErrorStatus' (:numref:`govwayStatusSpecifici`)".
 
    .. figure:: ../_figure_console/govwayStatusSpecifici.png
     :scale: 50%
@@ -16,14 +20,13 @@ Quanto premesso, in ambienti di collaudo o dove lo si ritiene opportuno per moti
 
     Attivazione temporanea dei codici di errore specifici di GovWay
 
-Una abilitazione permanente è invece attuabile agendo sul file di proprietà esterno /etc/govway/govway_local.properties abilitando la seguente proprietà:
+L'abilitazione permanente è invece possibile abilitando la seguente proprietà sul file di proprietà esterno /etc/govway/govway_local.properties:
 
 	::
 
 		org.openspcoop2.pdd.errori.status=true
 
-
-Di seguito viene riportato un esempio di errore generato in seguito al rilevamento di una richiesta non conforme all'interfaccia API REST, dove è stato abilitata la generazione di un codice di errore specifico:
+Di seguito viene riportato un esempio di errore generato in seguito al rilevamento di una richiesta non conforme all'interfaccia API REST, dove è stata abilitata la generazione di un codice di errore specifico:
 
 ::
 
@@ -48,7 +51,7 @@ Di seguito viene riportato un esempio di errore generato in seguito al rilevamen
 
 Il codice di errore specifico può essere generato anche all'interno del SOAP Fault come 'Fault Code' al posto di quello di default generato da GovWay e descritto nella sezione :ref:`gestioneErrori`.
 
-È possibile abilitare temporaneamente la generazione all'interno del SOAP Fault Code accendendo alla voce 'Strumenti - Runtime' della console di gestione e abilitando 'SOAP Fault Code' nella sezione "Codici di errore 'GovWay-Transaction-ErrorStatus'" (:numref:`govwayStatusSpecificiSoapFault`).
+È possibile abilitare temporaneamente la generazione all'interno del SOAP Fault Code accendendo alla voce 'Strumenti - Runtime' della console di gestione e abilitando 'SOAP Fault Code' nella sezione "Codici di errore specifici 'GovWay-Transaction-ErrorStatus'" (:numref:`govwayStatusSpecificiSoapFault`).
 
    .. figure:: ../_figure_console/govwayStatusSpecificiSoapFault.png
     :scale: 50%
@@ -57,14 +60,14 @@ Il codice di errore specifico può essere generato anche all'interno del SOAP Fa
 
     Attivazione temporanea dei codici di errore specifici di GovWay come SOAP Fault Code
 
-Una abilitazione permanente è invece attuabile agendo sul file di proprietà esterno /etc/govway/govway_local.properties abilitando la seguente proprietà:
+L'abilitazione permanente è invece possibile abilitando la seguente proprietà sul file di proprietà esterno /etc/govway/govway_local.properties:
 
 	::
 
 		org.openspcoop2.pdd.errori.soap.useGovWayStatusAsFaultCode=true
 
 
-Di seguito viene riportato un esempio di errore generato in seguito al rilevamento di una richiesta non conforme all'interfaccia API SOAP, dove è stato abilitata sia la generazione di un codice di errore specifico che la generazione del SOAP Fault Code specifico:
+Di seguito viene riportato un esempio di errore generato in seguito al rilevamento di una richiesta non conforme all'interfaccia API SOAP, dove è stata abilitata sia la generazione di un codice di errore specifico che la generazione del SOAP Fault Code specifico:
 
 ::
 
@@ -100,8 +103,7 @@ Di seguito viene riportato un esempio di errore generato in seguito al rilevamen
     </SOAP-ENV:Envelope>
 
 
-Di seguito vengono riportate le casistiche di errore che possono
-avvenire sul Gateway, con i relativi codici.
+Di seguito vengono riportate le casistiche di errore che possono verificarsi sul Gateway, con i relativi codici.
 
 .. note::
     Alcuni degli errori riportati sono scaturiti da funzionalità

@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Classe che implementa una autenticazione BASIC.
@@ -84,7 +85,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
-			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali non fornite",user,password));
+			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali non fornite",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(realm!=null) {
@@ -104,7 +105,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita",e);
 			
-			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+			esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
@@ -113,7 +114,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		}
 		
 		if(idServizioApplicativo == null){
-			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali fornite non corrette",user,password));
+			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali fornite non corrette",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(realm!=null) {
@@ -122,7 +123,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			return esito;
 		}
 		else if(idServizioApplicativo.getIdSoggettoProprietario().equals(soggettoFruitore)==false) {
-			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("soggetto proprietario dell'applicativo identificato differente dal soggetto proprietario della porta invocata",user,password));
+			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("soggetto proprietario dell'applicativo identificato differente dal soggetto proprietario della porta invocata",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(realm!=null) {

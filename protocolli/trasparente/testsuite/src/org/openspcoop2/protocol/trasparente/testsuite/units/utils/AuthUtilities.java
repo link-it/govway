@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiConne
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
@@ -43,6 +44,7 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.CooperazioneTrasparen
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
@@ -50,8 +52,10 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.testsuite.units.utils.ErroreApplicativoUtilities;
+import org.openspcoop2.testsuite.units.utils.ExceptionCodeExpected;
 import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
 import org.openspcoop2.testsuite.units.utils.ProblemUtilities;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.testng.Assert;
 import org.testng.Reporter;
 
@@ -76,33 +80,33 @@ public class AuthUtilities {
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
 		testPortaDelegata(nomePorta,
 				credenzialiInvocazione, null, null,
 				addIDUnivoco,
-				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
 				null);
 	}
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,  
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
 		testPortaDelegata(nomePorta,
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery,
 				addIDUnivoco,
-				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
 				null);
 	}
 	
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
 			Integer readTimeout) throws Exception{
 		test(true, nomePorta, 
 				credenzialiInvocazione, null, null,
 				addIDUnivoco, 
-				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
 				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
 				returnCodeAtteso, false,
 				readTimeout);
@@ -110,12 +114,12 @@ public class AuthUtilities {
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
 			Integer readTimeout) throws Exception{
 		test(true, nomePorta, 
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery,
 				addIDUnivoco, 
-				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
 				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
 				returnCodeAtteso, false,
 				readTimeout);
@@ -124,33 +128,33 @@ public class AuthUtilities {
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
 		testPortaDelegata(nomePorta,
 				credenzialiInvocazione, null, null,
 				addIDUnivoco,
-				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
 				null);
 	}
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
 		testPortaDelegata(nomePorta,
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
 				addIDUnivoco,
-				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
 				null);
 	}
 	
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
 			Integer readTimeout) throws Exception{
 		test(true, nomePorta, 
 				credenzialiInvocazione, null, null, 
 				addIDUnivoco, 
-				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
 				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
 				returnCodeAtteso, checkOpenSPCoopDetail,
 				readTimeout);
@@ -158,12 +162,12 @@ public class AuthUtilities {
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione,  String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
 			Integer readTimeout) throws Exception{
 		test(true, nomePorta, 
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
 				addIDUnivoco, 
-				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
 				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
 				returnCodeAtteso, checkOpenSPCoopDetail,
 				readTimeout);
@@ -172,33 +176,33 @@ public class AuthUtilities {
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
 		testPortaApplicativa(nomePorta, soggettoFruitore,
 				credenzialiInvocazione, null, null,
 				addIDUnivoco,
-				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
 				null);
 	}
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione,  String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
 		testPortaApplicativa(nomePorta, soggettoFruitore,
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery,
 				addIDUnivoco,
-				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
 				null);
 	}
 	
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
 			Integer readTimeout) throws Exception{
 		test(false, nomePorta, 
 				credenzialiInvocazione, null, null,
 				addIDUnivoco, 
-				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
+				genericCode, integrationFunctionError, erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
 				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
 				returnCodeAtteso, false,
 				readTimeout);
@@ -206,12 +210,12 @@ public class AuthUtilities {
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione,  String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
 			Integer readTimeout) throws Exception{
 		test(false, nomePorta, 
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery,
 				addIDUnivoco, 
-				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
+				genericCode, integrationFunctionError, erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
 				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
 				returnCodeAtteso, false,
 				readTimeout);
@@ -220,33 +224,33 @@ public class AuthUtilities {
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
 		testPortaApplicativa(nomePorta, soggettoFruitore,
 				credenzialiInvocazione, null, null, 
 				addIDUnivoco,
-				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
 				null);
 	}
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
 		testPortaApplicativa(nomePorta, soggettoFruitore,
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
 				addIDUnivoco,
-				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
+				genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
 				null);
 	}
 	
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione, 
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
 			Integer readTimeout) throws Exception{
 		test(false, nomePorta, 
 				credenzialiInvocazione, null, null, 
 				addIDUnivoco, 
-				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
+				genericCode, integrationFunctionError, erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
 				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
 				returnCodeAtteso, checkOpenSPCoopDetail,
 				readTimeout);
@@ -254,12 +258,12 @@ public class AuthUtilities {
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
 			Integer readTimeout) throws Exception{
 		test(false, nomePorta, 
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
 				addIDUnivoco, 
-				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
+				genericCode, integrationFunctionError, erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
 				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
 				returnCodeAtteso, checkOpenSPCoopDetail,
 				readTimeout);
@@ -268,7 +272,67 @@ public class AuthUtilities {
 	private static void test(boolean portaDelegata, String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
 			boolean addIDUnivoco,
-			String erroreAtteso, CodiceErroreIntegrazione codiceErroreIntegrazione, CodiceErroreCooperazione codiceErroreCooperazone, boolean ricercaEsatta, Date dataInizioTest,
+			boolean genericCode, IntegrationFunctionError integrationFunctionError, String erroreAttesoParam, CodiceErroreIntegrazione codiceErroreIntegrazione, CodiceErroreCooperazione codiceErroreCooperazone, boolean ricercaEsatta, Date dataInizioTest,
+			IDSoggetto fruitore,IDSoggetto erogatore, int returnCodeAtteso, 
+			boolean checkOpenSPCoopDetail, // presente solamente in caso di errore di processamento
+			Integer readTimeout) throws Exception{
+		
+		ExceptionCodeExpected exceptionCodeExpected = null;
+		String erroreAtteso = erroreAttesoParam;
+		if(integrationFunctionError!=null) {
+		
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(LoggerWrapperFactory.getLogger(AuthUtilities.class));
+						
+			String codiceErrore = null;
+			int codiceErroreSpecificoNumerico = -1;
+			if(portaDelegata) {
+				codiceErrore = Utilities.toString(codiceErroreIntegrazione);
+				codiceErroreSpecificoNumerico = codiceErroreIntegrazione.getCodice();
+			}
+			else {
+				if(codiceErroreIntegrazione!=null) {
+					codiceErrore = Utilities.toString(codiceErroreIntegrazione);
+					codiceErroreSpecificoNumerico = codiceErroreIntegrazione.getCodice();
+				}
+				else {
+					codiceErrore = Utilities.toString(codiceErroreCooperazone);
+					codiceErroreSpecificoNumerico = codiceErroreCooperazone.getCodice();
+				}
+			}
+			
+			exceptionCodeExpected = new ExceptionCodeExpected();
+			exceptionCodeExpected.setGenericCode(genericCode);
+			exceptionCodeExpected.setIntegrationFunctionError(integrationFunctionError);
+			exceptionCodeExpected.setProtocolException(codiceErroreCooperazone!=null);
+			if(genericCode) {
+				exceptionCodeExpected.setCodiceErrore(erroriProperties.getErrorType_noWrap(integrationFunctionError));
+			}else {
+				exceptionCodeExpected.setCodiceErrore(codiceErrore);
+			}
+			exceptionCodeExpected.setCodiceErroreSpecifico(codiceErrore);
+			exceptionCodeExpected.setCodiceErroreSpecificoNumerico(codiceErroreSpecificoNumerico);
+			
+			if(genericCode) {
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					erroreAtteso = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+		}
+		
+		
+		_test(portaDelegata, nomePorta,
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
+				addIDUnivoco, 
+				erroreAtteso, exceptionCodeExpected, ricercaEsatta, dataInizioTest, 
+				fruitore, erogatore, returnCodeAtteso, 
+				checkOpenSPCoopDetail, 
+				readTimeout);
+			
+	}
+	private static void _test(boolean portaDelegata, String nomePorta,
+			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
+			boolean addIDUnivoco,
+			String erroreAtteso, ExceptionCodeExpected exceptionCodeExpected, boolean ricercaEsatta, Date dataInizioTest,
 			IDSoggetto fruitore,IDSoggetto erogatore, int returnCodeAtteso, 
 			boolean checkOpenSPCoopDetail, // presente solamente in caso di errore di processamento
 			Integer readTimeout) throws Exception{
@@ -408,8 +472,18 @@ public class AuthUtilities {
 					Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"] found["+error.getFaultActor()+"]");
 					Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 					
-					Reporter.log("Controllo fault code ["+Utilities.toString(codiceErroreIntegrazione)+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
-					Assert.assertTrue(Utilities.toString(codiceErroreIntegrazione).equals(error.getFaultCode().getLocalPart()));
+					String codiceErrore = null;
+					if(exceptionCodeExpected.isGenericCode()) {
+						codiceErrore = (exceptionCodeExpected.getIntegrationFunctionError().isClientError() ? 
+								org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT : org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER) +
+								org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+exceptionCodeExpected.getCodiceErrore();
+					}
+					else {
+						codiceErrore = exceptionCodeExpected.getCodiceErrore();
+					}
+					
+					Reporter.log("Controllo fault code ["+codiceErrore+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
+					Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 					
 					Reporter.log("Controllo fault string ["+erroreAtteso+"], found["+error.getFaultString()+"]");
 					if(ricercaEsatta) {
@@ -427,13 +501,12 @@ public class AuthUtilities {
 					if(erroreApplicativo) {
 						ErroreApplicativoUtilities.verificaFaultErroreApplicativo(error, 
 							fruitore,tipoPdD,modulo, 
-							codiceErroreIntegrazione, erroreAtteso, ricercaEsatta);
+							exceptionCodeExpected, erroreAtteso, ricercaEsatta);
 					}
 					else {
 						ProblemUtilities.verificaProblem(error, 
 								fruitore,tipoPdD,modulo, 
-								codiceErroreIntegrazione, erroreAtteso, ricercaEsatta,
-								returnCodeAtteso);
+								exceptionCodeExpected, erroreAtteso, ricercaEsatta);
 					}
 					
 					
@@ -451,15 +524,19 @@ public class AuthUtilities {
 					if(problem) {
 						Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"] found["+error.getFaultActor()+"]");
 						Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
-											
-						if(codiceErroreIntegrazione!=null) {
-							Reporter.log("Controllo fault code integrazione ["+Utilities.toString(codiceErroreIntegrazione)+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
-							Assert.assertTrue(Utilities.toString(codiceErroreIntegrazione).equals(error.getFaultCode().getLocalPart()));
+							
+						String codiceErrore = null;
+						if(exceptionCodeExpected.isGenericCode()) {
+							codiceErrore = (exceptionCodeExpected.getIntegrationFunctionError().isClientError() ? 
+									org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT : org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER) +
+									org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+exceptionCodeExpected.getCodiceErrore();
 						}
 						else {
-							Reporter.log("Controllo fault code cooperazione ["+Utilities.toString(codiceErroreCooperazone)+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
-							Assert.assertTrue(Utilities.toString(codiceErroreCooperazone).equals(error.getFaultCode().getLocalPart()));
+							codiceErrore = exceptionCodeExpected.getCodiceErrore();
 						}
+						
+						Reporter.log("Controllo fault code ["+codiceErrore+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
+						Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 						
 						Reporter.log("Controllo fault string ["+erroreAtteso+"], found["+error.getFaultString()+"]");
 						if(ricercaEsatta) {
@@ -484,7 +561,7 @@ public class AuthUtilities {
 						ErroreApplicativoUtilities.verificaFaultErroreApplicativo(error, 
 							erogatore,tipoPdD,
 							"PortaApplicativa",//modulo, 
-							codiceErroreCooperazone, erroreAtteso, ricercaEsatta);
+							exceptionCodeExpected, erroreAtteso, ricercaEsatta);
 						
 						
 						if(checkOpenSPCoopDetail){
@@ -496,7 +573,7 @@ public class AuthUtilities {
 							List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioniOD = 
 									new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 								org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail eccOD = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
-								eccOD.setCodice(Utilities.toString(codiceErroreCooperazone));
+								eccOD.setCodice(exceptionCodeExpected.getCodiceErroreSpecifico());
 								eccOD.setDescrizione(erroreAtteso);
 								eccOD.setCheckDescrizioneTramiteMatchEsatto(ricercaEsatta);
 								eccezioniOD.add(eccOD);
@@ -507,18 +584,9 @@ public class AuthUtilities {
 						}
 					}
 					else {
-						if(codiceErroreIntegrazione!=null) {
-							ProblemUtilities.verificaProblem(error, 
-									fruitore,tipoPdD,modulo, 
-									codiceErroreIntegrazione, erroreAtteso, ricercaEsatta,
-									returnCodeAtteso);
-						}
-						else {
-							ProblemUtilities.verificaProblem(error, 
-									fruitore,tipoPdD,modulo, 
-									codiceErroreCooperazone, erroreAtteso, ricercaEsatta,
-									returnCodeAtteso);
-						}
+						ProblemUtilities.verificaProblem(error, 
+								fruitore,tipoPdD,modulo, 
+								exceptionCodeExpected, erroreAtteso, ricercaEsatta);
 					}
 
 				}	

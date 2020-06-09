@@ -22,8 +22,10 @@ package org.openspcoop2.protocol.manifest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.protocol.manifest.constants.IntegrationErrorMessageDetailType;
 import org.openspcoop2.protocol.manifest.constants.IntegrationErrorMessageType;
 import java.io.Serializable;
 
@@ -34,8 +36,12 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="IntegrationError"&gt;
- * 		&lt;attribute name="httpReturnCode" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="errorCode" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorCode" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
  * 		&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorMessageType" use="required"/&gt;
+ * 		&lt;attribute name="retry" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="errorMessage" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorMessageDetailType" use="optional" default="generic"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -46,7 +52,11 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "IntegrationError")
+@XmlType(name = "IntegrationError", 
+  propOrder = {
+  	"errorCode"
+  }
+)
 
 @XmlRootElement(name = "IntegrationError")
 
@@ -54,12 +64,12 @@ public class IntegrationError extends org.openspcoop2.utils.beans.BaseBean imple
   public IntegrationError() {
   }
 
-  public int getHttpReturnCode() {
-    return this.httpReturnCode;
+  public IntegrationErrorCode getErrorCode() {
+    return this.errorCode;
   }
 
-  public void setHttpReturnCode(int httpReturnCode) {
-    this.httpReturnCode = httpReturnCode;
+  public void setErrorCode(IntegrationErrorCode errorCode) {
+    this.errorCode = errorCode;
   }
 
   public void set_value_messageType(String value) {
@@ -82,18 +92,59 @@ public class IntegrationError extends org.openspcoop2.utils.beans.BaseBean imple
     this.messageType = messageType;
   }
 
+  public boolean isRetry() {
+    return this.retry;
+  }
+
+  public boolean getRetry() {
+    return this.retry;
+  }
+
+  public void setRetry(boolean retry) {
+    this.retry = retry;
+  }
+
+  public void set_value_errorMessage(String value) {
+    this.errorMessage = (IntegrationErrorMessageDetailType) IntegrationErrorMessageDetailType.toEnumConstantFromString(value);
+  }
+
+  public String get_value_errorMessage() {
+    if(this.errorMessage == null){
+    	return null;
+    }else{
+    	return this.errorMessage.toString();
+    }
+  }
+
+  public org.openspcoop2.protocol.manifest.constants.IntegrationErrorMessageDetailType getErrorMessage() {
+    return this.errorMessage;
+  }
+
+  public void setErrorMessage(org.openspcoop2.protocol.manifest.constants.IntegrationErrorMessageDetailType errorMessage) {
+    this.errorMessage = errorMessage;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
-  @XmlAttribute(name="httpReturnCode",required=true)
-  protected int httpReturnCode;
+  @XmlElement(name="errorCode",required=true,nillable=false)
+  protected IntegrationErrorCode errorCode;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_messageType;
 
   @XmlAttribute(name="messageType",required=true)
   protected IntegrationErrorMessageType messageType;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="retry",required=false)
+  protected boolean retry = false;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_errorMessage;
+
+  @XmlAttribute(name="errorMessage",required=false)
+  protected IntegrationErrorMessageDetailType errorMessage = (IntegrationErrorMessageDetailType) IntegrationErrorMessageDetailType.toEnumConstantFromString("generic");
 
 }

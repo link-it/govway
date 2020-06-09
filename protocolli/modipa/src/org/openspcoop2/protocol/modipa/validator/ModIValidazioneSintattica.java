@@ -40,7 +40,6 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -57,6 +56,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -330,7 +330,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 			if(request) {
 				ValidazioneSintatticaResult<AbstractModISecurityToken<?>> errorResult = new ValidazioneSintatticaResult<AbstractModISecurityToken<?>>(null, null, null, 
 						bustaRitornata, new ErroreCooperazione(msgErrore, CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO), null, null, false);
-				errorResult.setErrore_integrationError(IntegrationError.INTERNAL_ERROR);
+				errorResult.setErrore_integrationFunctionError(IntegrationFunctionError.INTERNAL_REQUEST_ERROR);
 				return errorResult;
 			}
 			else {
@@ -339,7 +339,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				}catch(Exception eInternal) {
 					ValidazioneSintatticaResult<AbstractModISecurityToken<?>> errorResult = new ValidazioneSintatticaResult<AbstractModISecurityToken<?>>(null, null, null, 
 							bustaRitornata, new ErroreCooperazione(msgErrore, CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO), null, null, false);
-					errorResult.setErrore_integrationError(IntegrationError.INTERNAL_ERROR);
+					errorResult.setErrore_integrationFunctionError(IntegrationFunctionError.INTERNAL_RESPONSE_ERROR);
 					return errorResult;
 				}
 			}

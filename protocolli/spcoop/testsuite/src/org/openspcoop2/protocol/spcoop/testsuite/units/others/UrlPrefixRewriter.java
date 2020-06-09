@@ -53,7 +53,9 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -68,11 +70,20 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class UrlPrefixRewriter {
+public class UrlPrefixRewriter extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "UrlPrefixRewriter";
 
+	
+	@SuppressWarnings("unused")
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected UrlPrefixRewriter() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
 	
 	private Date dataAvvioGruppoTest = null;
 	@BeforeGroups (alwaysRun=true , groups=ID_GRUPPO)
@@ -115,6 +126,8 @@ public class UrlPrefixRewriter {
 		this.testPD1StartTime = new Date();
 		
 		try{
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_1);
@@ -154,6 +167,8 @@ public class UrlPrefixRewriter {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(false);
 		}
 		
 		Date dataFineTest = DateManager.getDate();
@@ -407,6 +422,8 @@ public class UrlPrefixRewriter {
 		this.testPD2StartTime = new Date();
 
 		try{
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_2);
@@ -446,6 +463,8 @@ public class UrlPrefixRewriter {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(false);
 		}
 		
 		Date dataFineTest = DateManager.getDate();
@@ -695,6 +714,8 @@ public class UrlPrefixRewriter {
 		this.testPD3StartTime = new Date();
 
 		try{
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_3);
@@ -735,6 +756,8 @@ public class UrlPrefixRewriter {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(false);
 		}
 	}
 	@DataProvider (name="testPD3Provider")
@@ -1174,6 +1197,8 @@ public class UrlPrefixRewriter {
 		this.testPD5StartTime = new Date();
 		
 		try{
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_5);
@@ -1213,6 +1238,8 @@ public class UrlPrefixRewriter {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(false);
 		}
 		
 		Date dataFineTest = DateManager.getDate();
@@ -1467,6 +1494,8 @@ public class UrlPrefixRewriter {
 		this.testPD6StartTime = new Date();
 		
 		try{
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_6);
@@ -1506,6 +1535,8 @@ public class UrlPrefixRewriter {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(false);
 		}
 		
 		Date dataFineTest = DateManager.getDate();
@@ -1989,6 +2020,8 @@ public class UrlPrefixRewriter {
 		this.testPD8StartTime = new Date();
 		
 		try{
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_8);
@@ -2028,6 +2061,8 @@ public class UrlPrefixRewriter {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(false);
 		}
 		
 		Date dataFineTest = DateManager.getDate();
@@ -2287,6 +2322,8 @@ public class UrlPrefixRewriter {
 		this.testPD9StartTime = new Date();
 		
 		try{
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_9);
@@ -2326,6 +2363,8 @@ public class UrlPrefixRewriter {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(false);
 		}
 		
 		Date dataFineTest = DateManager.getDate();
@@ -2585,6 +2624,8 @@ public class UrlPrefixRewriter {
 		this.testPD10StartTime = new Date();
 		
 		try{
+			super.lockForCode(false, false);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_10);
@@ -2623,6 +2664,8 @@ public class UrlPrefixRewriter {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(false);
 		}
 		
 		Date dataFineTest = DateManager.getDate();

@@ -94,6 +94,9 @@ public class Costanti {
 	
 	public final static String ERRORE_TRUE = "true";
 	
+	public final static String RICHIESTA_INOLTRATA_BACKEND = "RICHIESTA_INOLTRATA_BACKEND";
+	public final static String RICHIESTA_INOLTRATA_BACKEND_VALORE = "true";
+	
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.ID_TRANSAZIONE,Costanti.PROTOCOL_NAME,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,

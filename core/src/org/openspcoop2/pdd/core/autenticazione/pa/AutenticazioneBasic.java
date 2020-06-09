@@ -37,6 +37,7 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Classe che implementa una autenticazione BASIC.
@@ -80,7 +81,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
-			esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
+			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(realm!=null) {
@@ -99,7 +100,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		}
 		catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Soggetti) non riuscita",e);
-			esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);
@@ -125,7 +126,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		}
 		catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Applicativi) non riuscita",e);
-			esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);
@@ -133,7 +134,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		}
 				
 		if(idSoggetto == null){
-			esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
+			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(realm!=null) {

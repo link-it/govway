@@ -32,6 +32,29 @@ import java.io.Serializable;
  */
 public enum IntegrationError implements Serializable {
 	
-	AUTHENTICATION, AUTHORIZATION, NOT_FOUND, BAD_REQUEST, TOO_MANY_REQUESTS, INTERNAL_ERROR, SERVICE_UNAVAILABLE, DEFAULT;
-
+	// 4xx errore del client
+	AUTHENTICATION, 
+	AUTHORIZATION, 
+	NOT_FOUND, 
+	BAD_REQUEST, 
+	CONFLICT,
+	LIMIT_EXCEEDED,
+	TOO_MANY_REQUESTS, 
+	
+	// backend non raggiungibile
+	SERVICE_UNAVAILABLE,
+	ENDPOINT_REQUEST_TIMED_OUT,
+	
+	// risposta ritornata ha generato un errore durante il suo processamento
+	BAD_RESPONSE,
+	
+	// errore generico avvenuto durante la gestione della richiesta
+	INTERNAL_REQUEST_ERROR,
+	
+	// errore generico avvenuto durante la gestione della risposta
+	INTERNAL_RESPONSE_ERROR,
+	
+	// default
+	DEFAULT;
+	
 }

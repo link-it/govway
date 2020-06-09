@@ -35,29 +35,30 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.xml.XMLDiff;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
 import org.openspcoop2.utils.xml.XMLException;
 import org.openspcoop2.utils.xml.XMLUtils;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -70,21 +71,31 @@ import org.w3c.dom.NodeList;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ErroreApplicativoCNIPA {
+public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "ErroreApplicativoCNIPA";
 
 
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	private boolean genericCode = false;
+	private boolean unwrap = false;
+	
+	protected ErroreApplicativoCNIPA(boolean genericCode, boolean unwrap) {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+		this.genericCode = genericCode;
+		this.unwrap = unwrap;
+	}
+	
+	
 	
 	private Date dataAvvioGruppoTest = null;
-	@BeforeGroups (alwaysRun=true , groups=ID_GRUPPO)
-	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
+	protected void _testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
 	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
-	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
-	public void testOpenspcoopCoreLog() throws Exception{
+	protected void _testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
 			FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest,
 					this.erroriAttesiOpenSPCoopCore.toArray(new ErroreAttesoOpenSPCoopLogCore[1]));
@@ -112,8 +123,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** ERRORI 4XX */
 	
-	@DataProvider (name="personalizzazioniErroriApplicativi4XX")
-	public Object[][] personalizzazioniErroriApplicativi4XX(){
+	protected Object[][] _personalizzazioniErroriApplicativi4XX(){
 		return new Object[][]{
 				{null,null,"PORTA_DELEGATA_NON_ESISTENTE"},
 				{"erroreApplicativoAsSoapFaultDefault","123456",CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_CNIPA},
@@ -123,18 +133,18 @@ public class ErroreApplicativoCNIPA {
 		};
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".ErroriApplicativi4XX"},dataProvider="personalizzazioniErroriApplicativi4XX")
-	public void testErroriApplicativi4XX(String username,String password,String portaDelegata) throws Exception{
-		testErroriApplicativi4XX_engine(username, password, portaDelegata);
-	}
-	public Object testErroriApplicativi4XX_engine(String username,String password,String portaDelegata) throws Exception{
+	protected Object _testErroriApplicativi4XX(String username,String password,String portaDelegata) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
-		Date dataInizioTest = DateManager.getDate();
 		Object response = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
-
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -158,15 +168,36 @@ public class ErroreApplicativoCNIPA {
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA);
 			String msg = CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX;
 			boolean equalsMatch = false;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if(username==null){
 				idPorta = Utilities.testSuiteProperties.getIdentitaDefault_dominio();
 				codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE);
 				msg = CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE;
 				equalsMatch = false;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_OUT_UNKNOWN;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 			}
 			else if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
+				if(!this.genericCode) {
+					codice = "PREFIX_PERSONALIZZATO_423";
+				}
 				actor = "ACTOR_RIDEFINITO";
-				codice = "PREFIX_PERSONALIZZATO_423";
 			}
 			
 			try {
@@ -221,7 +252,8 @@ public class ErroreApplicativoCNIPA {
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
 			
-			Date dataFineTest = DateManager.getDate();
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 			
 			// Aggiungo errori attesi
 			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
@@ -239,8 +271,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SERVIZIO TUNNEL SOAP: ERRORI 4XX */
 	
-	@DataProvider (name="personalizzazioniErroriApplicativi4XXTunnelSOAP")
-	public Object[][] personalizzazioniErroriApplicativi4XXTunnelSOAP(){
+	protected Object[][] _personalizzazioniErroriApplicativi4XXTunnelSOAP(){
 		return new Object[][]{
 				{null,null,"PORTA_DELEGATA_NON_ESISTENTE"},
 				{"erroreApplicativoAsSoapFaultDefault","123456",CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_CNIPA},
@@ -250,15 +281,18 @@ public class ErroreApplicativoCNIPA {
 		};
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".ErroriApplicativi4XX_TUNNEL_SOAP"},dataProvider="personalizzazioniErroriApplicativi4XXTunnelSOAP")
-	public void testErroriApplicativi4XXTunnelSOAP(String username,String password,String portaDelegata) throws Exception{
+	protected void _testErroriApplicativi4XXTunnelSOAP(String username,String password,String portaDelegata) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
-		Date dataInizioTest = DateManager.getDate();
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
 
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
 			bout = new ByteArrayOutputStream();
@@ -292,14 +326,35 @@ public class ErroreApplicativoCNIPA {
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA);
 			String msg = CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX;
 			boolean equalsMatch = true;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.OPERATION_UNDEFINED;
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if(username==null){
 				idPorta = Utilities.testSuiteProperties.getIdentitaDefault_dominio();
 				codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE);
 				msg = CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE;
 				equalsMatch = false;
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_OUT_UNKNOWN;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 			}
 			else if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
-				codice = "PREFIX_PERSONALIZZATO_423";
+				if(!this.genericCode) {
+					codice = "PREFIX_PERSONALIZZATO_423";
+				}
 			}
 			
 			try {
@@ -330,9 +385,10 @@ public class ErroreApplicativoCNIPA {
 			}catch(Exception e){}
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
-		
-		Date dataFineTest = DateManager.getDate();
 		
 		// Aggiungo errori attesi
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
@@ -359,8 +415,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** ERRORI 5XX */
 	
-	@DataProvider (name="personalizzazioniErroriApplicativi5XX")
-	public Object[][] personalizzazioniErroriApplicativi5XX(){
+	protected Object[][] _personalizzazioniErroriApplicativi5XX(){
 		return new Object[][]{
 				{"erroreApplicativoAsSoapFaultDefault","123456",CostantiTestSuite.PORTA_DELEGATA_VERIFICA_ERRORE_PROCESSAMENTO_5XX},
 				{"erroreApplicativoAsSoapFaultRidefinito","123456",CostantiTestSuite.PORTA_DELEGATA_VERIFICA_ERRORE_PROCESSAMENTO_5XX},
@@ -369,18 +424,17 @@ public class ErroreApplicativoCNIPA {
 		};
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".ErroriApplicativi5XX"},dataProvider="personalizzazioniErroriApplicativi5XX")
-	public void testErroriApplicativi5XX(String username,String password,String portaDelegata) throws Exception{
-		testErroriApplicativi5XX_engine(username, password, portaDelegata);
-	}
-	public Object testErroriApplicativi5XX_engine(String username,String password,String portaDelegata) throws Exception{
+	protected Object _testErroriApplicativi5XX(String username,String password,String portaDelegata) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
 
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -405,10 +459,27 @@ public class ErroreApplicativoCNIPA {
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO);
 			String msg = CostantiErroriIntegrazione.MSG_5XX_SISTEMA_NON_DISPONIBILE;
 			boolean equalsMatch = true;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+				if(this.unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+				}
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
 				actor = "ACTOR_RIDEFINITO";
-				codice = "PREFIX_PERSONALIZZATO_504";
-				msg = "processo di autorizzazione [testOpenSPCoop2] fallito, Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)";
+				
+				if(!this.genericCode) {
+					codice = "PREFIX_PERSONALIZZATO_504";
+					msg = "processo di autorizzazione [testOpenSPCoop2] fallito, Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)";
+				}
 			}
 			
 			try {
@@ -462,9 +533,10 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
-		}	
-		
-		Date dataFineTest = DateManager.getDate();
+
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
+		}
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -478,8 +550,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SERVIZIO TUNNEL SOAP: ERRORI 5XX */
 	
-	@DataProvider (name="personalizzazioniErroriApplicativi5XXTunnelSOAP")
-	public Object[][] personalizzazioniErroriApplicativi5XXTunnelSOAP(){
+	protected Object[][] _personalizzazioniErroriApplicativi5XXTunnelSOAP(){
 		return new Object[][]{
 				{"erroreApplicativoAsSoapFaultDefault","123456",CostantiTestSuite.PORTA_DELEGATA_VERIFICA_ERRORE_PROCESSAMENTO_5XX},
 				{"erroreApplicativoAsSoapFaultRidefinito","123456",CostantiTestSuite.PORTA_DELEGATA_VERIFICA_ERRORE_PROCESSAMENTO_5XX},
@@ -488,16 +559,18 @@ public class ErroreApplicativoCNIPA {
 		};
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".ErroriApplicativi5XX_TUNNEL_SOAP"},dataProvider="personalizzazioniErroriApplicativi5XXTunnelSOAP")
-	public void testErroriApplicativi5XXTunnelSOAP(String username,String password,String portaDelegata) throws Exception{
+	protected void _testErroriApplicativi5XXTunnelSOAP(String username,String password,String portaDelegata) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
 
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
 			bout = new ByteArrayOutputStream();
@@ -531,9 +604,25 @@ public class ErroreApplicativoCNIPA {
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO);
 			String msg = CostantiErroriIntegrazione.MSG_5XX_SISTEMA_NON_DISPONIBILE;
 			boolean equalsMatch = true;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_503_INTERNAL_ERROR;
+				if(this.unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+				}
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
-				codice = "PREFIX_PERSONALIZZATO_504";
-				msg = "processo di autorizzazione [testOpenSPCoop2] fallito, Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)";
+				if(!this.genericCode) {
+					codice = "PREFIX_PERSONALIZZATO_504";
+					msg = "processo di autorizzazione [testOpenSPCoop2] fallito, Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)";
+				}
 			}
 			
 			try {
@@ -563,9 +652,10 @@ public class ErroreApplicativoCNIPA {
 			}catch(Exception e){}
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
-		}	
-		
-		Date dataFineTest = DateManager.getDate();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
+		}
 		
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
@@ -591,8 +681,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SOAP FAULT APPLICATIVO ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniFaultApplicativi")
-	public Object[][] personalizzazioniFaultApplicativi(){
+	protected Object[][] _personalizzazioniFaultApplicativi(){
 		return new Object[][]{
 				{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
@@ -601,18 +690,16 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_APPLICATIVO"},dataProvider="personalizzazioniFaultApplicativi")
-	public void testFaultApplicativoArricchitoFAULTCNIPA_Default(String servizioApplicativoFruitore) throws Exception{
-		testFaultApplicativoArricchitoFAULTCNIPA_Default_engine(servizioApplicativoFruitore);
-	}
-	public Object testFaultApplicativoArricchitoFAULTCNIPA_Default_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testFaultApplicativoArricchitoFAULTCNIPA_Default(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_SOAP_FAULT_SERVIZIO_APPLICATIVO_SINCRONO;
 		Object response = null;
+		
 		try{
-
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -671,11 +758,22 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						codice,	msgErrore, equalsMatch);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -685,16 +783,14 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 		
 		return response;
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_APPLICATIVO_2"},dataProvider="personalizzazioniFaultApplicativi")
-	public void testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato(String servizioApplicativoFruitore) throws Exception{
-		testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato_engine(servizioApplicativoFruitore);
-	}
-	public Object testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
@@ -704,8 +800,10 @@ public class ErroreApplicativoCNIPA {
 		init();
 		
 		Object response = null;
+		
 		try{
-
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -801,12 +899,22 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE, 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);		
+						codice, msgErrore, equalsMatch);		
 
 			}finally{
 				dbComponentFruitore.close();
@@ -817,15 +925,13 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 		return response;	
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_APPLICATIVO_3"},dataProvider="personalizzazioniFaultApplicativi")
-	public void testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix(String servizioApplicativoFruitore) throws Exception{
-		testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix_engine(servizioApplicativoFruitore);
-	}
-	public Object testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
@@ -835,8 +941,10 @@ public class ErroreApplicativoCNIPA {
 		init();
 		
 		Object response = null;
+		
 		try{
-
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -932,12 +1040,22 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE, 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);		
+						codice, msgErrore, equalsMatch);		
 
 			}finally{
 				dbComponentFruitore.close();
@@ -948,6 +1066,8 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 		return response;	
 	}
@@ -955,8 +1075,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SERVIZIO TUNNEL SOAP: SOAP FAULT APPLICATIVO ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniFaultApplicativiTunnelSOAP")
-	public Object[][] personalizzazioniFaultApplicativiTunnelSOAP(){
+	protected Object[][] _personalizzazioniFaultApplicativiTunnelSOAP(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -964,16 +1083,17 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_APPLICATIVO_TUNNEL_SOAP"},dataProvider="personalizzazioniFaultApplicativiTunnelSOAP")
-	public void testFaultApplicativoArricchitoFAULTCNIPA_Default_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
+	protected void _testFaultApplicativoArricchitoFAULTCNIPA_Default_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_SOAP_FAULT_SERVIZIO_APPLICATIVO_SINCRONO;
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
+		
 		try{
-
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
@@ -1065,12 +1185,23 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Assert.assertTrue(erroreCNIPA!=null);
 				Utilities.verificaErroreApplicativoCnipa(erroreCNIPA, "MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						codice, msgErrore, equalsMatch);				
 				
 			} catch (AxisFault error) {
 				
@@ -1086,6 +1217,8 @@ public class ErroreApplicativoCNIPA {
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
 			fin.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 				
 	}
@@ -1102,8 +1235,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SOAP FAULT PDD ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniFaultApplicativiPdD")
-	public Object[][] personalizzazioniFaultApplicativiPdD(){
+	protected Object[][] _personalizzazioniFaultApplicativiPdD(){
 		return new Object[][]{
 				{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
@@ -1112,18 +1244,16 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_PDD"},dataProvider="personalizzazioniFaultApplicativiPdD")
-	public void testFaultPddArricchitoFAULTCNIPA_Default(String servizioApplicativoFruitore) throws Exception{
-		testFaultPddArricchitoFAULTCNIPA_Default_engine(servizioApplicativoFruitore);
-	}
-	public Object testFaultPddArricchitoFAULTCNIPA_Default_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testFaultPddArricchitoFAULTCNIPA_Default(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_SOAP_FAULT_PDD_DESTINAZIONE_SINCRONO;
 		Object response = null;
+		
 		try{
-
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -1182,11 +1312,22 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreSOAPFaultServer");
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreSOAPFaultServer"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						codice, msgErrore, equalsMatch);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1196,23 +1337,23 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 		return response;	
 	}
 	
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_PDD_2"},dataProvider="personalizzazioniFaultApplicativiPdD")
-	public void testFaultPddArricchitoFAULTCNIPA_FaultGeneratoTramiteServizioWEBReale(String servizioApplicativoFruitore) throws Exception{
-		testFaultPddArricchitoFAULTCNIPA_FaultGeneratoTramiteServizioWEBReale_engine(servizioApplicativoFruitore);
-	}
-	public Object testFaultPddArricchitoFAULTCNIPA_FaultGeneratoTramiteServizioWEBReale_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testFaultPddArricchitoFAULTCNIPA_FaultGeneratoTramiteServizioWEBReale(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_IM;
 		Object response = null;
+		
 		try{
-
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -1257,11 +1398,22 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SOAPFaultIM");
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SOAPFaultIM"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						codice, msgErrore, equalsMatch);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1271,24 +1423,24 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 		return response;	
 	}
 	
 	
-	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_PDD_3"},dataProvider="personalizzazioniFaultApplicativiPdD")
-	public void testFaultPddArricchitoFAULTCNIPA_FaultGeneratoSenzaDetails(String servizioApplicativoFruitore) throws Exception{
-		testFaultPddArricchitoFAULTCNIPA_FaultGeneratoSenzaDetails_engine(servizioApplicativoFruitore);
-	}
-	public Object testFaultPddArricchitoFAULTCNIPA_FaultGeneratoSenzaDetails_engine(String servizioApplicativoFruitore) throws Exception{
+
+	protected Object _testFaultPddArricchitoFAULTCNIPA_FaultGeneratoSenzaDetails(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_SENZA_DETAILS;
 		Object response = null;
+		
 		try{
-
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -1331,11 +1483,22 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SOAPFaultSenzaDetails");
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SOAPFaultSenzaDetails"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						codice, msgErrore, equalsMatch);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1345,15 +1508,13 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 		return response;	
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_PDD_4"},dataProvider="personalizzazioniFaultApplicativiPdD")
-	public void testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato(String servizioApplicativoFruitore) throws Exception{
-		testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato_engine(servizioApplicativoFruitore);
-	}
-	public Object testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
@@ -1362,7 +1523,10 @@ public class ErroreApplicativoCNIPA {
 		init();
 		
 		Object response = null;
+		
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -1458,13 +1622,23 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore =CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
+						CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE);
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
-								CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						codice, msgErrore, equalsMatch);				
 
 			}finally{
 				dbComponentFruitore.close();
@@ -1475,15 +1649,13 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 		return response;	
 	}
 	
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_PDD_5"},dataProvider="personalizzazioniFaultApplicativiPdD")
-	public void testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix(String servizioApplicativoFruitore) throws Exception{
-		testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix_engine(servizioApplicativoFruitore);
-	}
-	public Object testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
@@ -1493,7 +1665,10 @@ public class ErroreApplicativoCNIPA {
 		init();
 		
 		Object response = null;
+		
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -1589,13 +1764,23 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore =CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
+						CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE);
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
-								CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
-						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						codice, msgErrore, equalsMatch);				
 
 			}finally{
 				dbComponentFruitore.close();
@@ -1606,6 +1791,8 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 		return response;	
 	}
@@ -1613,8 +1800,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SERVIZIO TUNNEL SOAP: SOAP FAULT PDD ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniFaultApplicativiPdDTunnelSOAP")
-	public Object[][] personalizzazioniFaultApplicativiPdDTunnelSOAP(){
+	protected Object[][] _personalizzazioniFaultApplicativiPdDTunnelSOAP(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -1622,15 +1808,17 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_PDD_TUNNEL_SOAP"},dataProvider="personalizzazioniFaultApplicativiPdDTunnelSOAP")
-	public void testFaultPddArricchitoFAULTCNIPA_Default_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
+	protected void _testFaultPddArricchitoFAULTCNIPA_Default_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
 
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_SOAP_FAULT_PDD_DESTINAZIONE_SINCRONO;
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
+		
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
@@ -1722,12 +1910,23 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					codice = "PREFIX_PERSONALIZZATO_516";
 				}
+				String msgErrore =CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreSOAPFaultServer");
+				boolean equalsMatch = Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS;
+								
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				if(this.genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+					codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						equalsMatch = true;
+					}
+				}
 				
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Assert.assertTrue(erroreCNIPA!=null);
 				Utilities.verificaErroreApplicativoCnipa(erroreCNIPA, "MinisteroFruitoreSPCoopIT","InoltroBuste", 
-						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreSOAPFaultServer"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						codice, msgErrore, equalsMatch);				
 		
 			} catch (AxisFault error) {
 				
@@ -1743,6 +1942,8 @@ public class ErroreApplicativoCNIPA {
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
 			fin.close();
+			
+			super.unlockForCode(this.genericCode);
 		}
 				
 	}
@@ -1764,8 +1965,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** ERRORE CONNETTORE PDD: connection refused ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectionRefused")
-	public Object[][] personalizzazioniErroreConnectionRefused(){
+	protected Object[][] _personalizzazioniErroreConnectionRefused(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -1773,18 +1973,18 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".CONNECTION_REFUSED_PDD"},dataProvider="personalizzazioniErroreConnectionRefused")
-	public void testServizioApplicativoConnectionRefused(String servizioApplicativoFruitore) throws Exception{
-		testServizioApplicativoConnectionRefused_engine(servizioApplicativoFruitore);
-	}
-	public Object testServizioApplicativoConnectionRefused_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testServizioApplicativoConnectionRefused(String servizioApplicativoFruitore) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+		
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SINCRONO_STATELESS;
@@ -1813,9 +2013,22 @@ public class ErroreApplicativoCNIPA {
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
 			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErrato");
 			boolean equalsMatch = true;
+									
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 				actor = "ACTOR_RIDEFINITO";
-				codice = "PREFIX_PERSONALIZZATO_516";
+				if(!this.genericCode) {
+					codice = "PREFIX_PERSONALIZZATO_516";
+				}
 			}
 			
 			try {
@@ -1864,8 +2077,6 @@ public class ErroreApplicativoCNIPA {
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
 				
-				Date dataFineTest = DateManager.getDate();
-				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
 				err.setIntervalloSuperiore(dataFineTest);
@@ -1877,6 +2088,9 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
 		
 		return response;
@@ -1884,8 +2098,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SERVIZIO TUNNEL SOAP: ERRORE CONNETTORE, connection refused ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectionRefusedTunnelSOAP")
-	public Object[][] personalizzazioniErroreConnectionRefusedTunnelSOAP(){
+	protected Object[][] _personalizzazioniErroreConnectionRefusedTunnelSOAP(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -1893,16 +2106,19 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".CONNECTION_REFUSED_PDD_TUNNEL_SOAP"},dataProvider="personalizzazioniErroreConnectionRefusedTunnelSOAP")
-	public void testServizioApplicativoConnectionRefused_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
+	protected void _testServizioApplicativoConnectionRefused_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+		
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SINCRONO_STATELESS;
@@ -1940,8 +2156,21 @@ public class ErroreApplicativoCNIPA {
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
 			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErrato");
 			boolean equalsMatch = true;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
-				codice = "PREFIX_PERSONALIZZATO_516";
+				if(!this.genericCode) {
+					codice = "PREFIX_PERSONALIZZATO_516";
+				}
 			}
 			
 			try {
@@ -1963,8 +2192,6 @@ public class ErroreApplicativoCNIPA {
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
 				
-				Date dataFineTest = DateManager.getDate();
-				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
 				err.setIntervalloSuperiore(dataFineTest);
@@ -1979,6 +2206,9 @@ public class ErroreApplicativoCNIPA {
 			}catch(Exception e){}
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
 				
 	}
@@ -2003,8 +2233,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** ERRORE CONNETTORE SA: connection refused ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectionRefusedServizioApplicativo")
-	public Object[][] personalizzazioniErroreConnectionRefusedServizioApplicativo(){
+	protected Object[][] _personalizzazioniErroreConnectionRefusedServizioApplicativo(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -2012,18 +2241,18 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".CONNECTION_REFUSED_SA"},dataProvider="personalizzazioniErroreConnectionRefusedServizioApplicativo")
-	public void testServizioApplicativoConnectionRefusedServizioApplicativo(String servizioApplicativoFruitore) throws Exception{
-		testServizioApplicativoConnectionRefusedServizioApplicativo_engine(servizioApplicativoFruitore);
-	}
-	public Object testServizioApplicativoConnectionRefusedServizioApplicativo_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testServizioApplicativoConnectionRefusedServizioApplicativo(String servizioApplicativoFruitore) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+		
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS;
@@ -2050,8 +2279,23 @@ public class ErroreApplicativoCNIPA {
 			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+			String codiceEGOV = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
 			String msg = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
 			boolean equalsMatch = false;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+				if(this.unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+				}
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 				actor = "ACTOR_RIDEFINITO";
 			}
@@ -2085,7 +2329,7 @@ public class ErroreApplicativoCNIPA {
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
-						codice, 
+						codiceEGOV, 
 						msg, equalsMatch);	
 				
 			} catch (AxisFault error) {
@@ -2097,12 +2341,11 @@ public class ErroreApplicativoCNIPA {
 				Utilities.verificaFaultIntegrazione(error, actor,
 						idPorta,"SbustamentoRisposte", 
 						codice, 
-						msg, equalsMatch);				
+						msg, equalsMatch,
+						codiceEGOV);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
-				
-				Date dataFineTest = DateManager.getDate();
 				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2115,6 +2358,9 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
 		
 		return response;
@@ -2122,8 +2368,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SERVIZIO TUNNEL SOAP: ERRORE CONNETTORE SA, connection refused ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectionRefusedServizioApplicativoTunnelSOAP")
-	public Object[][] personalizzazioniErroreConnectionRefusedServizioApplicativoTunnelSOAP(){
+	protected Object[][] _personalizzazioniErroreConnectionRefusedServizioApplicativoTunnelSOAP(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -2131,17 +2376,19 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".CONNECTION_REFUSED_SA_TUNNEL_SOAP"},
-			dataProvider="personalizzazioniErroreConnectionRefusedServizioApplicativoTunnelSOAP")
-	public void testServizioApplicativoConnectionRefusedServizioApplicativo_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
+	protected void _testServizioApplicativoConnectionRefusedServizioApplicativo_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+		
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS;
@@ -2176,9 +2423,26 @@ public class ErroreApplicativoCNIPA {
 			}
 			
 			String idPorta = "MinisteroFruitoreSPCoopIT";
+			// CNIPA richiede un codice eGov 
+			@SuppressWarnings("unused")
 			String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+			String codiceEGOV = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
 			String msg = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
 			boolean equalsMatch = false;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+				if(this.unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+				}
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 			}
 			
@@ -2192,7 +2456,7 @@ public class ErroreApplicativoCNIPA {
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
-						codice, 
+						codiceEGOV, 
 						msg, equalsMatch);	
 								
 			} catch (AxisFault error) {
@@ -2200,8 +2464,6 @@ public class ErroreApplicativoCNIPA {
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
-				
-				Date dataFineTest = DateManager.getDate();
 				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2217,6 +2479,9 @@ public class ErroreApplicativoCNIPA {
 			}catch(Exception e){}
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
 				
 	}
@@ -2243,8 +2508,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** ERRORE CONNETTORE PDD: Connect Timed Out ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectTimedOut")
-	public Object[][] personalizzazioniErroreConnectTimedOut(){
+	protected Object[][] _personalizzazioniErroreTimedOut(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -2252,21 +2516,24 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".CONNECT_TIMED_OUT_PDD"},dataProvider="personalizzazioniErroreConnectTimedOut")
-	public void testServizioApplicativoConnectTimedOut(String servizioApplicativoFruitore) throws Exception{
-		testServizioApplicativoConnectTimedOut_engine(servizioApplicativoFruitore);
-	}
-	public Object testServizioApplicativoConnectTimedOut_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testServizioApplicativoTimedOut(String servizioApplicativoFruitore, boolean readTimedOut) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+		
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_PDD_SINCRONO_STATELESS_CONNECT_TIMED_OUT;
+			if(readTimedOut) {
+				portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_PDD_SINCRONO_STATELESS_CONNECT_READ_TIMED_OUT;
+			}
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setConnectionReadTimeout(60000);
@@ -2291,11 +2558,28 @@ public class ErroreApplicativoCNIPA {
 			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErratoConnectTimedOut");
+			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
+					readTimedOut ? "spc-SoggettoConnettoreErratoConnectReadTimedOut" : "spc-SoggettoConnettoreErratoConnectTimedOut");
 			boolean equalsMatch = true;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+				if(readTimedOut) {
+					integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+				}
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 				actor = "ACTOR_RIDEFINITO";
-				codice = "PREFIX_PERSONALIZZATO_516";
+				if(!this.genericCode) {
+					codice = "PREFIX_PERSONALIZZATO_516";
+				}
 			}
 			
 			try {
@@ -2344,12 +2628,15 @@ public class ErroreApplicativoCNIPA {
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
 				
-				Date dataFineTest = DateManager.getDate();
-				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
 				err.setIntervalloSuperiore(dataFineTest);
-				err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+				if(readTimedOut) {
+					err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Read timed out");
+				}
+				else {
+					err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+				}
 				this.erroriAttesiOpenSPCoopCore.add(err);
 			}
 		}catch(Exception e){
@@ -2357,6 +2644,9 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
 		
 		return response;
@@ -2364,8 +2654,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SERVIZIO TUNNEL SOAP: ERRORE CONNETTORE, Connect Timed Out ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectTimedOutTunnelSOAP")
-	public Object[][] personalizzazioniErroreConnectTimedOutTunnelSOAP(){
+	protected Object[][] _personalizzazioniErroreTimedOutTunnelSOAP(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -2373,19 +2662,25 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".CONNECT_TIMED_OUT_PDD_TUNNEL_SOAP"},dataProvider="personalizzazioniErroreConnectTimedOutTunnelSOAP")
-	public void testServizioApplicativoConnectTimedOut_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
+	protected void _testServizioApplicativoTimedOut_TunnelSOAP(String servizioApplicativoFruitore, boolean readTimedOut) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+		
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_PDD_SINCRONO_STATELESS_CONNECT_TIMED_OUT;
+			if(readTimedOut) {
+				portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_PDD_SINCRONO_STATELESS_CONNECT_READ_TIMED_OUT;
+			}
 			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
 			bout = new ByteArrayOutputStream();
@@ -2419,10 +2714,27 @@ public class ErroreApplicativoCNIPA {
 			
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErratoConnectTimedOut");
+			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
+					readTimedOut ? "spc-SoggettoConnettoreErratoConnectReadTimedOut" : "spc-SoggettoConnettoreErratoConnectTimedOut");
 			boolean equalsMatch = true;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
+				if(readTimedOut) {
+					integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+				}
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
-				codice = "PREFIX_PERSONALIZZATO_516";
+				if(!this.genericCode) {
+					codice = "PREFIX_PERSONALIZZATO_516";
+				}
 			}
 			
 			try {
@@ -2444,12 +2756,15 @@ public class ErroreApplicativoCNIPA {
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
 				
-				Date dataFineTest = DateManager.getDate();
-				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
 				err.setIntervalloSuperiore(dataFineTest);
-				err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+				if(readTimedOut) {
+					err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Read timed out");
+				}
+				else {
+					err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+				}
 				this.erroriAttesiOpenSPCoopCore.add(err);
 			}
 		}catch(Exception e){
@@ -2460,6 +2775,9 @@ public class ErroreApplicativoCNIPA {
 			}catch(Exception e){}
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
 				
 	}
@@ -2484,8 +2802,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** ERRORE CONNETTORE SA: Connect Timed Out ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectTimedOutServizioApplicativo")
-	public Object[][] personalizzazioniErroreConnectTimedOutServizioApplicativo(){
+	protected Object[][] _personalizzazioniErroreTimedOutServizioApplicativo(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -2493,21 +2810,24 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".CONNECT_TIMED_OUT_SA"},dataProvider="personalizzazioniErroreConnectTimedOutServizioApplicativo")
-	public void testServizioApplicativoConnectTimedOutServizioApplicativo(String servizioApplicativoFruitore) throws Exception{
-		testServizioApplicativoConnectTimedOutServizioApplicativo_engine(servizioApplicativoFruitore);
-	}
-	public Object testServizioApplicativoConnectTimedOutServizioApplicativo_engine(String servizioApplicativoFruitore) throws Exception{
+	protected Object _testServizioApplicativoTimedOutServizioApplicativo(String servizioApplicativoFruitore, boolean readTimedOut) throws Exception{
 
-		Date dataInizioTest = DateManager.getDate();
-		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+		
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS_CONNECT_TIMED_OUT;
+			if(readTimedOut) {
+				portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS_CONNECT_READ_TIMED_OUT;
+			}
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setConnectionReadTimeout(60000);
@@ -2532,8 +2852,23 @@ public class ErroreApplicativoCNIPA {
 			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+			String codiceEGOV = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
 			String msg = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
 			boolean equalsMatch = false;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+				if(this.unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+				}
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 				actor = "ACTOR_RIDEFINITO";
 			}
@@ -2567,7 +2902,7 @@ public class ErroreApplicativoCNIPA {
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
-						codice, 
+						codiceEGOV, 
 						msg, equalsMatch);	
 				
 			} catch (AxisFault error) {
@@ -2579,17 +2914,20 @@ public class ErroreApplicativoCNIPA {
 				Utilities.verificaFaultIntegrazione(error, actor,
 						idPorta,"SbustamentoRisposte", 
 						codice, 
-						msg, equalsMatch);				
+						msg, equalsMatch, codiceEGOV);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
 							
-				Date dataFineTest = DateManager.getDate();
-				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
 				err.setIntervalloSuperiore(dataFineTest);
-				err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+				if(readTimedOut) {
+					err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Read timed out");
+				}
+				else {
+					err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+				}
 				this.erroriAttesiOpenSPCoopCore.add(err);
 			}
 		}catch(Exception e){
@@ -2597,6 +2935,9 @@ public class ErroreApplicativoCNIPA {
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
 		
 		return response;
@@ -2604,8 +2945,7 @@ public class ErroreApplicativoCNIPA {
 	
 	/** SERVIZIO TUNNEL SOAP: ERRORE CONNETTORE SA, Connect Timed Out ARRICCHITO */
 	
-	@DataProvider (name="personalizzazioniErroreConnectTimedOutServizioApplicativoTunnelSOAP")
-	public Object[][] personalizzazioniErroreConnectTimedOutServizioApplicativoTunnelSOAP(){
+	protected Object[][] _personalizzazioniErroreTimedOutServizioApplicativoTunnelSOAP(){
 		return new Object[][]{{null},
 				{"erroreApplicativoAsSoapFaultDefault"},
 				{"erroreApplicativoAsSoapFaultRidefinito"},
@@ -2613,20 +2953,25 @@ public class ErroreApplicativoCNIPA {
 				{"erroreApplicativoAsXmlRidefinito"},
 		};
 	}
-	@Test(groups={CostantiErrori.ID_GRUPPO_ERRORI,ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".CONNECT_TIMED_OUT_SA_TUNNEL_SOAP"},
-			dataProvider="personalizzazioniErroreConnectTimedOutServizioApplicativoTunnelSOAP")
-	public void testServizioApplicativoConnectTimedOutServizioApplicativo_TunnelSOAP(String servizioApplicativoFruitore) throws Exception{
-		
-		Date dataInizioTest = DateManager.getDate();
+	protected void _testServizioApplicativoTimedOutServizioApplicativo_TunnelSOAP(String servizioApplicativoFruitore, boolean readTimedOut) throws Exception{
 		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
+		
+		Date dataInizioTest = null;
+		Date dataFineTest = null;
 		try{
+			super.lockForCode(this.genericCode, this.unwrap);
+			dataInizioTest = DateManager.getDate();
+		
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS_CONNECT_TIMED_OUT;
+			if(readTimedOut) {
+				portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS_CONNECT_READ_TIMED_OUT;
+			}
 			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
 			bout = new ByteArrayOutputStream();
@@ -2659,9 +3004,26 @@ public class ErroreApplicativoCNIPA {
 			}
 			
 			String idPorta = "MinisteroFruitoreSPCoopIT";
+			// CNIPA prevede un codice egov
+			@SuppressWarnings("unused")
 			String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+			String codiceEGOV = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
 			String msg = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
 			boolean equalsMatch = false;
+			
+			ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+			if(this.genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+				if(this.unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+				}
+				codice = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msg = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					equalsMatch = true;
+				}
+			}
+			
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 			}
 			
@@ -2675,7 +3037,7 @@ public class ErroreApplicativoCNIPA {
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
-						codice, 
+						codiceEGOV, 
 						msg, equalsMatch);	
 								
 			} catch (AxisFault error) {
@@ -2684,12 +3046,15 @@ public class ErroreApplicativoCNIPA {
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
 							
-				Date dataFineTest = DateManager.getDate();
-				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
 				err.setIntervalloSuperiore(dataFineTest);
-				err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+				if(readTimedOut) {
+					err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Read timed out");
+				}
+				else {
+					err.setMsgErrore("Errore avvenuto durante la consegna HTTP: connect timed out");
+				}
 				this.erroriAttesiOpenSPCoopCore.add(err);
 			}
 		}catch(Exception e){
@@ -2700,21 +3065,12 @@ public class ErroreApplicativoCNIPA {
 			}catch(Exception e){}
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
+			
+			super.unlockForCode(this.genericCode);
+			dataFineTest = DateManager.getDate();
 		}	
 				
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }

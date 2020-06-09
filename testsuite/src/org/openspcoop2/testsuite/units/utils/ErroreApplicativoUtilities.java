@@ -126,29 +126,17 @@ public class ErroreApplicativoUtilities {
 	}
 	
 	public static void verificaFaultErroreApplicativo(AxisFault error,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String identificativoModuloAtteso,
-			CodiceErroreIntegrazione codiceErroreIntegrazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
+			ExceptionCodeExpected exceptionCodeExpected, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
 		String[] identificativiFunzioneAttesi = new String[1];
 		identificativiFunzioneAttesi[0] = identificativoModuloAtteso;
 		verificaFaultErroreApplicativo(getErroreApplicativo(error), dominioAtteso, tipoPdDAtteso, identificativiFunzioneAttesi, 
-				null, codiceErroreIntegrazione, descrizione, checkDescrizioneTramiteMatchEsatto);
-	}
-	public static void verificaFaultErroreApplicativo(AxisFault error,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String identificativoModuloAtteso,
-			CodiceErroreCooperazione codiceErroreCooperazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
-		String[] identificativiFunzioneAttesi = new String[1];
-		identificativiFunzioneAttesi[0] = identificativoModuloAtteso;
-		verificaFaultErroreApplicativo(getErroreApplicativo(error), dominioAtteso, tipoPdDAtteso, identificativiFunzioneAttesi, 
-				codiceErroreCooperazione, null, descrizione, checkDescrizioneTramiteMatchEsatto);
+				exceptionCodeExpected, descrizione, checkDescrizioneTramiteMatchEsatto);
 	}
 	
 	public static void verificaFaultErroreApplicativo(AxisFault error,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreIntegrazione codiceErroreIntegrazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
+			ExceptionCodeExpected exceptionCodeExpected, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
 		verificaFaultErroreApplicativo(getErroreApplicativo(error), dominioAtteso, tipoPdDAtteso, identificativoModuloAtteso, 
-				null, codiceErroreIntegrazione, descrizione, checkDescrizioneTramiteMatchEsatto);
-	}
-	public static void verificaFaultErroreApplicativo(AxisFault error,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreCooperazione codiceErroreCooperazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
-		verificaFaultErroreApplicativo(getErroreApplicativo(error), dominioAtteso, tipoPdDAtteso, identificativoModuloAtteso, 
-				codiceErroreCooperazione, null, descrizione, checkDescrizioneTramiteMatchEsatto);
+				exceptionCodeExpected, descrizione, checkDescrizioneTramiteMatchEsatto);
 	}
 	
 	private static Node getErroreApplicativo(AxisFault error){
@@ -173,18 +161,8 @@ public class ErroreApplicativoUtilities {
 	}
 	
 	public static void verificaFaultErroreApplicativo(Node erroreApplicativoNode,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreIntegrazione codiceErroreIntegrazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
-		verificaFaultErroreApplicativo(erroreApplicativoNode, dominioAtteso, tipoPdDAtteso, identificativoModuloAtteso, 
-				null, codiceErroreIntegrazione, descrizione, checkDescrizioneTramiteMatchEsatto);
-	}
-	public static void verificaFaultErroreApplicativo(Node erroreApplicativoNode,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreCooperazione codiceErroreCooperazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
-		verificaFaultErroreApplicativo(erroreApplicativoNode, dominioAtteso, tipoPdDAtteso, identificativoModuloAtteso, 
-				codiceErroreCooperazione, null, descrizione, checkDescrizioneTramiteMatchEsatto);
-	}
-	private static void verificaFaultErroreApplicativo(Node erroreApplicativoNode,IDSoggetto dominioAtteso,TipoPdD tipoPdDAtteso,String[] identificativoModuloAtteso,
-			CodiceErroreCooperazione codiceErroreCooperazione, CodiceErroreIntegrazione codiceErroreIntegrazione, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
-		
+			ExceptionCodeExpected exceptionCodeExpected, String descrizione, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
+
 		String xml = null;
 		
 		try{
@@ -360,13 +338,13 @@ public class ErroreApplicativoUtilities {
 					Assert.assertTrue(tipoEccezione!=null);
 					String valoreTipoEccezione = tipoEccezione.getTextContent();
 					Assert.assertTrue(valoreTipoEccezione!=null);
-					if(codiceErroreIntegrazione!=null) {
-						Reporter.log("Controllo tipo eccezione presente["+valoreTipoEccezione+"] atteso-integrazione["+org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.INTEGRATION+"]");
-						Assert.assertTrue(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.INTEGRATION.equals(valoreTipoEccezione));
-					}
-					else {
+					if(exceptionCodeExpected.isProtocolException()) {
 						Reporter.log("Controllo tipo eccezione presente["+valoreTipoEccezione+"] atteso-integrazione["+org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.PROTOCOL+"]");
 						Assert.assertTrue(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.PROTOCOL.equals(valoreTipoEccezione));
+					}
+					else {
+						Reporter.log("Controllo tipo eccezione presente["+valoreTipoEccezione+"] atteso-integrazione["+org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.INTEGRATION+"]");
+						Assert.assertTrue(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.INTEGRATION.equals(valoreTipoEccezione));	
 					}
 					
 					
@@ -395,22 +373,18 @@ public class ErroreApplicativoUtilities {
 							Assert.assertTrue(tipoCodice!=null);
 							String valoreTipoCodice = tipoCodice.getTextContent();
 							Assert.assertTrue(valoreTipoCodice!=null);
-							if(codiceErroreIntegrazione!=null) {
-								Reporter.log("Controllo code presente["+valoreTipoCodice+"] atteso-integrazione["+codiceErroreIntegrazione.getCodice()+"]");
-								Assert.assertTrue(valoreTipoCodice.equals(codiceErroreIntegrazione.getCodice()+""));
+							int codiceErroreAtteso = exceptionCodeExpected.getCodiceErroreSpecificoNumerico();
+							if(exceptionCodeExpected.isGenericCode()) {
+								codiceErroreAtteso = exceptionCodeExpected.getGovWayReturnCode();
 							}
-							else {
-								Reporter.log("Controllo code presente["+valoreTipoCodice+"] atteso-cooperazione["+codiceErroreCooperazione.getCodice()+"]");
-								Assert.assertTrue(valoreTipoCodice.equals(codiceErroreCooperazione.getCodice()+""));
-							}
+							Reporter.log("Controllo code presente["+valoreTipoCodice+"] atteso-integrazione["+codiceErroreAtteso+"]");
+							Assert.assertTrue(valoreTipoCodice.equals(codiceErroreAtteso+""));
+							
 							
 							String value = tmp.getTextContent();
-							String atteso = null;
-							if(codiceErroreIntegrazione!=null) {
-								atteso = toString(codiceErroreIntegrazione);
-							}
-							else {
-								atteso = toString(codiceErroreCooperazione);
+							String atteso = exceptionCodeExpected.getCodiceErroreSpecifico();
+							if(exceptionCodeExpected.isGenericCode()) {
+								atteso = exceptionCodeExpected.getCodiceErrore();
 							}
 							Reporter.log("Controllo codice descrittivo presente["+value+"] atteso["+atteso+"]");
 							Assert.assertTrue(value.equals(atteso));

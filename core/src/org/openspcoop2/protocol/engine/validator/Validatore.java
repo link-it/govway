@@ -32,7 +32,6 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.Configurazione;
@@ -48,6 +47,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -90,7 +90,7 @@ public class Validatore  {
 	private ProprietaValidazione proprietaValidazione;
 	/** Eventuale errore avvenuto durante il processo di validazione */
 	ErroreCooperazione errore;
-	IntegrationError errore_integrationError;
+	IntegrationFunctionError errore_integrationFunctionError;
 	/** Errori di validazione riscontrati sulla busta */
 	private java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
 	/** Errori di processamento riscontrati sulla busta */
@@ -232,10 +232,21 @@ public class Validatore  {
 			this.validatoreSintattico = new ValidazioneSintattica(this.context, this.state,this.msg, busta, isRichiesta, this.log,this.readQualifiedAttribute, this.protocolFactory);
 			if (this.validatoreSintattico.valida() == false){
 				this.errore = this.validatoreSintattico.getErrore();
-				this.errore_integrationError = this.validatoreSintattico.getErrore_integrationError();
+				this.errore_integrationFunctionError = this.validatoreSintattico.getErrore_integrationFunctionError();
+				if(this.errore_integrationFunctionError==null) {
+					if(isRichiesta==null || isRichiesta){
+						this.errore_integrationFunctionError = IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_REQUEST;
+					}
+					else {
+						this.errore_integrationFunctionError = IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_RESPONSE;
+					}
+				}
 				this.bustaErroreHeaderIntestazione = this.validatoreSintattico.getBustaErroreHeaderIntestazione();
 				return false;
 			}
+			
+			this.errore_integrationFunctionError = this.validatoreSintattico.getErrore_integrationFunctionError();
+			
 			this.busta = this.validatoreSintattico.getBusta();
 			IValidatoreErrori validatoreErrori = this.protocolFactory.createValidatoreErrori(this.state);
 			ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
@@ -299,6 +310,12 @@ public class Validatore  {
 			this.log.error("validazioneSintattica",e);
 			this.eccezioneProcessamentoValidazioneSintattica = e;
 			this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento("Errore di processamento: " +e.getMessage());
+			if(isRichiesta==null || isRichiesta){
+				this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+			}
+			else {
+				this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+			}
 			return false;
 		}	
 	}
@@ -418,7 +435,7 @@ public class Validatore  {
 		return true;	
 	}
 	
-	public boolean validazioneSemantica_messageSecurity_process(MessageSecurityContext messageSecurityContext, StringBuilder errore, TempiElaborazione tempiElaborazione) {
+	public boolean validazioneSemantica_messageSecurity_process(MessageSecurityContext messageSecurityContext, StringBuilder errore, TempiElaborazione tempiElaborazione, boolean request) {
 		try{
 			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 				
@@ -439,6 +456,12 @@ public class Validatore  {
 					}else{
 						Eccezione ecc = new Eccezione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(),messageSecurityContext.getCodiceErrore()), true, null, this.protocolFactory);
 						eccezioniSicurezza.add(ecc);
+					}
+					if(request) {
+						this.errore_integrationFunctionError=IntegrationFunctionError.MESSAGE_SECURITY_REQUEST_FAILED;
+					}
+					else {
+						this.errore_integrationFunctionError=IntegrationFunctionError.MESSAGE_SECURITY_RESPONSE_FAILED;
 					}
 					if(this.isMessaggioErrore){
 						// NOTA: il message security header puo' non essere presente se l'altra porta di dominio, ha generato un messaggio Busta Errore.
@@ -556,6 +579,7 @@ public class Validatore  {
 				this.tipoServizioCorrelato = registryValidator.getTipoServizioCorrelato();
 				this.versioneServizioCorrelato = registryValidator.getVersioneServizioCorrelato();
 				this.infoServizio = registryValidator.getInfoServizio();
+				this.errore_integrationFunctionError = registryValidator.getErrore_integrationFunctionError();
 				if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
 						|| 
 					( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
@@ -607,8 +631,8 @@ public class Validatore  {
 	public ErroreCooperazione getErrore(){
 		return this.errore;
 	}
-	public IntegrationError getErrore_integrationError() {
-		return this.errore_integrationError;
+	public IntegrationFunctionError getErrore_integrationFunctionError() {
+		return this.errore_integrationFunctionError;
 	}
 
 	/**

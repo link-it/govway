@@ -1,16 +1,15 @@
 .. _gestioneErrori:
 
-Gestione degli Errori
-~~~~~~~~~~~~~~~~~~~~~
+Classificazione degli Errori
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Il codice HTTP indica se una operazione ha avuto successo.
-Una risposta con codice 2xx indica che l'operazione ha avuto successo mentre altri errori indicano un problema imputabile al client (4xx su API REST o da un fault code 'Client' su API SOAP) o un errore che deve essere risolto agendo su GovWay (5xx su API REST o da un fault code 'Server' su API SOAP).
+Una risposta con codice 2xx indica che l'operazione ha avuto successo mentre codici diversi indicano un problema imputabile al client (4xx su API REST o da un fault code 'Client' su API SOAP) o un errore dipendente dallo stato del servizio (5xx su API REST o da un fault code 'Server' su API SOAP).
 
-La tabella :numref:`gestioneErroriTab` mostra gli errori ritornati da GovWay. La tabella mostra nella colonna 'Retry' quali errori sono risolvibili semplicemente tramite un nuovo invio (poichè non imputabili al client). Le indicazioni fornite per un nuovo invio sono le seguenti:
+La tabella :numref:`gestioneErroriTab` riporta l'elenco dei possibili codici di errore restituiti da GovWay. Per ognuno di questi, nella colonna 'Retry' è indicato se sia possibile o meno effettuare nuovi invii della stessa richiesta che ha ottenuto errore. Le indicazioni fornite sono le seguenti:
 
-- Si: il client può effettuare una nuova identica richiesta per ottenere una risposta con successo.
-- Si se idempotentene: il client può effettuare una nuova identica richiesta, ma solo se l'operazione sul backend applicativo è stata implementata idenmpotente.
-- No: il client deve risolvere il problema presente sulla sua richiesta prima di effettuarne una nuova.
+- Sì: il client può effettuare nuovamente la stessa richiesta;
+- Sì, se idempotente: il client può effettuare nuovamente la stessa richiesta, ma solo se l'operazione sul backend applicativo è implementata in maniera idempotente.
+- No: il client deve risolvere il problema segnalato prima di effettuare una nuova richiesta (ripetere la stessa richiesta produrrebbe sempre lo stesso esito).
 
    .. table:: Gestione degli Errori
       :widths: auto
@@ -25,14 +24,14 @@ La tabella :numref:`gestioneErroriTab` mostra gli errori ritornati da GovWay. La
       404 / Client     :ref:`errori_404`                       No
       409 / Client     :ref:`errori_409`                       No
       429 / Client     LimitExceeded - :ref:`errori_429`       No
-      429 / Client     TooManyRequests - :ref:`errori_429`     Si
-      502 / Server     :ref:`errori_502`                       Si se idempotente 
-      503 / Server     :ref:`errori_503`                       Si
-      504 / Server     :ref:`errori_504`                       Si se idempotente
+      429 / Client     TooManyRequests - :ref:`errori_429`     Sì
+      502 / Server     :ref:`errori_502`                       Sì, se idempotente 
+      503 / Server     :ref:`errori_503`                       Sì
+      504 / Server     :ref:`errori_504`                       Sì, se idempotente
       ============     ===================================     =================
 
-GovWay, nei casi dove è consigliata la rispedizione, genera un header 'Retry-After' che indica al client il numero di secondi dopo i quali ripresentarsi.
-Maggiori informazioni sugli header generati riguardanti la politica di rispedizione dei client sono trattate nella sezione :ref:`headerRisposta`.
+Nei casi in cui è prevista la rispedizione, GovWay genera un header 'Retry-After' che indica al client il numero di secondi di attesa prima di ripetere la richiesta.
+Maggiori dettagli sugli header generati per i casi di errore con rispedizione sono riportati nella sezione :ref:`headerRisposta`.
 
 
 .. toctree::

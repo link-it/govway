@@ -31,6 +31,7 @@ import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Esempio di AutorizzazioneContenutoBusteKO
@@ -63,7 +64,7 @@ public class AutorizzazioneContenutoBusteKO extends AbstractAutorizzazioneConten
     		String errore = "Il soggetto "+soggettoFruitore.getTipo()+"/"+soggettoFruitore.getNome() +" non e' autorizzato ad invocare il servizio "+
     				IDServizioFactory.getInstance().getUriFromIDServizio(servizio)+" con il contenuto applicativo fornito";
 			
-    		esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+    		esito.setErroreCooperazione(IntegrationFunctionError.CONTENT_AUTHORIZATION_DENY, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
 			esito.setAutorizzato(false);
         	return esito;
     		

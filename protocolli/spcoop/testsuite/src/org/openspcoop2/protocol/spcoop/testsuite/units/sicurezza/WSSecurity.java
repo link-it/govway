@@ -33,6 +33,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -42,6 +43,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.axis14.Axis14WSSBaseUtils;
 import org.openspcoop2.testsuite.clients.ClientCore;
@@ -59,7 +61,9 @@ import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -74,10 +78,19 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class WSSecurity {
+public class WSSecurity extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "WSSecurity";
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected WSSecurity() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
@@ -158,7 +171,43 @@ public class WSSecurity {
 	Repository repositoryOneWayWSSNonAutorizzato=new Repository();
 	private boolean faultCorrettoRicevuto = false;
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"})
-	public void oneWayWSSNonAutorizzato() throws TestSuiteException, Exception{
+	public void oneWayWSSNonAutorizzato_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_oneWayWSSNonAutorizzato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"})
+	public void oneWayWSSNonAutorizzato_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_oneWayWSSNonAutorizzato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"})
+	public void oneWayWSSNonAutorizzato_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_oneWayWSSNonAutorizzato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _oneWayWSSNonAutorizzato(boolean genericCode, boolean unwrap) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -183,9 +232,29 @@ public class WSSecurity {
 			client.run();
 			
 		} catch (AxisFault error) {
+			
+			String codiceEccezione = Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA);
+			String msgErrore = null;
+			if(genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+				if(unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+				}
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+			
 			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-			Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA)+"]");
-			Assert.assertTrue(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
+			Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+			Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+			if(msgErrore!=null) {
+				Reporter.log("Controllo fault string ["+msgErrore+"]");
+				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+			}
 			this.faultCorrettoRicevuto = true;
 		}finally{
 			dbComponentFruitore.close();
@@ -206,8 +275,19 @@ public class WSSecurity {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}
 		};
 	}
-	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato",dependsOnMethods="oneWayWSSNonAutorizzato")
-	public void testDBWSSNonAutorizzato(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato",dependsOnMethods="oneWayWSSNonAutorizzato_genericCode_wrap")
+	public void testDBWSSNonAutorizzato_genericCode_wrap(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		_testDBWSSNonAutorizzato(data, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato",dependsOnMethods="oneWayWSSNonAutorizzato_genericCode_unwrap")
+	public void testDBWSSNonAutorizzato_genericCode_unwrap(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		_testDBWSSNonAutorizzato(data, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato",dependsOnMethods="oneWayWSSNonAutorizzato_specificCode")
+	public void testDBWSSNonAutorizzato_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		_testDBWSSNonAutorizzato(data, id, checkServizioApplicativo);
+	}
+	private void _testDBWSSNonAutorizzato(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 		
 			if(id==null && this.faultCorrettoRicevuto){
@@ -454,7 +534,43 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSEncryptMessaggioAlterato=new Repository();
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSEncryptMessaggioAlterato"})
-	public void wssEncryptMessaggioAlterato() throws TestSuiteException, Exception{
+	public void wssEncryptMessaggioAlterato_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_wssEncryptMessaggioAlterato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSEncryptMessaggioAlterato"})
+	public void wssEncryptMessaggioAlterato_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_wssEncryptMessaggioAlterato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSEncryptMessaggioAlterato"})
+	public void wssEncryptMessaggioAlterato_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_wssEncryptMessaggioAlterato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _wssEncryptMessaggioAlterato(boolean genericCode, boolean unwrap) throws TestSuiteException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -483,9 +599,31 @@ public class WSSecurity {
 			client.run();
 			
 		} catch (AxisFault error) {
+			
+			
+			String codiceEccezione = Utilities.toString(CodiceErroreCooperazione.SICUREZZA);
+			String msgErrore = null;
+			if(genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+				if(unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+				}
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+			
 			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-			Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreCooperazione.SICUREZZA)+"]");
-			Assert.assertTrue(Utilities.toString(CodiceErroreCooperazione.SICUREZZA).equals(error.getFaultCode().getLocalPart()));			
+			Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+			Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+			if(msgErrore!=null) {
+				Reporter.log("Controllo fault string ["+msgErrore+"]");
+				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+			}
+			
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
@@ -514,7 +652,43 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSSignatureMessaggioAlterato=new Repository();
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSSignatureMessaggioAlterato"})
-	public void wssSignatureMessaggioAlterato() throws TestSuiteException, Exception{
+	public void wssSignatureMessaggioAlterato_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_wssSignatureMessaggioAlterato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSSignatureMessaggioAlterato"})
+	public void wssSignatureMessaggioAlterato_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_wssSignatureMessaggioAlterato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSSignatureMessaggioAlterato"})
+	public void wssSignatureMessaggioAlterato_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_wssSignatureMessaggioAlterato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _wssSignatureMessaggioAlterato(boolean genericCode, boolean unwrap) throws TestSuiteException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -543,9 +717,30 @@ public class WSSecurity {
 			client.run();
 			
 		} catch (AxisFault error) {
+			
+			String codiceEccezione = Utilities.toString(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA);
+			String msgErrore = null;
+			if(genericCode) {
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+				if(unwrap) {
+					integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+				}
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+						org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+				if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+					msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+				}
+			}
+			
 			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-			Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA)+"]");
-			Assert.assertTrue(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA).equals(error.getFaultCode().getLocalPart()));			
+			Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+			Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+			if(msgErrore!=null) {
+				Reporter.log("Controllo fault string ["+msgErrore+"]");
+				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+			}
+						
 		}finally{
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
@@ -2606,7 +2801,45 @@ public class WSSecurity {
 	}
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".XACML_POLICY"},dataProvider="SincronoWSS_XACML_POLICY_invocazione",
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity")
-	public void sincronoWSS_XACML_POLICY(String azione) throws Exception{
+	public void sincronoWSS_XACML_POLICY_genericCode_wrap(String azione) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_sincronoWSS_XACML_POLICY(azione, genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".XACML_POLICY"},dataProvider="SincronoWSS_XACML_POLICY_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity")
+	public void sincronoWSS_XACML_POLICY_genericCode_unwrap(String azione) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_sincronoWSS_XACML_POLICY(azione, genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".XACML_POLICY"},dataProvider="SincronoWSS_XACML_POLICY_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity")
+	public void sincronoWSS_XACML_POLICY_specificCode(String azione) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_sincronoWSS_XACML_POLICY(azione, genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoWSS_XACML_POLICY(String azione, boolean genericCode, boolean unwrap) throws Exception{
 		
 		if(azione.endsWith("Ok")){
 		
@@ -2657,9 +2890,28 @@ public class WSSecurity {
 				
 				String id=this.repositorySincronoWSS_XACML_POLICY.getNext();
 				
+				String codiceEccezione = Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA);
+				String msgErrore = null;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+				if(msgErrore!=null) {
+					Reporter.log("Controllo fault string ["+msgErrore+"]");
+					Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				}
 				
 				// Check Fruitore
 				data = DatabaseProperties.getDatabaseComponentDiagnosticaFruitore();

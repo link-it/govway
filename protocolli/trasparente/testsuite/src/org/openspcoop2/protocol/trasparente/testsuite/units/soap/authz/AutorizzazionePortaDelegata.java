@@ -20,16 +20,22 @@
 
 package org.openspcoop2.protocol.trasparente.testsuite.units.soap.authz;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Vector;
 
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.trasparente.testsuite.core.TrasparenteTestsuiteLogger;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.AuthUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.CredenzialiInvocazione;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
@@ -42,10 +48,20 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AutorizzazionePortaDelegata {
+public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "AutorizzazionePortaDelegata";
+	
+	
+	@SuppressWarnings("unused")
+	private Logger log = TrasparenteTestsuiteLogger.getInstance();
+	
+	protected AutorizzazionePortaDelegata() {
+		super(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
+	
 	
 	private static boolean addIDUnivoco = true;
 
@@ -73,19 +89,48 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] authenticatedProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic", "123456"), 
-						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic2", "123456"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparenteBasic2"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					null,
+					null, -1,true, 200}, // crendeziali corrette
+				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic2", "123456"),
+					IntegrationFunctionError.AUTHORIZATION_DENY,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparenteBasic2"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED"},dataProvider="authenticatedProvider")
-	public void test_authenticated(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_authenticated_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_authenticated(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED"},dataProvider="authenticatedProvider")
+	public void test_authenticated_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_authenticated(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_authenticated(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_AUTHENTICATED, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -108,19 +153,48 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] rolesAllProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					null,
+					null, -1,true, 200}, // crendeziali corrette
+				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"),
+					IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_ALL"},dataProvider="rolesAllProvider")
-	public void test_rolesAll(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_rolesAll_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_rolesAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_ALL"},dataProvider="rolesAllProvider")
+	public void test_rolesAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_rolesAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_rolesAll(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_ROLES_ALL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -143,7 +217,7 @@ public class AutorizzazionePortaDelegata {
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
 						null, -1,true, 200}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-							null, -1,true, 200}, // crendeziali corrette
+						null, -1,true, 200}, // crendeziali corrette
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_ANY"},dataProvider="rolesAnyProvider")
@@ -151,7 +225,7 @@ public class AutorizzazionePortaDelegata {
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_ROLES_ANY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				false, null, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -172,19 +246,48 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] rolesInternalAllProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette
+					null,
+					null, -1,true, 200}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-							CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
-								replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
-							CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_INTERNAL_ALL"},dataProvider="rolesInternalAllProvider")
-	public void test_rolesInternalAll(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_rolesInternalAll_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_rolesInternalAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_INTERNAL_ALL"},dataProvider="rolesInternalAllProvider")
+	public void test_rolesInternalAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_rolesInternalAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_rolesInternalAll(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,  
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_INTERNAL_ROLES_ALL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -205,9 +308,9 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] rolesInternalAnyProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette
+					null, -1,true, 200}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-							null, -1,true, 200}, // crendeziali corrette
+					null, -1,true, 200}, // crendeziali corrette
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_INTERNAL_ANY"},dataProvider="rolesInternalAnyProvider")
@@ -215,7 +318,7 @@ public class AutorizzazionePortaDelegata {
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_INTERNAL_ROLES_ANY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				false, null, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -238,19 +341,48 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] rolesExternalAllProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette
+					null,
+					null, -1,true, 200}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-							CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
-								replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
-							CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_EXTERNAL_ALL"},dataProvider="rolesExternalAllProvider")
-	public void test_rolesExternalAll(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_rolesExternalAll_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_rolesExternalAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_EXTERNAL_ALL"},dataProvider="rolesExternalAllProvider")
+	public void test_rolesExternalAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_rolesExternalAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_rolesExternalAll(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,  
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ALL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -280,7 +412,7 @@ public class AutorizzazionePortaDelegata {
 	public void test_rolesExternalAny(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ANY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				false, null, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
 				30000);
 		
 		if(erroreAtteso!=null) {
@@ -303,20 +435,49 @@ public class AutorizzazionePortaDelegata {
 	@DataProvider(name="rolesExternalNoAuthenticationAllProvider")
 	public Object[][] rolesExternalNoAuthenticationAllProvider(){
 		return new Object[][]{
-				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette
+				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"),
+					null,
+					null, -1,true, 200}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-							CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
-								replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "Anonimo"),	
-							CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "Anonimo"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_EXTERNAL_ALL_NO_AUTHENTICATION"},dataProvider="rolesExternalNoAuthenticationAllProvider")
-	public void test_rolesExternalNoAuthenticationAll(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_rolesExternalNoAuthenticationAll_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_rolesExternalNoAuthenticationAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_EXTERNAL_ALL_NO_AUTHENTICATION"},dataProvider="rolesExternalNoAuthenticationAllProvider")
+	public void test_rolesExternalNoAuthenticationAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_rolesExternalNoAuthenticationAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_rolesExternalNoAuthenticationAll(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,   
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ALL_NO_AUTHENTICATION, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -339,7 +500,7 @@ public class AutorizzazionePortaDelegata {
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
 						null, -1,true, 200}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-							null, -1,true, 200}, // crendeziali corrette
+						null, -1,true, 200}, // crendeziali corrette
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_EXTERNAL_ANY_NO_AUTHENTICATION"},dataProvider="rolesExternalNoAuthenticationAnyProvider")
@@ -347,7 +508,7 @@ public class AutorizzazionePortaDelegata {
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ANY_NO_AUTHENTICATION, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				false, null, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -368,22 +529,52 @@ public class AutorizzazionePortaDelegata {
 	@DataProvider(name="Authenticated_or_rolesAllProvider")
 	public Object[][] Authenticated_or_rolesAllProvider(){
 		return new Object[][]{
-				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
-				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
+				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"),
+					null,
+					null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
+				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"),
+					null,
+					null, -1,true, 200}, // (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal3", "Op3nSPC@@p2"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "Anonimo"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "Anonimo"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED_OR_ROLES_ALL"},dataProvider="Authenticated_or_rolesAllProvider")
-	public void test_Authenticated_or_rolesAll(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_Authenticated_or_rolesAll_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_Authenticated_or_rolesAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED_OR_ROLES_ALL"},dataProvider="Authenticated_or_rolesAllProvider")
+	public void test_Authenticated_or_rolesAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_Authenticated_or_rolesAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_Authenticated_or_rolesAll(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,   
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_ROLES_ALL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -418,7 +609,7 @@ public class AutorizzazionePortaDelegata {
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_ROLES_ANY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				false, null, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -442,21 +633,50 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] Authenticated_or_internalRolesAllProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic", "123456"), 
-						null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
+					null,
+					null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
 				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic2", "123456"), 
-						null, -1,true, 200}, // (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
+					null,
+					null, -1,true, 200}, // (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
 				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparenteBasic3", "123456"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparenteBasic3"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_DENY,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparenteBasic3"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED_OR_INTERNAL_ROLES_ALL"},dataProvider="Authenticated_or_internalRolesAllProvider")
-	public void test_Authenticated_or_internalRolesAll(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_Authenticated_or_internalRolesAll_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_Authenticated_or_internalRolesAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED_OR_INTERNAL_ROLES_ALL"},dataProvider="Authenticated_or_internalRolesAllProvider")
+	public void test_Authenticated_or_internalRolesAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_Authenticated_or_internalRolesAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _test_Authenticated_or_internalRolesAll(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,    
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_INTERNAL_ROLES_ALL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -491,7 +711,7 @@ public class AutorizzazionePortaDelegata {
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_INTERNAL_ROLES_ANY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				false, null, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -517,21 +737,51 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] Authenticated_or_externalRolesAllProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
+					null,
+					null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
+					null,
+					null, -1,true, 200}, // (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal3", "Op3nSPC@@p2"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "Anonimo"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "Anonimo"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED_OR_EXTERNAL_ROLES_ALL"},dataProvider="Authenticated_or_externalRolesAllProvider")
-	public void test_Authenticated_or_externalRolesAll(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_Authenticated_or_externalRolesAll_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_Authenticated_or_externalRolesAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED_OR_EXTERNAL_ROLES_ALL"},dataProvider="Authenticated_or_externalRolesAllProvider")
+	public void test_Authenticated_or_externalRolesAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_Authenticated_or_externalRolesAll(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_Authenticated_or_externalRolesAll(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,     
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_EXTERNAL_ROLES_ALL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -566,7 +816,7 @@ public class AutorizzazionePortaDelegata {
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_EXTERNAL_ROLES_ANY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				false, null, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -597,19 +847,47 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] XacmlPolicy_Provider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
+					null,
+					null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_POLICY_DENY,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".XACML_POLICY"},dataProvider="XacmlPolicy_Provider")
-	public void test_XacmlPolicy_(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_XacmlPolicy_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_XacmlPolicy(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".XACML_POLICY"},dataProvider="XacmlPolicy_Provider")
+	public void test_XacmlPolicy_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_XacmlPolicy(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _test_XacmlPolicy(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,    
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_XACML_POLICY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -638,19 +916,47 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] InternalXacmlPolicy_Provider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
+					null,
+					null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_POLICY_DENY,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".INTERNAL_XACML_POLICY"},dataProvider="InternalXacmlPolicy_Provider")
-	public void test_InternalXacmlPolicy_(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_InternalXacmlPolicy_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_InternalXacmlPolicy(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".INTERNAL_XACML_POLICY"},dataProvider="InternalXacmlPolicy_Provider")
+	public void test_InternalXacmlPolicy_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_InternalXacmlPolicy(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _test_InternalXacmlPolicy(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,     
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_INTERNAL_XACML_POLICY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -679,19 +985,48 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] ExternalXacmlPolicy_Provider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
+					null,
+					null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_POLICY_DENY,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "EsempioFruitoreTrasparentePrincipal2"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".EXTERNAL_XACML_POLICY"},dataProvider="ExternalXacmlPolicy_Provider")
-	public void test_ExternalXacmlPolicy_(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_ExternalXacmlPolicy_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_ExternalXacmlPolicy(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".EXTERNAL_XACML_POLICY"},dataProvider="ExternalXacmlPolicy_Provider")
+	public void test_ExternalXacmlPolicy_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_ExternalXacmlPolicy(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_ExternalXacmlPolicy(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,      
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_EXTERNAL_XACML_POLICY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -721,19 +1056,48 @@ public class AutorizzazionePortaDelegata {
 	public Object[][] ExternalXacmlPolicy_noAuthentication_Provider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal", "Op3nSPC@@p2"), 
-						null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
+					null,
+					null, -1,true, 200}, // crendeziali corrette (possiede i ruoli)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal2", "Op3nSPC@@p2"), 
-						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY.
-							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "Anonimo"),	
-						CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+					IntegrationFunctionError.AUTHORIZATION_POLICY_DENY,
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE, "Anonimo"),	
+					CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".EXTERNAL_XACML_POLICY_NO_AUTHENTICATION"},dataProvider="ExternalXacmlPolicy_noAuthentication_Provider")
-	public void test_ExternalXacmlPolicy_noAuthentication_(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void test_ExternalXacmlPolicy_noAuthentication_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_ExternalXacmlPolicy_noAuthentication(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".EXTERNAL_XACML_POLICY_NO_AUTHENTICATION"},dataProvider="ExternalXacmlPolicy_noAuthentication_Provider")
+	public void test_ExternalXacmlPolicy_noAuthentication_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_test_ExternalXacmlPolicy_noAuthentication(credenzialiInvocazione, genericCode, integrationFunctionError, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _test_ExternalXacmlPolicy_noAuthentication(CredenzialiInvocazione credenzialiInvocazione, boolean genericCode, IntegrationFunctionError integrationFunctionError,  
+			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_EXTERNAL_XACML_POLICY_NO_AUTHENTICATION, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();

@@ -27,10 +27,12 @@ import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.config.ConfigurationRFC7807;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -54,7 +56,8 @@ public abstract class AbstractEccezioneBuilderParameter {
 	private Date oraRegistrazione = DateManager.getDate();
 	private ParseException parseException;
 	private ConfigurationRFC7807 rfc7807;
-	private int httpStatus;
+	private IntegrationErrorReturnConfiguration returnConfig;
+	private IntegrationFunctionError functionError;
 	private String nomePorta;
 	private String transactionId;
 	private Context context;
@@ -131,11 +134,17 @@ public abstract class AbstractEccezioneBuilderParameter {
 	public void setRfc7807(ConfigurationRFC7807 rfc7807) {
 		this.rfc7807 = rfc7807;
 	}
-	public int getHttpStatus() {
-		return this.httpStatus;
+	public IntegrationErrorReturnConfiguration getReturnConfig() {
+		return this.returnConfig;
 	}
-	public void setHttpStatus(int httpStatus) {
-		this.httpStatus = httpStatus;
+	public void setReturnConfig(IntegrationErrorReturnConfiguration returnConfig) {
+		this.returnConfig = returnConfig;
+	}
+	public IntegrationFunctionError getFunctionError() {
+		return this.functionError;
+	}
+	public void setFunctionError(IntegrationFunctionError functionError) {
+		this.functionError = functionError;
 	}
 	public String getNomePorta() {
 		return this.nomePorta;

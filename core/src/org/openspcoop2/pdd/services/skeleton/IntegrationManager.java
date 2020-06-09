@@ -87,7 +87,9 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -140,6 +142,16 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 	protected abstract HttpServletRequest getHttpServletRequest() throws IntegrationManagerException;
 	protected abstract HttpServletResponse getHttpServletResponse() throws IntegrationManagerException;
+
+	private ErroriProperties getErroriProperties(Logger log) {
+		ErroriProperties erroriProperties = null;
+		try {
+			erroriProperties = ErroriProperties.getInstance(log);
+		}catch(Exception Ignoree) {
+			// non succede
+		}
+		return erroriProperties;
+	}
 	
 	private IProtocolFactory<?> getProtocolFactory(Logger log) throws IntegrationManagerException{
 		try {
@@ -147,7 +159,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
 		} catch (Exception e) {
 			log.error("Errore durante il recupero della ProtocolFactory: "+e.getMessage(),e);
-			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),
+					IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(log));
 		} 
 	}
 	
@@ -163,7 +176,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
-			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),
+					IntegrationFunctionError.AUTHORIZATION, this.getErroriProperties(log));
 		} 
 	}
 	private void setNomePortaDelegata(Logger log,String nomePorta) throws IntegrationManagerException{
@@ -171,7 +185,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			getHttpServletRequest().setAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA, nomePorta);
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
-			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),
+					IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(log));
 		} 
 	}
 	
@@ -209,7 +224,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	//private java.util.Hashtable<String, IGestoreCredenzialiIM> gestoriCredenziali = null;
 	// E' stato aggiunto lo stato dentro l'oggetto.
 	private String [] tipiGestoriCredenziali = null;
-	private synchronized void initializeGestoreCredenziali(IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag) throws IntegrationManagerException{
+	private synchronized void initializeGestoreCredenziali(Logger logCore,IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag) throws IntegrationManagerException{
 		if(this.tipiGestoriCredenziali==null){
 			
 			Loader loader = Loader.getInstance();
@@ -227,16 +242,17 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						msgDiag.logErroreGenerico(e, "InizializzazioneGestoreCredenziali("+this.tipiGestoriCredenziali[i]+")");
 						throw new IntegrationManagerException(protocolFactory,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE));
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE),
+									IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 					}
 				}
 			}
 		}
 	}
-	private void gestioneCredenziali(IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,
+	private void gestioneCredenziali(Logger logCore,IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,
 			InfoConnettoreIngresso infoConnettoreIngresso,PdDContext pddContext) throws IntegrationManagerException {
 		if(this.tipiGestoriCredenziali==null){
-			initializeGestoreCredenziali(protocolFactory,msgDiag);
+			initializeGestoreCredenziali(logCore,protocolFactory,msgDiag);
 		}
 		if(this.tipiGestoriCredenziali!=null){
 			msgDiag.mediumDebug("Gestione personalizzata delle credenziali...");
@@ -256,7 +272,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						msgDiag.logErroreGenerico(e, "InizializzazioneGestoreCredenziali("+this.tipiGestoriCredenziali[i]+")");
 						throw new IntegrationManagerException(protocolFactory,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE));
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE),
+									IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 					}
 					
 					if (gestore != null) {
@@ -289,15 +306,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
 					msgDiag.logPersonalizzato("gestoreCredenziali.errore");
 					ErroreIntegrazione errore = null;
+					IntegrationFunctionError integrationFunctionError = null;
 					if(e instanceof GestoreCredenzialiConfigurationException){
+						GestoreCredenzialiConfigurationException ge = (GestoreCredenzialiConfigurationException) e;
+						integrationFunctionError = ge.getIntegrationFunctionError();
 						errore = ErroriIntegrazione.ERRORE_431_GESTORE_CREDENZIALI_ERROR.
 								getErrore431_ErroreGestoreCredenziali(this.tipiGestoriCredenziali[i], e);
 					}else{
 						errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE);
 					}
+					if(integrationFunctionError==null) {
+						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+					}
 					
-					throw new IntegrationManagerException(protocolFactory,errore);
+					throw new IntegrationManagerException(protocolFactory,errore,
+							integrationFunctionError, this.getErroriProperties(logCore));
 					
 				}
 			}
@@ -310,7 +334,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	 * @return il nome del Servizio Applicativo invocante
 	 * 
 	 */
-	private IDServizioApplicativo autenticazione(IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,InfoConnettoreIngresso infoConnettoreIngresso,
+	private IDServizioApplicativo autenticazione(Logger logCore, IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,InfoConnettoreIngresso infoConnettoreIngresso,
 			ConfigurazionePdDManager configPdDManager,PdDContext pddContext) throws IntegrationManagerException {
 		
 		Credenziali credenziali = infoConnettoreIngresso.getCredenziali();
@@ -327,13 +351,15 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		if(tipoAutenticazione==null || tipoAutenticazione.length<1){
 			msgDiag.logPersonalizzato("autenticazioneNonImpostata");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR),
+					IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 		}
 		for(int i=0; i<tipoAutenticazione.length; i++){
 			if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString().equalsIgnoreCase(tipoAutenticazione[i]) == true){
 				msgDiag.logPersonalizzato("autenticazioneNonImpostata");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR),
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}
 		
@@ -351,7 +377,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"Autenticazione("+tipoAutenticazione[i]+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE),
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}	
 			if(esito.getDetails()==null){
 				msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
@@ -372,7 +399,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}catch(Exception e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione dell'errore: "+e.getMessage(),e);
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR),
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 				}
 			}
 			else{
@@ -386,13 +414,15 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errori.toString());
 				msgDiag.logPersonalizzato("servizioApplicativo.identificazioneTramiteCredenziali");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.
-						getErrore402_AutenticazioneFallita(errori.toString()));
+						getErrore402_AutenticazioneFallita(errori.toString()),
+						IntegrationFunctionError.AUTHENTICATION, this.getErroriProperties(logCore));
 			}
 			else{
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "servizio applicativo non autenticato");
 				msgDiag.logPersonalizzato("servizioApplicativo.identificazioneTramiteCredenziali");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE),
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}
 		
@@ -414,32 +444,38 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		if( OpenSPCoop2Startup.initialize == false){
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Inizializzazione di OpenSPCoop non correttamente effettuata");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
+					IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, this.getErroriProperties(logCore));
 		}
 		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI),
+					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
 		if (TimerThresholdThread.freeSpace == false) {
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Non sono disponibili abbastanza risorse per la gestione della richiesta");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO),
+					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
 		if( Tracciamento.tracciamentoDisponibile == false){
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Tracciatura non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage(),Tracciamento.motivoMalfunzionamentoTracciamento);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE),
+					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
 		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE),
+					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
 		if( Dump.sistemaDumpDisponibile == false){
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Sistema di dump dei contenuti applicativi non disponibile: "+Dump.motivoMalfunzionamentoDump.getMessage(),Dump.motivoMalfunzionamentoDump);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE),
+					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
 		// Check Configurazione (XML)
 		try{
@@ -447,7 +483,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}catch(Exception e){
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Riscontrato errore durante la verifica della consistenza della configurazione PdD",e);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
+					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
 		
 		boolean serviceIsEnabled = false;
@@ -464,18 +501,20 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				logCore.error("["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Servizio IntegrationManager disabilitato");
 			}
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_552_IM_SERVICE_NOT_ACTIVE));
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_552_IM_SERVICE_NOT_ACTIVE),
+					IntegrationFunctionError.API_SUSPEND, this.getErroriProperties(logCore));
 		}
 
 	}
 	
 	/* -------- Utility -------------- */
-	private IUniqueIdentifier getUniqueIdentifier(IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,String tipoOperazione) throws IntegrationManagerException {
+	private IUniqueIdentifier getUniqueIdentifier(Logger logCore, IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,String tipoOperazione) throws IntegrationManagerException {
 		try{
 			return UniqueIdentifierManager.newUniqueIdentifier();
 		}catch(Exception e){
-			msgDiag.logErroreGenerico(e,"getAllMessagesId("+tipoOperazione+").getUniqueIdentifier()");
-			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			msgDiag.logErroreGenerico(e,"("+tipoOperazione+").getUniqueIdentifier()");
+			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),
+					IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 		}
 	}
 	private MsgDiagnostico getMsgDiagnostico(){
@@ -535,7 +574,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		
 		// PddContext
 		PdDContext pddContext = new PdDContext();
-		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
+		String idTransazione = this.getUniqueIdentifier(logCore, protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 		
@@ -552,7 +591,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		} catch(Exception e) {
 			msgDiag.logErroreGenerico(e, "IDServizioFactory.getIDServizioFromValues");
 			ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
-			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione,
+					IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 		}
 		idServizio.setAzione(azione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_SERVIZIO,idServizio);
@@ -567,8 +607,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			GestoreHandlers.integrationManagerRequest(imRequestContext, msgDiag, logCore);
 		} catch(Exception e) {
 			ErroreIntegrazione erroreIntegrazione = null;
+			IntegrationFunctionError integrationFunctionError = null;
 			if(e instanceof HandlerException){
 				HandlerException he = (HandlerException) e;
+				integrationFunctionError = he.getIntegrationFunctionError();
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 				}
@@ -579,7 +621,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			if(erroreIntegrazione==null){
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 			}
-			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
+			if(integrationFunctionError==null) {
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+			}
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione,
+					integrationFunctionError, this.getErroriProperties(logCore));
 		}
 
 		
@@ -600,10 +646,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			
 			// gestione credenziali
-			this.gestioneCredenziali(protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
+			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 						
 			// Autenticazione Servizio Applicativo
-			id_servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			id_servizio_applicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
 			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
 			String tipoServizioLog = "";
 			String servizioLog = "";
@@ -636,7 +682,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			if(ids.size() == 0){
 				msgDiag.logPersonalizzato("messaggiNonPresenti");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.
-						getErroreIntegrazione(),id_servizio_applicativo);
+						getErroreIntegrazione(),id_servizio_applicativo,
+						IntegrationFunctionError.IM_MESSAGES_NOT_FOUND, this.getErroriProperties(logCore));
 			}
 			List<String> listResponse = new ArrayList<String>();
 			if(ids!=null && ids.size()>0){
@@ -672,7 +719,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw (IntegrationManagerException)e;
 			}else{
 				msgDiag.logErroreGenerico(e,"getAllMessagesId("+tipoOperazione+")");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo);
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}finally{
 			try{
@@ -838,7 +886,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		OpenSPCoopStateful stato = null;
 		// PddContext
 		PdDContext pddContext = new PdDContext();
-		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
+		String idTransazione = this.getUniqueIdentifier(logCore, protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO,idMessaggio);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME,protocolFactory.getProtocol());
@@ -853,8 +901,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			GestoreHandlers.integrationManagerRequest(imRequestContext, msgDiag, logCore);
 		}catch(Exception e){
 			ErroreIntegrazione erroreIntegrazione = null;
+			IntegrationFunctionError integrationFunctionError = null;
 			if(e instanceof HandlerException){
 				HandlerException he = (HandlerException) e;
+				integrationFunctionError = he.getIntegrationFunctionError();
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 				}
@@ -865,7 +915,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			if(erroreIntegrazione==null){
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 			}
-			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
+			if(integrationFunctionError==null) {
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+			}
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione,
+					integrationFunctionError, this.getErroriProperties(logCore));
 		}
 		
 		
@@ -885,10 +939,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			
 			// gestione credenziali
-			this.gestioneCredenziali(protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
+			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			id_servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			id_servizio_applicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
 			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
 			String param = "ServizioApplicativo["+id_servizio_applicativo.getNome()+"] ID["+idMessaggio+"]";
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
@@ -902,7 +956,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 				msgDiag.logPersonalizzato("messaggioNonTrovato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.
-						getErroreIntegrazione(),id_servizio_applicativo);
+						getErroreIntegrazione(),id_servizio_applicativo,
+						IntegrationFunctionError.IM_MESSAGE_NOT_FOUND, this.getErroriProperties(logCore));
 			}
 
 			// Check Autorizzazione all'utilizzo di IntegrationManager
@@ -911,7 +966,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
 						getErrore404_AutorizzazioneFallitaServizioApplicativo(id_servizio_applicativo.getNome()),
-						id_servizio_applicativo);
+						id_servizio_applicativo,
+						IntegrationFunctionError.AUTHORIZATION, this.getErroriProperties(logCore));
 			}
 
 			// GetIDMessaggio Richiesto
@@ -923,7 +979,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("mappingRifMsgToId.nonRiuscito");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 
 			// Proprieta' Protocollo del Messaggio da ritornare
@@ -966,7 +1023,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.logErroreGenerico(e,"ReadInformazioniProtocollo("+tipoOperazione+","+idMessaggioRichiesto+")");
 				if(e.getMessage()==null || (e.getMessage().indexOf("Busta non trovata")<0) ){
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 				}// else
 				//{
 				//busta non presente, il msg puo' cmq essere consumato
@@ -986,7 +1044,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 			
 			// TipoMessaggio
@@ -1022,7 +1081,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);				
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));				
 				}
 			}
 			
@@ -1048,7 +1108,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"buildMsgReturn("+idMessaggio+","+tipoOperazione+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE),id_servizio_applicativo);
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 
 			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
@@ -1104,7 +1165,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw (IntegrationManagerException)e;
 			}else{	
 				msgDiag.logErroreGenerico(e,"getMessage("+tipoOperazione+")");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo);
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}finally{
 			try{
@@ -1221,7 +1283,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		OpenSPCoopStateful stato = null;
 		// PddContext
 		PdDContext pddContext = new PdDContext();
-		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
+		String idTransazione = this.getUniqueIdentifier(logCore, protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO,idMessaggio);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
@@ -1237,8 +1299,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			GestoreHandlers.integrationManagerRequest(imRequestContext, msgDiag, logCore);
 		}catch(Exception e){
 			ErroreIntegrazione erroreIntegrazione = null;
+			IntegrationFunctionError integrationFunctionError = null;
 			if(e instanceof HandlerException){
 				HandlerException he = (HandlerException) e;
+				integrationFunctionError = he.getIntegrationFunctionError();
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 				}
@@ -1249,7 +1313,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			if(erroreIntegrazione==null){
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 			}
-			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
+			if(integrationFunctionError==null) {
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+			}
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione,
+					integrationFunctionError, this.getErroriProperties(logCore));
 		}
 		
 		
@@ -1269,10 +1337,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());	
 			
 			// gestione credenziali
-			this.gestioneCredenziali(protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
+			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			id_servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			id_servizio_applicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
 			servizio_applicativo = id_servizio_applicativo.getNome();
 			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
 			String param = "ServizioApplicativo["+servizio_applicativo+"] ID["+idMessaggio+"]";
@@ -1286,7 +1354,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 				msgDiag.logPersonalizzato("messaggioNonTrovato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.
-						getErroreIntegrazione(),id_servizio_applicativo);
+						getErroreIntegrazione(),id_servizio_applicativo,
+						IntegrationFunctionError.IM_MESSAGE_NOT_FOUND, this.getErroriProperties(logCore));
 			}
 
 			// Check Autorizzazione all'utilizzo di IntegrationManager
@@ -1295,7 +1364,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
 						getErrore404_AutorizzazioneFallitaServizioApplicativo(servizio_applicativo),
-						id_servizio_applicativo);
+						id_servizio_applicativo,
+						IntegrationFunctionError.AUTHORIZATION, this.getErroriProperties(logCore));
 			}
 
 			//	GetIDMessaggio Richiesto
@@ -1307,7 +1377,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("mappingRifMsgToId.nonRiuscito");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 
 			//	Gestore Messaggio da eliminare
@@ -1317,7 +1388,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizio_applicativo+","+idMessaggio+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 			
 			// Aggiorno la transazione prima di eliminare il messaggio
@@ -1347,7 +1419,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizio_applicativo+","+idMessaggio+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 
 			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
@@ -1379,7 +1452,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw (IntegrationManagerException)e;
 			}else{
 				msgDiag.logErroreGenerico(e,"deleteMessage("+tipoOperazione+")");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo);
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}finally{
 			try{
@@ -1488,7 +1562,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		OpenSPCoopStateful stato = null;
 		// PddContext
 		PdDContext pddContext = new PdDContext();
-		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
+		String idTransazione = this.getUniqueIdentifier(logCore, protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 		msgDiag.setPddContext(pddContext, protocolFactory);
@@ -1503,8 +1577,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			GestoreHandlers.integrationManagerRequest(imRequestContext, msgDiag, logCore);
 		}catch(Exception e){
 			ErroreIntegrazione erroreIntegrazione = null;
+			IntegrationFunctionError integrationFunctionError = null;
 			if(e instanceof HandlerException){
 				HandlerException he = (HandlerException) e;
+				integrationFunctionError = he.getIntegrationFunctionError();
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 				}
@@ -1515,7 +1591,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			if(erroreIntegrazione==null){
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 			}
-			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
+			if(integrationFunctionError==null) {
+				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+			}
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione,
+					integrationFunctionError, getErroriProperties(logCore));
 		}
 		
 		
@@ -1534,10 +1614,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());	
 			
 			// gestione credenziali
-			this.gestioneCredenziali(protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
+			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			id_servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			id_servizio_applicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
 			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
 			String param = "ServizioApplicativo["+id_servizio_applicativo.getNome()+"]";
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
@@ -1550,7 +1630,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			if(ids.size() == 0){
 				msgDiag.logPersonalizzato("messaggiNonPresenti");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.
-						getErroreIntegrazione(),id_servizio_applicativo);
+						getErroreIntegrazione(),id_servizio_applicativo,
+						IntegrationFunctionError.IM_MESSAGES_NOT_FOUND, this.getErroriProperties(logCore));
 			}
 
 			// Creo i vari gestori di messaggi
@@ -1563,7 +1644,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 					msgDiag.logPersonalizzato("messaggioNonTrovato");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 				}
 
 				// Check Autorizzazione all'utilizzo di IntegrationManager
@@ -1572,7 +1654,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA
 							.getErrore404_AutorizzazioneFallitaServizioApplicativo(id_servizio_applicativo.getNome()),
-							id_servizio_applicativo);
+							id_servizio_applicativo,
+							IntegrationFunctionError.AUTHORIZATION, this.getErroriProperties(logCore));
 				}
 			}
 
@@ -1588,7 +1671,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+id_servizio_applicativo.getNome()+","+idMessaggio+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 				}
 			}
 			
@@ -1622,7 +1706,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw (IntegrationManagerException)e;
 			}else{
 				msgDiag.logErroreGenerico(e,"deleteAllMessages("+tipoOperazione+")");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo);
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo,
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}finally{
 			try{

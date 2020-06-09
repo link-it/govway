@@ -22,7 +22,6 @@
 
 package org.openspcoop2.protocol.engine.builder;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDServizio;
@@ -30,8 +29,10 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.config.ConfigurationRFC7807;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseException;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -44,7 +45,9 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
 /**
@@ -97,7 +100,8 @@ public class ErroreApplicativoBuilder  {
 	
 	private ConfigurationRFC7807 rfc7807;
 	private boolean useProblemRFC7807;
-	private int httpStatus;
+	private IntegrationErrorReturnConfiguration returnConfig;
+	private IntegrationFunctionError functionError;
 	private String nomePorta;
 	
 	private DettaglioEccezioneOpenSPCoop2Builder dettaglioEccezioneOpenSPCoop2Builder;
@@ -118,7 +122,8 @@ public class ErroreApplicativoBuilder  {
 	public ErroreApplicativoBuilder(Logger aLog, IProtocolFactory<?> protocolFactory,
 			IDSoggetto dominio,IDSoggetto mittente,IDServizio servizio,String idFunzione,
 			ProprietaErroreApplicativo proprietaErroreApplicativo,MessageType messageType,
-			ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
+			ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig,
+			IntegrationFunctionError functionError, String nomePorta,
 			TipoPdD tipoPdD,String servizioApplicativo,
 			String idTransazione, Context context) throws ProtocolException{
 		if(aLog!=null)
@@ -144,7 +149,8 @@ public class ErroreApplicativoBuilder  {
 
 		this.rfc7807 = rfc7807;
 		this.useProblemRFC7807 = this.rfc7807!=null;
-		this.httpStatus = httpStatus;
+		this.returnConfig = returnConfig;
+		this.functionError = functionError;
 		this.nomePorta = nomePorta;
 		
 		this.dettaglioEccezioneOpenSPCoop2Builder = new DettaglioEccezioneOpenSPCoop2Builder(aLog, protocolFactory);
@@ -177,8 +183,22 @@ public class ErroreApplicativoBuilder  {
 		parameters.setMessageType(this.messageType);
 		
 		parameters.setRfc7807(this.rfc7807);
-		parameters.setHttpStatus(this.httpStatus);
+		parameters.setReturnConfig(this.returnConfig);
+		parameters.setFunctionError(this.functionError);
+		
 		parameters.setNomePorta(this.nomePorta);
+		if(this.nomePorta==null) {
+			if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				Object o = this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				if(o!=null && o instanceof RequestInfo) {
+					RequestInfo requestInfo = (RequestInfo) o;
+					if(requestInfo.getProtocolContext()!=null) {
+						this.nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+					}
+				}
+			}
+		}
+		
 		parameters.setTransactionId(this.idTransazione);
 		parameters.setContext(this.context);
 		
@@ -290,7 +310,8 @@ public class ErroreApplicativoBuilder  {
 			if(produciDettaglioEccezione){
 				
 				dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(this.dominio, this.tipoPdD, this.idFunzione, 
-						codErroreTrasformato, msgErroreTrasformato, false);
+						codErroreTrasformato, msgErroreTrasformato, false,
+						this.returnConfig, this.functionError);
 				if(eProcessamento!=null){
 					// internamente, se l'informazioni sul details di OpenSPCoop non e' definita viene usato come comportamento quello del servizio applicativo
 					boolean informazioniGeneriche = this.proprietaErroreApplicato.isInformazioniGenericheDetailsOpenSPCoop(); 

@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -79,6 +80,7 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 					Logger log = LoggerWrapperFactory.getLogger("govway.testsuite");
 					config.setLog(log);
 					ProtocolFactoryManager.initializeSingleProtocol(log, config, CostantiTestSuite.PROTOCOL_NAME);
+					ErroriProperties.initialize(null, log, new Loader());
 				}catch(Exception e){
 					throw new RuntimeException(e.getMessage(),e);
 				}

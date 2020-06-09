@@ -4,7 +4,7 @@
 Altri header di Integrazione
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Per attivare differenti header di integrazione è richiesto l'accesso
+Per attivare ulteriori header di integrazione è richiesto l'accesso
 alla govwayConsole in modalità *avanzata* (Sezione :ref:`modalitaAvanzata`).
 
 .. note::

@@ -176,19 +176,19 @@ ed in particolare:
 Errori Generati dal Gateway
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-La gestione dei casi di errore, nelle comunicazioni mediate da un Gateway, devono tenere conto di ulteriori situazioni che possono presentarsi rispetto alla situazione di dialogo diretto tra gli applicativi. 
-Oltre agli errori conosciuti dagli applicativi, e quindi previsti nei descrittori del servizio, gli applicativi client possono ricevere due tipi di errori generati da GovWay:
+La gestione dei casi di errore, nelle comunicazioni mediate da un Gateway, deve tener conto di ulteriori casi di errore che possono presentarsi rispetto al dialogo diretto tra gli applicativi.
+Oltre agli errori già previsti nei descrittori del servizio, gli applicativi client possono pertanto ricevere due tipi di errori generati direttamente da GovWay:
 
-- *Errori Client*: sono identificabili da un codice http 4xx su API REST o da un fault code 'Client' su API SOAP. Il problema deve essere risolto dal Client prima di effettuare una nuova richiesta.
+- *Errori Client*: sono identificabili da un codice http 4xx su API REST o da un fault code 'Client' su API SOAP. Indicano che GovWay ha rilevato problemi nella richiesta effettuata dal client (es. errore autenticazione, autorizzazione, validazione contenuti...).
 
-- *Errori Server*: sono identificabili da un codice http 5xx su API REST o da un fault code 'Server' su API SOAP. Il problema deve essere risolto agendo su GovWay. Il client può effettuare una nuova richiesta fino a che non ottiene un successo.
+- *Errori Server*: sono identificabili dai codici http 502, 503 e 504 per le API REST o da un fault code 'Server' generato dal Gateway e restituito con codice http 500 per le API SOAP.
 
-Per ciascun error GovWay ritorna le seguenti informazioni:
+Per ciascun errore GovWay riporta le seguenti informazioni:
 
 - Un codice http su API REST o un fault code su API SOAP come descritto in precedenza.
-- Un codice di errore, indicato nell'header http 'GovWay-Transaction-ErrorType', che specifica la problematica rilevata dal gateway (es. AuthenticationRequired, TokenExpired, InvalidRequestContent ...). 
-- Un identificativo di transazione, indicato nell'header http 'GovWay-Transaction-ID', che permette di individuare la transazione terminata in errore tramite la Console di Monitoraggio.
-- Un payload http, contenente maggiori dettagli sull'errore, che differisce a seconda se l'errore riguarda una API di tipologia REST (:ref:`rfc7807`) o SOAP (:ref:`soapFault`).
+- Un codice di errore, indicato nell'header http 'GovWay-Transaction-ErrorType', che riporta l'errore rilevato dal gateway (es. AuthenticationRequired, TokenExpired, InvalidRequestContent ...). 
+- Un identificativo di transazione, indicato nell'header http 'GovWay-Transaction-ID', che identifica la transazione in errore, utile principalmente per indagini diagnostiche.
+- Un payload http, contenente maggiori dettagli sull'errore, opportunamente codificato per API REST (:ref:`rfc7807`) o SOAP (:ref:`soapFault`).
 
 Maggiori dettagli, sulla gestione degli errori, sono disponibili nella sezione :ref:`erroriGovWay`.
 

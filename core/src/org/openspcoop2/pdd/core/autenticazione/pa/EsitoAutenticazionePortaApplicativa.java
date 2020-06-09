@@ -27,6 +27,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.autenticazione.EsitoAutenticazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Esito di un processo di autenticazione.
@@ -67,6 +68,14 @@ public class EsitoAutenticazionePortaApplicativa extends EsitoAutenticazione {
 	}
 
 	
+	/** IntegrationFunctionError */
+	private IntegrationFunctionError integrationFunctionError;
+	
+	public IntegrationFunctionError getIntegrationFunctionError() {
+		return this.integrationFunctionError;
+	}
+
+	
 	/** codice di errore */
 	private ErroreCooperazione erroreCooperazione;
 
@@ -74,7 +83,8 @@ public class EsitoAutenticazionePortaApplicativa extends EsitoAutenticazione {
 		return this.erroreCooperazione;
 	}
 
-	public void setErroreCooperazione(ErroreCooperazione erroreCooperazione) {
+	public void setErroreCooperazione(IntegrationFunctionError integrationFunctionError, ErroreCooperazione erroreCooperazione) {
+		this.integrationFunctionError = integrationFunctionError;
 		this.erroreCooperazione = erroreCooperazione;
 	}
 	
@@ -86,7 +96,8 @@ public class EsitoAutenticazionePortaApplicativa extends EsitoAutenticazione {
 		return this.erroreIntegrazione;
 	}
 
-	public void setErroreIntegrazione(ErroreIntegrazione erroreIntegrazione) {
+	public void setErroreIntegrazione(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione) {
+		this.integrationFunctionError = integrationFunctionError;
 		this.erroreIntegrazione = erroreIntegrazione;
 	}
 	

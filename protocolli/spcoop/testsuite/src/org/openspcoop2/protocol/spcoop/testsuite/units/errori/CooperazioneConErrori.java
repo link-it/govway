@@ -39,6 +39,7 @@ import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.db.DatiServizioAzione;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -54,6 +55,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -69,11 +71,18 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class CooperazioneConErrori {
+public class CooperazioneConErrori extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "CooperazioneConErrori";
 
+	
+	@SuppressWarnings("unused")
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected CooperazioneConErrori() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
 	
 	
 	private Date dataAvvioGruppoTest = null;
@@ -129,6 +138,8 @@ public class CooperazioneConErrori {
 		DatabaseComponent dbComponentErogatore = null;
 		java.io.FileInputStream fin = null;
 		try{
+			super.lockForCode(false, false);
+			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
@@ -335,6 +346,8 @@ public class CooperazioneConErrori {
 			try{
 				fin.close();
 			}catch(Exception e){}
+			
+			super.unlockForCode(false);
 		}
 	}
 	

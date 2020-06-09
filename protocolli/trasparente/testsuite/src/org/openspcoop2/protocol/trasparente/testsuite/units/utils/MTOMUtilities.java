@@ -45,11 +45,13 @@ import org.openspcoop2.example.server.mtom.ws.MTOMServiceExampleSOAP11Service;
 import org.openspcoop2.example.server.mtom.ws.MTOMServiceExampleSOAP12Service;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CooperazioneTrasparenteBase;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.Repository;
@@ -61,6 +63,7 @@ import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.db.DatiServizioAzione;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.testsuite.units.utils.ProblemUtilities;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.utils.xml.XMLDiff;
@@ -115,11 +118,11 @@ public class MTOMUtilities {
 			boolean addOtherAttachments, String azione, int numeroAttachmentsRequest, int numeroAttachmentResponse) throws Exception{
 		testMTOM(soap11, portaDelegata, url, username, password, addIDUnivoco, 
 				addOtherAttachments, azione, numeroAttachmentsRequest, numeroAttachmentResponse, 
-				false, null, false, null);
+				false, false, false, false, null, false, null);
 	}
 	public static void testMTOM(boolean soap11, boolean portaDelegata, String url, String username, String password, boolean addIDUnivoco,
 			boolean addOtherAttachments, String azione, int numeroAttachmentsRequest, int numeroAttachmentResponse,
-			boolean invocazioneConErrore,String erroreAtteso, boolean ricercaEsatta, Date dataInizioTest) throws Exception{
+			boolean requestError, boolean genericCode, boolean unwrap, boolean invocazioneConErrore, String erroreAtteso, boolean ricercaEsatta, Date dataInizioTest) throws Exception{
 		
         init();
 		
@@ -277,9 +280,65 @@ public class MTOMUtilities {
         		Throwable e2 = e.getCause();
         		Reporter.log("Exception2 ["+e2.getClass().getName()+"]");
 				Assert.assertTrue((e instanceof javax.xml.ws.soap.SOAPFaultException) || (e2 instanceof org.apache.cxf.binding.soap.SoapFault));
+				
+				String codiceErrore = null;
+				String msgErrore = "Sistema non disponibile";
+				if(portaDelegata){	
+					String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+					codiceErrore = prefix+"500";
+				}
+				else {
+					String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
+					codiceErrore = prefix+"500";
+				}
+				
+				String soap12code = org.openspcoop2.message.constants.Costanti.SOAP12_FAULT_CODE_SERVER;
+				
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(LoggerWrapperFactory.getLogger(MTOMUtilities.class));
+					IntegrationFunctionError integrationFunctionError = null;
+					if(requestError) {
+						if(unwrap) {
+							integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED;
+						}
+						else {
+							integrationFunctionError = IntegrationFunctionError.WRAP_400_INTERNAL_BAD_REQUEST;
+						}
+						soap12code = org.openspcoop2.message.constants.Costanti.SOAP12_FAULT_CODE_CLIENT;
+					}
+					else {
+						if(unwrap) {
+							integrationFunctionError = IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED;
+						}
+						else {
+							integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+						}
+					}
+					
+					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(soap11){
+						if(requestError) {
+							codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+									org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+ codiceErrore;
+						}
+						else {
+							codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+									org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+ codiceErrore;
+						}
+					}
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("GenericCode ["+genericCode+"]");
+				Reporter.log("Cerco codice di errore ["+codiceErrore+"]");
+				Reporter.log("Cerco messaggio di errore ["+msgErrore+"]");
+				
 				if(e instanceof javax.xml.ws.soap.SOAPFaultException) {
 					javax.xml.ws.soap.SOAPFaultException fault = (javax.xml.ws.soap.SOAPFaultException) e;
 					Reporter.log("FaultCode ["+fault.getFault().getFaultCode()+"]");
+					Reporter.log("FaultCodeLocalPart ["+fault.getFault().getFaultCodeAsName().getLocalName()+"]");
 					String sub = null;
 					if(soap11==false){
 //						if(fault.getFault().getFaultSubcodes().hasNext()){
@@ -290,41 +349,37 @@ public class MTOMUtilities {
 					}
 					Reporter.log("FaultString ["+fault.getFault().getFaultString()+"]");
 					Reporter.log("FaultActor ["+fault.getFault().getFaultActor()+"]");
-					if(portaDelegata){
-						String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
-						if(portaDelegata) {
-							prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
-						}
+										
+					if(portaDelegata){						
 						if(soap11){
-							Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), prefix+"500");
+							Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), codiceErrore);
 						}
 						else{
-							Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Receiver");
-							Assert.assertEquals(sub, prefix+"500");
+							Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), soap12code);
+							Assert.assertEquals(sub, codiceErrore);
 						}
-						Assert.assertEquals(fault.getFault().getFaultString(), "Sistema non disponibile");
-						Assert.assertEquals(fault.getFault().getFaultActor(), "http://govway.org/integration");
+						Assert.assertEquals(fault.getFault().getFaultString(), msgErrore);
+						Assert.assertEquals(fault.getFault().getFaultActor(), org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 					}
 					else{
 						boolean problem = ProblemUtilities.existsProblem(fault.getFault().getDetail());
 						if(problem) {
-							String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
 							if(soap11){
-								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), prefix+"500");
+								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), codiceErrore);
 							}
 							else{
-								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Receiver");
-								Assert.assertEquals(sub, prefix+"500");
+								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), soap12code);
+								Assert.assertEquals(sub, codiceErrore);
 							}
-							Assert.assertEquals(fault.getFault().getFaultString(), "Sistema non disponibile");
-							Assert.assertEquals(fault.getFault().getFaultActor(), "http://govway.org/integration");
+							Assert.assertEquals(fault.getFault().getFaultString(), msgErrore);
+							Assert.assertEquals(fault.getFault().getFaultActor(), org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 						}
 						else {
 							if(soap11){
-								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Server");
+								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER);
 							}
 							else{
-								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Receiver");
+								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), soap12code);
 							}
 							Assert.assertEquals(fault.getFault().getFaultString(), "300 - Errore nel processamento del messaggio di cooperazione");
 							Assert.assertTrue(fault.getFault().getFaultActor()==null);
@@ -334,6 +389,7 @@ public class MTOMUtilities {
 				else {
 					org.apache.cxf.binding.soap.SoapFault fault = (org.apache.cxf.binding.soap.SoapFault) e2;
 					Reporter.log("FaultCode ["+fault.getFaultCode()+"]");
+					Reporter.log("FaultCodeLocalPart ["+fault.getFaultCode().getLocalPart()+"]");
 					String sub = null;
 					if(soap11==false){
 						if(fault.getSubCode()!=null){
@@ -345,40 +401,35 @@ public class MTOMUtilities {
 					Reporter.log("FaultString ["+fault.getReason()+"]");
 					Reporter.log("FaultActor ["+fault.getRole()+"]");
 					if(portaDelegata){
-						String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
-						if(portaDelegata) {
-							prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
-						}
 						if(soap11){
-							Assert.assertEquals(fault.getFaultCode().getLocalPart(), prefix+"500");
+							Assert.assertEquals(fault.getFaultCode().getLocalPart(), codiceErrore);
 						}
 						else{
-							Assert.assertEquals(fault.getFaultCode().getLocalPart(), "Receiver");
-							Assert.assertEquals(sub, prefix+"500");
+							Assert.assertEquals(fault.getFaultCode().getLocalPart(), soap12code);
+							Assert.assertEquals(sub, codiceErrore);
 						}
-						Assert.assertEquals(fault.getReason(), "Sistema non disponibile");
-						Assert.assertEquals(fault.getRole(), "http://govway.org/integration");
+						Assert.assertEquals(fault.getReason(), msgErrore);
+						Assert.assertEquals(fault.getRole(), org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 					}
 					else{
 						boolean problem = ProblemUtilities.existsProblem(fault.getDetail());
 						if(problem) {
-							String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
 							if(soap11){
-								Assert.assertEquals(fault.getFaultCode().getLocalPart(), prefix+"500");
+								Assert.assertEquals(fault.getFaultCode().getLocalPart(), codiceErrore);
 							}
 							else{
-								Assert.assertEquals(fault.getFaultCode().getLocalPart(), "Receiver");
-								Assert.assertEquals(sub, prefix+"500");
+								Assert.assertEquals(fault.getFaultCode().getLocalPart(), soap12code);
+								Assert.assertEquals(sub, codiceErrore);
 							}
-							Assert.assertEquals(fault.getReason(), "Sistema non disponibile");
-							Assert.assertEquals(fault.getRole(), "http://govway.org/integration");
+							Assert.assertEquals(fault.getReason(), msgErrore);
+							Assert.assertEquals(fault.getRole(), org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 						}
 						else {
 							if(soap11){
-								Assert.assertEquals(fault.getFaultCode().getLocalPart(), "Server");
+								Assert.assertEquals(fault.getFaultCode().getLocalPart(), org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER);
 							}
 							else{
-								Assert.assertEquals(fault.getFaultCode().getLocalPart(), "Receiver");
+								Assert.assertEquals(fault.getFaultCode().getLocalPart(), soap12code);
 							}
 							Assert.assertEquals(fault.getReason(), "300 - Errore nel processamento del messaggio di cooperazione");
 							Assert.assertTrue(fault.getRole()==null);

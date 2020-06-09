@@ -1669,16 +1669,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					long idConnettore = 1;
 					if(!isPddEsterna){
 						idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
-						paDefault = this.porteApplicativeCore.getPortaApplicativa(idPA);
-						paSADefault = paDefault.getServizioApplicativoList().get(0);
+						if(idPA!=null) {
+							paDefault = this.porteApplicativeCore.getPortaApplicativa(idPA);
+						}
 						paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
-						paNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, paDefault.getNome());
-						paIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+paDefault.getId());
 						paIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
 						paConfigurazioneDati = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
-						paIdProvider = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PROVIDER, paDefault.getIdSoggetto() + "");
-						paIdPortaPerSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, ""+paDefault.getId());
 						paConnettoreDaListaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, Costanti.CHECK_BOX_ENABLED_TRUE);
+						if(paDefault!=null) {
+							paSADefault = paDefault.getServizioApplicativoList().get(0);
+							paNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, paDefault.getNome());
+							paIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+paDefault.getId());
+							paIdProvider = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PROVIDER, paDefault.getIdSoggetto() + "");
+							paIdPortaPerSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, ""+paDefault.getId());
+						}
 						
 						List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
 						List<PortaApplicativa> listaPorteApplicativeAssociate = new ArrayList<>();
@@ -1702,22 +1706,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						
 						if(visualizzaConnettore) {
-							connettoreMultiploEnabled = paDefault.getBehaviour() != null;
-							PortaApplicativaServizioApplicativo paDefautServizioApplicativo = paDefault.getServizioApplicativoList().get(0);
-							IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-							idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario()));
-							idServizioApplicativo.setNome(paDefautServizioApplicativo.getNome());
-							ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
-							org.openspcoop2.core.config.Connettore connettore = sa.getInvocazioneServizio().getConnettore();
-							idConnettore = connettore.getId();
-							checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
+							if(paDefault!=null) {
+								connettoreMultiploEnabled = paDefault.getBehaviour() != null;
+								PortaApplicativaServizioApplicativo paDefautServizioApplicativo = paDefault.getServizioApplicativoList().get(0);
+								IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+								idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario()));
+								idServizioApplicativo.setNome(paDefautServizioApplicativo.getNome());
+								ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
+								org.openspcoop2.core.config.Connettore connettore = sa.getInvocazioneServizio().getConnettore();
+								idConnettore = connettore.getId();
+								checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
+							}
 						}
 					}
 					
 					
 					// url invocazione
 					de = new DataElement();
-					if(isPddEsterna){
+					if(isPddEsterna || this.isModalitaCompleta()){
 						de.setType(DataElementType.TEXT);
 						de.setValue("-");
 					}
@@ -1731,7 +1737,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					// connettore
 					if(showConnettorePA) {
 						de = new DataElement();
-						if(isPddEsterna){
+						if(isPddEsterna || this.isModalitaCompleta()){
 							de.setType(DataElementType.TEXT);
 							de.setValue("-");
 						}
@@ -1759,7 +1765,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						Parameter pIdConnettore = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+"");
 						Parameter pConnettoreAccessoDaGruppi = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false");
 						Parameter pConnettoreVerificaAccesso = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false");
-						if(isPddEsterna){
+						if(isPddEsterna || this.isModalitaCompleta()){
 							de.setType(DataElementType.TEXT);
 							de.setValue("-");
 						}
@@ -1790,7 +1796,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						// configura connettori multipli
 						de = new DataElement();
-						if(isPddEsterna){
+						if(isPddEsterna || this.isModalitaCompleta()){
 							de.setType(DataElementType.TEXT);
 							de.setValue("-");
 						}
@@ -1819,7 +1825,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						// lista  connettori multipli
 						de = new DataElement();
-						if(isPddEsterna){
+						if(isPddEsterna || this.isModalitaCompleta()){
 							de.setType(DataElementType.TEXT);
 							de.setValue("-");
 						}

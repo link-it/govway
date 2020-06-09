@@ -31,6 +31,7 @@ import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazioneContenutiBuiltIn;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
  * Esempio di AutorizzazioneContenutoBuiltIn
@@ -67,7 +68,7 @@ public class AutorizzazioneContenutoBuiltIn extends AbstractAutorizzazioneConten
         			servizioApplicativo = CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO;
         		}
         		
-        		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA.getErrore428_AutorizzazioneContenutoFallita(servizioApplicativo));
+        		esito.setErroreIntegrazione(IntegrationFunctionError.CONTENT_AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA.getErrore428_AutorizzazioneContenutoFallita(servizioApplicativo));
         		esito.setAutorizzato(false);
         		esito.setDetails(gestore.getErrorMessage());
     		}

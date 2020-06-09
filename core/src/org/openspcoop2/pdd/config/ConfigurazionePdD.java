@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -1969,6 +1970,42 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Porta Delegata ["+idPD.getNome()+"] non esistente");
 	} 
 	
+	public void updateStatoPortaDelegata(Connection connectionPdD,IDPortaDelegata idPD, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(this.cache==null){
+			return;
+		}
+		
+		// Raccolta dati
+		if(idPD==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaDelegataInCache]: Parametro non definito (idPD)");
+		if(idPD.getNome()==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaDelegataInCache]: Parametro non definito (nome)");
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = this._getKey_getPortaDelegata(idPD);
+		org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+		if(response != null){
+			if(response.getException()==null && response.getObject()!=null){
+				PortaDelegata pd = (PortaDelegata)  response.getObject();
+				pd.setStato(stato);
+			}
+		}
+		
+		PortaDelegata pd = (PortaDelegata) this.getObject("getPortaDelegata",connectionPdD,CONFIGURAZIONE_PORTA,idPD);
+		if(!stato.equals(pd.getStato())) {
+			org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
+			if(driver instanceof DriverConfigurazioneDB) {
+				DriverConfigurazioneDB db = (DriverConfigurazioneDB) driver;
+				IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+				oldIDPortaDelegataForUpdate.setNome(idPD.getNome());
+				pd.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
+				pd.setStato(stato);
+				db.updatePortaDelegata(pd);
+			}
+		}
+	}
 	
 	
 	
@@ -2062,6 +2099,44 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Porta Applicativa ["+idPA.getNome()+"] non esistente");
 		}
 	} 
+	
+	public void updateStatoPortaApplicativa(Connection connectionPdD,IDPortaApplicativa idPA, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(this.cache==null){
+			return;
+		}
+		
+		// Raccolta dati
+		if(idPA==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (idPA)");
+		if(idPA.getNome()==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (nome)");
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = this._getKey_getPortaApplicativa(idPA);
+		org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+		if(response != null){
+			if(response.getException()==null && response.getObject()!=null){
+				PortaApplicativa pa = (PortaApplicativa)  response.getObject();
+				pa.setStato(stato);
+			}
+		}
+		
+		
+		PortaApplicativa pa = (PortaApplicativa) this.getObject("getPortaApplicativa",connectionPdD,CONFIGURAZIONE_PORTA,idPA);
+		if(!stato.equals(pa.getStato())) {
+			org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
+			if(driver instanceof DriverConfigurazioneDB) {
+				DriverConfigurazioneDB db = (DriverConfigurazioneDB) driver;
+				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+				oldIDPortaApplicativaForUpdate.setNome(idPA.getNome());
+				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+				pa.setStato(stato);
+				db.updatePortaApplicativa(pa);
+			}
+		}
+	}
 	
 	private String _getKey_getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale){
 		String key = "getPorteApplicative_ricercaPuntuale("+ricercaPuntuale+")_" + 

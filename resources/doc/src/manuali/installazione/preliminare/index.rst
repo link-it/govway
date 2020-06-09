@@ -23,7 +23,7 @@ mancanti.
 
    - -Dfile.encoding=UTF-8
 
-#. *Application Server WildFly* (http://wildfly.org) versione 18. In alternativa è possibile effettuare
+#. *Application Server WildFly* (http://wildfly.org) versione 18 o 19. In alternativa è possibile effettuare
    l'installazione su Apache Tomcat (http://tomcat.apache.org) versione 9.
 
    .. note::

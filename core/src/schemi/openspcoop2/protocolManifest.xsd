@@ -191,13 +191,24 @@
        <xsd:complexType name="IntegrationErrorCollection">
               <xsd:sequence>
                      <xsd:element name="rfc7807" type="RFC7807" minOccurs="0" />
+                     <!-- 4xx errore del client -->
                      <xsd:element name="authentication" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="authorization" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="notFound" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="badRequest" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="conflict" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="limitExceeded" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="tooManyRequests" type="IntegrationError" minOccurs="0" />
-                     <xsd:element name="internalError" type="IntegrationError" minOccurs="0" />
+                     <!-- backend non raggiungibile -->                     
                      <xsd:element name="serviceUnavailable" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="endpointRequestTimedOut" type="IntegrationError" minOccurs="0" />
+                     <!-- risposta ritornata ha generato un errore durante il suo processamento -->
+                     <xsd:element name="badResponse" type="IntegrationError" minOccurs="0" />
+                     <!-- errore generico avvenuto durante la gestione della richiesta -->
+                     <xsd:element name="internalRequestError" type="IntegrationError" minOccurs="0" />
+                     <!-- errore generico avvenuto durante la gestione della risposta -->
+                     <xsd:element name="internalResponseError" type="IntegrationError" minOccurs="0" />
+                     <!-- errore generico non classificabile -->
                      <xsd:element name="default" type="DefaultIntegrationError" />
               </xsd:sequence>
               <xsd:attribute name="problemType" type="IntegrationErrorProblemType" use="required" />
@@ -206,19 +217,33 @@
        </xsd:complexType>
        
        <xsd:complexType name="IntegrationError">
-              <xsd:attribute name="httpReturnCode" type="xsd:int" use="required" />
+              <xsd:sequence>
+                     <xsd:element name="errorCode" type="IntegrationErrorCode" minOccurs="1" maxOccurs="1" />
+              </xsd:sequence>
               <xsd:attribute name="messageType" type="IntegrationErrorMessageType" use="required" />
+              <xsd:attribute name="retry" type="xsd:boolean" use="optional"  default="false"/>
+              <xsd:attribute name="errorMessage" type="IntegrationErrorMessageDetailType" use="optional" default="generic"/>
        </xsd:complexType>
        
        <xsd:complexType name="DefaultIntegrationError">
-              <xsd:attribute name="httpReturnCode" type="xsd:int" use="required" />
+              <xsd:sequence>
+                     <xsd:element name="errorCode" type="IntegrationErrorCode" minOccurs="1" maxOccurs="1" />
+              </xsd:sequence>
               <xsd:attribute name="messageType" type="DefaultIntegrationErrorMessageType" use="required" />
+              <xsd:attribute name="retry" type="xsd:boolean" use="optional"  default="false"/>
+              <xsd:attribute name="errorMessage" type="IntegrationErrorMessageDetailType" use="optional" default="generic"/>
        </xsd:complexType>
-       
+ 
+       <xsd:complexType name="IntegrationErrorCode">
+              <xsd:attribute name="http" type="xsd:int" use="required" />
+              <xsd:attribute name="govway" type="xsd:int" use="required" />
+       </xsd:complexType> 
+ 
        <xsd:complexType name="RFC7807">
               <xsd:attribute name="useAcceptHeader" type="xsd:boolean" use="required" />
               <xsd:attribute name="details" type="xsd:boolean" use="required" />
               <xsd:attribute name="instance" type="xsd:boolean" use="required" />
+              <xsd:attribute name="govwayType" type="xsd:boolean" use="required" />
               <xsd:attribute name="govwayStatus" type="xsd:boolean" use="required" />
               <xsd:attribute name="govwayTransactionId" type="xsd:boolean" use="required" />
               <xsd:attribute name="type" type="xsd:boolean" default="true" />
@@ -423,7 +448,7 @@
               <xsd:attribute name="authentication" type="xsd:boolean" use="optional" default="true"/>
               <xsd:attribute name="inboundApplicativeAuthentication" type="xsd:boolean" use="optional" default="true"/>
               <xsd:attribute name="inboundOrganizationAuthorizationWithoutAuthentication" type="xsd:boolean" use="optional" default="false"/>
-	       <xsd:attribute name="codeDomain" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="codeDomain" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="codeIPA" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="replyToAddress" type="xsd:boolean" use="optional" default="false"/> <!-- replyToAddress -->
        </xsd:complexType>
@@ -549,6 +574,13 @@
                      <xsd:enumeration value="xml"/>
                      <xsd:enumeration value="json"/>
                      <xsd:enumeration value="none"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+
+       <xsd:simpleType name="IntegrationErrorMessageDetailType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="generic"/>
+                     <xsd:enumeration value="specific"/>
               </xsd:restriction>
        </xsd:simpleType>
        

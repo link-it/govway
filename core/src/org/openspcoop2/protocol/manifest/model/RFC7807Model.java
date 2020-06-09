@@ -43,6 +43,7 @@ public class RFC7807Model extends AbstractModel<RFC7807> {
 		this.USE_ACCEPT_HEADER = new Field("useAcceptHeader",boolean.class,"RFC7807",RFC7807.class);
 		this.DETAILS = new Field("details",boolean.class,"RFC7807",RFC7807.class);
 		this.INSTANCE = new Field("instance",boolean.class,"RFC7807",RFC7807.class);
+		this.GOVWAY_TYPE = new Field("govwayType",boolean.class,"RFC7807",RFC7807.class);
 		this.GOVWAY_STATUS = new Field("govwayStatus",boolean.class,"RFC7807",RFC7807.class);
 		this.GOVWAY_TRANSACTION_ID = new Field("govwayTransactionId",boolean.class,"RFC7807",RFC7807.class);
 		this.TYPE = new Field("type",boolean.class,"RFC7807",RFC7807.class);
@@ -57,6 +58,7 @@ public class RFC7807Model extends AbstractModel<RFC7807> {
 		this.USE_ACCEPT_HEADER = new ComplexField(father,"useAcceptHeader",boolean.class,"RFC7807",RFC7807.class);
 		this.DETAILS = new ComplexField(father,"details",boolean.class,"RFC7807",RFC7807.class);
 		this.INSTANCE = new ComplexField(father,"instance",boolean.class,"RFC7807",RFC7807.class);
+		this.GOVWAY_TYPE = new ComplexField(father,"govwayType",boolean.class,"RFC7807",RFC7807.class);
 		this.GOVWAY_STATUS = new ComplexField(father,"govwayStatus",boolean.class,"RFC7807",RFC7807.class);
 		this.GOVWAY_TRANSACTION_ID = new ComplexField(father,"govwayTransactionId",boolean.class,"RFC7807",RFC7807.class);
 		this.TYPE = new ComplexField(father,"type",boolean.class,"RFC7807",RFC7807.class);
@@ -71,6 +73,8 @@ public class RFC7807Model extends AbstractModel<RFC7807> {
 	public IField DETAILS = null;
 	 
 	public IField INSTANCE = null;
+	 
+	public IField GOVWAY_TYPE = null;
 	 
 	public IField GOVWAY_STATUS = null;
 	 

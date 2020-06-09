@@ -33,6 +33,7 @@ import org.apache.axis.Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -41,6 +42,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientCore;
 import org.openspcoop2.testsuite.core.Repository;
@@ -54,7 +56,9 @@ import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -69,10 +73,18 @@ import org.testng.annotations.Test;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class IntegrationManager {
+public class IntegrationManager extends GestioneViaJmx {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "IntegrationManager";
+	
+	
+	private Logger log = SPCoopTestsuiteLogger.getInstance();
+	
+	protected IntegrationManager() {
+		super(org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance());
+	}
+	
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
@@ -1182,9 +1194,32 @@ public class IntegrationManager {
 	
 	
 	// MESSAGE BOX
-	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX"})
-	public void message_box() throws Exception{
-		Reporter.log("SOAPEngine axis14["+use_axis14_engine+"] cxf["+use_cxf_engine+"]");
+	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX_GENERIC_CODE"})
+	public void message_box_genericCode() throws Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_message_box(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX_SPECIFIC_CODE"},dependsOnMethods={"message_box_genericCode"})
+	public void message_box_specificCode() throws Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_message_box(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _message_box(boolean genericCode) throws Exception{
+		Reporter.log("SOAPEngine axis14["+use_axis14_engine+"] cxf["+use_cxf_engine+"] genericCode["+genericCode+"]");
 		
 		// IntegrationManager
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop1_axis14 = null;
@@ -1243,7 +1278,12 @@ public class IntegrationManager {
 				imSilGop1_axis14.deleteAllMessages();
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("Pulizia repository SilGop1 MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1251,7 +1291,12 @@ public class IntegrationManager {
 				imSilGop1_cxf.deleteAllMessages();
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("Pulizia repository SilGop1 MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -1260,7 +1305,12 @@ public class IntegrationManager {
 				imSilGop3_axis14.deleteAllMessages();
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("Pulizia repository SilGop3 MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1268,7 +1318,12 @@ public class IntegrationManager {
 				imSilGop3_cxf.deleteAllMessages();
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("Pulizia repository SilGop3 MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -1284,7 +1339,12 @@ public class IntegrationManager {
 				imSilCredenzialiErrate_axis14.getAllMessagesId();
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("0. Condizioni di errore in MessageBox per UsernameErroto non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.AUTHENTICATION);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1292,7 +1352,12 @@ public class IntegrationManager {
 				imSilCredenzialiErrate_cxf.getAllMessagesId();
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("0. Condizioni di errore in MessageBox per UsernameErroto non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.AUTHENTICATION);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -1301,7 +1366,12 @@ public class IntegrationManager {
 				imSilGop1_axis14.getMessage("IDEGOV_XXXXX_NON_ESISTENTE_XXXX");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("0. Condizioni di errore in MessageBox per ID non esistente non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1309,7 +1379,12 @@ public class IntegrationManager {
 				imSilGop1_cxf.getMessage("IDEGOV_XXXXX_NON_ESISTENTE_XXXX");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("0. Condizioni di errore in MessageBox per ID non esistente non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -1318,7 +1393,12 @@ public class IntegrationManager {
 				imSilGop1_axis14.deleteMessage("IDEGOV_XXXXX_NON_ESISTENTE_XXXX");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("0. Condizioni di errore in MessageBox per ID non esistente non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1326,7 +1406,12 @@ public class IntegrationManager {
 				imSilGop1_cxf.deleteMessage("IDEGOV_XXXXX_NON_ESISTENTE_XXXX");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("0. Condizioni di errore in MessageBox per ID non esistente non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -1342,7 +1427,12 @@ public class IntegrationManager {
 				throw new Exception("1. getAllMessageId per SilGop1 non ha generato SPCoopException");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("1. Prelevo messaggi in MessageBox per SilGop1 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1351,7 +1441,12 @@ public class IntegrationManager {
 				throw new Exception("1. getAllMessageId per SilGop1 non ha generato SPCoopException");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("1. Prelevo messaggi in MessageBox per SilGop1 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 			
@@ -1361,7 +1456,12 @@ public class IntegrationManager {
 				throw new Exception("1. getAllMessageId per SilGop2 non ha generato SPCoopException");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("1. Prelevo messaggi per SilGop2 in MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1370,7 +1470,12 @@ public class IntegrationManager {
 				throw new Exception("1. getAllMessageId per SilGop2 non ha generato SPCoopException");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("1. Prelevo messaggi per SilGop2 in MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -1380,7 +1485,12 @@ public class IntegrationManager {
 				throw new Exception("1. getAllMessageId per SilGop3 non ha generato SPCoopException");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("1. Prelevo messaggi per SilGop3 in MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1389,7 +1499,12 @@ public class IntegrationManager {
 				throw new Exception("1. getAllMessageId per SilGop3 non ha generato SPCoopException");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("1. Prelevo messaggi per SilGop3 in MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -1565,10 +1680,20 @@ public class IntegrationManager {
 			throw new Exception("6. Prelevo messaggio con identita SilGop2 non ha generato SPCoopException");
 		}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 			Reporter.log("Prelevo messaggi in MessageBox con SilGop2 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getCodiceEccezione()));
+			String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+			if(genericCode) {
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+			}
+			Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 		}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 			Reporter.log("Prelevo messaggi in MessageBox con SilGop2 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getFaultInfo().getCodiceEccezione()));
+			String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+			if(genericCode) {
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+			}
+			Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 		}
 		
 		Reporter.log("6. Prelevamento messaggi in MessageBox terminato");
@@ -1708,10 +1833,20 @@ public class IntegrationManager {
 			throw new Exception("6. Prelevo messaggio con identita SilGop3 del msg #3 non ha generato SPCoopException");
 		}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 			Reporter.log("Prelevo messaggi in MessageBox con SilGop3 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getCodiceEccezione()));
+			String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+			if(genericCode) {
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+			}
+			Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 		}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 			Reporter.log("Prelevo messaggi in MessageBox con SilGop3 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getFaultInfo().getCodiceEccezione()));
+			String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+			if(genericCode) {
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+			}
+			Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 		}
 		
 		Reporter.log("Prelevamento messaggo in MessageBox, con identita SilGop2 e id ["+idMsgSilGop1[0]+"]...");
@@ -1721,10 +1856,20 @@ public class IntegrationManager {
 			throw new Exception("6. Prelevo messaggio con identita SilGop2 non ha generato SPCoopException");
 		}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 			Reporter.log("Prelevo messaggi in MessageBox con SilGop2 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getCodiceEccezione()));
+			String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+			if(genericCode) {
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+			}
+			Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 		}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 			Reporter.log("Prelevo messaggi in MessageBox con SilGop2 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getFaultInfo().getCodiceEccezione()));
+			String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+			if(genericCode) {
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+				codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+			}
+			Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 		}
 		
 		Reporter.log("9. Prelevamento messaggi in MessageBox terminato");
@@ -1875,7 +2020,12 @@ public class IntegrationManager {
 				throw new Exception("Eccezione non sollevata per getAllMessageIdByServices per SilGop3");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("Prelevo messaggi in MessageBox con SilGop3 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -1886,7 +2036,12 @@ public class IntegrationManager {
 				throw new Exception("Eccezione non sollevata per getAllMessageIdByServices per SilGop3");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("Prelevo messaggi in MessageBox con SilGop3 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		Reporter.log("10. Prelevamento id messaggi in MessageBox con Filtri terminato");
@@ -2123,7 +2278,12 @@ public class IntegrationManager {
 				throw new Exception("Delete idegov ["+idEGov+"] non riuscito per SilGop1, eccezione non sollevata");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("Delete idegov ["+idEGov+"] in MessageBox con SilGop1 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -2132,7 +2292,12 @@ public class IntegrationManager {
 				throw new Exception("Delete idegov ["+idEGov+"] non riuscito per SilGop1, eccezione non sollevata");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("Delete idegov ["+idEGov+"] in MessageBox con SilGop1 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGE_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -2198,7 +2363,12 @@ public class IntegrationManager {
 				throw new Exception("Eccezione Messaggi non presenti per SilGop3 non lanciata");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log(" Prelevo id messaggi all message in MessageBox con SilGop3 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -2207,7 +2377,12 @@ public class IntegrationManager {
 				throw new Exception("Eccezione Messaggi non presenti per SilGop3 non lanciata");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log(" Prelevo id messaggi all message in MessageBox con SilGop3 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -2233,7 +2408,12 @@ public class IntegrationManager {
 				throw new Exception("Eccezione Messaggi non presenti per SilGop1 non lanciata");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log(" Prelevo id messaggi all message in MessageBox con SilGop1 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -2242,7 +2422,12 @@ public class IntegrationManager {
 				throw new Exception("Eccezione Messaggi non presenti per SilGop1 non lanciata");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log(" Prelevo id messaggi all message in MessageBox con SilGop1 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -2253,8 +2438,31 @@ public class IntegrationManager {
 	
 	
 	Repository repositorySincronoIM=new Repository();
-	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX"},dependsOnMethods={"message_box"})
-	public void message_box_invocazione_per_riferimento() throws Exception{
+	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX_PER_RIFERIMENTO_GENERIC_CODE"},dependsOnMethods={"message_box_specificCode"})
+	public void message_box_invocazione_per_riferimento_genericCode() throws Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_message_box_invocazione_per_riferimento(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX_PER_RIFERIMENTO_SPECIFIC_CODE"},dependsOnMethods={"message_box_invocazione_per_riferimento_genericCode"})
+	public void message_box_invocazione_per_riferimento_specifiCode() throws Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_message_box_invocazione_per_riferimento(genericCode);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+
+	private void _message_box_invocazione_per_riferimento(boolean genericCode) throws Exception{
 		
 		
 		// IntegrationManager
@@ -2289,7 +2497,12 @@ public class IntegrationManager {
 				imSilGop1_axis14.deleteAllMessages();
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log("Pulizia repository SilGop1 MessageBox non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -2297,7 +2510,12 @@ public class IntegrationManager {
 				imSilGop1_cxf.deleteAllMessages();
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log("Pulizia repository SilGop1 MessageBox non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -2418,7 +2636,12 @@ public class IntegrationManager {
 				throw new Exception("Eccezione Messaggi non presenti per SilGop1 non lanciata");
 			}catch(org.openspcoop2.pdd.services.axis14.IntegrationManagerException e){
 				Reporter.log(" Prelevo id messaggi all message in MessageBox con SilGop1 non riuscito, codice eccezione: "+e.getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getCodiceEccezione()));
 			}
 		}
 		else if(use_cxf_engine){
@@ -2427,7 +2650,12 @@ public class IntegrationManager {
 				throw new Exception("Eccezione Messaggi non presenti per SilGop1 non lanciata");
 			}catch(org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception e){
 				Reporter.log(" Prelevo id messaggi all message in MessageBox con SilGop1 non riuscito, codice eccezione: "+e.getFaultInfo().getCodiceEccezione());
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI);
+				if(genericCode) {
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = erroriProperties.getErrorType(IntegrationFunctionError.IM_MESSAGES_NOT_FOUND);
+				}
+				Assert.assertTrue(codiceEccezione.equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
 		
@@ -2449,7 +2677,7 @@ public class IntegrationManager {
 		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoIM, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
-	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX"},dataProvider="SincronoIM",dependsOnMethods={"message_box_invocazione_per_riferimento"})
+	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX_SINCRONO"},dataProvider="SincronoIM",dependsOnMethods={"message_box_invocazione_per_riferimento_specifiCode"})
 	public void testSincronoIM(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			this.collaborazioneSPCoopBaseIM.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,

@@ -23,10 +23,10 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 import java.util.List;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
-import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**     
@@ -202,7 +202,7 @@ public class GeneratoreMessaggiErrore {
 		he.setCustomizedResponse(true);
 		he.setCustomizedResponseAs4xxCode(true);
 		he.setCustomizedResponseCode(MAX_THREADS_VIOLATED_CODE);
-		he.setIntegrationError(IntegrationError.TOO_MANY_REQUESTS);
+		he.setIntegrationFunctionError(IntegrationFunctionError.TOO_MANY_REQUESTS);
 						
 		return he;
 	} 
@@ -216,8 +216,50 @@ public class GeneratoreMessaggiErrore {
 		if(erroreGenerico==false){
 			bf.append("Rilevate "+policyViolate.size()+" policy violate:\n");
 		}
+		boolean limitExceeded_conditionalCongestion = false; 
+		boolean limitExceeded_conditionalDeteriorationPerformance = false; 
+		boolean limitExceeded = false; 
+		boolean tooManyRequests_conditionalCongestion = false; 
+		boolean tooManyRequests_conditionalDeteriorationPerformance = false; 
+		boolean tooManyRequests = false; 
+				
 		for (int i = 0; i < policyViolate.size(); i++) {
 			RisultatoVerificaPolicy risultato = policyViolate.get(i);
+			
+			if(!risultato.isErroreGenerico()) {
+				if(risultato.isSimultanee()) {
+					if(risultato.isApplicabilitaCongestione()) {
+						tooManyRequests_conditionalCongestion = true;
+					}
+					else if(risultato.isApplicabilitaDegradoPrestazionale()) {
+						tooManyRequests_conditionalDeteriorationPerformance = true;
+					}
+					else if(risultato.isApplicabilitaStatoAllarme()) {
+						tooManyRequests_conditionalDeteriorationPerformance = true; // TODO IntegrationFunctionError apposito
+					}
+					else {
+						tooManyRequests = true;
+					}
+				}
+				else {
+					if(risultato.isApplicabilitaCongestione()) {
+						limitExceeded_conditionalCongestion = true;
+					}
+					else if(risultato.isApplicabilitaDegradoPrestazionale()) {
+						limitExceeded_conditionalDeteriorationPerformance = true;
+					}
+					else if(risultato.isApplicabilitaStatoAllarme()) {
+						limitExceeded_conditionalDeteriorationPerformance = true; // TODO IntegrationFunctionError apposito
+					}
+					else {
+						limitExceeded = true;
+					}
+				}
+			}
+			else {
+				tooManyRequests = true; // viene scelto questo 
+			}
+			
 			if(erroreGenerico){
 				
 				if(i>0){
@@ -260,7 +302,29 @@ public class GeneratoreMessaggiErrore {
 			bfCode.append(toCode(risultato));
 		}
 		he.setCustomizedResponseCode(bfCode.toString());
-		he.setIntegrationError(IntegrationError.TOO_MANY_REQUESTS);
+		
+		if(limitExceeded) {
+			// prevale poiche' il client non potra rispedire
+			he.setIntegrationFunctionError(IntegrationFunctionError.LIMIT_EXCEEDED);
+		}
+		else if(limitExceeded_conditionalCongestion) {
+			he.setIntegrationFunctionError(IntegrationFunctionError.LIMIT_EXCEEDED_CONDITIONAL_CONGESTION);
+		}
+		else if(limitExceeded_conditionalDeteriorationPerformance) {
+			he.setIntegrationFunctionError(IntegrationFunctionError.LIMIT_EXCEEDED_CONDITIONAL_DETERIORATION_PERFORMANCE);
+		}
+		else if(tooManyRequests) {
+			he.setIntegrationFunctionError(IntegrationFunctionError.TOO_MANY_REQUESTS);
+		}
+		else if(tooManyRequests_conditionalCongestion) {
+			he.setIntegrationFunctionError(IntegrationFunctionError.TOO_MANY_REQUESTS_CONDITIONAL_CONGESTION);
+		}
+		else if(tooManyRequests_conditionalDeteriorationPerformance) {
+			he.setIntegrationFunctionError(IntegrationFunctionError.TOO_MANY_REQUESTS_CONDITIONAL_DETERIORATION_PERFORMANCE);
+		}
+		else {
+			he.setIntegrationFunctionError(IntegrationFunctionError.TOO_MANY_REQUESTS);
+		}
 		
 		return he;
 	} 

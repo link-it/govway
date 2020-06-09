@@ -34,9 +34,13 @@ import org.openspcoop2.core.eccezione.details.Eccezione;
 import org.openspcoop2.core.eccezione.details.Eccezioni;
 import org.openspcoop2.core.eccezione.details.constants.TipoEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
+import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -77,7 +81,58 @@ public class DaoBuilder {
 		return dominio;
 	}
 	
-	public static DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo, String codErrore,String msgErrore,boolean isErroreProtocollo){
+	private static void setCodeInEccezione(String codErrore,  org.openspcoop2.core.eccezione.details.Eccezione eccezione,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException {
+		if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO){
+			eccezione.setCode(codErrore);
+		}
+		else {
+			String govwayType = erroriProperties.getErrorType(functionError);
+			eccezione.setCode(govwayType);
+		}
+	}
+	private static void setDescriptionInEccezione(String descrErrore,  org.openspcoop2.core.eccezione.details.Eccezione eccezione,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException {
+		
+		boolean genericDetails = returnConfig.isGenericDetails();
+		if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+			genericDetails = true;
+		}
+		if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+			genericDetails = false;
+		}
+		
+		if(genericDetails){
+			String govwayDetails = erroriProperties.getGenericDetails(functionError);
+			eccezione.setDescription(govwayDetails);
+		}
+		else {
+			eccezione.setDescription(descrErrore);
+		}
+	}
+	private static void addDettaglio(Dettaglio dettaglio, DettaglioEccezione dettaglioEccezione,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException {
+		if(dettaglio != null){
+			
+			boolean genericDetails = returnConfig.isGenericDetails();
+			if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+				genericDetails = true;
+			}
+			if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+				genericDetails = false;
+			}
+			
+			if(!genericDetails) {
+				if(dettaglioEccezione.getDetails()==null){
+					dettaglioEccezione.setDetails(new Dettagli());
+				}
+				dettaglioEccezione.getDetails().addDetail(dettaglio);
+			}
+		}
+	}
+	
+	public static DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo, String codErrore,String msgErrore,boolean isErroreProtocollo,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = new DettaglioEccezione();
 			
 		dettaglioEccezione.setTimestamp(DateManager.getDate());
@@ -85,8 +140,8 @@ public class DaoBuilder {
 		dettaglioEccezione.setDomain(buildDominio(identitaPdD, tipoPdD, modulo));
 		
 		org.openspcoop2.core.eccezione.details.Eccezione eccezione = new org.openspcoop2.core.eccezione.details.Eccezione();
-		eccezione.setCode(codErrore);
-		eccezione.setDescription(msgErrore);
+		setCodeInEccezione(codErrore, eccezione, returnConfig, functionError, erroriProperties);
+		setDescriptionInEccezione(msgErrore, eccezione, returnConfig, functionError, erroriProperties);
 		if(isErroreProtocollo){
 			eccezione.setType(TipoEccezione.PROTOCOL);
 		}else{
@@ -99,7 +154,8 @@ public class DaoBuilder {
 		return dettaglioEccezione;
 	}
 	
-	public static DettaglioEccezione buildDettaglioEccezione(Date oraRegistrazione, IDSoggetto identitaPdD,TipoPdD tipoPdD, String modulo, Eccezione eccezione, Dettaglio dettaglio){
+	public static DettaglioEccezione buildDettaglioEccezione(Date oraRegistrazione, IDSoggetto identitaPdD,TipoPdD tipoPdD, String modulo, Eccezione eccezione, Dettaglio dettaglio,
+			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = new DettaglioEccezione();
 
 		// info generali
@@ -111,14 +167,15 @@ public class DaoBuilder {
 			if(dettaglioEccezione.getExceptions()==null){
 				dettaglioEccezione.setExceptions(new Eccezioni());
 			}
+			
+			setCodeInEccezione(eccezione.getCode(), eccezione, returnConfig, functionError, erroriProperties);
+			setDescriptionInEccezione(eccezione.getDescription(), eccezione, returnConfig, functionError, erroriProperties);
+			
 			dettaglioEccezione.getExceptions().addException(eccezione);
 		}
 		
 		if(dettaglio != null){
-			if(dettaglioEccezione.getDetails()==null){
-				dettaglioEccezione.setDetails(new Dettagli());
-			}
-			dettaglioEccezione.getDetails().addDetail(dettaglio);
+			addDettaglio(dettaglio, dettaglioEccezione, returnConfig, functionError, erroriProperties);
 		}
 		return dettaglioEccezione;
 	}

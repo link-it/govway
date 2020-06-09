@@ -47,6 +47,13 @@ public class Costanti {
 	public static final String SOAP_ENVELOPE_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
 	public static final String SOAP12_ENVELOPE_NAMESPACE = "http://www.w3.org/2003/05/soap-envelope";
 	
+	/** SOAP Fault Code */
+	public static final String SOAP11_FAULT_CODE_SEPARATOR = ".";
+	public static final String SOAP11_FAULT_CODE_SERVER = "Server";
+	public static final String SOAP11_FAULT_CODE_CLIENT = "Client";
+	public static final String SOAP12_FAULT_CODE_SERVER = "Receiver";
+	public static final String SOAP12_FAULT_CODE_CLIENT = "Sender";
+	
 	/** XMLNamespace */
 	public static final String XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
 	public static final String XMLNS_LOCAL_NAME = "xmlns";
@@ -80,4 +87,7 @@ public class Costanti {
     public final static String ERRORE_GOVWAY = "ERRORE_GOVWAY";
     public final static String TIPO_GOVWAY = "govway";
     public final static String TIPO_RFC7807 = "rfc7807";
+    public final static String ERRORE_GOVWAY_PREFIX_CODE = "ERRORE_GOVWAY_PREFIX_CODE";
+    public final static String ERRORE_GOVWAY_CODE = "ERRORE_GOVWAY_CODE";
+    public final static String ERRORE_GOVWAY_DETAILS = "ERRORE_GOVWAY_DETAILS";
 }

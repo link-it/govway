@@ -36,6 +36,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="useAcceptHeader" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
  * 		&lt;attribute name="details" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
  * 		&lt;attribute name="instance" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="govwayType" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
  * 		&lt;attribute name="govwayStatus" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
  * 		&lt;attribute name="govwayTransactionId" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
  * 		&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
@@ -92,6 +93,18 @@ public class RFC7807 extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   public void setInstance(boolean instance) {
     this.instance = instance;
+  }
+
+  public boolean isGovwayType() {
+    return this.govwayType;
+  }
+
+  public boolean getGovwayType() {
+    return this.govwayType;
+  }
+
+  public void setGovwayType(boolean govwayType) {
+    this.govwayType = govwayType;
   }
 
   public boolean isGovwayStatus() {
@@ -153,6 +166,10 @@ public class RFC7807 extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="instance",required=true)
   protected boolean instance;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="govwayType",required=true)
+  protected boolean govwayType;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="govwayStatus",required=true)

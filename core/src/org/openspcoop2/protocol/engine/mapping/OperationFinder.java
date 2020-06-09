@@ -61,7 +61,7 @@ public class OperationFinder {
 			IProtocolFactory<?> protocolFactory,
 			ModalitaIdentificazioneAzione modalitaIdentificazione, String pattern, 
 			boolean forceRegistryBased, boolean forcePluginBased,
-			Logger log, boolean portaApplicativa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			Logger log, boolean portaApplicativa) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 		
 		try{
 

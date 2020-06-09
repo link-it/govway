@@ -61,7 +61,7 @@ public abstract class AbstractApiValidator   {
 		
 		ApiOperation operation = api.findOperation(httpEntity.getMethod(), httpEntity.getUrl());
 		if(operation==null){
-			throw new ProcessingException("Operation httpMethod["+httpEntity.getMethod()+"] path["+httpEntity.getUrl()+"] not found");
+			throw new ProcessingException("Resource "+httpEntity.getMethod()+" '"+httpEntity.getUrl()+"' not found");
 		}
 
 		// es. xsd
@@ -127,9 +127,9 @@ public abstract class AbstractApiValidator   {
 				
 				if(!contentTypeSupported) {
 					if(status>0)
-						throw new ValidatorException("Content-Type ["+baseTypeHttp+"] (http response with status '"+status+"') unsupported");
+						throw new ValidatorException("Content-Type '"+baseTypeHttp+"' (http response status '"+status+"') unsupported");
 					else
-						throw new ValidatorException("Content-Type ["+baseTypeHttp+"] unsupported");
+						throw new ValidatorException("Content-Type '"+baseTypeHttp+"' unsupported");
 				}
 			}
 			
@@ -143,14 +143,14 @@ public abstract class AbstractApiValidator   {
 						String value = TransportUtils.get(request.getParametersTrasporto(), name);
 						if(value==null){
 							if(paramHeader.isRequired()){
-								throw new ValidatorException("Required HttpHeader ["+name+"] not found");
+								throw new ValidatorException("Required http header '"+name+"' not found");
 							}
 						}
 						if(value!=null){
 							try{
 								validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("HttpHeader ["+name+"] with value ["+value+"] not valid (expected type ["+paramHeader.getType()+"]): "+val.getMessage(),val);
+								throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
 							}
 						}
 					}
@@ -169,14 +169,14 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value==null){
 							if(paramCookie.isRequired()){
-								throw new ValidatorException("Required Cookie ["+name+"] not found");
+								throw new ValidatorException("Required Cookie '"+name+"' not found");
 							}
 						}
 						if(value!=null){
 							try{
 								validateValueAsType(value,paramCookie.getType(),paramCookie.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("Cookie ["+name+"] with value ["+value+"] not valid (expected type ["+paramCookie.getType()+"]): "+val.getMessage(),val);
+								throw new ValidatorException("Invalid value '"+value+"' in cookie '"+name+"' (expected type '"+paramCookie.getType()+"'): "+val.getMessage(),val);
 							}
 						}
 					}
@@ -188,14 +188,14 @@ public abstract class AbstractApiValidator   {
 						String value = TransportUtils.get(request.getParametersQuery(), name);
 						if(value==null){
 							if(paramQuery.isRequired()){
-								throw new ValidatorException("Required QueryParameter ["+name+"] not found");
+								throw new ValidatorException("Required query parameter '"+name+"' not found");
 							}
 						}
 						if(value!=null){
 							try{
 								validateValueAsType(value,paramQuery.getType(),paramQuery.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("QueryParameter ["+name+"] with value ["+value+"] not valid (expected type ["+paramQuery.getType()+"]): "+val.getMessage(),val);
+								throw new ValidatorException("Invalid value '"+value+"' in query parameter '"+name+"' (expected type '"+paramQuery.getType()+"'): "+val.getMessage(),val);
 							}
 						}
 					}
@@ -212,7 +212,7 @@ public abstract class AbstractApiValidator   {
 									if(paramDynamicPath.getName().equals(idDinamic)){
 										String [] urlList = ApiUtilities.extractUrlList(baseUrl, request.getUrl());
 										if(i>=urlList.length){
-											throw new ValidatorException("DynamicPath ["+paramDynamicPath.getName()+"] not found (position:"+i+", urlLenght:"+urlList.length+")");
+											throw new ValidatorException("Dynamic path '"+paramDynamicPath.getName()+"' not found (position:"+i+", urlLenght:"+urlList.length+")");
 										}
 										find = true;
 										valueFound = urlList[i];
@@ -222,13 +222,13 @@ public abstract class AbstractApiValidator   {
 							}
 						}
 						if(!find && paramDynamicPath.isRequired()){
-							throw new ValidatorException("Required DynamicPath ["+paramDynamicPath.getName()+"] not found");
+							throw new ValidatorException("Required dynamic path '"+paramDynamicPath.getName()+"' not found");
 						}
 						if(find){
 							try{
 								validateValueAsType(valueFound,paramDynamicPath.getType(),paramDynamicPath.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("DynamicPath ["+paramDynamicPath.getName()+"] with value ["+valueFound+"] not valid (expected type ["+paramDynamicPath.getType()+"]): "+val.getMessage(),val);
+								throw new ValidatorException("Invalid value '"+valueFound+"' in dynamic path '"+paramDynamicPath.getName()+"' (expected type '"+paramDynamicPath.getType()+"'): "+val.getMessage(),val);
 							}
 						}
 					}
@@ -240,14 +240,14 @@ public abstract class AbstractApiValidator   {
 						String value = TransportUtils.get(request.getParametersForm(), name);
 						if(value==null){
 							if(paramForm.isRequired()){
-								throw new ValidatorException("Required FormParameter ["+name+"] not found");
+								throw new ValidatorException("Required form parameter '"+name+"' not found");
 							}
 						}
 						if(value!=null){
 							try{
 								validateValueAsType(value,paramForm.getType(),paramForm.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("FormParameter ["+name+"] with value ["+value+"] not valid (expected type ["+paramForm.getType()+"]): "+val.getMessage(),val);
+								throw new ValidatorException("Invalid value '"+value+"' in form parameter '"+name+"' (expected type '"+paramForm.getType()+"'): "+val.getMessage(),val);
 							}
 						}
 					}
@@ -275,7 +275,7 @@ public abstract class AbstractApiValidator   {
 					apiResponseFound = apiResponseDefault;
 				}
 				if(apiResponseFound==null){
-					throw new ValidatorException("HttpReturnCode ["+response.getStatus()+"] unsupported");
+					throw new ValidatorException("Http status code '"+response.getStatus()+"' unsupported");
 				}
 				
 				if(apiResponseFound.sizeHeaderParameters()>0){
@@ -284,14 +284,14 @@ public abstract class AbstractApiValidator   {
 						String value = TransportUtils.get(response.getParametersTrasporto(), name);
 						if(value==null){
 							if(paramHeader.isRequired()){
-								throw new ValidatorException("Required HttpHeader ["+name+"] not found");
+								throw new ValidatorException("Required http header '"+name+"' not found");
 							}
 						}
 						if(value!=null){
 							try{
 								validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("HttpHeader ["+name+"] with value ["+value+"] not valid (expected type ["+paramHeader.getType()+"]): "+val.getMessage(),val);
+								throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
 							}
 						}
 					}
@@ -310,14 +310,14 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value==null){
 							if(paramCookie.isRequired()){
-								throw new ValidatorException("Required Cookie ["+name+"] not found");
+								throw new ValidatorException("Required cookie '"+name+"' not found");
 							}
 						}
 						if(value!=null){
 							try{
 								validateValueAsType(value,paramCookie.getType(),paramCookie.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("Cookie ["+name+"] with value ["+value+"] not valid (expected type ["+paramCookie.getType()+"]): "+val.getMessage(),val);
+								throw new ValidatorException("Invalid value '"+value+"' in cookie '"+name+"' (expected type '"+paramCookie.getType()+"'): "+val.getMessage(),val);
 							}
 						}
 					}

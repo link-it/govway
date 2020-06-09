@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.services.skeleton;
 
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
@@ -27,6 +29,8 @@ import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.w3c.dom.Node;
 
 /**
@@ -99,24 +103,29 @@ public class IntegrationManagerUtility {
 	 * @return la protocol exception
 	 * 
 	 */
-	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory<?> protocolFactory,String xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
+	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory<?> protocolFactory,String xml,String prefixCodiceErroreApplicativoIntegrazione, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws Exception{
 		org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 		org.w3c.dom.Document document = xmlUtils.newDocument(xml.getBytes());
-		return IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,document.getFirstChild(),prefixCodiceErroreApplicativoIntegrazione);
+		return IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,document.getFirstChild(),prefixCodiceErroreApplicativoIntegrazione, 
+				functionError, erroriProperties);
 	}
 	
-	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory<?> protocolFactory,Node xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
+	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory<?> protocolFactory,Node xml,String prefixCodiceErroreApplicativoIntegrazione, 
+			IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws Exception{
 		
 		AbstractEccezioneBuilderParameter eccezione = 
 				protocolFactory.createErroreApplicativoBuilder().readErroreApplicativo(xml, prefixCodiceErroreApplicativoIntegrazione);
 		IntegrationManagerException exc = null;
 		if(eccezione instanceof EccezioneProtocolloBuilderParameters){
 			EccezioneProtocolloBuilderParameters eccBusta = (EccezioneProtocolloBuilderParameters) eccezione;
-			exc = new IntegrationManagerException(protocolFactory, eccBusta.getEccezioneProtocollo());
+			exc = new IntegrationManagerException(protocolFactory, eccBusta.getEccezioneProtocollo(), 
+					functionError, erroriProperties);
 		}
 		else{
 			EccezioneIntegrazioneBuilderParameters eccIntegrazione = (EccezioneIntegrazioneBuilderParameters) eccezione;
-			exc = new IntegrationManagerException(protocolFactory, eccIntegrazione.getErroreIntegrazione());
+			exc = new IntegrationManagerException(protocolFactory, eccIntegrazione.getErroreIntegrazione(), 
+					functionError, erroriProperties);
 		}
 		
 		exc.setOraRegistrazione(protocolFactory.createTraduttore().getDate_protocolFormat(eccezione.getOraRegistrazione()));
@@ -124,6 +133,19 @@ public class IntegrationManagerUtility {
 		exc.setIdentificativoPorta(eccezione.getDominioPorta().getCodicePorta());
 
 		return exc;
+
+	}
+	
+	
+	public static IntegrationManagerException mapMessageIntoProtocolException(OpenSPCoop2SoapMessage message, String faultCode, String faultString, IDSoggetto identitaPdD, String identificativoFunzione) throws Exception {
+	
+		Object govwayPrefixCodeInContextProperty = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_PREFIX_CODE);
+		Object govwayCodeInContextProperty = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE);
+		if(govwayPrefixCodeInContextProperty!=null && govwayCodeInContextProperty!=null){
+			return new IntegrationManagerException(message, faultCode, faultString, identitaPdD, identificativoFunzione);
+		}
+		
+		return null;
 
 	}
 }
