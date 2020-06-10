@@ -3122,7 +3122,7 @@ components:
     tag:
       name: "tag"
       in: "query"
-      description: "Identificativo del TAg"
+      description: "Identificativo del Tag"
       required: false
       schema:
         $ref: "#/components/schemas/NCName"

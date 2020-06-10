@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -63,6 +64,8 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -121,9 +124,33 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			final AccordoServizioParteComuneSintetico as = Helper.getAccordoSintetico(body.getApiNome(),
 					body.getApiVersione(), idReferente, env.apcCore);
 
+			String referente = "";
+			if( env.apcCore.isSupportatoSoggettoReferente(env.tipo_protocollo) && idReferente!=null ){
+				referente = " (referente: "+idReferente+")";
+			}
+			
 			if (as == null) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(
-						"Nessuna Api registrata con nome " + body.getApiNome() + " e versione " + body.getApiVersione());
+						"Nessuna Api registrata con nome " + body.getApiNome() + " e versione " + body.getApiVersione()+referente);
+			}
+			if(ServiceBinding.SOAP.equals(as.getServiceBinding())) {
+				if(StringUtils.isEmpty(body.getApiSoapServizio())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(
+							"Per una API di tipo SOAP il claim 'api_soap_servizio' deve essere obbligatoriamente fornito");
+				}
+				boolean ptFind = false;
+				if(as.getPortType()!=null && !as.getPortType().isEmpty()) {
+					for (PortTypeSintetico pt : as.getPortType()) {
+						if(pt.getNome().equals(body.getApiSoapServizio())) {
+							ptFind = true;
+							break;
+						}
+					}
+				}
+				if(!ptFind) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(
+							"Nel claim 'api_soap_servizio' è stato indicato un servizio non esistente nell'API "+body.getApiNome()+" v"+body.getApiVersione()+referente);
+				}
 			}
 
 			AccordoServizioParteSpecifica asps = ErogazioniApiHelper.apiImplToAps(body, soggettoErogatore, as, env);

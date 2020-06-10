@@ -243,14 +243,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, 
 						msg, equalsMatch);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -374,8 +382,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			} catch (AxisFault error) {
 				throw error;			
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
@@ -383,8 +395,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			try{
 				fin.close();
 			}catch(Exception e){}
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -525,14 +541,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, 
 						msg, equalsMatch);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -641,8 +665,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			} catch (AxisFault error) {
 				throw error;			
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
@@ -650,8 +678,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			try{
 				fin.close();
 			}catch(Exception e){}
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -775,14 +807,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice,	msgErrore, equalsMatch);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -917,14 +957,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, msgErrore, equalsMatch);		
 
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1058,14 +1106,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, msgErrore, equalsMatch);		
 
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1208,14 +1264,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 				throw error;
 				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			fin.close();
 			
 			super.unlockForCode(this.genericCode);
@@ -1329,14 +1393,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, msgErrore, equalsMatch);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1415,14 +1487,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, msgErrore, equalsMatch);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1500,14 +1580,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, msgErrore, equalsMatch);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1641,14 +1729,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, msgErrore, equalsMatch);				
 
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1783,14 +1879,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, msgErrore, equalsMatch);				
 
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 		}
@@ -1933,14 +2037,22 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 				throw error;
 				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 			}
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			fin.close();
 			
 			super.unlockForCode(this.genericCode);
@@ -2074,8 +2186,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, 
 						msg, equalsMatch);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2086,8 +2202,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -2189,8 +2309,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			} catch (AxisFault error) {
 				throw error;			
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2204,8 +2328,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			try{
 				fin.close();
 			}catch(Exception e){}
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -2344,8 +2472,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						msg, equalsMatch,
 						codiceEGOV);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2356,8 +2488,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -2462,8 +2598,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			} catch (AxisFault error) {
 				throw error;			
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2477,8 +2617,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			try{
 				fin.close();
 			}catch(Exception e){}
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -2625,8 +2769,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, 
 						msg, equalsMatch);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2642,8 +2790,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -2753,8 +2905,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			} catch (AxisFault error) {
 				throw error;			
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 				
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2773,8 +2929,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			try{
 				fin.close();
 			}catch(Exception e){}
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -2916,8 +3076,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 						codice, 
 						msg, equalsMatch, codiceEGOV);				
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 							
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -2933,8 +3097,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 		}catch(Exception e){
 			throw e;
 		}finally{
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();
@@ -3043,8 +3211,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			} catch (AxisFault error) {
 				throw error;			
 			}finally{
-				dbComponentFruitore.close();
-				dbComponentErogatore.close();
+				try {
+					dbComponentFruitore.close();
+				}catch(Exception eClose) {}
+				try {
+					dbComponentErogatore.close();
+				}catch(Exception eClose) {}	
 							
 				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 				err.setIntervalloInferiore(dataInizioTest);
@@ -3063,8 +3235,12 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			try{
 				fin.close();
 			}catch(Exception e){}
-			dbComponentFruitore.close();
-			dbComponentErogatore.close();
+			try {
+				dbComponentFruitore.close();
+			}catch(Exception eClose) {}
+			try {
+				dbComponentErogatore.close();
+			}catch(Exception eClose) {}
 			
 			super.unlockForCode(this.genericCode);
 			dataFineTest = DateManager.getDate();

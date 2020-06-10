@@ -2,7 +2,7 @@
     
     "autorizzazione": {
         "tipo": "abilitato",
-        "puntuale": true,
+        "richiedente": true,
         "ruoli": true,
         "scope": true
     }

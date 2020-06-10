@@ -31,6 +31,9 @@ import org.apache.cxf.ext.logging.event.DefaultLogEventMapper;
 import org.apache.cxf.ext.logging.event.LogEvent;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.beans.context.core.AbstractTransaction;
@@ -53,10 +56,12 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * @version $Rev$, $Date$
  */
 @NoJSR250Annotations
-public class ServiceInfoInInterceptor extends org.apache.cxf.ext.logging.LoggingInInterceptor {
+public class ServiceInfoInInterceptor extends AbstractPhaseInterceptor<Message> {
+	//extends org.apache.cxf.ext.logging.LoggingInInterceptor {
 
 	public ServiceInfoInInterceptor() {
-		super();
+		//super();
+		super(Phase.RECEIVE);
 	}
 
 	@Override
@@ -135,7 +140,7 @@ public class ServiceInfoInInterceptor extends org.apache.cxf.ext.logging.Logging
 				}
 			}
 			
-			Object o = message.get("HTTP.REQUEST");
+			Object o = message.get(AbstractHTTPDestination.HTTP_REQUEST);
 			if(o!=null && o instanceof HttpServletRequest) {
 				HttpServletRequest httpServletRequest = (HttpServletRequest) o;
 				

@@ -65,11 +65,23 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	
 	private static boolean addIDUnivoco = true;
 
+	boolean doTestSpecificCodeContainer = true;
 	
 	private Date dataAvvioGruppoTest = null;
 	@BeforeGroups (alwaysRun=true , groups=AutorizzazionePortaDelegata.ID_GRUPPO)
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
+		
+		try{
+			String version_jbossas = org.openspcoop2.protocol.trasparente.testsuite.core.Utilities.readApplicationServerVersion();
+			if(version_jbossas.startsWith("tomcat")){
+				System.out.println("WARNING: Verifiche ruoli disabilitate per Tomcat");
+				this.doTestSpecificCodeContainer = false;
+			}
+		}catch(Exception e){
+			System.err.println("Comprensione A.S. non riuscita: "+e.getMessage());
+			e.printStackTrace(System.out);
+		}
 	} 	
 	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
 	@AfterGroups (alwaysRun=true , groups=AutorizzazionePortaDelegata.ID_GRUPPO)
@@ -178,6 +190,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_ALL"},dataProvider="rolesAllProvider")
 	public void test_rolesAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -271,6 +288,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_INTERNAL_ALL"},dataProvider="rolesInternalAllProvider")
 	public void test_rolesInternalAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -366,6 +388,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_EXTERNAL_ALL"},dataProvider="rolesExternalAllProvider")
 	public void test_rolesExternalAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -461,6 +488,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_EXTERNAL_ALL_NO_AUTHENTICATION"},dataProvider="rolesExternalNoAuthenticationAllProvider")
 	public void test_rolesExternalNoAuthenticationAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -558,6 +590,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED_OR_ROLES_ALL"},dataProvider="Authenticated_or_rolesAllProvider")
 	public void test_Authenticated_or_rolesAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -765,6 +802,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".AUTHENTICATED_OR_EXTERNAL_ROLES_ALL"},dataProvider="Authenticated_or_externalRolesAllProvider")
 	public void test_Authenticated_or_externalRolesAll_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -872,6 +914,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".XACML_POLICY"},dataProvider="XacmlPolicy_Provider")
 	public void test_XacmlPolicy_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}		
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -941,6 +988,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".INTERNAL_XACML_POLICY"},dataProvider="InternalXacmlPolicy_Provider")
 	public void test_InternalXacmlPolicy_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -1010,6 +1062,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".EXTERNAL_XACML_POLICY"},dataProvider="ExternalXacmlPolicy_Provider")
 	public void test_ExternalXacmlPolicy_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
@@ -1081,6 +1138,11 @@ public class AutorizzazionePortaDelegata extends GestioneViaJmx {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".EXTERNAL_XACML_POLICY_NO_AUTHENTICATION"},dataProvider="ExternalXacmlPolicy_noAuthentication_Provider")
 	public void test_ExternalXacmlPolicy_noAuthentication_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
 			String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso) throws TestSuiteException, IOException, Exception{
+
+		if(!this.doTestSpecificCodeContainer) {
+			return;
+		}
+		
 		boolean genericCode = false;
 		boolean unwrap = false;
 		try {
