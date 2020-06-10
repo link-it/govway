@@ -6224,6 +6224,7 @@ public class RicezioneBuste {
 						if(rispostaModalitaSincrona){
 							msgDiag.addKeyword(CostantiPdD.KEY_PROPRIETARIO_MESSAGGIO, proprietarioMessaggio);
 							msgDiag.logPersonalizzato("messaggioInGestione.gestioneSincrona");
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
 							if(this.msgContext.isGestioneRisposta()){
 								
 								parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -6267,6 +6268,9 @@ public class RicezioneBuste {
 									if(ConsegnaContenutiApplicativi.ID_MODULO.equals(proprietarioMessaggio) || 
 											TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio) ||
 											(msgRequest.existsMessage_noCache()==false) ){
+										
+										pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
+										
 										if(this.msgContext.isGestioneRisposta()){
 											this.msgContext.setMessageResponse(this.generaRisposta_msgGiaRicevuto(!this.msgContext.isForzaFiltroDuplicati_msgGiaInProcessamento(),
 													bustaRichiesta,infoIntegrazione, msgDiag, openspcoopstate, logCore, configurazionePdDReader,propertiesReader,
@@ -6318,6 +6322,7 @@ public class RicezioneBuste {
 							}
 							if(isErrore_MsgGiaRicevuto){
 								msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.timeoutScaduto");
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
 								if(this.msgContext.isGestioneRisposta()){
 									
 									parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);

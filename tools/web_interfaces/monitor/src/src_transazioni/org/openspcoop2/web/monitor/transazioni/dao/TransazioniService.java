@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -1695,6 +1696,15 @@ public class TransazioniService implements ITransazioniService {
 //			expr.and(orExpr);
 			expr.and();
 			expr.notEquals(Transazione.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(!isRisposta) {
+				// Solo una porta applicativa puo' ricevere una busta di richiesta (serve per evitare i problemi in caso di loopback)
+				expr.equals(Transazione.model().PDD_RUOLO, TipoPdD.APPLICATIVA.getTipo());
+			}
+			else {
+				// Solo una porta delegata puo' ricevere una busta di risposta (serve per evitare i problemi in caso di loopback)
+				expr.equals(Transazione.model().PDD_RUOLO, TipoPdD.DELEGATA.getTipo());
+			}
 			
 
 			//			StringBuilder sb = new StringBuilder(

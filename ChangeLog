@@ -1,5 +1,10 @@
 2020-06-10  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayMonitor]
+	Gestiti nuovi esiti associati alle Transazioni, relativamente alle richieste e risposte duplicate.
+
+2020-06-10  Andrea Poli <apoli@link.it>
+
 	* [ApiRsConfigurazione, ApiRsMonitoraggio]
 	Ripristino log relativo all'http status code ritornato nel log govway_api[Config,Monitor]_transaction.log
 	Aggiunti controlli di robustezza durante la creazione di una erogazione o fruizione di API SOAP, al fine di verificare la presenza obbligatoria del claim 'api_soap_servizio'.

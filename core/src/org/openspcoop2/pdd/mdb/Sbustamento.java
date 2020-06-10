@@ -939,6 +939,8 @@ public class Sbustamento extends GenericLib{
 					// BUSTA GIA' PRECEDENTEMENTE RICEVUTA
 					if (bustaDuplicata){
 	
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
+						
 						// Aggiorno duplicati
 						msgDiag.logPersonalizzato("ricezioneBustaDuplicata.count");
 						gestoreFiltroDuplicati.incrementaNumeroDuplicati(protocolFactory,bustaRichiesta.getID());

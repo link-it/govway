@@ -193,8 +193,8 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
          errore dovuto al fallimento del processo di autorizzazione del
          chiamante;
 
-      -  *Errore SPCoop/SDI/eDelivery*: Errore specifico per ciascun profilo di interoperabilità che indica le transazioni che hanno generato
-         errori a livello del protocollo (es. SPCoop) specifico della
+      -  *Errore ModI PA/SPCoop/SDI/eDelivery*: Errore specifico per ciascun profilo di interoperabilità che indica le transazioni che hanno generato
+         errori a livello del protocollo (es. ModI PA) specifico della
          comunicazione con il dominio esterno;
 
       -  *API Sospesa*: Errore dovuto al fatto che l'API invocata risulta sospesa in configurazione;
@@ -247,11 +247,15 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
          applicativa, prevista sul messaggio di risposta, ha prodotto un
          fallimento.
 
-      -  *Contenuto Risposta Malformato:*\ transazioni la cui
+      -  *Richiesta già elaborata*: la richiesta risulta essere già stata elaborata. 
+
+      -  *Risposta già elaborata*: la risposta risulta essere già stata elaborata. 
+
+      -  *Contenuto Risposta Malformato*: transazioni la cui
          risposta applicativa ritornata dal servizio remoto non è
          risultata processabile (es. xml non valido sintatticamente)
 
-      -  *Connessione Client Interrotta:*\ rientrano in questa casistica
+      -  *Connessione Client Interrotta*: rientrano in questa casistica
          le transazioni per cui il gateway non è riuscito a restituire
          la risposta al chiamante poiché quest'ultimo ha interrotto la
          connessione;

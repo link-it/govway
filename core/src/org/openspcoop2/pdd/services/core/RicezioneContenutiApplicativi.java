@@ -4474,6 +4474,7 @@ public class RicezioneContenutiApplicativi {
 				else {
 					msgDiag.addKeyword(CostantiPdD.KEY_PROPRIETARIO_MESSAGGIO, proprietarioMessaggio);
 					msgDiag.logPersonalizzato("messaggioInGestione");
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
 					openspcoopstate.releaseResource(); 
 					if (this.msgContext.isGestioneRisposta()) {
 						this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,IntegrationFunctionError.CONFLICT_IN_QUEUE,

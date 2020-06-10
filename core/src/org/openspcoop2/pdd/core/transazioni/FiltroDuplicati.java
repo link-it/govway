@@ -73,9 +73,14 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	
 	private TransazioneFieldConverter transazioneFieldConverter = null;
 	private String nomeTabellaTransazioni = null;
+
+	private String colonna_pdd_ruolo = null;
+	
+	private String colonna_duplicati_richiesta = null;
 	private String colonna_data_id_msg_richiesta = null;
 	private String colonna_id_messaggio_richiesta = null;
-	private String colonna_pdd_ruolo = null;
+
+	private String colonna_duplicati_risposta = null;
 	private String colonna_data_id_msg_risposta = null;
 	private String colonna_id_messaggio_risposta = null;
 	
@@ -283,9 +288,14 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				this.transazioneFieldConverter = new TransazioneFieldConverter(this.tipoDatabaseRuntime);
 				
 				this.nomeTabellaTransazioni = this.transazioneFieldConverter.toTable(Transazione.model());
+				
+				this.colonna_pdd_ruolo = this.transazioneFieldConverter.toColumn(Transazione.model().PDD_RUOLO, false);
+							
+				this.colonna_duplicati_richiesta = this.transazioneFieldConverter.toColumn(Transazione.model().DUPLICATI_RICHIESTA, false);
 				this.colonna_data_id_msg_richiesta = this.transazioneFieldConverter.toColumn(Transazione.model().DATA_ID_MSG_RICHIESTA, false);
 				this.colonna_id_messaggio_richiesta = this.transazioneFieldConverter.toColumn(Transazione.model().ID_MESSAGGIO_RICHIESTA, false);
-				this.colonna_pdd_ruolo = this.transazioneFieldConverter.toColumn(Transazione.model().PDD_RUOLO, false);
+				
+				this.colonna_duplicati_risposta = this.transazioneFieldConverter.toColumn(Transazione.model().DUPLICATI_RISPOSTA, false);
 				this.colonna_data_id_msg_risposta = this.transazioneFieldConverter.toColumn(Transazione.model().DATA_ID_MSG_RISPOSTA, false);
 				this.colonna_id_messaggio_risposta = this.transazioneFieldConverter.toColumn(Transazione.model().ID_MESSAGGIO_RISPOSTA, false);
 				
@@ -516,20 +526,24 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			}
 			sqlQueryObject.addUpdateTable(this.nomeTabellaTransazioni);
 			if(richiesta){
-				sqlQueryObject.addUpdateField("duplicati_richiesta", "duplicati_richiesta+1");
+				sqlQueryObject.addUpdateField(this.colonna_duplicati_richiesta, this.colonna_duplicati_richiesta+"+1");
 				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					sqlQueryObject.addWhereCondition(this.colonna_data_id_msg_richiesta+"=?");
 				}
 				sqlQueryObject.addWhereCondition(this.colonna_id_messaggio_richiesta+"=?");
-				sqlQueryObject.addWhereCondition("duplicati_richiesta>=?");
+				sqlQueryObject.addWhereCondition(this.colonna_duplicati_richiesta+">=?");
+				// Solo una porta applicativa puo' ricevere una busta di richiesta (serve per evitare i problemi in caso di loopback)
+				sqlQueryObject.addWhereCondition(this.colonna_pdd_ruolo+"=?");	
 			}
 			else{
-				sqlQueryObject.addUpdateField("duplicati_risposta", "duplicati_risposta+1");
+				sqlQueryObject.addUpdateField(this.colonna_duplicati_risposta, this.colonna_duplicati_risposta+"+1");
 				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					sqlQueryObject.addWhereCondition(this.colonna_data_id_msg_risposta+"=?");
 				}
 				sqlQueryObject.addWhereCondition(this.colonna_id_messaggio_risposta+"=?");
-				sqlQueryObject.addWhereCondition("duplicati_risposta>=?");
+				sqlQueryObject.addWhereCondition(this.colonna_duplicati_risposta+">=?");
+				// Solo una porta delegata puo' ricevere una busta di risposta (serve per evitare i problemi in caso di loopback)
+				sqlQueryObject.addWhereCondition(this.colonna_pdd_ruolo+"=?");	
 			}
 			sqlQueryObject.setANDLogicOperator(true); 
 			
@@ -547,6 +561,12 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			}
 			pstmt.setString(index++, idBusta);
 			pstmt.setInt(index++, 0);
+			if(richiesta){
+				pstmt.setString(index++, TipoPdD.APPLICATIVA.getTipo());
+			}
+			else {
+				pstmt.setString(index++, TipoPdD.DELEGATA.getTipo());
+			}
 			
 			if(this.debug){
 				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
@@ -557,6 +577,12 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 					sql = sql.replaceFirst("\\?", "'"+idBusta+"'");
 				}
 				sql = sql.replaceFirst("\\?", "0");
+				if(richiesta){
+					sql = sql.replaceFirst("\\?", "'"+TipoPdD.APPLICATIVA.getTipo()+"'");
+				}
+				else {
+					sql = sql.replaceFirst("\\?", "'"+TipoPdD.DELEGATA.getTipo()+"'");
+				}
 				this.logSql.debug("Eseguo query: "+sql);
 			}
 			

@@ -79,6 +79,8 @@ public enum EsitoTransazioneName implements Serializable{
 	CONSEGNA_MULTIPLA_FALLITA,
 	API_NON_INDIVIDUATA,
 	OPERAZIONE_NON_INDIVIDUATA,
+	RICHIESTA_DUPLICATA,
+	RISPOSTA_DUPLICATA,
 	
 	CUSTOM;
 
@@ -128,7 +130,8 @@ public enum EsitoTransazioneName implements Serializable{
 				EsitoTransazioneName.ERRORE_ALLEGATI_MESSAGGIO_RISPOSTA.equals(esitoTransactionName) || 
 				EsitoTransazioneName.ERRORE_CORRELAZIONE_APPLICATIVA_RISPOSTA.equals(esitoTransactionName) || 
 				EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RISPOSTA.equals(esitoTransactionName) || 
-				EsitoTransazioneName.ERRORE_VALIDAZIONE_RISPOSTA.equals(esitoTransactionName)
+				EsitoTransazioneName.ERRORE_VALIDAZIONE_RISPOSTA.equals(esitoTransactionName) ||
+				EsitoTransazioneName.RISPOSTA_DUPLICATA.equals(esitoTransactionName)
 				){
 			return true;
 		}
