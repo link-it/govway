@@ -1000,7 +1000,13 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 										org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT :  org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER) +
 										org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+codiceEccezioneGW;
 							}
-							QName eccezioneNameGovway = this.getQNameEccezioneIntegrazione(codiceEccezioneGW);
+							QName eccezioneNameGovway = null;
+							if(MessageType.SOAP_11.equals(messageType)) {
+								eccezioneNameGovway = new QName(org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE, codiceEccezioneGW, fault.getPrefix());
+							}
+							else {
+								eccezioneNameGovway = this.getQNameEccezioneIntegrazione(codiceEccezioneGW);
+							}
 							msg.castAsSoap().setFaultCode(fault, code, eccezioneNameGovway);
 						}
 						

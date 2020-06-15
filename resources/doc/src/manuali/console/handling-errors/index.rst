@@ -64,9 +64,7 @@ Lo stesso tipo di errore, rilevato per una API SOAP, viene riportato di seguito:
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
       <SOAP-ENV:Body>
         <SOAP-ENV:Fault>
-          <faultcode xmlns:integration="http://govway.org/integration/fault">
-		integration:Client.InvalidRequestContent
-	  </faultcode>
+          <faultcode>SOAP-ENV:Client.InvalidRequestContent</faultcode>
           <faultstring>Received request is not conform to API specification</faultstring>
           <faultactor>http://govway.org/integration</faultactor>
           <detail>

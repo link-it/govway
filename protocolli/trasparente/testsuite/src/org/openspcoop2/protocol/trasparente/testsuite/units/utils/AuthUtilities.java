@@ -323,7 +323,7 @@ public class AuthUtilities {
 		_test(portaDelegata, nomePorta,
 				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
 				addIDUnivoco, 
-				erroreAtteso, exceptionCodeExpected, ricercaEsatta, dataInizioTest, 
+				erroreAtteso, erroreAttesoParam, exceptionCodeExpected, ricercaEsatta, dataInizioTest, 
 				fruitore, erogatore, returnCodeAtteso, 
 				checkOpenSPCoopDetail, 
 				readTimeout);
@@ -332,7 +332,7 @@ public class AuthUtilities {
 	private static void _test(boolean portaDelegata, String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
 			boolean addIDUnivoco,
-			String erroreAtteso, ExceptionCodeExpected exceptionCodeExpected, boolean ricercaEsatta, Date dataInizioTest,
+			String erroreAtteso, String erroreAttesoDiagnostico, ExceptionCodeExpected exceptionCodeExpected, boolean ricercaEsatta, Date dataInizioTest,
 			IDSoggetto fruitore,IDSoggetto erogatore, int returnCodeAtteso, 
 			boolean checkOpenSPCoopDetail, // presente solamente in caso di errore di processamento
 			Integer readTimeout) throws Exception{
@@ -670,7 +670,7 @@ public class AuthUtilities {
 		
 
 		DatabaseMsgDiagnosticiComponent dataMsg = null;
-		if(erroreAtteso!=null) {
+		if(erroreAttesoDiagnostico!=null) {
 			try{
 				if(portaDelegata)
 					dataMsg = DatabaseProperties.getDatabaseComponentDiagnosticaFruitore();
@@ -682,21 +682,21 @@ public class AuthUtilities {
 					}
 					// il messaggio di errore eventuale viene comunque registrato con livello info, se siamo in un contesto opzionale o di warning
 	    			if(ricercaEsatta){
-	    				Assert.assertTrue(dataMsg.isTracedMessaggio(id, erroreAtteso));
+	    				Assert.assertTrue(dataMsg.isTracedMessaggio(id, erroreAttesoDiagnostico));
 	    			}
 	    			else{
 	    				if(returnCodeAtteso==200 && portaDelegata) {
-	    					boolean withId = dataMsg.isTracedMessaggio(id, true, erroreAtteso);
-	    					boolean withoutId = dataMsg.isTracedMessaggioWithLike(dataInizioTest, erroreAtteso);
+	    					boolean withId = dataMsg.isTracedMessaggio(id, true, erroreAttesoDiagnostico);
+	    					boolean withoutId = dataMsg.isTracedMessaggioWithLike(dataInizioTest, erroreAttesoDiagnostico);
 	    					Assert.assertTrue(withId || withoutId);
 	    				}
 	    				else {
-	    					Assert.assertTrue(dataMsg.isTracedMessaggio(id, true, erroreAtteso));
+	    					Assert.assertTrue(dataMsg.isTracedMessaggio(id, true, erroreAttesoDiagnostico));
 	    				}
 	    			}
 				}
 				else{
-					Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, erroreAtteso));
+					Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, erroreAttesoDiagnostico));
 				}
 	
 			}catch(Exception eInternal){

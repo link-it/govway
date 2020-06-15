@@ -41,6 +41,7 @@ public class FaultBuilderConfig {
 	private String rfc7807GovWayTypeHeaderErrorTypeValue;
 	
 	private String actor;
+	private String prefixSoap;
 	
 	private QName errorCode;
 	
@@ -79,6 +80,12 @@ public class FaultBuilderConfig {
 	}
 	public void setActor(String actor) {
 		this.actor = actor;
+	}
+	public String getPrefixSoap() {
+		return this.prefixSoap;
+	}
+	public void setPrefixSoap(String prefixSoap) {
+		this.prefixSoap = prefixSoap;
 	}
 	public QName getErrorCode() {
 		return this.errorCode;

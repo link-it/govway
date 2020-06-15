@@ -247,7 +247,15 @@ public abstract class AbstractErrorGenerator {
 					codiceEccezioneGW = code11 +
 							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+codiceEccezioneGW;
 				}
-				QName eccezioneNameGovway = this.getProtocolFactory().createErroreApplicativoBuilder().getQNameEccezioneIntegrazione(codiceEccezioneGW);
+				QName eccezioneNameGovway = null;
+				if(MessageType.SOAP_11.equals(msgTypeErrorResponse)) {
+					String prefix = "SOAP-ENV";
+					eccezioneNameGovway = new QName(org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE, codiceEccezioneGW, prefix);
+					config.setPrefixSoap(prefix);
+				}
+				else {
+					eccezioneNameGovway = this.getProtocolFactory().createErroreApplicativoBuilder().getQNameEccezioneIntegrazione(codiceEccezioneGW);
+				}
 				config.setErrorCode(eccezioneNameGovway);
 			}
 			

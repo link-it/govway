@@ -992,17 +992,29 @@ public abstract class OpenSPCoop2MessageFactory {
 			String fault = null;
 			String contentType = MessageUtilities.getDefaultContentType(messageType);
 			if(MessageType.SOAP_11.equals(messageType)){
-				fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-						+"<SOAP-ENV:Header/><SOAP-ENV:Body>"
-						+"<SOAP-ENV:Fault>";
+				
+				String prefixSoap = "SOAP-ENV";
+				if(faultBuilderConfig.getPrefixSoap()!=null) {
+					prefixSoap = faultBuilderConfig.getPrefixSoap();
+				}
+				
+				fault = "<"+prefixSoap+":Envelope xmlns:"+prefixSoap+"=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+						+"<"+prefixSoap+":Header/><"+prefixSoap+":Body>"
+						+"<"+prefixSoap+":Fault>";
 				if(faultBuilderConfig.getErrorCode()!=null) {
-					fault = fault
-							+"<faultcode xmlns:"+faultBuilderConfig.getErrorCode().getPrefix()+"=\""+faultBuilderConfig.getErrorCode().getNamespaceURI()+
-									"\">"+faultBuilderConfig.getErrorCode().getPrefix()+":"+faultBuilderConfig.getErrorCode().getLocalPart()+"</faultcode>";
+					if(prefixSoap.equals(faultBuilderConfig.getErrorCode().getPrefix())) {
+						fault = fault
+								+"<faultcode>"+faultBuilderConfig.getErrorCode().getPrefix()+":"+faultBuilderConfig.getErrorCode().getLocalPart()+"</faultcode>";
+					}
+					else {
+						fault = fault
+								+"<faultcode xmlns:"+faultBuilderConfig.getErrorCode().getPrefix()+"=\""+faultBuilderConfig.getErrorCode().getNamespaceURI()+
+										"\">"+faultBuilderConfig.getErrorCode().getPrefix()+":"+faultBuilderConfig.getErrorCode().getLocalPart()+"</faultcode>";
+					}
 				}
 				else {
 					fault = fault		
-							+"<faultcode>SOAP-ENV:"+Costanti.SOAP11_FAULT_CODE_SERVER+"</faultcode>";
+							+"<faultcode>"+prefixSoap+":"+Costanti.SOAP11_FAULT_CODE_SERVER+"</faultcode>";
 				}
 				fault = fault
 						+"<faultstring>" + errore + "</faultstring>";
@@ -1015,39 +1027,45 @@ public abstract class OpenSPCoop2MessageFactory {
 							+"<faultactor>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</faultactor>";
 				}
 				fault = fault
-						+"</SOAP-ENV:Fault>"
-						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
+						+"</"+prefixSoap+":Fault>"
+						+"</"+prefixSoap+":Body></"+prefixSoap+":Envelope>";
 			}
 			else if(MessageType.SOAP_12.equals(messageType)){
+				
+				String prefixSoap = "env";
+				if(faultBuilderConfig.getPrefixSoap()!=null) {
+					prefixSoap = faultBuilderConfig.getPrefixSoap();
+				}
+				
 				String code12 = Costanti.SOAP12_FAULT_CODE_SERVER;
 				if(faultBuilderConfig.getGovwayReturnCode()!=null) {
 					if(faultBuilderConfig.getGovwayReturnCode()<=499) {
 						code12 = Costanti.SOAP12_FAULT_CODE_CLIENT;
 					}
 				}
-				fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\">"
-						+"<SOAP-ENV:Header/><SOAP-ENV:Body>"
-						+"<SOAP-ENV:Fault>"
-						+"<SOAP-ENV:Code><SOAP-ENV:Value>SOAP-ENV:"+code12+"</SOAP-ENV:Value>";
+				fault = "<"+prefixSoap+":Envelope xmlns:"+prefixSoap+"=\"http://www.w3.org/2003/05/soap-envelope\">"
+						+"<"+prefixSoap+":Header/><"+prefixSoap+":Body>"
+						+"<"+prefixSoap+":Fault>"
+						+"<"+prefixSoap+":Code><"+prefixSoap+":Value>"+prefixSoap+":"+code12+"</"+prefixSoap+":Value>";
 				if(faultBuilderConfig.getErrorCode()!=null) {
 					fault = fault
-							+"<env:Subcode><env:Value xmlns:"+faultBuilderConfig.getErrorCode().getPrefix()+"=\""+faultBuilderConfig.getErrorCode().getNamespaceURI()+
-								"\">"+faultBuilderConfig.getErrorCode().getPrefix()+":"+faultBuilderConfig.getErrorCode().getLocalPart()+"</env:Value></env:Subcode>";
+							+"<"+prefixSoap+":Subcode><"+prefixSoap+":Value xmlns:"+faultBuilderConfig.getErrorCode().getPrefix()+"=\""+faultBuilderConfig.getErrorCode().getNamespaceURI()+
+								"\">"+faultBuilderConfig.getErrorCode().getPrefix()+":"+faultBuilderConfig.getErrorCode().getLocalPart()+"</"+prefixSoap+":Value></"+prefixSoap+":Subcode>";
 				}
 				fault = fault	
-						+"</SOAP-ENV:Code>"
-						+"<SOAP-ENV:Reason><SOAP-ENV:Text xml:lang=\"en-US\">" + errore + "</SOAP-ENV:Text></SOAP-ENV:Reason>";
+						+"</"+prefixSoap+":Code>"
+						+"<"+prefixSoap+":Reason><"+prefixSoap+":Text xml:lang=\"en-US\">" + errore + "</"+prefixSoap+":Text></"+prefixSoap+":Reason>";
 				if(faultBuilderConfig.getActor()!=null) {
 					fault = fault
-							+"<SOAP-ENV:Role>"+faultBuilderConfig.getActor()+"</SOAP-ENV:Role>";
+							+"<"+prefixSoap+":Role>"+faultBuilderConfig.getActor()+"</"+prefixSoap+":Role>";
 				}
 				else {
 					fault = fault
-							+"<SOAP-ENV:Role>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</SOAP-ENV:Role>";
+							+"<"+prefixSoap+":Role>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</"+prefixSoap+":Role>";
 				}
 				fault = fault
-						+"</SOAP-ENV:Fault>"
-						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
+						+"</"+prefixSoap+":Fault>"
+						+"</"+prefixSoap+":Body></"+prefixSoap+":Envelope>";
 			}
 			else if(MessageType.XML.equals(messageType)){
 				if(useProblemRFC7807) {

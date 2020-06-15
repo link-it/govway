@@ -31,9 +31,7 @@ Di seguito viene riportato un esempio di errore rilevato per una API SOAP 1.1:
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
       <SOAP-ENV:Body>
         <SOAP-ENV:Fault>
-          <faultcode xmlns:integration="http://govway.org/integration/fault">
-		integration:Client.InvalidRequestContent
-	  </faultcode>
+          <faultcode>SOAP-ENV:Client.InvalidRequestContent</faultcode>
           <faultstring>Received request is not conform to API specification</faultstring>
           <faultactor>http://govway.org/integration</faultactor>
           <detail>
@@ -61,13 +59,15 @@ Lo stesso tipo di errore, rilevato per una API SOAP 1.2, viene riportato di segu
     Content-Type: application/soap+xml
     Date: Thu, 28 May 2020 15:59:14 GMT
  
-    <env:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
+    <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
       <env:Body>
         <env:Fault>
 	   <env:Code>
 	      <env:Value>env:Sender</env:Value>
 	      <env:Subcode>
-		<env:Value xmlns:integration="http://govway.org/integration/fault">integration:InvalidRequestContent</env:Value>
+		<env:Value xmlns:integration="http://govway.org/integration/fault">
+		   integration:InvalidRequestContent
+		</env:Value>
 	      </env:Subcode>
 	   </env:Code>
 	   <env:Reason>
