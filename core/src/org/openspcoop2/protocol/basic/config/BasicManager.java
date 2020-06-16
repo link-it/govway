@@ -221,7 +221,7 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 	
 	@Override
 	public boolean isSuccessfulHttpRedirectStatusCode(ServiceBinding serviceBinding) throws ProtocolException{
-		return false;
+		return ServiceBinding.REST.equals(serviceBinding);
 	}
 	
 	

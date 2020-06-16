@@ -88,16 +88,16 @@ public class GestoreErroreConnettore {
 
 	public static GestioneErrore getGestioneErroreDefaultComponenteIntegrazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding) {
 
-		String protocol = protocolFactory.getProtocol();
+		String key = protocolFactory.getProtocol()+"_"+serviceBinding;
 
-		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(protocol)){
-			return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(protocol);
+		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(key)){
+			return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(key);
 		}else{
 
 			synchronized (gestioneErroreDefaultComponenteIntegrazioneMap) {
 
-				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(protocol)){
-					return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(protocol);
+				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(key)){
+					return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(key);
 				}
 
 				GestioneErrore gestione = new GestioneErrore();
@@ -126,7 +126,7 @@ public class GestoreErroreConnettore {
 				gestione.addSoapFault(faultAccetta);
 
 
-				GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.put(protocol, gestione);
+				GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.put(key, gestione);
 				return gestione;
 
 			}
@@ -135,16 +135,16 @@ public class GestoreErroreConnettore {
 
 	public static GestioneErrore getGestioneErroreDefaultComponenteCooperazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding) {
 
-		String protocol = protocolFactory.getProtocol();
+		String key = protocolFactory.getProtocol()+"_"+serviceBinding;
 
-		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(protocol)){
-			return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(protocol);
+		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(key)){
+			return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(key);
 		}else{
 
 			synchronized (gestioneErroreDefaultComponenteCooperazioneMap) {
 
-				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(protocol)){
-					return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(protocol);
+				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(key)){
+					return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(key);
 				}
 
 				GestioneErrore gestione = new GestioneErrore();
@@ -217,7 +217,7 @@ public class GestoreErroreConnettore {
 					//				gestione.addSoapFault(faultSoapServer);
 				}
 
-				GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.put(protocol, gestione);
+				GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.put(key, gestione);
 				return gestione;
 
 			}

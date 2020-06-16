@@ -2143,6 +2143,7 @@ public class GestoreToken {
 			connettore = new ConnettoreHTTP();
 		}
 		connettore.init(pddContext, protocolFactory);
+		connettore.setRegisterSendIntoContext(false);
 		
 		if(basic){
 			InvocazioneCredenziali credenziali = new InvocazioneCredenziali();

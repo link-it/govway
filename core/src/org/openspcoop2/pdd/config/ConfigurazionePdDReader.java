@@ -4466,12 +4466,14 @@ public class ConfigurazionePdDReader {
 	 * @return la politica di gestione della consegna tramite connettore per il componente di cooperazione
 	 * 
 	 */
-	private static GestioneErrore gestioneErroreConnettoreComponenteCooperazione = null;
+	private static HashMap<String, GestioneErrore> gestioneErroreConnettoreComponenteCooperazioneMap = new HashMap<>();
 	protected GestioneErrore getGestioneErroreConnettoreComponenteCooperazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione==null){
+		String key = protocolFactory.getProtocol()+"_"+serviceBinding;
+		
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap.containsKey(key)){
+			GestioneErrore gestione = null;
 			try{
-				GestioneErrore gestione = null;
 				try{
 					gestione = this.configurazionePdD.getGestioneErroreComponenteCooperazione(connectionPdD);
 
@@ -4502,16 +4504,26 @@ public class ConfigurazionePdDReader {
 					this.log.error("getGestioneErroreConnettoreComponenteCooperazione",e);
 				}
 				if(gestione == null)
-					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione(protocolFactory, serviceBinding);
-				else
-					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione = gestione;
-
+					gestione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione(protocolFactory, serviceBinding);
+				
 			}catch(Exception e){
-				ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione(protocolFactory, serviceBinding);
-			}  	
+				gestione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione(protocolFactory, serviceBinding);
+			} 
+			
+			if(this.configurazioneDinamica) {
+				return gestione;
+			}
+			else {
+				synchronized (ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap) {
+					if(!ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap.containsKey(key)) {
+						ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap.put(key, gestione);
+					}
+				}
+			}
+			
 		}
 
-		return ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione;
+		return ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap.get(key);
 
 	}
 
@@ -4521,12 +4533,14 @@ public class ConfigurazionePdDReader {
 	 * @return la politica di gestione della consegna tramite connettore per il componente di integrazione
 	 * 
 	 */
-	private static GestioneErrore gestioneErroreConnettoreComponenteIntegrazione = null;
+	private static HashMap<String, GestioneErrore> gestioneErroreConnettoreComponenteIntegrazioneMap = new HashMap<>();
 	protected GestioneErrore getGestioneErroreConnettoreComponenteIntegrazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione==null){
+		String key = protocolFactory.getProtocol()+"_"+serviceBinding;
+		
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap.containsKey(key)){
+			GestioneErrore gestione = null;
 			try{
-				GestioneErrore gestione = null;
 				try{
 					gestione = this.configurazionePdD.getGestioneErroreComponenteIntegrazione(connectionPdD);
 
@@ -4557,16 +4571,25 @@ public class ConfigurazionePdDReader {
 					this.log.error("getGestioneErroreConnettoreComponenteIntegrazione",e);
 				}
 				if(gestione == null)
-					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione(protocolFactory, serviceBinding);
-				else
-					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione = gestione;
+					gestione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione(protocolFactory, serviceBinding);
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione(protocolFactory, serviceBinding);
-			}  	
+				gestione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione(protocolFactory, serviceBinding);
+			}
+			
+			if(this.configurazioneDinamica) {
+				return gestione;
+			}
+			else {
+				synchronized (ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap) {
+					if(!ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap.containsKey(key)) {
+						ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap.put(key, gestione);
+					}
+				}
+			}
 		}
 
-		return ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione;
+		return ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap.get(key);
 
 	}
 

@@ -2761,7 +2761,7 @@ public class RicezioneBuste {
 									eGestioneToken = esitoIntrospectionToken.getEccezioneProcessamento();
 									errorMessageGestioneToken = esitoIntrospectionToken.getErrorMessage();
 									wwwAuthenticateErrorHeader = esitoIntrospectionToken.getWwwAuthenticateErrorHeader();
-									integrationFunctionError = esitoValidazioneToken.getIntegrationFunctionError();
+									integrationFunctionError = esitoIntrospectionToken.getIntegrationFunctionError();
 									
 								}
 							}
@@ -2820,7 +2820,7 @@ public class RicezioneBuste {
 									eGestioneToken = esitoUserInfoToken.getEccezioneProcessamento();
 									errorMessageGestioneToken = esitoUserInfoToken.getErrorMessage();
 									wwwAuthenticateErrorHeader = esitoUserInfoToken.getWwwAuthenticateErrorHeader();
-									integrationFunctionError = esitoValidazioneToken.getIntegrationFunctionError();
+									integrationFunctionError = esitoUserInfoToken.getIntegrationFunctionError();
 									
 								}
 							}
@@ -2916,6 +2916,7 @@ public class RicezioneBuste {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento("processo di gestione token ["+ tipoGestioneToken + "] fallito, " + e.getMessage(),
 									CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN);
+					erroreCooperazione = null;
 					eGestioneToken = e;
 					
 					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
@@ -3162,6 +3163,7 @@ public class RicezioneBuste {
 							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione ["
 											+ tipoAutenticazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
+							erroreCooperazione = null;
 							eAutenticazione = e;
 							logCore.error("processo di autenticazione ["
 									+ tipoAutenticazione + "] fallito, " + e.getMessage(),e);
@@ -3343,6 +3345,7 @@ public class RicezioneBuste {
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione token ["
 										+ checkAuthnToken + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
+						erroreCooperazione = null;
 						eAutenticazione = e;
 						logCore.error("processo di autenticazione token ["
 								+ checkAuthnToken + "] fallito, " + e.getMessage(),e);

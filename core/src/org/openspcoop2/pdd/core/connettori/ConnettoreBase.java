@@ -183,6 +183,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     
     protected Dump dump;
 	
+    private boolean registerSendIntoContext = true;
+    public void setRegisterSendIntoContext(boolean registerSendIntoContext) {
+		this.registerSendIntoContext = registerSendIntoContext;
+	}
 
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
@@ -810,7 +814,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     
     protected void postOutRequest() throws Exception{
     	
-    	if(this.getPddContext()!=null) {
+    	if(this.registerSendIntoContext && this.getPddContext()!=null) {
     		this.getPddContext().addObject(Costanti.RICHIESTA_INOLTRATA_BACKEND, Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE);
     	}
 	   

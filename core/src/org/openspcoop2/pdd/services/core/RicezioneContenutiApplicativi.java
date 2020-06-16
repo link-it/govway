@@ -1910,7 +1910,7 @@ public class RicezioneContenutiApplicativi {
 									eGestioneToken = esitoIntrospectionToken.getEccezioneProcessamento();
 									errorMessageGestioneToken = esitoIntrospectionToken.getErrorMessage();
 									wwwAuthenticateErrorHeader = esitoIntrospectionToken.getWwwAuthenticateErrorHeader();
-									integrationFunctionError = esitoValidazioneToken.getIntegrationFunctionError();
+									integrationFunctionError = esitoIntrospectionToken.getIntegrationFunctionError();
 									
 								}
 							}
@@ -1968,7 +1968,7 @@ public class RicezioneContenutiApplicativi {
 									eGestioneToken = esitoUserInfoToken.getEccezioneProcessamento();
 									errorMessageGestioneToken = esitoUserInfoToken.getErrorMessage();
 									wwwAuthenticateErrorHeader = esitoUserInfoToken.getWwwAuthenticateErrorHeader();
-									integrationFunctionError = esitoValidazioneToken.getIntegrationFunctionError();
+									integrationFunctionError = esitoUserInfoToken.getIntegrationFunctionError();
 									
 								}
 							}
