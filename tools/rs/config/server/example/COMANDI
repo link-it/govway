@@ -23,6 +23,7 @@ ESEMPIO:
 
 	+ UPDATE:
 ./update applicativi/ApplicativoJson bodies/applicativo_update.json
+./update applicativi/ApplicativoJson bodies/applicativo_updateNome.json
 
 	+ DELETE: 		
 ./rem applicativi/ApplicativoJson	

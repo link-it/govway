@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortTypeAzione;
@@ -135,38 +137,55 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		
-		if(!esterno) {
-			
-			BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
-					ModIConsoleCostanti.MODIPA_APPLICATIVI_ID, 
-					ModIConsoleCostanti.MODIPA_APPLICATIVI_LABEL);
-			configuration.addConsoleItem(titolo );
-			
-			BaseConsoleItem subTitolo = ProtocolPropertiesFactory.newSubTitleItem(
-					ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_ID, 
-					ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL);
-			configuration.addConsoleItem(subTitolo );
-			
-			BooleanConsoleItem booleanConsoleItem = 
-					(BooleanConsoleItem) ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN, ConsoleItemType.CHECKBOX,
-							ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_ID, ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_LABEL);
-			booleanConsoleItem.setDefaultValue(false);
-			booleanConsoleItem.setReloadOnChange(true);
-			configuration.addConsoleItem(booleanConsoleItem);
-			
-			this.addKeystoreConfig(configuration, false, true, true);
+		boolean isClient = true;
+		try {
+			String client = consoleHelper.getParameter("tipoSA"); // definito in ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA
+			isClient = (client==null) || ("".equals(client)) || (CostantiConfigurazione.CLIENT.toString().equals(client)) || (CostantiConfigurazione.CLIENT_OR_SERVER.toString().equals(client));
+			if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
+				ServizioApplicativo sa = configIntegrationReader.getServizioApplicativo(id);
+				isClient = CostantiConfigurazione.CLIENT.toString().equals(sa.getTipo()) || sa.isUseAsClient();
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
 		}
 		
-		StringConsoleItem profiloSicurezzaMessaggioAudienceItem = (StringConsoleItem) 
-				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
-				ConsoleItemType.TEXT_AREA,
-				ModIConsoleCostanti.MODIPA_API_APPLICATIVI_AUDIENCE_RISPOSTA_ID, 
-				ModIConsoleCostanti.MODIPA_API_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL);
-		profiloSicurezzaMessaggioAudienceItem.setRows(2);
-		profiloSicurezzaMessaggioAudienceItem.setNote(ModIConsoleCostanti.MODIPA_API_APPLICATIVI_AUDIENCE_RISPOSTA_NOTE);
-		configuration.addConsoleItem(profiloSicurezzaMessaggioAudienceItem);
-		
-		return configuration;
+		if(isClient) {
+			if(!esterno) {
+				
+				BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
+						ModIConsoleCostanti.MODIPA_APPLICATIVI_ID, 
+						ModIConsoleCostanti.MODIPA_APPLICATIVI_LABEL);
+				configuration.addConsoleItem(titolo );
+				
+				BaseConsoleItem subTitolo = ProtocolPropertiesFactory.newSubTitleItem(
+						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_ID, 
+						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL);
+				configuration.addConsoleItem(subTitolo );
+				
+				BooleanConsoleItem booleanConsoleItem = 
+						(BooleanConsoleItem) ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN, ConsoleItemType.CHECKBOX,
+								ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_ID, ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_LABEL);
+				booleanConsoleItem.setDefaultValue(false);
+				booleanConsoleItem.setReloadOnChange(true);
+				configuration.addConsoleItem(booleanConsoleItem);
+				
+				this.addKeystoreConfig(configuration, false, true, true);
+			}
+			
+			StringConsoleItem profiloSicurezzaMessaggioAudienceItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.TEXT_AREA,
+					ModIConsoleCostanti.MODIPA_API_APPLICATIVI_AUDIENCE_RISPOSTA_ID, 
+					ModIConsoleCostanti.MODIPA_API_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL);
+			profiloSicurezzaMessaggioAudienceItem.setRows(2);
+			profiloSicurezzaMessaggioAudienceItem.setNote(ModIConsoleCostanti.MODIPA_API_APPLICATIVI_AUDIENCE_RISPOSTA_NOTE);
+			configuration.addConsoleItem(profiloSicurezzaMessaggioAudienceItem);
+			
+			return configuration;
+		}
+		else {
+			return super.getDynamicConfigServizioApplicativo(consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id);
+		}
 		
 	}
 
@@ -184,7 +203,20 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		
-		if(!esterno) {
+		boolean isClient = true;
+		try {
+			String client = consoleHelper.getParameter("tipoSA"); // definito in ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA
+			isClient = (client==null) || ("".equals(client)) || (CostantiConfigurazione.CLIENT.toString().equals(client)) || (CostantiConfigurazione.CLIENT_OR_SERVER.toString().equals(client));
+			if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
+				ServizioApplicativo sa = configIntegrationReader.getServizioApplicativo(id);
+				isClient = CostantiConfigurazione.CLIENT.toString().equals(sa.getTipo()) || sa.isUseAsClient();
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		
+		
+		if(!esterno && isClient) {
 			
 			BooleanProperty booleanModeItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_ID);
 			if(booleanModeItemValue!=null && booleanModeItemValue.getValue()!=null && booleanModeItemValue.getValue()) {
@@ -221,32 +253,46 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		
-		boolean changeBinary = false;
-		if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
-			try {
-				String p = consoleHelper.getParameter("changeBinary"); // ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY
-				if("true".equalsIgnoreCase(p)) {
-					changeBinary = true;
-					BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
-					if(archiveItemValue==null || archiveItemValue.getValue()==null) {
-						throw new ProtocolException("Archivio non fornito");
-					}
-				}
-			}catch(Exception e) {
-				throw new ProtocolException(e.getMessage(),e);
+		boolean isClient = true;
+		try {
+			String client = consoleHelper.getParameter("tipoSA"); // definito in ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA
+			isClient = (client==null) || ("".equals(client)) || (CostantiConfigurazione.CLIENT.toString().equals(client)) || (CostantiConfigurazione.CLIENT_OR_SERVER.toString().equals(client));
+			if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
+				ServizioApplicativo sa = configIntegrationReader.getServizioApplicativo(id);
+				isClient = CostantiConfigurazione.CLIENT.toString().equals(sa.getTipo()) || sa.isUseAsClient();
 			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
 		}
-
-		if(!esterno && !changeBinary) {
 		
-			// NOTA: se si attiva anche la validazione durante il change binary, poi non si riesce a modificarlo poiche' la password o l'alis, o qualche parametro non è compatibile con il nuovo archivio.
-			
-			try {
-				this.readKeystoreConfig(properties);
-			}catch(Throwable e) {
-				throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
+		if(isClient) {
+			boolean changeBinary = false;
+			if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
+				try {
+					String p = consoleHelper.getParameter("changeBinary"); // ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY
+					if("true".equalsIgnoreCase(p)) {
+						changeBinary = true;
+						BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
+						if(archiveItemValue==null || archiveItemValue.getValue()==null) {
+							throw new ProtocolException("Archivio non fornito");
+						}
+					}
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
 			}
+	
+			if(!esterno && !changeBinary) {
 			
+				// NOTA: se si attiva anche la validazione durante il change binary, poi non si riesce a modificarlo poiche' la password o l'alis, o qualche parametro non è compatibile con il nuovo archivio.
+				
+				try {
+					this.readKeystoreConfig(properties);
+				}catch(Throwable e) {
+					throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
+				}
+				
+			}
 		}
 	}
 

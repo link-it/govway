@@ -60,6 +60,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -491,12 +492,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 		de.setValue(nome);
 		de.setSize(this.getSize());
-		if (tipoOperazione.equals(TipoOperazione.ADD)) {
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setRequired(true);
-		} else {
-			de.setType(DataElementType.TEXT);
-		}
+		//if (tipoOperazione.equals(TipoOperazione.ADD)) {
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
+//		} else {
+//			de.setType(DataElementType.TEXT);
+//		}
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 		dati.addElement(de);
 
@@ -507,8 +508,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
 		de.setSize(this.getSize());
+		
+		boolean applicativoServerSelezionabile = true;
+		if(this.isProfiloModIPA(nomeProtocollo)) {
+			if(PddTipologia.ESTERNO.toString().equals(dominio)){
+				applicativoServerSelezionabile = false;
+				tipoSA = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT;
+			}
+		}
+
 		if(applicativiServerEnabled) {
-			if(tipoOperazione.equals(TipoOperazione.ADD)) {
+			if(tipoOperazione.equals(TipoOperazione.ADD) && applicativoServerSelezionabile) {
 				de.setSelected(tipoSA);
 				de.setType(DataElementType.SELECT);
 				de.setLabels(ServiziApplicativiCostanti.LABELS_SERVIZI_APPLICATIVI_TIPO);
@@ -1441,6 +1451,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					if ((tipoOperazione.equals(TipoOperazione.CHANGE)) && (nome.equals(sa.getNome())) && (idProvOld == sa.getIdSoggetto())) {
 						continue;
 					}
+					if(saOld!=null && tipoOperazione.equals(TipoOperazione.CHANGE) && saOld.getId().longValue() == sa.getId().longValue()) {
+						continue;
+					}
 
 					// Messaggio di errore
 					String labelSoggetto = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
@@ -1539,6 +1552,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						if ((tipoOperazione.equals(TipoOperazione.CHANGE)) && (nome.equals(sa.getNome())) && (idProvOld == sa.getIdSoggetto())) {
 							continue;
 						}
+						if(saOld!=null && tipoOperazione.equals(TipoOperazione.CHANGE) && saOld.getId().longValue() == sa.getId().longValue()) {
+							continue;
+						}
 	
 						// Raccolgo informazioni soggetto
 						// Messaggio di errore
@@ -1587,6 +1603,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}
 
 					if ((tipoOperazione.equals(TipoOperazione.CHANGE)) && (nome.equals(sa.getNome())) && (idProvOld == sa.getIdSoggetto())) {
+						continue;
+					}
+					if(saOld!=null && tipoOperazione.equals(TipoOperazione.CHANGE) && saOld.getId().longValue() == sa.getId().longValue()) {
 						continue;
 					}
 

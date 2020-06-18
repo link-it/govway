@@ -325,10 +325,11 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			newSa.setTipoSoggettoProprietario(tmpSa.getTipoSoggettoProprietario());		
 			newSa.getInvocazionePorta().setCredenzialiList(tmpSa.getInvocazionePorta().getCredenzialiList());
 			newSa.getInvocazionePorta().setRuoli(tmpSa.getInvocazionePorta().getRuoli());
-			
-			if (!oldSa.getNome().equals(newSa.getNome())) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile modificare il nome del servizio applicativo");
-			}
+
+			// Vincolo rilasciato in 3.3.1
+//			if (!oldSa.getNome().equals(newSa.getNome())) {
+//				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile modificare il nome del servizio applicativo");
+//			}
 					
 			IDServizioApplicativo oldID = new IDServizioApplicativo();
 			oldID.setIdSoggettoProprietario(ApplicativiApiHelper.getIDSoggetto(oldSa.getNomeSoggettoProprietario(), env.tipo_protocollo));
@@ -347,12 +348,14 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					oldSa.getIdSoggetto(),
 					newSa.getTipologiaFruizione(),
 					newSa.getTipologiaErogazione(),
-					listExtendedConnettore, null
+					listExtendedConnettore, oldSa
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			env.saCore.performUpdateOperation(env.userLogin, false, newSa);
+			// eseguo l'aggiornamento
+			List<Object> listOggettiDaAggiornare = ServiziApplicativiUtilities.getOggettiDaAggiornare(env.saCore, oldID, newSa);
+			env.saCore.performUpdateOperation(env.userLogin, false, listOggettiDaAggiornare.toArray());
 					
 			context.getLogger().info("Invocazione completata con successo");     
 		}

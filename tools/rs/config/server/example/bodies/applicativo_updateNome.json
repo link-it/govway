@@ -1,0 +1,9 @@
+{
+ 	"nome": "ApplicativoJsonModificato",
+   	"credenziali": {
+			"modalita_accesso": "http-basic",
+       		"username": "usernome",
+       		"password": "password"     
+	},
+	"ruoli": [ ]
+}

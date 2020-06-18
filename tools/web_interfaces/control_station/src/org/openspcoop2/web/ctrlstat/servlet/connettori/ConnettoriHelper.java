@@ -1934,6 +1934,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					else {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
+						autenticazioneHttp = Costanti.CHECK_BOX_DISABLED;
 					}
 					dati.addElement(de);		
 					//}
@@ -2203,6 +2204,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					else {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
+						autenticazioneHttp = Costanti.CHECK_BOX_DISABLED;
 					}
 					dati.addElement(de);		
 					//}

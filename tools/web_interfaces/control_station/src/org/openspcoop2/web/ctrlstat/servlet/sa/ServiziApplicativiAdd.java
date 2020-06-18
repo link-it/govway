@@ -395,6 +395,7 @@ public final class ServiziApplicativiAdd extends Action {
 						if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
 							tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
 							ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+							endpointtype=TipiConnettore.HTTP.toString();
 						}
 						if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT)) {
 							tipoauthSA = saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();

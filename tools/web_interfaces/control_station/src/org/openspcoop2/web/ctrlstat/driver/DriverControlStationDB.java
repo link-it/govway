@@ -27,6 +27,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB_LIB;
+import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
@@ -3769,7 +3771,7 @@ public class DriverControlStationDB  {
 	
 	public AttivazionePolicy getPolicy(String policyId, AttivazionePolicyFiltro filtroParam, AttivazionePolicyRaggruppamento groupBy,
 			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException,DriverControlStationNotFound{
-		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
+		String nomeMetodo = "getPolicy"; 
 		Connection con = null;
 		if (this.atomica) {
 			try {
@@ -3955,7 +3957,7 @@ public class DriverControlStationDB  {
 	
 	public AttivazionePolicy getPolicyByAlias(String alias,
 			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException,DriverControlStationNotFound{
-		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
+		String nomeMetodo = "getPolicyByAlias"; 
 		Connection con = null;
 		if (this.atomica) {
 			try {
@@ -3991,6 +3993,68 @@ public class DriverControlStationDB  {
 			}
 		
 			return serviceManager.getAttivazionePolicyServiceSearch().find(expression);
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Attivazione Policy non presente.");
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<AttivazionePolicy> getPolicyByServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "getPolicyByServizioApplicativo"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			IPaginatedExpression expression = serviceManager.getAttivazionePolicyServiceSearch().newPaginatedExpression();
+
+			expression.limit(100000); // non ne esisteranno mai cosi tante.
+			
+			expression.or();
+			
+			Map<IField, Object> propertyNameValuesFruitore = new HashMap<IField, Object>();
+			propertyNameValuesFruitore.put(AttivazionePolicy.model().FILTRO.TIPO_FRUITORE, idServizioApplicativo.getIdSoggettoProprietario().getTipo());
+			propertyNameValuesFruitore.put(AttivazionePolicy.model().FILTRO.NOME_FRUITORE, idServizioApplicativo.getIdSoggettoProprietario().getNome());
+			propertyNameValuesFruitore.put(AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_FRUITORE, idServizioApplicativo.getNome());
+			expression.allEquals(propertyNameValuesFruitore, true);
+			
+			Map<IField, Object> propertyNameValuesErogatore = new HashMap<IField, Object>();
+			propertyNameValuesErogatore.put(AttivazionePolicy.model().FILTRO.TIPO_EROGATORE, idServizioApplicativo.getIdSoggettoProprietario().getTipo());
+			propertyNameValuesErogatore.put(AttivazionePolicy.model().FILTRO.NOME_EROGATORE, idServizioApplicativo.getIdSoggettoProprietario().getNome());
+			propertyNameValuesErogatore.put(AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_EROGATORE, idServizioApplicativo.getNome());
+			expression.allEquals(propertyNameValuesErogatore, true);
+			
+			List<AttivazionePolicy> l = serviceManager.getAttivazionePolicyServiceSearch().findAll(expression);
+			if(l==null || l.isEmpty()) {
+				throw new NotFoundException("Non presenti");
+			}
+			return l;
+			
 		}catch (NotFoundException e) {
 			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Attivazione Policy non presente.");
 		} catch (Exception qe) {

@@ -55,7 +55,26 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
  * 
  */
 public class ServiziApplicativiUtilities {
-
+	
+	public static List<Object> getOggettiDaAggiornare(ServiziApplicativiCore saCore,
+			IDServizioApplicativo oldIdServizioApplicativo,
+			ServizioApplicativo sa) throws Exception{
+		
+		// Oggetti da modificare (per riflettere la modifica sul connettore)
+		ServiziApplicativiUpdateUtilities saUpdateUtilities = 
+				new ServiziApplicativiUpdateUtilities(saCore, oldIdServizioApplicativo, sa);
+		
+		// ServizioApplicativo
+		// aggiungo il sa da aggiornare
+		saUpdateUtilities.addServizioApplicativo();
+		
+		// RateLimiting
+		saUpdateUtilities.checkRateLimiting();
+		
+		return saUpdateUtilities.getOggettiDaAggiornare();
+	}
+	
+	
 	public static void deleteServizioApplicativo(ServizioApplicativo sa, String userLogin, ServiziApplicativiCore saCore, ServiziApplicativiHelper saHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		
 		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
