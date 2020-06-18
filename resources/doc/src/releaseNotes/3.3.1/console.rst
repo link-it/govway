@@ -36,3 +36,5 @@ Relativamente alla sola console di monitoraggio
 
 - *Escludi Richieste Scartate*: il comportamento di default utilizzato nella sezione Transazioni e Statistiche è indicabile tramite la proprietà 'transazioni.escludiRichiesteScartate.defaultValue' nel file di configurazione esterno '/etc/govway/monitor_local.properties'.
 
+- *Volume di Traffico Iniziale*: il grafico che fornisce il volume di traffico complessivo, disponibile una volta collegati alla console, è adesso configurabile per ritornare il volume complessivo di tutti i Profili di Interoperabilità abilitati sul gateway.
+

@@ -61,7 +61,8 @@ public class TransazioniReportManager implements ILiveReport,Serializable {
 	}
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String esitoContesto,String protocollo, TipologiaRicerca tipologiaRicerca) {
-		return this.transazioniService.getEsiti(permessiUtente, min, max, esitoContesto,protocollo, tipologiaRicerca);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String esitoContesto,
+			String protocolloSelected, String protocolloDefault, TipologiaRicerca tipologiaRicerca) {
+		return this.transazioniService.getEsiti(permessiUtente, min, max, esitoContesto, protocolloSelected, protocolloDefault, tipologiaRicerca);
 	}
 }

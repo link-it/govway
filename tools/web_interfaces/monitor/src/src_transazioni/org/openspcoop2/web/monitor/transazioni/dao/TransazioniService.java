@@ -727,14 +727,18 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick, String protocollo) {
+	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick, String protocolloSelected, String protocolloDefault) {
 
 		this.log.debug("Get Esiti Info Live[idPorta: " + permessiUtente+ "], [ LastDatePick: " + lastDatePick + "]");
 
 		try {
 			
+			String protocolloP = protocolloDefault;
+			if(protocolloSelected!=null) {
+				protocolloP = protocolloSelected;
+			}
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocolloP);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1873,14 +1877,19 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto, String protocollo, TipologiaRicerca tipologiaRicerca) {
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto, 
+			String protocolloSelected, String protocolloDefault, TipologiaRicerca tipologiaRicerca) {
 		// StringBuilder pezzoIdPorta = new StringBuilder();
 
 		this.log.debug("Get Esiti [permessiUtenti: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
 		try {
+			String protocolloP = protocolloDefault;
+			if(protocolloSelected!=null) {
+				protocolloP = protocolloSelected;
+			}
 			
-			EsitoUtils esitoUtils = new EsitoUtils(this.log, protocollo);
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocollo);
+			EsitoUtils esitoUtils = new EsitoUtils(this.log, protocolloP);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocolloP);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1945,9 +1954,11 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
-			exprOk.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
-			exprFault.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
-			exprKo.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
+			if(protocolloSelected!=null) {
+				exprOk.and().equals(Transazione.model().PROTOCOLLO,	protocolloSelected);
+				exprFault.and().equals(Transazione.model().PROTOCOLLO,	protocolloSelected);
+				exprKo.and().equals(Transazione.model().PROTOCOLLO,	protocolloSelected);
+			}
 			
 			// Devo rileggere il valore ogni volta, il service del live viene istanziato solamente una volta
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(this.log);

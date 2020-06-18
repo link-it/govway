@@ -68,14 +68,15 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	 * @param esitoContesto
 	 * @return esiti sul numero transazioni (ok,ko) nell'intervallo
 	 */
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto,String protocollo, TipologiaRicerca tipologiaRicerca);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto,
+			String protocolloSelected, String protocolloDefault, TipologiaRicerca tipologiaRicerca);
 
 	/**
 	 * Recupera le informazioni per la live view
 	 * 
 	 * @return L'oggetto contenente le informazioni sul numero di transazioni corrette/errate
 	 */
-	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick,String protocollo);
+	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick,String protocolloSelected, String protocolloDefault);
 
 	public boolean hasInfoDumpAvailable(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio);
 

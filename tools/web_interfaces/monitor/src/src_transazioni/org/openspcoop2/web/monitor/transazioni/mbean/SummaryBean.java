@@ -156,7 +156,9 @@ public class SummaryBean implements Serializable{
 	
 	private DynamicPdDBeanUtils dynamicUtils = null;
 	
+	private int protocolliSupportati = 0;
 	private String protocollo;
+	private String protocolloDefault;
 	private List<SelectItem> protocolli= null;
 
 
@@ -196,10 +198,21 @@ public class SummaryBean implements Serializable{
 			IProtocolFactory<?> protocolFactory = null;
 			User utente =  Utility.getLoggedUtente();
 			
+			if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() > 0) {
+				this.protocolliSupportati = utente.getProtocolliSupportati().size();
+			}
+			else {
+				this.protocolliSupportati = ProtocolFactoryManager.getInstance().getProtocolFactories().size();
+			}
+			
+			boolean utenteNonHaSelezionatoUnProtocolloInAltoADestra = false;
 			if(this.isShowListaProtocolli()) {
 				String loggedUtenteModalita = Utility.getLoggedUtenteModalita();
 				
 				if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteModalita)) {
+					
+					utenteNonHaSelezionatoUnProtocolloInAltoADestra = true;
+					
 					if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() > 0) {
 						if(utente.getProtocolliSupportati().contains(ProtocolFactoryManager.getInstance().getDefaultProtocolFactory().getProtocol())) {
 							protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
@@ -230,6 +243,11 @@ public class SummaryBean implements Serializable{
 			}
 			
 			this.protocollo = protocolFactory.getProtocol();
+			this.protocolloDefault = protocolFactory.getProtocol();
+			
+			if(utenteNonHaSelezionatoUnProtocolloInAltoADestra && this.protocolliSupportati>1) {
+				this.protocollo = Costanti.VALUE_PARAMETRO_MODALITA_ALL; // default: tutti
+			}
 			
 			this.showTipologiaRicerca = govwayMonitorProperties.isVisualizzaFiltroRuoloSummary();
 			if(this.showTipologiaRicerca) {
@@ -242,7 +260,7 @@ public class SummaryBean implements Serializable{
 		}
 		
 		try {
-			this.esitiProperties = EsitiProperties.getInstance(SummaryBean.log, this.protocollo);
+			this.esitiProperties = EsitiProperties.getInstance(SummaryBean.log, this.protocolloDefault);
 		} catch (Exception e) {
 			SummaryBean.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}
@@ -369,12 +387,23 @@ public class SummaryBean implements Serializable{
 		}
 		else if(CostantiReport.ULTIMI_30_GIORNI.equals(this.periodo)){
 			min.add(Calendar.DATE, -30);
+			min.set(Calendar.HOUR_OF_DAY,min.getActualMinimum(Calendar.HOUR_OF_DAY));
+			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
+			min.clear(Calendar.SECOND);
+			min.clear(Calendar.MILLISECOND);
 		}
 		else if(CostantiReport.ULTIMI_7_GIORNI.equals(this.periodo)){
 			min.add(Calendar.DATE, -6);
+			min.set(Calendar.HOUR_OF_DAY,min.getActualMinimum(Calendar.HOUR_OF_DAY));
+			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
+			min.clear(Calendar.SECOND);
+			min.clear(Calendar.MILLISECOND);
 		}else if(CostantiReport.ULTIME_24_ORE.equals(this.periodo)){
 			min.add(Calendar.HOUR_OF_DAY, 1);
 			min.add(Calendar.HOUR_OF_DAY, -24);
+			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
+			min.clear(Calendar.SECOND);
+			min.clear(Calendar.MILLISECOND);
 		}
 		
 		this.startDateForLabel = min.getTime();
@@ -495,7 +524,8 @@ public class SummaryBean implements Serializable{
 			ResLive r = null;
 			try{
 				// L'xml del Summary Bean viene generato dal report selezionato all'avvio del bean.
-				r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo, this.tipologiaRicerca);
+				String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
+				r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, protocolloSelected, this.protocolloDefault, this.tipologiaRicerca);
 			} catch (CoreException er) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 				SummaryBean.log.error(er.getMessage(), er);
@@ -689,7 +719,8 @@ public class SummaryBean implements Serializable{
 
 					ResLive r = null;
 					try{
-						r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo, this.tipologiaRicerca);
+						String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
+						r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, protocolloSelected, this.protocolloDefault, this.tipologiaRicerca);
 					} catch (CoreException er) {
 						MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 						SummaryBean.log.error(er.getMessage(),er);
@@ -848,7 +879,8 @@ public class SummaryBean implements Serializable{
 		//se idPorta e' null allora recupera tutti gli esiti 
 		ResLive esiti=null;
 		try {
-			esiti = this.transazioniService.getEsitiInfoLive(getPermessiUtenteOperatore(),this.lastRequest, this.protocollo);
+			String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
+			esiti = this.transazioniService.getEsitiInfoLive(getPermessiUtenteOperatore(),this.lastRequest, protocolloSelected, this.protocolloDefault);
 		} catch (CoreException e) {
 			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 			SummaryBean.log.error(e.getMessage(), e);
@@ -948,7 +980,8 @@ public class SummaryBean implements Serializable{
 			//se idPorta e' null allora recupera tutti gli esiti 
 			ResLive esiti=null;
 			try {
-				esiti = this.transazioniService.getEsitiInfoLive(this.getPermessiUtenteOperatore(),this.lastRequest, this.protocollo);
+				String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
+				esiti = this.transazioniService.getEsitiInfoLive(this.getPermessiUtenteOperatore(),this.lastRequest, protocolloSelected, this.protocolloDefault);
 			} catch (CoreException e) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 				SummaryBean.log.error(e.getMessage(),e);
@@ -1028,6 +1061,10 @@ public class SummaryBean implements Serializable{
 
 			Calendar min = (Calendar) max.clone();
 			min.add(Calendar.DATE, -30);
+			min.set(Calendar.HOUR_OF_DAY,min.getActualMinimum(Calendar.HOUR_OF_DAY));
+			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
+			min.clear(Calendar.SECOND);
+			min.clear(Calendar.MILLISECOND);
 			this.minDate=min.getTime();
 			
 			this.offset=5;
@@ -1038,6 +1075,10 @@ public class SummaryBean implements Serializable{
 
 			Calendar min = (Calendar) max.clone();
 			min.add(Calendar.DATE, -6);
+			min.set(Calendar.HOUR_OF_DAY,min.getActualMinimum(Calendar.HOUR_OF_DAY));
+			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
+			min.clear(Calendar.SECOND);
+			min.clear(Calendar.MILLISECOND);
 			this.minDate=min.getTime();
 			
 			this.offset=7;
@@ -1049,6 +1090,9 @@ public class SummaryBean implements Serializable{
 			Calendar min = (Calendar) max.clone();
 			min.add(Calendar.HOUR_OF_DAY, 1);
 			min.add(Calendar.HOUR_OF_DAY, -24);
+			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
+			min.clear(Calendar.SECOND);
+			min.clear(Calendar.MILLISECOND);
 			this.minDate=min.getTime();
 			this.offset=24;
 		}
@@ -1357,7 +1401,8 @@ public class SummaryBean implements Serializable{
 
 		try{
 
-			EsitoUtils esitoUtils = new EsitoUtils(SummaryBean.log, this.protocollo);
+			String protocolloSelected = this.isSelectedShowAllProtocols() ? this.protocolloDefault : this.protocollo;
+			EsitoUtils esitoUtils = new EsitoUtils(SummaryBean.log, protocolloSelected);
 			
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING,esitoUtils.getEsitoContestoLabelFromValue(EsitoUtils.ALL_VALUE_AS_STRING)));
 			
@@ -1478,7 +1523,9 @@ public class SummaryBean implements Serializable{
 	public List<SelectItem> getProtocolli() throws Exception {
 		//		if(this.protocolli == null)
 		this.protocolli = new ArrayList<SelectItem>();
-//		this.protocolli.add(new SelectItem("*",AllConverter.ALL_STRING));
+		if(this.protocolliSupportati>1) {
+			this.protocolli.add(new SelectItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL,Costanti.LABEL_PARAMETRO_MODALITA_ALL));
+		}
 		try {
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
 			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
@@ -1498,6 +1545,9 @@ public class SummaryBean implements Serializable{
 		return this.protocolli;
 	}
 
+	public boolean isSelectedShowAllProtocols() {
+		return Costanti.VALUE_PARAMETRO_MODALITA_ALL.contentEquals(this.protocollo);
+	}
 
 	public boolean isShowListaProtocolli(){
 		try {

@@ -1407,7 +1407,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	// ********** ESITI LIVE ******************
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,	String periodo, String esitoContesto,String protocollo, TipologiaRicerca tipologiaRicerca) {
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,	String periodo, String esitoContesto,
+			String protocolloSelected, String protocolloDefault, TipologiaRicerca tipologiaRicerca) {
 
 		// StringBuilder pezzoIdPorta = new StringBuilder();
 		StatisticheGiornaliereService.log.debug("Get Esiti [id porta: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
@@ -1444,8 +1445,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}			
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log, protocollo);
-			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, protocollo);
+			String protocolloP = protocolloDefault;
+			if(protocolloSelected!=null) {
+				protocolloP = protocolloSelected;
+			}
+			
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log, protocolloP);
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, protocolloP);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1513,9 +1519,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			exprKo.addGroupBy(model.DATA);
 
-			impostaTipiCompatibiliConProtocollo(dao, model, exprOk, protocollo, null);
-			impostaTipiCompatibiliConProtocollo(dao, model, exprFault, protocollo, null);
-			impostaTipiCompatibiliConProtocollo(dao, model, exprKo, protocollo, null);
+			if(protocolloSelected!=null) {
+				impostaTipiCompatibiliConProtocollo(dao, model, exprOk, protocolloSelected, null);
+				impostaTipiCompatibiliConProtocollo(dao, model, exprFault, protocolloSelected, null);
+				impostaTipiCompatibiliConProtocollo(dao, model, exprKo, protocolloSelected, null);
+			}
 			
 			if(forceIndexes!=null && forceIndexes.size()>0){
 				for (Index index : forceIndexes) {

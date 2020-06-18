@@ -61,10 +61,10 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     	String errore = "";
     	try{
 
-    		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
     		IDServizioApplicativo idSA = datiInvocazione.getIdentitaServizioApplicativoFruitore();
+    		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
     		IDServizio idServizio = datiInvocazione.getIdServizio();
-    		errore = this.getErrorString(idSoggetto, idServizio);
+    		errore = this.getErrorString(idSA, idSoggetto, idServizio);
     		
     		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()); 
     		

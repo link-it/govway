@@ -43,7 +43,7 @@
 								<rich:comboBox id="protocolloCombo" value="#{summaryBean.protocollo}" converter="selectItemConverter" 
 									defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="416" enableManualInput="false">
 									<f:selectItems value="#{summaryBean.protocolli}"/>
-									<a4j:support status="mainStatus" event="onselect" actionListener="#{summaryBean.protocolloSelected}" data="#{summaryBean.data}" oncomplete="updateChart(data)" reRender="summaryCt,sogLocaleCombo"/>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{summaryBean.protocolloSelected}" data="#{summaryBean.data}" oncomplete="updateChart(data)" reRender="summaryCt,sogLocaleCombo,soggettoServizioPnl"/>
 								</rich:comboBox>
 							</link:prop>
 							
@@ -57,7 +57,7 @@
 								</a4j:region>
 							</link:prop>
 							
-							<link:prop label="Contesto" rendered="#{summaryBean.showEsitiContesto}">
+							<link:prop label="Contesto" rendered="#{summaryBean.showEsitiContesto and not summaryBean.selectedShowAllProtocols}">
 								<rich:comboBox id="esitoContestoCombo" value="#{summaryBean.esitoContesto}"
 									defaultLabel="Seleziona contesto" directInputSuggestions="true"
 									converter="selectItemConverter" enableManualInput="true">
@@ -66,40 +66,42 @@
 								</rich:comboBox>
 							</link:prop>
 							
-							<c:if test="#{!applicationBean.amministratore}">
-								<link:prop label="#{summaryBean.labelTipiNomiSoggettiServiziAssociati}" rendered="#{summaryBean.showFiltroSoggettoLocale}">
-									<a4j:region renderRegionOnly="true">
-										<rich:comboBox width="416" id="sogLocaleCombo" converter="selectItemConverter"
-														value="#{summaryBean.soggettoLocale}" directInputSuggestions="true"
-														listWidth="#{summaryBean.soggettiAssociatiSelectItemsWidth}" enableManualInput="true">
-												<f:selectItem itemValue="--" itemLabel="--"/>
-												<f:selectItems value="#{summaryBean.tipiNomiSoggettiAssociati}"  />
-												<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
-										</rich:comboBox>
-									</a4j:region>
-								</link:prop>
-							</c:if>
-							<c:if test="#{applicationBean.amministratore}">
-								<link:prop label="#{summaryBean.labelServizio}">
-									<a4j:region renderRegionOnly="true">
-										<h:inputText id="sogLocaleCombo" value="#{summaryBean.labelSoggettoLocale}" styleClass="inputLinkLong" />
-										<rich:suggestionbox id="sogLocaleComboSuggestion" width="416"
-											for="sogLocaleCombo" listWidth="#{summaryBean.soggettiSelectItemsWidth}"
-											suggestionAction="#{summaryBean.soggettiServiziAutoComplete}" var="selectItem" fetchValue="#{selectItem.label}"
-											ajaxSingle="true" nothingLabel="--" param="sogLocaleCombo">
-											<h:column>
-												<h:outputText value="#{selectItem.label}" rendered="true" />
-											</h:column>
-											<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)" >
-												<f:setPropertyActionListener value="#{selectItem.value}" target="#{summaryBean.soggettoLocale}" /> 
-											</a4j:support>
-										</rich:suggestionbox>
-										<h:inputHidden id="sogLocaleInputHidden" value="#{summaryBean.soggettoLocale}" />
-										<rich:toolTip rendered="#{not empty summaryBean.soggettoLocale}" direction="top-right" for="sogLocaleCombo"
-											 showDelay="200" styleClass="tooltip" layout="block" value="#{summaryBean.labelSoggettoLocale}"/>
-									</a4j:region>
-								</link:prop>
-							</c:if>
+							<a4j:outputPanel id="soggettoServizioPnl" ajaxRendered="false" layout="block">
+								<c:if test="#{!applicationBean.amministratore}">
+									<link:prop label="#{summaryBean.labelTipiNomiSoggettiServiziAssociati}" rendered="#{summaryBean.showFiltroSoggettoLocale  and not summaryBean.selectedShowAllProtocols}">
+										<a4j:region renderRegionOnly="true">
+											<rich:comboBox width="416" id="sogLocaleCombo" converter="selectItemConverter"
+															value="#{summaryBean.soggettoLocale}" directInputSuggestions="true"
+															listWidth="#{summaryBean.soggettiAssociatiSelectItemsWidth}" enableManualInput="true">
+													<f:selectItem itemValue="--" itemLabel="--"/>
+													<f:selectItems value="#{summaryBean.tipiNomiSoggettiAssociati}"  />
+													<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
+											</rich:comboBox>
+										</a4j:region>
+									</link:prop>
+								</c:if>
+								<c:if test="#{applicationBean.amministratore}">
+									<link:prop label="#{summaryBean.labelServizio}" rendered="#{not summaryBean.selectedShowAllProtocols}">
+										<a4j:region renderRegionOnly="true">
+											<h:inputText id="sogLocaleCombo" value="#{summaryBean.labelSoggettoLocale}" styleClass="inputLinkLong" />
+											<rich:suggestionbox id="sogLocaleComboSuggestion" width="416"
+												for="sogLocaleCombo" listWidth="#{summaryBean.soggettiSelectItemsWidth}"
+												suggestionAction="#{summaryBean.soggettiServiziAutoComplete}" var="selectItem" fetchValue="#{selectItem.label}"
+												ajaxSingle="true" nothingLabel="--" param="sogLocaleCombo">
+												<h:column>
+													<h:outputText value="#{selectItem.label}" rendered="true" />
+												</h:column>
+												<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)" >
+													<f:setPropertyActionListener value="#{selectItem.value}" target="#{summaryBean.soggettoLocale}" /> 
+												</a4j:support>
+											</rich:suggestionbox>
+											<h:inputHidden id="sogLocaleInputHidden" value="#{summaryBean.soggettoLocale}" />
+											<rich:toolTip rendered="#{not empty summaryBean.soggettoLocale}" direction="top-right" for="sogLocaleCombo"
+												 showDelay="200" styleClass="tooltip" layout="block" value="#{summaryBean.labelSoggettoLocale}"/>
+										</a4j:region>
+									</link:prop>
+								</c:if>
+							</a4j:outputPanel>
 						</a4j:form>
 					</a4j:region>
 				</a4j:outputPanel>

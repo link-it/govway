@@ -35,5 +35,6 @@ import org.openspcoop2.web.monitor.core.datamodel.ResLive;
  */
 public interface ILiveReport {
 
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String contesto, String protocollo, TipologiaRicerca tipologiaRicerca);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String contesto, 
+			String protocolloSelected, String protocolloDefault, TipologiaRicerca tipologiaRicerca);
 }

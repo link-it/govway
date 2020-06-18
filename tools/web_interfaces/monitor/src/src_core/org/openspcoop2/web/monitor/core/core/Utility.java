@@ -877,8 +877,9 @@ public class Utility {
 		if(utente.getProtocolliSupportati()!=null && utente.getProtocolliSupportati().size()>0) {
 			listProtocolli = ProtocolUtils.orderProtocolli(utente.getProtocolliSupportati());
 		}
-
-		listProtocolli = getProtocolli(protocolFactories); // ordinato dentro il metodo
+		else {
+			listProtocolli = getProtocolli(protocolFactories); // ordinato dentro il metodo
+		}
 		
 		if(utente.getSoggetti()!=null && !utente.getSoggetti().isEmpty()) {
 			

@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core.autorizzazione.pa;
 
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziServizioNotFound;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -60,9 +61,10 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     			}
     		}
     		
+    		IDServizioApplicativo idSA = datiInvocazione.getIdentitaServizioApplicativoFruitore();
     		String identitaServizioApplicativoFruitore = null;
-    		if(datiInvocazione.getIdentitaServizioApplicativoFruitore()!=null){
-    			identitaServizioApplicativoFruitore = datiInvocazione.getIdentitaServizioApplicativoFruitore().getNome();
+    		if(idSA!=null){
+    			identitaServizioApplicativoFruitore = idSA.getNome();
     		}
     		
     		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
@@ -75,7 +77,7 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     		}
     		
     		if(!autorizzazioneSoggettiMittenti && !autorizzazioneApplicativiMittenti) {
-    			String errore = this.getErrorString(idSoggetto, idServizio);
+    			String errore = this.getErrorString(idSA, idSoggetto, idServizio);
     			esito.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);
     		}
@@ -95,7 +97,7 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     				
 		    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
 		    		if(esitoAutorizzazione.isServizioAutorizzato()==false){
-		    			String errore = this.getErrorString(idSoggetto, idServizio);
+		    			String errore = this.getErrorString(idSA, idSoggetto, idServizio);
 		    			if(esitoAutorizzazione.getDetails()!=null){
 		    				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
 		    			}

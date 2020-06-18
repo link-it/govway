@@ -27,6 +27,7 @@ import java.util.List;
 import org.herasaf.xacml.core.context.impl.DecisionType;
 import org.herasaf.xacml.core.context.impl.ResultType;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.core.autorizzazione.XACMLPolicyUtilities;
@@ -123,9 +124,10 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 
     	EsitoAutorizzazionePortaApplicativa esito = new EsitoAutorizzazionePortaApplicativa();
     	
-    	IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
+    	IDServizioApplicativo idSA = datiInvocazione.getIdentitaServizioApplicativoFruitore();
+		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
 		IDServizio idServizio = datiInvocazione.getIdServizio();
-		String errore = this.getErrorString(idSoggetto, idServizio);
+		String errore = this.getErrorString(idSA, idSoggetto, idServizio);
 		
 		
 		

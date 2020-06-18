@@ -1,5 +1,11 @@
 2020-06-18  Andrea Poli <apoli@link.it>
 
+	* [GovWayMonitor]
+	Il grafico che fornisce il volume di traffico complessivo, disponibile una volta collegati alla console,
+	è adesso configurabile per ritornare il volume complessivo di tutti i Profili di Interoperabilità abilitati sul gateway.
+
+2020-06-18  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole, ApiRsConfigurazione]
 	Aggiunta la possibilità di modificare il nome di un applicativo precedentemente registrato.
 
