@@ -1867,6 +1867,10 @@ public class CostantiControlStation {
 	public final static String ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP = "Elenco Connettori";
 	public final static String ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO = "Elenco Connettori {0}";
 	
+	public final static String ICONA_UPGRADE_CONFIGURAZIONE = "&#xE3CA;";
+	public final static String ICONA_UPGRADE_CONFIGURAZIONE_TOOLTIP = "Aggiorna";
+	public final static String ICONA_UPGRADE_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Aggiorna {0}";
+	
 	public final static String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
 	public final static String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";
 	

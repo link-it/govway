@@ -1322,15 +1322,30 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		// lista icone a dx 
 		// n.b. iniziare ad aggiungerle da quella che deve stare piu' a dx perche' la regola css float right le allinea al contrario
+		
+		boolean apiImplementataCambiabile = ErogazioniUtilities.isChangeAPIEnabled(asps, this.apsCore);
+		if(apiImplementataCambiabile) {
+			listParametersServizio.remove(listParametersServizio.size()-1);
+			listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_API, "true"));
+			
+			DataElementImage image = new DataElementImage();
+			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,	listParametersServizio.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CAMBIA_API_TOOLTIP_CON_PARAMETRO, 
+					AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			image.setTarget(TargetType.SELF);
+			de.addImage(image);
+		}
+		
 		if(asParteComuneCompatibili!=null && asParteComuneCompatibili.size()>1) {
 			listParametersServizio.remove(listParametersServizio.size()-1);
 			listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, "true"));
 			
 			DataElementImage image = new DataElementImage();
 			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,	listParametersServizio.toArray(new Parameter[1]));
-			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, 
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_UPGRADE_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, 
 					"Versione "+AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
-			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_UPGRADE_CONFIGURAZIONE);
 			image.setTarget(TargetType.SELF);
 			de.addImage(image);
 		}

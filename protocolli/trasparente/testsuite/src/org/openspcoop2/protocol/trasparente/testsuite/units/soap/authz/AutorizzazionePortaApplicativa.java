@@ -120,8 +120,9 @@ public class AutorizzazionePortaApplicativa extends GestioneViaJmx {
 				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparente2_utilizzatoErogazione", "123456"), 
 					IntegrationFunctionError.AUTHORIZATION_DENY,
 					CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
-					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO.
-						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_TEMPLATE, CostantiTestSuite.PROXY_SOGGETTO_FRUITORE.toString()),	
+					CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_APPLICATIVO_NON_AUTORIZZATO.
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_TEMPLATE, CostantiTestSuite.PROXY_SOGGETTO_FRUITORE.toString()).
+						replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_APPLICATIVO_TEMPLATE, "EsempioFruitoreTrasparente2_utilizzatoErogazione"),	
 					CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}

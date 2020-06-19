@@ -264,6 +264,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_GESTIONE_CONFIGURAZIONI = "gestioneConfigurazioni";
 	public final static String PARAMETRO_APS_MODIFICA_API = "modificaAPI";
 	public final static String PARAMETRO_APS_MODIFICA_PROFILO = "modificaProfilo";
+	public final static String PARAMETRO_APS_CAMBIA_API = "cambiaAPI";
 	public final static String PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO = "backToConfermaModificaDatiServizio";
 	public final static String PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER;
 	public final static String PARAMETRO_APS_ID_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ID_APPLICATIVO_SERVER;
@@ -288,6 +289,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_THE_FILE = "Documento";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO = LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;//"API";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_ATTUALE = "Attuale";
+	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_NUOVO = "Nuovo";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE = "Soggetto Referente";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE = "Versione";
 	public final static String LABEL_PARAMETRO_APS_DESCRIZIONE = "Descrizione";

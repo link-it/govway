@@ -617,6 +617,9 @@ public class AccordoServizioWrapperUtilities {
 					bindingWSDL = (javax.wsdl.Binding) bindingsIterator.next();
 					
 					// Raccolgo dati portType
+					if(bindingWSDL.getPortType()==null) {
+						throw new DriverRegistroServiziException("Un errore è avvenuto durante l'analisi del binding '"+bindingWSDL.getQName()+"': port type non definito o non esistente");
+					}
 					String nomePortType = bindingWSDL.getPortType().getQName().getLocalPart();
 					PortType ptAS = this.accordoServizioWrapper.removePortType(nomePortType);
 					if(ptAS==null)

@@ -1,3 +1,9 @@
+2020-06-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1011
+	Aggiunta la possibilità di modificare l'API implementata in una erogazione o fruizione.
+
 2020-06-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]
@@ -7,6 +13,7 @@
 2020-06-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1011
 	Aggiunta la possibilità di modificare il nome di un applicativo precedentemente registrato.
 
 2020-06-16  Andrea Poli <apoli@link.it>
