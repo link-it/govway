@@ -68,6 +68,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -90,7 +92,9 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
@@ -2469,10 +2473,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					DataElement de = new DataElement();
+					String url = new Parameter("", ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, 
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+""),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idsogg)).getValue();
+					
 					if(this.isModalitaCompleta()) {
-						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
-								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId() + ""),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PROVIDER, idsogg));
+						de.setUrl(url);
+					} else {
+						String tooltip = sa.getNome();
+						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
 					}
 					de.setValue(sa.getNome());
 					de.setIdToRemove(sa.getNome());
@@ -2588,6 +2597,17 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
 					de.setIdToRemove(ruolo);
+					
+					if(!this.isModalitaCompleta()) {
+						Ruolo ruoloObj = this.ruoliCore.getRuolo(ruolo);
+						Parameter pIdRuolo = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruoloObj.getId()+"");
+						
+						String url = new Parameter("", RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE , pIdRuolo).getValue();
+						String tooltip = ruolo;
+						
+						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
+					}
+					
 					e.addElement(de);
 		
 					dati.addElement(e);
@@ -2698,6 +2718,17 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(scope);
 					de.setIdToRemove(scope);
+					
+					if(!this.isModalitaCompleta()) {
+						Scope scopeObj = this.scopeCore.getScope(scope);
+						Parameter pIdScope = new Parameter(ScopeCostanti.PARAMETRO_SCOPE_ID, scopeObj.getId()+"");
+						
+						String url = new Parameter("", ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE , pIdScope).getValue();
+						String tooltip = scope;
+						
+						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
+					}
+					
 					e.addElement(de);
 		
 					dati.addElement(e);

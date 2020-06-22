@@ -269,6 +269,7 @@ import org.openspcoop2.web.lib.mvc.MenuEntry;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TargetType;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
@@ -15024,4 +15025,24 @@ public class ConsoleHelper implements IConsoleHelper {
 		return isSoapOneWay;
 	}
 
+	public DataElement newDataElementVisualizzaInNuovoTab(DataElement deParam, String url, String tooltip ) { 
+			
+		DataElement de = deParam;
+		if(de==null) 
+			de = new DataElement();
+		
+		de.setUrl(url);
+		de.setTarget(TargetType.BLANK);
+		if(tooltip != null)
+			de.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, tooltip));
+		else  
+			de.setToolTip(CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP);
+		
+		de.setIcon(CostantiControlStation.ICONA_VISUALIZZA);
+		de.setDisabilitaAjaxStatus();
+		// link apri nuovo tab
+		de.setVisualizzaLinkApriNuovaFinestra(true);
+			
+		return de;
+	}
 }

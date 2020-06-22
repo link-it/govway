@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -1567,6 +1568,17 @@ public class SoggettiHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
 					de.setIdToRemove(ruolo);
+					
+					if(!this.isModalitaCompleta()) {
+						Ruolo ruoloObj = this.ruoliCore.getRuolo(ruolo);
+						Parameter pIdRuolo = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruoloObj.getId()+"");
+						
+						String url = new Parameter("", RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE , pIdRuolo).getValue();
+						String tooltip = ruolo;
+						
+						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
+					}
+					
 					e.addElement(de);
 
 					dati.addElement(e);

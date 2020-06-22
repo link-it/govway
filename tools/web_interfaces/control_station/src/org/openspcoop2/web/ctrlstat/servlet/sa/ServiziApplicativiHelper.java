@@ -59,6 +59,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -2845,6 +2846,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
 					de.setIdToRemove(ruolo);
+					
+					if(!this.isModalitaCompleta()) {
+						Ruolo ruoloObj = this.ruoliCore.getRuolo(ruolo);
+						Parameter pIdRuolo = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruoloObj.getId()+"");
+						
+						String url = new Parameter("", RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE , pIdRuolo).getValue();
+						String tooltip = ruolo;
+						
+						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
+					}
+					
 					e.addElement(de);
 		
 					dati.addElement(e);

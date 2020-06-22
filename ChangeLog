@@ -1,3 +1,15 @@
+2020-06-22  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1009
+	Aggiunta possibilità di visualizzare gli elementi riferiti in un nuovo tab.
+	La funzione e' stata aggiunta agli elenchi:
+	- Ruoli di un Applicativo;
+	- Ruoli di un Soggetto;
+	- Soggetti e Applicativi nella sezione ControlloAccessi -> (Autorizzazione per Richiedente) per Erogazioni e Fruizioni;
+	- Ruoli nella sezione ControlloAccessi -> (Autorizzazione per Ruoli) per Erogazioni e Fruizioni;
+	- Scope nella sezione ControlloAccessi -> (Autorizzazione per Scope) per Erogazioni e Fruizioni.
+
 2020-06-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

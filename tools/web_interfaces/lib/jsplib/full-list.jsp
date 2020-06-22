@@ -387,10 +387,23 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 								  			deTip = " title=\"" + tip + "\"";
 								  		}
 								  		
-								  		
-								  		
-								  		%><a class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" onClick="<%= visualizzaAjaxStatus %>return true;"><%= res %></a><%
-								  		
+								  		if(de.isVisualizzaLinkApriNuovaFinestra()) { // stringa senza link e icona sulla dx
+								  			String deIconName = de.getIcon(); 
+								  			if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
+								  				tip=de.getToolTip();
+								  				deTip = " title=\"" + tip + "\"";
+								  			}
+								  			%><span class="<%= classSpan %>" ><%= de.getValue() %></span>
+								  				
+								  				<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+			                						<span class="icon-box">
+														<i class="material-icons md-18"><%= deIconName %></i>
+													</span>
+			                					</a>
+								  			<%
+								  		} else { // visualizzazione normale
+								  			%><a class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" onClick="<%= visualizzaAjaxStatus %>return true;"><%= res %></a><%
+								  		}
 							      	} else {
 										//no url
 										if (!de.getOnClick().equals("")) {

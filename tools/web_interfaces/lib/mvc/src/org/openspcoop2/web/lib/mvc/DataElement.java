@@ -115,6 +115,8 @@ public class DataElement {
 	
 	private DataElementPassword password = null;
 	
+	private boolean visualizzaLinkApriNuovaFinestra = false;
+	
 	public String getIdToRemove() {
 		return this.idToRemove;
 	}
@@ -873,6 +875,13 @@ public class DataElement {
 	public void setAbilitaFiltroOpzioniSelect(boolean abilitaFiltroOpzioniSelect) {
 		this.abilitaFiltroOpzioniSelect = abilitaFiltroOpzioniSelect;
 	}
-	
+
+	public boolean isVisualizzaLinkApriNuovaFinestra() {
+		return this.visualizzaLinkApriNuovaFinestra;
+	}
+
+	public void setVisualizzaLinkApriNuovaFinestra(boolean visualizzaLinkApriNuovaFinestra) {
+		this.visualizzaLinkApriNuovaFinestra = visualizzaLinkApriNuovaFinestra;
+	}
 	
 }

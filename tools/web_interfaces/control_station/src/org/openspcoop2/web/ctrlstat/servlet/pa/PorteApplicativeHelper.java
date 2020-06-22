@@ -79,6 +79,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -115,8 +117,10 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
+import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
@@ -3335,13 +3339,18 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 					Long idSoggetto =this.soggettiCore.getIdSoggetto(sog.getNome(), sog.getTipo());
 					DataElement de = new DataElement();
+					String labelNomeSoggetto = this.getLabelNomeSoggetto(protocollo, sog.getTipo() , sog.getNome());
+					
+					String url = new Parameter("", SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,idSoggetto+""),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,sog.getNome()),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sog.getTipo())).getValue();
 					if(this.isModalitaCompleta()) {
-						de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,idSoggetto+""),
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,sog.getNome()),
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sog.getTipo()));
+						de.setUrl(url);
+					}else {
+						this.newDataElementVisualizzaInNuovoTab(de, url, labelNomeSoggetto);
 					}
-					de.setValue(this.getLabelNomeSoggetto(protocollo, sog.getTipo() , sog.getNome()));
+					de.setValue(labelNomeSoggetto);
 					de.setIdToRemove(sog.getTipo() + "/" + sog.getNome());
 					e.addElement(de);
 
@@ -3482,6 +3491,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElement de = new DataElement();
 					de.setValue(sa.getNome());
 					de.setIdToRemove(sa.getNome()+"@"+sa.getTipoSoggettoProprietario() + "/" + sa.getNomeSoggettoProprietario());
+					
+					if(!this.isModalitaCompleta()) {
+						IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
+						Soggetto soggettoProprietario = this.soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
+						String dominio = this.pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
+						
+						long idServizioApplicativo = this.saCore.getIdServizioApplicativo(idSoggettoProprietario, sa.getNome());
+						String url = new Parameter("", ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, 
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, idServizioApplicativo+""),
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggettoProprietario.getId()+""),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio)).getValue();
+						String tooltip = sa.getNome();
+						
+						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
+					}
+					
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -4102,6 +4127,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
 					de.setIdToRemove(ruolo);
+					
+					if(!this.isModalitaCompleta()) {
+						Ruolo ruoloObj = this.ruoliCore.getRuolo(ruolo);
+						Parameter pIdRuolo = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruoloObj.getId()+"");
+						
+						String url = new Parameter("", RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE , pIdRuolo).getValue();
+						String tooltip = ruolo;
+						
+						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
+					}
+					
 					e.addElement(de);
 		
 					dati.addElement(e);
@@ -4207,6 +4243,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElement de = new DataElement();
 					de.setValue(scope);
 					de.setIdToRemove(scope);
+					
+					if(!this.isModalitaCompleta()) {
+						Scope scopeObj = this.scopeCore.getScope(scope);
+						Parameter pIdScope = new Parameter(ScopeCostanti.PARAMETRO_SCOPE_ID, scopeObj.getId()+"");
+						
+						String url = new Parameter("", ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE , pIdScope).getValue();
+						String tooltip = scope;
+						
+						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
+					}
+					
 					e.addElement(de);
 		
 					dati.addElement(e);
