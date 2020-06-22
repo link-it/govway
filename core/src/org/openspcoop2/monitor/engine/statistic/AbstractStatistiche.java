@@ -26,10 +26,19 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.statistiche.Statistica;
+import org.openspcoop2.core.statistiche.StatisticaContenuti;
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
+import org.openspcoop2.core.statistiche.dao.IServiceManager;
+import org.openspcoop2.core.statistiche.dao.IStatisticaInfoService;
+import org.openspcoop2.core.statistiche.dao.IStatisticaInfoServiceSearch;
+import org.openspcoop2.core.statistiche.model.StatisticaModel;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
@@ -44,21 +53,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.TipiDatabase;
-
-import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
-import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
-import org.openspcoop2.monitor.engine.config.statistiche.dao.IConfigurazioneStatisticaService;
-import org.openspcoop2.core.transazioni.constants.PddRuolo;
-import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
-import org.openspcoop2.core.statistiche.Statistica;
-import org.openspcoop2.core.statistiche.StatisticaContenuti;
-import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
-import org.openspcoop2.core.statistiche.dao.IServiceManager;
-import org.openspcoop2.core.statistiche.dao.IStatisticaInfoService;
-import org.openspcoop2.core.statistiche.dao.IStatisticaInfoServiceSearch;
-import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.monitor.engine.condition.FilterImpl;
 import org.openspcoop2.monitor.engine.config.BasicServiceLibrary;
 import org.openspcoop2.monitor.engine.config.BasicServiceLibraryReader;
@@ -66,6 +60,9 @@ import org.openspcoop2.monitor.engine.config.StatisticsServiceLibrary;
 import org.openspcoop2.monitor.engine.config.StatisticsServiceLibraryReader;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibraryReader;
+import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
+import org.openspcoop2.monitor.engine.config.statistiche.dao.IConfigurazioneStatisticaService;
+import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
@@ -75,6 +72,9 @@ import org.openspcoop2.monitor.sdk.statistic.StatisticResourceFilter;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.TipiDatabase;
+import org.slf4j.Logger;
 
 
 
@@ -1008,7 +1008,23 @@ public abstract class AbstractStatistiche {
 			int esitoConsegnaMultiplaFallita = -1;
 			int esitoConsegnaMultiplaCompletata = -1;
 			try {
-				esitiProperties = EsitiProperties.getInstance(this.logger, ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(stat.getDestinatario().getTipo()));
+				String protocollo = null;
+				if(stat.getDestinatario()!=null && 
+						stat.getDestinatario().getTipo()!=null && 
+						!"".equals(stat.getDestinatario().getTipo()) && 
+						!Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(stat.getDestinatario().getTipo())) {
+					protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(stat.getDestinatario().getTipo());
+				}
+				else if(stat.getMittente()!=null && 
+						stat.getMittente().getTipo()!=null && 
+						!"".equals(stat.getMittente().getTipo()) && 
+						!Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(stat.getMittente().getTipo())) {
+					protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(stat.getMittente().getTipo());
+				}
+				else {
+					protocollo = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory().getProtocol();
+				}
+				esitiProperties = EsitiProperties.getInstance(this.logger, protocollo);
 				esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 				esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
