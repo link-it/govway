@@ -425,8 +425,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 					if(ContentTypeUtilities.isMultipart(contentType)){
 						contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
 					}
-					ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
 				}
+				ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
 			}catch(Exception e) {
 				ext = "bin";
 			}
