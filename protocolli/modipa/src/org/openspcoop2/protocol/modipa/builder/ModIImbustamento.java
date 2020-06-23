@@ -256,6 +256,8 @@ public class ModIImbustamento {
 					
 					boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
 					
+					boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
+					
 					ModIKeystoreConfig keystoreConfig = null;
 					ModISecurityConfig securityConfig = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
 							rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
@@ -276,11 +278,11 @@ public class ModIImbustamento {
 					}
 					
 					if(rest) {
-						String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio);
+						String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest);
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(token));
 					}
 					else {
-						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio);
+						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest);
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(env));
 					}
 					

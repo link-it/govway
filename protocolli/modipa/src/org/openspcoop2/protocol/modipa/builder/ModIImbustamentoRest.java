@@ -267,7 +267,11 @@ public class ModIImbustamentoRest {
 	}
 	
 	public String addToken(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
-			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio) throws Exception {
+			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest) throws Exception {
+		
+		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+		
 		
 		/*
 		 * == realizzo token ==
@@ -315,6 +319,15 @@ public class ModIImbustamentoRest {
 		boolean addIss = true;
 		boolean addSub = true;
 		
+		if(integrita && RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && includiRequestDigest) {
+			if(context.containsKey(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST)) {
+				Object o = context.getObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST);
+				String value = (String) o;
+				String claimNameRequestDigest = this.modiProperties.getRestSecurityTokenClaimRequestDigest();
+				payloadToken.put(claimNameRequestDigest, value);
+			}
+		}
+		
 		if(corniceSicurezza) {
 			
 			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log);
@@ -356,8 +369,7 @@ public class ModIImbustamentoRest {
 
 		}
 		
-		if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
-				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile)) {
+		if(integrita) {
 			
 			String digestValue = null;
 			if(msg.castAsRest().hasContent()) {

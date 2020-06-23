@@ -183,6 +183,7 @@ public class ModIProperties {
 			}
 			getRestSecurityTokenClaimsClientIdHeader();
 			getRestSecurityTokenClaimSignedHeaders();
+			getRestSecurityTokenClaimRequestDigest();
 			getRestSecurityTokenSignedHeaders();
 			getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
 			isRestSecurityTokenRequestDigestClean();
@@ -228,6 +229,13 @@ public class ModIProperties {
 			useSoapBodyReplyToNamespace();
 			isSoapReplyToMustUnderstand();
 			getSoapReplyToActor();
+			
+			getSoapRequestDigestName();
+			getSoapRequestDigestNamespace();
+			getSoapRequestDigestPrefix();
+			useSoapBodyRequestDigestNamespace();
+			isSoapRequestDigestMustUnderstand();
+			getSoapRequestDigestActor();
 			
 			// .. PUSH ..
 			isSoapSecurityTokenPushReplyToUpdateOrCreate();
@@ -1071,6 +1079,32 @@ public class ModIProperties {
     	}
     	
     	return ModIProperties.getRestSecurityTokenClaimSignedHeaders;
+	}
+	
+	
+	private static String getRestSecurityTokenClaimRequestDigest= null;
+	public String getRestSecurityTokenClaimRequestDigest() throws Exception{
+    	if(ModIProperties.getRestSecurityTokenClaimRequestDigest==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.requestDigest";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getRestSecurityTokenClaimRequestDigest = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestSecurityTokenClaimRequestDigest;
 	}
 	
 	
@@ -1993,6 +2027,141 @@ public class ModIProperties {
     	}
     	
     	return ModIProperties.getSoapReplyToActor;
+	}
+	
+	
+	private static String getSoapRequestDigestName= null;
+	public String getSoapRequestDigestName() throws Exception{
+    	if(ModIProperties.getSoapRequestDigestName==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.name";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapRequestDigestName = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getSoapRequestDigestName;
+	}
+	
+	private static String getSoapRequestDigestNamespace= null;
+	public String getSoapRequestDigestNamespace() throws Exception{
+    	if(ModIProperties.getSoapRequestDigestNamespace==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.namespace";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapRequestDigestNamespace = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getSoapRequestDigestNamespace;
+	}
+	
+	public boolean useSoapBodyRequestDigestNamespace() throws Exception {
+		return ModICostanti.MODIPA_USE_BODY_NAMESPACE.equals(this.getSoapRequestDigestNamespace());
+	}
+	
+	private static String getSoapRequestDigestPrefix= null;
+	public String getSoapRequestDigestPrefix() throws Exception{
+    	if(ModIProperties.getSoapRequestDigestPrefix==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.prefix";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapRequestDigestPrefix = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getSoapRequestDigestPrefix;
+	}
+	
+	private static Boolean getSoapRequestDigestMustUnderstand_read= null;
+	private static Boolean getSoapRequestDigestMustUnderstand= null;
+	public boolean isSoapRequestDigestMustUnderstand() throws Exception{
+    	if(ModIProperties.getSoapRequestDigestMustUnderstand_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.mustUnderstand";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapRequestDigestMustUnderstand = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    		
+    		ModIProperties.getSoapRequestDigestMustUnderstand_read = true;
+    	}
+    	
+    	return ModIProperties.getSoapRequestDigestMustUnderstand;
+	}	
+	
+	private static Boolean getSoapRequestDigestActor_read= null;
+	private static String getSoapRequestDigestActor= null;
+	public String getSoapRequestDigestActor() throws Exception{
+    	if(ModIProperties.getSoapRequestDigestActor_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.actor";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						ModIProperties.getSoapRequestDigestActor = value;
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    		
+    		ModIProperties.getSoapRequestDigestActor_read = true;
+    	}
+    	
+    	return ModIProperties.getSoapRequestDigestActor;
 	}
 	
 	// .. PUSH ..

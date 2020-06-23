@@ -45,6 +45,8 @@ public class ModICostanti {
 	
     public final static String MODIPA_USE_BODY_NAMESPACE = "useBodyNamespace";
     
+    public final static String MODIPA_CONTEXT_REQUEST_DIGEST = "MODIPA_REQUEST_DIGEST";
+    
     public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE = "ProfiloInterazione";
     public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX = "ProfiloInterazioneAsincrona-";
     public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_TIPO = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"Tipo";
@@ -205,6 +207,8 @@ public class ModICostanti {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE = "modipaSecurityMessageRequestAud";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE = "modipaSecurityMessageResponseAud";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST = "modipaSecurityMessageRequestDigest";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST = "modipaSecurityMessageHttpHeaders";
 

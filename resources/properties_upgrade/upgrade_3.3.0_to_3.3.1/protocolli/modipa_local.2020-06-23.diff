@@ -1,0 +1,44 @@
+diff --git a/ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties b/ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
+index 4911964a7..801c08e0f 100755
+--- a/ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
++++ b/ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
+@@ -30,9 +30,9 @@ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.password=chan
+ 
+ 
+ # ================================================
+-# -------- Cornice Sicurezza -------- 
++# -------- Informazioni Utente -------- 
+ 
+-# Gestione della Cornice di Sicurezza
++# Aggiunta delle Informazioni Utente nel Token di Sicurezza
+ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza=true
+ 
+ # REST
+@@ -57,6 +57,27 @@ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.ipuser=${hea
+ # ================================================
+ 
+ 
++# ================================================
++# -------- Digest Richiesta -------- 
++
++# REST
++# Nome del claim, presente nel token di sicurezza della risposta, contenente il digest della richiesta
++org.openspcoop2.protocol.modipa.rest.securityToken.claims.requestDigest=request_digest
++
++# SOAP
++# Nome dell'header SOAP contenente il digest della richiesta
++org.openspcoop2.protocol.modipa.soap.requestDigest.name=X-RequestDigest
++# Namespace dell'header SOAP contenente il digest
++# - 'useBodyNamespace': indica di usare lo stesso namespace del body (verrà usato anche lo stesso prefisso)
++# - '....':  namespace statico da usare
++org.openspcoop2.protocol.modipa.soap.requestDigest.namespace=useBodyNamespace
++# Altre caratteristiche dell'header SOAP generato (prefisso, mustUnderstand, actor/role)
++org.openspcoop2.protocol.modipa.soap.requestDigest.prefix=modipa
++org.openspcoop2.protocol.modipa.soap.requestDigest.mustUnderstand=
++org.openspcoop2.protocol.modipa.soap.requestDigest.actor=
++# ================================================
++
++
+ # ================================================
+ # -------- Token Sicurezza REST -------- 
+ 

@@ -70,6 +70,7 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.slf4j.Logger;
+import org.w3c.dom.NodeList;
 
 /**
  * ModIImbustamentoSoap
@@ -240,7 +241,7 @@ public class ModIImbustamentoSoap {
 	}
 	
 	public SOAPEnvelope addSecurity(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
-			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio) throws Exception {
+			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest) throws Exception {
 	
 		ModIProperties modIProperties = ModIProperties.getInstance();
 	
@@ -251,6 +252,19 @@ public class ModIImbustamentoSoap {
 		
 		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+		
+
+		/*
+		 * == request digest ==
+		 */
+		SOAPHeaderElement requestDigest = null;
+		if(integrita && RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && includiRequestDigest) {
+			if(context.containsKey(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST)) {
+				Object o = context.getObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST);
+				NodeList nodeList = (NodeList) o;
+				requestDigest = ModIUtilities.addSOAPHeaderRequestDigest(soapMessage, nodeList); 
+			}
+		}
 		
 		
 		/*
@@ -396,6 +410,12 @@ public class ModIImbustamentoSoap {
 			}
 			bf.append("{Element}{").append(Costanti.SAML_20_NAMESPACE).append("}Assertion");
 		}
+		if(requestDigest!=null) {
+			if(bf.length()>0) {
+				bf.append(";");
+			}
+			bf.append("{Element}{").append(requestDigest.getNamespaceURI()).append("}").append(requestDigest.getLocalName());
+		}
 		secProperties.put(SecurityConstants.SIGNATURE_PARTS, bf.toString());
 		
 		// algoritmi
@@ -504,6 +524,7 @@ public class ModIImbustamentoSoap {
 		ModISOAPSecurity soapSecurity = new ModISOAPSecurity();		
 		soapSecurity.setSecurityHeader(securityHeader);
 		soapSecurity.setWsAddressingHeader(wsAddressingHeaders);
+		soapSecurity.setRequestDigestHeader(requestDigest);
 		if(integrita) {
 			QName qname = new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Id");
 			String wsuIdBodyRef = msg.castAsSoap().getSOAPBody().getAttributeValue(qname);

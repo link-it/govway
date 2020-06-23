@@ -52,6 +52,7 @@ public class ModISOAPSecurity {
 
 	private SOAPHeaderElement securityHeader;
 	private WSAddressingHeader wsAddressingHeader;
+	private SOAPHeaderElement requestDigestHeader;
 	private String wsuIdBodyRef;
 	
 	private MessageSecurityReceiver_wss4j wss4jSignature;
@@ -69,6 +70,12 @@ public class ModISOAPSecurity {
 	}
 	public void setWsAddressingHeader(WSAddressingHeader wsAddressingHeader) {
 		this.wsAddressingHeader = wsAddressingHeader;
+	}
+	public SOAPHeaderElement getRequestDigestHeader() {
+		return this.requestDigestHeader;
+	}
+	public void setRequestDigestHeader(SOAPHeaderElement requestDigestHeader) {
+		this.requestDigestHeader = requestDigestHeader;
 	}
 	public String getWsuIdBodyRef() {
 		return this.wsuIdBodyRef;
@@ -100,31 +107,38 @@ public class ModISOAPSecurity {
 		boolean removeAllIdRefValue = true;
 		this.wss4jSignature.cleanDirtyElements(this.messageSecurityContext, soapMessage, this.elementsToClean, detachValue, removeAllIdRefValue);
 		
-		if(this.wsAddressingHeader!=null) {
+		if(this.wsAddressingHeader!=null || this.requestDigestHeader!=null) {
 			
 			SOAPHeader header = soapMessage.getSOAPHeader();
 			
 			if(header!=null) {
-				if(this.wsAddressingHeader.getTo()!=null) {
-					header.removeChild(this.wsAddressingHeader.getTo());
+				
+				if(this.wsAddressingHeader!=null) {
+					if(this.wsAddressingHeader.getTo()!=null) {
+						header.removeChild(this.wsAddressingHeader.getTo());
+					}
+					if(this.wsAddressingHeader.getFrom()!=null) {
+						header.removeChild(this.wsAddressingHeader.getFrom());
+					}
+					if(this.wsAddressingHeader.getAction()!=null) {
+						header.removeChild(this.wsAddressingHeader.getAction());
+					}
+					if(this.wsAddressingHeader.getId()!=null) {
+						header.removeChild(this.wsAddressingHeader.getId());
+					}
+					if(this.wsAddressingHeader.getRelatesTo()!=null) {
+						header.removeChild(this.wsAddressingHeader.getRelatesTo());
+					}
+					if(this.wsAddressingHeader.getReplyTo()!=null) {
+						header.removeChild(this.wsAddressingHeader.getReplyTo());
+					}
+					if(this.wsAddressingHeader.getFaultTo()!=null) {
+						header.removeChild(this.wsAddressingHeader.getFaultTo());
+					}
 				}
-				if(this.wsAddressingHeader.getFrom()!=null) {
-					header.removeChild(this.wsAddressingHeader.getFrom());
-				}
-				if(this.wsAddressingHeader.getAction()!=null) {
-					header.removeChild(this.wsAddressingHeader.getAction());
-				}
-				if(this.wsAddressingHeader.getId()!=null) {
-					header.removeChild(this.wsAddressingHeader.getId());
-				}
-				if(this.wsAddressingHeader.getRelatesTo()!=null) {
-					header.removeChild(this.wsAddressingHeader.getRelatesTo());
-				}
-				if(this.wsAddressingHeader.getReplyTo()!=null) {
-					header.removeChild(this.wsAddressingHeader.getReplyTo());
-				}
-				if(this.wsAddressingHeader.getFaultTo()!=null) {
-					header.removeChild(this.wsAddressingHeader.getFaultTo());
+				
+				if(this.requestDigestHeader!=null) {
+					header.removeChild(this.requestDigestHeader);
 				}
 			}
 		}
@@ -178,6 +192,11 @@ public class ModISOAPSecurity {
 					header.addChildElement(this.wsAddressingHeader.getFaultTo());
 					add = true;
 				}
+			}
+			
+			if(this.requestDigestHeader!=null) {
+				header.addChildElement(this.requestDigestHeader);
+				add = true;
 			}
 			
 			SOAPBody body = soapMessage.getSOAPBody();

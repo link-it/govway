@@ -35,6 +35,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.message.token.Timestamp;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.message.soap.wsaddressing.Costanti;
@@ -49,6 +50,7 @@ import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModITruststoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -65,7 +67,9 @@ import org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
+import org.openspcoop2.utils.xml.XPathReturnType;
 import org.slf4j.Logger;
+import org.w3c.dom.NodeList;
 
 /**
  * ModIValidazioneSintatticaSoap
@@ -76,8 +80,8 @@ import org.slf4j.Logger;
  */
 public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintatticaCommons{
 
-	public ModIValidazioneSintatticaSoap(Logger log, IState state, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
-		super(log, state, modiProperties, validazioneUtils);
+	public ModIValidazioneSintatticaSoap(Logger log, IState state, Context context, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
+		super(log, state, context, modiProperties, validazioneUtils);
 	}
 
 	public void validateInteractionProfile(OpenSPCoop2Message msg, boolean request, String asyncInteractionType, String asyncInteractionRole, 
@@ -169,7 +173,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 	}
 	
-	public SOAPEnvelope validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza,
+	public SOAPEnvelope validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig) throws Exception {
 		
@@ -202,6 +206,16 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
 
 		/*
+		 * == requestDigest ==
+		 */
+		
+		SOAPHeaderElement requestDigestHeader = null;
+		if(integrita && !request && includiRequestDigest) {
+			requestDigestHeader = ModIUtilities.getSOAPHeaderRequestDigest(soapMessage);
+		}
+		
+		
+		/*
 		 * == signature ==
 		 */
 		
@@ -213,6 +227,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		WSDataRef wsaToRef = null;
 		WSDataRef wsaMessageIdRef = null;
 		WSDataRef bodyRef = null;
+		WSDataRef requestDigestRef = null;
 		MessageSecurityReceiver_wss4j wss4jSignature = null;
 		try {
 		
@@ -341,6 +356,12 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 							soapEnvelope.getNamespaceURI().equals(wsDataRef.getName().getNamespaceURI())) {
 						bodyRef = wsDataRef;
 					}
+					else if(requestDigestHeader!=null &&
+							wsDataRef.getName()!=null && 
+							requestDigestHeader.getLocalName().equals(wsDataRef.getName().getLocalPart()) &&
+							requestDigestHeader.getNamespaceURI().equals(wsDataRef.getName().getNamespaceURI())) {
+						requestDigestRef = wsDataRef;
+					}
 				}
 			}
 			
@@ -417,6 +438,40 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				String digestValue = s!=null ? (s.name()+"=") : "";
 				digestValue = digestValue + Hex.encodeHexString(bodyRef.getDigestValue());
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST, digestValue);
+				
+				if(request && includiRequestDigest && this.context!=null && securityHeader!=null) {
+					
+					String digestNamespace = "http://www.w3.org/2000/09/xmldsig#";
+					String digestReferencePattern = "//{"+digestNamespace+"}:Reference";
+					OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+					DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContext(securityHeader);
+					XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
+					
+					Object res = null;
+					try {
+						res = xpathEngine.getMatchPattern(securityHeader, dnc, digestReferencePattern, XPathReturnType.NODESET);
+					}catch(XPathNotFoundException notFound) {}
+					if(res!=null) {
+						if(res instanceof NodeList) {
+							NodeList nodeList = (NodeList) res;
+							this.context.addObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST, nodeList);
+						}
+						else {
+							this.log.error("Tipo non gestito ritornato dal xpath engine durante la raccolta delle signature references ["+res.getClass().getName()+"]");
+						}
+					}
+				}
+			}
+			
+			if(!request && includiRequestDigest) {
+				if(requestDigestHeader==null) {
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_NON_VALIDO, 
+							"Header Request Digest non presente"));
+				}
+				if(requestDigestRef==null || requestDigestRef.getDigestValue()==null || requestDigestRef.getDigestAlgorithm()==null) {
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_NON_VALIDO, 
+							"Header WSSecurity Signature; Header Request Digest non firmato"));
+				}
 			}
 		}
 
@@ -572,6 +627,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		// elementi per costruire la traccia
 		soapSecurity.setSecurityHeader(securityHeader);
 		soapSecurity.setWsAddressingHeader(wsAddressingHeader);
+		soapSecurity.setRequestDigestHeader(requestDigestHeader);
 		if(bodyRef!=null) {
 			soapSecurity.setWsuIdBodyRef(bodyRef.getWsuId());
 		}

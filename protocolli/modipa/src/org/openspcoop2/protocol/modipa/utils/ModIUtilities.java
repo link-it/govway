@@ -42,6 +42,7 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -63,6 +64,9 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * ModIImbustamentoUtilities
@@ -327,6 +331,14 @@ public class ModIUtilities {
 				modIProperties.useSoapBodyCorrelationIdNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapCorrelationIdNamespace(),
 				modIProperties.getSoapCorrelationIdActor());
 	}
+	
+	public static SOAPHeaderElement getSOAPHeaderRequestDigest(OpenSPCoop2SoapMessage msg) throws Exception {
+		ModIProperties modIProperties = ModIProperties.getInstance();
+		return getSOAPHeaderElement(msg, modIProperties.getSoapRequestDigestName(), 
+				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapRequestDigestNamespace(),
+				modIProperties.getSoapRequestDigestActor());
+	}
+	
 	public static SOAPHeaderElement getSOAPHeaderElement(OpenSPCoop2SoapMessage msg, String localName, String namespace, String actor) throws Exception {
 		
 		SOAPHeader header = msg.getSOAPHeader();
@@ -381,7 +393,17 @@ public class ModIUtilities {
 				value);
 	}
 	
-	public static void addSOAPHeaderElement(OpenSPCoop2SoapMessage msg, String localName, String prefix, String namespace, String actor, boolean mustUnderstand, String value) throws Exception {
+	public static SOAPHeaderElement addSOAPHeaderRequestDigest(OpenSPCoop2SoapMessage msg, NodeList value) throws Exception {
+		ModIProperties modIProperties = ModIProperties.getInstance();
+		return addSOAPHeaderElement(msg, modIProperties.getSoapRequestDigestName(), 
+				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyPrefix(msg) : modIProperties.getSoapRequestDigestPrefix(),
+				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapRequestDigestNamespace(),
+				modIProperties.getSoapRequestDigestActor(),
+				modIProperties.isSoapRequestDigestMustUnderstand(),
+				value);
+	}
+	
+	public static SOAPHeaderElement addSOAPHeaderElement(OpenSPCoop2SoapMessage msg, String localName, String prefix, String namespace, String actor, boolean mustUnderstand, Object value) throws Exception {
 		
 		// se gia esiste aggiorno il valore
 		SOAPHeaderElement hdrElement = getSOAPHeaderElement(msg, localName, namespace, actor);
@@ -401,9 +423,20 @@ public class ModIUtilities {
 			}
 				
 		}
+		if(value instanceof String) {
+			hdrElement.setValue( (String) value);
+		}
+		else {
+			NodeList nodeList = (NodeList) value;
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node n = nodeList.item(i);
+				byte[] ref = msg.getAsByte(n, false);
+				Element element = XMLUtils.getInstance(msg.getFactory()).newElement(ref);
+				hdrElement.addChildElement(SoapUtils.getSoapFactory(msg.getFactory(), msg.getMessageType()).createElement(element));
+			}
+		}
 		
-		hdrElement.setValue(value);
-		
+		return hdrElement;
 	}
 	
 	private static String getSOAPChildBodyNamespace(OpenSPCoop2SoapMessage msg) throws Exception {

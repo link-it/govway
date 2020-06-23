@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModITruststoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -69,8 +70,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
  */
 public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintatticaCommons{
 
-	public ModIValidazioneSintatticaRest(Logger log, IState state, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
-		super(log, state, modiProperties, validazioneUtils);
+	public ModIValidazioneSintatticaRest(Logger log, IState state, Context context, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
+		super(log, state, context, modiProperties, validazioneUtils);
 	}
 	
 	
@@ -279,7 +280,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		}
 	}
 	
-	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, 
+	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig) throws Exception {
 		
@@ -650,6 +651,9 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				else {
 					digestValueInHeaderHTTP = toString(digest);
 					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST, digestValueInHeaderHTTP);
+					if(request && includiRequestDigest && this.context!=null) {
+						this.context.addObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST, digestValueInHeaderHTTP);
+					}
 				}
 			}
 			

@@ -157,10 +157,10 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				ModIValidazioneSintatticaRest validatoreSintatticoRest = null;
 				ModIValidazioneSintatticaSoap validatoreSintatticoSoap = null;
 				if(rest) {
-					validatoreSintatticoRest = new ModIValidazioneSintatticaRest(this.log, this.state, this.modiProperties, this.validazioneUtils);
+					validatoreSintatticoRest = new ModIValidazioneSintatticaRest(this.log, this.state, this.context, this.modiProperties, this.validazioneUtils);
 				}
 				else {
-					validatoreSintatticoSoap = new ModIValidazioneSintatticaSoap(this.log, this.state, this.modiProperties, this.validazioneUtils);
+					validatoreSintatticoSoap = new ModIValidazioneSintatticaSoap(this.log, this.state, this.context, this.modiProperties, this.validazioneUtils);
 				}
 				
 				
@@ -288,9 +288,11 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						
 						boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
 						
+						boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
+						
 						if(rest) {
 							
-							String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, bustaRitornata, 
+							String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig);
 							
 							if(token!=null) {
@@ -305,7 +307,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						}
 						else {
 							
-							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, bustaRitornata, 
+							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, securityConfig);
 							
 							if(token!=null) {

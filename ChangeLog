@@ -1,3 +1,11 @@
+2020-06-23  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1014
+	Nel token di sicurezza della risposta è adesso possibile includere il digest della richiesta. 
+	La funzionalità consente di implementare la soluzione per la non ripudiabilità della trasmissione come suggerito nelle linee guida di interoperabilità (punto D):
+	https://docs.italia.it/italia/piano-triennale-ict/lg-modellointeroperabilita-docs/it/bozza/doc/doc_04/soluzioni-di-sicurezza.html#soluzioni-per-la-non-ripudiabilita-della-trasmissione.
+
 2020-06-22  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

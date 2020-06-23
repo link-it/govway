@@ -34,6 +34,7 @@ import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -57,9 +58,11 @@ public class AbstractModIValidazioneSintatticaCommons {
 	protected ModIProperties modiProperties;
 	protected ValidazioneUtils validazioneUtils;
 	protected IState state;
-	public AbstractModIValidazioneSintatticaCommons(Logger log, IState state, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
+	protected Context context;
+	public AbstractModIValidazioneSintatticaCommons(Logger log, IState state, Context context, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
 		this.log = log;
 		this.state = state;
+		this.context = context;
 		this.modiProperties = modiProperties;
 		this.validazioneUtils = validazioneUtils;
 	}

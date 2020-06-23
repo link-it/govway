@@ -6,7 +6,7 @@ Erogazione
 Nelle erogazioni, le richieste provengono da amministrazioni esterne al dominio e sono dirette ad applicativi interni. Prima di procedere con l'inoltro della richiesta verso il backend interno, GovWay valida il token di sicurezza ricevuto rispetto al profilo associato all'operazione invocata (come descritto nella sezione :ref:`modipa_idar01`): verifica firma, validazione temporale, filtro duplicati, verifica integrità del messaggio ... (:numref:`ErogazioneModIPA2`)
 
    .. figure:: ../../_figure_console/ErogazioneModIPA.jpg
-    :scale: 100%
+    :scale: 70%
     :align: center
     :name: ErogazioneModIPA2
 

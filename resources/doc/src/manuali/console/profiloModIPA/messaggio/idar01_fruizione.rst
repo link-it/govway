@@ -8,7 +8,7 @@ Le richieste che provengono dagli applicativi interni del dominio e sono dirette
 Per la configurazione delle fruizioni con i profili di sicurezza messaggio è necessario registrare ciascun applicativo interno coinvolto al fine principale di associargli una chiave privata e un certificato X509 che GovWay utilizza per firmare il token di sicurezza ModIPA prodotto. Gli applicativi vengono identificati da GovWay tramite una delle modalità di autenticazione supportate descritte nella sezione :ref:`apiGwAutenticazione` (:numref:`FruizioneModIPA2`). 
 
    .. figure:: ../../_figure_console/FruizioneModIPA.jpg
-    :scale: 100%
+    :scale: 70%
     :align: center
     :name: FruizioneModIPA2
 

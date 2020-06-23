@@ -1,7 +1,7 @@
 .. _modipa_idar03:
 
-[IDAS03 / IDAR03] Integrità della payload del messaggio
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[IDAS03 / IDAR03] Integrità payload del messaggio
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note::
     La sigla che identifica il profilo di sicurezza messaggio varia a seconda se l'API sia di tipo REST, per cui la sigla corrisponde a *IDAR03*, o SOAP dove viene utilizzata la sigla *IDAS03*.
