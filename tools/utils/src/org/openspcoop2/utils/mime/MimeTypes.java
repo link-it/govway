@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * Identity
@@ -111,6 +112,12 @@ public class MimeTypes {
 		return this.getMimeType(ext);
 	}
 	public String getMimeType(String ext){
+		if("xml".equalsIgnoreCase(ext)) {
+			return HttpConstants.CONTENT_TYPE_TEXT_XML;
+		}
+		else if("json".equalsIgnoreCase(ext)) {
+			return HttpConstants.CONTENT_TYPE_JSON;
+		}
 		return this.mapExtToMime.get(ext.trim().toLowerCase());
 	}
 	public String getExtension(String mime){
