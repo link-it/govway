@@ -127,18 +127,22 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			this.isResponse.close();
 			bout.flush();
 			bout.close();
-			this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
+			if(this.debug) {
+				this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
+			}
 			// Creo nuovo inputStream
 			this.isResponse = new ByteArrayInputStream(bout.toByteArray());
 			
 			this.dumpBinarioRispostaIngresso(bout.toByteArray(), trasporto);
 		}
 		else {
-			if(this.tipoRisposta!=null) {
-				this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") senza contenuto nell'http-reply",false);
-			}
-			else {
-				this.logger.info("Messaggio ricevuto senza contenuto nell'http-reply",false);
+			if(this.debug) {
+				if(this.tipoRisposta!=null) {
+					this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") senza contenuto nell'http-reply",false);
+				}
+				else {
+					this.logger.info("Messaggio ricevuto senza contenuto nell'http-reply",false);
+				}
 			}
 			
 			// devo registrare almeno gli header HTTP

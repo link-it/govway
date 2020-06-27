@@ -119,6 +119,7 @@ import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
@@ -602,7 +603,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-
+			/* ------------- Inizializzo Configurazione FileTrace --------------- */
+			try {
+				if(propertiesReader.isTransazioniFileTraceEnabled()) {
+					FileTraceConfig.init(propertiesReader.getTransazioniFileTraceConfig());
+				}
+			}catch(Exception e) {
+				this.logError("Riscontrato errore durante l'inizializzazione del FileTrace");
+				return;
+			}
 
 			
 			
@@ -2218,6 +2227,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						configurazionePdDManager.tracciamentoBuste(), 
 						configurazionePdDManager.dumpBinarioPD(), configurazionePdDManager.dumpBinarioPA(),
 						OpenSPCoop2Logger.loggerTracciamentoAbilitato, OpenSPCoop2Logger.loggerDumpAbilitato,
+						propertiesReader.getFileTraceGovWayState().toString(),
 						ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST(), 
 						(ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE() && ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR()),
 						ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR(),

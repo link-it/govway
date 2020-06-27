@@ -20,6 +20,7 @@
 package org.openspcoop2.pdd.core.transazioni;
 
 
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.monitor.engine.config.TransactionResource;
@@ -76,6 +77,7 @@ public class Transaction {
 	
 	/** DumpMessaggi */
 	private List<Messaggio> messaggi = new ArrayList<Messaggio>();
+	private List<TipoMessaggio> messaggi_onlyLogFileTrace = new ArrayList<TipoMessaggio>();
 	
 	/** Scenario di cooperazione */
 	private String scenarioCooperazione;
@@ -170,12 +172,15 @@ public class Transaction {
 		return this.msgDiagnostici.get(index);
 	}
 	
-	public MsgDiagnostico removeMsgDiagnostico(int index) throws TransactionDeletedException {
+	public MsgDiagnostico removeMsgDiagnostico(int index) {
 		return this.msgDiagnostici.remove(index);
 	}
 	
 	public List<Messaggio> getMessaggi() {
 		return this.messaggi;
+	}
+	public List<TipoMessaggio> getMessaggi_onlyLogFileTrace() {
+		return this.messaggi_onlyLogFileTrace;
 	}
 	
 	public int sizeMessaggi(){
@@ -186,7 +191,7 @@ public class Transaction {
 		return this.messaggi.get(index);
 	}
 	
-	public Messaggio removeMessaggio(int index) throws TransactionDeletedException {
+	public Messaggio removeMessaggio(int index) {
 		return this.messaggi.remove(index);
 	}
 	
@@ -345,16 +350,22 @@ public class Transaction {
 		}
 	}
 	
-	public void addMessaggio(Messaggio messaggio) throws TransactionDeletedException {
+	public void addMessaggio(Messaggio messaggio, boolean onlyLogFileTrace) throws TransactionDeletedException {
 		if(this.gestioneStateful){
 			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
 				this.messaggi.add(messaggio);
+				if(onlyLogFileTrace) {
+					this.messaggi_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+				}
 			}
 		}else{
 			this.messaggi.add(messaggio);
+			if(onlyLogFileTrace) {
+				this.messaggi_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+			}
 		}
 	}
 

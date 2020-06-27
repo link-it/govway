@@ -65,6 +65,8 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -114,7 +116,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
 	public final static String PROTOCOLS = "getPluginProtocols";
 	public final static String INFORMAZIONI_INSTALLAZIONE = "getInformazioniInstallazione";
-
+	public final static String FILE_TRACE_CONFIG = "getFileTrace";
+	public final static String FILE_TRACE_UPDATE = "updateFileTrace";
 
 
 
@@ -279,6 +282,14 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		else if(actionName.equals(INFORMAZIONI_INSTALLAZIONE)){
 			return this.getInformazioniInstallazione();
 		}
+		
+		else if(actionName.equals(FILE_TRACE_CONFIG)){
+			return this.getFileTrace();
+		}
+		
+		else if(actionName.equals(FILE_TRACE_UPDATE)){
+			return this.updateFileTrace();
+		}
 
 
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
@@ -439,6 +450,20 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 
+		// FILE_TRACE_CONFIG
+		MBeanOperationInfo fileTraceConfigOp = new MBeanOperationInfo(FILE_TRACE_CONFIG,"Visualizza il path della configurazione del FileTrace",
+				null,
+				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// FILE_TRACE_UPDATE
+		MBeanOperationInfo fileTraceUpdateOp = new MBeanOperationInfo(FILE_TRACE_UPDATE,"Aggiorna la configurazione del FileTrace",
+				null,
+				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
 		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
@@ -456,7 +481,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				informazioniTIMEZONEOp, informazioniCompleteTIMEZONEOp,
 				informazioniProprietaJavaNetworkingOp, informazioniCompleteProprietaJavaNetworkingOp, 
 				informazioniProprietaJavaAltroOp, informazioniProprietaSistemaOp,
-				messageFactoryOp,confDirectoryOp,protocolsOp};
+				messageFactoryOp,confDirectoryOp,protocolsOp,
+				fileTraceConfigOp, fileTraceUpdateOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -1111,7 +1137,30 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		
 	}
 	
-
+	public String getFileTrace(){
+		try {
+			FileTraceGovWayState state = this.openspcoopProperties.getFileTraceGovWayState();
+			return state.toString();
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String updateFileTrace(){
+		try {
+			if(this.openspcoopProperties.isTransazioniFileTraceEnabled()){
+				FileTraceConfig.update(this.openspcoopProperties.getTransazioniFileTraceConfig());
+				return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+			}
+			else {
+				throw new Exception("Funzionalità 'FileTrace' disabilitata");
+			}
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
 }
 
 class VersioneBaseDatiChecker implements Callable<String>{

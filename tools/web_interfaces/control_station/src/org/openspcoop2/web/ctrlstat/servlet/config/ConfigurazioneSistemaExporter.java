@@ -355,6 +355,16 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			log4j_dump = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String fileTraceGovWayState = null;
+		try{
+			fileTraceGovWayState = confCore.invokeJMXMethod(gestoreRisorseJMX, alias, confCore.getJmxPdD_configurazioneSistema_type(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato di configurazione del file trace (jmxResourcePdD): "+e.getMessage(),e);
+			log4j_dump = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		
 		String errorSpecificTypeProcessRequest = null;
 		try{
@@ -791,6 +801,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				"true".equals(log4j_diagnostica), "true".equals(log4j_openspcoop), "true".equals(log4j_integrationManager), 
 				"true".equals(tracciamento), "true".equals(dumpPD), "true".equals(dumpPA),
 				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
+				fileTraceGovWayState,
 				"true".equals(errorSpecificTypeProcessRequest), "true".equals(errorSpecificTypeProcessResponse), "true".equals(errorSpecificTypeInternalError),
 				"true".equals(errorStatus), "true".equals(errorStatusInSoapFaultCode),
 				"true".equals(errorSpecificDetails), "true".equals(errorInstanceId), "true".equals(errorGenerateHttpErrorCodeInSoap),

@@ -247,12 +247,12 @@ public class Dump {
 
 	/** ----------------- METODI DI LOGGING  ---------------- */
 
-	public void dumpBinarioRichiestaIngresso(byte[] msg, URLProtocolContext protocolContext) throws DumpException {
+	public void dumpBinarioRichiestaIngresso(boolean onlyLogFileTrace, byte[] msg, URLProtocolContext protocolContext) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaIngresso();
 		}
 		try {
-			dump(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+			dump(onlyLogFileTrace, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -266,7 +266,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaIngresso();
 		}
 		try {
-			dump(TipoMessaggio.RICHIESTA_INGRESSO,msg,null,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+			dump(false, TipoMessaggio.RICHIESTA_INGRESSO,msg,null,protocolContext.getSource(),protocolContext.getParametersTrasporto());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -279,7 +279,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaIngresso();
 		}
 		try {
-			dump(TipoMessaggio.RICHIESTA_INGRESSO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+			dump(false, TipoMessaggio.RICHIESTA_INGRESSO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -289,12 +289,12 @@ public class Dump {
 	}
 	
 
-	public void dumpBinarioRichiestaUscita(byte[] msg, InfoConnettoreUscita infoConnettore) throws DumpException {
+	public void dumpBinarioRichiestaUscita(boolean onlyLogFileTrace, byte[] msg, InfoConnettoreUscita infoConnettore) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaUscita();
 		}
 		try {
-			dump(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getPropertiesTrasporto());
+			dump(onlyLogFileTrace, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getPropertiesTrasporto());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -307,7 +307,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaUscita();
 		}
 		try {
-			dump(TipoMessaggio.RICHIESTA_USCITA,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getPropertiesTrasporto());
+			dump(false, TipoMessaggio.RICHIESTA_USCITA,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getPropertiesTrasporto());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -317,12 +317,12 @@ public class Dump {
 	}
 
 	
-	public void dumpBinarioRispostaIngresso(byte[] msg, InfoConnettoreUscita infoConnettore, Map<String, String> transportHeaderRisposta) throws DumpException {
+	public void dumpBinarioRispostaIngresso(boolean onlyLogFileTrace, byte[] msg, InfoConnettoreUscita infoConnettore, Map<String, String> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaIngresso();
 		}
 		try {
-			dump(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
+			dump(onlyLogFileTrace, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -336,7 +336,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaIngresso();
 		}
 		try {
-			dump(TipoMessaggio.RISPOSTA_INGRESSO,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
+			dump(false, TipoMessaggio.RISPOSTA_INGRESSO,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -347,12 +347,12 @@ public class Dump {
 	
 
 	
-	public void dumpBinarioRispostaUscita(byte[] msg, URLProtocolContext protocolContext, Map<String, String> transportHeaderRisposta) throws DumpException {
+	public void dumpBinarioRispostaUscita(boolean onlyLogFileTrace, byte[] msg, URLProtocolContext protocolContext, Map<String, String> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaUscita();
 		}
 		try {
-			dump(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,null,msg,protocolContext.getSource(),transportHeaderRisposta);
+			dump(onlyLogFileTrace, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,null,msg,protocolContext.getSource(),transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -366,7 +366,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaUscita();
 		}
 		try {
-			dump(TipoMessaggio.RISPOSTA_USCITA,msg,null,protocolContext.getSource(),transportHeaderRisposta);
+			dump(false, TipoMessaggio.RISPOSTA_USCITA,msg,null,protocolContext.getSource(),transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -381,7 +381,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpIntegrationManager();
 		}
 		try {
-			dump(TipoMessaggio.INTEGRATION_MANAGER,msg,null,"IntegrationManager.getMessage()",null);
+			dump(false, TipoMessaggio.INTEGRATION_MANAGER,msg,null,"IntegrationManager.getMessage()",null);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -397,7 +397,7 @@ public class Dump {
 	 * @throws TracciamentoException 
 	 * 
 	 */
-	private void dump(TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,byte[] msgBytes, 
+	private void dump(boolean onlyLogFileTrace, TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,byte[] msgBytes, 
 			String location,Map<String, String> transportHeaderParam) throws DumpException {
 
 		boolean dumpNormale = TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio) ||
@@ -679,7 +679,7 @@ public class Dump {
 		
 		
 		// TransazioneContext
-		if(this.properties.isTransazioniSaveDumpInUniqueTransaction()) {
+		if(this.properties.isTransazioniSaveDumpInUniqueTransaction() || onlyLogFileTrace) {
 			
 			
 			if(this.transazioneApplicativoServer!=null) {
@@ -707,7 +707,7 @@ public class Dump {
 				boolean gestioneStateful = false;
 				try {
 					Transaction tr = TransactionContext.getTransaction(this.idTransazione);
-					tr.addMessaggio(messaggio);
+					tr.addMessaggio(messaggio, onlyLogFileTrace);
 				}catch(TransactionDeletedException e){
 					gestioneStateful = true;
 				}catch(TransactionNotExistsException e){
@@ -859,19 +859,21 @@ public class Dump {
 		
 		// Il dump via API lo effettuo solamente se ho davvero un messaggio OpenSPCoop
 		// Senno ottengo errori all'interno delle implementazioni degli appender dump
-		for(int i=0; i<this.loggerDumpOpenSPCoopAppender.size();i++){
-			try{
-				this.loggerDumpOpenSPCoopAppender.get(i).dump(getConnectionFromState(false),messaggio);
-			}catch(Exception e){
-				OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump personalizzato ["+this.tipoDumpOpenSPCoopAppender.get(i)+
-						"] del contenuto applicativo presente nel messaggio ("+tipoMessaggio+") con identificativo di transazione ["+this.idTransazione+"]: "+e.getMessage(),e);
+		if(!onlyLogFileTrace) {
+			for(int i=0; i<this.loggerDumpOpenSPCoopAppender.size();i++){
 				try{
-					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
-					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoDumpOpenSPCoopAppender.get(i));
-					this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita.openspcoopAppender");
-				}catch(Exception eMsg){}
-				gestioneErroreDump(e);
+					this.loggerDumpOpenSPCoopAppender.get(i).dump(getConnectionFromState(false),messaggio);
+				}catch(Exception e){
+					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump personalizzato ["+this.tipoDumpOpenSPCoopAppender.get(i)+
+							"] del contenuto applicativo presente nel messaggio ("+tipoMessaggio+") con identificativo di transazione ["+this.idTransazione+"]: "+e.getMessage(),e);
+					try{
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoDumpOpenSPCoopAppender.get(i));
+						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita.openspcoopAppender");
+					}catch(Exception eMsg){}
+					gestioneErroreDump(e);
+				}
 			}
 		}
 

@@ -1,3 +1,14 @@
+2020-06-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1016
+	Aggiunto al normale tracciamento su database la possibilità di tracciare su file. 
+	La funzionalità consente di definire un tracciamento di tutte le informazioni, relative alle comunicazioni gestite sul gateway, 
+	su file di log in modo che siano facilmente processabili da strumenti esterni (es. FileBeat).
+	La funzionalità consente una completa personalizzazione delle informazioni che si desidera riportare su file di log, 
+	permettendo anche di definirne il formato e l’ordine in cui vengono salvate. 
+	È inoltre possibile suddividere le informazioni in più file di log in modo da definire differenti topic di interesse per il monitoraggio.
+
 2020-06-23  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

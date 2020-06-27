@@ -14,9 +14,10 @@ Funzionalità Avanzate
         multitenant
         header_integrazione/index.rst
         connettori/index.rst
+	correlazione
 	opzioniAvanzate
+	fileTrace/index.rst
 	govway_proxy
-        correlazione
         autenticazione
 	contentBased
 	validazione

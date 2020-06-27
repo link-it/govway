@@ -178,7 +178,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			// Collezione header di trasporto per dump
 			Map<String, String> propertiesTrasportoDebug = null;
-			if(this.debug) {
+			if(this.isDumpBinario()) {
 				propertiesTrasportoDebug = new HashMap<String, String>();
 			}
 
@@ -462,10 +462,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				}
 				out.flush();
 				out.close();
-				if(this.debug){
-					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
-					
-					this.dumpBinarioRichiestaUscita(out.toByteArray(), this.location, propertiesTrasportoDebug);
+				if(this.isDumpBinario()) {
+					this.dumpBinarioRichiestaUscita(out, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 				}
 				HttpEntity httpEntity = new ByteArrayEntity(out.toByteArray());
 				if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
@@ -473,6 +471,12 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				}
 				else{
 					throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
+				}
+			}
+			else {
+				if(this.isDumpBinario()) {
+					// devo registrare almeno gli header HTTP
+					this.dumpBinarioRichiestaUscita(null, null, this.location, propertiesTrasportoDebug);
 				}
 			}
 			
@@ -605,7 +609,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			this.initCheckContentTypeConfiguration();
 			
-			if(this.debug){
+			if(this.isDumpBinario()){
 				this.dumpResponse(this.propertiesTrasportoRisposta);
 			}
 					

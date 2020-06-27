@@ -56,6 +56,8 @@ import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceManager;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
@@ -498,7 +500,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						this.transazioniRegistrazioneTokenInformazioniNormalizzate,
 						this.transazioniRegistrazioneTempiElaborazione);
 				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
-							
+	
 			}catch (Throwable e) {
 				try{
 					exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(transaction, idTransazione, null);
@@ -549,6 +551,26 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					return;
 				}
 			}
+			
+			
+			
+			
+			
+			
+			// ### FileTrace ###
+			
+			if(this.openspcoopProperties.isTransazioniFileTraceEnabled()) {
+				try {
+					FileTraceConfig config = FileTraceConfig.getConfig(this.openspcoopProperties.getTransazioniFileTraceConfig());
+					FileTraceManager	fileTraceManager = new FileTraceManager(this.log, config);
+					fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction);
+					fileTraceManager.invoke(context.getTipoPorta(), context.getPddContext());
+				}catch (Throwable e) {
+					this.log.error("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);
+				}
+			}
+
+			
 			
 			
 			

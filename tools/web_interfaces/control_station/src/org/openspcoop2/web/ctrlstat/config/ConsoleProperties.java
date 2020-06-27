@@ -548,6 +548,12 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInstallazione");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getFileTrace");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.updateFileTrace");
+	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaMonitoraggio");
 	}

@@ -11,6 +11,7 @@ si può invece far riferimento al file ChangeLog di questa versione.
         :maxdepth: 2
 
 	handling-errors
+	fileTrace
 	govwayProxy
 	modipa
 	console

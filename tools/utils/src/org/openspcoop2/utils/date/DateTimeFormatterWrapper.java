@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * DateTimeFormatterWrapper
@@ -50,6 +51,11 @@ public class DateTimeFormatterWrapper extends SimpleDateFormat {
 		this.timeZone = timeZone;
 	}
 	
+	private TimeZone zone;
+	@Override
+	public void setTimeZone(TimeZone zone) {
+		this.zone = zone;
+	}
 	
 	@Override
 	public Date parse(String source) throws ParseException {
@@ -62,6 +68,9 @@ public class DateTimeFormatterWrapper extends SimpleDateFormat {
 				SimpleDateFormat sdf =  new SimpleDateFormat (this.format); // SimpleDateFormat non e' thread-safe
 				if(this.timeZone) {
 					sdf.setCalendar(Calendar.getInstance());
+				}
+				else if(this.zone!=null) {
+					sdf.setTimeZone(this.zone);
 				}
 				return sdf.parse(source);
 				
@@ -97,6 +106,9 @@ public class DateTimeFormatterWrapper extends SimpleDateFormat {
 				if(this.timeZone) {
 					sdf.setCalendar(Calendar.getInstance());
 				}
+				else if(this.zone!=null) {
+					sdf.setTimeZone(this.zone);
+				}
 				toAppendTo.append(sdf.format(date));
 				return toAppendTo;
 				
@@ -118,4 +130,5 @@ public class DateTimeFormatterWrapper extends SimpleDateFormat {
 		
 		throw new RuntimeException("["+this.dataType+"] unsupported");
 	}
+	
 }

@@ -119,6 +119,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
@@ -4248,7 +4249,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	private void addInformazioneNonDisponibile(Vector<DataElement> dati, String label){
-		DataElement de = new DataElement();
+		DataElement de = newDataElementStyleRuntime();
 		de.setLabel(label);
 		de.setValue(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 		de.setType(DataElementType.TEXT);
@@ -4825,6 +4826,60 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL);
 		}
 		
+		try{
+			String fileTraceGovWayState = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(alias));
+			FileTraceGovWayState state = FileTraceGovWayState.toConfig(fileTraceGovWayState);
+
+			if(state.isEnabled()) {
+				de = newDataElementStyleRuntime();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
+			
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE);
+			if(state.isEnabled()) {
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_STATO_LABEL);
+			}
+			else {
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
+			}
+			String v = state.isEnabled() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.TEXT);
+			de.setValue(v);
+			dati.addElement(de);
+			
+			if(state.isEnabled()) {
+				
+				de = newDataElementStyleRuntime();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIG);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_LABEL);
+				de.setType(DataElementType.TEXT);
+				de.setValue(state.getPath());
+				dati.addElement(de);
+				
+				String[] valori = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+				String[] label = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_NOTE, state.getLastModified() };
+				
+				de = newDataElementStyleRuntime();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_UPDATE);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LAST_UPDATE_LABEL);
+				de.setType(DataElementType.SELECT);
+				de.setValues(valori);
+				de.setLabels(label);
+				de.setSelected(CostantiConfigurazione.DISABILITATO.getValue());
+				de.setPostBack_viaPOST(true);
+				dati.addElement(de);
+				
+			}
+		
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul FileTrace (jmxResourcePdD): "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
+		}
 		
 		
 		

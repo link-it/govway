@@ -66,13 +66,14 @@ public class DumpRaw {
 	private String idTransaction;
 	private Logger logDump;
 	private Dump dump;
+	private boolean onlyLogFileTrace = false;
 	private URLProtocolContext urlProtocolContext;
 	
 	private IDSoggetto dominio;
 	private String modulo;
 	private TipoPdD tipoPdD;
 	
-	public DumpRaw(Logger log,IDSoggetto dominio,String modulo,TipoPdD tipoPdD) throws ConnectorException{
+	public DumpRaw(Logger log,IDSoggetto dominio,String modulo,TipoPdD tipoPdD, boolean onlyLogFileTrace) throws ConnectorException{
 		this.log = log;
 		
 		switch (tipoPdD) {
@@ -84,14 +85,17 @@ public class DumpRaw {
 			break;
 		}
 		
-		if(this.pd){
-			this.logDump = OpenSPCoop2Logger.getLoggerOpenSPCoopDumpBinarioPD();
-		}
-		else{
-			this.logDump = OpenSPCoop2Logger.getLoggerOpenSPCoopDumpBinarioPA();
-		}
-		if(this.logDump==null){
-			throw new ConnectorException("Logger per la registrazione dei dati binari non inizializzato");
+		this.onlyLogFileTrace = onlyLogFileTrace;
+		if(!this.onlyLogFileTrace) {
+			if(this.pd){
+				this.logDump = OpenSPCoop2Logger.getLoggerOpenSPCoopDumpBinarioPD();
+			}
+			else{
+				this.logDump = OpenSPCoop2Logger.getLoggerOpenSPCoopDumpBinarioPA();
+			}
+			if(this.logDump==null){
+				throw new ConnectorException("Logger per la registrazione dei dati binari non inizializzato");
+			}
 		}
 		
 		this.dominio = dominio;
@@ -100,7 +104,7 @@ public class DumpRaw {
 	}
 	
 	public void setPddContext(String interfaceName, PdDContext pddContext) throws DumpException {
-		if(OpenSPCoop2Properties.getInstance().isDumpBinario_registrazioneDatabase()) {
+		if(OpenSPCoop2Properties.getInstance().isDumpBinario_registrazioneDatabase() || this.onlyLogFileTrace) {
 			this.dump = new Dump(this.dominio, this.modulo, this.tipoPdD, interfaceName, pddContext);
 		}	
 	}
@@ -126,6 +130,10 @@ public class DumpRaw {
 		}
 	}
 	public void serializeContext(Date dataAccettazioneRichiesta,Date dataIngressoRichiesta, String idTransazione, IDService serviceType, TipoPdD tipoPdD,String protocol){
+		
+		if(this.onlyLogFileTrace) {
+			return;
+		}
 		
 		this.bfContext.append("------ RequestContext ("+idTransazione+") ------\n");
 		this.idTransaction = idTransazione;
@@ -221,14 +229,16 @@ public class DumpRaw {
 			this.log.error("Request.getURLProtocolContext error: "+t.getMessage(),t);
 		}
 		
-		this.serializeRequest(contentType, contentLength, credential, this.urlProtocolContext, req.getRequestAsString(),
-				req.getParsingRequestErrorAsString());
+		if(!this.onlyLogFileTrace) {
+			this.serializeRequest(contentType, contentLength, credential, this.urlProtocolContext, req.getRequestAsString(),
+					req.getParsingRequestErrorAsString());
+		}
 		
 		if(this.dump!=null) {
 			byte [] rawMessage = req.getRequestAsByte();
 			//if(rawMessage!=null){ // devono essere registrati anche solamente gli header
 			try {
-				this.dump.dumpBinarioRichiestaIngresso(rawMessage, this.urlProtocolContext);
+				this.dump.dumpBinarioRichiestaIngresso(this.onlyLogFileTrace, rawMessage, this.urlProtocolContext);
 			}catch(Throwable t){
 				this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
 			}
@@ -420,8 +430,10 @@ public class DumpRaw {
 	
 	public void serializeResponse(DumpRawConnectorOutMessage res) {
 		
-		this.serializeResponse(res.getResponseAsString(),res.getParsingResponseErrorAsString(),
-				res.getTrasporto(),res.getContentLenght(),res.getContentType(),res.getStatus());
+		if(!this.onlyLogFileTrace) {
+			this.serializeResponse(res.getResponseAsString(),res.getParsingResponseErrorAsString(),
+					res.getTrasporto(),res.getContentLenght(),res.getContentType(),res.getStatus());
+		}
 		
 		if(this.dump!=null) {
 			byte [] rawMessage = res.getResponseAsByte();
@@ -430,7 +442,7 @@ public class DumpRaw {
 				if(res.getContentType()!=null) {
 					res.getTrasporto().put(HttpConstants.CONTENT_TYPE,res.getContentType());
 				}
-				this.dump.dumpBinarioRispostaUscita(rawMessage, this.urlProtocolContext, res.getTrasporto());
+				this.dump.dumpBinarioRispostaUscita(this.onlyLogFileTrace, rawMessage, this.urlProtocolContext, res.getTrasporto());
 			}catch(Throwable t){
 				this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
 			}

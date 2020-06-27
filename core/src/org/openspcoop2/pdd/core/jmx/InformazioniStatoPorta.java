@@ -23,6 +23,8 @@ package org.openspcoop2.pdd.core.jmx;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
+
 /**
  * InformazioniStatoPorta
  *
@@ -42,6 +44,7 @@ public class InformazioniStatoPorta {
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
+			String fileTraceGovWayState,
 			boolean errorSpecificTypeProcessRequest, boolean errorSpecificTypeProcessResponse, boolean errorSpecificTypeInternalError,
 			boolean errorStatus, boolean errorStatusInSoapFaultCode,
 			boolean errorSpecificDetails, boolean errorInstanceId, boolean errorGenerateHttpErrorCodeInSoap,
@@ -60,6 +63,7 @@ public class InformazioniStatoPorta {
 				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
 				tracciamento, dumpPD, dumpPA,
 				log4j_tracciamento, log4j_dump,
+				fileTraceGovWayState,
 				errorSpecificTypeProcessRequest, errorSpecificTypeProcessResponse, errorSpecificTypeInternalError,
 				errorStatus, errorStatusInSoapFaultCode,
 				errorSpecificDetails, errorInstanceId, errorGenerateHttpErrorCodeInSoap,
@@ -86,6 +90,7 @@ public class InformazioniStatoPorta {
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpPD, boolean dumpPA, 
 			boolean log4j_tracciamento, boolean log4j_dump,
+			String fileTraceGovWayState,
 			boolean errorSpecificTypeProcessRequest, boolean errorSpecificTypeProcessResponse, boolean errorSpecificTypeInternalError,
 			boolean errorStatus, boolean errorStatusInSoapFaultCode,
 			boolean errorSpecificDetails, boolean errorInstanceId, boolean errorGenerateHttpErrorCodeInSoap,
@@ -163,6 +168,19 @@ public class InformazioniStatoPorta {
 		format(bf, dumpPA ? "abilitato" : "disabilitato", "Dump Binario Porta Applicativa");
 		format(bf, log4j_tracciamento ? "abilitato" : "disabilitato", "Log4J govway_tracciamento.log");
 		format(bf, log4j_dump ? "abilitato" : "disabilitato", "Log4J openspcoop2_dump.log");
+		FileTraceGovWayState fileTraceGovWayStateObject = null;
+		if(fileTraceGovWayState!=null && !"".equals(fileTraceGovWayState)) {
+			fileTraceGovWayStateObject = FileTraceGovWayState.toConfig(fileTraceGovWayState);
+			format(bf, fileTraceGovWayStateObject.isEnabled() ? "abilitato" : "disabilitato", "FileTrace");
+			if(fileTraceGovWayStateObject.isEnabled()) {
+				format(bf, fileTraceGovWayStateObject.getPath(), "FileTrace path");
+				format(bf, fileTraceGovWayStateObject.getLastModified(), "FileTrace lastModified");
+				format(bf, fileTraceGovWayStateObject.isEnabledInErogazione() ? "abilitato" : "disabilitato", "FileTrace inPAContent");
+				format(bf, fileTraceGovWayStateObject.isEnabledOutErogazione() ? "abilitato" : "disabilitato", "FileTrace outPAContent");
+				format(bf, fileTraceGovWayStateObject.isEnabledInFruizione() ? "abilitato" : "disabilitato", "FileTrace inPDContent");
+				format(bf, fileTraceGovWayStateObject.isEnabledOutFruizione() ? "abilitato" : "disabilitato", "FileTrace outPDContent");
+			}
+		}
 		bf.append("\n");
 
 		bf.append("===========================\n");

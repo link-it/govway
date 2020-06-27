@@ -385,7 +385,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			
 			// Collezione header di trasporto per dump
 			Map<String, String> propertiesTrasportoDebug = null;
-			if(this.debug) {
+			if(this.isDumpBinario()) {
 				propertiesTrasportoDebug = new HashMap<String, String>();
 			}
 
@@ -683,7 +683,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				if(this.debug)
 					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
 				OutputStream out = this.httpConn.getOutputStream();
-				if(this.debug){
+				if(this.isDumpBinario()) {
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					if(this.isSoap && this.sbustamentoSoap){
 						this.logger.debug("Sbustamento...");
@@ -694,10 +694,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					bout.flush();
 					bout.close();
 					out.write(bout.toByteArray());
-					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+bout.toString(),false);
 					bout.close();
 					
-					this.dumpBinarioRichiestaUscita(bout.toByteArray(), this.location, propertiesTrasportoDebug);
+					this.dumpBinarioRichiestaUscita(bout, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 					
 				}else{
 					if(this.isSoap && this.sbustamentoSoap){
@@ -712,10 +711,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				out.close();
 			}
 			else {
-				if(this.debug){
+				if(this.isDumpBinario()) {
 					// devo registrare almeno gli header HTTP
-					this.logger.info("Messaggio inviato senza contenuto nell'http-payload", false);
-					this.dumpBinarioRichiestaUscita(null, this.location, propertiesTrasportoDebug);
+					this.dumpBinarioRichiestaUscita(null, null, this.location, propertiesTrasportoDebug);
 				}
 			}
 			
@@ -885,7 +883,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			
 			this.initCheckContentTypeConfiguration();
 			
-			if(this.debug){
+			if(this.isDumpBinario()){
 				this.dumpResponse(this.propertiesTrasportoRisposta);
 			}
 			

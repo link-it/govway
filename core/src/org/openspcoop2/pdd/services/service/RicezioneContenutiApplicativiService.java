@@ -196,8 +196,13 @@ public class RicezioneContenutiApplicativiService {
 		// DumpRaw
 		DumpRaw dumpRaw = null;
 		try{
-			if(configPdDManager.dumpBinarioPD()){
-				dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA);
+			boolean dumpBinarioPD = configPdDManager.dumpBinarioPD();
+			boolean onlyLogFileTrace = false;
+			if(!dumpBinarioPD) {
+				onlyLogFileTrace = openSPCoopProperties.isTransazioniFileTraceEnabled() && openSPCoopProperties.isTransazioniFileTraceDumpBinarioPDEnabled();
+			}
+			if(dumpBinarioPD || onlyLogFileTrace){
+				dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, onlyLogFileTrace);
 				req = new DumpRawConnectorInMessage(logCore, req);
 				res = new DumpRawConnectorOutMessage(logCore, res);
 			}

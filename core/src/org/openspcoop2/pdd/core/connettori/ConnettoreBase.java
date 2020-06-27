@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,6 +63,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
@@ -182,6 +184,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     protected Dump dump;
+    protected boolean logFileTrace = false;
 	
     private boolean registerSendIntoContext = true;
     public void setRegisterSendIntoContext(boolean registerSendIntoContext) {
@@ -271,7 +274,15 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		this.msgDiagnostico = request.getMsgDiagnostico();
 
 		// Dump
-		if(this.openspcoopProperties.isDumpBinario_registrazioneDatabase()) {
+		if(this.openspcoopProperties.isTransazioniFileTraceEnabled() && this.idModulo!=null){
+			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+				this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+			}
+			else {
+				this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
+			}
+		}
+		if(this.openspcoopProperties.isDumpBinario_registrazioneDatabase() || this.logFileTrace) {
 			String protocol = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
 			IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(protocol);
 			String nomePorta = (this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) ? this.requestInfo.getProtocolContext().getInterfaceName() : null;
@@ -1009,19 +1020,38 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	return tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage());
     }
     
+    protected boolean isDumpBinario() {
+    	return this.debug || this.logFileTrace;
+    }
     
     private InfoConnettoreUscita infoConnettoreUscita = null;
-    protected void dumpBinarioRichiestaUscita(byte[]raw,String location, Map<String, String> trasporto) throws DumpException {
+    protected void dumpBinarioRichiestaUscita(ByteArrayOutputStream bout,String contentTypeRichiesta,String location, Map<String, String> trasporto) throws DumpException {
+    	if(this.debug){
+    		String content = null;
+	    	if(bout!=null) {
+	    		content = bout.toString();
+	    		this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+content,false);
+	    	}
+	    	else {
+	    		this.logger.info("Messaggio inviato senza contenuto nell'http-payload", false);
+	    	}
+		}
     	if(this.dump!=null) {
 			this.infoConnettoreUscita = new InfoConnettoreUscita();
 			this.infoConnettoreUscita.setLocation(location);
 			this.infoConnettoreUscita.setPropertiesTrasporto(trasporto);
-			this.dump.dumpBinarioRichiestaUscita(raw, this.infoConnettoreUscita);
+			boolean onlyLogFileTrace = !this.debug && this.logFileTrace;
+	    	byte[]content = null;
+	    	if(bout!=null) {
+	    		content = bout.toByteArray();
+	    	}
+			this.dump.dumpBinarioRichiestaUscita(onlyLogFileTrace, content, this.infoConnettoreUscita);
     	}
     }
     protected void dumpBinarioRispostaIngresso(byte[]raw,Map<String, String> trasportoRisposta) throws DumpException {
     	if(this.dump!=null) {
-			this.dump.dumpBinarioRispostaIngresso(raw, this.infoConnettoreUscita, trasportoRisposta);
+    		boolean onlyLogFileTrace = !this.debug && this.logFileTrace;
+			this.dump.dumpBinarioRispostaIngresso(onlyLogFileTrace, raw, this.infoConnettoreUscita, trasportoRisposta);
     	}
     }
     

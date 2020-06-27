@@ -1,0 +1,30 @@
+diff --git a/ant/setup/deploy/resources/core/govway_local.properties b/ant/setup/deploy/resources/core/govway_local.properties
+index 6815f59aa..3e737cd8c 100644
+--- a/ant/setup/deploy/resources/core/govway_local.properties
++++ b/ant/setup/deploy/resources/core/govway_local.properties
+@@ -130,3 +130,25 @@ org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale=none
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.principal=X-Principal
+ # ================================================
+ 
++# ================================================
++# FileTrace
++# Indicazione se la funzionalità è abilitata o meno
++org.openspcoop2.pdd.transazioni.fileTrace.enabled=false
++#
++# Indicazione se nella funzionalità è consentito l'accesso ai contenuti
++# -- Fruizioni --
++# inRequest/outResponse
++org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.enabled=true
++# outRequest/inResponse
++org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.enabled=true
++# -- Erogazioni --
++# inRequest/outResponse
++org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.enabled=true
++# outRequest/inResponse
++org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.enabled=true
++#
++# File di Configurazione
++# Il file può essere indicato con un path assoluto o relativo rispetto alla directory di configurazione
++org.openspcoop2.pdd.transazioni.fileTrace.config=govway.fileTrace.properties
++# ================================================
++

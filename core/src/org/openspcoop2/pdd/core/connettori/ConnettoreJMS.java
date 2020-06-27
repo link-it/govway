@@ -192,12 +192,14 @@ public class ConnettoreJMS extends ConnettoreBase {
 				this.errore = "Errore avvenuto durante la consegna JMS: Trasformazione del messaggio in byte[] non riuscita";
 				return false;
 			}
-			if(this.debug){
+			if(this.isDumpBinario()) {
 				try{
 					String contentTypeRichiesta = this.requestMsg.getContentType();
-					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+new String(consegna),false);
-					
-					this.dumpBinarioRichiestaUscita(consegna, this.location, this.propertiesTrasporto);
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					bout.write(consegna);
+					bout.flush();
+					bout.close();
+					this.dumpBinarioRichiestaUscita(bout, contentTypeRichiesta, this.location, this.propertiesTrasporto);
 				}catch(Exception e){
 					this.logger.error("DebugMode, log del messaggio inviato non riuscito",e);
 				}

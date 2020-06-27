@@ -31,7 +31,7 @@ Vengono forniti differenti tipi di bilanciamento del carico:
 
 - *Weight Random*: rispetto al Random si ha una distribuzione casuale che considerà però il peso associato ad ogni connettore;
 
-- *Source IP hash*: combina l'indirizzo IP del client e l'eventuale indirizzo IP portato nell'header 'Forwarded-For' per generare una chiave hash che viene designata per un connettore specifico;
+- *Source IP hash*: combina l'indirizzo IP del client e l'eventuale indirizzo IP portato in un header appartenente alla classe "Forwarded-For" o "Client-IP" per generare una chiave hash che viene designata per un connettore specifico;
 
 - *Least Connections*: la richiesta viene indirizzata verso il connettore che ha il numero minimo di connessioni attive.
 
@@ -59,7 +59,7 @@ L'identificativo di sessione utilizzato è individuabile tramite una delle segue
 
 - *Client IP*: indirizzo IP del client;
 
-- *X-Forwared-For*: header http appartenente alla classe di header 'Forwarded-For';
+- *X-Forwarded-For*: header http appartenente alla classe "Forwarded-For" o "Client-IP";
 
 - *Template*: l'identificativo di sessione è il risultato dell'istanziazione del template fornito rispetto ai dati della richiesta;
 

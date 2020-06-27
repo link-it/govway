@@ -82,7 +82,7 @@ La sezione **Informazioni Mittente** (:numref:`mon_DettaglioTransazioneMittente_
 
     -  Client IP: l'indirizzo di provenienza della richiesta pervenuta
 
-    -  X-Forwared-For: presente solamente se viene rilevato tra gli header http della richiesta un header tra i seguenti: 'X-Forwared-For', 'Forwared-For', 'Forwarded', 'X-Client-IP', 'Client-IP'
+    -  X-Forwarded-For: presente solamente se viene rilevato tra gli header http della richiesta un header appartenente alla classe "Forwarded-For" o "Client-IP"
 
     -  Codice Risposta Client: codice http restituito al mittente
 

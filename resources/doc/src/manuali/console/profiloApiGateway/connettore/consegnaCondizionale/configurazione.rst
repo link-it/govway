@@ -36,7 +36,7 @@ Il valore del filtro (utilizzato per identificare il connettore di consegna) o i
 
 - *Client IP*: indirizzo IP del client;
 
-- *X-Forwared-For*: header http appartenente alla classe di header 'Forwarded-For';
+- *X-Forwarded-For*: header http appartenente alla classe "Forwarded-For" o "Client-IP";
 
 - *Template*: l'identificativo di sessione è il risultato dell'istanziazione del template fornito rispetto ai dati della richiesta;
 

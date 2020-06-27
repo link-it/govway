@@ -266,6 +266,19 @@
 				</replace>
 			</then>
 		</if>
+
+		<var name="govway_fileTrace_log4j2_properties_name" value="govway.fileTrace.log4j2.properties"/>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<var name="govway_fileTrace_log4j2_properties_name" value="govway.fileTrace.log4j2.properties.new"/>
+			</then>
+		</if>
+		<antcall target="replace_token">
+		    <param name="file" value="${dist}/cfg/${govway_fileTrace_log4j2_properties_name}"/>
+			<param name="token" value="/var/govway/log"/>
+			<param name="value" value="${log_dir}"/>
+		</antcall>
 		
 		<if>
 			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
@@ -276,6 +289,8 @@
 					<fileset dir="${dist}/cfg">
 						<exclude name="govway_local*properties"/>
 						<exclude name="govway_local*properties.new"/>
+						<exclude name="govway.fileTrace*properties"/>
+						<exclude name="govway.fileTrace*properties.new"/>
 						<exclude name="trasparente*"/>
 						<exclude name="modipa*"/>
 						<exclude name="spcoop*"/>
@@ -319,6 +334,7 @@
 				</move>
 			</then>
 		</if>
+
 
 		<!-- SQL -->
 		<mkdir dir="${dist}/sql"/>

@@ -250,7 +250,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			// Collezione header di trasporto per dump
 			Map<String, String> propertiesTrasportoDebug = null;
-			if(this.debug) {
+			if(this.isDumpBinario()) {
 				propertiesTrasportoDebug = new HashMap<String, String>();
 			}
 			
@@ -315,7 +315,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.debug("Serializzazione ["+this.outputFile.getAbsolutePath()+"] (consume-request-message:"+consumeRequestMessage+")...");
 			OutputStream out = new FileOutputStream(this.outputFile);
-			if(this.debug){
+			if(this.isDumpBinario()) {
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				if(this.isSoap && this.sbustamentoSoap){
 					this.logger.debug("Sbustamento...");
@@ -326,10 +326,9 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				bout.flush();
 				bout.close();
 				out.write(bout.toByteArray());
-				this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+bout.toString(),false);
 				bout.close();
 				
-				this.dumpBinarioRichiestaUscita(bout.toByteArray(), this.location, propertiesTrasportoDebug);
+				this.dumpBinarioRichiestaUscita(bout, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 			}else{
 				if(this.isSoap && this.sbustamentoSoap){
 					if(this.debug)
@@ -477,7 +476,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				
 				this.initCheckContentTypeConfiguration();
 				
-				if(this.debug){
+				if(this.isDumpBinario()){
 					this.dumpResponse(this.propertiesTrasportoRisposta);
 				}
 								

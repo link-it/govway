@@ -192,8 +192,13 @@ public class RicezioneBusteService  {
 		// Configurazione Reader
 		DumpRaw dumpRaw = null;
 		try{
-			if(configPdDManager.dumpBinarioPA()){
-				dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.APPLICATIVA);
+			boolean dumpBinarioPA = configPdDManager.dumpBinarioPA();
+			boolean onlyLogFileTrace = false;
+			if(!dumpBinarioPA) {
+				onlyLogFileTrace = openSPCoopProperties.isTransazioniFileTraceEnabled() && openSPCoopProperties.isTransazioniFileTraceDumpBinarioPAEnabled();
+			}
+			if(dumpBinarioPA || onlyLogFileTrace){
+				dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.APPLICATIVA, onlyLogFileTrace);
 				req = new DumpRawConnectorInMessage(logCore, req);
 				res = new DumpRawConnectorOutMessage(logCore, res);
 			}

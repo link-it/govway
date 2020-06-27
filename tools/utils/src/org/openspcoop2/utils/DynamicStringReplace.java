@@ -21,6 +21,7 @@ package org.openspcoop2.utils;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -129,6 +130,9 @@ public class DynamicStringReplace {
 	}
 	
 	public static String replace(String messaggioWithPlaceHolder, Map<String, Object> map, boolean startWithDollaro) throws UtilsException{
+		return replace(messaggioWithPlaceHolder, map, startWithDollaro, true);
+	}
+	public static String replace(String messaggioWithPlaceHolder, Map<String, Object> map, boolean startWithDollaro, boolean complexField) throws UtilsException{
 		
 		validate(messaggioWithPlaceHolder, startWithDollaro);
 		
@@ -198,7 +202,7 @@ public class DynamicStringReplace {
 					if(object==null){
 						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object with key ["+tipo+"] is null");
 					}
-					String valoreRimpiazzato = getValue(key, tipo, value, object);
+					String valoreRimpiazzato = getValue(key, tipo, value, object, complexField);
 					if(valoreRimpiazzato==null){
 						// keyword non esistente, devo utilizzare l'originale
 						throw new UtilsException("Placeholder [{"+key+"}] resolution failed");
@@ -220,7 +224,7 @@ public class DynamicStringReplace {
 		return bf.toString();
 	}
 	
-	private static String getValue(String key, String tipo, String value, Object object) throws UtilsException{
+	private static String getValue(String key, String tipo, String value, Object object, boolean complexField) throws UtilsException{
 		
 		// Se l'oggetto nella mappa è una data utilizzo il valore come format
 		Date d = null;
@@ -291,7 +295,7 @@ public class DynamicStringReplace {
 					throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"]["+position+"] return null object");
 				}
 				else{
-					return readValueInObject(key, oInternal, newValue);
+					return readValueInObject(key, oInternal, newValue, complexField);
 				}
 			}
 			else{
@@ -323,16 +327,16 @@ public class DynamicStringReplace {
 		else{
 			
 			// Altrimenti provo a navigarlo
-			return readValueInObject(key, object, value);
+			return readValueInObject(key, object, value, complexField);
 		
 		}
 		
 	}
-	private static String readValueInObject(String key, Object o,String name) throws UtilsException{
+	private static String readValueInObject(String key, Object o,String name, boolean complexField) throws UtilsException{
 		//System.out.println("Invocato con oggetto["+o.getClass().getName()+"] nome["+name+"]");
 		String fieldName = name;
 		String position = null;
-		if(name.contains(".")){
+		if(name.contains(".") && complexField){
 			fieldName = name.substring(0, name.indexOf("."));
 		}
 		String methodName = new String(fieldName);
@@ -349,15 +353,65 @@ public class DynamicStringReplace {
 		if(methodName.length()>1){
 			getMethod = getMethod + methodName.substring(1);
 		}
+		//System.out.println("getMethod ["+getMethod+"]");
+		List<String> parametersObject = null;
+		List<Class<?>> parametersClass = null;
+		try{
+			if(getMethod.contains("(") && getMethod.endsWith(")")) { // supporta 1 solo parametro stringa
+				int startParams = getMethod.indexOf("(");
+				
+				String sP = getMethod.substring(startParams, getMethod.length());
+				if(sP.length()>2) {
+					sP = sP.substring(1, sP.length()-1);
+				}
+				if(sP.contains(",")) {
+					parametersObject = new ArrayList<String>();
+					parametersClass = new ArrayList<Class<?>>();
+					StringBuilder sb = new StringBuilder();
+					for (int i = 0; i < sP.length(); i++) {
+						String sAt = sP.charAt(i)+"";
+						if(sAt.equals(",")) {
+							parametersObject.add(sb.toString()); // gli spazi possono essere voluti (non fare trim)
+							parametersClass.add(String.class);
+							sb = new StringBuilder();
+						}
+						else {
+							sb.append(sAt);
+						}
+					}
+					parametersObject.add(sb.toString()); // gli spazi possono essere voluti (non fare trim)
+					parametersClass.add(String.class);
+				}
+				else {
+					parametersObject = new ArrayList<String>();
+					parametersClass = new ArrayList<Class<?>>();
+					parametersObject.add(sP);
+					parametersClass.add(String.class);
+				}
+				getMethod = getMethod.substring(0, startParams);
+			}
+		}catch(Throwable e){
+			throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] read parameter error; "+e.getMessage(),e);
+		}
 		Method m = null;
 		try{
-			m = o.getClass().getMethod(getMethod);
+			if(parametersClass!=null && !parametersClass.isEmpty()) {
+				m = o.getClass().getMethod(getMethod, parametersClass.toArray(new Class[1]));
+			}
+			else {
+				m = o.getClass().getMethod(getMethod);
+			}
 		}catch(Throwable e){
 			throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] not found; "+e.getMessage(),e);
 		}
 		Object ret = null;
 		try{
-			ret = m.invoke(o);
+			if(parametersObject!=null && !parametersObject.isEmpty()) {
+				ret = m.invoke(o, parametersObject.toArray(new Object[1]));
+			}
+			else {
+				ret = m.invoke(o);
+			}
 		}catch(Throwable e){
 			throw new UtilsException("Placeholder [{"+key+"}] resolution failed: invocation method ["+o.getClass().getName()+"."+getMethod+"()] failed; "+e.getMessage(),e);
 		}
@@ -401,12 +455,12 @@ public class DynamicStringReplace {
 				}				
 			}
 		}
-		if(name.contains(".")){
+		if(name.contains(".") && complexField){
 			if(ret==null){
 				throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return null object");
 			}
 			else{
-				return readValueInObject(key, ret, name.substring((fieldName+".").length(), name.length()));
+				return readValueInObject(key, ret, name.substring((fieldName+".").length(), name.length()), complexField);
 			}
 		}
 		else{

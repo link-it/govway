@@ -3,7 +3,7 @@ Nuova funzionalità Proxy
 
 In alcune architetture potrebbe essere presente tra GovWay e l'applicativo da contattare un proxy che media le comunicazioni. 
 
-Nei casi più comuni la comunicazione è mediata da un proxy http. In questi casi l'indirizzo remoto dell'applicativo viene censito su GovWay, sul connettore dell'API, configurando anche i parametri di accesso al proxy http (hostname, porta, credenziali).
+Nelle architetture più comuni si tratta di un proxy http. In questi casi l'indirizzo remoto dell'applicativo viene censito su GovWay, sul connettore dell'API, configurando anche i parametri di accesso al proxy http (hostname, porta, credenziali).
 
 In altri scenari, più complessi, possono essere presenti proxy non http che possiedono funzioni applicative più evolute, quali ad esempio la gestione di una connessione TLS personalizzata per contesti applicativi dove si utilizzano certificati client e/o trustStore differenti. Normalmente in queste situazioni l'endpoint indicato nella configurazione del connettore su GovWay non è l'indirizzo remoto dell'applicativo ma bensì l'indirizzo del proxy applicativo il quale a sua volta si occuperà di inoltrare la richiesta attraverso la consultazione di un suo registro.
 

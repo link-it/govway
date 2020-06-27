@@ -169,8 +169,13 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		// DumpRaw
 		DumpRaw dumpRaw = null;
 		try{
-			if(configPdDManager.dumpBinarioPD()){
-				dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA);
+			boolean dumpBinarioPD = configPdDManager.dumpBinarioPD();
+			boolean onlyLogFileTrace = false;
+			if(!dumpBinarioPD) {
+				onlyLogFileTrace = openSPCoopProperties.isTransazioniFileTraceEnabled() && openSPCoopProperties.isTransazioniFileTraceDumpBinarioPDEnabled();
+			}
+			if(dumpBinarioPD || onlyLogFileTrace){
+				dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, onlyLogFileTrace);
 			}
 		}catch(Throwable e){
 			String msgError = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";

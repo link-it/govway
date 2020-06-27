@@ -642,6 +642,9 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO = "dump";
 	public final static String PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD = "dumpConnettorePD";
 	public final static String PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA = "dumpConnettorePA";
+	public final static String PARAMETRO_CONFIGURAZIONE_FILE_TRACE = "fileTrace";
+	public final static String PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIG = "fileTraceConfig";
+	public final static String PARAMETRO_CONFIGURAZIONE_FILE_TRACE_UPDATE = "fileTraceUpdate";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE = "trErrStatusCode";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE = "trErrTypeProcessResponse";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST = "trErrTypeProcessRequest";
@@ -1097,6 +1100,11 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE = "govway_dumpBinarioPD.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL = "Dump Binario PA";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE = "govway_dumpBinarioPA.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL = "File Trace";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_STATO_LABEL = "Stato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_LABEL = "Configurazione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LAST_UPDATE_LABEL = "Ultimo Aggiornamento";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_NOTE = "Aggiorna la configurazione";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "ID Cluster";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "Versione";
