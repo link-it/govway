@@ -5,9 +5,13 @@ Tracciatura su File
 
 Le informazioni inerenti le comunicazioni gestite dal gateway vengono registrate su una base dati di tracciamento (:ref:`tracciamentoErogazione`) e sono consultabili tramite una console di monitoraggio (:ref:`mon_intro`). 
 
-È possibile estendere il normale tracciamento su database al fine di attivare un tracciamento su file. La funzionalità consente di definire un tracciamento di tutte le informazioni, relative alle comunicazioni gestite sul gateway, su file di log in modo che siano facilmente processabili da strumenti esterni (es. FileBeat) per poi poterle riversare in sistemi di monitoraggio evoluti (es. Elasticsearch, Logstash, Kibana).
+È possibile estendere il normale tracciamento su database, attivando il tracciamento su file.
 
-La funzionalità consente una completa personalizzazione delle informazioni che si desidera riportare su file di log, permettendo anche di definirne il formato e l’ordine in cui vengono salvate. È inoltre possibile suddividere le informazioni in più file di log in modo da definire differenti topic di interesse per il monitoraggio.
+La nuova funzionalità consente il tracciamento su file di tutte le informazioni relative alle comunicazioni gestite da GovWay.
+Il successivo processamento del file da strumenti esterni (es. FileBeat) permette così una facile integrazione con sistemi di tracciamento esterni (es. Logstash, Kafka, ...).
+
+La funzionalità consente una completa personalizzazione delle informazioni da riportare su file di log, permettendo anche di definirne
+il formato e l'ordine in cui vengono salvate. È inoltre possibile suddividere le informazioni in più file di log in modo da facilitare l'invio di informazioni selezionate a destinazioni diverse.
 
 Per attivare la funzionalità si deve abilitare la proprietà 'org.openspcoop2.pdd.transazioni.fileTrace.enabled' nel file di configurazione locale '/etc/govway/govway_local.properties' (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione). Una volta attivata, si deve indicare, attraverso la proprietà 'org.openspcoop2.pdd.transazioni.fileTrace.config', dove reperire il file di configurazione che definisce il formato dei log prodotti dal gateway (formato descritto in :ref:`avanzate_fileTrace_format`). Di seguito un estratto della configurazione.
 

@@ -1,17 +1,27 @@
-Nuova funzionalità Proxy
--------------------------
+Nuova funzionalità Gestione Proxy
+---------------------------------
 
-In alcune architetture potrebbe essere presente tra GovWay e l'applicativo da contattare un proxy che media le comunicazioni. 
+Permette di gestire correttamente le situazioni in cui le comunicazioni tra GovWay e l'endpoint destinatario siano mediate dalla presenza di un proxy. 
 
-Nelle architetture più comuni si tratta di un proxy http. In questi casi l'indirizzo remoto dell'applicativo viene censito su GovWay, sul connettore dell'API, configurando anche i parametri di accesso al proxy http (hostname, porta, credenziali).
+Nei casi più comuni si tratta di un "forward proxy". In questi casi
+l'indirizzo del proxy può essere censito sul connettore
+dell'Erogazione.
 
-In altri scenari, più complessi, possono essere presenti proxy non http che possiedono funzioni applicative più evolute, quali ad esempio la gestione di una connessione TLS personalizzata per contesti applicativi dove si utilizzano certificati client e/o trustStore differenti. Normalmente in queste situazioni l'endpoint indicato nella configurazione del connettore su GovWay non è l'indirizzo remoto dell'applicativo ma bensì l'indirizzo del proxy applicativo il quale a sua volta si occuperà di inoltrare la richiesta attraverso la consultazione di un suo registro.
+In scenari più complessi possono essere presenti reverse proxy che
+intervengono nella gestione delle connessioni https, utilizzando
+certificati client e/o trustStore differenti per diversi contesti applicativi.
+In queste situazioni l'endpoint indicato nella
+configurazione del connettore su GovWay non è l'indirizzo remoto
+dell'applicativo ma bensì l'indirizzo del reverse proxy il quale a
+sua volta si occuperà di inoltrare la richiesta agli indirizzi a lui noti.
 
-Dalla versione 3.3.1 GovWay permette di supportare un'architettura che presenta un Proxy Applicativo 'stateless' che non necessita di consultare un suo registro. L'indirizzo remoto dell'applicativo viene censito su GovWay e viene inoltrato al proxy tramite un header HTTP o un parametro della url.
+In questa situazione, è necessario configurare gli endpoint delle API
+sia su GovWay (indirizzo del reverse proxy), che sul reverse proxy
+(indirizzo dell'Erogatore finale)
 
-Una volta abilitata la funzionalità è possibile configurare:
-
-- Endpoint a cui verranno inoltrate le richieste. L'endpoint può contenere parti dinamiche che verranno risolte a runtime dal Gateway.
-
-- Il nome di un header http o il nome di un parametro della url utilizzato per inoltrare al proxy l'indirizzo remoto. È possibile abilitare la condifica in base64 dell'indirizzo remoto.
+Per semplificare la gestione di questo scenario architetturale, dalla
+versione 3.3.1 GovWay può passare l'indirizzo remoto dell'applicativo
+al proxy tramite un header HTTP o un parametro della url. In questo
+modo il censimento degli applicativi viene effettuato esclusivamente
+su GovWay.
 

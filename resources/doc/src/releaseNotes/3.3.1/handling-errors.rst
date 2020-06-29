@@ -1,13 +1,13 @@
 Nuova Gestione degli Errori generati da GovWay
 ----------------------------------------------
 
-Sono state completamente riviste le informazioni di errore ritornate al client, in seguito ad anomalie rilevate da GovWay sulla richiesta o sulla risposta.
+Sono state completamente riviste le informazioni di errore ritornate al client, in seguito ad anomalie rilevate da GovWay nella gestione della richiesta o della risposta.
 
-Oltre agli errori già previsti nei descrittori del servizio, gli applicativi client possono pertanto ricevere due tipi di errori generati direttamente da GovWay:
+Oltre agli errori già previsti nelle interfacce dell'API, gli applicativi client possono ricevere due tipi di errori generati direttamente da GovWay:
 
-- *Errori Client*: sono identificabili da un codice http 4xx su API REST o da un fault code 'Client' su API SOAP. Indicano che GovWay ha rilevato problemi nella richiesta effettuata dal client (es. errore autenticazione, autorizzazione, validazione contenuti...).
+- *Errori Client*: identificabili da un codice http 4xx su API REST o da un fault code 'Client' su API SOAP. Indicano che GovWay ha rilevato problemi nella richiesta effettuata dal client (es. errore autenticazione, autorizzazione, validazione contenuti...).
 
-- *Errori Server*: sono identificabili dai codici http 502, 503 e 504 per le API REST o da un fault code 'Server' generato dal Gateway e restituito con codice http 500 per le API SOAP.
+- *Errori Server*: identificabili dai codici http 502, 503 e 504 per le API REST o da un fault code 'Server' generato dal Gateway e restituito con codice http 500 per le API SOAP.
 
 La codifica degli errori prodotta dal Gateway permette alle applicazioni client di discriminare tra errori causati da una richiesta errata, per i quali è quindi necessario intervenire sull'applicazione client prima di effettuare nuovi invii, ed errori dovuti allo stato dei servizi invocati, per i quali è invece possibile continuare ad effettuare la richiesta. 
 

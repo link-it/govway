@@ -3,7 +3,7 @@ Miglioramenti alle Console
 
 Sono stati apportati i seguenti miglioramenti:
 
--  *Elemento in Lista Ricercabile*: aggiunta la possibilità di selezionare un elemento tra quelli di una lista scrivendo il criterio di ricerca all'interno della lista stessa.
+-  *Ricerca nelle liste a tendina*: aggiunta la possibilità di selezionare incrementalmente nelle liste a tendina, tramite digitazione di caratteri.
 
 -  *Highlight*: aggiunto il supporto dell'highlight della keyword di ricerca effettuata sia all'interno delle liste che nei campi con funzionalità di 'autocomplete'.
 
@@ -18,8 +18,7 @@ Relativamente alla sola console di gestione:
 
 - *Modifica API di una Erogazione/Fruizione*: aggiunta la possibilità di modificare l'API implementata in una erogazione o fruizione.
 
-- *Sospensione API*: la sospensione di una API (erogazione/fruizione), o la successiva riattivazione, non necessita più un'operazione di reset delle cache per l'effettiva applicazione sul runtime di GovWay. L'operazione effettuata tramite console è immediatamente applicata sul runtime.
-
+- *Sospensione API*: la sospensione di una API (erogazione/fruizione), o la successiva riattivazione, non necessita più un'operazione di reset delle cache. L'operazione effettuata tramite console è immediatamente attiva.
 
 Relativamente alla sola console di monitoraggio
 
@@ -34,7 +33,6 @@ Relativamente alla sola console di monitoraggio
 	- 'Errore ModI PA': gli errori generati durante la validazione 'ModI PA' vengono adesso classificati con un esito dedicato;
 	- 'Richiesta o Risposta già Elaborata': i nuovi esiti sono associati a transazioni riguadanti richieste o risposte duplicate.
 
-- *Escludi Richieste Scartate*: il comportamento di default utilizzato nella sezione Transazioni e Statistiche è indicabile tramite la proprietà 'transazioni.escludiRichiesteScartate.defaultValue' nel file di configurazione esterno '/etc/govway/monitor_local.properties'.
+- *Escludi Richieste Scartate*: il comportamento di default utilizzato nella sezione Transazioni e Statistiche può essere modificato tramite la proprietà 'transazioni.escludiRichiesteScartate.defaultValue' nel file di configurazione esterno '/etc/govway/monitor_local.properties'.
 
-- *Volume di Traffico Iniziale*: il grafico che fornisce il volume di traffico complessivo, disponibile una volta collegati alla console, è adesso configurabile per ritornare il volume complessivo di tutti i Profili di Interoperabilità abilitati sul gateway.
-
+- *Volume di Traffico Iniziale*: il grafico che fornisce il volume di traffico complessivo, disponibile una volta collegati alla console, è adesso configurabile per restituire il volume complessivo di tutti i Profili di Interoperabilità abilitati sul gateway.

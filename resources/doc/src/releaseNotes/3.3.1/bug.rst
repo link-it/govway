@@ -3,11 +3,24 @@ Bug Fix
 
 Sono stati risolti i seguenti bug:
 
-- Nella funzionalità di tracciamento con correlazione applicativa è adesso possibile definire regole multiple di correlazione anche per i messaggi JSON e non più solamente per messaggi XML. L'applicabilità di una regola è verificabile tramite l'utilizzo di un'espressione JSONPath.
+- Nella funzionalità di tracciamento con correlazione applicativa è
+  adesso possibile definire regole multiple di correlazione anche per
+  i messaggi JSON e non più solamente per
+  messaggi XML. L'applicabilità di una regola è verificabile tramite
+  l'utilizzo di un'espressione JSONPath.
 
-- Le richieste 'OPTIONS', identificate tramite una risorsa definita nell'API con HttpMethod 'Qualsiasi', vengono adesso gestite come 'Request Preflight' se il CORS è abilitato nell'API.
+- Le richieste 'OPTIONS', identificate tramite una risorsa definita
+  nell'API con HttpMethod 'Qualsiasi', vengono adesso gestite come
+  'Request Preflight' se il CORS è abilitato nell'API.
         
-- Gli header HTTP di integrazione specifici di un Profilo di Interoperabilità (es. Fatturazione Elettronica) non venivano gestiti correttamente in caso di attivazione dei 'metadati' di integrazione 'backward compatibility' il cui scopo è quello di produrre header di integrazione uguali a quelli generati da 'OpenSPCoop2' (es. x-openspcoop2-trasporto). Il problema è stato risolto e adesso tutti gli header generati sono stati allineati per essere retrocompatibili (es. X-SDI-\*).
+- Gli header HTTP di integrazione specifici di un Profilo di
+  Interoperabilità (es. Fatturazione Elettronica) non venivano gestiti
+  correttamente in caso di attivazione dei 'metadati' di integrazione
+  'backward compatibility' il cui scopo è quello di produrre header di
+  integrazione uguali a quelli generati da 'OpenSPCoop2'
+  (es. x-openspcoop2-trasporto). Il problema è stato risolto e adesso
+  tutti gli header generati sono stati allineati per essere
+  retrocompatibili (es. X-SDI-\*).
 
 - L'accesso al database è stato ottimizzato per i seguenti casi:
 
@@ -19,10 +32,16 @@ Sono stati risolti i seguenti bug:
 
 - Aggiunta la possibilità di gestire gli header HTTP e i parametri delle URL all'interno di una trasformazione.
 
-- L'identificativo del cluster numerico assegnabile alla proprietà 'org.openspcoop2.pdd.cluster_id.numeric' nel file 'govway_local.properties', veniva erroneamente gestito come intero invece che come stringa; questo comportava nel caso di numeri a due cifre che non si potessero utilizzare le prime 9 cifre definite come '0X' poichè si perdeva lo 0 iniziale. Il problema è stato corretto.
+- L'identificativo del cluster numerico assegnabile alla proprietà
+  'org.openspcoop2.pdd.cluster_id.numeric' nel file
+  'govway_local.properties', veniva erroneamente gestito come intero
+  invece che come stringa; questo comportava nel caso di numeri a due
+  cifre che non si potessero utilizzare le prime 9 cifre definite come
+  '0X' poichè si perdeva lo 0 iniziale. Il problema è stato corretto.
 
-- Modificato il livello di severità da 'error' a 'info' del diagnostico che riporta l'esito di una comunicazione terminata con codice http 3xx di una API REST.
-
+- Modificato il livello di severità da 'error' a 'info' del
+  diagnostico che riporta l'esito di una comunicazione terminata con
+  codice http 3xx di una API REST.
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
@@ -36,9 +55,7 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - Se durante un aggiornamento veniva aggiunto un nuovo profilo di interoperabilità, senza che fosse stato creato sul database un soggetto di default associato, la console sollevava un errore generico. L'anomalia viene adesso segnalata correttamente.
 
-
-
-In particolar modo sono stati risolti i seguenti bug relativi alle funzionalità 'importa' e 'esporta'
+Nelle funzionalità di 'importa' e 'esporta' sono stati risolti i seguenti bug.
 
 - Aggiunti controlli di consistenza durante l'import di un archivio: vengono verificate la presenta di tutti gli elementi riferiti dalle configurazioni, compreso le Token Policy.
 
@@ -55,7 +72,6 @@ In particolar modo sono stati risolti i seguenti bug relativi alle funzionalità
 - L'import di un archivio, contenente una una erogazione con connettore definito tramite Integration Manager, comportava una errata registrazione di un applicativo 'client'.
 
 - Se su un connettore veniva prima abilitata la consegna su Integration Manager, definendo delle credenziali basic, e poi successivamente disabilitata, le credenziali rimanevano erroneamente assegnato all'applicativo. Il problema si evidenziava effettuando una esportazione ed una successiva importazione dell'erogazione. Terminato il processo di import veniva creato erroneamente un applicativo che possedeva il nome interno dell'erogazione e le credenziali che inizialmente erano state assegnate alla funzione I.M.
-
 
 Sulla console di monitoraggio sono stati risolti i seguenti bug:
 
@@ -74,8 +90,6 @@ Sulla console di monitoraggio sono stati risolti i seguenti bug:
 - Corretto colore dei link visitati; veniva erroneamente utilizzato il colore associato all'hover.
 
 - L'export, di qualsiasi tipo, non conteneva le informazioni riguardanti il tipo di api (REST/SOAP) e i tags.
-
-
 
 Per le API di configurazione e monitoraggio sono stati risolti i seguenti bug:
 
