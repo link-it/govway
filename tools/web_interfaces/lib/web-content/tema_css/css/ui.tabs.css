@@ -32,4 +32,8 @@ li.ui-state-default.ui-state-hover {
 	border-bottom: 2px solid ${a.hover.color} !important;
 }
 
+li.ui-state-active.ui-state-hover {
+	cursor: pointer;
+}
+
 #tabsNav { height: 56px; }

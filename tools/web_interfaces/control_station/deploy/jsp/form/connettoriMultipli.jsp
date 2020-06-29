@@ -1282,6 +1282,10 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 											           
 											           return false;
 											       });
+												
+												$("li[id^='li-tabs']").click(function() { 
+													$(this).children('a').click();
+												});
 
 											});
 											
