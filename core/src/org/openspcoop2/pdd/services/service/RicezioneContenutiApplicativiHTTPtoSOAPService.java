@@ -136,6 +136,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			if(this.generatoreErrore==null){
 				this.generatoreErrore = 
 						new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, RicezioneContenutiApplicativiHTTPtoSOAPConnector.ID_MODULO, requestInfo);
+				this.generatoreErrore.getProprietaErroreAppl().setFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 			}
 		}catch(Exception e){
 			String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
@@ -826,7 +827,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 							}
 						}
 					}
-										
+					
 					// transfer length
 					if(risposta!=null){
 						lengthOutResponse = risposta.length;
@@ -847,6 +848,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 							statoServletResponse, requestInfo.getIntegrationServiceBinding(),
 							responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
 							(pddContext!=null ? pddContext.getContext() : null));
+					
+					// httpHeaders
+					res.sendResponseHeaders(responseMessage);					
 					
 					// contenuto
 					if(risposta!=null){

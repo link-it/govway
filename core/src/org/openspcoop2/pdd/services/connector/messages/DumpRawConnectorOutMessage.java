@@ -113,27 +113,32 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		return this.status;
 	}
 	
+	private void _sendHeaders(OpenSPCoop2Message message) throws Exception {
+		// Eventuali header http propagati
+		OpenSPCoop2MessageProperties forwardHeader = null;
+		if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+			forwardHeader = message.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(false));
+		}
+		else {
+			forwardHeader = message.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
+		}
+		if(forwardHeader!=null && forwardHeader.size()>0){
+			Iterator<String> keys = forwardHeader.getKeys();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = forwardHeader.getProperty(key);
+				this.setHeader(key, value);	
+			}
+		}
+	}
+	
 	@Override
 	public void sendResponse(OpenSPCoop2Message message, boolean consume)
 			throws ConnectorException {
 		
 		try{
-			// Eventuali header http propagati
-			OpenSPCoop2MessageProperties forwardHeader = null;
-			if(ServiceBinding.REST.equals(message.getServiceBinding())) {
-				forwardHeader = message.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(false));
-			}
-			else {
-				forwardHeader = message.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
-			}
-			if(forwardHeader!=null && forwardHeader.size()>0){
-				Iterator<String> keys = forwardHeader.getKeys();
-				while (keys.hasNext()) {
-					String key = (String) keys.next();
-					String value = forwardHeader.getProperty(key);
-					this.setHeader(key, value);	
-				}
-			}
+			// Propago eventuali header http
+			this._sendHeaders(message);
 			
 			// Prima lo registro e dopo serializzo
 			if(this.bout!=null){
@@ -210,6 +215,16 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		
 		// wrapped method
 		this.connectorOutMessage.sendResponse(message);
+	}
+	
+	@Override
+	public void sendResponseHeaders(OpenSPCoop2Message message) throws ConnectorException{
+		try{
+			// Propago eventuali header http
+			this._sendHeaders(message);
+		}catch(Exception e){
+			throw new ConnectorException(e.getMessage(),e);
+		}
 	}
 
 	@Override

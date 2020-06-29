@@ -62,6 +62,15 @@ public class AS4ConnectorOutMessage implements ConnectorOutMessage {
 		this.messageAsBytes = message;
 	}
 	
+	private OpenSPCoop2Message responseHeaderMessage;
+	public OpenSPCoop2Message getResponseHeaderMessage() {
+		return this.responseHeaderMessage;
+	}
+	@Override
+	public void sendResponseHeaders(OpenSPCoop2Message message) throws ConnectorException{
+		this.responseHeaderMessage = message;
+	}
+	
 	
 	private Map<String, String> headers = new Hashtable<String, String>();
 	public String getHeader(String key) throws ConnectorException{

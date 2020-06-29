@@ -870,6 +870,22 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			// 1) Il Messagge Type XML o JSON DEVE ESSERE CAPITO PRIMA
 			// 2) In questo momento deve arrivare la configurazione del RFC PROBLEM
 			
+			// FIX: in caso di XML devo restituire un errore 'XML'
+			
+			// PROPRIETA ERRORE APPLICATIVO
+			ProprietaErroreApplicativo proprieta = null;
+			if(eccezioneIntegrazione!=null){
+				proprieta = eccezioneIntegrazione.getProprieta();
+			}else{
+				proprieta = eccezioneProtocollo.getProprieta();
+			}
+			
+			if(proprieta!=null && 
+					proprieta.isFaultAsXML()){
+				messageType = MessageType.XML;
+				returnConfig.setHttpReturnCode(returnConfig.getGovwayReturnCode());
+			}
+			
 			switch (messageType) {
 			
 				case XML:
@@ -907,15 +923,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					return msg;
 
 				default:
-				
-					// PROPRIETA ERRORE APPLICATIVO
-					ProprietaErroreApplicativo proprieta = null;
-					if(eccezioneIntegrazione!=null){
-						proprieta = eccezioneIntegrazione.getProprieta();
-					}else{
-						proprieta = eccezioneProtocollo.getProprieta();
-					}
-				
+								
 					// PERSONALIZZAZIONE MESSAGGI
 					String codiceEccezione = null;
 					String posizioneEccezione = null;

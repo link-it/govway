@@ -33,7 +33,8 @@ public interface ConnectorOutMessage {
 
 	public void sendResponse(OpenSPCoop2Message message, boolean consume) throws ConnectorException; 
 	
-	public void sendResponse(byte[] message) throws ConnectorException; 
+	public void sendResponse(byte[] message) throws ConnectorException;
+	public void sendResponseHeaders(OpenSPCoop2Message message) throws ConnectorException; 
 	
 	public void setHeader(String key,String value) throws ConnectorException; 
 	
