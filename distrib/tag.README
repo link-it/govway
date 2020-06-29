@@ -35,37 +35,42 @@ Per creare una tag version:
     - tools/rs/monitor/server/src/schemi/govway_rs-api_monitor.yaml
     - tools/rs/monitor/server/src/schemi/merge/govway_rs-api_monitor.yaml
 
-12. Sistemare file publiccode.yml sia come ultima versione stabile che come eventuali nuove funzionalità.
+12. Validare le interfacce dei servizi 'rs' tramite il servizio 'https://github.com/teamdigitale/api-oas-checker.git'
+
+13. Sistemare file publiccode.yml sia come ultima versione stabile che come eventuali nuove funzionalità.
     Non editare il file a mano, ma usare lo strumento: https://publiccode-editor.developers.italia.it/
 
-13. Sistemare migratore delle configurazioni da OpenSPCoop
+14. Sistemare migratore delle configurazioni da OpenSPCoop
 
-14. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
-   Per farlo, ad esempio se stiamo rilasciando la versione 3.2.1:
+15. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
+   Per farlo, ad esempio se stiamo rilasciando la versione 3.3.1:
    - fare il clone di govway-docker
-   - generare una versione dell'installer semi-definitiva e copiarla dentro la directory compose_bin/ di govway-docker
+   - generare una versione dell'installer semi-definitiva (con master build version) e copiarla dentro la directory compose_bin/ di govway-docker
    - editare il file compose_bin/Dockerfile:
+	. Impostare la versione corretta:
+		ARG govway_fullversion=3.3.1
 	. Commentare la seguente riga:
 		#RUN wget -qO - https://github.com/link-it/GovWay/releases/download/${GOVWAY_FULLVERSION}/govway-installer-${GOVWAY_FULLVERSION}.tgz | tar -xzf- -C /opt
 	. Aggiungere sotto le direttive:
-		COPY govway-installer-3.2.1.tgz /tmp
-		RUN tar -xzf /tmp/govway-installer-3.2.1.tgz -C /opt
-   - Come utenza root:
-         ./build_compose.sh  -t govway:3.2.1-preRilascio -v 3.2.1
+		COPY govway-installer-${GOVWAY_FULLVERSION}.build-473a622d4.tgz /tmp
+		RUN tar -xzf /tmp/govway-installer-${GOVWAY_FULLVERSION}.build-473a622d4.tgz -C /opt \
+		&& mv /opt/govway-installer-${GOVWAY_FULLVERSION}.build-473a622d4 /opt/govway-installer-${GOVWAY_FULLVERSION}
+   - Come utenza root nella radice del progetto govway-docker:
+         ./build_compose.sh  -t govway:3.3.1-preRilascio -v 3.3.1
    - Attendere per qualche minuto il completamento del build
    - Decomprimere resources/scenari/scenari.zip
    - Editare il file scenari/docker-compose.yml
    	. Commentare la riga (Attenzione all'indentazione):
 		#    image: linkitaly/govway:3.2.0_postgres
 	. e aggiungere la direttiva:
-		image: govway:3.2.1-preRilascio
-   - Come utenza root avviare il database prima usando il comando:
+		image: govway:3.3.1-preRilascio
+   - Come utenza root avviare il database prima usando il comando, una volta posizionati dentro la directory scenari:
 	source env.sh; docker-compose up testdatabase
    - Eseguire prima l'installer pre rilascio per ottenere la patch SQL da applicare al database a partire dalla precedente versione
    - Come utenza root:
-	docker cp /var/tmp/GovWay_upgrade_3.2.1.sql PGSQL955:/tmp
+	docker cp /var/tmp/GovWay_upgrade_3.3.1.sql PGSQL955:/tmp
         docker exec -ti PGSQL955 /bin/bash
-        psql govwaydb govway -f /tmp/GovWay_upgrade_3.2.1.sql
+        psql govwaydb govway -f /tmp/GovWay_upgrade_3.3.1.sql
 	exit
    - Riportare eventuali aggiunte dei file esterni della nuova versione in scenari/data/govway/etc/
    - Si fa una prova del tutto sempre con utenza root:
@@ -78,15 +83,15 @@ Per creare una tag version:
 	./stoptest.sh
     - Editare nuovamente il file scenari/docker-compose.yml:
 	. Eliminare la direttiva:
-		image: govway:3.2.1-preRilascio
+		image: govway:3.3.1-preRilascio
 	. e scommentare facendo l'upgrade di versione dell'immagine ufficiale:
-		image: linkitaly/govway:3.2.1_postgres	
+		image: linkitaly/govway:3.3.1_postgres	
     - Ripulire i log:
 	. rm scenari/data/govway/log/* -rf
 	. rm scenari/data/govway/log/tomcat_logs/* -f
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 
-15. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
+16. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
-16. Creazione versione tag
+17. Creazione versione tag

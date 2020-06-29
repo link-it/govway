@@ -133,13 +133,13 @@ maintenance:
     - name: Link.it
       until: '2021-12-31'
       website: 'https://www.link.it'
-  type: internal
+  type: community
 name: GovWay
 platforms:
   - web
 releaseDate: '2020-03-30'
 softwareType: standalone/web
-softwareVersion: 3.3.0
+softwareVersion: 3.3.1
 url: 'https://github.com/link-it/govway'
 usedBy:
   - MISE - Ministero dello Sviluppo Economico
