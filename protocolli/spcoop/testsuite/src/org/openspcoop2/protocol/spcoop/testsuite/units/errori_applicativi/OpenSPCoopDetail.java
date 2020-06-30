@@ -186,8 +186,14 @@ public class OpenSPCoopDetail extends GestioneViaJmx {
 		}
 		else{
 			
-			Assert.assertTrue(o instanceof Element);
-			Element element = (Element) o;
+			Assert.assertTrue(o instanceof Element || o instanceof byte[]);
+			Element element = null;
+			if(o instanceof Element) {
+				element = (Element) o;
+			}
+			else {
+				element = org.openspcoop2.utils.xml.XMLUtils.getInstance().newElement((byte[])o);
+			}
 			
 			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false); // non vengono generati in caso di 4XX
 			
@@ -301,8 +307,14 @@ public class OpenSPCoopDetail extends GestioneViaJmx {
 		}
 		else{
 			
-			Assert.assertTrue(o instanceof Element);
-			Element element = (Element) o;
+			Assert.assertTrue(o instanceof Element || o instanceof byte[]);
+			Element element = null;
+			if(o instanceof Element) {
+				element = (Element) o;
+			}
+			else {
+				element = org.openspcoop2.utils.xml.XMLUtils.getInstance().newElement((byte[])o);
+			}
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
 			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
@@ -544,8 +556,14 @@ public class OpenSPCoopDetail extends GestioneViaJmx {
 		}
 		else{
 			
-			Assert.assertTrue(o instanceof Element);
-			Element element = (Element) o;
+			Assert.assertTrue(o instanceof Element || o instanceof byte[]);
+			Element element = null;
+			if(o instanceof Element) {
+				element = (Element) o;
+			}
+			else {
+				element = org.openspcoop2.utils.xml.XMLUtils.getInstance().newElement((byte[])o);
+			}
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
 			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
@@ -644,8 +662,14 @@ public class OpenSPCoopDetail extends GestioneViaJmx {
 		}
 		else{
 			
-			Assert.assertTrue(o instanceof Element);
-			Element element = (Element) o;
+			Assert.assertTrue(o instanceof Element || o instanceof byte[]);
+			Element element = null;
+			if(o instanceof Element) {
+				element = (Element) o;
+			}
+			else {
+				element = org.openspcoop2.utils.xml.XMLUtils.getInstance().newElement((byte[])o);
+			}
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
 			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
@@ -757,8 +781,14 @@ public class OpenSPCoopDetail extends GestioneViaJmx {
 		}
 		else{
 			
-			Assert.assertTrue(o instanceof Element);
-			Element element = (Element) o;
+			Assert.assertTrue(o instanceof Element || o instanceof byte[]);
+			Element element = null;
+			if(o instanceof Element) {
+				element = (Element) o;
+			}
+			else {
+				element = org.openspcoop2.utils.xml.XMLUtils.getInstance().newElement((byte[])o);
+			}
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
 			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
@@ -865,8 +895,14 @@ public class OpenSPCoopDetail extends GestioneViaJmx {
 		}
 		else{
 			
-			Assert.assertTrue(o instanceof Element);
-			Element element = (Element) o;
+			Assert.assertTrue(o instanceof Element || o instanceof byte[]);
+			Element element = null;
+			if(o instanceof Element) {
+				element = (Element) o;
+			}
+			else {
+				element = org.openspcoop2.utils.xml.XMLUtils.getInstance().newElement((byte[])o);
+			}
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
 			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);

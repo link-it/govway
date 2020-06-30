@@ -1130,7 +1130,7 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 					}
 					else{
 					
-						Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+						Assert.assertTrue(client.getCodiceStatoHTTP()==400);
 						
 						byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 						Assert.assertTrue(xmlErroreApplicativo!=null);

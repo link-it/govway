@@ -113,6 +113,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 	public RicezioneContenutiApplicativiHTTPtoSOAPService(RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore){
 		this.generatoreErrore = generatoreErrore;
 		this.generatoreErrore.setForceMessageTypeResponse(MessageType.XML); // forzo xml
+		if(this.generatoreErrore.getProprietaErroreAppl()!=null) {
+			this.generatoreErrore.getProprietaErroreAppl().setFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
+		}
 	}
 	
 	public void process(ConnectorInMessage req, ConnectorOutMessage res) throws ConnectorException {

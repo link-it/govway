@@ -201,6 +201,14 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = false;
+				if("erroreApplicativoAsXmlRidefinito".equals(username) || "erroreApplicativoAsSoapXmlDefault".equals(username)) {
+					responseAsXml = true;
+				}
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
 				if("erroreApplicativoAsSoapFaultDefault".equals(username) ||
@@ -209,23 +217,36 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
-				
-				Message msgRisposta = client.getResponseMessage();
-				Assert.assertTrue(msgRisposta!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+				Reporter.log("Return Code '"+username+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==404);
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				}
 				
 				byte [] xmlErroreApplicativo = null;
-				try {
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
-				}catch(Throwable t) {
-					// normalize per conflito di librerie axis - saaj
-					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
-					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				if(responseAsXml) {
+					xmlErroreApplicativo = client.getMessaggioXMLRisposta();
+					response = xmlErroreApplicativo;
+					Assert.assertTrue(xmlErroreApplicativo!=null);
 				}
-				response = msgRisposta.getSOAPBody();
+				else {
+					Message msgRisposta = client.getResponseMessage();
+					Assert.assertTrue(msgRisposta!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+					
+					try {
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+					}catch(Throwable t) {
+						// normalize per conflito di librerie axis - saaj
+						org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+						Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+					}
+					response = msgRisposta.getSOAPBody();
+				}
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativi", 
@@ -366,10 +387,15 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = true; // tunnel soap sono tutti errori xml in risposta
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
-				Reporter.log("CODICE HTTP ["+client.getCodiceStatoHTTP()+"]==500");
-				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				Reporter.log("Return Code '"+username+"' '"+client.getCodiceStatoHTTP()+"'");
+				Assert.assertTrue(client.getCodiceStatoHTTP()==404);
 				
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
@@ -499,6 +525,14 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = false;
+				if("erroreApplicativoAsXmlRidefinito".equals(username) || "erroreApplicativoAsSoapXmlDefault".equals(username)) {
+					responseAsXml = true;
+				}
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
 				if("erroreApplicativoAsSoapFaultDefault".equals(username) ||
@@ -507,23 +541,38 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
-				
-				Message msgRisposta = client.getResponseMessage();
-				Assert.assertTrue(msgRisposta!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+				Reporter.log("Return Code '"+username+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==503);
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				}
 				
 				byte [] xmlErroreApplicativo = null;
-				try {
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
-				}catch(Throwable t) {
-					// normalize per conflito di librerie axis - saaj
-					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
-					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				if(responseAsXml) {
+					xmlErroreApplicativo = client.getMessaggioXMLRisposta();
+					response = xmlErroreApplicativo;
+					Assert.assertTrue(xmlErroreApplicativo!=null);
 				}
-				response = msgRisposta.getSOAPBody();
+				else {
+				
+					Message msgRisposta = client.getResponseMessage();
+					Assert.assertTrue(msgRisposta!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+					
+					try {
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+					}catch(Throwable t) {
+						// normalize per conflito di librerie axis - saaj
+						org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+						Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+					}
+					response = msgRisposta.getSOAPBody();
+				
+				}
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativi", 
@@ -650,9 +699,15 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = true; // tunnel soap sono tutti errori xml in risposta
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				Reporter.log("Return Code '"+username+"' '"+client.getCodiceStatoHTTP()+"'");
+				Assert.assertTrue(client.getCodiceStatoHTTP()==503);
 				
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
@@ -1954,6 +2009,11 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
 			}
 			try {
+				boolean responseAsXml = true; // tunnel soap sono tutti errori xml in risposta
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
 				Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
@@ -2144,6 +2204,14 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = false;
+				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapXmlDefault".equals(servizioApplicativoFruitore)) {
+					responseAsXml = true;
+				}
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
 				if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
@@ -2152,23 +2220,38 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
-				
-				Message msgRisposta = client.getResponseMessage();
-				Assert.assertTrue(msgRisposta!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+				Reporter.log("Return Code '"+servizioApplicativoFruitore+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==503);
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				}
 				
 				byte [] xmlErroreApplicativo = null;
-				try {
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
-				}catch(Throwable t) {
-					// normalize per conflito di librerie axis - saaj
-					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
-					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				if(responseAsXml) {
+					xmlErroreApplicativo = client.getMessaggioXMLRisposta();
+					response = xmlErroreApplicativo;
+					Assert.assertTrue(xmlErroreApplicativo!=null);
 				}
-				response = msgRisposta.getSOAPBody();
+				else {
+				
+					Message msgRisposta = client.getResponseMessage();
+					Assert.assertTrue(msgRisposta!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+					
+					try {
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+					}catch(Throwable t) {
+						// normalize per conflito di librerie axis - saaj
+						org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+						Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+					}
+					response = msgRisposta.getSOAPBody();
+					
+				}
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
@@ -2294,9 +2377,20 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = true; // tunnel soap sono tutti errori xml in risposta
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				Reporter.log("Return Code '"+servizioApplicativoFruitore+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==503);
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				}
 				
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
@@ -2429,6 +2523,14 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = false;
+				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapXmlDefault".equals(servizioApplicativoFruitore)) {
+					responseAsXml = true;
+				}
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
 				if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
@@ -2437,24 +2539,39 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
-				
-				Message msgRisposta = client.getResponseMessage();
-				Assert.assertTrue(msgRisposta!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+				Reporter.log("Return Code '"+servizioApplicativoFruitore+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==502);
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				}
 				
 				byte [] xmlErroreApplicativo = null;
-				try {
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
-				}catch(Throwable t) {
-					// normalize per conflito di librerie axis - saaj
-					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
-					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				if(responseAsXml) {
+					xmlErroreApplicativo = client.getMessaggioXMLRisposta();
+					response = xmlErroreApplicativo;
+					Assert.assertTrue(xmlErroreApplicativo!=null);
 				}
-				response = msgRisposta.getSOAPBody();
+				else {
 				
+					Message msgRisposta = client.getResponseMessage();
+					Assert.assertTrue(msgRisposta!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+					
+					try {
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+					}catch(Throwable t) {
+						// normalize per conflito di librerie axis - saaj
+						org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+						Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+					}
+					response = msgRisposta.getSOAPBody();
+					
+				}
+					
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codiceEGOV, 
@@ -2583,9 +2700,20 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = true; // tunnel soap sono tutti errori xml in risposta
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				Reporter.log("Return Code '"+servizioApplicativoFruitore+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==502);
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				}
 				
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
@@ -2727,6 +2855,14 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = false;
+				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapXmlDefault".equals(servizioApplicativoFruitore)) {
+					responseAsXml = true;
+				}
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
 				if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
@@ -2735,23 +2871,43 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
-				
-				Message msgRisposta = client.getResponseMessage();
-				Assert.assertTrue(msgRisposta!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+				Reporter.log("Return Code '"+servizioApplicativoFruitore+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					if(readTimedOut) {
+						Assert.assertTrue(client.getCodiceStatoHTTP()==504);
+					}
+					else {
+						Assert.assertTrue(client.getCodiceStatoHTTP()==503);
+					}
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				}
 				
 				byte [] xmlErroreApplicativo = null;
-				try {
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
-				}catch(Throwable t) {
-					// normalize per conflito di librerie axis - saaj
-					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
-					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				if(responseAsXml) {
+					xmlErroreApplicativo = client.getMessaggioXMLRisposta();
+					response = xmlErroreApplicativo;
+					Assert.assertTrue(xmlErroreApplicativo!=null);
 				}
-				response = msgRisposta.getSOAPBody();
+				else {
+				
+					Message msgRisposta = client.getResponseMessage();
+					Assert.assertTrue(msgRisposta!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+					
+					try {
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+					}catch(Throwable t) {
+						// normalize per conflito di librerie axis - saaj
+						org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+						Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+					}
+					response = msgRisposta.getSOAPBody();
+					
+				}
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
@@ -2890,9 +3046,25 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = true; // tunnel soap sono tutti errori xml in risposta
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				Reporter.log("Return Code '"+servizioApplicativoFruitore+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					if(readTimedOut) {
+						Assert.assertTrue(client.getCodiceStatoHTTP()==504);
+					}
+					else {
+						Assert.assertTrue(client.getCodiceStatoHTTP()==503);
+					}
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				}
 				
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
@@ -3034,6 +3206,14 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = false;
+				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapXmlDefault".equals(servizioApplicativoFruitore)) {
+					responseAsXml = true;
+				}
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
 				if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
@@ -3042,23 +3222,38 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
-				
-				Message msgRisposta = client.getResponseMessage();
-				Assert.assertTrue(msgRisposta!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
-				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+				Reporter.log("Return Code '"+servizioApplicativoFruitore+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==502);
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				}
 				
 				byte [] xmlErroreApplicativo = null;
-				try {
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
-				}catch(Throwable t) {
-					// normalize per conflito di librerie axis - saaj
-					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
-					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
-					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				if(responseAsXml) {
+					xmlErroreApplicativo = client.getMessaggioXMLRisposta();
+					response = xmlErroreApplicativo;
+					Assert.assertTrue(xmlErroreApplicativo!=null);
 				}
-				response = msgRisposta.getSOAPBody();
+				else {
+				
+					Message msgRisposta = client.getResponseMessage();
+					Assert.assertTrue(msgRisposta!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
+					Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
+					
+					try {
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+					}catch(Throwable t) {
+						// normalize per conflito di librerie axis - saaj
+						org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+						Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+						xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+					}
+					response = msgRisposta.getSOAPBody();
+					
+				}
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
@@ -3196,9 +3391,20 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 			}
 			
 			try {
+				boolean responseAsXml = true; // tunnel soap sono tutti errori xml in risposta
+				if(responseAsXml) {
+					client.setForceResponseAsBinaryProcessor(true);
+				}
+				
 				client.run();
 
-				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				Reporter.log("Return Code '"+servizioApplicativoFruitore+"' '"+client.getCodiceStatoHTTP()+"'");
+				if(responseAsXml) {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==502);
+				}
+				else {
+					Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				}
 				
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);

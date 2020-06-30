@@ -106,6 +106,7 @@ public class ClientHttpGenerico extends ClientCore{
 	private byte[] messaggioXMLRichiesta;
 	private byte[] messaggioXMLRisposta;
 	private boolean forceResponseAsSOAPProcessor;
+	private boolean forceResponseAsBinaryProcessor = false;
 	/** ContentType */
 	private String contentType;
 	/** ContentType Risposta*/
@@ -558,7 +559,7 @@ public class ClientHttpGenerico extends ClientCore{
 			
 			// Ricezione messaggio
 			if(is!=null){
-				if(this.messaggioXMLRichiesta==null || this.forceResponseAsSOAPProcessor){
+				if(!this.forceResponseAsBinaryProcessor && (this.messaggioXMLRichiesta==null || this.forceResponseAsSOAPProcessor)){
 					// gestione SOAP
 					try{
 						this.receivedMessage = new org.apache.axis.Message(is,false,tipoRisposta,locationRisposta);	
@@ -877,5 +878,11 @@ public class ClientHttpGenerico extends ClientCore{
 	}
 	public void setForceResponseAsSOAPProcessor(boolean forceResponseAsSOAPProcessor) {
 		this.forceResponseAsSOAPProcessor = forceResponseAsSOAPProcessor;
+	}
+	public boolean isForceResponseAsBinaryProcessor() {
+		return this.forceResponseAsBinaryProcessor;
+	}
+	public void setForceResponseAsBinaryProcessor(boolean forceResponseAsBinaryProcessor) {
+		this.forceResponseAsBinaryProcessor = forceResponseAsBinaryProcessor;
 	}
 }

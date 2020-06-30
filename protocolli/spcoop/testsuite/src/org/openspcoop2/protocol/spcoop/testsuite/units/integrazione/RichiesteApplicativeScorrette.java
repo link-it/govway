@@ -2791,7 +2791,8 @@ public class RichiesteApplicativeScorrette extends GestioneViaJmx {
 			try {
 				client.run();
 				
-				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
+				Reporter.log("Return Code '"+client.getCodiceStatoHTTP()+"'");
+				Assert.assertTrue(client.getCodiceStatoHTTP()==400);
 				
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
