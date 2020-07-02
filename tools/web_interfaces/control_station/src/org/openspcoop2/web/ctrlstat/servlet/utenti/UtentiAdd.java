@@ -33,7 +33,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -188,8 +187,7 @@ public final class UtentiAdd extends Action {
 			}
 	
 			// Cripto la password
-			Password procToCall = new Password();
-			pwsu = procToCall.cryptPw(pwsu);
+			pwsu = utentiHelper.getPasswordManager().crypt(pwsu);
 	
 			// Inserisco l'utente nel db
 			User newU = new User();

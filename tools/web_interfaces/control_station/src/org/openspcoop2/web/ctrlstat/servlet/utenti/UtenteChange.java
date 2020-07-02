@@ -33,7 +33,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
@@ -184,8 +183,7 @@ public final class UtenteChange extends Action {
 						//tutto ok modifico pwd
 						// Cripto la nuova password
 						if (!"".equals(newpw)) {
-							Password procToCall = new Password();
-							newpw = procToCall.cryptPw(newpw);
+							newpw = utentiHelper.getPasswordManager().crypt(newpw);
 
 							// Modifico i dati della pw nel db
 							myS = utentiCore.getUser(userLogin);

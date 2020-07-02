@@ -31,7 +31,8 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
-import org.openspcoop2.utils.crypt.Password;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
@@ -69,6 +70,8 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	private String id;
 
 	private boolean gestionePassword = true;
+	private ICrypt passwordManager;
+	private ICrypt passwordManager_backwardCompatibility;
 
 	private PasswordVerifier passwordVerifier = null;
 
@@ -76,15 +79,21 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		this.service = new UserService();
 
 		try {
-			this.gestionePassword = PddMonitorProperties.getInstance(log).isGestionePasswordUtentiAttiva();
-			String passwordVerifierConfig = PddMonitorProperties.getInstance(log).getUtentiPasswordVerifier();
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
+			
+			this.gestionePassword = pddMonitorProperties.isGestionePasswordUtentiAttiva();
+			String passwordVerifierConfig = pddMonitorProperties.getUtentiPasswordVerifier();
 			if(passwordVerifierConfig!=null){
 				this.passwordVerifier = new PasswordVerifier(passwordVerifierConfig);
 				if(this.passwordVerifier.existsRestriction()==false){
 					this.passwordVerifier = null;
 				}
 			}
-
+			this.passwordManager = CryptFactory.getCrypt(log, pddMonitorProperties.getConsolePasswordCryptConfig());
+			if(pddMonitorProperties.isConsolePasswordCrypt_backwardCompatibility()) {
+				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
+			}
+			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -164,8 +173,11 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 
 				// check vecchia password dal db [TODO]
 				User findById = this.service.findById(this.user.getLogin());
-				Password passwordManager = new Password();
-				if (!passwordManager.checkPw(this.vecchiaPassword, findById.getPassword())) {
+				boolean trovato = this.passwordManager.check(this.vecchiaPassword, findById.getPassword());
+				if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+					trovato = this.passwordManager_backwardCompatibility.check(this.vecchiaPassword, findById.getPassword());
+				}
+				if (!trovato) {
 					MessageUtils.addErrorMsg("La vecchia password indicata non \u00E8 corretta");
 					return null;
 				}
@@ -195,8 +207,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			}
 
 			// cript pwd
-			Password passwordManager = new Password();
-			String newPassword = passwordManager.cryptPw(this.user.getPassword());
+			String newPassword = this.passwordManager.crypt(this.user.getPassword());
 			((UserService)this.service).savePassword(this.user.getLogin(), newPassword);
 
 			FacesContext.getCurrentInstance().addMessage(null,

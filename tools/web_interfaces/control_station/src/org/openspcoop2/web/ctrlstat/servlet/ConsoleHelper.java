@@ -198,7 +198,8 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.DynamicStringReplace;
-import org.openspcoop2.utils.crypt.Password;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
@@ -324,7 +325,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 	}
 	
-	protected Password passwordManager;
+	protected ICrypt passwordManager;
+	public ICrypt getPasswordManager() {
+		return this.passwordManager;
+	}
+	protected ICrypt passwordManager_backwardCompatibility;
 	protected ControlStationCore core = null;
 	public ControlStationCore getCore() {
 		return this.core;
@@ -464,9 +469,24 @@ public class ConsoleHelper implements IConsoleHelper {
 		this.request = request;
 		this.pd = pd;
 		this.session = session;
-		this.passwordManager = new Password();
 		this.log = ControlStationLogger.getPddConsoleCoreLogger();
 		try {
+			
+			Properties passwordManagerConfig = null;
+			boolean passwordManager_backwardCompatibility = false;
+			if(ControlStationCore.isAPIMode()) {
+				passwordManagerConfig = ControlStationCore.getPasswordManagerConfig_APIMode();
+				passwordManager_backwardCompatibility = ControlStationCore.isPasswordManager_backwardCompatibility_APIMode();
+			}
+			else {
+				ConsoleProperties consoleProperties = ConsoleProperties.getInstance();
+				passwordManagerConfig = consoleProperties.getConsolePasswordCryptConfig();
+				passwordManager_backwardCompatibility = consoleProperties.isConsolePasswordCrypt_backwardCompatibility();
+			}
+			this.passwordManager = CryptFactory.getCrypt(this.log, passwordManagerConfig);
+			if(passwordManager_backwardCompatibility) {
+				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(this.log);
+			}
 			
 			if (this.request.getCharacterEncoding() == null) { 
 		        this.request.setCharacterEncoding(Charset.UTF_8.getValue());
@@ -545,7 +565,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			try {
-				this.size = ConsoleProperties.getInstance().getConsoleLunghezzaLabel();
+				if(!ControlStationCore.isAPIMode()) {
+					ConsoleProperties consoleProperties = ConsoleProperties.getInstance();
+					this.size = consoleProperties.getConsoleLunghezzaLabel();
+				}
 			}catch(Exception e) {
 				this.size = 50;
 			}

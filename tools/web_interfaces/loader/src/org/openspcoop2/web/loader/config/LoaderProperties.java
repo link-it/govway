@@ -195,6 +195,16 @@ public class LoaderProperties {
 	}
 	
 	
+	/* ----- Gestione Utenze ------- */
+	
+	public Properties getConsolePasswordCryptConfig() throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("console.password.");
+	}
+	
+	public boolean isConsolePasswordCrypt_backwardCompatibility() throws UtilsException{
+		return this.readBooleanProperty(true, "console.password.crypt.backwardCompatibility");
+	}
+	
 	
 	
 	/* ----- Impostazioni grafiche ------- */

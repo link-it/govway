@@ -1579,10 +1579,26 @@ public class ControlStationCore {
 	public static boolean isAPIMode() {
 		return API!=null ? API : false;
 	}
-	
+		
 	protected boolean usedByApi = false;
 	public boolean isUsedByApi() {
 		return this.usedByApi;
+	}
+	
+	private static Properties passwordManagerConfig_APIMode = null;
+	private static boolean passwordManager_backwardCompatibility_APIMode = false;
+	public static Properties getPasswordManagerConfig_APIMode() {
+		return ControlStationCore.passwordManagerConfig_APIMode;
+	}
+	public static void setPasswordManagerConfig_APIMode(Properties passwordManagerConfig_APIMode) {
+		ControlStationCore.passwordManagerConfig_APIMode = passwordManagerConfig_APIMode;
+	}
+	public static boolean isPasswordManager_backwardCompatibility_APIMode() {
+		return ControlStationCore.passwordManager_backwardCompatibility_APIMode;
+	}
+	public static void setPasswordManager_backwardCompatibility_APIMode(
+			boolean passwordManager_backwardCompatibility_APIMode) {
+		ControlStationCore.passwordManager_backwardCompatibility_APIMode = passwordManager_backwardCompatibility_APIMode;
 	}
 	
 	public ControlStationCore() throws Exception {

@@ -76,7 +76,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			connection = dbManager.getConnectionConfig();
 			ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 			DBLoginDAO loginService = new DBLoginDAO(connection, true, smp, LoggerProperties.getLoggerDAO());
-		
+			
 			UserDetailsBean u = null;
 			try {
 				u = loginService.loadUserByUsername(username, false); // il controllo e' fatto nella acl
@@ -85,13 +85,16 @@ public class AuthenticationProvider implements org.springframework.security.auth
 				throw new UsernameNotFoundException("Username '"+username+"' not found", e);
 			}
 			catch(Exception e) {
+				LoggerProperties.getLoggerCore().error(e.getMessage(),e);
 				throw new AuthenticationServiceException("AuthenticationProvider,ricerca utente fallita: "+e.getMessage(),e);
 			}
 			
 			boolean correct = false;
 			try {
+				loginService.setPasswordManager(ServerProperties.getInstance().getConsolePasswordCryptConfig(), ServerProperties.getInstance().isConsolePasswordCrypt_backwardCompatibility());
 				correct = loginService.login(username, password);
 			}catch(Exception e) {
+				LoggerProperties.getLoggerCore().error(e.getMessage(),e);
 				throw new AuthenticationServiceException("Inizializzazione AuthenticationProvider fallita: "+e.getMessage(),e);
 			}
 			if(!correct) {

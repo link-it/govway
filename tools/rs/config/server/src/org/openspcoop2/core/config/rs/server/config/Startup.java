@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.slf4j.Logger;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
@@ -153,6 +154,16 @@ public class Startup implements ServletContextListener {
 				throw new RuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione Connettori effettuata con successo");
+			
+			Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
+			try {
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				ControlStationCore.setPasswordManagerConfig_APIMode(serverProperties.getConsolePasswordCryptConfig());
+				ControlStationCore.setPasswordManager_backwardCompatibility_APIMode(serverProperties.isConsolePasswordCrypt_backwardCompatibility());
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
 			
 			Startup.initializedResources = true;
 			

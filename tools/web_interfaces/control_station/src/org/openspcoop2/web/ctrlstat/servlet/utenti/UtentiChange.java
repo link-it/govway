@@ -40,7 +40,6 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
-import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -418,8 +417,7 @@ public final class UtentiChange extends Action {
 				// Cripto la password
 				boolean cpwd = ServletUtils.isCheckBoxEnabled(changepwd);
 				if(cpwd && !"".equals(pwsu)){
-					Password procToCall = new Password();
-					pwsu = procToCall.cryptPw(pwsu);
+					pwsu = utentiHelper.getPasswordManager().crypt(pwsu);
 				}
 
 				// Modifico i dati dell'utente

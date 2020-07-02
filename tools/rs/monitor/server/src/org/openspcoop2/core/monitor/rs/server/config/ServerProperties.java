@@ -213,5 +213,11 @@ public class ServerProperties  {
 		return config;
 	}
 	
-
+	public Properties getConsolePasswordCryptConfig() throws Exception{
+		return this.reader.readProperties_convertEnvProperties("utenti.password.");
+	}
+	
+	public boolean isConsolePasswordCrypt_backwardCompatibility() throws Exception{
+		return "true".equalsIgnoreCase(this.readProperty(true, "utenti.password.crypt.backwardCompatibility"));
+	}
 }

@@ -40,11 +40,14 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
-import org.openspcoop2.utils.crypt.Password;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.slf4j.Logger;
 
@@ -73,6 +76,16 @@ public class DBLoginDAO implements ILoginDAO {
 	
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 
+	private ICrypt passwordManager;
+	private ICrypt passwordManager_backwardCompatibility;
+	
+	public void setPasswordManager(Properties config, boolean backwardCompatibility) throws UtilsException {
+		this.passwordManager = CryptFactory.getCrypt(log, config);
+		if(backwardCompatibility) {
+			this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
+		}
+	}
+	
 	public DBLoginDAO() {
 		try {	
 
@@ -90,6 +103,12 @@ public class DBLoginDAO implements ILoginDAO {
 
 			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, DBLoginDAO.log, tipoDatabase);
 
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
+			this.passwordManager = CryptFactory.getCrypt(log, pddMonitorProperties.getConsolePasswordCryptConfig());
+			if(pddMonitorProperties.isConsolePasswordCrypt_backwardCompatibility()) {
+				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
+			}
+			
 		} catch (ServiceException e) {
 
 			DBLoginDAO.log.error(e.getMessage(), e);
@@ -151,8 +170,13 @@ public class DBLoginDAO implements ILoginDAO {
 				throw new NotFoundException("Utente ["+username+"] non registrato");
 
 			User u = this.utenteDAO.getUser(username);
-			Password passwordManager = new Password();
-			return passwordManager.checkPw(pwd, u.getPassword());
+			
+			boolean trovato = this.passwordManager.check(pwd, u.getPassword());
+			if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+				trovato = this.passwordManager_backwardCompatibility.check(pwd, u.getPassword());
+			}
+			
+			return trovato;
 		}catch (NotFoundException e) {
 			DBLoginDAO.log.debug(e.getMessage(), e);
 			return false;

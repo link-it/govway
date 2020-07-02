@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
-import org.openspcoop2.utils.crypt.Password;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
@@ -93,8 +94,23 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			throw new UsernameNotFoundException("Username '"+username+"' not found");
 		}
 		String pwcrypt = u.getPassword();
-		Password passwordManager = new Password();
-		boolean match = passwordManager.checkPw(password, pwcrypt);
+		
+		ICrypt passwordManager = null;
+		ICrypt passwordManager_backwardCompatibility = null;
+		try {
+			ServerProperties serverProperties = ServerProperties.getInstance();
+			passwordManager = CryptFactory.getCrypt(this.log, serverProperties.getConsolePasswordCryptConfig());
+			if(serverProperties.isConsolePasswordCrypt_backwardCompatibility()) {
+				passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(this.log);
+			}
+		}catch(Exception e) {
+			throw new AuthenticationServiceException("Inizializzazione AuthenticationProvider fallita: "+e.getMessage(),e);
+		}
+		
+		boolean match = passwordManager.check(password, pwcrypt);
+		if(!match && passwordManager_backwardCompatibility!=null) {
+			match = passwordManager_backwardCompatibility.check(password, pwcrypt);
+		}
 		if(!match) {
 			throw new BadCredentialsException("Bad credentials");
 		}

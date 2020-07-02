@@ -1,3 +1,35 @@
+2020-07-02  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Corretto http status ritornato, da 204 a 201, in caso di operazione effettuata con successo per le risorse:
+	- POST /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/azioni
+	- POST /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni
+
+2020-07-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1019
+	Introdotta la configurabilità del tipo di cifratura delle password utilizzato per le utenze delle console di gestione e monitoraggio.
+	La configurazione di default prevede di cifrare in SHA-512-based Unix crypt ($6$) le password prodotte dall'installer e create/modificate con le console.
+	Per garantire la retrocompatibilità con le utenze esistenti, la verifica delle password viene attuata anche usando la cifratura 'libc crypt() MD5' ($1$). 
+	La verifica in modalità 'backward compatibility' può essere disattivata una volta migrate tutte le password al nuovo formato di cifratura.
+
+2020-07-01  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-1019
+	Il package 'org.openspcoop2.utils.random' gestisce i differenti algoritmi di java.security.SecureRandom e il generatore di base java.util.Random.
+	Il package 'org.openspcoop2.utils.crypt' è stato esteso per supportare differenti tipi di cifratura delle password:
+	- libc crypt() MD5 "$1$" e variante Apache "$apr1$".
+	- SHA2-based Unix crypt in variante SHA-256 e SHA-512. 
+	- Unix crypt(3) DES
+	- RFC2307 in variante MD5, SMD5, SHA e SSHA
+	- Jasypt in variante basic e strong
+	- Jasypt custom configurabile per salt, iterator, digest algorithm, base64/hex encoding
+	- PBE Key Spec
+	- BCrypt e SCrypt
+	- Implementazione Custom
+
 2020-06-30  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.1

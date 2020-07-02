@@ -27,10 +27,10 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.crypt.Password;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -40,10 +40,12 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.loader.config.LoaderProperties;
 import org.openspcoop2.web.loader.core.Costanti;
 import org.openspcoop2.web.loader.core.LoaderCore;
 import org.openspcoop2.web.loader.servlet.about.AboutCore;
 import org.openspcoop2.web.loader.servlet.archivi.ImportaXML;
+import org.slf4j.Logger;
 
 /**
  * OpenSPCoopLoaderHelper
@@ -62,7 +64,11 @@ public class LoaderHelper {
 	protected LoaderCore core;
 	protected AboutCore aboutCore;
 
-	Password passwordManager;
+	protected ICrypt passwordManager;
+	public ICrypt getPasswordManager() {
+		return this.passwordManager;
+	}
+	protected ICrypt passwordManager_backwardCompatibility;
 
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
@@ -94,11 +100,16 @@ public class LoaderHelper {
 		try {
 			this.core = new LoaderCore();
 			this.aboutCore = new AboutCore(this.core);
+			
+			LoaderProperties consoleProperties = LoaderProperties.getInstance();
+			this.passwordManager = CryptFactory.getCrypt(this.log, consoleProperties.getConsolePasswordCryptConfig());
+			if(consoleProperties.isConsolePasswordCrypt_backwardCompatibility()) {
+				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(this.log);
+			}
+			
 		} catch (Exception e) {
-			this.log.error("Exception OpenSPCoopLoaderHelper: " + e.getMessage(), e);
+			this.log.error("Exception LoaderHelper: " + e.getMessage(), e);
 		}
-		
-		this.passwordManager = new Password();
 	}
 
 	public int getSize() {
@@ -167,7 +178,10 @@ public class LoaderHelper {
 			String pwcrypt = u.getPassword();
 			if ((pwcrypt != null) && (!pwcrypt.equals(""))) {
 				// Controlla se utente e password corrispondono
-				trovato = this.passwordManager.checkPw(password, pwcrypt);
+				trovato = this.passwordManager.check(password, pwcrypt);
+				if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+					trovato = this.passwordManager_backwardCompatibility.check(password, pwcrypt);
+				}
 			}
 		}
 

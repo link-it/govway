@@ -1196,7 +1196,11 @@ public class UtentiHelper extends ConsoleHelper {
 			User user = ServletUtils.getUserFromSession(this.session);
 
 			if(user.getPermessi().isUtenti()==false){
-				if (!this.passwordManager.checkPw(oldpw, user.getPassword())) {
+				boolean trovato = this.passwordManager.check(oldpw, user.getPassword());
+				if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+					trovato = this.passwordManager_backwardCompatibility.check(oldpw, user.getPassword());
+				}
+				if (!trovato) {
 					this.pd.setMessage("La vecchia password indicata non e' corretta");
 					return false;
 				}

@@ -273,11 +273,7 @@ public class ConsoleProperties {
 	public boolean isGestoreConsistenzaDati_forceCheckMapping() throws UtilsException{
 		return this.readBooleanProperty(true, "gestoreConsistenzaDati.forceCheckMapping");
 	}
-	
-	public String getConsolePasswordVerifier() throws UtilsException{
-		return this.readProperty(false, "console.passwordVerifier");
-	}
-	
+		
 	public PropertiesSourceConfiguration getMessageSecurityPropertiesSourceConfiguration() throws UtilsException {
 		return _getSourceConfiguration("messageSecurity", 
 				"messageSecurity.dir", "messageSecurity.dir.refresh", 
@@ -374,6 +370,22 @@ public class ConsoleProperties {
 	
 	public boolean isApplicativiServerEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "applicativiServer.enabled");
+	}
+	
+	
+	
+	/* ----- Gestione Utenze ------- */
+	
+	public Properties getConsolePasswordCryptConfig() throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("console.password.");
+	}
+	
+	public boolean isConsolePasswordCrypt_backwardCompatibility() throws UtilsException{
+		return this.readBooleanProperty(true, "console.password.crypt.backwardCompatibility");
+	}
+	
+	public String getConsolePasswordVerifier() throws UtilsException{
+		return this.readProperty(false, "console.passwordVerifier");
 	}
 	
 	
