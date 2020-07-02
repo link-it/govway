@@ -12,4 +12,4 @@ In entrambi i ruoli la configurazione varia a seconda dell'architettura in cui Ã
         :maxdepth: 2
 
 	server/index
-	client
+	client/index

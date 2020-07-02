@@ -32,6 +32,16 @@ import org.apache.commons.codec.binary.StringUtils;
  */
 public class Base64Utilities {
 
+    /**
+     * Characters for Base64 transformation.
+     */
+    public static final String B64_STRING = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    /**
+     * Characters for Base64 transformation.
+     */
+    public static final char[] B64_ARRAY = B64_STRING.toCharArray();
+    
 	
 	public static byte[] decode(byte [] data){
 		return org.apache.commons.codec.binary.Base64.decodeBase64(data);

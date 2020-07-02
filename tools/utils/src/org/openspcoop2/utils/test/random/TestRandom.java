@@ -18,28 +18,43 @@
  *
  */
 
-package org.openspcoop2.pdd_test.message;
+package org.openspcoop2.utils.test.random;
 
-import org.openspcoop2.pdd_test.Costanti;
+import org.openspcoop2.utils.random.SecureRandomAlgorithm;
+import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * TestMTOM
+ * TestCrypt
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestMTOM {
+public class TestRandom {
 
-	private static final String ID_TEST = "MTOM";
+	private static final String ID_TEST = "Random";
 	
-	@Test(groups={Costanti.GRUPPO_PDD,Costanti.GRUPPO_PDD+"."+ID_TEST})
-	public void testMTOM() throws Exception{
+	@DataProvider(name="randomProvider")
+	public Object[][] provider(){
+		return new Object[][]{
+				{false, null},
+				{true, null},
+				{true, SecureRandomAlgorithm.NATIVE_PRNG.getValue()},
+				{true, SecureRandomAlgorithm.NATIVE_PRNG_BLOCKING.getValue()},
+				{true, SecureRandomAlgorithm.NATIVE_PRNG_NON_BLOCKING.getValue()},
+				{true, SecureRandomAlgorithm.DRBG.getValue()},
+				{true, SecureRandomAlgorithm.SHA1PRNG.getValue()}
+		};
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="randomProvider")
+	public void testRandomGenerator(boolean useSecureRandom, String secureRandomAlgorithm) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.message.soap.mtom.Client.main(null);
+		org.openspcoop2.utils.random.Test.test(useSecureRandom, secureRandomAlgorithm);
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

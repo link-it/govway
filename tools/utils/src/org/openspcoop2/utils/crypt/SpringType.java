@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2020 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -18,30 +18,29 @@
  *
  */
 
-package org.openspcoop2.pdd_test.message;
-
-import org.openspcoop2.pdd_test.Costanti;
-import org.openspcoop2.utils.test.TestLogger;
-import org.testng.annotations.Test;
+package org.openspcoop2.utils.crypt;
 
 /**
- * TestMTOM
- * 
- * @author Andrea Poli (apoli@link.it)
+ * SpringType
+ *
+ * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestMTOM {
+public enum SpringType {
 
-	private static final String ID_TEST = "MTOM";
+	B_CRYPT,
 	
-	@Test(groups={Costanti.GRUPPO_PDD,Costanti.GRUPPO_PDD+"."+ID_TEST})
-	public void testMTOM() throws Exception{
-		
-		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.message.soap.mtom.Client.main(null);
-		TestLogger.info("Run test '"+ID_TEST+"' ok");
-		
+	S_CRYPT;
+
+	public CryptType toCryptType() {
+		switch (this) {
+		case B_CRYPT:
+			return CryptType.B_CRYPT;
+		case S_CRYPT:
+			return CryptType.S_CRYPT;
+		default:
+			return null;
+		}
 	}
-	
 }

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2020 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -18,30 +18,24 @@
  *
  */
 
-package org.openspcoop2.utils.test.crypt;
+package org.openspcoop2.utils.crypt;
 
-import org.openspcoop2.utils.test.Costanti;
-import org.openspcoop2.utils.test.TestLogger;
-import org.testng.annotations.Test;
+import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 /**
- * TestMD5Crypt
- * 
- * @author Andrea Poli (apoli@link.it)
+ * ICrypt
+ *
+ * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestMD5Crypt {
+public interface ICrypt {
 
-	private static final String ID_TEST = "MD5Crypt";
+	public void init(Logger log, CryptConfig config);
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testPasswordGenerator() throws Exception{
+	public String crypt(String password) throws UtilsException;
 		
-		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.crypt.MD5Crypt.main(null);
-		TestLogger.info("Run test '"+ID_TEST+"' ok");
-		
-	}
+	public boolean check(String password, String pwcrypt);
 	
 }

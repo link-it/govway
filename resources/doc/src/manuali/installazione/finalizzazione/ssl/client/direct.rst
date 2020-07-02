@@ -1,6 +1,6 @@
-.. _install_ssl_client:
+.. _install_ssl_client_direct:
 
-Comunicazioni in Uscita
+Wildfly / Tomcat
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Le comunicazioni in uscita utilizzano una configurazione ssl differente a seconda dell'impostazione utilizzata nei connettori configurati per ogni API. 

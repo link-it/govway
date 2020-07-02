@@ -24,6 +24,8 @@ package org.openspcoop2.utils.crypt;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.openspcoop2.utils.random.RandomGenerator;
+
 /**
  * A Java Implementation of the MD5Crypt function Modified from the GANYMEDE
  * network directory management system released under the GNU General Public
@@ -39,6 +41,7 @@ import java.security.NoSuchAlgorithmException;
  * @version $Rev$, $Date$
  */
 
+@Deprecated
 public class MD5Crypt {
 	// Character set allowed for the salt string
 	static private final String SALTCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -46,6 +49,30 @@ public class MD5Crypt {
 	// Character set of the encrypted password: A-Za-z0-9./
 	static private final String itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
+	public static String newSalt() {
+
+        int c = 0;
+        byte[] arrByte = new byte[2];
+
+        RandomGenerator randomGenerator = new RandomGenerator(false);
+        randomGenerator.nextRandomBytes(arrByte);
+        
+        for (int i = 0; i<2; i++) {
+            c = arrByte[i] >> 6;  // div(64)
+            c = (arrByte[i] - (c<<6));
+            if ( c <= 11 ) // 46-57 ./0..9
+                c+=46;
+            if ( c >= 12 && c <= 37 ) // 65-90 a..z
+               c+=(65-12);     
+            if ( c >= 38 && c <= 63 ) // 97-122 A..Z
+                c+=(97-38);
+            arrByte[i] = (byte) c;
+        }
+
+        String pw = new String(arrByte);
+        return pw;
+    }
+	
 	/**
 	 * Function to return a string from the set: A-Za-z0-9./
 	 * 
