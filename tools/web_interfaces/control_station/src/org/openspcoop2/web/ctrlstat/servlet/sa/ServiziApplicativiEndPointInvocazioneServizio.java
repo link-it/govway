@@ -143,7 +143,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String getmsg = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
 			String getmsgUsername = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 			String getmsgPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-
+			String changepwd = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
+			String tipoCredenzialiSSLVerificaTuttiICampi = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+			if (tipoCredenzialiSSLVerificaTuttiICampi == null) {
+				tipoCredenzialiSSLVerificaTuttiICampi = Costanti.CHECK_BOX_DISABLED;
+			}
+			
 			String invrifRichiesta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
 
 			String risprif = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
@@ -314,6 +319,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String postBackElementName = saHelper.getPostBackElementName();
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
 			if(postBackElementName != null ){
+				
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER)){
 					// se il vecchio SA era di tipo server e ripristino il default allora resetto la creazione del connettore
 					if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()) && !erogazioneServizioApplicativoServerEnabled) {
@@ -419,6 +425,15 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						responseInputFileNameHeaders = null;
 						responseInputDeleteAfterRead = null;
 						responseInputWaitTime = null;
+					}
+				}
+				
+				// Change Password basic/api
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD)) {
+					if(!ServletUtils.isCheckBoxEnabled(changepwd)) {
+						if (invocazionePorta != null && invocazionePorta.sizeCredenzialiList()>0){
+							getmsgPassword = invocazionePorta.getCredenziali(0).getPassword();
+						}
 					}
 				}
 			}
@@ -576,6 +591,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 									if(CredenzialeTipo.BASIC.equals(c.getTipo())) {
 										getmsgUsername = c.getUser();
 										getmsgPassword = c.getPassword();
+										tipoCredenzialiSSLVerificaTuttiICampi = c.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
 										break;
 									}
 								}
@@ -934,7 +950,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false,
-						integrationManagerEnabled);
+						integrationManagerEnabled,
+						TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd);
 				
 				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
 				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
@@ -976,7 +993,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore);
+			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore, sa);
 			if (!isOk) {
 
 				// setto la barra del titolo
@@ -992,7 +1009,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false,
-						integrationManagerEnabled);
+						integrationManagerEnabled,
+						TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd);
 				
 				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
 				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
@@ -1040,6 +1058,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			connis = is.getConnettore();
 			cp = connis.getPropertyList();
 
+			String secret_pleaseCopy = null;
+			
 			List<Object> oggettiDaAggiornare = new ArrayList<>();
 			// se ho selezionato un servizio applicativo Server allora devo associarlo alla porta al posto del vecchio 
 			if(erogazioneServizioApplicativoServerEnabled) {
@@ -1225,6 +1245,22 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 								c.setUser(getmsgUsername);
 								c.setPassword(getmsgPassword);
 								found = true;
+								
+								boolean encryptOldPlainPwd = !c.isCertificateStrictVerification() && saCore.isApplicativiPasswordEncryptEnabled(); 
+								
+								if(ServletUtils.isCheckBoxEnabled(changepwd)) {
+									c.setCertificateStrictVerification(false); // se è abilitata la cifratura, verrà impostata a true nel perform update
+									if(saCore.isApplicativiPasswordEncryptEnabled()) {
+										secret_pleaseCopy = getmsgPassword;
+									}
+								}
+								else if(encryptOldPlainPwd) {
+									secret_pleaseCopy = getmsgPassword;
+								}
+								else {
+									c.setCertificateStrictVerification(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi));
+								}
+								
 							}
 						}
 					}
@@ -1237,6 +1273,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						c.setTipo(CredenzialeTipo.BASIC);
 						c.setUser(getmsgUsername);
 						c.setPassword(getmsgPassword);
+						
+						c.setCertificateStrictVerification(false); // se è abilitata la cifratura, verrà impostata a true nel perform update
+						if(saCore.isApplicativiPasswordEncryptEnabled()) {
+							secret_pleaseCopy = getmsgPassword;
+						}
+												
 						invocazionePorta.addCredenziali(c);
 					}
 				}
@@ -1258,6 +1300,11 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			if(oggettiDaAggiornare.size() > 0)
 				saCore.performUpdateOperation(userLogin, saHelper.smista(), oggettiDaAggiornare.toArray(new Object[oggettiDaAggiornare.size()]));
 
+			// Messaggio 'Please Copy'
+			if(secret_pleaseCopy!=null) {
+				saHelper.setSecretPleaseCopy(secret_pleaseCopy, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, false, null);
+			}
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

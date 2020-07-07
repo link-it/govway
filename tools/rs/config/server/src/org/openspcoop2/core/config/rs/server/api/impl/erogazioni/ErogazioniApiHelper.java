@@ -317,7 +317,7 @@ public class ErogazioniApiHelper {
 		final Connettore connRest = ErogazioniApiHelper.buildConnettore(connRegistro.getProperties());
 		final ConnettoreConfigurazioneHttps httpsConf 	 = connRest.getAutenticazioneHttps();
 
-		final AuthenticationHttpBasic 		httpConf	 = connRest.getAutenticazioneHttp();
+		final ConnettoreConfigurazioneHttpBasic httpConf	 = connRest.getAutenticazioneHttp();
 		// Questa è la cosa diversa per i fruitori, Li invece abbiamo le credenziali direttamente nel connettore.
         final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
       	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
@@ -835,7 +835,7 @@ public class ErogazioniApiHelper {
         
         final Connettore conn = impl.getConnettore();
         final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
-        final AuthenticationHttpBasic 		httpConf	 = conn.getAutenticazioneHttp();
+        final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
         
 	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
 	    
@@ -1158,7 +1158,7 @@ public class ErogazioniApiHelper {
 		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
 		
 	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
-	    final AuthenticationHttpBasic 		httpConf	 = conn.getAutenticazioneHttp();
+	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
 
 	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
 	    
@@ -1269,7 +1269,7 @@ public class ErogazioniApiHelper {
 		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
 		
 	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
-	    final AuthenticationHttpBasic 		httpConf	 = conn.getAutenticazioneHttp();
+	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
 
 	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
 	    
@@ -1380,7 +1380,7 @@ public class ErogazioniApiHelper {
 		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
 		
 	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
-	    final AuthenticationHttpBasic 		httpConf	 = conn.getAutenticazioneHttp();
+	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
 
 	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
 	    
@@ -2737,7 +2737,7 @@ public class ErogazioniApiHelper {
 		c.setEndpoint(props.get(CostantiDB.CONNETTORE_HTTP_LOCATION));
 		
 		//TODO: Forse questi nel caso delle erogazioni vanno presi dall'invocazione, guarda la updateConnettore.
-		AuthenticationHttpBasic http = new AuthenticationHttpBasic();
+		ConnettoreConfigurazioneHttpBasic http = new ConnettoreConfigurazioneHttpBasic();
 		http.setPassword(evalnull( () -> props.get(CostantiDB.CONNETTORE_PWD).trim())); 
 		http.setUsername(evalnull( () -> props.get(CostantiDB.CONNETTORE_USER).trim()));
 		if ( !StringUtils.isAllEmpty(http.getPassword(), http.getUsername()) ) {

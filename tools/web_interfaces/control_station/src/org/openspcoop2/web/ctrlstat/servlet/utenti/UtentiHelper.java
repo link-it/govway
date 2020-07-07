@@ -469,7 +469,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if( (TipoOperazione.ADD.equals(tipoOperazione)) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
 
-			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 			
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
@@ -478,7 +478,9 @@ public class UtentiHelper extends ConsoleHelper {
 			de.getPassword().setVisualizzaPasswordChiaro(true);
 			de.getPassword().setVisualizzaBottoneGeneraPassword(true);
 			if(passwordVerifier != null) {
-				de.getPassword().setPasswordGenerator(new PasswordGenerator(passwordVerifier));
+				PasswordGenerator passwordGenerator = new PasswordGenerator(passwordVerifier);
+				passwordGenerator.setDefaultLength(this.utentiCore.getUtenzeLunghezzaPasswordGenerate());
+				de.getPassword().setPasswordGenerator(passwordGenerator);
 				de.setNote(passwordVerifier.help("<BR/>"));
 			}
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
@@ -789,7 +791,7 @@ public class UtentiHelper extends ConsoleHelper {
 		//se e' stato selezionato il link per il cambio password allora mostro i dati
 		if(ServletUtils.isCheckBoxEnabled(changepw)){
 
-			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 			
 //			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
 			
@@ -1076,7 +1078,7 @@ public class UtentiHelper extends ConsoleHelper {
 //			}
 			
 			if (checkPassword){
-				PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+				PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 				if(passwordVerifier!=null){
 					StringBuilder motivazioneErrore = new StringBuilder();
 					if(passwordVerifier.validate(nomesu, pwsu, motivazioneErrore)==false){
@@ -1196,9 +1198,9 @@ public class UtentiHelper extends ConsoleHelper {
 			User user = ServletUtils.getUserFromSession(this.session);
 
 			if(user.getPermessi().isUtenti()==false){
-				boolean trovato = this.passwordManager.check(oldpw, user.getPassword());
-				if(!trovato && this.passwordManager_backwardCompatibility!=null) {
-					trovato = this.passwordManager_backwardCompatibility.check(oldpw, user.getPassword());
+				boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());
+				if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
+					trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(oldpw, user.getPassword());
 				}
 				if (!trovato) {
 					this.pd.setMessage("La vecchia password indicata non e' corretta");
@@ -1238,7 +1240,7 @@ public class UtentiHelper extends ConsoleHelper {
 				return false;
 			}
 
-			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 			if(passwordVerifier!=null){
 				StringBuilder motivazioneErrore = new StringBuilder();
 				if(passwordVerifier.validate(user.getLogin(), newpw, motivazioneErrore)==false){

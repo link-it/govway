@@ -96,6 +96,9 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
@@ -1716,10 +1719,12 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 
 	@Override
 	public Soggetto getSoggettoByCredenzialiBasic(
-			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+			String user,String password, 
+			CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
 				null, null, null, false,
-				null);
+				null,
+				config);
 	}
 	
 	@Override
@@ -1727,6 +1732,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			String subject, String issuer) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				subject, issuer, null, false,
+				null,
 				null);
 	}
 	
@@ -1734,6 +1740,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	public Soggetto getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				null, null, certificate, strictVerifier,
+				null,
 				null);
 	}
 	
@@ -1742,11 +1749,13 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
 				null, null, null, false,
-				principal);
+				principal,
+				null);
 	}
 	private org.openspcoop2.core.registry.Soggetto _getSoggettoAutenticato(CredenzialeTipo tipoCredenziale, String user,String password, 
 			String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
-			String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			String principal, 
+			CryptConfig config) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// conrollo consistenza
 		if (tipoCredenziale == null)
@@ -1795,7 +1804,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				credenzialiSoggetto.setUser(principal);
 				break;
 			}
-			filtroRicerca.setCredenzialiSoggetto(credenzialiSoggetto);
+			filtroRicerca.setCredenzialiSoggetto(credenzialiSoggetto, config);
 			List<IDSoggetto> l = this.getAllIdSoggetti(filtroRicerca);
 			if(l.size()>1){
 				throw new DriverRegistroServiziException("Trovato più di un soggetto che possiede le credenziali '"+tipoCredenziale.toString()+"' fornite");
@@ -1826,6 +1835,25 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		try{
 			// Ricerca UDDI dei soggetti
 			String [] urlXMLSoggetti = this.uddiLib.getUrlXmlSoggetti();
+			
+			boolean testInChiaro = false;
+			ICrypt crypt = null;
+			if(filtroRicerca!=null && filtroRicerca.getCredenzialiSoggetto()!=null && filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
+				CredenzialeTipo cTipo = filtroRicerca.getCredenzialiSoggetto().getTipo();
+				if(CredenzialeTipo.BASIC.equals(cTipo)){
+					CryptConfig config = filtroRicerca.getCryptConfig();
+					if(config==null || config.isBackwardCompatibility()) {
+						testInChiaro = true;
+					}
+					if(config!=null) {
+						try {
+							crypt = CryptFactory.getCrypt(this.log, config);
+						}catch(Exception e) {
+							throw new DriverRegistroServiziException(e.getMessage(),e);
+						}
+					}
+				}
+			}
 			
 			// Esamina dei soggetti
 			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
@@ -1941,7 +1969,16 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 							}
 						}
 						if(filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
-							if(filtroRicerca.getCredenzialiSoggetto().getPassword().equals(credenziali.getPassword())==false){
+							String passwordSaved =  credenziali.getPassword();
+							boolean found = false;
+							if(testInChiaro) {
+								found = filtroRicerca.getCredenzialiSoggetto().getPassword().equals(passwordSaved);
+							}
+							if(!found && crypt!=null) {
+								found = crypt.check(filtroRicerca.getCredenzialiSoggetto().getPassword(), passwordSaved);
+							}
+							
+							if( !found ) {
 								continue;
 							}
 						}

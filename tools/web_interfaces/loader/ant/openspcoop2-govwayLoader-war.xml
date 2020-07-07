@@ -83,6 +83,7 @@
 				<include name="commons-io-2.6.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="${commons_logging_jar}"/>
+				<include name="commons-codec-1.14.jar"/>
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/shared" >
 				<include name="wsdl4j-1.6.3.jar"/>
@@ -96,6 +97,7 @@
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/security" >
 				<include name="xmlsec-2.1.4.jar"/>
+				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/saaj" >
 				<include name="*.jar" />

@@ -168,6 +168,9 @@ public final class SoggettiChange extends Action {
 			this.passwordSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			this.subjectSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 			this.principalSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			
+			String changepwd = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
+						
 			String tipoCredenzialiSSLSorgente = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
 			if(tipoCredenzialiSSLSorgente == null) {
 				tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO;
@@ -262,6 +265,12 @@ public final class SoggettiChange extends Action {
 				oldtipoprov = soggettoConfig.getTipo();
 			}
 
+			boolean encryptOldPlainPwd = false;
+			if(soggettoRegistry!=null && soggettoRegistry.getCredenziali()!=null && 
+					org.openspcoop2.core.registry.constants.CredenzialeTipo.BASIC.equals(soggettoRegistry.getCredenziali().getTipo())) {
+				encryptOldPlainPwd = !soggettoRegistry.getCredenziali().isCertificateStrictVerification() && soggettiCore.isSoggettiPasswordEncryptEnabled(); 
+			}
+			
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
 			//tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(versioneProtocollo); // all tipi soggetti gestiti
@@ -474,6 +483,15 @@ public final class SoggettiChange extends Action {
 					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
 				}
+				
+				// Change Password basic/api
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD)) {
+					if(!ServletUtils.isCheckBoxEnabled(changepwd)) {
+						if (oldCredenziali != null){
+							this.passwordSoggetto = oldCredenziali.getPassword();
+						}
+					}
+				}
 			}
 			
 			boolean checkWizard = false;
@@ -664,6 +682,9 @@ public final class SoggettiChange extends Action {
 									this.tipoauthSoggetto = credenziali.getTipo().toString();
 								this.utenteSoggetto = credenziali.getUser();
 								this.passwordSoggetto = credenziali.getPassword();
+								if(this.tipoauthSoggetto!=null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(this.tipoauthSoggetto)){
+									tipoCredenzialiSSLVerificaTuttiICampi = credenziali.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+								}
 								this.principalSoggetto = credenziali.getUser();
 								
 								if(credenziali.getCertificate() != null) {
@@ -757,6 +778,10 @@ public final class SoggettiChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idSoggetto); 
 				
+				if(this.tipoauthSoggetto != null && this.tipoauthSoggetto.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
+					this.subjectSoggetto = changepwd;
+				}
+				
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
@@ -843,6 +868,10 @@ public final class SoggettiChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idSoggetto); 
 
+				if(this.tipoauthSoggetto != null && this.tipoauthSoggetto.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
+					this.subjectSoggetto = changepwd;
+				}
+				
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
@@ -894,6 +923,8 @@ public final class SoggettiChange extends Action {
 				identificativoPortaCalcolato = soggettiCore.getIdentificativoPortaDefault(this.protocollo, idSoggetto);
 			}
 
+			String secret_pleaseCopy = null;
+			
 			if(soggettiCore.isRegistroServiziLocale()){
 
 				soggettoRegistry.setIdentificativoPorta(identificativoPortaCalcolato);
@@ -916,7 +947,20 @@ public final class SoggettiChange extends Action {
 							credenziali.setUser(this.principalSoggetto); // al posto di user
 						}
 						credenziali.setPassword(this.passwordSoggetto);
-						
+						if(this.tipoauthSoggetto!=null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(this.tipoauthSoggetto)){
+							if(ServletUtils.isCheckBoxEnabled(changepwd)) {
+								credenziali.setCertificateStrictVerification(false); // se è abilitata la cifratura, verrà impostata a true nel perform update
+								if(soggettiCore.isSoggettiPasswordEncryptEnabled()) {
+									secret_pleaseCopy = this.passwordSoggetto;
+								}
+							}
+							else if(encryptOldPlainPwd) {
+								secret_pleaseCopy = this.passwordSoggetto;
+							}
+							else {
+								credenziali.setCertificateStrictVerification(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi));
+							}
+						}						
 						
 						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(this.tipoauthSoggetto)) {
 							if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
@@ -1030,6 +1074,11 @@ public final class SoggettiChange extends Action {
 			}
 			
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
+			
+			// Messaggio 'Please Copy'
+			if(secret_pleaseCopy!=null) {
+				soggettiHelper.setSecretPleaseCopy(secret_pleaseCopy, this.tipoauthSoggetto, true, sog.getNome());
+			}
 			
 			// preparo lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

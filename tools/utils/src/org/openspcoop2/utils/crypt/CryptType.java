@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.crypt;
 
+import java.io.Serializable;
+
 /**
  * CryptType
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.crypt;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum CryptType {
+public enum CryptType implements Serializable {
 
 	/* 
 	 * https://commons.apache.org/proper/commons-codec/archives/1.13/apidocs/src-html/org/apache/commons/codec/digest/Md5Crypt.html
@@ -71,6 +73,8 @@ public enum CryptType {
 	
 	B_CRYPT,
 	
-	S_CRYPT;
-	
+	S_CRYPT,
+
+	PLAIN;
+
 }

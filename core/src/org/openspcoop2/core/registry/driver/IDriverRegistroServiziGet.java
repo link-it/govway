@@ -45,6 +45,7 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.crypt.CryptConfig;
 
 
 /**
@@ -326,7 +327,7 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * 
 	 */
 	public Soggetto getSoggettoByCredenzialiBasic(
-			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+			String user, String password, CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 

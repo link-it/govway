@@ -22,6 +22,23 @@
 			<param name="value" value="${work_dir}"/>
 		</antcall>
 
+		<!-- Autenticazione Utenze/Applicativi/Soggetti -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="console.utenze.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="console.applicativi.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="console.soggetti.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
+
 		<!-- DYNAMIC CONFIG DIR -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

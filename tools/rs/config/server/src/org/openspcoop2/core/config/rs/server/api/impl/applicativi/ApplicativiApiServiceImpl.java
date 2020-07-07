@@ -22,15 +22,19 @@ package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.rs.server.api.ApplicativiApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.ListaApplicativi;
+import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -85,8 +89,12 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
                 
 			Applicativo applicativo = body;
 			try{
-				applicativo.setCredenziali(ApplicativiApiHelper.translateCredenzialiApplicativo(applicativo));
-			}catch(Throwable e) {
+				applicativo.setCredenziali(ApplicativiApiHelper.translateCredenzialiApplicativo(applicativo, true));
+			}
+			catch(javax.ws.rs.WebApplicationException e) {
+				throw e;
+			}
+			catch(Throwable e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 
@@ -306,8 +314,12 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			Applicativo applicativo = body;
 			try{
-				applicativo.setCredenziali(ApplicativiApiHelper.translateCredenzialiApplicativo(applicativo));
-			}catch(Throwable e) {
+				applicativo.setCredenziali(ApplicativiApiHelper.translateCredenzialiApplicativo(applicativo, false));
+			}
+			catch(javax.ws.rs.WebApplicationException e) {
+				throw e;
+			}
+			catch(Throwable e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 			
@@ -318,6 +330,26 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			final ServizioApplicativo tmpSa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, soggetto, env.stationCore);
 			final ServizioApplicativo newSa = ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore);
+			
+			if(ModalitaAccessoEnum.HTTP_BASIC.equals(body.getCredenziali().getModalitaAccesso())) {
+				AuthenticationHttpBasic httpBasic = (AuthenticationHttpBasic) body.getCredenziali();
+				if(httpBasic.getPassword()==null || StringUtils.isEmpty(httpBasic.getPassword())) {
+					// password in update non è obbligatoria
+					boolean set = false;
+					if(newSa.getInvocazionePorta()!=null && newSa.getInvocazionePorta().sizeCredenzialiList()>0) {
+						Credenziali cNewSaImageDB = newSa.getInvocazionePorta().getCredenziali(0);
+						Credenziali cTmp = tmpSa.getInvocazionePorta().sizeCredenzialiList()>0 ? tmpSa.getInvocazionePorta().getCredenziali(0) : null;
+						if(cNewSaImageDB!=null && cTmp!=null) {
+							cTmp.setPassword(cNewSaImageDB.getPassword());
+							cTmp.setCertificateStrictVerification(cNewSaImageDB.isCertificateStrictVerification());
+							set = true;
+						}
+					}
+					if(!set) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; indicare la password");
+					}
+				}
+			}
 			
 			newSa.setNome(tmpSa.getNome());
 			newSa.setIdSoggetto(tmpSa.getIdSoggetto());

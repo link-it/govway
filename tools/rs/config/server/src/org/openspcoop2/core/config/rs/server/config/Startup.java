@@ -158,8 +158,19 @@ public class Startup implements ServletContextListener {
 			Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
 			try {
 				ServerProperties serverProperties = ServerProperties.getInstance();
-				ControlStationCore.setPasswordManagerConfig_APIMode(serverProperties.getConsolePasswordCryptConfig());
-				ControlStationCore.setPasswordManager_backwardCompatibility_APIMode(serverProperties.isConsolePasswordCrypt_backwardCompatibility());
+				
+				ControlStationCore.setUtenzePasswordEncryptEngine_apiMode(serverProperties.getUtenzeCryptConfig());
+				
+				ControlStationCore.setApplicativiPasswordEncryptEngine_apiMode(serverProperties.getApplicativiCryptConfig());
+				if(serverProperties.isApplicativiBasicPasswordEnableConstraints()) {
+					ControlStationCore.setApplicativiPasswordVerifierEngine_apiMode(serverProperties.getApplicativiPasswordVerifier());
+				}
+				
+				ControlStationCore.setSoggettiPasswordEncryptEngine_apiMode(serverProperties.getSoggettiCryptConfig());
+				if(serverProperties.isSoggettiBasicPasswordEnableConstraints()) {
+					ControlStationCore.setSoggettiPasswordVerifierEngine_apiMode(serverProperties.getSoggettiPasswordVerifier());
+				}
+				
 			} catch (Exception e) {
 				throw new RuntimeException(e.getMessage(),e);
 			}

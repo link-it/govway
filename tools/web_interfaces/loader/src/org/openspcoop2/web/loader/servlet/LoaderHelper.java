@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
@@ -102,8 +103,9 @@ public class LoaderHelper {
 			this.aboutCore = new AboutCore(this.core);
 			
 			LoaderProperties consoleProperties = LoaderProperties.getInstance();
-			this.passwordManager = CryptFactory.getCrypt(this.log, consoleProperties.getConsolePasswordCryptConfig());
-			if(consoleProperties.isConsolePasswordCrypt_backwardCompatibility()) {
+			CryptConfig config = new CryptConfig(consoleProperties.getConsoleUtenzePassword());
+			this.passwordManager = CryptFactory.getCrypt(this.log, config);
+			if(config.isBackwardCompatibility()) {
 				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(this.log);
 			}
 			

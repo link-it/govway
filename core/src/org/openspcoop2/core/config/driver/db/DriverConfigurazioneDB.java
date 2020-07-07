@@ -102,6 +102,9 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
@@ -6843,20 +6846,23 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
             return this._getServizioApplicativo(idServizioApplicativo, null, null, 
             		null, null, null, false,
             		null, 
+            		null,
             		null);
     }
     @Override
-    public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
             return this._getServizioApplicativo(null, aUser, aPassword, 
             		null, null, null, false,
             		null, 
-            		null);
+            		null,
+            		config);
     }
     @Override
     public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
             return this._getServizioApplicativo(null, null, null, 
             		aSubject, aIssuer, null, false,
             		null, 
+            		null,
             		null);
     }
     @Override
@@ -6864,6 +6870,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
     	 return this._getServizioApplicativo(null, null, null, 
          		null, null, certificate, strictVerifier,
          		null, 
+         		null,
          		null);
     }
     @Override
@@ -6871,19 +6878,22 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
     	return this._getServizioApplicativo(null, null, null, 
     			null, null, null, false,
     			principal, 
+    			null,
     			null);
     }
     public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
             return this._getServizioApplicativo(null, null, null, 
             		null, null, null, false,
             		null, 
-            		idServizioApplicativo);
+            		idServizioApplicativo,
+            		null);
     }
 
     private ServizioApplicativo _getServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, String aUser, String aPassord, 
     		String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
     		String principal,
-    		Long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+    		Long idServizioApplicativo, 
+    		CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -6947,7 +6957,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 
 			switch (type) {
-			case TYPE_ID_OBJECT:
+			case TYPE_ID_OBJECT:{
 				String tipoSog=idServizioApplicativoObject.getIdSoggettoProprietario().getTipo();
 				String nomeSog=idServizioApplicativoObject.getIdSoggettoProprietario().getNome();
 
@@ -6966,29 +6976,73 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nome_sa));
 
 				break;
+			}
+			case TYPE_BASIC:{
 
-			case TYPE_BASIC:
-
+				boolean testInChiaro = false;
+				ICrypt crypt = null;
+				if(config==null || config.isBackwardCompatibility()) {
+					testInChiaro = true;
+				}
+				if(config!=null) {
+					crypt = CryptFactory.getCrypt(this.log, config);
+				}
+				
 				//cerco un servizio applicativo che contenga utente e password con autenticazione basi
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
 				sqlQueryObject.addWhereCondition("utente = ?");
-				sqlQueryObject.addWhereCondition("password = ?");
+				//sqlQueryObject.addWhereCondition("password = ?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				//stm.setString(1, nome_sa);
 				stm.setString(1, CostantiConfigurazione.CREDENZIALE_BASIC.toString());
 				stm.setString(2, aUser);
-				stm.setString(3, aPassord);
+				//stm.setString(3, aPassord);
 
-				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_BASIC.toString(), aUser, aPassord));
+				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_BASIC.toString(), aUser));
 
-				break;
+				rs = stm.executeQuery();
+				long idSA = -1;
+				while(rs.next()){
+					
+					String passwordDB =  rs.getString("password");
+					
+					boolean found = false;
+					if(testInChiaro) {
+						found = aPassord.equals(passwordDB);
+					}
+					if(!found && crypt!=null) {
+						found = crypt.check(aPassord, passwordDB);
+					}
+					
+					if( found ) {
+						idSA = rs.getLong("id");
+						break;
+					}
+
+				}
+				rs.close();
+				stm.close();
+				//System.out.println("TROVATO["+idSA+"]");
+				if(idSA<=0){
+					throw new DriverConfigurazioneNotFound("Nessun Servizio Applicativo trovato.");
+				}
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id = ?");
+				stm = con.prepareStatement(sqlQueryObject.toString());
+				stm.setLong(1, idSA);
+
+				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
 				
-			case TYPE_SSL_SUBJECT_ISSUER:
+				break;
+			}	
+			case TYPE_SSL_SUBJECT_ISSUER:{
 
 				// Autenticazione SSL deve essere LIKE
 				Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(aSubject, PrincipalType.subject);
@@ -6997,7 +7051,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					hashIssuer = CertificateUtils.getPrincipalIntoHashtable(aIssuer, PrincipalType.issuer);
 				}
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
@@ -7078,13 +7132,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
 
 				break;
-
-			case TYPE_SSL_CERTIFICATE:
+			}
+			case TYPE_SSL_CERTIFICATE:{
 
 				String cnSubject = aCertificate.getSubject().getCN();
 				String cnIssuer = aCertificate.getIssuer().getCN();
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
@@ -7112,7 +7166,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
 				
 				rs = stm.executeQuery();
-				idSA = -1;
+				long idSA = -1;
 				while(rs.next()){
 					// Possono esistere piu' sil che hanno un CN con subject e issuer diverso.
 					
@@ -7143,11 +7197,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
 
 				break;
-				
-			case TYPE_PRINCIPAL:
+			}	
+			case TYPE_PRINCIPAL:{
 
 				//cerco un servizio applicativo che contenga utente e password con autenticazione basi
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
@@ -7161,9 +7215,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString(), principal));
 
 				break;
-				
-			case TYPE_ID_LONG:
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			}
+			case TYPE_ID_LONG:{
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("id = ?");
@@ -7173,7 +7227,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idServizioApplicativo));
 				break;
-				
+			}
+			
 			}
 
 			rs = stm.executeQuery();

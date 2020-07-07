@@ -94,6 +94,7 @@ import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.slf4j.Logger;
 
@@ -194,7 +195,7 @@ public class ConfigurazionePdD  {
 			}
 		}
 	}
-	public void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws DriverConfigurazioneException{
+	public void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, CryptConfig config) throws DriverConfigurazioneException{
 		if(this.cache!=null)
 			throw new DriverConfigurazioneException("Cache gia' abilitata");
 		else{
@@ -215,7 +216,7 @@ public class ConfigurazionePdD  {
 				if(itemLifeSecond!=null){
 					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheConfigurazione(configurazioneCache, null, false);
+				initCacheConfigurazione(configurazioneCache, null, false, config);
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -288,7 +289,8 @@ public class ConfigurazionePdD  {
 	 * @param accessoConfigurazione Informazioni per accedere alla configurazione della PdD OpenSPCoop.
 	 */
 	public ConfigurazionePdD(AccessoConfigurazionePdD accessoConfigurazione,Logger alog,Logger alogConsole,Properties localProperties, 
-			String jndiNameDatasourcePdD, boolean forceDisableCache, boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache)throws DriverConfigurazioneException{
+			String jndiNameDatasourcePdD, boolean forceDisableCache, boolean useOp2UtilsDatasource, boolean bindJMX, 
+			boolean prefillCache, CryptConfig configApplicativi)throws DriverConfigurazioneException{
 
 		try{ 
 			// Inizializzo OpenSPCoopProperties
@@ -349,7 +351,8 @@ public class ConfigurazionePdD  {
 			}catch(DriverConfigurazioneNotFound notFound){}
 			if(accessoDatiConfigurazione!=null && accessoDatiConfigurazione.getCache()!=null){
 				if(forceDisableCache==false){
-					initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole, prefillCache);
+					initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole, 
+							prefillCache, configApplicativi);
 				}
 			}
 
@@ -362,7 +365,8 @@ public class ConfigurazionePdD  {
 		}
 	}
 
-	private void initCacheConfigurazione(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache)throws Exception{
+	private void initCacheConfigurazione(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, 
+			boolean prefillCache, CryptConfig configApplicativi)throws Exception{
 		this.cache = new Cache(CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
 
 		String msg = null;
@@ -520,7 +524,7 @@ public class ConfigurazionePdD  {
 		}
 		
 		if(prefillCache){
-			this.prefillCache(null,alogConsole);
+			this.prefillCache(null,alogConsole, configApplicativi);
 		}
 	}
 
@@ -544,7 +548,7 @@ public class ConfigurazionePdD  {
 
 
 	
-	public void prefillCache(Connection connectionPdD,Logger alogConsole){
+	public void prefillCache(Connection connectionPdD,Logger alogConsole, CryptConfig configApplicativi){
 		
 		String msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD) in corso ...";
 		this.log.info(msg);
@@ -706,7 +710,7 @@ public class ConfigurazionePdD  {
 										if(CredenzialeTipo.BASIC.equals(credenziale.getTipo())){
 											try{
 												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
-												this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword());
+												this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword(), configApplicativi);
 											}
 											catch(DriverConfigurazioneNotFound notFound){}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
@@ -969,7 +973,7 @@ public class ConfigurazionePdD  {
 							if(CredenzialeTipo.BASIC.equals(credenziale.getTipo())){
 								try{
 									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
-									this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword());
+									this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword(), configApplicativi);
 								}
 								catch(DriverConfigurazioneNotFound notFound){}
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
@@ -2531,7 +2535,7 @@ public class ConfigurazionePdD  {
 		key = key +"_"+aUser+"_"+aPassword;
 		return key;
 	}
-	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword, CryptConfig config)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
 		if(aUser == null)
@@ -2560,9 +2564,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiBasic",connectionPdD,CONFIGURAZIONE_PORTA,aUser,aPassword);
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiBasic",connectionPdD,CONFIGURAZIONE_PORTA,aUser,aPassword, config);
 		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiBasic",connectionPdD,CONFIGURAZIONE_PORTA,aUser,aPassword);
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiBasic",connectionPdD,CONFIGURAZIONE_PORTA,aUser,aPassword, config);
 		}
 
 		if(s!=null)

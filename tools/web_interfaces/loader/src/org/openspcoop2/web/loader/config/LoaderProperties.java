@@ -169,6 +169,10 @@ public class LoaderProperties {
 		return this.readBooleanProperty(false, "user.searchDatabaseRegistro");
 	}
 	
+	public String getConsoleUtenzePassword() throws UtilsException{
+		return this.readProperty(true, "user.password");
+	}
+	
 	public String getNomePddOperativaConsoleSinglePdDMode() throws UtilsException{
 		return this.readProperty(false, "nomePddOperativa_CtrlstatSinglePdD");
 	}
@@ -193,18 +197,7 @@ public class LoaderProperties {
 		}
 		return StatiAccordo.valueOf(tmp);
 	}
-	
-	
-	/* ----- Gestione Utenze ------- */
-	
-	public Properties getConsolePasswordCryptConfig() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("console.password.");
-	}
-	
-	public boolean isConsolePasswordCrypt_backwardCompatibility() throws UtilsException{
-		return this.readBooleanProperty(true, "console.password.crypt.backwardCompatibility");
-	}
-	
+
 	
 	
 	/* ----- Impostazioni grafiche ------- */

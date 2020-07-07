@@ -471,7 +471,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		try{
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
-			org.openspcoop2.protocol.registry.RegistroServiziReader.prefillCache();
+			org.openspcoop2.protocol.registry.RegistroServiziReader.prefillCache(this.openspcoopProperties.getCryptConfigAutenticazioneSoggetti());
 			return JMXUtils.MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
@@ -501,7 +501,8 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	public String abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond){
 		try{
-			org.openspcoop2.protocol.registry.RegistroServiziReader.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
+			org.openspcoop2.protocol.registry.RegistroServiziReader.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond,
+					this.openspcoopProperties.getCryptConfigAutenticazioneSoggetti());
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
 		}catch(Throwable e){

@@ -29,6 +29,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.crypt.CryptConfig;
 
 /**
  * IRegistryReader
@@ -44,8 +45,8 @@ public interface IConfigIntegrationReader {
 	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo);
 	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound,RegistryException;
 	
-	public boolean existsServizioApplicativoByCredenzialiBasic(String username, String password);
-	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password) throws RegistryNotFound,RegistryException;
+	public boolean existsServizioApplicativoByCredenzialiBasic(String username, String password, CryptConfig config);
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password, CryptConfig config) throws RegistryNotFound,RegistryException;
 	
 	public boolean existsServizioApplicativoByCredenzialiSsl(String subject, String aIssuer);
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String aIssuer) throws RegistryNotFound,RegistryException;

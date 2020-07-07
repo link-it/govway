@@ -524,7 +524,8 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false,
-						integrationManagerEnabled);
+						integrationManagerEnabled,
+						TipoOperazione.ADD, null,null);
 				
 				dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 						null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 

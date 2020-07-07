@@ -96,6 +96,7 @@ import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.slf4j.Logger;
 
@@ -177,7 +178,7 @@ public class RegistroServizi  {
 			}
 		}
 	}
-	public void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws DriverRegistroServiziException{
+	public void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, CryptConfig cryptConfigSoggetti) throws DriverRegistroServiziException{
 		if(this.cache!=null)
 			throw new DriverRegistroServiziException("Cache gia' abilitata");
 		else{
@@ -197,7 +198,7 @@ public class RegistroServizi  {
 				if(itemLifeSecond!=null){
 					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheRegistriServizi(configurazioneCache,null,false);
+				initCacheRegistriServizi(configurazioneCache,null,false, cryptConfigSoggetti);
 			}catch(Exception e){
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -273,7 +274,8 @@ public class RegistroServizi  {
 	 */
 	public RegistroServizi(AccessoRegistro accessoRegistro,Logger alog,
 			Logger alogConsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
-			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache)throws DriverRegistroServiziException{
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
+			boolean prefillCache, CryptConfig cryptConfigSoggetti)throws DriverRegistroServiziException{
 
 		try{ 
 			this.driverRegistroServizi = new java.util.Hashtable<String,IDriverRegistroServiziGet>();
@@ -422,7 +424,7 @@ public class RegistroServizi  {
 
 			// Inizializzazione della Cache
 			if(accessoRegistro.getCache()!=null){
-				initCacheRegistriServizi(accessoRegistro.getCache(),alogConsole,prefillCache);
+				initCacheRegistriServizi(accessoRegistro.getCache(),alogConsole,prefillCache, cryptConfigSoggetti);
 			}
 
 		}catch(Exception e){
@@ -473,7 +475,7 @@ public class RegistroServizi  {
 
 
 
-	private void initCacheRegistriServizi(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache) throws Exception{
+	private void initCacheRegistriServizi(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache, CryptConfig cryptConfigSoggetti) throws Exception{
 		this.cache = new Cache(CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
 
 		if( (configurazioneCache.getDimensione()!=null) ||
@@ -638,7 +640,7 @@ public class RegistroServizi  {
 		}
 		
 		if(prefillCache){
-			this.prefillCache(null,alogConsole);
+			this.prefillCache(null,alogConsole, cryptConfigSoggetti);
 		}
 	}
 
@@ -661,7 +663,8 @@ public class RegistroServizi  {
 		return this.driverRegistroServizi;
 	}
 
-	public void prefillCache(Connection connectionPdD,Logger alogConsole){
+	public void prefillCache(Connection connectionPdD,Logger alogConsole,
+			CryptConfig cryptConfigSoggetti){
 		
 		String msg = "[Prefill] Inizializzazione cache (RegistroServizi) in corso ...";
 		this.log.info(msg);
@@ -1063,7 +1066,7 @@ public class RegistroServizi  {
 							if(CredenzialeTipo.BASIC.equals(soggetto.getCredenziali().getTipo())){
 								try{
 									this.cache.remove(_getKey_getSoggettoByCredenzialiBasic(soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword()));
-									this.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword());
+									this.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword(), cryptConfigSoggetti);
 								}
 								catch(DriverRegistroServiziNotFound notFound){}
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -1501,6 +1504,15 @@ public class RegistroServizi  {
 						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
 						obj = method.invoke(driver,values[0],values[1]);
 					}
+				}else if(classArgoments.length==3){
+					Method method =  null;
+					if((driver instanceof DriverRegistroServiziDB) && (readContenutoAllegati!=null) ){
+						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2],boolean.class);
+						obj = method.invoke(driver,values[0],values[1],values[2],readContenutoAllegati.booleanValue());
+					}else{
+						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2]);
+						obj = method.invoke(driver,values[0],values[1],values[2]);
+					}
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
 				
@@ -1612,6 +1624,16 @@ public class RegistroServizi  {
 						}else{
 							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
 							obj = method.invoke(driver,values[0],values[1]);
+						}
+						find = true;
+					}else if(classArgoments.length==3){
+						Method method =  null;
+						if((driver instanceof DriverRegistroServiziDB) && (readContenutoAllegati!=null) ){
+							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2],boolean.class);
+							obj = method.invoke(driver,values[0],values[1],values[2],readContenutoAllegati.booleanValue());
+						}else{
+							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2]);
+							obj = method.invoke(driver,values[0],values[1],values[2]);
 						}
 						find = true;
 					}else
@@ -1990,7 +2012,7 @@ public class RegistroServizi  {
 	private String _getKey_getSoggettoByCredenzialiBasic(String user,String password) throws DriverRegistroServiziException{
 		return "getSoggettoByCredenzialiBasic_" + user +"_" + password;
 	}
-	public Soggetto getSoggettoByCredenzialiBasic(Connection connectionPdD,String nomeRegistro,String user,String password) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public Soggetto getSoggettoByCredenzialiBasic(Connection connectionPdD,String nomeRegistro,String user,String password, CryptConfig config) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
 		if(user==null)
@@ -2019,9 +2041,9 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		Soggetto soggetto = null;
 		if(this.cache!=null){
-			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiBasic",nomeRegistro,null,connectionPdD,user,password);
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiBasic",nomeRegistro,null,connectionPdD,user,password,config);
 		}else{
-			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiBasic",nomeRegistro,null,connectionPdD,user,password);
+			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiBasic",nomeRegistro,null,connectionPdD,user,password,config);
 		}
 
 		if(soggetto!=null)

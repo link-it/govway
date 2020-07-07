@@ -183,7 +183,7 @@ public final class UtenteChange extends Action {
 						//tutto ok modifico pwd
 						// Cripto la nuova password
 						if (!"".equals(newpw)) {
-							newpw = utentiHelper.getPasswordManager().crypt(newpw);
+							newpw = utentiCore.getUtenzePasswordManager().crypt(newpw);
 
 							// Modifico i dati della pw nel db
 							myS = utentiCore.getUser(userLogin);

@@ -187,7 +187,7 @@ public final class UtentiAdd extends Action {
 			}
 	
 			// Cripto la password
-			pwsu = utentiHelper.getPasswordManager().crypt(pwsu);
+			pwsu = utentiCore.getUtenzePasswordManager().crypt(pwsu);
 	
 			// Inserisco l'utente nel db
 			User newU = new User();

@@ -37,6 +37,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.crypt.CryptConfig;
 
 /**
  * Classe che implementa una autenticazione BASIC.
@@ -81,7 +82,10 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		//		 Nel caso optional, la transazione continuera' correttamente, ma verra' comunque segnalato le credenziali errate nei diagnostici.
 		//		 a differenza dei casi ssl/principal dove credenziali che non corrispondono ad alcun attore, non comportano una segnalazione nei diagnostici.
 		
-		String realm = OpenSPCoop2Properties.getInstance().getRealmAutenticazioneBasic();
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		
+		CryptConfig cryptConfigApplicativi = op2Properties.getCryptConfigAutenticazioneApplicativi();
+		String realm = op2Properties.getRealmAutenticazioneBasic();
 		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
@@ -98,7 +102,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		IDServizioApplicativo idServizioApplicativo = null;
 		try{
 			idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
-						getIdServizioApplicativoByCredenzialiBasic(user, password);
+						getIdServizioApplicativoByCredenzialiBasic(user, password, cryptConfigApplicativi);
 			if(idServizioApplicativo!=null && soggettoFruitore==null) {
 				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();
 			}

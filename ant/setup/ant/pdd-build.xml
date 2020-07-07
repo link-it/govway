@@ -181,6 +181,18 @@
 			<param name="value" value="auto-bytewise"/>
 		</antcall>
 
+		<!-- Autenticazione Applicativi/Soggetti -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.core.autenticazione.applicativi.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.core.autenticazione.soggetti.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
+
 		<!-- HTTPS -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
@@ -62,6 +63,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -190,6 +192,11 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			AuthenticationHttpBasic c = (AuthenticationHttpBasic) credenziali;
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME, c.getUsername());
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD, c.getPassword());
+			if(c.getPassword()!=null && StringUtils.isNotEmpty(c.getPassword())) {
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD, 
+						Costanti.CHECK_BOX_CONFIG_ENABLE);
+			}
+			
 			break;
 		}
 		case HTTPS: {
@@ -214,6 +221,9 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO, certificate.getTipoCertificato().toString());
 					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO, certificate.getAlias());
 					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD, certificate.getPassword());
+					
+					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI, 
+							certificate.isStrictVerification()? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_CONFIG_DISABLE);
 					
 				}
 				else {
@@ -262,7 +272,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	 * @return
 	 * @throws Exception
 	 */
-	public static OneOfBaseCredenzialiCredenziali translateCredenziali(OneOfBaseCredenzialiCredenziali creds) {
+	public static OneOfBaseCredenzialiCredenziali translateCredenziali(OneOfBaseCredenzialiCredenziali creds, boolean create) {
 		
 		if(creds==null || creds.getModalitaAccesso()==null) {
 			return null;
@@ -274,6 +284,12 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		switch (tipoAuth) {
 		case HTTP_BASIC: {
 			ret = (AuthenticationHttpBasic) creds;
+			if(create) {
+				AuthenticationHttpBasic basic = (AuthenticationHttpBasic) ret;
+				if(basic.getPassword()==null || StringUtils.isEmpty(basic.getPassword())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("In una operazione 'create' con tipo di autenticazione '"+tipoAuth+"' è obbligatorio indicare la password");
+				}
+			}
 			break;
 		}
 		case HTTPS: {
@@ -393,7 +409,12 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		if ("basic".equals(tipo)) {
 			AuthenticationHttpBasic auth = new AuthenticationHttpBasic();
 			auth.setUsername(BeanUtils.getProperty(govwayCreds, "user"));
-			auth.setPassword(BeanUtils.getProperty(govwayCreds, "password"));
+			
+			Method mCertificateStrictVerification = credClass.getMethod("isCertificateStrictVerification");
+			boolean cifrata = (Boolean) mCertificateStrictVerification.invoke(govwayCreds);
+			if(!cifrata) {
+				auth.setPassword(BeanUtils.getProperty(govwayCreds, "password"));
+			}
 			auth.setModalitaAccesso(ModalitaAccessoEnum.HTTP_BASIC);
 			ret = auth;
 		}

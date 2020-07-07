@@ -1,3 +1,12 @@
+2020-07-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1019
+	Gli applicativi e i soggetti con credenziale 'basic' vengono adesso registrati con la password cifrata.
+	Il tipo di cifratura è configurabile (default SHA-512-based Unix crypt '$6$').
+	La verifica della password viene attuata in modalità 'backward compatibility', in modo da garantire l'identificazione degli applicativi/soggetti già esistenti.
+	L'opzione di retrocompatibilità può essere disattivata una volta migrate tutte le password al nuovo formato di cifratura.
+
 2020-07-02  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

@@ -160,6 +160,9 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
@@ -9194,10 +9197,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 	
 	@Override
 	public Soggetto getSoggettoByCredenzialiBasic(
-			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+			String user,String password, CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
 				null, null, null, false, 
-				null);
+				null,
+				config);
 	}
 	
 	@Override
@@ -9205,6 +9209,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			String subject, String issuer) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				subject, issuer, null, false,
+				null,
 				null);
 	}
 	
@@ -9212,6 +9217,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	public Soggetto getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				null, null, certificate, strictVerifier,
+				null,
 				null);
 	}
 	
@@ -9220,13 +9226,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
 				null, null, null, false,
-				principal);
+				principal,
+				null);
 	}
 	
 	private Soggetto _getSoggettoAutenticato(
 			CredenzialeTipo tipoCredenziale, String user,String password, 
 			String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
-			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+			String principal,
+			CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		
 		// conrollo consistenza
 		if (tipoCredenziale == null)
@@ -9276,8 +9284,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addWhereCondition("tipoauth = ?");
 			switch (tipoCredenziale) {
 			case BASIC:
+				sqlQueryObject.addSelectField("password");
+				
 				sqlQueryObject.addWhereCondition("utente = ?");
-				sqlQueryObject.addWhereCondition("password = ?");
+				//sqlQueryObject.addWhereCondition("password = ?");
 				break;
 			case SSL:
 				if(aSubject!=null && !"".equals(aSubject)) {
@@ -9341,8 +9351,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			switch (tipoCredenziale) {
 			case BASIC:
 				stm.setString(index++, user);
-				stm.setString(index++, password);
-				this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), user,password));
+				//stm.setString(index++, password);
+				this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), user));
 				break;
 			case SSL:
 				if(aSubject!=null && !"".equals(aSubject)) {
@@ -9372,7 +9382,38 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			rs = stm.executeQuery();
 
-			if(CredenzialeTipo.SSL.equals(tipoCredenziale)) {
+			if(CredenzialeTipo.BASIC.equals(tipoCredenziale)) {
+				
+				boolean testInChiaro = false;
+				ICrypt crypt = null;
+				if(config==null || config.isBackwardCompatibility()) {
+					testInChiaro = true;
+				}
+				if(config!=null) {
+					crypt = CryptFactory.getCrypt(this.log, config);
+				}
+				
+				while(rs.next()){
+					String passwordDB =  rs.getString("password");
+					
+					boolean found = false;
+					if(testInChiaro) {
+						found = password.equals(passwordDB);
+					}
+					if(!found && crypt!=null) {
+						found = crypt.check(password, passwordDB);
+					}
+					
+					if( found ) {
+						idSoggetto = new IDSoggetto();
+						idSoggetto.setTipo(rs.getString("tipo_soggetto"));
+						idSoggetto.setNome(rs.getString("nome_soggetto"));
+						break;
+					}
+				}
+				
+			}
+			else if(CredenzialeTipo.SSL.equals(tipoCredenziale)) {
 				
 				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
 				
@@ -9723,6 +9764,25 @@ IDriverWS ,IMonitoraggioRisorsa{
 			else
 				con = this.globalConnection;
 
+			boolean testInChiaro = false;
+			ICrypt crypt = null;
+			if(filtroRicerca!=null && filtroRicerca.getCredenzialiSoggetto()!=null && filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
+				CredenzialeTipo cTipo = filtroRicerca.getCredenzialiSoggetto().getTipo();
+				if(CredenzialeTipo.BASIC.equals(cTipo)){
+					CryptConfig config = filtroRicerca.getCryptConfig();
+					if(config==null || config.isBackwardCompatibility()) {
+						testInChiaro = true;
+					}
+					if(config!=null) {
+						try {
+							crypt = CryptFactory.getCrypt(this.log, config);
+						}catch(Exception e) {
+							throw new DriverRegistroServiziException(e.getMessage(),e);
+						}
+					}
+				}
+			}
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 			if(filtroRicerca!=null){
@@ -9764,7 +9824,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".utente = ?");
 					}
 					if(filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
-						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".password = ?");
+						//sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".password = ?");
+						sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".password");
 					}
 					if(filtroRicerca.getCredenzialiSoggetto().getSubject()!=null){
 						
@@ -9864,11 +9925,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 						stm.setString(indexStmt, filtroRicerca.getCredenzialiSoggetto().getUser());
 						indexStmt++;
 					}
-					if(filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
-						this.log.debug("credenziali.password stmt.setString("+filtroRicerca.getCredenzialiSoggetto().getPassword()+")");
-						stm.setString(indexStmt, filtroRicerca.getCredenzialiSoggetto().getPassword());
-						indexStmt++;
-					}
+//					if(filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
+//						this.log.debug("credenziali.password stmt.setString("+filtroRicerca.getCredenzialiSoggetto().getPassword()+")");
+//						stm.setString(indexStmt, filtroRicerca.getCredenzialiSoggetto().getPassword());
+//						indexStmt++;
+//					}
 					if(filtroRicerca.getCredenzialiSoggetto().getSubject()!=null){
 						// nop;
 					}
@@ -9897,6 +9958,23 @@ IDriverWS ,IMonitoraggioRisorsa{
 			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
 			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
 			while (rs.next()) {
+				
+				if(filtroRicerca!=null &&
+						filtroRicerca.getCredenzialiSoggetto()!=null && 
+						filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
+					String passwordDB =  rs.getString("password");
+					
+					boolean found = false;
+					if(testInChiaro) {
+						found = filtroRicerca.getCredenzialiSoggetto().getPassword().equals(passwordDB);
+					}
+					if(!found && crypt!=null) {
+						found = crypt.check(filtroRicerca.getCredenzialiSoggetto().getPassword(), passwordDB);
+					}
+					if( !found ) {
+						continue;
+					}
+				}
 				
 				if(filtroRicerca!=null &&
 						filtroRicerca.getCredenzialiSoggetto()!=null && 

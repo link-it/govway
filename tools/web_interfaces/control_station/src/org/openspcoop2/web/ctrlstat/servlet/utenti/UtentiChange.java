@@ -417,7 +417,7 @@ public final class UtentiChange extends Action {
 				// Cripto la password
 				boolean cpwd = ServletUtils.isCheckBoxEnabled(changepwd);
 				if(cpwd && !"".equals(pwsu)){
-					pwsu = utentiHelper.getPasswordManager().crypt(pwsu);
+					pwsu = utentiCore.getUtenzePasswordManager().crypt(pwsu);
 				}
 
 				// Modifico i dati dell'utente

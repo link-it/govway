@@ -807,7 +807,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			
 
-			if(this.credenzialiCheckData(tipoOp)==false){
+			boolean oldPasswordCifrata = false;
+			if(soggettoOld!=null && soggettoOld.getCredenziali()!=null && soggettoOld.getCredenziali().isCertificateStrictVerification()) {
+				oldPasswordCifrata = true;
+			}
+			boolean encryptEnabled = this.saCore.isSoggettiPasswordEncryptEnabled();
+			if(this.credenzialiCheckData(tipoOp,oldPasswordCifrata, encryptEnabled, this.soggettiCore.getSoggettiPasswordVerifier())==false){
 				return false;
 			}
 

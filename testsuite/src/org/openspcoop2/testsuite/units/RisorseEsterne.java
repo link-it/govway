@@ -206,7 +206,10 @@ public class RisorseEsterne extends GestioneViaJmx {
 			Reporter.log("Controllo risorse jmx: connessioni database ...");
 			Object response = jmxconn.invoke(jmxname, MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER, null, null);
 			Reporter.log("Controllo risorse jmx: connessioni database  ["+response+"]");
-			Assert.assertTrue("Nessuna connessione allocata".equals(response));
+			boolean statoOk1 = "Nessuna connessione allocata".equals(response);
+			boolean statoOk2 = (response instanceof String) && ((String)response).contains("1 risorse allocate") && ((String)response).contains("GovWay.Timer");
+			Reporter.log("Verifiche connessioni database stato1["+statoOk1+"] stato2["+statoOk2+"]");
+			Assert.assertTrue(statoOk1 || statoOk2);
 			
 			Reporter.log("Controllo risorse jmx: connessioni jms ...");
 			response = jmxconn.invoke(jmxname, MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER, null, null);

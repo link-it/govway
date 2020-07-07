@@ -231,6 +231,39 @@ public class TestOpenApi4j {
 		httpEntityResponse.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
 		apiValidator.validate(httpEntityResponse);	
 		System.out.println("Test #6 completato\n\n");
+		
+		
+		
+		System.out.println("Test #7 (Richiesta POST con parametro /documenti/mixed/send e elemento null)");
+		String testUrl7 = baseUri+"/documenti/mixed/send";
+		TextHttpRequestEntity httpEntity7 = new TextHttpRequestEntity();
+		httpEntity7.setMethod(HttpRequestMethod.POST);
+		httpEntity7.setUrl(testUrl7);	
+		Map<String, String> parametersTrasporto7 = new HashMap<>();
+		parametersTrasporto7.put("api_key", "aaa");
+		parametersTrasporto7.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+		httpEntity7.setParametersTrasporto(parametersTrasporto7);
+		httpEntity7.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+		String json7 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\","+
+				"\"string_nullable\":null,"+
+				"\"number_nullable\":null,"+
+				"\"enum_nullable\":null,"+
+				"\"allegati\":"+
+				"["+
+					"{\"nome\":\"HelloWorld.pdf\",\"descrizione\":\"File di esempio 'HelloWorld.pdf'\",\"tipoMIME\":\"application/pdf\","+
+					  "\"dataDocumento\":\"2020-04-24T13:06:18.823+02:00\","+
+					  "\"documento\":{\"tipoDocumento\":\"riferimento-uri\","+
+					  				  "\"uri\":\"https://api.agenziaentrate.it/retrieve-document/0.1//documenti/f6892e27-5cbd-4789-b875-bdcb18f4557f\","+
+					  				  "\"impronta\":\"KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA=\"}"+
+					"},"+
+					"{\"nome\":\"PROVA.txt\",\"descrizione\":\"File di esempio 'PROVA.txt'\",\"tipoMIME\":\"text/plain\","+
+					  "\"dataDocumento\":\"2020-04-24T13:06:18.851+02:00\","+
+					  "\"documento\":{\"tipoDocumento\":\"inline\",\"contenuto\":\"SGVsbG8gV29ybGQhCg==\"}"+
+					"}"+
+				"]}";
+		httpEntity7.setContent(json7);
+		apiValidator.validate(httpEntity7);	
+		System.out.println("Test #7 completato\n\n");
 	}
 
 }

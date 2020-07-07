@@ -204,7 +204,6 @@ components:
       required:
         - modalita_accesso
         - username
-        - password
       properties:
         modalita_accesso:
           $ref: '#/components/schemas/ModalitaAccessoEnum'
@@ -310,7 +309,23 @@ components:
               'https': '#/components/schemas/AuthenticationHttps'
               'principal': '#/components/schemas/AuthenticationPrincipal'  
 
-    # Base: Connettore            
+    # Base: Connettore 
+    ConnettoreConfigurazioneHttpBasic:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          maxLength: 255
+          example: 'user'
+        password:
+          type: string
+          format: password
+          maxLength: 255
+          example: 'pwd'
+      additionalProperties: false           
     ConnettoreConfigurazioneHttps:
       type: object
       required: 
@@ -445,7 +460,7 @@ components:
           format: uri
           example: 'http://ente.it/servizio'
         autenticazione_http:
-          $ref: '#/components/schemas/AuthenticationHttpBasic'
+          $ref: '#/components/schemas/ConnettoreConfigurazioneHttpBasic'
         autenticazione_https:
           $ref: '#/components/schemas/ConnettoreConfigurazioneHttps'
         proxy:

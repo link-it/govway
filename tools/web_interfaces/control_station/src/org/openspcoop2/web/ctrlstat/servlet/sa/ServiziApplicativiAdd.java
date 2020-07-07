@@ -223,7 +223,7 @@ public final class ServiziApplicativiAdd extends Action {
 			} else {
 				tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.valueOf(tipoCredenzialiSSLTipoArchivioS);
 			}
-			
+						
 			BinaryParameter tipoCredenzialiSSLFileCertificato = saHelper.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 			String tipoCredenzialiSSLFileCertificatoPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 			List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
@@ -909,6 +909,8 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 
 			// Inserisco il servizioApplicativo nel db
+			String secret_pleaseCopy = null;
+			ServizioApplicativo sa = null;
 			try {
 				// con.setAutoCommit(false);
 				if(isApplicativiServerEnabled && tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
@@ -950,7 +952,7 @@ public final class ServiziApplicativiAdd extends Action {
 				credenzialiInvocazione.setUser("");
 				credenzialiInvocazione.setPassword("");
 
-				ServizioApplicativo sa = new ServizioApplicativo();
+				sa = new ServizioApplicativo();
 				sa.setNome(nome);
 
 				if(ruoloFruitore==null){
@@ -1084,6 +1086,12 @@ public final class ServiziApplicativiAdd extends Action {
 				}
 				credenziali.setPassword(passwordSA);
 				
+				if(saCore.isApplicativiPasswordEncryptEnabled()) {
+					if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
+						secret_pleaseCopy = passwordSA;
+					}
+				}
+				
 				if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA)) {
 					if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 						Certificate cSelezionato = null;
@@ -1134,6 +1142,11 @@ public final class ServiziApplicativiAdd extends Action {
 						ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.ADD());
 			}
 
+			// Messaggio 'Please Copy'
+			if(secret_pleaseCopy!=null) {
+				saHelper.setSecretPleaseCopy(secret_pleaseCopy, tipoauthSA, false, sa.getNome());
+			}
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

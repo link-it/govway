@@ -198,8 +198,6 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.DynamicStringReplace;
-import org.openspcoop2.utils.crypt.CryptFactory;
-import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
@@ -325,11 +323,6 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 	}
 	
-	protected ICrypt passwordManager;
-	public ICrypt getPasswordManager() {
-		return this.passwordManager;
-	}
-	protected ICrypt passwordManager_backwardCompatibility;
 	protected ControlStationCore core = null;
 	public ControlStationCore getCore() {
 		return this.core;
@@ -471,22 +464,6 @@ public class ConsoleHelper implements IConsoleHelper {
 		this.session = session;
 		this.log = ControlStationLogger.getPddConsoleCoreLogger();
 		try {
-			
-			Properties passwordManagerConfig = null;
-			boolean passwordManager_backwardCompatibility = false;
-			if(ControlStationCore.isAPIMode()) {
-				passwordManagerConfig = ControlStationCore.getPasswordManagerConfig_APIMode();
-				passwordManager_backwardCompatibility = ControlStationCore.isPasswordManager_backwardCompatibility_APIMode();
-			}
-			else {
-				ConsoleProperties consoleProperties = ConsoleProperties.getInstance();
-				passwordManagerConfig = consoleProperties.getConsolePasswordCryptConfig();
-				passwordManager_backwardCompatibility = consoleProperties.isConsolePasswordCrypt_backwardCompatibility();
-			}
-			this.passwordManager = CryptFactory.getCrypt(this.log, passwordManagerConfig);
-			if(passwordManager_backwardCompatibility) {
-				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(this.log);
-			}
 			
 			if (this.request.getCharacterEncoding() == null) { 
 		        this.request.setCharacterEncoding(Charset.UTF_8.getValue());
@@ -15067,5 +15044,30 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setVisualizzaLinkApriNuovaFinestra(true);
 			
 		return de;
+	}
+	
+	public void setSecretPleaseCopy(String secret_pleaseCopy, String tipoAuth, boolean soggetti, String nome) {
+		String tipoCredenziale = "chiave";
+		String nomeP = nome!=null ? " "+nome : "";
+		String tipoOggetto = null;
+		if(soggetti) {
+			tipoOggetto = "al soggetto"+nomeP;
+		}
+		else {
+			if(nome!=null) {
+				tipoOggetto = "all'applicativo"+nomeP;
+			}
+			else {
+				tipoOggetto = "all'erogazione";
+			}
+		}
+		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
+			tipoCredenziale= "password";
+		}
+		
+		String warn = "<b>!! Attenzione !!</b>";
+		String msg1 = StringEscapeUtils.escapeHtml("La "+tipoCredenziale+" associata "+tipoOggetto+" è la seguente: "+secret_pleaseCopy);
+		String msg2 = StringEscapeUtils.escapeHtml("Si prega di copiarla e custodirla attentamente.");
+		this.pd.setMessage(warn+"<br/>"+msg1+"<br/>"+msg2, org.openspcoop2.web.lib.mvc.MessageType.INFO);
 	}
 }

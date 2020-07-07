@@ -82,6 +82,9 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.crypt.CryptFactory;
+import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -1422,7 +1425,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		if(aUser==null){
 			throw new DriverConfigurazioneException("Username non definito");
@@ -1431,6 +1434,19 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			throw new DriverConfigurazioneException("Password non definita");
 		}
 		
+		boolean testInChiaro = false;
+		ICrypt crypt = null;
+		if(config==null || config.isBackwardCompatibility()) {
+			testInChiaro = true;
+		}
+		if(config!=null) {
+			try {
+				crypt = CryptFactory.getCrypt(this.log, config);
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}
+				
 		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
 			Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
 			for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
@@ -1439,11 +1455,23 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 					for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
 						if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
 								CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
-							if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) && 
-									(aPassword.equals(sa.getInvocazionePorta().getCredenziali(z).getPassword()))){
-								sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
-								sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
-								return sa;
+							if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) ){
+								
+								String passwordSaved = sa.getInvocazionePorta().getCredenziali(z).getPassword();
+								
+								boolean found = false;
+								if(testInChiaro) {
+									found = aPassword.equals(passwordSaved);
+								}
+								if(!found && crypt!=null) {
+									found = crypt.check(aPassword, passwordSaved);
+								}
+								
+								if( found ) {
+									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
+									return sa;
+								}
 							}
 						}
 					}

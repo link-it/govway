@@ -146,6 +146,7 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.slf4j.Logger;
 
 
@@ -205,11 +206,11 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Reset della cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
-	public static void prefillCache() throws DriverConfigurazioneException{
+	public static void prefillCache(CryptConfig configApplicativi) throws DriverConfigurazioneException{
 		try{
 			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
 			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
-				configurazionePdDReader.configurazionePdD.prefillCache(null, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+				configurazionePdDReader.configurazionePdD.prefillCache(null, OpenSPCoop2Logger.getLoggerOpenSPCoopCore(), configApplicativi);
 				configurazionePdDReader.configurazionePdD.prefillCacheConInformazioniRegistro(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			}
 		}catch(Exception e){
@@ -239,11 +240,11 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Abilitazione cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
-	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws DriverConfigurazioneException{
+	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, CryptConfig configApplicativi) throws DriverConfigurazioneException{
 		try{
 			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
 			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
-				configurazionePdDReader.configurazionePdD.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
+				configurazionePdDReader.configurazionePdD.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond, configApplicativi);
 			}
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Abilitazione cache della Configurazione non riuscita: "+e.getMessage(),e);
@@ -317,11 +318,13 @@ public class ConfigurazionePdDReader {
 	 */
 	public static boolean initialize(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache,
-			boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache){
+			boolean useOp2UtilsDatasource, boolean bindJMX, 
+			boolean prefillCache, CryptConfig configApplicativi){
 
 		try {
 			ConfigurazionePdDReader.configurazionePdDReader = new ConfigurazionePdDReader(accessoConfigurazione,aLog,aLogconsole,localProperties,jndiNameDatasourcePdD, 
-					forceDisableCache, useOp2UtilsDatasource, bindJMX, prefillCache);	
+					forceDisableCache, useOp2UtilsDatasource, bindJMX, 
+					prefillCache, configApplicativi);	
 			return ConfigurazionePdDReader.initialize;
 		}
 		catch(Exception e) {
@@ -376,14 +379,16 @@ public class ConfigurazionePdDReader {
 	 */
 	public ConfigurazionePdDReader(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache,
-			boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache)throws DriverConfigurazioneException{
+			boolean useOp2UtilsDatasource, boolean bindJMX, 
+			boolean prefillCache, CryptConfig configApplicativi)throws DriverConfigurazioneException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
 			else
 				this.log = LoggerWrapperFactory.getLogger(ConfigurazionePdDReader.class);
 			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache,
-					useOp2UtilsDatasource, bindJMX, prefillCache);
+					useOp2UtilsDatasource, bindJMX, 
+					prefillCache, configApplicativi);
 
 			// OpenSPCoop Properties
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
@@ -2654,10 +2659,10 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
 	}
 
-	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword) throws DriverConfigurazioneException{
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword);
+			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword, config);
 		}catch(DriverConfigurazioneNotFound e){
 			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
 		}

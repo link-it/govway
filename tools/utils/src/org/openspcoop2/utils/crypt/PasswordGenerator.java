@@ -29,6 +29,8 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 
 /**
  * PasswordGenerator
@@ -41,6 +43,15 @@ import org.openspcoop2.utils.UtilsException;
 public class PasswordGenerator extends PasswordVerifier {
 	
 	public static PasswordGenerator DEFAULT;
+	static {
+		DEFAULT = new PasswordGenerator();
+		DEFAULT.setIncludeLowerCaseLetter(true);
+		DEFAULT.setIncludeUpperCaseLetter(true);
+		DEFAULT.setIncludeNumber(true);
+		DEFAULT.setIncludeNotAlphanumericSymbol(true);
+	}
+	
+	public static PasswordGenerator BASE64;
 	static {
 		DEFAULT = new PasswordGenerator();
 		DEFAULT.setIncludeLowerCaseLetter(true);
@@ -95,23 +106,59 @@ public class PasswordGenerator extends PasswordVerifier {
 		this.dictionaryAlpha = dictionaryAlpha;
 	}
 	
+	private int defaultLength = 10;
+	public int getDefaultLength() {
+		return this.defaultLength;
+	}
+	public void setDefaultLength(int defaultLength) {
+		this.defaultLength = defaultLength;
+	}
+	
+	private boolean base64 = false;
+	private boolean hex = false;
+	public boolean isBase64() {
+		return this.base64;
+	}
+	public void setBase64(boolean base64) {
+		this.base64 = base64;
+	}
+	public boolean isHex() {
+		return this.hex;
+	}
+	public void setHex(boolean hex) {
+		this.hex = hex;
+	}
+	
+	private String prefix = null;
+	private String suffix = null;
+	public String getPrefix() {
+		return this.prefix;
+	}
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+	public String getSuffix() {
+		return this.suffix;
+	}
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
 	
 	public String generate() throws UtilsException{
-		int defaultLength = 10;
-		
+				
 		if(this.minLenght>0){
-			if(defaultLength<this.minLenght) {
-				defaultLength = this.minLenght;
+			if(this.defaultLength<this.minLenght) {
+				this.defaultLength = this.minLenght;
 			}
 		}
 		
 		if(this.maxLenght>0){
-			if(defaultLength>this.maxLenght){
-				defaultLength = this.maxLenght;
+			if(this.defaultLength>this.maxLenght){
+				this.defaultLength = this.maxLenght;
 			}
 		}
 		
-		return this.generate(defaultLength);
+		return this.generate(this.defaultLength);
 	}
 	public String generate(int length) throws UtilsException{
 		return this.generate("login",length);
@@ -133,7 +180,23 @@ public class PasswordGenerator extends PasswordVerifier {
 		for (int i = 0; i < tentativi; i++) {
 			String password = _generate(length);
 			if(this.validate(username, password)) {
-				return password;
+				
+				if(this.prefix!=null) {
+					password = this.prefix + password;
+				}
+				if(this.suffix!=null) {
+					password = password + this.suffix;
+				}
+				
+				if(this.base64) {
+					return Base64Utilities.encodeAsString(password.getBytes());
+				}
+				else if(this.hex) {
+					return HexBinaryUtilities.encodeAsString(password.getBytes());
+				}
+				else {
+					return password;
+				}
 			}
 		}
 		
@@ -178,6 +241,9 @@ public class PasswordGenerator extends PasswordVerifier {
 					}
 				}
 			}
+			if(i >= length) {
+				break;
+			}
 			if(this.includeUpperCaseLetter){
 				if(tmpDictionaryCharsUpperCase.length()>0) {
 					int randomOffset = random.nextInt(tmpDictionaryCharsUpperCase.length());
@@ -189,6 +255,9 @@ public class PasswordGenerator extends PasswordVerifier {
 						tmpDictionaryCharsUpperCase = tmpDictionaryCharsUpperCase.replace(s, "");
 					}
 				}
+			}
+			if(i >= length) {
+				break;
 			}
 			if(this.includeNumber){
 				if(tmpDictionaryNumbers.length()>0) {

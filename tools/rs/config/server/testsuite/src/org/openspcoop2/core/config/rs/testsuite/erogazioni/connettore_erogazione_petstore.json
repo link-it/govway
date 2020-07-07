@@ -2,8 +2,7 @@
     "endpoint": "https://ginovadifretta.it/petstore",
 
     "autenticazione_http": {
-        "modalita_accesso": "http-basic",
-   	"username": "mario",
+        "username": "mario",
         "password": "perbene"
     },
 

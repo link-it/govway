@@ -22,6 +22,24 @@
 			<param name="value" value="${work_dir}"/>
 		</antcall>
 		
+		<!-- Autenticazione Utenze/Applicativi/Soggetti -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="utenze.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="applicativi.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="soggetti.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
+
+
 		<!-- 
 		  PROTOCOL DEFAULT
 		  se abilitati verrano scelto nell'ordine:

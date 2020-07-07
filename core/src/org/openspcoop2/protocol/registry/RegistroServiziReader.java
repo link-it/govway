@@ -92,6 +92,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -130,11 +131,11 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Reset della cache di accesso ai registri dei servizi non riuscita: "+e.getMessage(),e);
 		}
 	}
-	public static void prefillCache() throws DriverRegistroServiziException{
+	public static void prefillCache(CryptConfig cryptConfigSoggetti) throws DriverRegistroServiziException{
 		try{
 			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
 			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
-				registroServiziReader.registroServizi.prefillCache(null, registroServiziReader.log);
+				registroServiziReader.registroServizi.prefillCache(null, registroServiziReader.log, cryptConfigSoggetti);
 			}
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("Prefill della cache di accesso ai registri dei servizi non riuscita: "+e.getMessage(),e);
@@ -163,11 +164,11 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Abilitazione cache di accesso ai registri dei servizi non riuscita: "+e.getMessage(),e);
 		}
 	}
-	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws DriverRegistroServiziException{
+	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, CryptConfig cryptConfigSoggetti) throws DriverRegistroServiziException{
 		try{
 			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
 			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
-				registroServiziReader.registroServizi.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
+				registroServiziReader.registroServizi.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond, cryptConfigSoggetti);
 			}
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("Abilitazione cache di accesso ai registri dei servizi non riuscita: "+e.getMessage(),e);
@@ -244,12 +245,14 @@ public class RegistroServiziReader {
 	 */
 	public static boolean initialize(AccessoRegistro accessoRegistro,Logger aLog,Logger aLogconsole,
 			boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
-			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache){
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
+			boolean prefillCache, CryptConfig cryptConfigSoggetti){
 
 		try {
 			RegistroServiziReader.registroServiziReader = 
 				new RegistroServiziReader(accessoRegistro,aLog,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
-						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX, prefillCache);	
+						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX, 
+						prefillCache, cryptConfigSoggetti);	
 			return RegistroServiziReader.initialize;
 		}
 		catch(Exception e) {
@@ -298,14 +301,16 @@ public class RegistroServiziReader {
 	 */
 	public RegistroServiziReader(AccessoRegistro accessoRegistro,Logger aLog,
 			Logger aLogconsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
-			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache)throws DriverRegistroServiziException{
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
+			boolean prefillCache, CryptConfig cryptConfigSoggetti)throws DriverRegistroServiziException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
 			else
 				this.log = LoggerWrapperFactory.getLogger(RegistroServiziReader.class);
 			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
-					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX, prefillCache);
+					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX, 
+					prefillCache, cryptConfigSoggetti);
 			RegistroServiziReader.initialize = true;
 		}catch(Exception e){
 			RegistroServiziReader.initialize = false;
@@ -2606,8 +2611,8 @@ public class RegistroServiziReader {
 	
 	/* ********  A U T E N T I C A Z I O N E   S O G G E T T I  ******** */ 
 	
-	public Soggetto getSoggettoByCredenzialiBasic(Connection connectionPdD,String username, String password, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password);
+	public Soggetto getSoggettoByCredenzialiBasic(Connection connectionPdD,String username, String password, CryptConfig cryptConfig, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password, cryptConfig);
 	}
 	
 	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
@@ -2622,8 +2627,8 @@ public class RegistroServiziReader {
 		return this.registroServizi.getSoggettoByCredenzialiPrincipal(connectionPdD, nomeRegistro, principal);
 	}
 	
-	public IDSoggetto getIdSoggettoByCredenzialiBasic(Connection connectionPdD,String username, String password, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return convertToId(this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password));
+	public IDSoggetto getIdSoggettoByCredenzialiBasic(Connection connectionPdD,String username, String password, CryptConfig cryptConfig, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return convertToId(this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password, cryptConfig));
 	}
 	
 	public IDSoggetto getIdSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

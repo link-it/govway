@@ -30,6 +30,7 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
@@ -42,6 +43,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
@@ -1747,6 +1749,10 @@ public class AccordiServizioParteSpecificaUtilities {
 					}
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						sa.getInvocazioneServizio().setConnettore(connettore.mappingIntoConnettoreConfigurazione());
+						
+						// elimino eventuale configurazione I.M. presente sulla configurazione clonata
+						sa.getInvocazioneServizio().setGetMessage(StatoFunzionalita.DISABILITATO);
+						sa.setInvocazionePorta(new InvocazionePorta());
 					}
 					else {
 						sa.getInvocazioneServizio().setConnettore(connettorePDClonato);

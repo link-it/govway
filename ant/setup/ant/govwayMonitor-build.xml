@@ -26,6 +26,13 @@
 			<param name="token" value="forceIndex.repository"/>
 			<param name="value" value="${work_dir}/monitor.forceIndex.properties"/>
 		</antcall>
+
+		<!-- Autenticazione Utenze -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="utenti.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
 		
 		<!-- ESITI LIVE DISABLED -->
 		<antcall target="set_property">

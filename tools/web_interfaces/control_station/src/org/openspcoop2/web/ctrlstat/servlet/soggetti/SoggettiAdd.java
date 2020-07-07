@@ -714,6 +714,8 @@ public final class SoggettiAdd extends Action {
 				this.portadom=soggettiCore.getIdentificativoPortaDefault(this.protocollo, idSoggetto);
 			}
 
+			String secret_pleaseCopy = null;
+			
 			// utilizzo il soggetto del registro che e' un
 			// sovrainsieme di quello del config
 			Soggetto soggettoRegistro = null;
@@ -761,6 +763,12 @@ public final class SoggettiAdd extends Action {
 						}
 						credenziali.setPassword(this.passwordSoggetto);
 
+						if(soggettiCore.isSoggettiPasswordEncryptEnabled()) {
+							if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(this.tipoauthSoggetto)) {
+								secret_pleaseCopy = this.passwordSoggetto;
+							}
+						}
+						
 						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(this.tipoauthSoggetto)) {
 							if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 								Certificate cSelezionato = null;
@@ -848,6 +856,11 @@ public final class SoggettiAdd extends Action {
 			soggettiHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 
+			// Messaggio 'Please Copy'
+			if(secret_pleaseCopy!=null) {
+				soggettiHelper.setSecretPleaseCopy(secret_pleaseCopy, this.tipoauthSoggetto, true, sog.getNome());
+			}
+									
 			// recupero la lista dei soggetti
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

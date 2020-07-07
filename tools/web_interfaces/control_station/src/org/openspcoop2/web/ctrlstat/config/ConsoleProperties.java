@@ -374,21 +374,59 @@ public class ConsoleProperties {
 	
 	
 	
-	/* ----- Gestione Utenze ------- */
+	/* ----- Gestione Password ------- */
 	
-	public Properties getConsolePasswordCryptConfig() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("console.password.");
+	// Utenze Console
+	
+	public String getConsoleUtenzePassword() throws UtilsException{
+		return this.readProperty(true, "console.utenze.password");
 	}
 	
-	public boolean isConsolePasswordCrypt_backwardCompatibility() throws UtilsException{
-		return this.readBooleanProperty(true, "console.password.crypt.backwardCompatibility");
+	public int getConsoleUtenzeLunghezzaPasswordGenerate() throws UtilsException{
+		String lunghezzaS = this.readProperty(true, "console.utenze.passwordGenerated.length");
+		return Integer.parseInt(lunghezzaS); 
 	}
 	
-	public String getConsolePasswordVerifier() throws UtilsException{
-		return this.readProperty(false, "console.passwordVerifier");
+	// Applicativi
+	
+	public String getConsoleApplicativiPassword() throws UtilsException{
+		return this.readProperty(true, "console.applicativi.password");
 	}
 	
+	public int getConsoleApplicativiBasicLunghezzaPasswordGenerate() throws UtilsException{
+		String lunghezzaS = this.readProperty(true, "console.applicativi.basic.passwordGenerated.length");
+		return Integer.parseInt(lunghezzaS); 
+	}
 	
+	public int getConsoleApplicativiApiKeyLunghezzaPasswordGenerate() throws UtilsException{
+		String lunghezzaS = this.readProperty(true, "console.applicativi.api_key.passwordGenerated.length");
+		return Integer.parseInt(lunghezzaS); 
+	}
+	
+	public boolean isConsoleApplicativiBasicPasswordEnableConstraints() throws UtilsException{
+		return this.readBooleanProperty(true, "console.applicativi.basic.password.enableConstraints");
+	}
+	
+	// Soggetti
+	
+	public String getConsoleSoggettiPassword() throws UtilsException{
+		return this.readProperty(true, "console.soggetti.password");
+	}
+	
+	public int getConsoleSoggettiBasicLunghezzaPasswordGenerate() throws UtilsException{
+		String lunghezzaS = this.readProperty(true, "console.soggetti.basic.passwordGenerated.length");
+		return Integer.parseInt(lunghezzaS); 
+	}
+	
+	public int getConsoleSoggettiApiKeyLunghezzaPasswordGenerate() throws UtilsException{
+		String lunghezzaS = this.readProperty(true, "console.soggetti.api_key.passwordGenerated.length");
+		return Integer.parseInt(lunghezzaS); 
+	}
+	
+	public boolean isConsoleSoggettiBasicPasswordEnableConstraints() throws UtilsException{
+		return this.readBooleanProperty(true, "console.soggetti.basic.password.enableConstraints");
+	}
+
 
 	/* ----- Impostazioni grafiche ------- */
 	

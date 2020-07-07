@@ -639,13 +639,13 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					List<ExtendedConnettore> listExtendedConnettore = 
 							ServletExtendedConnettoreUtils.getExtendedConnettore(is.getConnettore(), ConnettoreServletType.WIZARD_CONFIG, this, false, endpointtype);
 					
-					boolean isOk = saHelper.servizioApplicativoEndPointCheckData(null, listExtendedConnettore);
+					boolean isOk = saHelper.servizioApplicativoEndPointCheckData(null, listExtendedConnettore, null);
 					if (!isOk) {
 						return false;
 					}
 					
 					if(StatoFunzionalita.ABILITATO.equals(is.getGetMessage())){
-						isOk = this.credenzialiCheckData(TipoOperazione.ADD);
+						isOk = this.credenzialiCheckData(TipoOperazione.ADD, false, this.saCore.isApplicativiPasswordEncryptEnabled(), this.saCore.getApplicativiPasswordVerifier());
 						if (!isOk) {
 							return false;
 						}
@@ -688,7 +688,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				Credenziali credenziali = this.readCredenzialiSA();
 				if(credenziali!=null){
 					ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-					boolean isOk = connettoriHelper.credenzialiCheckData(TipoOperazione.ADD);
+					boolean isOk = connettoriHelper.credenzialiCheckData(TipoOperazione.ADD, false, this.saCore.isApplicativiPasswordEncryptEnabled(), this.saCore.getApplicativiPasswordVerifier());
 					if (!isOk) {
 						return false;
 					}
@@ -2311,7 +2311,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 						getmsg,getmsgUsername,getmsgPassword,true,
 						null,null,protocollo,false,true, showSection, null,null, null, erogazioneServizioApplicativoServerEnabled,
 						null, false,
-						integrationManagerEnabled);
+						integrationManagerEnabled,
+						TipoOperazione.ADD, null, null);
 							
 				boolean forceEnabled = true; // non ha senso non fornire un connettore a meno che non vi sia la possibilita' di utilizzare l'integration manager
 				boolean showSectionTitle = false;

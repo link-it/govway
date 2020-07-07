@@ -62,6 +62,7 @@ public class ConnettoriCostanti {
 	
 	/* LABEL GENERALI */
 
+	public final static String LABEL_MODIFICA_PASSWORD = "Modifica Password";
 	public final static String LABEL_SERVER = "Applicativo Server";
 	public final static String LABEL_CONNETTORE = "Connettore";
 	public final static String LABEL_DOWNLOAD_CERTIFICATI_SERVER = "Download Certificati Server";
@@ -128,6 +129,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP = "confSSLCredWizStep";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_DOWNLOAD= "confSSLCredFileCertLink";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA = "confSSLCredFileModificaCertLink";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD = "changepwd";
 	
 	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = "connettore_token_policy_stat";
 	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
@@ -234,6 +236,7 @@ public class ConnettoriCostanti {
 	
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME = "Utente";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "Password";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD = "Nuova Password";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT = "Subject";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER = "Issuer";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "UserId";

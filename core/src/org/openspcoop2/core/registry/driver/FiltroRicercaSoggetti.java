@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.utils.crypt.CryptConfig;
 
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
@@ -69,13 +70,18 @@ public class FiltroRicercaSoggetti extends FiltroRicerca implements Serializable
 	
 	/** CredenzialeSoggetto */
 	private CredenzialiSoggetto credenzialiSoggetto;
+	private CryptConfig cryptConfig;
 	
+	public CryptConfig getCryptConfig() {
+		return this.cryptConfig;
+	}
 	public CredenzialiSoggetto getCredenzialiSoggetto() {
 		return this.credenzialiSoggetto;
 	}
 
-	public void setCredenzialiSoggetto(CredenzialiSoggetto credenzialiSoggetto) {
+	public void setCredenzialiSoggetto(CredenzialiSoggetto credenzialiSoggetto, CryptConfig cryptConfig) {
 		this.credenzialiSoggetto = credenzialiSoggetto;
+		this.cryptConfig = cryptConfig;
 	}
 
 	@Override

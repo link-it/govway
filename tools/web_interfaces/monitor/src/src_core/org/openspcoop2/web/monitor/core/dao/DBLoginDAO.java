@@ -42,6 +42,7 @@ import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
@@ -79,9 +80,9 @@ public class DBLoginDAO implements ILoginDAO {
 	private ICrypt passwordManager;
 	private ICrypt passwordManager_backwardCompatibility;
 	
-	public void setPasswordManager(Properties config, boolean backwardCompatibility) throws UtilsException {
+	public void setPasswordManager(CryptConfig config) throws UtilsException {
 		this.passwordManager = CryptFactory.getCrypt(log, config);
-		if(backwardCompatibility) {
+		if(config.isBackwardCompatibility()) {
 			this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 		}
 	}
@@ -104,8 +105,9 @@ public class DBLoginDAO implements ILoginDAO {
 			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, DBLoginDAO.log, tipoDatabase);
 
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
-			this.passwordManager = CryptFactory.getCrypt(log, pddMonitorProperties.getConsolePasswordCryptConfig());
-			if(pddMonitorProperties.isConsolePasswordCrypt_backwardCompatibility()) {
+			CryptConfig config = new CryptConfig(pddMonitorProperties.getUtentiPassword());
+			this.passwordManager = CryptFactory.getCrypt(log, config);
+			if(config.isBackwardCompatibility()) {
 				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 			}
 			

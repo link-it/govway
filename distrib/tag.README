@@ -34,6 +34,7 @@ Per creare una tag version:
     - tools/rs/config/server/src/schemi/merge/govway_rs-api_config.yaml
     - tools/rs/monitor/server/src/schemi/govway_rs-api_monitor.yaml
     - tools/rs/monitor/server/src/schemi/merge/govway_rs-api_monitor.yaml
+11b. Riportare tutte le differenze relative alle ultime versioni negli archivi core/deploy/preloading/apiConfig.zip e core/deploy/preloading/apiMonitor.zip
 
 12. Validare le interfacce dei servizi 'rs' tramite il servizio 'https://github.com/teamdigitale/api-oas-checker.git'
 

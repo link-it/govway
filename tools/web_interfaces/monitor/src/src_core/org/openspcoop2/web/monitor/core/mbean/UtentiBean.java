@@ -31,6 +31,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
@@ -81,16 +82,18 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
 			
+			String utentiPasswordConfig = pddMonitorProperties.getUtentiPassword();
+			
 			this.gestionePassword = pddMonitorProperties.isGestionePasswordUtentiAttiva();
-			String passwordVerifierConfig = pddMonitorProperties.getUtentiPasswordVerifier();
-			if(passwordVerifierConfig!=null){
-				this.passwordVerifier = new PasswordVerifier(passwordVerifierConfig);
+			if(utentiPasswordConfig!=null){
+				this.passwordVerifier = new PasswordVerifier(utentiPasswordConfig);
 				if(this.passwordVerifier.existsRestriction()==false){
 					this.passwordVerifier = null;
 				}
 			}
-			this.passwordManager = CryptFactory.getCrypt(log, pddMonitorProperties.getConsolePasswordCryptConfig());
-			if(pddMonitorProperties.isConsolePasswordCrypt_backwardCompatibility()) {
+			CryptConfig config = new CryptConfig(utentiPasswordConfig);
+			this.passwordManager = CryptFactory.getCrypt(log, config);
+			if(config.isBackwardCompatibility()) {
 				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 			}
 			

@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -213,11 +214,19 @@ public class ServerProperties  {
 		return config;
 	}
 	
-	public Properties getConsolePasswordCryptConfig() throws Exception{
-		return this.reader.readProperties_convertEnvProperties("utenti.password.");
+	public String getUtenzePassword() throws UtilsException{
+		return this.readProperty(true, "utenti.password");
 	}
-	
-	public boolean isConsolePasswordCrypt_backwardCompatibility() throws Exception{
-		return "true".equalsIgnoreCase(this.readProperty(true, "utenti.password.crypt.backwardCompatibility"));
+	private static CryptConfig utenzeCryptConfig = null;
+	private static synchronized void initUtenzeCryptConfig(String p) throws UtilsException {
+		if(utenzeCryptConfig==null) {
+			utenzeCryptConfig = new CryptConfig(p);
+		}
+	}
+	public CryptConfig getUtenzeCryptConfig() throws UtilsException {
+		if(utenzeCryptConfig==null) {
+			initUtenzeCryptConfig(getUtenzePassword());
+		}
+		return utenzeCryptConfig;
 	}
 }

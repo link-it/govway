@@ -852,7 +852,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getSoggettoByCredenzialiBasic(user, password);
+			return driver.getDriverRegistroServiziDB().getSoggettoByCredenzialiBasic(user, password, this.getSoggettiPasswordEncrypt());
 
 		} 
 		catch (DriverRegistroServiziNotFound e) {

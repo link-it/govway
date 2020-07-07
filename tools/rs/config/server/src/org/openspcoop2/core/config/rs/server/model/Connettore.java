@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneProxy;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneTimeout;
@@ -35,7 +35,7 @@ public class Connettore  {
   private String endpoint = null;
   
   @Schema(description = "")
-  private AuthenticationHttpBasic autenticazioneHttp = null;
+  private ConnettoreConfigurazioneHttpBasic autenticazioneHttp = null;
   
   @Schema(description = "")
   private ConnettoreConfigurazioneHttps autenticazioneHttps = null;
@@ -74,15 +74,15 @@ public class Connettore  {
   **/
   @JsonProperty("autenticazione_http")
   @Valid
-  public AuthenticationHttpBasic getAutenticazioneHttp() {
+  public ConnettoreConfigurazioneHttpBasic getAutenticazioneHttp() {
     return this.autenticazioneHttp;
   }
 
-  public void setAutenticazioneHttp(AuthenticationHttpBasic autenticazioneHttp) {
+  public void setAutenticazioneHttp(ConnettoreConfigurazioneHttpBasic autenticazioneHttp) {
     this.autenticazioneHttp = autenticazioneHttp;
   }
 
-  public Connettore autenticazioneHttp(AuthenticationHttpBasic autenticazioneHttp) {
+  public Connettore autenticazioneHttp(ConnettoreConfigurazioneHttpBasic autenticazioneHttp) {
     this.autenticazioneHttp = autenticazioneHttp;
     return this;
   }

@@ -7097,7 +7097,6 @@ components:
     AuthenticationHttpBasic:
       required:
       - "modalita_accesso"
-      - "password"
       - "username"
       type: "object"
       properties:
@@ -7204,6 +7203,22 @@ components:
           - $ref: "#/components/schemas/AuthenticationHttpBasic"
           - $ref: "#/components/schemas/AuthenticationHttps"
           - $ref: "#/components/schemas/AuthenticationPrincipal"
+    ConnettoreConfigurazioneHttpBasic:
+      required:
+      - "password"
+      - "username"
+      type: "object"
+      properties:
+        username:
+          maxLength: 255
+          type: "string"
+          example: "user"
+        password:
+          maxLength: 255
+          type: "string"
+          format: "password"
+          example: "pwd"
+      additionalProperties: false
     ConnettoreConfigurazioneHttps:
       required:
       - "server"
@@ -7338,7 +7353,7 @@ components:
           format: "uri"
           example: "http://ente.it/servizio"
         autenticazione_http:
-          $ref: "#/components/schemas/AuthenticationHttpBasic"
+          $ref: "#/components/schemas/ConnettoreConfigurazioneHttpBasic"
         autenticazione_https:
           $ref: "#/components/schemas/ConnettoreConfigurazioneHttps"
         proxy:

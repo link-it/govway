@@ -62,6 +62,8 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.crypt.PasswordGenerator;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.transport.http.SSLConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
@@ -1275,11 +1277,75 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				}
 				else{
-					// Nuova visualizzazione Password con bottone genera password
-					de.setType(DataElementType.CRYPT);
-					de.getPassword().setVisualizzaPasswordChiaro(true);
-					de.getPassword().setVisualizzaBottoneGeneraPassword(true);
-					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+					
+					boolean change = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE.equals(toCall) || 
+							SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE.equals(toCall);
+					boolean soggetti = SoggettiCostanti.SERVLET_NAME_SOGGETTI_ADD.equals(toCall) || 
+							SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE.equals(toCall);
+					
+					boolean passwordCifrata = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi); // tipoCredenzialiSSLVerificaTuttiICampi usata come informazione per sapere se una password e' cifrata o meno
+					
+					String changepwd = subject; // mi appoggio a questa informazione per sapere se modificare la password o no
+					
+					if(change && passwordCifrata ){
+						DataElement deModifica = new DataElement();
+						deModifica.setLabel(ConnettoriCostanti.LABEL_MODIFICA_PASSWORD);
+						deModifica.setType(DataElementType.CHECKBOX);
+						deModifica.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
+						deModifica.setPostBack(true);
+						deModifica.setSelected(changepwd);
+						deModifica.setSize(this.getSize());
+						dati.addElement(deModifica);
+						
+						DataElement deCifratura = new DataElement();
+						deCifratura.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+						deCifratura.setType(DataElementType.HIDDEN);
+						deCifratura.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
+						dati.add(deCifratura);
+						
+						de.setType(DataElementType.HIDDEN);
+						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+					}
+					
+					if( (!change) || (!passwordCifrata) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
+					
+						if(change && passwordCifrata && ServletUtils.isCheckBoxEnabled(changepwd) ){
+							de.setValue(null); // non faccio vedere una password cifrata
+							de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD);
+						}
+						
+						// Nuova visualizzazione Password con bottone genera password
+						de.setType(DataElementType.CRYPT);
+						de.getPassword().setVisualizzaPasswordChiaro(true);
+						de.getPassword().setVisualizzaBottoneGeneraPassword(true);
+						
+						PasswordVerifier passwordVerifier = null;
+						boolean isBasicPasswordEnableConstraints = false;
+						int lunghezzaPasswordGenerate= 10;
+						if ( soggetti ) {
+							lunghezzaPasswordGenerate = this.connettoriCore.getSoggettiBasicLunghezzaPasswordGenerate();
+							isBasicPasswordEnableConstraints = this.connettoriCore.isSoggettiBasicPasswordEnableConstraints();
+							if(isBasicPasswordEnableConstraints) {
+								passwordVerifier = this.connettoriCore.getSoggettiPasswordVerifier();
+							}
+						}
+						else {
+							lunghezzaPasswordGenerate = this.connettoriCore.getApplicativiBasicLunghezzaPasswordGenerate();
+							isBasicPasswordEnableConstraints = this.connettoriCore.isApplicativiBasicPasswordEnableConstraints();
+							if(isBasicPasswordEnableConstraints) {
+								passwordVerifier = this.connettoriCore.getApplicativiPasswordVerifier();
+							}
+						}
+						if(passwordVerifier != null) {
+							PasswordGenerator passwordGenerator = new PasswordGenerator(passwordVerifier);
+							de.getPassword().setPasswordGenerator(passwordGenerator);
+							de.setNote(passwordVerifier.help("<BR/>"));
+						}
+						de.getPassword().getPasswordGenerator().setDefaultLength(lunghezzaPasswordGenerate);
+						
+						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+						
+					}
 				}
 				de.setSize(this.getSize());
 				de.setRequired(true);
@@ -4042,7 +4108,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return opzioniAvanzate;
 	}
 	
-	public boolean credenzialiCheckData(TipoOperazione tipoOp) throws Exception{
+	public boolean credenzialiCheckData(TipoOperazione tipoOp, boolean oldPasswordCifrata, boolean encryptEnabled, PasswordVerifier passwordVerifier) throws Exception{
 		String tipoauth = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 		if (tipoauth == null) {
 			tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
@@ -4054,12 +4120,31 @@ public class ConnettoriHelper extends ConsoleHelper {
 		String principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 		
 		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
-			if(utente.equals("") || password.equals("")){
+			
+			boolean validaPassword = false;
+			if(TipoOperazione.ADD.equals(tipoOp) || !encryptEnabled) {
+				validaPassword = true;
+			}
+			else {
+				String changePwd = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
+				if(ServletUtils.isCheckBoxEnabled(changePwd)) {
+					validaPassword = true;
+				}
+			}
+			
+			boolean passwordEmpty = false;
+			if(validaPassword) {
+				if(password==null || password.equals("")) {
+					passwordEmpty = true;
+				}
+			}
+			
+			if(utente.equals("") || passwordEmpty){
 				String tmpElenco = "";
 				if (utente.equals("")) {
 					tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;
 				}
-				if (password.equals("")) {
+				if (passwordEmpty) {
 					if (tmpElenco.equals("")) {
 						tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
 					} else {
@@ -4079,6 +4164,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 			if(this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)==false) {
 				return false;
+			}
+			
+			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) && ((utente.indexOf(" ") != -1) || (validaPassword && password.indexOf(" ") != -1))) {
+				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				return false;
+			}
+			
+			if(validaPassword) {
+				if(passwordVerifier!=null){
+					StringBuilder motivazioneErrore = new StringBuilder();
+					if(passwordVerifier.validate(utente, password, motivazioneErrore)==false){
+						this.pd.setMessage(motivazioneErrore.toString());
+						return false;
+					}
+				}
 			}
 		}
 		
@@ -4211,12 +4311,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				return false;
 			}
 		}
-		
-		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
-			this.pd.setMessage("Non inserire spazi nei campi di testo");
-			return false;
-		}
-		
+				
 		if (!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) && 

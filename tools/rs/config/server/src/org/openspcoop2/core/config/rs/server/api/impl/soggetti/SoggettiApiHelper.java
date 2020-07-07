@@ -62,7 +62,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 public class SoggettiApiHelper {
 
 	public static final void overrideAuthParams(ConsoleHelper consoleHelper, Soggetto soggetto, HttpRequestWrapper wrap) {
-		
+
 		if(soggetto.getCredenziali()!=null && soggetto.getCredenziali().getModalitaAccesso()!=null) {
 			wrap.overrideParameter(
 					ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, 

@@ -20,8 +20,6 @@
 
 package org.openspcoop2.utils.crypt;
 
-import java.util.Properties;
-
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -36,27 +34,19 @@ import org.slf4j.Logger;
  */
 public class CryptFactory {
 
-	public static ICrypt getCrypt(Logger log, Properties p) throws UtilsException {
+	public static ICrypt getCrypt(Logger log, CryptConfig config) throws UtilsException {
 		
-		CryptConfig config = new CryptConfig(p);
-		
-		String tipo = CryptConfig.getProperty(p, CryptConfig.CRYPT_TYPE, false);
-		if(StringUtils.isNotEmpty(tipo)) {
-			CryptType cryptType = null;
-			try {
-				cryptType = CryptType.valueOf(tipo);
-			}catch(Throwable e) {
-				throw new UtilsException("Property '"+CryptConfig.CRYPT_TYPE+"' value '"+tipo+"' uncorrect: "+e.getMessage(), e);
-			}
-			return getCrypt(log, cryptType, config);
+		if(config.getCryptType()!=null) {
+			return getCrypt(log, config.getCryptType(), config);
 		}
 		else {
-			String className = CryptConfig.getProperty(p, CryptConfig.CRYPT_CUSTOM_TYPE, false);
+			String className = config.getCryptCustomType();
 			if(StringUtils.isEmpty(className)) {
 				throw new UtilsException("Property '"+CryptConfig.CRYPT_TYPE+"' or '"+CryptConfig.CRYPT_CUSTOM_TYPE+"' are required");
 			}
 			return getCrypt(log, className, config);
 		}
+
 	}
 	
 	public static ICrypt getCrypt(Logger log, CryptType type, CryptConfig config) {
@@ -111,6 +101,13 @@ public class CryptFactory {
 			return getSpringCrypt(log, SpringType.B_CRYPT);
 		case S_CRYPT:
 			return getSpringCrypt(log, SpringType.S_CRYPT);
+				
+		case PLAIN:{
+			PlainCrypt pbe = new PlainCrypt();
+			pbe.init(log, config);
+			return pbe;
+		}
+		
 		}
 		
 		return null;

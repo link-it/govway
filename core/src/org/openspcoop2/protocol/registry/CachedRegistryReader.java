@@ -61,6 +61,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.slf4j.Logger;
 
 /**
@@ -192,18 +193,18 @@ public class CachedRegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public boolean existsSoggettoByCredenzialiBasic(String username, String password){
+	public boolean existsSoggettoByCredenzialiBasic(String username, String password, CryptConfig cryptConfig){
 		try{
-			return this.registroServiziManager.getIdSoggettoByCredenzialiBasic(username, password, null)!=null;
+			return this.registroServiziManager.getIdSoggettoByCredenzialiBasic(username, password, cryptConfig, null)!=null;
 		}catch(Exception e){
 			return false;
 		}
 	}
 	
 	@Override
-	public Soggetto getSoggettoByCredenzialiBasic(String username, String password) throws RegistryNotFound,RegistryException{
+	public Soggetto getSoggettoByCredenzialiBasic(String username, String password, CryptConfig cryptConfig) throws RegistryNotFound,RegistryException{
 		try{
-			return this.registroServiziManager.getSoggettoByCredenzialiBasic(username, password, null);
+			return this.registroServiziManager.getSoggettoByCredenzialiBasic(username, password, cryptConfig, null);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

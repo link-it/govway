@@ -129,6 +129,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.date.IDate;
@@ -1269,6 +1270,12 @@ public class OpenSPCoop2Properties {
 			this.isBypassFilterMustUnderstandEnabledForAllHeaders();
 
 			// Realm Autenticazione Basic
+			if(this.getCryptConfigAutenticazioneApplicativi()==null) {
+				return false;
+			}
+			if(this.getCryptConfigAutenticazioneSoggetti()==null) {
+				return false;
+			}
 			this.getRealmAutenticazioneBasic();
 			
 			// Gestori Credenziali PD
@@ -14240,6 +14247,42 @@ public class OpenSPCoop2Properties {
 	
 	/* ********  Gestore Credenziali  ******** */
 
+	private static CryptConfig getCryptConfigAutenticazioneApplicativi = null;
+	public CryptConfig getCryptConfigAutenticazioneApplicativi() {
+		if(OpenSPCoop2Properties.getCryptConfigAutenticazioneApplicativi == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.autenticazione.applicativi.password"); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getCryptConfigAutenticazioneApplicativi = new CryptConfig(value);
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.applicativi.password': "+e.getMessage(),e);
+				return null;
+			}
+		}
+
+		return OpenSPCoop2Properties.getCryptConfigAutenticazioneApplicativi;
+	}
+	
+	private static CryptConfig getCryptConfigAutenticazioneSoggetti = null;
+	public CryptConfig getCryptConfigAutenticazioneSoggetti() {
+		if(OpenSPCoop2Properties.getCryptConfigAutenticazioneSoggetti == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.autenticazione.soggetti.password"); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getCryptConfigAutenticazioneSoggetti = new CryptConfig(value);
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.soggetti.password': "+e.getMessage(),e);
+				return null;
+			}
+		}
+
+		return OpenSPCoop2Properties.getCryptConfigAutenticazioneSoggetti;
+	}
+	
 	private static String getRealmAutenticazioneBasic = null;
 	private static boolean getRealmAutenticazioneBasicRead = false;
 	public String getRealmAutenticazioneBasic() {

@@ -21,6 +21,13 @@
 			<param name="token" value="confDirectory"/>
 			<param name="value" value="${work_dir}"/>
 		</antcall>
+
+		<!-- Autenticazione Utenze/Applicativi/Soggetti -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="user.password"/>
+			<param name="value" value="${work_dir}/consolePassword.properties"/>
+		</antcall>
 		
 		<!-- 
 		  PROTOCOL DEFAULT

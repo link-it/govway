@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.slf4j.Logger;
 
 /**
@@ -80,18 +81,18 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public boolean existsServizioApplicativoByCredenzialiBasic(String username, String password){
+	public boolean existsServizioApplicativoByCredenzialiBasic(String username, String password, CryptConfig config){
 		try{
-			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password)!=null;
+			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password, config)!=null;
 		} catch(Exception e){
 			return false;
 		}
 	}
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password) throws RegistryNotFound,RegistryException{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password, CryptConfig config) throws RegistryNotFound,RegistryException{
 		try{
-			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password);
+			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password, config);
 			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);

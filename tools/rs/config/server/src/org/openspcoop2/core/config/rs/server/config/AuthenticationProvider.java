@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
@@ -58,6 +60,17 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	private UserDetailsService userDetailsService;
 	private String configuratorRoleName = "configuratore";	
 
+	private static ICrypt passwordManager = null;
+	private static ICrypt passwordManager_backwardCompatibility = null;
+	private static synchronized void initPasswordManager(Logger log, CryptConfig config) throws UtilsException {
+		if(passwordManager==null) {
+			passwordManager = CryptFactory.getCrypt(log, config);
+			if(config.isBackwardCompatibility()) {
+				passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
+			}
+		}
+	}
+	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
@@ -95,13 +108,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		}
 		String pwcrypt = u.getPassword();
 		
-		ICrypt passwordManager = null;
-		ICrypt passwordManager_backwardCompatibility = null;
 		try {
-			ServerProperties serverProperties = ServerProperties.getInstance();
-			passwordManager = CryptFactory.getCrypt(this.log, serverProperties.getConsolePasswordCryptConfig());
-			if(serverProperties.isConsolePasswordCrypt_backwardCompatibility()) {
-				passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(this.log);
+			if(passwordManager==null) {
+				initPasswordManager(this.log, ServerProperties.getInstance().getUtenzeCryptConfig());
 			}
 		}catch(Exception e) {
 			throw new AuthenticationServiceException("Inizializzazione AuthenticationProvider fallita: "+e.getMessage(),e);

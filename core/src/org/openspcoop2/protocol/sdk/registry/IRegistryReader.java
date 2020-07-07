@@ -41,6 +41,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.crypt.CryptConfig;
 
 /**
  * IRegistryReader
@@ -74,8 +75,8 @@ public interface IRegistryReader {
 	
 	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException;
 
-	public boolean existsSoggettoByCredenzialiBasic(String username, String password);
-	public Soggetto getSoggettoByCredenzialiBasic(String username, String password) throws RegistryNotFound,RegistryException;
+	public boolean existsSoggettoByCredenzialiBasic(String username, String password, CryptConfig cryptConfig);
+	public Soggetto getSoggettoByCredenzialiBasic(String username, String password, CryptConfig cryptConfig) throws RegistryNotFound,RegistryException;
 	
 	public boolean existsSoggettoByCredenzialiSsl(String subject, String issuer);
 	public Soggetto getSoggettoByCredenzialiSsl(String subject, String issuer) throws RegistryNotFound,RegistryException;

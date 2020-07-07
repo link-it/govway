@@ -874,7 +874,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
-			org.openspcoop2.pdd.config.ConfigurazionePdDReader.prefillCache();
+			org.openspcoop2.pdd.config.ConfigurazionePdDReader.prefillCache(this.openspcoopProperties.getCryptConfigAutenticazioneApplicativi());
 			return JMXUtils.MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
@@ -904,7 +904,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 
 	public String abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond){
 		try{
-			org.openspcoop2.pdd.config.ConfigurazionePdDReader.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
+			org.openspcoop2.pdd.config.ConfigurazionePdDReader.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond,
+					this.openspcoopProperties.getCryptConfigAutenticazioneApplicativi());
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
 		}catch(Throwable e){

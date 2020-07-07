@@ -770,16 +770,8 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.gestionePassword.enabled", true, true));
 	}
 	
-	public Properties getConsolePasswordCryptConfig() throws Exception{
-		return this.appProperties.readProperties("utenti.password.");
-	}
-	
-	public boolean isConsolePasswordCrypt_backwardCompatibility() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.password.crypt.backwardCompatibility", true, true));
-	}
-	
-	public String getUtentiPasswordVerifier() throws Exception{
-		return this.appProperties.getProperty("utenti.passwordVerifier", false, true);
+	public String getUtentiPassword() throws Exception{
+		return this.appProperties.getProperty("utenti.password", true, true);
 	}
 	
 	public boolean isRuoloConfiguratoreAttivo() throws Exception{

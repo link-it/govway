@@ -25,5 +25,5 @@ endpoint=`echo $endpoint | sed -e 's/^\///g'`
 url="http://127.0.0.1:8080/govway/ENTE/api-config/v1/$endpoint?$query_params"
 
 echo $url
-curl --user amministratore:123456 -i -H "Content-Type: application/json" -X GET $url
+curl --user amministratore:123456 -i -X GET $url
 

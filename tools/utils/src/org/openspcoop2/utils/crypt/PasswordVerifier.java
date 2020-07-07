@@ -297,6 +297,10 @@ public class PasswordVerifier {
 		return this.validate(login,password,bf);
 	}
 	public boolean validate(String login, String password,StringBuilder bfMotivazioneErrore){
+		if(password==null) {
+			bfMotivazioneErrore.append("Password non fornita");
+			return false;
+		}
 		password = password.trim();
 		if(this.regulaExpressions.size()>0){
 			for (String regExp : this.regulaExpressions) {

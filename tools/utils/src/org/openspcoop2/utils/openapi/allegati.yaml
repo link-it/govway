@@ -457,6 +457,21 @@ components:
           type: string
         procedimento:
           type: string
+        string_nullable:
+          type: string
+          nullable: true
+        number_nullable:
+          type: integer
+          format: int64
+          nullable: true
+        enum_nullable:
+          type: string
+          nullable: true
+          enum:
+            - "Diverso dall'intestatario"
+            - "Coincide con l'intestatario"
+            - "Soggetto di una pa"
+            - null
  
     Allegato:
       type: object

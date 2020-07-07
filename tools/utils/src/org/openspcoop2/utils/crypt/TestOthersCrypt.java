@@ -34,11 +34,12 @@ public class TestOthersCrypt {
 
 	public static void main(String[] args) throws Exception {
 		
-		CryptType [] type = new CryptType[3];
+		CryptType [] type = new CryptType[4];
 		type[0] = CryptType.PBE_KEY_SPEC;
 		type[1] = CryptType.B_CRYPT;
 		type[2] = CryptType.S_CRYPT;
-	
+		type[3] = CryptType.PLAIN;
+		
 		String [] digestAlgo = new String[6];
 		digestAlgo[0] = null; // default
 		digestAlgo[1] = "PBKDF2WithHmacSHA1";
@@ -140,6 +141,9 @@ public class TestOthersCrypt {
 			
 		String password = "Pr@va.diUn@altroDiverso";
 		boolean verificaPasswordDiversa = true;
+		if(CryptType.PLAIN.equals(type)) {
+			verificaPasswordDiversa = false;
+		}
 		String passwordEncrypted = passwordEngine.crypt(password);
 		if(verificaPasswordDiversa) {
 			String passwordEncrypted2 = passwordEngine.crypt(password);

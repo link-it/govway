@@ -52,8 +52,6 @@ import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -67,6 +65,8 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -281,7 +281,7 @@ public class ApplicativiApiHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public static OneOfBaseCredenzialiCredenziali translateCredenzialiApplicativo(Applicativo applicativo) {
+	public static OneOfBaseCredenzialiCredenziali translateCredenzialiApplicativo(Applicativo applicativo, boolean create) {
 		OneOfBaseCredenzialiCredenziali creds = null;
 		
 		if(applicativo.getCredenziali()==null || applicativo.getCredenziali().getModalitaAccesso()==null) {
@@ -296,7 +296,7 @@ public class ApplicativiApiHelper {
 		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) ||
 				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) ||
 				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
-			creds = Helper.translateCredenziali(applicativo.getCredenziali());
+			creds = Helper.translateCredenziali(applicativo.getCredenziali(), create);
 		}
 		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 			creds = null;
@@ -305,7 +305,6 @@ public class ApplicativiApiHelper {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo autenticazione sconosciuto: " + tipoauthSA);
 		}
 
-		
 		return creds;
 	}
 	

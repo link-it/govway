@@ -22,15 +22,19 @@ package org.openspcoop2.core.config.rs.server.api.impl.soggetti;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.SoggettiApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaSoggetti;
+import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -87,11 +91,15 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				soggetto = (Soggetto) body;
 				
 				if ( soggetto.getCredenziali() != null && soggetto.getCredenziali().getModalitaAccesso() != null ) {
-					soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali()));
+					soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), true));
 					SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, soggetto, env.requestWrapper);
 				}
 				
-			}catch(Exception e) {
+			}
+			catch(javax.ws.rs.WebApplicationException e) {
+				throw e;
+			}
+			catch(Exception e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 			
@@ -316,8 +324,12 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			Soggetto soggetto = null;
 			try{
 				soggetto = (Soggetto) body;
-				soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali()));
-			}catch(Throwable e) {
+				soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), false));
+			}
+			catch(javax.ws.rs.WebApplicationException e) {
+				throw e;
+			}
+			catch(Throwable e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 
@@ -339,6 +351,26 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			final org.openspcoop2.core.registry.Soggetto newSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
 			
 			SoggettiApiHelper.convert(body, newSoggetto, env);
+			
+			if(ModalitaAccessoEnum.HTTP_BASIC.equals(body.getCredenziali().getModalitaAccesso())) {
+				AuthenticationHttpBasic httpBasic = (AuthenticationHttpBasic) body.getCredenziali();
+				if(httpBasic.getPassword()==null || StringUtils.isEmpty(httpBasic.getPassword())) {
+					// password in update non è obbligatoria
+					boolean set = false;
+					if(oldSoggetto.getCredenziali()!=null) {
+						CredenzialiSoggetto cImageDB = oldSoggetto.getCredenziali();
+						CredenzialiSoggetto cTmp = newSoggetto.getCredenziali();
+						if(cImageDB!=null && cTmp!=null) {
+							cTmp.setPassword(cImageDB.getPassword());
+							cTmp.setCertificateStrictVerification(cImageDB.isCertificateStrictVerification());
+							set = true;
+						}
+					}
+					if(!set) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; indicare la password");
+					}
+				}
+			}
 			
 			boolean isOk = env.soggettiHelper.soggettiCheckData(
 					TipoOperazione.CHANGE,

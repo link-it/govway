@@ -720,7 +720,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						invrifRichiesta,risprif,nomeProtocollo,true,false,true,
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false,
-						integrationManagerEnabled);
+						integrationManagerEnabled,
+						TipoOperazione.CHANGE, null,null);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -763,7 +764,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore);
+			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore, sa);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -779,7 +780,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						invrifRichiesta,risprif,nomeProtocollo,true,false,true,
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false,
-						integrationManagerEnabled);
+						integrationManagerEnabled,
+						TipoOperazione.CHANGE, null,null);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);

@@ -24,6 +24,8 @@ import java.util.Properties;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.slf4j.Logger;
 
@@ -217,4 +219,93 @@ public class ServerProperties  {
 		return "true".equalsIgnoreCase(this.readProperty(true, "console.password.crypt.backwardCompatibility"));
 	}
 
+	
+	/* ----- Gestione Password ------- */
+	
+	// Utenze
+	
+	public String getUtenzePassword() throws UtilsException{
+		return this.readProperty(true, "utenze.password");
+	}
+	private static CryptConfig utenzeCryptConfig = null;
+	private static synchronized void initUtenzeCryptConfig(String p) throws UtilsException {
+		if(utenzeCryptConfig==null) {
+			utenzeCryptConfig = new CryptConfig(p);
+		}
+	}
+	public CryptConfig getUtenzeCryptConfig() throws UtilsException {
+		if(utenzeCryptConfig==null) {
+			initUtenzeCryptConfig(getUtenzePassword());
+		}
+		return utenzeCryptConfig;
+	}
+	
+	// Applicativi
+	
+	public String getApplicativiPassword() throws UtilsException{
+		return this.readProperty(true, "applicativi.password");
+	}
+	private static CryptConfig applicativiCryptConfig = null;
+	private static synchronized void initApplicativiCryptConfig(String p) throws UtilsException {
+		if(applicativiCryptConfig==null) {
+			applicativiCryptConfig = new CryptConfig(p);
+		}
+	}
+	public CryptConfig getApplicativiCryptConfig() throws UtilsException {
+		if(applicativiCryptConfig==null) {
+			initApplicativiCryptConfig(getApplicativiPassword());
+		}
+		return applicativiCryptConfig;
+	}
+	
+	public boolean isApplicativiBasicPasswordEnableConstraints() throws UtilsException{
+		return "true".equalsIgnoreCase(this.readProperty(true, "applicativi.basic.password.enableConstraints"));
+	}
+	private static PasswordVerifier applicativiPasswordVerifier = null;
+	private static synchronized void initApplicativiPasswordVerifier(String p) throws UtilsException {
+		if(applicativiPasswordVerifier==null) {
+			applicativiPasswordVerifier = new PasswordVerifier(p);
+		}
+	}
+	public PasswordVerifier getApplicativiPasswordVerifier() throws UtilsException {
+		if(applicativiPasswordVerifier==null) {
+			initApplicativiPasswordVerifier(getApplicativiPassword());
+		}
+		return applicativiPasswordVerifier;
+	}
+	
+	// Soggetti
+	
+	public String getSoggettiPassword() throws UtilsException{
+		return this.readProperty(true, "soggetti.password");
+	}
+	private static CryptConfig soggettiCryptConfig = null;
+	private static synchronized void initSoggettiCryptConfig(String p) throws UtilsException {
+		if(soggettiCryptConfig==null) {
+			soggettiCryptConfig = new CryptConfig(p);
+		}
+	}
+	public CryptConfig getSoggettiCryptConfig() throws UtilsException {
+		if(soggettiCryptConfig==null) {
+			initSoggettiCryptConfig(getSoggettiPassword());
+		}
+		return soggettiCryptConfig;
+	}
+	
+	public boolean isSoggettiBasicPasswordEnableConstraints() throws UtilsException{
+		return "true".equalsIgnoreCase(this.readProperty(true, "soggetti.basic.password.enableConstraints"));
+	}
+	private static PasswordVerifier soggettiPasswordVerifier = null;
+	private static synchronized void initSoggettiPasswordVerifier(String p) throws UtilsException {
+		if(soggettiPasswordVerifier==null) {
+			soggettiPasswordVerifier = new PasswordVerifier(p);
+		}
+	}
+	public PasswordVerifier getSoggettiPasswordVerifier() throws UtilsException {
+		if(soggettiPasswordVerifier==null) {
+			initSoggettiPasswordVerifier(getSoggettiPassword());
+		}
+		return soggettiPasswordVerifier;
+	}
+	
 }

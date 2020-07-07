@@ -91,7 +91,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			
 			boolean correct = false;
 			try {
-				loginService.setPasswordManager(ServerProperties.getInstance().getConsolePasswordCryptConfig(), ServerProperties.getInstance().isConsolePasswordCrypt_backwardCompatibility());
+				loginService.setPasswordManager(ServerProperties.getInstance().getUtenzeCryptConfig());
 				correct = loginService.login(username, password);
 			}catch(Exception e) {
 				LoggerProperties.getLoggerCore().error(e.getMessage(),e);
