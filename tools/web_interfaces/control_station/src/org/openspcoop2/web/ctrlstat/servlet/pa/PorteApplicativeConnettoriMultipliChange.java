@@ -1400,7 +1400,10 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				}
 			}
 
-			String secret_pleaseCopy = null;
+			boolean secret = false;
+			String secret_password  = null;
+			String secret_user = null;
+			boolean secret_appId = false;
 			
 			if(visualizzaSezioneConnettore) {
 				// la modifica del connettore  
@@ -1615,14 +1618,20 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 										if(ServletUtils.isCheckBoxEnabled(changepwd)) {
 											c.setCertificateStrictVerification(false); // se è abilitata la cifratura, verrà impostata a true nel perform update
 											if(saCore.isApplicativiPasswordEncryptEnabled()) {
-												secret_pleaseCopy = getmsgPassword;
+												secret = true;
 											}
 										}
 										else if(encryptOldPlainPwd) {
-											secret_pleaseCopy = getmsgPassword;
+											secret = true;
 										}
 										else {
 											c.setCertificateStrictVerification(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi));
+										}
+										
+										if(secret) {
+											secret_user = c.getUser();
+											secret_password = c.getPassword();
+											secret_appId = c.isAppId();
 										}
 									}
 								}
@@ -1639,7 +1648,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								
 								c.setCertificateStrictVerification(false); // se è abilitata la cifratura, verrà impostata a true nel perform update
 								if(saCore.isApplicativiPasswordEncryptEnabled()) {
-									secret_pleaseCopy = getmsgPassword;
+									secret = true;
+								}
+								
+								if(secret) {
+									secret_user = c.getUser();
+									secret_password = c.getPassword();
+									secret_appId = c.isAppId();
 								}
 								
 								invocazionePorta.addCredenziali(c);
@@ -1773,8 +1788,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 
 			// Messaggio 'Please Copy'
-			if(secret_pleaseCopy!=null) {
-				porteApplicativeHelper.setSecretPleaseCopy(secret_pleaseCopy, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, false, null);
+			if(secret) {
+				porteApplicativeHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, false, null);
 			}
 			
 			// Preparo la lista

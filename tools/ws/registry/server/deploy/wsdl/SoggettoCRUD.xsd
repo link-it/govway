@@ -46,6 +46,7 @@
  			<xsd:element name="tipo" type="api:CredenzialeTipo" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="app-id" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="cn-subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="issuer" type="xsd:string" minOccurs="0" maxOccurs="1" />

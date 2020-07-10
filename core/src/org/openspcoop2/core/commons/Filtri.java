@@ -60,6 +60,8 @@ public final class Filtri
 	
 	public final static String FILTRO_TIPO_SERVIZIO_APPLICATIVO = "filtroTipoSA";
 	
+	public final static String FILTRO_TIPO_CREDENZIALI = "filtroTipoCredenziali";
+	
 	public final static String FILTRO_RUOLO_TIPOLOGIA = "filtroRuoloTipologia";
 	public final static String FILTRO_RUOLO_CONTESTO = "filtroRuoloContesto";
 	

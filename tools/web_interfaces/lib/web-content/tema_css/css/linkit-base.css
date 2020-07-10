@@ -752,6 +752,39 @@ div.messages-errors-sintetico-text {
 	margin: 0px;
 }
 
+div.messages-warn,
+div.messages-warn-sintetico {
+	margin: 0 40px 20px 16px;
+	padding: 10px 20px;
+	border: ${messages.error.border.color} 1px solid;
+	background-color: ${messages.error.background.color};
+	color: ${messages.error.color};
+}
+
+div.messages-warn a,
+div.messages-warn-sintetico a {
+	cursor: pointer;
+	font-family: 'Roboto';
+	text-decoration: underline;
+	color: ${messages.error.color};
+}
+
+div.messages-warn a:hover,
+div.messages-warn-sintetico a:hover{
+	color: ${messages.error.color};
+	text-decoration: none;
+}
+
+div.messages-warn-text,
+div.messages-warn-sintetico-text {
+	padding: 8px 4px 8px 0px;
+}
+
+.messages-warn-text p,
+.messages-warn-sintetico-text p {
+	margin: 0px;
+}
+
 div.messages-info,
 div.messages-info-sintetico {
 	margin: 0 40px 20px 16px;
@@ -799,6 +832,16 @@ div.messages-title {
 .messages-info-title-icon,
 .messages-info-sintetico-title-icon{
 	background-image: url(../images/tema_link/info_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: left center;
+	width: 20px;
+    height: 20px;
+    padding: 0px 8px 0px 10px;
+}
+
+.messages-warn-title-icon,
+.messages-warn-sintetico-title-icon{
+	background-image: url(../images/tema_link/alarm_white.png) ! important;
 	background-repeat: no-repeat;
 	background-position: left center;
 	width: 20px;

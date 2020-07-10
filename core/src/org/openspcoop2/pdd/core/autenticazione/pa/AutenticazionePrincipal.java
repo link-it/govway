@@ -40,7 +40,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**
- * Classe che implementa una autenticazione BASIC.
+ * Classe che implementa una autenticazione principal.
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
@@ -200,7 +200,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			}
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Applicativi) non riuscita",e);
+			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal (Applicativi) non riuscita",e);
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);

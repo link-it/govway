@@ -524,4 +524,12 @@ public final class CostantiDB {
     public static final String API_RESOURCE_DETAIL_RESPONSE = "RESPONSE";
 //    public static final int API_RESOURCE_DETAIL_STATUS_UNDEFINED = -1;
     
+    public static final String ISSUER_APIKEY = "apiKey";
+    public static final String ISSUER_APIKEY_APPID = "apiKey_appId";
+    public static String getISSUER_APIKEY(boolean appId) {
+    	return appId ? ISSUER_APIKEY_APPID : ISSUER_APIKEY;
+    }
+    public static boolean isAPPID(String issuer) {
+    	return ISSUER_APIKEY_APPID.equals(issuer);
+    }
 }

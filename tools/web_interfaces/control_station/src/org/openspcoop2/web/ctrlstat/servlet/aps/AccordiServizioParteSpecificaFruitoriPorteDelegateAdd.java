@@ -66,6 +66,7 @@ import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
@@ -387,14 +388,20 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					if(auth==null || "".equals(auth)){
 						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 					}
+					CredenzialeTipo credenziale = CredenzialeTipo.toEnumConstant(auth);
+					Boolean appId = null;
+					if(CredenzialeTipo.APIKEY.equals(credenziale)) {
+						ApiKeyState apiKeyState =  new ApiKeyState(null);
+						appId = apiKeyState.appIdSelected;
+					}
 					List<IDServizioApplicativoDB> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,null,
-								CredenzialeTipo.toEnumConstant(auth));
+								credenziale, appId);
 					}
 					else {
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,userLogin,
-								CredenzialeTipo.toEnumConstant(auth));
+								credenziale, appId);
 					}
 					if(oldSilList!=null && oldSilList.size()>0){
 						for (int i = 0; i < oldSilList.size(); i++) {

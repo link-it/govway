@@ -32,6 +32,8 @@ public enum MessageType {
 	INFO("info"),
 	INFO_SINTETICO("info-sintetico"),
 	CONFIRM("confirm"),
+	WARN("warn"),
+	WARN_SINTETICO("warn-sintetico"),
 	ERROR("errors"),
 	ERROR_SINTETICO("errors-sintetico");
 	

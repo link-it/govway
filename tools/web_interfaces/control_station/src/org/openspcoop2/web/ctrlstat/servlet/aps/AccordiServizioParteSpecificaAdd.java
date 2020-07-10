@@ -86,6 +86,7 @@ import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -1075,14 +1076,22 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					if(auth==null || "".equals(auth)){
 						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 					}
+					
+					org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth);
+					Boolean appId = null;
+					if(org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+						ApiKeyState apiKeyState =  new ApiKeyState(null);
+						appId = apiKeyState.appIdSelected;
+					}
+					
 					List<IDServizioApplicativoDB> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,null,
-								org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth));
+								tipoAutenticazione, appId);
 					}
 					else {
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,userLogin,
-								org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth));
+								tipoAutenticazione, appId);
 					}
 					if(oldSilList!=null && oldSilList.size()>0){
 						for (int i = 0; i < oldSilList.size(); i++) {
@@ -1097,17 +1106,22 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			List<String> soggettiAutenticatiLabel = new ArrayList<String>();
 			// lista soggetti autenticati per la creazione automatica
 			CredenzialeTipo credenziale =  null;
+			Boolean appIdSoggetti = null;
 			if((this.erogazioneAutenticazione !=null && !"".equals(this.erogazioneAutenticazione)) && erogazioneIsSupportatoAutenticazioneSoggetti) {
 				TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(this.erogazioneAutenticazione);
 				credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(this.erogazioneAutenticazione) : null;
+				if(CredenzialeTipo.APIKEY.equals(credenziale)) {
+					ApiKeyState apiKeyState =  new ApiKeyState(null);
+					appIdSoggetti = apiKeyState.appIdSelected;
+				}
 			}
 			
 			List<IDSoggettoDB> listSoggettiCompatibili = null;
 			 
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati );
 			}else{
-				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, pddTipologiaSoggettoAutenticati);
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati);
 			}
 			
 			if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
@@ -1353,9 +1367,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					 
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
-						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
+						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati );
 					}else{
-						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, pddTipologiaSoggettoAutenticati);
+						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati);
 					}
 					
 					if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {

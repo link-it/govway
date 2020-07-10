@@ -1008,6 +1008,10 @@ public class ImporterArchiveUtils {
 							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiBasic(credenziali.getUser());
 							c = credenziali.getUser();
 							break;
+						case APIKEY:
+							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiApiKey(credenziali.getUser(), credenziali.isCertificateStrictVerification());
+							c = credenziali.getUser();
+							break;
 						case SSL:
 							if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
 								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
@@ -1240,6 +1244,10 @@ public class ImporterArchiveUtils {
 						switch (tipo) {
 						case BASIC:
 							saFound = this.importerEngine.getServizioApplicativoCredenzialiBasic(credenziali.getUser());
+							c = credenziali.getUser();
+							break;
+						case APIKEY:
+							saFound = this.importerEngine.getServizioApplicativoCredenzialiApiKey(credenziali.getUser(), credenziali.isCertificateStrictVerification());
 							c = credenziali.getUser();
 							break;
 						case SSL:

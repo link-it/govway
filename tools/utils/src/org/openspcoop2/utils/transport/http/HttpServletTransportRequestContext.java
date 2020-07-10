@@ -20,11 +20,14 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
 
@@ -86,6 +89,20 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 				//log.info("Proprieta' Trasporto: nome["+nomeProperty+"] valore["+req.getHeader(nomeProperty)+"]");
 			}
 			
+			// Cookies
+			this.cookiesValue = new HashMap<String, String>();
+			this.cookiesMaxAge = new HashMap<String, Integer>();
+			Cookie [] cookies = req.getCookies();
+			if(cookies!=null && cookies.length>0) {
+				for (Cookie cookie : cookies) {
+					String cookieName = cookie.getName();
+					String value = URLDecoder.decode(cookie.getValue(), Charset.UTF_8.getValue());
+					this.cookiesValue.put(cookieName,value);
+					if(cookie.getMaxAge()>0) {
+						this.cookiesMaxAge.put(cookieName, cookie.getMaxAge());
+					}
+				}
+			}
 			
 			this.webContext = req.getContextPath();
 			this.requestURI = req.getRequestURI();

@@ -132,6 +132,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiFruizioni;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
@@ -12118,6 +12119,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				PortaDelegata portaDelegata = null;
 				PortaApplicativa portaApplicativa = null;
 				CredenzialeTipo tipoAutenticazione = null;
+				Boolean appId = null;
 				IDSoggetto idSoggettoProprietario = null;
 				if(ruoloPorta!=null) {
 					if(applicativa) {
@@ -12139,6 +12141,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						idPA.setNome(nomePorta);
 						portaApplicativa = this.porteApplicativeCore.getPortaApplicativa(idPA);
 						tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaApplicativa.getAutenticazione());
+						if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+							ApiKeyState apiKeyState =  new ApiKeyState(this.porteApplicativeCore.getParametroAutenticazione(portaApplicativa.getAutenticazione(), portaApplicativa.getProprietaAutenticazioneList()));
+							appId = apiKeyState.appIdSelected;
+						}
 						idSoggettoProprietario = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
 						
 						if(portaApplicativa.getGestioneToken()!=null) {
@@ -12159,6 +12165,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						idPD.setNome(nomePorta);
 						portaDelegata = this.porteDelegateCore.getPortaDelegata(idPD);
 						tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaDelegata.getAutenticazione());
+						if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+							ApiKeyState apiKeyState =  new ApiKeyState(this.porteDelegateCore.getParametroAutenticazione(portaDelegata.getAutenticazione(), portaDelegata.getProprietaAutenticazioneList()));
+							appId = apiKeyState.appIdSelected;
+						}
 						idSoggettoProprietario = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
 						
 						if(portaDelegata.getGestioneToken()!=null) {
@@ -12183,7 +12193,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				// Filtro 
 				addToDatiAttivazioneFiltro(dati, tipoOperazione, policy, nomeSezione, infoPolicy, ruoloPorta, nomePorta, serviceBinding,
-						idSoggettoProprietario, tokenAbilitato, tipoAutenticazione, pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore
+						idSoggettoProprietario, tokenAbilitato, 
+						tipoAutenticazione, appId, 
+						pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore
 						);
 				
 			}
@@ -12436,7 +12448,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 	private void addToDatiAttivazioneFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione,AttivazionePolicy policy, String nomeSezione, InfoPolicy infoPolicy, 
 			RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
-			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, CredenzialeTipo tipoAutenticazione, PddTipologia pddTipologiaSoggettoAutenticati, boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) throws Exception {
+			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, 
+			CredenzialeTipo tipoAutenticazione, Boolean appId, 
+			PddTipologia pddTipologiaSoggettoAutenticati, boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) throws Exception {
 	
 		boolean delegata = false;
 		boolean applicativa = false;
@@ -12987,9 +13001,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						List<IDSoggettoDB> list = null;
 						if(this.core.isVisioneOggettiGlobale(userLogin)){
-							list = this.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
+							list = this.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
 						}else{
-							list = this.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
+							list = this.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
 						}
 						if(list!=null && !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) {
 							for (int i = 0; i < list.size(); i++) {
@@ -13020,7 +13034,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										}
 									}
 									if(!found) {
-										List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig);
+										List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId);
 										if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
 											IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
 											idSoggettoDB.setTipo(s.getTipo());
@@ -13110,7 +13124,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
 						if(delegata || !multitenant) {
-							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig);
+							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig,appId);
 						}
 						else {
 							// sull'applicativa con multitenant deve essere stata selezionato un soggetto operativo.
@@ -13119,7 +13133,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggettoSelezionato);
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
 								if(!isPddEsterna) {
-									listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoSelezionato,userLogin,tipoAutenticazioneConfig);
+									listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoSelezionato,userLogin,tipoAutenticazioneConfig,appId);
 								}									
 							}
 						}

@@ -35,6 +35,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -66,6 +67,11 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 		this.idSoggettoToAdd = idSoggettoToAdd;
 		
 		CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(pa.getAutenticazione());
+		Boolean appId = null;
+		if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+			ApiKeyState apiKeyState =  new ApiKeyState(paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
+			appId = apiKeyState.appIdSelected;
+		}
 		
 		SoggettiCore soggettiCore = new SoggettiCore(paCore);
 		PddCore pddCore = new PddCore(paCore);
@@ -103,7 +109,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
 				List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
 				if(!modipa || pddCore.isPddEsterna(soggetto.getPortaDominio())) {
-					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, filtroTipoSA);
+					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA);
 				}
 				else {
 					// modipa, soggetto interno

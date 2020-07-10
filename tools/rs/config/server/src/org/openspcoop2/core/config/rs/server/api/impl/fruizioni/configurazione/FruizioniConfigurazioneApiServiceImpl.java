@@ -127,6 +127,7 @@ import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
@@ -184,8 +185,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			// Prendo la lista di servizi applicativi associati al soggetto
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pd.getAutenticazione());
+			Boolean appId = null;
+			if(org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+				ApiKeyState apiKeyState =  new ApiKeyState(env.pdCore.getParametroAutenticazione(pd.getAutenticazione(), pd.getProprietaAutenticazioneList()));
+				appId = apiKeyState.appIdSelected;
+			}
 			
-			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione);
+			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId);
 			if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nella fruizione selezionata");
 			}

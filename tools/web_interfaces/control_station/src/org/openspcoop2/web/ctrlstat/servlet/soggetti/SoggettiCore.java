@@ -28,16 +28,18 @@ import java.util.Map;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Soggetto;
-import org.openspcoop2.core.registry.constants.CredenzialeTipo;
-import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
+import org.openspcoop2.pdd.core.autenticazione.ApiKey;
+import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.resources.MapReader;
@@ -818,9 +820,9 @@ public class SoggettiCore extends ControlStationCore {
 
 	}
 	
-	public org.openspcoop2.core.registry.Soggetto soggettoWithCredenzialiBasicList(String user, String password, boolean checkPassword) throws DriverConfigurazioneException {
+	public org.openspcoop2.core.registry.Soggetto soggettoWithCredenzialiBasic(String user, String password, boolean checkPassword) throws DriverConfigurazioneException {
 		Connection con = null;
-		String nomeMetodo = "soggettoWithCredenzialiBasicList";
+		String nomeMetodo = "soggettoWithCredenzialiBasic";
 		DriverControlStationDB driver = null;
 
 		try {
@@ -829,7 +831,88 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().soggettoWithCredenzialiBasicList(user, password, checkPassword);
+			return driver.getDriverRegistroServiziDB().soggettoWithCredenzialiBasic(user, password, checkPassword);
+
+		} 
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public String toAppId(String protocollo, IDSoggetto idSoggetto,  boolean multipleApiKeys) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		String nomeMetodo = "toAppId";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return ApiKeyUtilities.toAppId(protocollo, idSoggetto, multipleApiKeys, driver.getDriverRegistroServiziDB());
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+		
+	}
+	
+	public ApiKey newApiKey(String protocollo, IDSoggetto idSoggetto) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		String nomeMetodo = "newApiKey";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return ApiKeyUtilities.newApiKey(protocollo, idSoggetto, this.getSoggettiApiKeyLunghezzaPasswordGenerate(), driver.getDriverRegistroServiziDB());
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+		
+	}
+	
+	public ApiKey newMultipleApiKey() throws DriverConfigurazioneException {
+		
+		String nomeMetodo = "newMultipleApiKey";
+		try {
+			return ApiKeyUtilities.newMultipleApiKey(this.getSoggettiApiKeyLunghezzaPasswordGenerate());
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+		
+	}
+	
+	public org.openspcoop2.core.registry.Soggetto soggettoWithCredenzialiApiKey(String user, boolean appId) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "soggettoWithCredenzialiApiKey";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().soggettoWithCredenzialiApiKey(user, appId);
 
 		} 
 		catch (Exception e) {
@@ -968,7 +1051,7 @@ public class SoggettiCore extends ControlStationCore {
 
 	}
 	
-	public List<IDSoggettoDB> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser,CredenzialeTipo credenziale, PddTipologia pddTipologia) throws DriverConfigurazioneException{
+	public List<IDSoggettoDB> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser,CredenzialeTipo credenziale, Boolean appId, PddTipologia pddTipologia) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getSoggettiFromTipoAutenticazione";
 		DriverControlStationDB driver = null;
@@ -979,7 +1062,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getSoggettiFromTipoAutenticazione(tipiSoggetto,superuser,credenziale,pddTipologia);
+			return driver.getDriverRegistroServiziDB().getSoggettiFromTipoAutenticazione(tipiSoggetto,superuser,credenziale,appId, pddTipologia);
 
 		} 
 		catch (Exception e) {

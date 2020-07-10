@@ -38,6 +38,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/config}CredenzialeTipo" use="optional" default="ssl"/&gt;
  * 		&lt;attribute name="user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="password" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="app-id" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="subject" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="cn-subject" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="issuer" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -112,6 +113,18 @@ public class Credenziali extends org.openspcoop2.utils.beans.BaseBean implements
     this.password = password;
   }
 
+  public boolean isAppId() {
+    return this.appId;
+  }
+
+  public boolean getAppId() {
+    return this.appId;
+  }
+
+  public void setAppId(boolean appId) {
+    this.appId = appId;
+  }
+
   public java.lang.String getSubject() {
     return this.subject;
   }
@@ -184,6 +197,10 @@ public class Credenziali extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="password",required=false)
   protected java.lang.String password;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="app-id",required=false)
+  protected boolean appId = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="subject",required=false)

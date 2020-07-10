@@ -575,8 +575,8 @@
 	<xsd:complexType name="trasformazione-regola">
 		<xsd:sequence>
 			<xsd:element maxOccurs="1" minOccurs="0" name="applicabilita" type="trasformazione-regola-applicabilita-richiesta"/>
-			<xsd:element maxOccurs="1" minOccurs="1" name="richiesta" type="trasformazione-regola-richiesta"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="1" name="risposta" type="trasformazione-regola-risposta"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="richiesta" type="trasformazione-regola-richiesta"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="risposta" type="trasformazione-regola-risposta"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
@@ -708,6 +708,9 @@
 		</xsd:attribute>
 		<xsd:attribute name="user" type="xsd:string"/>
 		<xsd:attribute name="password" type="xsd:string"/>
+		<xsd:attribute default="false" name="app-id" type="xsd:boolean">
+			
+		</xsd:attribute>
 		<xsd:attribute name="subject" type="xsd:string"/>
 		<xsd:attribute name="cn-subject" type="xsd:string"/>
 		<xsd:attribute name="issuer" type="xsd:string"/>
@@ -1436,6 +1439,7 @@
 			<xsd:enumeration value="basic"/>
 			<xsd:enumeration value="ssl"/>
 			<xsd:enumeration value="principal"/>
+			<xsd:enumeration value="apikey"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="GestioneErroreComportamento">

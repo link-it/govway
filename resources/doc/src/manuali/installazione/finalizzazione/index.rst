@@ -107,6 +107,11 @@ tematiche:
 
    In entrambi i ruoli la configurazione varia a seconda dell'architettura in cui è stato dispiegato GovWay (es. presenza di un Web Server). Indicazioni sulla configurazione vengono fornite nella sezione :ref:`install_ssl_config`.
 
+#. *Richieste 'application/x-www-form-urlencoded' su WildFly*
+
+   Per poter gestire correttamente richieste con Content-Type 'application/x-www-form-urlencoded' su application server 'WildFly', è richiesto di abilitare l'attributo 'allow-non-standard-wrappers' nella configurazione dell'A.S. 
+   Indicazioni sulla configurazione vengono fornite nella sezione :ref:`wfUrlEncoded`.
+
 .. toctree::
         :maxdepth: 2
 
@@ -119,3 +124,4 @@ tematiche:
 	apiRest
 	cluster/index
 	ssl/index
+	wildflyUrlEncoded

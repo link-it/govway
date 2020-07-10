@@ -38,6 +38,8 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.pdd.core.autenticazione.ApiKey;
+import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 
@@ -156,6 +158,86 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiBasicList(utente, password, checkPassword);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public String toAppId(String protocollo, IDServizioApplicativo idSA,  boolean multipleApiKeys) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		String nomeMetodo = "toAppId";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return ApiKeyUtilities.toAppId(protocollo, idSA, multipleApiKeys, driver.getDriverConfigurazioneDB());
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+		
+	}
+	
+	public ApiKey newApiKey(String protocollo, IDServizioApplicativo idSA) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		String nomeMetodo = "newApiKey";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return ApiKeyUtilities.newApiKey(protocollo, idSA, this.getApplicativiApiKeyLunghezzaPasswordGenerate(), driver.getDriverConfigurazioneDB());
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+		
+	}
+	
+	public ApiKey newMultipleApiKey() throws DriverConfigurazioneException {
+		
+		String nomeMetodo = "newMultipleApiKey";
+		try {
+			return ApiKeyUtilities.newMultipleApiKey(this.getApplicativiApiKeyLunghezzaPasswordGenerate());
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+		
+	}
+	
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiApiKeyList(String utente, boolean appId) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "servizioApplicativoWithCredenzialiApiKeyList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiApiKeyList(utente, appId);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -376,11 +458,11 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 
-	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return this.soggettiServizioApplicativoList(idSoggetto, superuser, credenziale, null);
+	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, Boolean appId) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return this.soggettiServizioApplicativoList(idSoggetto, superuser, credenziale, appId, null);
 	}
 	
-	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, Boolean appId, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "soggettiServizioApplicativoList";
 		DriverControlStationDB driver = null;
@@ -391,7 +473,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(idSoggetto,superuser,credenziale, tipo);
+			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(idSoggetto,superuser,credenziale, appId, tipo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

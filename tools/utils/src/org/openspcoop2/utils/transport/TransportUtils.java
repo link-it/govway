@@ -83,7 +83,10 @@ public class TransportUtils {
 	public static Object remove(Map<String, String> p, String name) {
 		return _properties(p, name, false);
 	}
-	private static Object _properties(Map<String, String> p, String name, boolean get) {
+	public static <T> T getObject(Map<String, T> p, String name) {
+		return _properties(p, name, true);
+	}
+	private static <T> T _properties(Map<String, T> p, String name, boolean get) {
 		
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
@@ -93,7 +96,7 @@ public class TransportUtils {
 		if(name==null) {
 			return null;
 		}
-		Object value = get ? p.get(name) : p.remove(name);
+		T value = get ? p.get(name) : p.remove(name);
 		if(value==null){
 			value = get ? p.get(name.toLowerCase()) : p.remove(name.toLowerCase());
 		}

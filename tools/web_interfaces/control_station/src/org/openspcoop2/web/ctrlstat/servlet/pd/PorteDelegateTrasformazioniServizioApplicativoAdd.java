@@ -46,6 +46,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -136,6 +137,11 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 			// Prendo nome della porta delegata
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaDelegata.getAutenticazione());
+			Boolean appId = null;
+			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+				ApiKeyState apiKeyState =  new ApiKeyState(porteDelegateCore.getParametroAutenticazione(portaDelegata.getAutenticazione(), portaDelegata.getProprietaAutenticazioneList()));
+				appId = apiKeyState.appIdSelected;
+			}
 			String nomePorta = portaDelegata.getNome();
 			
 			Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
@@ -210,7 +216,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				// Prendo la lista di servizioApplicativo associati al soggetto
 				// e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();
@@ -286,7 +292,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				// Prendo la lista di servizioApplicativo (tranne quelli già
 				// usati) e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();

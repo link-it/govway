@@ -46,6 +46,7 @@ import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -172,6 +173,11 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = portaApplicativa.getNome();
 			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaApplicativa.getAutenticazione());
+			Boolean appId = null;
+			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+				ApiKeyState apiKeyState =  new ApiKeyState(porteApplicativeCore.getParametroAutenticazione(portaApplicativa.getAutenticazione(), portaApplicativa.getProprietaAutenticazioneList()));
+				appId = apiKeyState.appIdSelected;
+			}
 			
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 			
@@ -196,9 +202,9 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			// calcolo soggetti compatibili con tipi protocollo supportati dalla pa e credenziali indicate
 			List<IDSoggettoDB> list = null;
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
+				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
 			}else{
-				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
+				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
 			}
 			if(list!=null && !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) {
 				for (int i = 0; i < list.size(); i++) {

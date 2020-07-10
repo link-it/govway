@@ -1,3 +1,15 @@
+2020-07-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1022
+	Aggiunto un nuovo tipo di autenticazione 'api-key' che implementa quando descritto in OpenAPI3:
+	- https://swagger.io/docs/specification/authentication/api-keys/
+	L'autenticazione prevede una chiave di identificazione 'Api Key' veicolata in un header http, un parametro della url o un cookie.
+	Viene supportata anche la modalità 'Multiple Api Keys' dove viene veicolato anche un 'App ID'.
+	È adesso quindi possibile registrare applicativi e soggetti con credenziali 'api-key'.
+	La registrazione comporta la generazione di una chiave univoca che l'applicativo o il soggetto dovrà utilizzare per accedere all'API su GovWay.
+	Aggiunto infine, sulla console di gestione, la possibilità di filtrare i soggetti e gli applicativi per il tipo di credenziali (https, http-basic, api-key, principal). 
+
 2020-07-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]

@@ -1513,7 +1513,19 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
 				null, null, null, false,
 				null,
-				config);
+				config,
+				false);
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiApiKey(
+			String user,String password, boolean appId, 
+			CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
+				null, null, null, false,
+				null,
+				config,
+				appId);
 	}
 	
 	@Override
@@ -1522,7 +1534,8 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				subject, issuer, null, false,
 				null,
-				null);
+				null,
+				false);
 	}
 	
 	@Override
@@ -1530,7 +1543,8 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				null, null, certificate, strictVerifier,
 				null,
-				null);
+				null,
+				false);
 	}
 	
 	@Override
@@ -1539,12 +1553,14 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
 				null, null, null, false,
 				principal,
-				null);
+				null,
+				false);
 	}
 	private org.openspcoop2.core.registry.Soggetto _getSoggettoAutenticato(CredenzialeTipo tipoCredenziale, String user,String password, 
 			String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
 			String principal, 
-			CryptConfig config) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			CryptConfig config,
+			boolean appId) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		// conrollo consistenza
 		if (tipoCredenziale == null)
@@ -1556,6 +1572,12 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro user is null (required for basic auth)");
 			if (password == null || "".equalsIgnoreCase(password))
 				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro password is null (required for basic auth)");
+			break;
+		case APIKEY:
+			if (user == null || "".equalsIgnoreCase(user))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro user is null (required for apikey auth)");
+			if (password == null || "".equalsIgnoreCase(password))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro password is null (required for apikey auth)");
 			break;
 		case SSL:
 			if ( (aSubject == null || "".equalsIgnoreCase(aSubject)) && (aCertificate==null))
@@ -1576,6 +1598,11 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			case BASIC:
 				credenzialiSoggetto.setUser(user);
 				credenzialiSoggetto.setPassword(password);
+				break;
+			case APIKEY:
+				credenzialiSoggetto.setUser(user);
+				credenzialiSoggetto.setPassword(password);
+				credenzialiSoggetto.setAppId(appId);
 				break;
 			case SSL:
 				credenzialiSoggetto.setSubject(aSubject);
@@ -1644,6 +1671,19 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 						}catch(Exception e) {
 							throw new DriverRegistroServiziException(e.getMessage(),e);
 						}
+					}
+				}
+				else if(CredenzialeTipo.APIKEY.equals(cTipo)){
+					CryptConfig config = filtroRicerca.getCryptConfig();
+					if(config!=null) {
+						try {
+							crypt = CryptFactory.getCrypt(this.log, config);
+						}catch(Exception e) {
+							throw new DriverRegistroServiziException(e.getMessage(),e);
+						}
+					}
+					else {
+						testInChiaro = true;
 					}
 				}
 			}
@@ -1732,6 +1772,18 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 							else{
 								if(filtroRicerca.getCredenzialiSoggetto().getTipo().equals(credenziali.getTipo())==false){
 									continue;
+								}
+								if(CredenzialeTipo.APIKEY.equals(filtroRicerca.getCredenzialiSoggetto().getTipo())){
+									if(filtroRicerca.getCredenzialiSoggetto().isAppId()) {
+										if(!credenziali.isAppId()) {
+											continue;
+										}
+									}
+									else {
+										if(credenziali.isAppId()) {
+											continue;
+										}
+									}
 								}
 							}
 						}

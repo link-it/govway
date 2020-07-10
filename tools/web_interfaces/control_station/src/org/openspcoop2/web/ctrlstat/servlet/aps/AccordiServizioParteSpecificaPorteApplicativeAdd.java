@@ -66,6 +66,7 @@ import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
@@ -415,17 +416,22 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			List<String> soggettiAutenticatiLabel = new ArrayList<String>();
 			// lista soggetti autenticati per la creazione automatica
 			CredenzialeTipo credenziale =  null;
+			Boolean appIdSoggetti = null;
 			if((erogazioneAutenticazione !=null && !"".equals(erogazioneAutenticazione)) && erogazioneIsSupportatoAutenticazioneSoggetti) {
 				TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(erogazioneAutenticazione);
 				credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(erogazioneAutenticazione) : null;
+				if(CredenzialeTipo.APIKEY.equals(credenziale)) {
+					ApiKeyState apiKeyState =  new ApiKeyState(null);
+					appIdSoggetti = apiKeyState.appIdSelected;
+				}
 			}
 			
 			List<IDSoggettoDB> listSoggettiCompatibili = null;
 			 
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati );
 			}else{
-				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, pddTipologiaSoggettoAutenticati);
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati);
 			}
 			
 			if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
@@ -512,9 +518,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						}
 						 
 						if(apsCore.isVisioneOggettiGlobale(userLogin)){
-							listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
+							listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati );
 						}else{
-							listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, pddTipologiaSoggettoAutenticati);
+							listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati);
 						}
 						
 						if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {

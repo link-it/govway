@@ -841,16 +841,19 @@ public class ValidazioneSemantica {
 					this.errori.add("La porta delegata "+idPortaDelegata+" possiede un meccanismo di autenticazione ["+autenticazione+"]: il servizio applicativo "+sa.getNome() +" non contiene la definizione di credenziali di accesso");
 				}
 				else{
-					if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.equals(autenticazione)){
+					if(CostantiConfigurazione.CREDENZIALE_BASIC.equals(autenticazione) ||
+							CostantiConfigurazione.CREDENZIALE_APIKEY.equals(autenticazione) ||
+							CostantiConfigurazione.CREDENZIALE_SSL.equals(autenticazione)  ||
+							CostantiConfigurazione.CREDENZIALE_PRINCIPAL.equals(autenticazione)){
 						boolean trovato = false;
 						for(int k=0; k<sa.getInvocazionePorta().sizeCredenzialiList(); k++){
-							if(CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(k).getTipo())){
+							if(autenticazione.equals(sa.getInvocazionePorta().getCredenziali(k).getTipo().getValue())){
 								trovato=true;
 								break;
 							}
 						}
 						if(!trovato){
-							this.errori.add("La porta delegata "+idPortaDelegata+" possiede un meccanismo di autenticazione ["+autenticazione+"]: il servizio applicativo "+sa.getNome() +" non contiene la definizione di credenziali di accesso di tipo "+CostantiConfigurazione.CREDENZIALE_BASIC.toString());
+							this.errori.add("La porta delegata "+idPortaDelegata+" possiede un meccanismo di autenticazione ["+autenticazione+"]: il servizio applicativo "+sa.getNome() +" non contiene la definizione di credenziali di accesso compatibili");
 						}
 					}
 				}
@@ -1170,7 +1173,7 @@ public class ValidazioneSemantica {
 		if(autorizzazione!=null){
 		
 			// Questi vincoli non valgono in spcoop e nello sdi
-			if("PROXY".equals(sogg.getTipo())){
+			if("gw".equals(sogg.getTipo())){
 				if(autorizzazione.toLowerCase().contains(CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED) &&
 						autorizzazione.toLowerCase().contains(CostantiConfigurazione.AUTORIZZAZIONE_ROLES)){
 					// Se e' definito un processo di autorizzazione che prevede sia autenticazione che ruoli l'autenticazione deve essere opzionale
@@ -2947,10 +2950,12 @@ public class ValidazioneSemantica {
 			tipo = c.getTipo();
 		}
 		if ( !tipo.equals(CostantiConfigurazione.CREDENZIALE_BASIC) && 
+				!tipo.equals(CostantiConfigurazione.CREDENZIALE_APIKEY) && 
 				!tipo.equals(CostantiConfigurazione.CREDENZIALE_SSL) && 
 				!tipo.equals(CostantiConfigurazione.CREDENZIALE_PRINCIPAL))
 			this.errori.add("Il tipo delle credenziali del "+oggetto+" deve possedere i valori: "+
 				CostantiConfigurazione.CREDENZIALE_BASIC.toString()+" o "+
+				CostantiConfigurazione.CREDENZIALE_APIKEY.toString()+" o "+
 					CostantiConfigurazione.CREDENZIALE_SSL.toString()+" o "+
 					CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString());
 		
@@ -2958,6 +2963,10 @@ public class ValidazioneSemantica {
 		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_BASIC)) {
 			if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
 				this.errori.add("Le credenziali di tipo basic del "+oggetto+" devono avere username e password valorizzati");
+		}
+		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_APIKEY)) {
+			if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
+				this.errori.add("Le credenziali di tipo apikey del "+oggetto+" devono avere username e password valorizzati");
 		}
 
 		// Se il tipo e' ssl, subject e' OBBLIGATORIO

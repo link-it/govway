@@ -95,4 +95,67 @@ public class AutenticazioneUtils {
 		}
     }
 	
+	public static void finalizeProcessApiKey(OpenSPCoop2Message message, 
+			boolean header, boolean cookie, boolean queryParameter, 
+			String nomeHeader, String nomeCookie, String nomeQueryParameter,
+			boolean clean) throws AutenticazioneException {
+		
+		if(header) {
+			if(nomeHeader!=null && message.getTransportRequestContext()!=null) {
+				if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
+					String headerValue = message.getTransportRequestContext().getParameterTrasporto(nomeHeader);
+					if(headerValue!=null) {
+						message.getTransportRequestContext().removeParameterTrasporto(nomeHeader);
+						if(!clean) {
+							message.forceTransportHeader(nomeHeader, headerValue); // serve soprattutto per soap
+						}
+					}
+	    		}
+			}
+		}
+		if(cookie && clean) { // su soap deve essere effettuato il forward solamente se consentito dalle regole
+			if(nomeCookie!=null && message.getTransportRequestContext()!=null) {
+				if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
+					String headerValue = message.getTransportRequestContext().getParameterTrasporto(HttpConstants.COOKIE);
+					if(headerValue!=null) {
+						message.getTransportRequestContext().removeParameterTrasporto(HttpConstants.COOKIE);
+						String [] tmp = headerValue.split(HttpConstants.COOKIE_SEPARATOR);
+						StringBuilder sb = new StringBuilder();
+						if(tmp!=null && tmp.length>0) {
+							for (int i = 0; i < tmp.length; i++) {
+								String cNameValue = tmp[i];
+								String [] c = cNameValue.split(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+								if(c!=null && c.length>0) {
+									String name = c[0];
+									if(!nomeCookie.equalsIgnoreCase(name)) {
+										if(sb.length()>0) {
+											sb.append(HttpConstants.COOKIE_SEPARATOR);
+										}
+										sb.append(cNameValue);
+									}
+								}
+							}
+						}
+						if(sb.length()>0) {
+							message.getTransportRequestContext().getParametersTrasporto().put(HttpConstants.COOKIE, sb.toString());
+						}
+					}
+	    		}
+			}
+		}
+		if(queryParameter) {
+			if(message.getTransportRequestContext()!=null) {
+				if(message.getTransportRequestContext().getParametersFormBased()!=null) {
+					String propertyValue = message.getTransportRequestContext().getParameterFormBased(nomeQueryParameter);
+					if(propertyValue!=null) {
+						message.getTransportRequestContext().removeParameterFormBased(nomeQueryParameter);
+						if(!clean) {
+							message.forceUrlProperty(nomeQueryParameter, propertyValue); // serve soprattutto per soap
+						}
+					}
+	    		}
+			}
+		}
+		
+	}
 }

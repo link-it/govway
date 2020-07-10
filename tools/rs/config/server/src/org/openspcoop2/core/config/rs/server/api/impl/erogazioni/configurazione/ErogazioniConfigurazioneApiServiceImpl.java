@@ -136,6 +136,7 @@ import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
@@ -201,7 +202,12 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					
 			
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pa.getAutenticazione());	
-			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(idSoggettoProprietarioSA.toIDSoggetto(),env.userLogin,tipoAutenticazione);
+			Boolean appId = null;
+			if(org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+				ApiKeyState apiKeyState =  new ApiKeyState(env.paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
+				appId = apiKeyState.appIdSelected;
+			}
+			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(idSoggettoProprietarioSA.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId);
 			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
 				if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
@@ -282,10 +288,15 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				);
 			
 			final CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(pa.getAutenticazione());	
+			Boolean appId = null;
+			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+				ApiKeyState apiKeyState =  new ApiKeyState(env.paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
+				appId = apiKeyState.appIdSelected;
+			}
 			final List<String> tipiSoggettiGestitiProtocollo = env.soggettiCore.getTipiSoggettiGestitiProtocollo(env.tipo_protocollo);
 			
 			// L'ultimo parametro è da configurare quando utilizzeremo il multitenant 
-			final List<IDSoggettoDB> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, null);
+			final List<IDSoggettoDB> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, null);
 			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti()) {
 				if (!BaseHelper.findFirst(soggettiCompatibili, s -> { 
 						return (daAutenticare.getTipo().equals(s.getTipo()) && daAutenticare.getNome().equals(s.getNome()) ); 

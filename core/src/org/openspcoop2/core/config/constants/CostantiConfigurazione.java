@@ -99,12 +99,15 @@ public class CostantiConfigurazione {
     
     /** tipo di porta autenticazione: basic */
     public final static CredenzialeTipo CREDENZIALE_BASIC = CredenzialeTipo.BASIC;
+    /** tipo di porta autenticazione: apikey */
+    public final static CredenzialeTipo CREDENZIALE_APIKEY = CredenzialeTipo.APIKEY;
     /** tipo di porta autenticazione: ssl */
     public final static CredenzialeTipo CREDENZIALE_SSL = CredenzialeTipo.SSL;
     /** tipo di porta autenticazione: principal */
     public final static CredenzialeTipo CREDENZIALE_PRINCIPAL = CredenzialeTipo.PRINCIPAL;
     
 	public final static String LABEL_CREDENZIALE_BASIC = "http-basic";
+	public final static String LABEL_CREDENZIALE_APIKEY = "api-key";
 	public final static String LABEL_CREDENZIALE_SSL = "https";
 	public final static String LABEL_CREDENZIALE_PRINCIPAL = "principal";
 	public final static String LABEL_CREDENZIALE_DISABILITATO = "disabilitato";
@@ -121,6 +124,7 @@ public class CostantiConfigurazione {
     /** tipo di porta autenticazione */
     public final static String AUTENTICAZIONE_NONE = "none";
     public final static String AUTENTICAZIONE_BASIC = "basic";
+    public final static String AUTENTICAZIONE_APIKEY = "apikey";
     public final static String AUTENTICAZIONE_SSL = "ssl";
     public final static String AUTENTICAZIONE_PRINCIPAL = "principal";
 //    public final static String AUTENTICAZIONE_PRINCIPAL_SSL_BASIC = "principalOrSslOrBasic";

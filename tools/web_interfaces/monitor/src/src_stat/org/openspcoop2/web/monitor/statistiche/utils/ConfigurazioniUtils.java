@@ -511,6 +511,9 @@ public class ConfigurazioniUtils {
 					case BASIC:
 						credenziale = CostantiConfigurazioni.VALUE_USER + CostantiConfigurazioni.LABEL_DOTS+cr.getUser();
 						break;
+					case APIKEY:
+						credenziale = CostantiConfigurazioni.VALUE_APP_ID + CostantiConfigurazioni.LABEL_DOTS+cr.getUser();
+						break;
 					case SSL:
 						credenziale = CostantiConfigurazioni.VALUE_SUBJECT + CostantiConfigurazioni.LABEL_DOTS+cr.getSubject();
 						break;

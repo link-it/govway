@@ -56,6 +56,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Configurazione;
@@ -158,6 +159,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
@@ -3823,6 +3825,98 @@ public class ConsoleHelper implements IConsoleHelper {
 				break;
 			}
 		}
+		else if(TipoAutenticazione.APIKEY.equals(autenticazione)) {
+			
+			// DATA ELEMENT
+			// 0: appId (CHECKBOX)
+			// 1: posizione (MULTI_SELECT)
+			// 2: useOAS3Names (CHECKBOX)
+			// 3: forwardApiKey (CHECKBOX)
+			// 4: queryParameterApiKey (TEXT_EDIT)
+			// 5: headerApiKey (TEXT_EDIT)
+			// 6: cookieApiKey (TEXT_EDIT)
+			// 7: forwardAppId (CHECKBOX)
+			// 8: queryParameterAppId (TEXT_EDIT)
+			// 9: headerAppId (TEXT_EDIT)
+			// 10: cookieAppId (TEXT_EDIT)
+			
+			l = new ArrayList<>();
+			
+			// posizione 0: appId
+			String v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+			l.add(ServletUtils.isCheckBoxEnabled(v)+"");
+			
+			// posizione 1: queryParameter
+			// posizione 2: header
+			// posizione 3: cookie
+			String [] vPos = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
+			boolean query = false;
+			boolean header = false;
+			boolean cookie = false;
+			if(vPos!=null && vPos.length>0) {
+				for (int i = 0; i < vPos.length; i++) {
+					String sel = vPos[i];
+					if(ParametriAutenticazioneApiKey.QUERY_PARAMETER.equals(sel)) {
+						query = true;
+					}
+					else if(ParametriAutenticazioneApiKey.HEADER.equals(sel)) {
+						header = true;
+					}
+					else if(ParametriAutenticazioneApiKey.COOKIE.equals(sel)) {
+						cookie = true;
+					}
+				}
+			}
+			l.add(query+"");
+			l.add(header+"");
+			l.add(cookie+"");
+			
+			// posizione 4: useOAS3Names
+			v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+2);
+			l.add(ServletUtils.isCheckBoxEnabled(v)+"");
+			
+			// posizione 5: cleanApiKey
+			String forwardApiKey = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+3);
+			if (ServletUtils.isCheckBoxEnabled(forwardApiKey)) {
+				l.add(false+"");
+			}
+			else {
+				l.add(true+"");
+			}
+
+			// posizione 6: cleanAppId
+			String forwardAppId = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+7);
+			if (ServletUtils.isCheckBoxEnabled(forwardAppId)) {
+				l.add(false+"");
+			}
+			else {
+				l.add(true+"");
+			}
+
+			// posizione 7: queryParameterApiKey
+			v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+4);
+			l.add(v);
+			
+			// posizione 8: headerApiKey
+			v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+5);
+			l.add(v);
+			
+			// posizione 9: cookieApiKey
+			v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+6);
+			l.add(v);
+			
+			// posizione 10: queryParameterAppId
+			v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+8);
+			l.add(v);
+			
+			// posizione 11: headerAppId
+			v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+9);
+			l.add(v);
+			
+			// posizione 12: cookieAppId
+			v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+10);
+			l.add(v);
+		}
 		
 		return l;
 	}
@@ -4085,6 +4179,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 				}catch(Exception e) {}
 				
+				boolean addOpzionale = true;
+				
 				if(TipoAutenticazione.BASIC.equals(autenticazione)) {
 					
 					// posizione 0: clean
@@ -4275,23 +4371,227 @@ public class ConsoleHelper implements IConsoleHelper {
 						break;
 					}
 				}
+				else if(TipoAutenticazione.APIKEY.equals(autenticazione)) {
+					
+					ApiKeyState apiKeyState = new ApiKeyState(autenticazioneParametroList);
+										
+					// 0: appId (CHECKBOX)
+					// 1: posizione (MULTI_SELECT)
+					// 2: useOAS3Names (CHECKBOX)
+					// 3: forwardApiKey (CHECKBOX)
+					// 4: queryParameterApiKey (TEXT_EDIT)
+					// 5: headerApiKey (TEXT_EDIT)
+					// 6: cookieApiKey (TEXT_EDIT)
+					// 7: forwardAppId (CHECKBOX)
+					// 8: queryParameterAppId (TEXT_EDIT)
+					// 9: headerAppId (TEXT_EDIT)
+					// 10: cookieAppId (TEXT_EDIT)
+					
+					// appId				
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+					de.setValue(apiKeyState.appId);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(apiKeyState.appIdSelected);
+						de.setPostBack(true);
+					}
+					dati.addElement(de);
+					
+					// opzionale
+					addOpzionale(dati, allHidden, forceDisableOptional, autenticazioneOpzionale, autenticazione);
+					addOpzionale = false;
+					
+					// posizione
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+						de.setSelezionati(apiKeyState.posizioneSelected);
+					}
+					else {
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE);
+						de.setType(DataElementType.MULTI_SELECT);
+						de.setSelezionati(apiKeyState.posizioneSelected);
+						de.setValues(apiKeyState.posizioneValues);
+						de.setLabels(apiKeyState.posizioneLabels);
+						de.setRows(3);
+						de.setPostBack(!apiKeyState.useOAS3NamesSelected);
+					}
+					dati.addElement(de);
+					
+					// useOAS3Names				
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+2);
+					de.setValue(apiKeyState.useOAS3Names);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_NOMI_STANDARD_OAS3);
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(apiKeyState.useOAS3NamesSelected);
+						de.setPostBack(true);
+					}
+					dati.addElement(de);
+					
+					// ** sezione apiKey **
+					if(!apiKeyState.useOAS3NamesSelected) {
+						de = new DataElement();
+						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+						de.setType(DataElementType.SUBTITLE);
+						dati.addElement(de);
+					}
+					
+					// forwardApiKey
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+3);
+					de.setValue(apiKeyState.forwardApiKey);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						if(apiKeyState.useOAS3NamesSelected) {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD_PREFIX+
+									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+						}
+						else {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD);
+						}
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(apiKeyState.forwardApiKeySelected);
+					}
+					dati.addElement(de);
+					
+					// queryParameterApiKey
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+4);
+					de.setValue(apiKeyState.queryParameterApiKey);
+					if(allHidden || apiKeyState.useOAS3NamesSelected || !apiKeyState.queryParameterEnabled) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setLabel(ModalitaIdentificazione.FORM_BASED.getLabel());
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setValue(apiKeyState.queryParameterApiKey);
+						de.setRequired(true);
+					}
+					dati.addElement(de);
+					
+					// headerApiKey
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+5);
+					de.setValue(apiKeyState.headerApiKey);
+					if(allHidden || apiKeyState.useOAS3NamesSelected || !apiKeyState.headerEnabled) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setLabel(ModalitaIdentificazione.HEADER_BASED.getLabel());
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setValue(apiKeyState.headerApiKey);
+						de.setRequired(true);
+					}
+					dati.addElement(de);
+					
+					// cookieApiKey
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+6);
+					de.setValue(apiKeyState.cookieApiKey);
+					if(allHidden || apiKeyState.useOAS3NamesSelected || !apiKeyState.cookieEnabled) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setLabel(ModalitaIdentificazione.COOKIE_BASED.getLabel());
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setValue(apiKeyState.cookieApiKey);
+						de.setRequired(true);
+					}
+					dati.addElement(de);
+					
+					
+					
+					// ** sezione appId **
+					if(!apiKeyState.useOAS3NamesSelected && apiKeyState.appIdSelected) {
+						de = new DataElement();
+						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+						de.setType(DataElementType.SUBTITLE);
+						dati.addElement(de);
+					}
+					
+					// forwardAppId
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+7);
+					de.setValue(apiKeyState.forwardAppId);
+					if(allHidden || !apiKeyState.appIdSelected) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						if(apiKeyState.useOAS3NamesSelected) {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD_PREFIX+
+									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+						}
+						else {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD);
+						}
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(apiKeyState.forwardAppIdSelected);
+					}
+					dati.addElement(de);
+					
+					// queryParameterAppId
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+8);
+					de.setValue(apiKeyState.queryParameterAppId);
+					if(allHidden || apiKeyState.useOAS3NamesSelected || !apiKeyState.queryParameterEnabled || !apiKeyState.appIdSelected) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setLabel(ModalitaIdentificazione.FORM_BASED.getLabel());
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setValue(apiKeyState.queryParameterAppId);
+						de.setRequired(true);
+					}
+					dati.addElement(de);
+					
+					// headerAppId
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+9);
+					de.setValue(apiKeyState.headerAppId);
+					if(allHidden || apiKeyState.useOAS3NamesSelected || !apiKeyState.headerEnabled || !apiKeyState.appIdSelected) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setLabel(ModalitaIdentificazione.HEADER_BASED.getLabel());
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setValue(apiKeyState.headerAppId);
+						de.setRequired(true);
+					}
+					dati.addElement(de);
+					
+					// cookieAppId
+					de = new DataElement();
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+10);
+					de.setValue(apiKeyState.cookieAppId);
+					if(allHidden || apiKeyState.useOAS3NamesSelected || !apiKeyState.cookieEnabled || !apiKeyState.appIdSelected) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setLabel(ModalitaIdentificazione.COOKIE_BASED.getLabel());
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setValue(apiKeyState.cookieAppId);
+						de.setRequired(true);
+					}
+					dati.addElement(de);
+				}
 				
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
-				if(forceDisableOptional) {
-					de.setType(DataElementType.HIDDEN);
-					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale));
+				if(addOpzionale) {
+					addOpzionale(dati, allHidden, forceDisableOptional, autenticazioneOpzionale, autenticazione);
 				}
-				else if(!allHidden && TipoAutenticazione.DISABILITATO.getValue().equals(autenticazione)==false){
-					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale));
-				}
-				else{
-					de.setType(DataElementType.HIDDEN);
-					de.setValue("");
-				}
-				dati.addElement(de);
+				
 			}
 			
 			
@@ -4304,6 +4604,25 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(TipoAutenticazione.DISABILITATO.getValue());
 			dati.addElement(de);
 		}
+	}
+	
+	private void addOpzionale(Vector<DataElement> dati, boolean allHidden, boolean forceDisableOptional, String autenticazioneOpzionale, String autenticazione) {
+		DataElement de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+		if(forceDisableOptional) {
+			de.setType(DataElementType.HIDDEN);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale));
+		}
+		else if(!allHidden && TipoAutenticazione.DISABILITATO.getValue().equals(autenticazione)==false){
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale));
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("");
+		}
+		dati.addElement(de);
 	}
 	
 	public void controlloAccessiGestioneToken(Vector<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
@@ -5288,6 +5607,87 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 			
+			if(TipoAutenticazione.APIKEY.equals(autenticazione)) {
+				if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty()){
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE));
+					return false;
+				}
+				
+				ApiKeyState apiKeyState = new ApiKeyState(autenticazioneParametroList);
+				if(!apiKeyState.queryParameterEnabled && !apiKeyState.headerEnabled && !apiKeyState.cookieEnabled) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE));
+					return false;
+				}
+				
+				if(!apiKeyState.useOAS3NamesSelected) {
+					if(apiKeyState.queryParameterEnabled) {
+						if(apiKeyState.queryParameterApiKey==null || "".equals(apiKeyState.queryParameterApiKey)) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.FORM_BASED.getLabel()));
+							return false;
+						}
+					}
+					if(apiKeyState.headerEnabled) {
+						if(apiKeyState.headerApiKey==null || "".equals(apiKeyState.headerApiKey)) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.HEADER_BASED.getLabel()));
+							return false;
+						}
+					}
+					if(apiKeyState.cookieEnabled) {
+						if(apiKeyState.cookieApiKey==null || "".equals(apiKeyState.cookieApiKey)) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.COOKIE_BASED.getLabel()));
+							return false;
+						}
+					}
+					
+					if(apiKeyState.appIdSelected) {
+						if(apiKeyState.queryParameterEnabled) {
+							if(apiKeyState.queryParameterAppId==null || "".equals(apiKeyState.queryParameterAppId)) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.FORM_BASED.getLabel()));
+								return false;
+							}
+							if(apiKeyState.queryParameterAppId.equalsIgnoreCase(apiKeyState.queryParameterApiKey)) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_CAMPI_DIFFERENTI,	
+										"'"+ModalitaIdentificazione.FORM_BASED.getLabel()+"' tra "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY,
+										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
+								return false;
+							}
+						}
+						if(apiKeyState.headerEnabled) {
+							if(apiKeyState.headerAppId==null || "".equals(apiKeyState.headerAppId)) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.HEADER_BASED.getLabel()));
+								return false;
+							}
+							if(apiKeyState.headerAppId.equalsIgnoreCase(apiKeyState.headerApiKey)) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_CAMPI_DIFFERENTI,	
+										"'"+ModalitaIdentificazione.HEADER_BASED.getLabel()+"' tra "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY,
+										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
+								return false;
+							}
+						}
+						if(apiKeyState.cookieEnabled) {
+							if(apiKeyState.cookieAppId==null || "".equals(apiKeyState.cookieAppId)) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.COOKIE_BASED.getLabel()));
+								return false;
+							}
+							if(apiKeyState.cookieAppId.equalsIgnoreCase(apiKeyState.cookieApiKey)) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_CAMPI_DIFFERENTI,	
+										"'"+ModalitaIdentificazione.COOKIE_BASED.getLabel()+"' tra "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY,
+										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
+								return false;
+							}
+						}
+					}
+				}
+			}
+			
 			// tipo autenticazione custom
 			if(autenticazione != null && autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
 				String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
@@ -5543,30 +5943,65 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						*/
 					}
-					if(isSupportatoAutenticazione && pd.getAutenticazione()!=null && 
-							!pd.getAutenticazione().equals(autenticazione)){
-						// modiifcata autenticazione
-						if(pd.sizeServizioApplicativoList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
-							return false;
+					if(isSupportatoAutenticazione && pd.getAutenticazione()!=null){
+						
+						String prefix = "";
+						
+						boolean modificataAutenticazione = !pd.getAutenticazione().equals(autenticazione);
+						if(!modificataAutenticazione) {
+							if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(autenticazione)) {
+								// verifico che non sia stato cambiato 'AppId'
+								ApiKeyState immagineAttuale = new ApiKeyState(autenticazioneParametroList);
+								ApiKeyState immaginePd = new ApiKeyState(this.porteDelegateCore.getParametroAutenticazione(autenticazione, pd.getProprietaAutenticazioneList()));
+								if(immagineAttuale.appIdSelected!=immaginePd.appIdSelected) {
+									modificataAutenticazione = true;
+									prefix = "(Modifica "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+") ";
+								}
+							}
 						}
 						
-						Trasformazioni trasformazioni = pd.getTrasformazioni();
-						if(trasformazioni != null) {
-							StringBuilder sb = new StringBuilder();
-							for(TrasformazioneRegola regola: trasformazioni.getRegolaList()) {
-								if(regola.getApplicabilita()!= null) {
-									if(regola.getApplicabilita().sizeServizioApplicativoList() > 0) {
-										sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-										sb.append("- ");
-										sb.append(regola.getNome());
+						// modiifcata autenticazione
+						if(modificataAutenticazione) {
+							if(pd.sizeServizioApplicativoList()>0) {
+								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
+								return false;
+							}
+							
+							Trasformazioni trasformazioni = pd.getTrasformazioni();
+							if(trasformazioni != null) {
+								StringBuilder sb = new StringBuilder();
+								for(TrasformazioneRegola regola: trasformazioni.getRegolaList()) {
+									if(regola.getApplicabilita()!= null) {
+										if(regola.getApplicabilita().sizeServizioApplicativoList() > 0) {
+											sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+											sb.append("- ");
+											sb.append(regola.getNome());
+										}
 									}
+								}
+								
+								if(sb.length() > 0) {
+									this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sb.toString());
+									return false;
 								}
 							}
 							
-							if(sb.length() > 0) {
-								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sb.toString());
-								return false;
+							Search ricercaAll = new Search(true);
+							List<AttivazionePolicy> listaRateLimiting = this.confCore.attivazionePolicyList(ricercaAll, RuoloPolicy.DELEGATA, pd.getNome());
+							if(listaRateLimiting!=null && !listaRateLimiting.isEmpty()) {
+								StringBuilder sb = new StringBuilder();
+								for(AttivazionePolicy policyRT: listaRateLimiting) {
+									if(policyRT.getFiltro()!= null && policyRT.getFiltro().getServizioApplicativoFruitore()!=null) {
+										sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+										sb.append("- ");
+										sb.append(policyRT.getAlias()!=null ? policyRT.getAlias() : policyRT.getIdActivePolicy());
+									}
+								}
+								
+								if(sb.length() > 0) {
+									this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_RATE_LIMITING_AUTENTICAZIONE_MODIFICATA + sb.toString());
+									return false;
+								}
 							}
 						}
 					}
@@ -5635,47 +6070,83 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						*/
 					}
-					if(isSupportatoAutenticazione && pa.getAutenticazione()!=null && 
-							!pa.getAutenticazione().equals(autenticazione)){
-						// modiifcata autenticazione
-						if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
-							return false;
-						}
-						if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
-							return false;
+					if(isSupportatoAutenticazione && pa.getAutenticazione()!=null ){
+						
+						String prefix = "";
+						
+						boolean modificataAutenticazione = !pa.getAutenticazione().equals(autenticazione);
+						if(!modificataAutenticazione) {
+							if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(autenticazione)) {
+								// verifico che non sia stato cambiato 'AppId'
+								ApiKeyState immagineAttuale = new ApiKeyState(autenticazioneParametroList);
+								ApiKeyState immaginePa = new ApiKeyState(this.porteApplicativeCore.getParametroAutenticazione(autenticazione, pa.getProprietaAutenticazioneList()));
+								if(immagineAttuale.appIdSelected!=immaginePa.appIdSelected) {
+									modificataAutenticazione = true;
+									prefix = "(Modifica "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+") ";
+								}
+							}
 						}
 						
-						Trasformazioni trasformazioni = pa.getTrasformazioni();
-						if(trasformazioni != null) {
-							StringBuilder sbSoggetti = new StringBuilder();
-							StringBuilder sbApplicativi = new StringBuilder();
+						// modiifcata autenticazione
+						if(modificataAutenticazione) {
+							if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
+								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
+								return false;
+							}
+							if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
+								return false;
+							}
 							
-							for(TrasformazioneRegola regola: trasformazioni.getRegolaList()) {
-								if(regola.getApplicabilita()!= null) {
-									if(regola.getApplicabilita().sizeSoggettoList() > 0) {
-										sbSoggetti.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-										sbSoggetti.append("- ");
-										sbSoggetti.append(regola.getNome());
+							Trasformazioni trasformazioni = pa.getTrasformazioni();
+							if(trasformazioni != null) {
+								StringBuilder sbSoggetti = new StringBuilder();
+								StringBuilder sbApplicativi = new StringBuilder();
+								
+								for(TrasformazioneRegola regola: trasformazioni.getRegolaList()) {
+									if(regola.getApplicabilita()!= null) {
+										if(regola.getApplicabilita().sizeSoggettoList() > 0) {
+											sbSoggetti.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+											sbSoggetti.append("- ");
+											sbSoggetti.append(regola.getNome());
+										}
+										
+										if(regola.getApplicabilita().sizeServizioApplicativoList() > 0) {
+											sbApplicativi.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+											sbApplicativi.append("- ");
+											sbApplicativi.append(regola.getNome());
+										}
 									}
-									
-									if(regola.getApplicabilita().sizeServizioApplicativoList() > 0) {
-										sbApplicativi.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-										sbApplicativi.append("- ");
-										sbApplicativi.append(regola.getNome());
-									}
+								}
+								
+								if(sbSoggetti.length() > 0) {
+									this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sbSoggetti.toString());
+									return false;
+								}
+								
+								if(sbApplicativi.length() > 0) {
+									this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sbApplicativi.toString());
+									return false;
 								}
 							}
 							
-							if(sbSoggetti.length() > 0) {
-								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sbSoggetti.toString());
-								return false;
-							}
-							
-							if(sbApplicativi.length() > 0) {
-								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sbApplicativi.toString());
-								return false;
+							Search ricercaAll = new Search(true);
+							List<AttivazionePolicy> listaRateLimiting = this.confCore.attivazionePolicyList(ricercaAll, RuoloPolicy.APPLICATIVA, pa.getNome());
+							if(listaRateLimiting!=null && !listaRateLimiting.isEmpty()) {
+								StringBuilder sb = new StringBuilder();
+								for(AttivazionePolicy policyRT: listaRateLimiting) {
+									if(policyRT.getFiltro()!= null && 
+											(policyRT.getFiltro().getServizioApplicativoFruitore()!=null || policyRT.getFiltro().getNomeFruitore()!=null)) {
+										sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+										sb.append("- ");
+										sb.append(policyRT.getAlias()!=null ? policyRT.getAlias() : policyRT.getIdActivePolicy());
+									}
+								}
+								
+								if(sb.length() > 0) {
+									this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_RATE_LIMITING_AUTENTICAZIONE_MODIFICATA + sb.toString());
+									return false;
+								}
 							}
 						}
 					}
@@ -8602,6 +9073,32 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			this.pd.addFilter(Filtri.FILTRO_GRUPPO, GruppiCostanti.LABEL_GRUPPO, gruppo, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterTipoCredenziali(String tipo, boolean postBack) throws Exception{
+		try {
+			String [] tmp_labels = ConnettoriCostanti.CREDENZIALI_LABELS;
+			String [] tmp_values = ConnettoriCostanti.CREDENZIALI_VALUES;
+			
+			String [] values = new String[tmp_values.length + 1];
+			String [] labels = new String[tmp_labels.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_TIPO_CREDENZIALI_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_TIPO_CREDENZIALI_QUALSIASI;
+			for (int i =0; i < tmp_labels.length ; i ++) {
+				labels[i+1] = tmp_labels[i];
+				values[i+1] = tmp_values[i];
+			}
+			
+			String selectedValue = tipo != null ? tipo : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_TIPO_CREDENZIALI_QUALSIASI;
+			
+			String label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO;
+
+			this.pd.addFilter(Filtri.FILTRO_TIPO_CREDENZIALI, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -15046,8 +15543,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		return de;
 	}
 	
-	public void setSecretPleaseCopy(String secret_pleaseCopy, String tipoAuth, boolean soggetti, String nome) {
-		String tipoCredenziale = "chiave";
+	public void setSecretPleaseCopy(String secret_password, String secret_user, boolean appId, String tipoAuth, boolean soggetti, String nome) {
+		String labelPassword = null;
+		String labelUtente = null;
 		String nomeP = nome!=null ? " "+nome : "";
 		String tipoOggetto = null;
 		if(soggetti) {
@@ -15062,12 +15560,30 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
-			tipoCredenziale= "password";
+			labelUtente= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME+": "+secret_user;
+			labelPassword= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD+": "+secret_password;
+		}
+		else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoAuth)) {
+			if(appId) {
+				labelUtente= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+": "+secret_user;
+			}
+			labelPassword= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+": "+secret_password;
 		}
 		
-		String warn = "<b>!! Attenzione !!</b>";
-		String msg1 = StringEscapeUtils.escapeHtml("La "+tipoCredenziale+" associata "+tipoOggetto+" è la seguente: "+secret_pleaseCopy);
-		String msg2 = StringEscapeUtils.escapeHtml("Si prega di copiarla e custodirla attentamente.");
-		this.pd.setMessage(warn+"<br/>"+msg1+"<br/>"+msg2, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+		//String warn = "<b>!! Attenzione !!</b>";
+		String intestazione = StringEscapeUtils.escapeHtml("Le credenziali associate "+tipoOggetto+" sono le seguenti: ");
+		String attenzione = StringEscapeUtils.escapeHtml("Si prega di copiarle e custodirle attentamente.");
+		StringBuilder sb = new StringBuilder();
+		String newLine = "<br/>";
+		//sb.append(warn).append(newLine).append(newLine);
+		sb.append(intestazione).append(newLine);
+		if(labelUtente!=null) {
+			sb.append(labelUtente).append(newLine);
+		}
+		if(labelPassword!=null) {
+			sb.append(labelPassword).append(newLine);
+		}
+		sb.append(newLine).append(attenzione);
+		this.pd.setMessage(sb.toString(), org.openspcoop2.web.lib.mvc.MessageType.WARN);
 	}
 }

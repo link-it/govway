@@ -567,7 +567,19 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
 				null, null, null, false,
 				null,
-				config);
+				config,
+				false);
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiApiKey(
+			String user,String password, boolean appId,
+			CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
+				null, null, null, false,
+				null,
+				config,
+				appId);
 	}
 	
 	@Override
@@ -576,7 +588,8 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				subject, issuer, null, false,
 				null,
-				null);
+				null,
+				false);
 	}
 	
 	@Override
@@ -584,7 +597,8 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				null, null, certificate, strictVerifier,
 				null,
-				null);
+				null,
+				false);
 	}
 	
 	@Override
@@ -593,12 +607,14 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
 				null, null, null, false,
 				principal,
-				null);
+				null,
+				false);
 	}
 	private org.openspcoop2.core.registry.Soggetto _getSoggettoAutenticato(CredenzialeTipo tipoCredenziale, String user,String password, 
 			String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
 			String principal, 
-			CryptConfig config) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			CryptConfig config,
+			boolean appId) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		// conrollo consistenza
 		if (tipoCredenziale == null)
@@ -610,6 +626,12 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro user is null (required for basic auth)");
 			if (password == null || "".equalsIgnoreCase(password))
 				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro password is null (required for basic auth)");
+			break;
+		case APIKEY:
+			if (user == null || "".equalsIgnoreCase(user))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro user is null (required for apikey auth)");
+			if (password == null || "".equalsIgnoreCase(password))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro password is null (required for apikey auth)");
 			break;
 		case SSL:
 			if ( (aSubject == null || "".equalsIgnoreCase(aSubject)) && (aCertificate==null))
@@ -630,6 +652,11 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			case BASIC:
 				credenzialiSoggetto.setUser(user);
 				credenzialiSoggetto.setPassword(password);
+				break;
+			case APIKEY:
+				credenzialiSoggetto.setUser(user);
+				credenzialiSoggetto.setPassword(password);
+				credenzialiSoggetto.setAppId(appId);
 				break;
 			case SSL:
 				credenzialiSoggetto.setSubject(aSubject);
@@ -687,6 +714,19 @@ public class DriverRegistroServiziWS extends BeanUtilities
 						}catch(Exception e) {
 							throw new DriverRegistroServiziException(e.getMessage(),e);
 						}
+					}
+				}
+				else if(CredenzialeTipo.APIKEY.equals(cTipo)){
+					CryptConfig config = filtroRicerca.getCryptConfig();
+					if(config!=null) {
+						try {
+							crypt = CryptFactory.getCrypt(this.log, config);
+						}catch(Exception e) {
+							throw new DriverRegistroServiziException(e.getMessage(),e);
+						}
+					}
+					else {
+						testInChiaro = true;
 					}
 				}
 			}

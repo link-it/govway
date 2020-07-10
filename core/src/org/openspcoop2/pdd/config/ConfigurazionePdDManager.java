@@ -785,6 +785,10 @@ public class ConfigurazionePdDManager {
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiBasic(this.getConnection(), aUser, aPassword, config);
 	}
+	
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiApiKey(this.getConnection(), aUser, aPassword, appId, config);
+	}
 
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), aSubject, aIssuer);

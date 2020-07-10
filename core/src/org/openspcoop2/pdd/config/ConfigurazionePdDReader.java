@@ -2678,6 +2678,26 @@ public class ConfigurazionePdDReader {
 		else
 			return null;
 	}
+	
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiApiKey(Connection connectionPdD,String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException{
+		ServizioApplicativo servizioApplicativo = null;
+		try{
+			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiApiKey(connectionPdD, aUser, aPassword, appId, config);
+		}catch(DriverConfigurazioneNotFound e){
+			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
+		}
+
+		if(servizioApplicativo!=null){
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(servizioApplicativo.getNome());
+			if(servizioApplicativo.getTipoSoggettoProprietario()!=null && servizioApplicativo.getNomeSoggettoProprietario()!=null){
+				idSA.setIdSoggettoProprietario(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
+			}
+			return idSA;
+		}
+		else
+			return null;
+	}
 
 	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject, String aIssuer) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;

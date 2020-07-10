@@ -73,6 +73,11 @@ public class HttpConstants {
 	/** Retry-After */
 	public final static String RETRY_AFTER = "Retry-After";
 	
+	/** Cookie */
+	public final static String COOKIE = "Cookie";
+	public final static String COOKIE_SEPARATOR = ";";
+	public final static String COOKIE_NAME_VALUE_SEPARATOR = "=";
+	
 	/** Digest */
 	public final static String DIGEST = "Digest";
 	public final static String DIGEST_ALGO_MD5 = "MD5";

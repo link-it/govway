@@ -50,6 +50,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -162,7 +163,11 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoA
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = portaApplicativa.getNome();
 			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaApplicativa.getAutenticazione());
-			
+			Boolean appId = null;
+			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+				ApiKeyState apiKeyState =  new ApiKeyState(porteApplicativeCore.getParametroAutenticazione(portaApplicativa.getAutenticazione(), portaApplicativa.getProprietaAutenticazioneList()));
+				appId = apiKeyState.appIdSelected;
+			}
 
 			// lista soggetti disponibili
 			String[] soggettiList = null;
@@ -201,7 +206,7 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoA
 				
 				for (org.openspcoop2.core.registry.Soggetto soggetto : listSoggetti) {
 					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
-					List<IDServizioApplicativoDB> listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
+					List<IDServizioApplicativoDB> listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId);
 					List<IDServizioApplicativoDB> listServiziApplicativiTmpUnique = new ArrayList<>();
 					
 					// scarto i sa già associati

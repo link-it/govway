@@ -59,6 +59,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -212,6 +213,9 @@ public final class ServiziApplicativiAdd extends Action {
 			String passwordSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			String subjectSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 			String principalSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			
+			String changepwd = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
+						
 			String tipoCredenzialiSSLSorgente = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
 			if(tipoCredenzialiSSLSorgente == null) {
 				tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO;
@@ -255,6 +259,10 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 			String oldTipoCredenzialiSSLWizardStep = tipoCredenzialiSSLWizardStep;
 			
+			String multipleApiKey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+			String appId = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+			String apiKey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+						
 			String sbustamentoInformazioniProtocolloRisposta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
 
 			
@@ -500,7 +508,14 @@ public final class ServiziApplicativiAdd extends Action {
 					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
 				}
+				
+				// apikey
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS)) {
+					appId = null;
+					apiKey = null;
+				}
 			}
+			
 			
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
@@ -694,6 +709,23 @@ public final class ServiziApplicativiAdd extends Action {
 					this.registryReader, this.configRegistryReader, idSA);
 			this.protocolProperties = saHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 			
+			boolean multipleApiKeysEnabled = false;
+			boolean appIdModificabile = ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_MODIFICABILE;
+			if(tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
+				multipleApiKeysEnabled = ServletUtils.isCheckBoxEnabled(multipleApiKey);
+				if(appIdModificabile && multipleApiKeysEnabled) {
+					boolean saDefined = nome!=null && !"".equals(nome) && 
+							idSoggetto!=null && 
+							idSoggetto.getTipo()!=null && !"".equals(idSoggetto.getTipo()) && 
+							idSoggetto.getNome()!=null && !"".equals(idSoggetto.getNome());
+					if(appId==null || "".equals(appId)) {
+						if( saDefined ) {
+							appId = saCore.toAppId(tipoProtocollo, idSA, multipleApiKeysEnabled);
+						}
+					}
+				}
+			}
+			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if(saHelper.isEditModeInProgress() || checkWizard){
@@ -786,6 +818,8 @@ public final class ServiziApplicativiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
+						changepwd,
+						multipleApiKey, appId, apiKey,
 						autenticazioneToken,token_policy, tipoSA, useAsClient,
 						integrationManagerEnabled);
 
@@ -895,6 +929,8 @@ public final class ServiziApplicativiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
+						changepwd,
+						multipleApiKey, appId, apiKey,
 						autenticazioneToken,token_policy, tipoSA, useAsClient,
 						integrationManagerEnabled);
 
@@ -909,7 +945,12 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 
 			// Inserisco il servizioApplicativo nel db
-			String secret_pleaseCopy = null;
+			
+			boolean secret = false;
+			String secret_password  = null;
+			String secret_user = null;
+			boolean secret_appId = false;
+			
 			ServizioApplicativo sa = null;
 			try {
 				// con.setAutoCommit(false);
@@ -920,6 +961,10 @@ public final class ServiziApplicativiAdd extends Action {
 				int idProv = Integer.parseInt(provider);
 
 				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
+					subjectSA = "";
+					principalSA = "";
+				}
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
 					subjectSA = "";
 					principalSA = "";
 				}
@@ -1086,9 +1131,37 @@ public final class ServiziApplicativiAdd extends Action {
 				}
 				credenziali.setPassword(passwordSA);
 				
+				ApiKey apiKeyGenerated = null;
+				if(tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
+					credenziali.setAppId(multipleApiKeysEnabled);
+					if(multipleApiKeysEnabled) {
+						apiKeyGenerated = saCore.newMultipleApiKey();
+						if(!appIdModificabile) {
+							appId = saCore.toAppId(tipoProtocollo, idSA, multipleApiKeysEnabled);
+						}
+					}
+					else {
+						appId = saCore.toAppId(tipoProtocollo, idSA,multipleApiKeysEnabled);
+						apiKeyGenerated = saCore.newApiKey(tipoProtocollo, idSA);
+					}
+					credenziali.setUser(appId);
+					credenziali.setPassword(apiKeyGenerated.getPassword());
+				}
+				else {
+					credenziali.setAppId(false);
+				}
+				
 				if(saCore.isApplicativiPasswordEncryptEnabled()) {
-					if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
-						secret_pleaseCopy = passwordSA;
+					if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) || tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
+						secret = true;
+						secret_user = credenziali.getUser();
+						if (apiKeyGenerated!=null) {
+							secret_password = apiKeyGenerated.getApiKey();
+						}
+						else {
+							secret_password = credenziali.getPassword();
+						}
+						secret_appId = credenziali.isAppId();
 					}
 				}
 				
@@ -1143,8 +1216,8 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 
 			// Messaggio 'Please Copy'
-			if(secret_pleaseCopy!=null) {
-				saHelper.setSecretPleaseCopy(secret_pleaseCopy, tipoauthSA, false, sa.getNome());
+			if(secret) {
+				saHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, tipoauthSA, false, sa.getNome());
 			}
 			
 			// Preparo la lista

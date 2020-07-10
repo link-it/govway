@@ -43,6 +43,7 @@ import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -792,16 +793,36 @@ public class TransazioneBean extends Transazione{
 		}
 		
 		
+		
 		String sFruitore = getSoggettoFruitore();
 		if(StringUtils.isNotEmpty(sFruitore)) {
-		
+
 			boolean addFruitore = true;
-			
-			if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
+						
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
+				
+				// L'AppId di un soggetto è già il soggetto. L'informazione sarebbe ridondante.
+				String sTrasportoMittente = getTrasportoMittenteLabel();
+				if(richiedente!=null && sTrasportoMittente!=null && richiedente.equals(sTrasportoMittente)) { // se e' stato selezionato l'appId
+					String sTipoTrasportoMittente = getTipoTrasportoMittenteLabel();
+					if(sTipoTrasportoMittente!=null && StringUtils.isNotEmpty(sTipoTrasportoMittente) && 
+							sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.APIKEY.getValue())) {
+						// autenticazione api-key
+						if(!sTrasportoMittente.contains(ApiKeyUtilities.APPLICATIVO_SOGGETTO_SEPARATOR)) {
+							// appId di un soggetto
+							bf = new StringBuilder(); // aggiunto solo il soggetto
+						}		
+					}
+				}
+				
+			}
+			else if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
+				
 				if(this.soggettoPddMonitor!=null && StringUtils.isNotEmpty(this.getTipoSoggettoFruitore()) && StringUtils.isNotEmpty(this.getNomeSoggettoFruitore())) {
 					IDSoggetto idSoggettoFruitore = new IDSoggetto(this.getTipoSoggettoFruitore(), this.getNomeSoggettoFruitore());
 					addFruitore = !this.soggettoPddMonitor.equals(idSoggettoFruitore.toString());
 				}
+				
 			}
 			
 			if(addFruitore) {

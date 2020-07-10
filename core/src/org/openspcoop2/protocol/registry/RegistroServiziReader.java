@@ -2615,6 +2615,10 @@ public class RegistroServiziReader {
 		return this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password, cryptConfig);
 	}
 	
+	public Soggetto getSoggettoByCredenzialiApiKey(Connection connectionPdD,String username, String password, boolean appId, CryptConfig cryptConfig, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSoggettoByCredenzialiApiKey(connectionPdD, nomeRegistro, username, password, appId, cryptConfig);
+	}
+	
 	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, subject, issuer);
 	}
@@ -2631,6 +2635,10 @@ public class RegistroServiziReader {
 		return convertToId(this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password, cryptConfig));
 	}
 	
+	public IDSoggetto getIdSoggettoByCredenzialiApiKey(Connection connectionPdD,String username, String password,  boolean appId, CryptConfig cryptConfig, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return convertToId(this.registroServizi.getSoggettoByCredenzialiApiKey(connectionPdD, nomeRegistro, username, password, appId, cryptConfig));
+	}
+	
 	public IDSoggetto getIdSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return convertToId(this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, subject, issuer));
 	}
@@ -2642,7 +2650,7 @@ public class RegistroServiziReader {
 	public IDSoggetto getIdSoggettoByCredenzialiPrincipal(Connection connectionPdD,String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return convertToId(this.registroServizi.getSoggettoByCredenzialiPrincipal(connectionPdD, nomeRegistro, principal));
 	}
-	
+		
 	private IDSoggetto convertToId(Soggetto s){
 		IDSoggetto id = new IDSoggetto(s.getTipo(), s.getNome(), s.getIdentificativoPorta());
 		return id;

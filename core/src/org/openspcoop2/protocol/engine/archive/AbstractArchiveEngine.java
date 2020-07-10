@@ -361,7 +361,10 @@ public abstract class AbstractArchiveEngine {
 	}
 	
 	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroCredenzialiBasic(String utente) throws DriverRegistroServiziException{
-		return this.driverRegistroServizi.soggettoWithCredenzialiBasicList(utente, null, false);
+		return this.driverRegistroServizi.soggettoWithCredenzialiBasic(utente, null, false);
+	}
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroCredenzialiApiKey(String utente, boolean appId) throws DriverRegistroServiziException{
+		return this.driverRegistroServizi.soggettoWithCredenzialiApiKey(utente, appId);
 	}
 	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroCredenzialiSsl(String subject, String issuer) throws DriverRegistroServiziException{
 		try {
@@ -482,6 +485,13 @@ public abstract class AbstractArchiveEngine {
 	
 	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiBasic(String utente) throws DriverConfigurazioneException{
 		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiBasicList(utente, null, false);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
+	}
+	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiApiKey(String utente, boolean appId) throws DriverConfigurazioneException{
+		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiApiKeyList(utente, appId);
 		if(l!=null && !l.isEmpty()) {
 			return l.get(0);
 		}

@@ -210,6 +210,10 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT = "Subject";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME = "Username";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL = "eMail";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE = "Posizione";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_NOMI_STANDARD_OAS3 = "Nomi Standard OAS3";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD = "Forward";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD_PREFIX = "Forward ";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI_SUFFIX = "Richiedente";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Autorizzazione per Richiedente";//"Applicativi Autenticati";
@@ -1024,6 +1028,9 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_RUOLO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_TIPO_CREDENZIALI_QUALSIASI = "";
+	public final static String LABEL_PARAMETRO_TIPO_CREDENZIALI_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
 	public final static String DEFAULT_VALUE_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
@@ -1757,7 +1764,7 @@ public class CostantiControlStation {
 		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_username.name());
 		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_eMail.name());
 	}
-		
+			
 	/** MESSAGGI */
 	public static final String MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE = "Posizione della policy modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
@@ -1777,6 +1784,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_CON_ELEMENTO_XML_DEFINITA_GIA_ESISTENTE = "Esiste gi&agrave; una correlazione applicativa con elemento [{0}] definita nella {1}";
 	public static final String MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI = "Modalit&agrave; identificazione dev'essere disabilitato, headerBased, urlBased, contentBased o inputBased ";
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI = "Dati incompleti.";
+	public static final String MESSAGGIO_ERRRORE_CAMPI_DIFFERENTI = "&Egrave; necessario indicare dei valori differenti in {0} e {1}";
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}";
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_VALORE_MINORE_DEL_MINIMO = "Il valore indicato per {0} è minore del minimo consentito: ${1}";
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_VALORE_MINORE_DEL_MASSIMO = "Il valore indicato per {0} è maggiore del massimo consentito: ${1}";
@@ -1818,6 +1826,7 @@ public class CostantiControlStation {
 //	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima eliminare gli applicativi associati alle trasformazioni:";
 //	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima eliminare i soggetti associati alle trasformazioni:";
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima eliminare gli applicativi associati alle trasformazioni:";
+	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_RATE_LIMITING_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima eliminare gli applicativi associati alle politiche di Rate Limiting:";
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima eliminare i soggetti associati alle trasformazioni:";
 	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY = "Validazione XSD dev'essere abilitato, disabilitato o warningOnly";
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO = "Valore del campo {0} non valido.";

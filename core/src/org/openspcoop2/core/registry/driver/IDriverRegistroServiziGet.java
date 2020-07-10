@@ -333,6 +333,18 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
 	 * che include le credenziali passate come parametro. 
 	 *
+	 * @param aUser User utilizzato come appId o all'interno del token
+	 * @param aPassword Password presente all'interno del token
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
+	 * 
+	 */
+	public Soggetto getSoggettoByCredenzialiApiKey(
+			String user, String password, boolean appId, CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
+	 * che include le credenziali passate come parametro. 
+	 *
 	 * @param subject Subject utilizzato nella connessione HTTPS.
 	 * @param issuer Issuer utilizzato nella connessione HTTPS.
 	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .

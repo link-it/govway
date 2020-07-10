@@ -1867,9 +1867,14 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, subjectCN);
 				
 				String issuer = null;
-				if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
-					issuer = credenziali.getIssuer();
-				updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				if(credenziali != null && org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(credenziali.getTipo())) {
+					updateStmt.setString(index++, CostantiDB.getISSUER_APIKEY(credenziali.isAppId()));
+				}
+				else {
+					if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
+						issuer = credenziali.getIssuer();
+					updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				}
 				String issuerCN = null;
 				if(credenziali!=null && credenziali.getCnIssuer()!=null && !"".equals(credenziali.getCnIssuer()))
 					issuerCN = credenziali.getCnIssuer();
@@ -2028,9 +2033,14 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, subjectCN);
 				
 				issuer = null;
-				if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
-					issuer = credenziali.getIssuer();
-				updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				if(credenziali != null && org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(credenziali.getTipo())) {
+					updateStmt.setString(index++, CostantiDB.getISSUER_APIKEY(credenziali.isAppId()));
+				}
+				else {
+					if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
+						issuer = credenziali.getIssuer();
+					updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				}
 				issuerCN = null;
 				if(credenziali!=null && credenziali.getCnIssuer()!=null && !"".equals(credenziali.getCnIssuer()))
 					issuerCN = credenziali.getCnIssuer();

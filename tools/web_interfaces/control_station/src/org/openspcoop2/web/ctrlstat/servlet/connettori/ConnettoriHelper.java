@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.utils.DynamicStringReplace;
@@ -1097,41 +1098,52 @@ public class ConnettoriHelper extends ConsoleHelper {
 	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata) throws Exception {
-		return this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
+		return this.addCredenzialiToDati(dati, tipoauth, null, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
 				null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+				null,
+				null,null,null,
 				null);
 	}
 	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata,
 			String subtitleConfigurazione) throws Exception {
-		return this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
+		return this.addCredenzialiToDati(dati, tipoauth, null, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
 				null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+				null,
+				null,null,null,
 				subtitleConfigurazione);
 	} 
 	
-	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
-			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
-			String prefix, boolean autenticazioneNessunaAbilitata,String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
-			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
-			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
-			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
-			String issuer, String tipoCredenzialiSSLStatoElaborazioneCertificato) throws Exception{
-		return addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal,
-				toCall, showLabelCredenzialiAccesso, endpointtype,connettore,visualizzaTipoAutenticazione,
-				prefix, autenticazioneNessunaAbilitata,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword,
-				listaAliasEstrattiCertificato, tipoCredenzialiSSLAliasCertificato,tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
-				tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, tipoCredenzialiSSLAliasCertificatoSelfSigned,
-				tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
-				issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,null);
-	}
-	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
+	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata,String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
 			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
 			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
 			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
 			String issuer, String tipoCredenzialiSSLStatoElaborazioneCertificato,
+			String changepwd, 
+			String multipleApiKey, String appId, String apiKey) throws Exception{
+		return addCredenzialiToDati(dati, tipoauth, oldtipoauth, utente, password, subject, principal,
+				toCall, showLabelCredenzialiAccesso, endpointtype,connettore,visualizzaTipoAutenticazione,
+				prefix, autenticazioneNessunaAbilitata,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword,
+				listaAliasEstrattiCertificato, tipoCredenzialiSSLAliasCertificato,tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
+				tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, tipoCredenzialiSSLAliasCertificatoSelfSigned,
+				tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
+				issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,
+				changepwd,
+				multipleApiKey, appId, apiKey,
+				null);
+	}
+	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
+			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
+			String prefix, boolean autenticazioneNessunaAbilitata,String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
+			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
+			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
+			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
+			String issuer, String tipoCredenzialiSSLStatoElaborazioneCertificato,
+			String changepwd, 
+			String multipleApiKey, String appId, String apiKey,
 			String subtitleConfigurazione) throws Exception{
 
 		if(subtitleConfigurazione==null) {
@@ -1177,24 +1189,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				
 				if (autenticazioneNessuna) {
-					tipoA = new String[] { ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA,
-							ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, 
-							ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL,
-							ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL };
-					labelTipoA = new String[] { ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA,
-							ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_BASIC, 
-							ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_SSL,
-							ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL };
+					tipoA = ConnettoriCostanti.CREDENZIALI_CON_NESSUNA_VALUES;
+					labelTipoA = ConnettoriCostanti.CREDENZIALI_CON_NESSUNA_LABELS;
 				}
 				else{
-					tipoA = new String[] { 
-							ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, 
-							ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL,
-							ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL };
-					labelTipoA = new String[] { 
-							ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_BASIC, 
-							ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_SSL,
-							ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL};
+					tipoA = ConnettoriCostanti.CREDENZIALI_VALUES;
+					labelTipoA = ConnettoriCostanti.CREDENZIALI_LABELS;
 					if(tipoauth==null){
 						tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
 					}
@@ -1268,6 +1268,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setRequired(true);
 				dati.addElement(de);
 
+				
+				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				de.setValue(StringEscapeUtils.escapeHtml(password));
@@ -1285,23 +1287,30 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					boolean passwordCifrata = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi); // tipoCredenzialiSSLVerificaTuttiICampi usata come informazione per sapere se una password e' cifrata o meno
 					
-					String changepwd = subject; // mi appoggio a questa informazione per sapere se modificare la password o no
+					if(change && passwordCifrata ){
+						DataElement deCifratura = new DataElement();
+						deCifratura.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+						deCifratura.setType(DataElementType.HIDDEN);
+						deCifratura.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
+						dati.add(deCifratura);
+					}
 					
+					// solo adesso posso reimpostare il change
+					if(change) {
+						if(!tipoauth.equals(oldtipoauth)) {
+							change = false;
+						}
+					}
+										
 					if(change && passwordCifrata ){
 						DataElement deModifica = new DataElement();
-						deModifica.setLabel(ConnettoriCostanti.LABEL_MODIFICA_PASSWORD);
+						deModifica.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_PASSWORD);
 						deModifica.setType(DataElementType.CHECKBOX);
 						deModifica.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
 						deModifica.setPostBack(true);
 						deModifica.setSelected(changepwd);
 						deModifica.setSize(this.getSize());
 						dati.addElement(deModifica);
-						
-						DataElement deCifratura = new DataElement();
-						deCifratura.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-						deCifratura.setType(DataElementType.HIDDEN);
-						deCifratura.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
-						dati.add(deCifratura);
 						
 						de.setType(DataElementType.HIDDEN);
 						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1723,6 +1732,159 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 			}
 			
+			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoauth)  && !connettore) {
+				
+				boolean multipleApiKeysEnabled = ServletUtils.isCheckBoxEnabled(multipleApiKey);
+				boolean appIdModificabile = ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_MODIFICABILE;
+				
+				boolean change = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE.equals(toCall) || 
+						SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE.equals(toCall);
+				
+				boolean soggetti = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE.equals(toCall);
+				boolean encryptPassword = soggetti ? this.connettoriCore.isSoggettiPasswordEncryptEnabled() : this.connettoriCore.isApplicativiPasswordEncryptEnabled();
+								
+				boolean modificaApiKey = ServletUtils.isCheckBoxEnabled(changepwd);
+				String suffixOld = "";
+				if(modificaApiKey) {
+					suffixOld = "__OLD";
+				}
+				
+				boolean passwordCifrata = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi); // tipoCredenzialiSSLVerificaTuttiICampi usata come informazione per sapere se una password e' cifrata o meno
+				
+				if(change && passwordCifrata ){
+					DataElement deCifratura = new DataElement();
+					deCifratura.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+					deCifratura.setType(DataElementType.HIDDEN);
+					deCifratura.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
+					dati.add(deCifratura);
+				}
+				
+				// solo adesso posso reimpostare a false il change
+				if(change) {
+					if(!tipoauth.equals(oldtipoauth)) {
+						change = false;
+					}
+				}
+				
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS+suffixOld);
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+				if(change) {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(multipleApiKey);
+					if(!modificaApiKey) {
+						DataElement deLabel = new DataElement();
+						deLabel.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+						deLabel.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS+"__LABEL");
+						if(!multipleApiKeysEnabled) {
+							deLabel.setType(DataElementType.TEXT);
+						}
+						else {
+							deLabel.setType(DataElementType.HIDDEN); // faccio vedere sotto direttamente l'app id
+						}
+						deLabel.setValue(multipleApiKeysEnabled? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
+						dati.addElement(deLabel);						
+					}
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(multipleApiKeysEnabled);
+					de.setPostBack(true);
+				}
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+suffixOld);
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL);
+				if(change) {
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+				}
+				de.setValue(StringEscapeUtils.escapeHtml(appId));
+				if(multipleApiKeysEnabled) {
+					if(appIdModificabile) {
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setSize(this.getSize());
+						de.setRequired(true);
+					}
+					else if(change && !modificaApiKey) {
+						de.setType(DataElementType.TEXT);
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+					}
+				}else {
+					de.setType(DataElementType.HIDDEN);
+				}
+				dati.addElement(de);
+				
+				if(change && !modificaApiKey && !encryptPassword && !passwordCifrata) {
+					de = new DataElement();
+					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+"__LABEL");
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setRows(3);
+					if(multipleApiKeysEnabled) {
+						de.setValue(ApiKeyUtilities.encodeMultipleApiKey(password));
+					}
+					else {
+						de.setValue(ApiKeyUtilities.encodeApiKey(utente, password));
+					}
+					dati.addElement(de);
+				}
+				
+				if(change) {
+					DataElement deModifica = new DataElement();
+					deModifica.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_API_KEY);
+					deModifica.setType(DataElementType.CHECKBOX);
+					deModifica.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
+					deModifica.setPostBack(true);
+					deModifica.setSelected(changepwd);
+					deModifica.setSize(this.getSize());
+					dati.addElement(deModifica);
+				}
+				
+				if(modificaApiKey) {
+					
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_API_KEY);
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(multipleApiKeysEnabled);
+					de.setPostBack(true);
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL);
+					de.setValue(StringEscapeUtils.escapeHtml(appId));
+					if(multipleApiKeysEnabled) {
+						if(appIdModificabile) {
+							de.setType(DataElementType.TEXT_EDIT);
+							de.setSize(this.getSize());
+							de.setRequired(true);
+						}
+						else {
+							de.setType(DataElementType.HIDDEN);
+						}
+					}else {
+						de.setType(DataElementType.HIDDEN);
+					}
+					dati.addElement(de);
+									
+				}
+				
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+				de.setValue(StringEscapeUtils.escapeHtml(apiKey));
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+				
+			}
 
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL.equals(tipoauth)  && !connettore) {
 				de = new DataElement();
@@ -4118,6 +4280,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		// String confpw = this.getParameter("confpw");
 		String subject = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 		String principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+		String appId = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 		
 		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 			
@@ -4298,6 +4461,23 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 		}
 		
+		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
+			boolean appIdModificabile = ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_MODIFICABILE ;
+			if(appIdModificabile && ServletUtils.isCheckBoxEnabled(appId)) {
+				if(utente.equals("")) {
+					String tmpElenco = "";
+					if (utente.equals("")) {
+						tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID;
+					}
+					this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+					return false;
+				}
+				if(this.checkLengthSubject_SSL_Principal(utente, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID)==false) {
+					return false;
+				}
+			}
+		}
+		
 		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) ) {
 			if(principal.equals("")) {
 				String tmpElenco = "";
@@ -4315,11 +4495,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if (!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) && 
+				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 			this.pd.setMessage("Tipo dev'essere "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC+", "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL+" o "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL+" o "+
+					ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY+" o "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA);
 			return false;
 		}

@@ -3847,9 +3847,14 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, subjectCN);
 				
 				String issuer = null;
-				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
-					issuer = credenzialiInvocazionePorta.getIssuer();
-				stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				if(credenzialiInvocazionePorta != null && org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(credenzialiInvocazionePorta.getTipo())) {
+					stm.setString(index++, CostantiDB.getISSUER_APIKEY(credenzialiInvocazionePorta.isAppId()));
+				}
+				else {
+					if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
+						issuer = credenzialiInvocazionePorta.getIssuer();
+					stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				}
 				String issuerCN = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getCnIssuer()))
 					issuerCN = credenzialiInvocazionePorta.getCnIssuer();
@@ -4170,9 +4175,14 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, subjectCN);
 				
 				issuer = null;
-				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
-					issuer = credenzialiInvocazionePorta.getIssuer();
-				stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				if(credenzialiInvocazionePorta != null && org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(credenzialiInvocazionePorta.getTipo())) {
+					stm.setString(index++, CostantiDB.getISSUER_APIKEY(credenzialiInvocazionePorta.isAppId()));
+				}
+				else {
+					if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
+						issuer = credenzialiInvocazionePorta.getIssuer();
+					stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				}
 				issuerCN = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getCnIssuer()))
 					issuerCN = credenzialiInvocazionePorta.getCnIssuer();

@@ -38,6 +38,7 @@ public enum TipoAutenticazione implements IEnumeration , Serializable , Cloneabl
 	DISABILITATO (CostantiConfigurazione.AUTENTICAZIONE_NONE,CostantiConfigurazione.LABEL_CREDENZIALE_DISABILITATO),
 	SSL (CostantiConfigurazione.AUTENTICAZIONE_SSL,CostantiConfigurazione.LABEL_CREDENZIALE_SSL),
 	BASIC (CostantiConfigurazione.AUTENTICAZIONE_BASIC,CostantiConfigurazione.LABEL_CREDENZIALE_BASIC),
+	APIKEY (CostantiConfigurazione.AUTENTICAZIONE_APIKEY,CostantiConfigurazione.LABEL_CREDENZIALE_APIKEY),
 	PRINCIPAL (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL,CostantiConfigurazione.LABEL_CREDENZIALE_PRINCIPAL);
 	
 	/** Value */

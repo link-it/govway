@@ -40,8 +40,8 @@ import java.util.List;
  * &lt;complexType name="trasformazione-regola"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="applicabilita" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-richiesta" minOccurs="0" maxOccurs="1"/&gt;
- * 			&lt;element name="richiesta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-richiesta" minOccurs="1" maxOccurs="1"/&gt;
- * 			&lt;element name="risposta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-risposta" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="richiesta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-richiesta" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="risposta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-risposta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
  * 		&lt;attribute name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/&gt;
@@ -170,7 +170,7 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBean i
   @XmlElement(name="applicabilita",required=false,nillable=false)
   protected TrasformazioneRegolaApplicabilitaRichiesta applicabilita;
 
-  @XmlElement(name="richiesta",required=true,nillable=false)
+  @XmlElement(name="richiesta",required=false,nillable=false)
   protected TrasformazioneRegolaRichiesta richiesta;
 
   @XmlElement(name="risposta",required=true,nillable=false)

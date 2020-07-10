@@ -1071,6 +1071,14 @@ public class RegistroServizi  {
 								catch(DriverRegistroServiziNotFound notFound){}
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 							}
+							else if(CredenzialeTipo.APIKEY.equals(soggetto.getCredenziali().getTipo())){
+								try{
+									this.cache.remove(_getKey_getSoggettoByCredenzialiApiKey(soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword(), soggetto.getCredenziali().isCertificateStrictVerification()));
+									this.getSoggettoByCredenzialiApiKey(connectionPdD, nomeRegistro, soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword(), soggetto.getCredenziali().isCertificateStrictVerification(), cryptConfigSoggetti);
+								}
+								catch(DriverRegistroServiziNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							}
 							else if(CredenzialeTipo.SSL.equals(soggetto.getCredenziali().getTipo())){
 								if(soggetto.getCredenziali().getSubject()!=null) {
 									try{
@@ -1513,6 +1521,21 @@ public class RegistroServizi  {
 						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2]);
 						obj = method.invoke(driver,values[0],values[1],values[2]);
 					}
+				}else if(classArgoments.length==4){
+					
+					Class<?> cArg2 = classArgoments[2];
+					if("getSoggettoByCredenzialiApiKey".equals(methodName)) {
+						cArg2 = boolean.class;
+					}
+					
+					Method method =  null;
+					if((driver instanceof DriverRegistroServiziDB) && (readContenutoAllegati!=null) ){
+						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],cArg2,classArgoments[3],boolean.class);
+						obj = method.invoke(driver,values[0],values[1],values[2],values[3],readContenutoAllegati.booleanValue());
+					}else{
+						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],cArg2,classArgoments[3]);
+						obj = method.invoke(driver,values[0],values[1],values[2],values[3]);
+					}
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
 				
@@ -1634,6 +1657,22 @@ public class RegistroServizi  {
 						}else{
 							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2]);
 							obj = method.invoke(driver,values[0],values[1],values[2]);
+						}
+						find = true;
+					}else if(classArgoments.length==4){
+						
+						Class<?> cArg2 = classArgoments[2];
+						if("getSoggettoByCredenzialiApiKey".equals(methodName)) {
+							cArg2 = boolean.class;
+						}
+						
+						Method method =  null;
+						if((driver instanceof DriverRegistroServiziDB) && (readContenutoAllegati!=null) ){
+							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],cArg2,classArgoments[3],boolean.class);
+							obj = method.invoke(driver,values[0],values[1],values[2],values[3],readContenutoAllegati.booleanValue());
+						}else{
+							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],cArg2,classArgoments[3]);
+							obj = method.invoke(driver,values[0],values[1],values[2],values[3]);
 						}
 						find = true;
 					}else
@@ -2050,6 +2089,50 @@ public class RegistroServizi  {
 			return soggetto;
 		else
 			throw new DriverRegistroServiziNotFound("[getSoggettoByCredenzialiBasic] Soggetto non Trovato");
+
+	}
+	
+	private String _getKey_getSoggettoByCredenzialiApiKey(String user,String password, boolean appId) throws DriverRegistroServiziException{
+		return (appId ? "getSoggettoByCredenzialiMultipleApiKey_" : "getSoggettoByCredenzialiApiKey_") + user +"_" + password;
+	}
+	public Soggetto getSoggettoByCredenzialiApiKey(Connection connectionPdD,String nomeRegistro,String user,String password, boolean appId, CryptConfig config) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		// Raccolta dati
+		if(user==null)
+			throw new DriverRegistroServiziException("[getSoggettoByCredenzialiApiKey] Parametro user Non Valido");
+		if(password==null)
+			throw new DriverRegistroServiziException("[getSoggettoByCredenzialiApiKey] Parametro password Non Valido");
+
+		//	se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = this._getKey_getSoggettoByCredenzialiApiKey(user, password, appId);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Soggetto) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Soggetto soggetto = null;
+		if(this.cache!=null){
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiApiKey",nomeRegistro,null,connectionPdD,user,password,appId,config);
+		}else{
+			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiApiKey",nomeRegistro,null,connectionPdD,user,password,appId,config);
+		}
+
+		if(soggetto!=null)
+			return soggetto;
+		else
+			throw new DriverRegistroServiziNotFound("[getSoggettoByCredenzialiApiKey] Soggetto non Trovato");
 
 	}
 	

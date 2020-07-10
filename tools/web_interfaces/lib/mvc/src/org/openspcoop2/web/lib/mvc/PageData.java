@@ -195,11 +195,15 @@ public class PageData {
 			case ERROR:
 				this.messageTitle = Costanti.MESSAGE_TYPE_ERROR_TITLE;
 				break;
+			case WARN:
+				this.messageTitle = Costanti.MESSAGE_TYPE_WARN_TITLE;
+				break;
 			case INFO:
 				this.messageTitle = Costanti.MESSAGE_TYPE_INFO_TITLE;
 				break;
 			case INFO_SINTETICO:
 			case ERROR_SINTETICO:
+			case WARN_SINTETICO:
 				this.messageTitle = this.message;
 			}
 		}

@@ -261,6 +261,10 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getSoggettoByCredenzialiBasic(this.getConnection(), username, password, cryptConfig, nomeRegistro);
 	}
 	
+	public Soggetto getSoggettoByCredenzialiApiKey(String username, String password, boolean appId, CryptConfig cryptConfig, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSoggettoByCredenzialiApiKey(this.getConnection(), username, password, appId, cryptConfig, nomeRegistro);
+	}
+	
 	public Soggetto getSoggettoByCredenzialiSsl(String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getSoggettoByCredenzialiSsl(this.getConnection(), subject, issuer, nomeRegistro);
 	}
@@ -277,6 +281,10 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getIdSoggettoByCredenzialiBasic(this.getConnection(), username, password, cryptConfig, nomeRegistro);
 	}
 	
+	public IDSoggetto getIdSoggettoByCredenzialiApiKey(String username, String password, boolean appId, CryptConfig cryptConfig, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getIdSoggettoByCredenzialiApiKey(this.getConnection(), username, password, appId, cryptConfig, nomeRegistro);
+	}
+	
 	public IDSoggetto getIdSoggettoByCredenzialiSsl(String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getIdSoggettoByCredenzialiSsl(this.getConnection(), subject, issuer, nomeRegistro);
 	}
@@ -288,6 +296,7 @@ public class RegistroServiziManager {
 	public IDSoggetto getIdSoggettoByCredenzialiPrincipal(String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getIdSoggettoByCredenzialiPrincipal(this.getConnection(), principal, nomeRegistro);
 	}
+	
 	
 	
 	/* ********  R I C E R C A  E L E M E N T I   P R I M I T I V I  ******** */

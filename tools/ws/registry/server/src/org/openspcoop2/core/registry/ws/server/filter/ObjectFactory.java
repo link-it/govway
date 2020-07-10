@@ -42,24 +42,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SearchFilterAccordoCooperazione }
+     */
+    public SearchFilterAccordoCooperazione createSearchFilterAccordoCooperazione() {
+        return new SearchFilterAccordoCooperazione();
+    }
+    
+    /**
      * Create an instance of {@link SearchFilterPortaDominio }
      */
     public SearchFilterPortaDominio createSearchFilterPortaDominio() {
         return new SearchFilterPortaDominio();
-    }
-    
-    /**
-     * Create an instance of {@link SearchFilterGruppo }
-     */
-    public SearchFilterGruppo createSearchFilterGruppo() {
-        return new SearchFilterGruppo();
-    }
-    
-    /**
-     * Create an instance of {@link SearchFilterAccordoServizioParteSpecifica }
-     */
-    public SearchFilterAccordoServizioParteSpecifica createSearchFilterAccordoServizioParteSpecifica() {
-        return new SearchFilterAccordoServizioParteSpecifica();
     }
     
     /**
@@ -84,17 +77,24 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link SearchFilterAccordoServizioParteSpecifica }
+     */
+    public SearchFilterAccordoServizioParteSpecifica createSearchFilterAccordoServizioParteSpecifica() {
+        return new SearchFilterAccordoServizioParteSpecifica();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterGruppo }
+     */
+    public SearchFilterGruppo createSearchFilterGruppo() {
+        return new SearchFilterGruppo();
+    }
+    
+    /**
      * Create an instance of {@link SearchFilterSoggetto }
      */
     public SearchFilterSoggetto createSearchFilterSoggetto() {
         return new SearchFilterSoggetto();
-    }
-    
-    /**
-     * Create an instance of {@link SearchFilterAccordoCooperazione }
-     */
-    public SearchFilterAccordoCooperazione createSearchFilterAccordoCooperazione() {
-        return new SearchFilterAccordoCooperazione();
     }
     
 

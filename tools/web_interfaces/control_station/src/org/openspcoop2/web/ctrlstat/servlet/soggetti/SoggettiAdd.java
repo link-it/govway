@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -160,6 +161,9 @@ public final class SoggettiAdd extends Action {
 			this.passwordSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			this.subjectSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 			this.principalSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			
+			String changepwd = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
+						
 			String tipoCredenzialiSSLSorgente = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
 			if(tipoCredenzialiSSLSorgente == null) {
 				tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO;
@@ -202,6 +206,10 @@ public final class SoggettiAdd extends Action {
 			}
 			String oldTipoCredenzialiSSLWizardStep = tipoCredenzialiSSLWizardStep;
 
+			String multipleApiKey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+			String appId = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+			String apiKey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+			
 			boolean isRouter = ServletUtils.isCheckBoxEnabled(is_router);
 
 			// Preparo il menu
@@ -386,6 +394,12 @@ public final class SoggettiAdd extends Action {
 					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
 				}
+				
+				// apikey
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS)) {
+					appId = null;
+					apiKey = null;
+				}
 			}
 
 			//			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
@@ -566,6 +580,23 @@ public final class SoggettiAdd extends Action {
 					this.registryReader, this.configRegistryReader, idSoggetto);
 			this.protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
+			boolean multipleApiKeysEnabled = false;
+			boolean appIdModificabile = ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_MODIFICABILE;
+			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(this.tipoauthSoggetto)) {
+				multipleApiKeysEnabled = ServletUtils.isCheckBoxEnabled(multipleApiKey);
+				if(appIdModificabile && multipleApiKeysEnabled) {
+					boolean soggettoDefined =
+							idSoggetto!=null && 
+							idSoggetto.getTipo()!=null && !"".equals(idSoggetto.getTipo()) && 
+							idSoggetto.getNome()!=null && !"".equals(idSoggetto.getNome());
+					if(appId==null || "".equals(appId)) {
+						if(soggettoDefined) {
+							appId = soggettiCore.toAppId(this.protocollo, idSoggetto, multipleApiKeysEnabled);
+						}
+					}
+				}
+			}
+			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			
 			if(ServletUtils.isEditModeInProgress(this.editMode) || checkWizard){
@@ -603,7 +634,9 @@ public final class SoggettiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
-						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep);
+						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep,
+						changepwd,
+						multipleApiKey, appId, apiKey);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -693,7 +726,9 @@ public final class SoggettiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
-						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep);
+						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep,
+						changepwd,
+						multipleApiKey, appId, apiKey);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -714,7 +749,10 @@ public final class SoggettiAdd extends Action {
 				this.portadom=soggettiCore.getIdentificativoPortaDefault(this.protocollo, idSoggetto);
 			}
 
-			String secret_pleaseCopy = null;
+			boolean secret = false;
+			String secret_password  = null;
+			String secret_user = null;
+			boolean secret_appId = false;
 			
 			// utilizzo il soggetto del registro che e' un
 			// sovrainsieme di quello del config
@@ -763,9 +801,37 @@ public final class SoggettiAdd extends Action {
 						}
 						credenziali.setPassword(this.passwordSoggetto);
 
+						ApiKey apiKeyGenerated = null;
+						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(this.tipoauthSoggetto)) {
+							credenziali.setAppId(multipleApiKeysEnabled);
+							if(multipleApiKeysEnabled) {
+								apiKeyGenerated = soggettiCore.newMultipleApiKey();
+								if(!appIdModificabile) {
+									appId = soggettiCore.toAppId(this.protocollo, idSoggetto, multipleApiKeysEnabled);
+								}
+							}
+							else {
+								appId = soggettiCore.toAppId(this.protocollo, idSoggetto, multipleApiKeysEnabled);
+								apiKeyGenerated = soggettiCore.newApiKey(this.protocollo, idSoggetto);
+							}
+							credenziali.setUser(appId);
+							credenziali.setPassword(apiKeyGenerated.getPassword());
+						}
+						else {
+							credenziali.setAppId(false);
+						}
+						
 						if(soggettiCore.isSoggettiPasswordEncryptEnabled()) {
-							if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(this.tipoauthSoggetto)) {
-								secret_pleaseCopy = this.passwordSoggetto;
+							if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(this.tipoauthSoggetto) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(this.tipoauthSoggetto)) {
+								secret = true;
+								secret_user = credenziali.getUser();
+								if (apiKeyGenerated!=null) {
+									secret_password = apiKeyGenerated.getApiKey();
+								}
+								else {
+									secret_password = credenziali.getPassword();
+								}
+								secret_appId = credenziali.isAppId();
 							}
 						}
 						
@@ -857,8 +923,8 @@ public final class SoggettiAdd extends Action {
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 
 			// Messaggio 'Please Copy'
-			if(secret_pleaseCopy!=null) {
-				soggettiHelper.setSecretPleaseCopy(secret_pleaseCopy, this.tipoauthSoggetto, true, sog.getNome());
+			if(secret) {
+				soggettiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, this.tipoauthSoggetto, true, sog.getNome());
 			}
 									
 			// recupero la lista dei soggetti

@@ -30,6 +30,7 @@ package org.openspcoop2.core.registry.ws.server.filter.beans;
  *         &lt;element name="tipo" type="{http://www.openspcoop2.org/core/registry}CredenzialeTipo" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="user" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="app-id" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="subject" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="cn-subject" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="issuer" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
@@ -61,6 +62,7 @@ import org.openspcoop2.core.registry.constants.CredenzialeTipo;
     "tipo",
     "user",
     "password",
+    "appId",
     "subject",
     "cnSubject",
     "issuer",
@@ -108,6 +110,19 @@ public class CredenzialiSoggetto extends org.openspcoop2.utils.beans.BaseBean im
 	
 	public String getPassword(){
 		return this.password;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="app-id",required=false,nillable=false)
+	private Boolean appId;
+	
+	public void setAppId(Boolean appId){
+		this.appId = appId;
+	}
+	
+	public Boolean getAppId(){
+		return this.appId;
 	}
 	
 	

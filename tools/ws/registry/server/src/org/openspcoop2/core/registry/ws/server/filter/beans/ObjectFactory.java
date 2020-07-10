@@ -42,10 +42,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AccordoServizioParteComuneServizioComposto }
+     * Create an instance of {@link Connettore }
      */
-    public AccordoServizioParteComuneServizioComposto createAccordoServizioParteComuneServizioComposto() {
-        return new AccordoServizioParteComuneServizioComposto();
+    public Connettore createConnettore() {
+        return new Connettore();
     }
     
     /**
@@ -63,10 +63,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link Connettore }
+     * Create an instance of {@link AccordoServizioParteComuneServizioComposto }
      */
-    public Connettore createConnettore() {
-        return new Connettore();
+    public AccordoServizioParteComuneServizioComposto createAccordoServizioParteComuneServizioComposto() {
+        return new AccordoServizioParteComuneServizioComposto();
     }
     
     /**

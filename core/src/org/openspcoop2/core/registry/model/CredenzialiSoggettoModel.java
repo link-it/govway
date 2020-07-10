@@ -43,6 +43,7 @@ public class CredenzialiSoggettoModel extends AbstractModel<CredenzialiSoggetto>
 		this.TIPO = new Field("tipo",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.USER = new Field("user",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.PASSWORD = new Field("password",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
+		this.APP_ID = new Field("app-id",boolean.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.SUBJECT = new Field("subject",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.CN_SUBJECT = new Field("cn-subject",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.ISSUER = new Field("issuer",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
@@ -59,6 +60,7 @@ public class CredenzialiSoggettoModel extends AbstractModel<CredenzialiSoggetto>
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.USER = new ComplexField(father,"user",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.PASSWORD = new ComplexField(father,"password",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
+		this.APP_ID = new ComplexField(father,"app-id",boolean.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.SUBJECT = new ComplexField(father,"subject",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.CN_SUBJECT = new ComplexField(father,"cn-subject",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
 		this.ISSUER = new ComplexField(father,"issuer",java.lang.String.class,"credenziali-soggetto",CredenzialiSoggetto.class);
@@ -75,6 +77,8 @@ public class CredenzialiSoggettoModel extends AbstractModel<CredenzialiSoggetto>
 	public IField USER = null;
 	 
 	public IField PASSWORD = null;
+	 
+	public IField APP_ID = null;
 	 
 	public IField SUBJECT = null;
 	 

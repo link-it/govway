@@ -51,15 +51,6 @@ public class PasswordGenerator extends PasswordVerifier {
 		DEFAULT.setIncludeNotAlphanumericSymbol(true);
 	}
 	
-	public static PasswordGenerator BASE64;
-	static {
-		DEFAULT = new PasswordGenerator();
-		DEFAULT.setIncludeLowerCaseLetter(true);
-		DEFAULT.setIncludeUpperCaseLetter(true);
-		DEFAULT.setIncludeNumber(true);
-		DEFAULT.setIncludeNotAlphanumericSymbol(true);
-	}
-	
 	
 	public PasswordGenerator(){
 		super();
@@ -181,6 +172,14 @@ public class PasswordGenerator extends PasswordVerifier {
 			String password = _generate(length);
 			if(this.validate(username, password)) {
 				
+				if(this.base64) {
+					password =  Base64Utilities.encodeAsString(password.getBytes());
+				}
+				else if(this.hex) {
+					password = HexBinaryUtilities.encodeAsString(password.getBytes());
+				}
+				
+				// NOTA i prefissi e i suffissi non si codificano in modo che si possa aggiungere caratteri speciali che consentano di identificare le parti una volta effettuata la codifica (es. il '.' in base64)
 				if(this.prefix!=null) {
 					password = this.prefix + password;
 				}
@@ -188,15 +187,7 @@ public class PasswordGenerator extends PasswordVerifier {
 					password = password + this.suffix;
 				}
 				
-				if(this.base64) {
-					return Base64Utilities.encodeAsString(password.getBytes());
-				}
-				else if(this.hex) {
-					return HexBinaryUtilities.encodeAsString(password.getBytes());
-				}
-				else {
-					return password;
-				}
+				return password;
 			}
 		}
 		

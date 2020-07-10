@@ -536,7 +536,7 @@ public class ErogazioniApiHelper {
 		
 	}
 	
-	public static final List<IDSoggettoDB> getSoggettiCompatibiliAutorizzazione( CredenzialeTipo tipoAutenticazione, IdSoggetto erogatore, ErogazioniEnv env ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+	public static final List<IDSoggettoDB> getSoggettiCompatibiliAutorizzazione( CredenzialeTipo tipoAutenticazione, Boolean appId, IdSoggetto erogatore, ErogazioniEnv env ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
 		
 		PddTipologia pddTipologiaSoggettoAutenticati = null;
 		boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = false;
@@ -558,7 +558,7 @@ public class ErogazioniApiHelper {
 		List<String> tipiSoggettiGestitiProtocollo = env.soggettiCore.getTipiSoggettiGestitiProtocollo(env.tipo_protocollo);
 		
 		// calcolo soggetti compatibili con tipi protocollo supportati dalla pa e credenziali indicate
-		List<IDSoggettoDB> list = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
+		List<IDSoggettoDB> list = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
 		
 		if( !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore ) {
 			for (int i = 0; i < list.size(); i++) {
@@ -955,7 +955,8 @@ public class ErogazioniApiHelper {
         	if ( !StringUtils.isEmpty(configAuthz_final.getSoggetto()) ) {
         		
         		CredenzialeTipo credTipo = evalnull( () -> Enums.credenzialeTipoFromTipoAutenticazione.get(authn.getTipo()) );
-        		Optional<String> soggettoCompatibile = getSoggettiCompatibiliAutorizzazione(credTipo, env.idSoggetto, env)
+        		Boolean appId = null; // TODO-APIKEY
+        		Optional<String> soggettoCompatibile = getSoggettiCompatibiliAutorizzazione(credTipo, appId, env.idSoggetto, env)
         	        	.stream()
         	        	.map( IDSoggettoDB::getNome )
         	        	.filter( s -> s.equals( configAuthz_final.getSoggetto() ) )

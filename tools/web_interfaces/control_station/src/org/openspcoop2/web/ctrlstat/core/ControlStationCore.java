@@ -110,6 +110,7 @@ import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
@@ -633,7 +634,7 @@ public class ControlStationCore {
 		return this.applicativiBasicLunghezzaPasswordGenerate;
 	}
 	private int applicativiApiKeyLunghezzaPasswordGenerate;
-	public int getApplicativiApiKeyLunghezzaPasswordGenerate() {
+	protected int getApplicativiApiKeyLunghezzaPasswordGenerate() {
 		return this.applicativiApiKeyLunghezzaPasswordGenerate;
 	}
 	
@@ -714,7 +715,7 @@ public class ControlStationCore {
 		return this.soggettiBasicLunghezzaPasswordGenerate;
 	}
 	private int soggettiApiKeyLunghezzaPasswordGenerate;
-	public int getSoggettiApiKeyLunghezzaPasswordGenerate() {
+	protected int getSoggettiApiKeyLunghezzaPasswordGenerate() {
 		return this.soggettiApiKeyLunghezzaPasswordGenerate;
 	}
 	
@@ -6336,8 +6337,61 @@ public class ControlStationCore {
 				}
 			}
 		}
+		else if(TipoAutenticazione.APIKEY.equals(autenticazione)) {
+			
+			parametroAutenticazioneList = new ArrayList<>();
+			
+			// posizione 0: appId
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.APP_ID, parametroAutenticazioneList);
+			
+			// posizione 1: queryParameter
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.QUERY_PARAMETER, parametroAutenticazioneList);
+			
+			// posizione 2: header
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.HEADER, parametroAutenticazioneList);
+			
+			// posizione 3: cookie
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.COOKIE, parametroAutenticazioneList);
+			
+			// posizione 4: useOAS3Names
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.USE_OAS3_NAMES, parametroAutenticazioneList);
+			
+			// posizione 5: cleanApiKey
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.CLEAN_API_KEY, parametroAutenticazioneList);
+			
+			// posizione 6: cleanAppId
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.CLEAN_APP_ID, parametroAutenticazioneList);
+			
+			// posizione 7: queryParameterApiKey
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.NOME_QUERY_PARAMETER_API_KEY, parametroAutenticazioneList);
+						
+			// posizione 8: headerApiKey
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.NOME_HEADER_API_KEY, parametroAutenticazioneList);
+						
+			// posizione 9: cookieApiKey
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.NOME_COOKIE_API_KEY, parametroAutenticazioneList);
+						
+			// posizione 10: queryParameterAppId
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.NOME_QUERY_PARAMETER_APP_ID, parametroAutenticazioneList);
+						
+			// posizione 11: headerAppId
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.NOME_HEADER_APP_ID, parametroAutenticazioneList);
+			
+			// posizione 12: cookieAppId
+			_addValoreProprieta(list, ParametriAutenticazioneApiKey.NOME_COOKIE_APP_ID, parametroAutenticazioneList);
+			
+		}
 			
 		return parametroAutenticazioneList;
+	}
+	
+	private void _addValoreProprieta(List<Proprieta> list, String nome, List<String> parametroAutenticazioneList) {
+		for (Proprieta proprieta : list) {
+			if(nome.equals(proprieta.getNome())) {
+				parametroAutenticazioneList.add(proprieta.getValore());
+				break;
+			}
+		}
 	}
 
 	public List<Proprieta> convertToAutenticazioneProprieta(String autenticazione, TipoAutenticazionePrincipal autenticazionePrincipal,  List<String> autenticazioneParametroList){
@@ -6449,6 +6503,72 @@ public class ControlStationCore {
 				}
 				break;
 			}
+		}
+		else if(TipoAutenticazione.APIKEY.equals(autenticazione)) {
+			if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+				for (int i = 0; i < autenticazioneParametroList.size(); i++) {
+					String autenticazioneParametro = autenticazioneParametroList.get(i);
+					if(autenticazioneParametro!=null && !"".equals(autenticazioneParametro)) {
+						Proprieta proprietaPar = new Proprieta();
+						proprietaPar.setValore(autenticazioneParametro);
+						
+						// posizione 0: appId
+						if(i==0) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.APP_ID);
+						}
+						// posizione 1: queryParameter
+						else if(i==1) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.QUERY_PARAMETER);
+						}
+						// posizione 2: header
+						else if(i==2) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.HEADER);
+						}
+						// posizione 3: cookie
+						else if(i==3) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.COOKIE);
+						}
+						// posizione 4: useOAS3Names
+						else if(i==4) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.USE_OAS3_NAMES);
+						}
+						// posizione 5: cleanApiKey
+						else if(i==5) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.CLEAN_API_KEY);
+						}
+						// posizione 6: cleanAppId
+						else if(i==6) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.CLEAN_APP_ID);
+						}
+						// posizione 7: queryParameterApiKey
+						else if(i==7) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.NOME_QUERY_PARAMETER_API_KEY);
+						}
+						// posizione 8: headerApiKey
+						else if(i==8) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.NOME_HEADER_API_KEY);
+						}
+						// posizione 9: cookieApiKey
+						else if(i==9) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.NOME_COOKIE_API_KEY);
+						}
+						// posizione 10: queryParameterAppId
+						else if(i==10) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.NOME_QUERY_PARAMETER_APP_ID);
+						}
+						// posizione 11: headerAppId
+						else if(i==11) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.NOME_HEADER_APP_ID);
+						}
+						// posizione 12: cookieAppId
+						else if(i==12) {
+							proprietaPar.setNome(ParametriAutenticazioneApiKey.NOME_COOKIE_APP_ID);
+						}
+						
+						list.add(proprietaPar);
+					}
+				}
+			}				
 		}
 		return list;
 	}

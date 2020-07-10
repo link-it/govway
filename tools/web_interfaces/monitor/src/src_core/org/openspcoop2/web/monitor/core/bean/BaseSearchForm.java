@@ -2096,9 +2096,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public List<SelectItem> getListaAutenticazioni(){
 		List<SelectItem> lst = new ArrayList<>();
 		
-		lst.add(new SelectItem("--", "--"));  
-		lst.add(new SelectItem(TipoAutenticazione.BASIC.getValue(), TipoAutenticazione.BASIC.getLabel()));  
+		lst.add(new SelectItem("--", "--"));
 		lst.add(new SelectItem(TipoAutenticazione.SSL.getValue(), TipoAutenticazione.SSL.getLabel()));  
+		lst.add(new SelectItem(TipoAutenticazione.BASIC.getValue(), TipoAutenticazione.BASIC.getLabel()));  
+		lst.add(new SelectItem(TipoAutenticazione.APIKEY.getValue(), TipoAutenticazione.APIKEY.getLabel()));  
 		lst.add(new SelectItem(TipoAutenticazione.PRINCIPAL.getValue(), TipoAutenticazione.PRINCIPAL.getLabel()));  
 		
 		return lst;

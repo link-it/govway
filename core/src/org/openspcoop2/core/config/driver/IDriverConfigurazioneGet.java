@@ -235,6 +235,15 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 */
 	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 
+	/**
+	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
+	 *
+	 * @param aUser User utilizzato come appId o all'interno del token
+	 * @param aPassword Password presente all'interno del token
+	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
+	 * 
+	 */
+	public ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 

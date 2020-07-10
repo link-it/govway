@@ -62,7 +62,6 @@ public class ConnettoriCostanti {
 	
 	/* LABEL GENERALI */
 
-	public final static String LABEL_MODIFICA_PASSWORD = "Modifica Password";
 	public final static String LABEL_SERVER = "Applicativo Server";
 	public final static String LABEL_CONNETTORE = "Connettore";
 	public final static String LABEL_DOWNLOAD_CERTIFICATI_SERVER = "Download Certificati Server";
@@ -110,6 +109,10 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "passwordCredenziali";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT = "subjectCredenziali";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER = "subjectIssuer";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS = "apiKeyMultipleCred";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY = "apiKeyCred";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID = "appIdCred";
+	public final static boolean PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_MODIFICABILE = false;
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "principalCredenziali";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL = "confSSLCredenziali";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO = "confSSLCredTipoArch";
@@ -227,19 +230,32 @@ public class ConnettoriCostanti {
 	
 	public final static String AUTENTICAZIONE_TIPO_NESSUNA = "nessuna";
 	public final static String AUTENTICAZIONE_TIPO_BASIC = CostantiConfigurazione.CREDENZIALE_BASIC.toString();
+	public final static String AUTENTICAZIONE_TIPO_APIKEY = CostantiConfigurazione.CREDENZIALE_APIKEY.toString();
 	public final static String AUTENTICAZIONE_TIPO_SSL = CostantiConfigurazione.CREDENZIALE_SSL.toString();
 	public final static String AUTENTICAZIONE_TIPO_PRINCIPAL = CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString();
 	public final static String LABEL_AUTENTICAZIONE_TIPO_BASIC = CostantiConfigurazione.LABEL_CREDENZIALE_BASIC;
+	public final static String LABEL_AUTENTICAZIONE_TIPO_APIKEY = CostantiConfigurazione.LABEL_CREDENZIALE_APIKEY;
 	public final static String LABEL_AUTENTICAZIONE_TIPO_SSL = CostantiConfigurazione.LABEL_CREDENZIALE_SSL;
 	public final static String LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL = CostantiConfigurazione.LABEL_CREDENZIALE_PRINCIPAL;
 	public final static String DEFAULT_AUTENTICAZIONE_TIPO = AUTENTICAZIONE_TIPO_NESSUNA;
 	
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME = "Utente";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "Password";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD = "Nuova Password";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT = "Subject";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER = "Issuer";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS_DESCR = "Multiple API Keys";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS = "App ID";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL = ""; //"App ID";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID = "App ID";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY = "Api Key";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "UserId";
+
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD = "Nuova "+LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_API_KEY = "Nuova "+LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY;
+	public final static int API_KEY_ROWS = 5;
+	
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_PASSWORD = "Modifica "+LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_API_KEY = "Aggiorna "+LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY;
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME = "Hostname";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_PORT = "Porta";
@@ -423,4 +439,25 @@ public class ConnettoriCostanti {
 	public final static  String[] PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_VALUES = { ArchiveType.CER.name(), ArchiveType.JKS.name(), ArchiveType.PKCS12.name()};
 	public final static  String[] PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_LABELS = { ArchiveType.CER.name(), ArchiveType.JKS.name(), ArchiveType.PKCS12.name()};
 	
+	public final static String [] CREDENZIALI_CON_NESSUNA_VALUES = new String[] { ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA,
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL,
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, 
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY, 
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL };
+	public final static String [] CREDENZIALI_CON_NESSUNA_LABELS = new String[] { ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA,
+			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_SSL,
+			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_BASIC, 
+			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_APIKEY, 
+			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL };
+	
+	public final static String [] CREDENZIALI_VALUES = new String[] { 
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL,
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, 
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY, 
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL };
+	public final static String [] CREDENZIALI_LABELS = new String[] { 
+			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_SSL,
+			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_BASIC, 
+			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_APIKEY, 
+			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL};
 }

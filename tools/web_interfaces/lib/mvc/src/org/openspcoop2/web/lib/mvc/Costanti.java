@@ -224,6 +224,7 @@ public class Costanti {
 	public final static MessageType MESSAGE_TYPE_CONFIRM = MessageType.CONFIRM;
 	
 	public final static String MESSAGE_TYPE_ERROR_TITLE = "Messaggio di Errore";
+	public final static String MESSAGE_TYPE_WARN_TITLE = "Attenzione";
 	public final static String MESSAGE_TYPE_INFO_TITLE = "Messaggio Informativo";
 	public final static String MESSAGE_TYPE_CONFIRM_TITLE = "Conferma Operazione";
 	

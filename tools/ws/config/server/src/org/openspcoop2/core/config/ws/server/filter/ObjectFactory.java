@@ -49,17 +49,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link SearchFilterServizioApplicativo }
-     */
-    public SearchFilterServizioApplicativo createSearchFilterServizioApplicativo() {
-        return new SearchFilterServizioApplicativo();
-    }
-    
-    /**
      * Create an instance of {@link SearchFilterPortaDelegata }
      */
     public SearchFilterPortaDelegata createSearchFilterPortaDelegata() {
         return new SearchFilterPortaDelegata();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterServizioApplicativo }
+     */
+    public SearchFilterServizioApplicativo createSearchFilterServizioApplicativo() {
+        return new SearchFilterServizioApplicativo();
     }
     
     /**

@@ -182,8 +182,10 @@ public class ServiziApplicativiUtilities {
 					for (Soggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliGestitiProtocollo.contains(soggetto.getTipo())){
 							listFiltrataCompatibileProtocollo.add(soggetto);
-							if(providerTmp < 0)
+							if(providerTmp < 0) {
 								providerTmp = soggetto.getId();
+								idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
+							}
 						}
 					}
 					if (listFiltrataCompatibileProtocollo.size() > 0) {

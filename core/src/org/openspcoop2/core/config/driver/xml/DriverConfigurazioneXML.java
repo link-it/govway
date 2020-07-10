@@ -1482,6 +1482,75 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali basic non trovato");
 	}
 	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(aUser==null){
+			throw new DriverConfigurazioneException("Username non definito");
+		}
+		if(aPassword==null){
+			throw new DriverConfigurazioneException("Password non definita");
+		}
+		
+		boolean testInChiaro = false;
+		ICrypt crypt = null;
+		if(config!=null) {
+			try {
+				crypt = CryptFactory.getCrypt(this.log, config);
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}
+		else {
+			testInChiaro = true;
+		}
+				
+		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
+			Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
+			for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
+				ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
+				if(sa.getInvocazionePorta()!=null){
+					for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
+						if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
+								CostantiConfigurazione.CREDENZIALE_APIKEY.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
+							if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) ){
+								
+								if(appId) {
+									if(!sa.getInvocazionePorta().getCredenziali(z).isAppId()) {
+										continue;
+									}
+								}
+								else {
+									if(sa.getInvocazionePorta().getCredenziali(z).isAppId()) {
+										continue;
+									}
+								}
+								
+								String passwordSaved = sa.getInvocazionePorta().getCredenziali(z).getPassword();
+								
+								boolean found = false;
+								if(testInChiaro) {
+									found = aPassword.equals(passwordSaved);
+								}
+								if(!found && crypt!=null) {
+									found = crypt.check(aPassword, passwordSaved);
+								}
+								
+								if( found ) {
+									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
+									return sa;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali basic non trovato");
+	}
+	
 	
 	@Override
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

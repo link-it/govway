@@ -21,6 +21,7 @@
 package org.openspcoop2.utils.transport;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -46,6 +47,9 @@ public class TransportRequestContext implements java.io.Serializable {
 	protected Map<String, String> parametersFormBased;
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
 	protected Map<String, String> parametersTrasporto;
+	/* ---- Coppie nome/valori dei cookie --- */
+	protected Map<String, String> cookiesValue;
+	protected Map<String, Integer> cookiesMaxAge;
 	
 	protected Credential credential = null;
 	
@@ -98,6 +102,7 @@ public class TransportRequestContext implements java.io.Serializable {
 	public String getInterfaceName() {
 		return this.interfaceName;
 	}
+	
 	public Map<String, String> getParametersFormBased(){
 		return this.parametersFormBased;
 	}
@@ -113,6 +118,7 @@ public class TransportRequestContext implements java.io.Serializable {
 		}
 		return TransportUtils.remove(this.parametersFormBased, name);
 	}
+	
 	public Map<String, String> getParametersTrasporto() {
 		return this.parametersTrasporto;
 	}
@@ -128,6 +134,29 @@ public class TransportRequestContext implements java.io.Serializable {
 		}
 		return TransportUtils.remove(this.parametersTrasporto, name);
 	}
+	
+	public Set<String> getCookies(){
+		return this.cookiesValue.keySet();
+	}
+	public Map<String, String> getCookiesValue() {
+		return this.cookiesValue;
+	}
+	public String getCookieValue(String name){
+		if(this.cookiesValue==null){
+			return null;
+		}
+		return TransportUtils.get(this.cookiesValue, name);
+	}
+	public Map<String, Integer> getCookiesMaxAge() {
+		return this.cookiesMaxAge;
+	}
+	public Integer getCookieMaxAge(String name){
+		if(this.cookiesMaxAge==null){
+			return null;
+		}
+		return TransportUtils.getObject(this.cookiesMaxAge, name);
+	}
+	
 	public String getContentType(){
 		if(this.parametersTrasporto!=null){
 			return this.getParameterTrasporto(HttpConstants.CONTENT_TYPE);

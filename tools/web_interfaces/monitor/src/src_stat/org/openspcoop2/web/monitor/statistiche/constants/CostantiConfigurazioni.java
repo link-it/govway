@@ -79,6 +79,7 @@ public class CostantiConfigurazioni {
 	
 	public static final String LABEL_DOTS = ":";
 	public static final String VALUE_USER = "user";
+	public static final String VALUE_APP_ID = "appId";
 	public static final String VALUE_SUBJECT = "subject";
 	public static final String VALUE_PRINCIPAL = "principal";
 	public static final String LABEL_SOGGETTI_AUTORIZZATI = "Soggetti Autorizzati";

@@ -1094,6 +1094,16 @@
 		</xsd:attribute>
 		<xsd:attribute name="user" type="xsd:string"/>
 		<xsd:attribute name="password" type="xsd:string"/>
+		<xsd:attribute name="app-id" type="xsd:boolean" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="subject" type="xsd:string"/>
 		<xsd:attribute name="cn-subject" type="xsd:string"/>
 		<xsd:attribute name="issuer" type="xsd:string"/>
@@ -1661,6 +1671,7 @@
 			<xsd:enumeration value="basic"/>
 			<xsd:enumeration value="ssl"/>
 			<xsd:enumeration value="principal"/>
+			<xsd:enumeration value="apikey"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
