@@ -65,6 +65,9 @@ import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneApiKey;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneApiKeyConfig;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneApiKeyPosizione;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneBasic;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneCustom;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneHttps;
@@ -124,6 +127,7 @@ import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.utils.service.BaseImpl;
@@ -1403,6 +1407,109 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				
 				break;
 			}  // case principal
+			
+			case API_KEY: {
+				
+				APIImplAutenticazioneApiKey authnApiKey = new APIImplAutenticazioneApiKey();
+				authnApiKey.setTipo(tipoAutenticazione);
+				authnApiKey.setOpzionale(Helper.statoFunzionalitaConfToBool( pa.getAutenticazioneOpzionale() ));
+				autRet = authnApiKey;
+			
+				if(pa.getProprietaAutenticazioneList()!=null && pa.sizeProprietaAutenticazioneList()>0) {
+					
+					APIImplAutenticazioneApiKeyPosizione posizione = null;
+					APIImplAutenticazioneApiKeyConfig apiKeyNomi = null;
+					APIImplAutenticazioneApiKeyConfig appIdNomi = null;
+					boolean useOasNames = false;
+					
+					for (Proprieta proprieta : pa.getProprietaAutenticazioneList()) {
+						String nomeP = proprieta.getNome();
+						String valoreP = proprieta.getValore();
+						if(ParametriAutenticazioneApiKey.APP_ID.equals(nomeP)) {
+							authnApiKey.setAppId(ParametriAutenticazioneApiKey.APP_ID_TRUE.equals(valoreP));
+						}
+						else if(ParametriAutenticazioneApiKey.QUERY_PARAMETER.equals(nomeP)) {
+							if(posizione==null) {
+								posizione = new APIImplAutenticazioneApiKeyPosizione();
+							}
+							posizione.setQueryParameter(ParametriAutenticazioneApiKey.QUERY_PARAMETER_TRUE.equals(valoreP));
+						}
+						else if(ParametriAutenticazioneApiKey.HEADER.equals(nomeP)) {
+							if(posizione==null) {
+								posizione = new APIImplAutenticazioneApiKeyPosizione();
+							}
+							posizione.setHeader(ParametriAutenticazioneApiKey.HEADER_TRUE.equals(valoreP));
+						}
+						else if(ParametriAutenticazioneApiKey.COOKIE.equals(nomeP)) {
+							if(posizione==null) {
+								posizione = new APIImplAutenticazioneApiKeyPosizione();
+							}
+							posizione.setCookie(ParametriAutenticazioneApiKey.COOKIE_TRUE.equals(valoreP));
+						}
+						else if(ParametriAutenticazioneApiKey.USE_OAS3_NAMES.equals(nomeP)) {
+							useOasNames = ParametriAutenticazioneApiKey.USE_OAS3_NAMES_TRUE.equals(valoreP);
+						}	
+						else if(ParametriAutenticazioneApiKey.CLEAN_API_KEY.equals(nomeP)) {
+							boolean clean = ParametriAutenticazioneApiKey.CLEAN_API_KEY_TRUE.equals(valoreP);
+							authnApiKey.setApiKeyForward(!clean);
+						}
+						else if(ParametriAutenticazioneApiKey.CLEAN_APP_ID.equals(nomeP)) {
+							boolean clean = ParametriAutenticazioneApiKey.CLEAN_APP_ID_TRUE.equals(valoreP);
+							authnApiKey.setAppIdForward(!clean);
+						}
+					}
+					
+					if(!useOasNames) {
+						for (Proprieta proprieta : pa.getProprietaAutenticazioneList()) {
+							String nomeP = proprieta.getNome();
+							String valoreP = proprieta.getValore();
+							if(ParametriAutenticazioneApiKey.NOME_QUERY_PARAMETER_API_KEY.equals(nomeP)) {
+								if(apiKeyNomi==null) {
+									apiKeyNomi = new APIImplAutenticazioneApiKeyConfig();
+								}
+								apiKeyNomi.setQueryParameter(valoreP);
+							}
+							else if(ParametriAutenticazioneApiKey.NOME_HEADER_API_KEY.equals(nomeP)) {
+								if(apiKeyNomi==null) {
+									apiKeyNomi = new APIImplAutenticazioneApiKeyConfig();
+								}
+								apiKeyNomi.setHeader(valoreP);
+							}
+							else if(ParametriAutenticazioneApiKey.NOME_COOKIE_API_KEY.equals(nomeP)) {
+								if(apiKeyNomi==null) {
+									apiKeyNomi = new APIImplAutenticazioneApiKeyConfig();
+								}
+								apiKeyNomi.setCookie(valoreP);
+							}
+							else if(ParametriAutenticazioneApiKey.NOME_QUERY_PARAMETER_APP_ID.equals(nomeP)) {
+								if(appIdNomi==null) {
+									appIdNomi = new APIImplAutenticazioneApiKeyConfig();
+								}
+								appIdNomi.setQueryParameter(valoreP);
+							}
+							else if(ParametriAutenticazioneApiKey.NOME_HEADER_APP_ID.equals(nomeP)) {
+								if(appIdNomi==null) {
+									appIdNomi = new APIImplAutenticazioneApiKeyConfig();
+								}
+								appIdNomi.setHeader(valoreP);
+							}
+							else if(ParametriAutenticazioneApiKey.NOME_COOKIE_APP_ID.equals(nomeP)) {
+								if(appIdNomi==null) {
+									appIdNomi = new APIImplAutenticazioneApiKeyConfig();
+								}
+								appIdNomi.setCookie(valoreP);
+							}
+						}
+					}
+					
+					authnApiKey.setPosizione(posizione);
+					authnApiKey.setApiKeyNomi(apiKeyNomi);
+					authnApiKey.setAppIdNomi(appIdNomi);
+				}
+				
+				break;
+			}  // case api-key
+			
 			case CUSTOM: {
 				APIImplAutenticazioneCustom authnCustom = new APIImplAutenticazioneCustom();
 				authnCustom.setTipo(tipoAutenticazione);

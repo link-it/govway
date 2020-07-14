@@ -26,22 +26,27 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.rs.server.api.ApplicativiApi;
+import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
+import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.ListaApplicativi;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
@@ -101,7 +106,17 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
 			ApplicativiEnv env = new ApplicativiEnv(wrap, profilo, soggetto, context); 					
 	
-			ServizioApplicativo sa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, env.idSoggetto.getNome(), env.stationCore);
+			String protocollo = env.protocolFactory.getProtocol();
+			String tipo_soggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo);
+			IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto,env.idSoggetto.getNome());
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setIdSoggettoProprietario(idSoggetto);
+			idSA.setNome(applicativo.getNome());
+			
+			ApiKeyInfo keyInfo = ApplicativiApiHelper.createApiKey(applicativo.getCredenziali(), idSA, env.saCore, protocollo);
+			boolean updateKey = false;
+			
+			ServizioApplicativo sa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, env.idSoggetto.getNome(), env.stationCore, keyInfo);
 						
 			if ( ApplicativiApiHelper.isApplicativoDuplicato(sa, env.saCore) ) {
 				throw FaultCode.CONFLITTO.toException(
@@ -109,7 +124,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				);
 			}
 					
-			ApplicativiApiHelper.overrideSAParameters(wrap, env.saHelper, sa, applicativo);
+			ApplicativiApiHelper.overrideSAParameters(wrap, env.saHelper, sa, applicativo, keyInfo, updateKey);
 			wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
 			
 			List<String> listaTipiProtocollo = ProtocolFactoryManager.getInstance().getProtocolNamesAsList();
@@ -135,8 +150,15 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				
 			env.saCore.performCreateOperation(env.userLogin, false, sa);
 			
-			context.getLogger().info("Invocazione completata con successo");
+			if(keyInfo!=null) {
+				context.getServletResponse().setHeader(ApiKeyInfo.API_KEY, keyInfo.getApiKey());
+				if(keyInfo.isMultipleApiKeys()) {
+					context.getServletResponse().setHeader(ApiKeyInfo.APP_ID, keyInfo.getAppId());
+				}
+			}
 			
+			context.getLogger().info("Invocazione completata con successo");
+						
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
@@ -214,7 +236,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      *
      */
 	@Override
-    public ListaApplicativi findAllApplicativi(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, String ruolo) {
+    public ListaApplicativi findAllApplicativi(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, String ruolo, ModalitaAccessoEnum tipoCredenziali) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -227,7 +249,15 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			int idLista = Liste.SERVIZIO_APPLICATIVO;
 
 			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
-			ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);				
+			ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);	
+			if (ruolo != null && ruolo.trim().length() > 0)
+				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO, ruolo.trim());
+			if(tipoCredenziali!=null) {
+				String filtro = Helper.tipoAuthFromModalitaAccesso.get(tipoCredenziali);
+				if(filtro!=null && !"".equals(filtro)) {
+					ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_CREDENZIALI, filtro);
+				}
+			}
 			
 			List<ServizioApplicativo> saLista = env.saCore.soggettiServizioApplicativoList(null, ricerca);
 			
@@ -327,8 +357,10 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			soggetto = env.idSoggetto.getNome();
 			
 			final ServizioApplicativo oldSa = BaseHelper.supplyOrNotFound( () -> ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore), "Servizio Applicativo");
+			ApiKeyInfo keyInfo = ApplicativiApiHelper.getApiKey(oldSa, false);
+			boolean updateKey = false;
 			
-			final ServizioApplicativo tmpSa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, soggetto, env.stationCore);
+			final ServizioApplicativo tmpSa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, soggetto, env.stationCore, keyInfo);
 			final ServizioApplicativo newSa = ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore);
 			
 			if(ModalitaAccessoEnum.HTTP_BASIC.equals(body.getCredenziali().getModalitaAccesso())) {
@@ -348,6 +380,13 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					if(!set) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; indicare la password");
 					}
+				}
+			}
+			else if(ModalitaAccessoEnum.API_KEY.equals(body.getCredenziali().getModalitaAccesso())) {
+				AuthenticationApiKey apiKeyCred = (AuthenticationApiKey) body.getCredenziali();
+				boolean appId = Helper.isAppId(apiKeyCred.isAppId());
+				if(appId != keyInfo.isMultipleApiKeys()) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; modifica del tipo (appId) non consentita");
 				}
 			}
 			
@@ -371,7 +410,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			List<ExtendedConnettore> listExtendedConnettore = null;	// Non serve alla checkData perchè da Api, gli applicativi sono sempre fruitori
 			
-			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, env.saHelper, newSa, applicativo);
+			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, env.saHelper, newSa, applicativo, keyInfo, updateKey);
 			env.requestWrapper.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
 			
 			if (! env.saHelper.servizioApplicativoCheckData(
@@ -401,5 +440,91 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 		}
     }
     
+    /**
+     * Modifica i dati di un applicativo
+     *
+     * Questa operazione consente di aggiornare le credenziali associate ad un applicativo identificato dal nome e dal soggetto di riferimento
+     */
+    @Override
+	public void updateCredenzialiApplicativo(BaseCredenziali body, String nome, ProfiloEnum profilo, String soggetto) {
+    	IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+			
+			BaseHelper.throwIfNull(body);
+			
+			OneOfBaseCredenzialiCredenziali credenziali = null;
+			try{
+				credenziali = ApplicativiApiHelper.translateCredenzialiApplicativo(body, true); // metto true, come se fosse create per obbligare la password basic
+			}
+			catch(javax.ws.rs.WebApplicationException e) {
+				throw e;
+			}
+			catch(Throwable e) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
+			}
+			
+			final ApplicativiEnv env = new ApplicativiEnv(context.getServletRequest(), profilo, soggetto, context);
+			soggetto = env.idSoggetto.getNome();
+			
+			final ServizioApplicativo oldSa = BaseHelper.supplyOrNotFound( () -> ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore), "Servizio Applicativo");
+			
+			IDServizioApplicativo oldID = new IDServizioApplicativo();
+			oldID.setIdSoggettoProprietario(ApplicativiApiHelper.getIDSoggetto(oldSa.getNomeSoggettoProprietario(), env.tipo_protocollo));
+			oldID.setNome(oldSa.getNome());
+						
+			ApiKeyInfo keyInfo = ApplicativiApiHelper.createApiKey(credenziali, oldID, env.saCore, env.protocolFactory.getProtocol());
+			boolean updateKey = true;
+			
+			Credenziali newCredenziali = ApplicativiApiHelper.credenzialiFromAuth(credenziali, keyInfo);
+			if(oldSa.getInvocazionePorta()==null) {
+				oldSa.setInvocazionePorta(new InvocazionePorta());
+			}
+			oldSa.getInvocazionePorta().getCredenzialiList().clear();
+			oldSa.getInvocazionePorta().addCredenziali(newCredenziali);
+			
+			oldSa.setOldIDServizioApplicativoForUpdate(oldID);
+				
+			List<ExtendedConnettore> listExtendedConnettore = null;	// Non serve alla checkData perchè da Api, gli applicativi sono sempre fruitori
+			
+			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, env.saHelper, oldSa, credenziali, keyInfo, updateKey);
+			env.requestWrapper.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
+			
+			if (! env.saHelper.servizioApplicativoCheckData(
+					TipoOperazione.CHANGE,
+					null,
+					oldSa.getIdSoggetto(),
+					oldSa.getTipologiaFruizione(),
+					oldSa.getTipologiaErogazione(),
+					listExtendedConnettore, oldSa
+				)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+			
+			// eseguo l'aggiornamento
+			List<Object> listOggettiDaAggiornare = ServiziApplicativiUtilities.getOggettiDaAggiornare(env.saCore, oldID, oldSa);
+			env.saCore.performUpdateOperation(env.userLogin, false, listOggettiDaAggiornare.toArray());
+				
+			if(keyInfo!=null) {
+				context.getServletResponse().setHeader(ApiKeyInfo.API_KEY, keyInfo.getApiKey());
+				if(keyInfo.isMultipleApiKeys()) {
+					context.getServletResponse().setHeader(ApiKeyInfo.APP_ID, keyInfo.getAppId());
+				}
+			}
+			
+			context.getLogger().info("Invocazione completata con successo");     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 }
 

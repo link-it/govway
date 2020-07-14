@@ -1,0 +1,8 @@
+{
+ 	"nome": "ApplicativoJsonApiKeyAddId",
+   	"credenziali": {
+			"modalita_accesso": "api-key",
+			"app_id": true
+	},
+	"ruoli": [ "RuoloDemo" ]
+}

@@ -129,7 +129,8 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			}
 			try {
 				return PrincipalUtilities.getPrincipal(this.tipoAutenticazionePrincipal, this.nome, this.pattern, this.tipoTokenClaim, 
-						datiInvocazione.getInfoConnettoreIngresso(), this.getPddContext(), false);
+						datiInvocazione.getInfoConnettoreIngresso(), this.getPddContext(), false,
+						new StringBuilder());
 			}catch(Exception e) {
 				return null;
 			}
@@ -149,11 +150,14 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     		soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
     	}
     	
+    	StringBuilder fullCredential= new StringBuilder();
+    	
     	// Controllo credenziali fornite
     	String principal = null;
     	try {
     		principal = PrincipalUtilities.getPrincipal(this.tipoAutenticazionePrincipal, this.nome, this.pattern, this.tipoTokenClaim,  
-    				datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true);
+    				datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
+    				fullCredential);
     	}catch(Exception e) {
     		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
     		esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal("credenziali non fornite",principal));
@@ -167,6 +171,9 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			esito.setClientIdentified(false);
 			return esito;
 		}
+    	
+    	// per conoscere la credenziale passata anche in caso di autenticazione fallita
+    	esito.setFullCredential(fullCredential.toString());
 		
     	// Essendoci il principal del chiamante, il client e' stato autenticato dal container
     	esito.setClientAuthenticated(true);

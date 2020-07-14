@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsCertificato;
@@ -109,6 +110,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.BASIC, ModalitaAccessoEnum.HTTP_BASIC);
 		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.PRINCIPAL, ModalitaAccessoEnum.PRINCIPAL);
 		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.SSL, ModalitaAccessoEnum.HTTPS);
+		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.APIKEY, ModalitaAccessoEnum.API_KEY);
 	}
 	
 	public static final Map<ModalitaAccessoEnum,CredenzialeTipo> credenzialeTipoFromModalitaAccesso = new HashMap<ModalitaAccessoEnum,CredenzialeTipo>();
@@ -122,15 +124,15 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		tipoAuthFromModalitaAccesso.put(ModalitaAccessoEnum.HTTPS, ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL);
 		tipoAuthFromModalitaAccesso.put(ModalitaAccessoEnum.HTTP_BASIC, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC);
 		tipoAuthFromModalitaAccesso.put(ModalitaAccessoEnum.PRINCIPAL, ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL);
+		tipoAuthFromModalitaAccesso.put(ModalitaAccessoEnum.API_KEY, ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY);
 		tipoAuthFromModalitaAccesso.put(null, ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA);
 	}
 
-	
-	// Deprecato, utilizzare il dizionario di sopra.
 	public static final Map<String,String> tipoAuthSAFromModalita = Stream.of(
 			new SimpleEntry<>("http-basic", ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC),
 			new SimpleEntry<>("https", ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL),
 			new SimpleEntry<>("principal",ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL),
+			new SimpleEntry<>("api-key",ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY),
 			new SimpleEntry<>("custom", ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)
 		).collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue));
 
@@ -175,7 +177,8 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		return soggetto;
 	}
 	
-	public static void overrideAuthParams(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, OneOfBaseCredenzialiCredenziali credenziali) {
+	public static void overrideAuthParams(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, OneOfBaseCredenzialiCredenziali credenziali, 
+			ApiKeyInfo apiKeyInfo, boolean updateKey) {
 		
 		ModalitaAccessoEnum modalitaAccesso = credenziali.getModalitaAccesso();
 		if(modalitaAccesso == null) {
@@ -193,6 +196,25 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME, c.getUsername());
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD, c.getPassword());
 			if(c.getPassword()!=null && StringUtils.isNotEmpty(c.getPassword())) {
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD, 
+						Costanti.CHECK_BOX_CONFIG_ENABLE);
+			}
+			
+			break;
+		}
+		case API_KEY: {
+			
+			if(! (credenziali instanceof AuthenticationApiKey)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+credenziali.getClass().getName()+"' non compatibili con la modalità '+"+modalitaAccesso.toString()+"+'");
+			}
+			
+			AuthenticationApiKey c = (AuthenticationApiKey) credenziali;
+			boolean appId = isAppId(c.isAppId());
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS, appId ? Costanti.CHECK_BOX_CONFIG_ENABLE : Costanti.CHECK_BOX_CONFIG_DISABLE);
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID, apiKeyInfo.getAppId());
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY, apiKeyInfo.getApiKey());
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD, apiKeyInfo.getPassword());
+			if(updateKey) {
 				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD, 
 						Costanti.CHECK_BOX_CONFIG_ENABLE);
 			}
@@ -287,7 +309,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			if(create) {
 				AuthenticationHttpBasic basic = (AuthenticationHttpBasic) ret;
 				if(basic.getPassword()==null || StringUtils.isEmpty(basic.getPassword())) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException("In una operazione 'create' con tipo di autenticazione '"+tipoAuth+"' è obbligatorio indicare la password");
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nell'operazione richiesta è obbligatorio indicare la password per il tipo di autenticazione '"+tipoAuth+"'");
 				}
 			}
 			break;
@@ -298,6 +320,10 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		}
 		case PRINCIPAL: {
 			ret = (AuthenticationPrincipal) creds;
+			break;
+		}
+		case API_KEY: {
+			ret = (AuthenticationApiKey) creds;
 			break;
 		}
 		default:
@@ -321,7 +347,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	
 	// TODO: Manage exceptions.
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T,E> T apiCredenzialiToGovwayCred(Object creds, ModalitaAccessoEnum tipoAuth, Class<T> credClass, Class<E> enumClass)
+	public static <T,E> T apiCredenzialiToGovwayCred(Object creds, ModalitaAccessoEnum tipoAuth, Class<T> credClass, Class<E> enumClass, ApiKeyInfo keyInfo)
 			throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
 		if (!enumClass.isEnum())
@@ -382,6 +408,24 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			AuthenticationPrincipal auth = (AuthenticationPrincipal) creds;
 			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "PRINCIPAL"));
 			BeanUtils.setProperty(ret, "user", auth.getUserid());
+			break;
+		}
+		case API_KEY: {
+			
+			if(! (creds instanceof AuthenticationApiKey)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+creds.getClass().getName()+"' non compatibili con la modalità '+"+tipoAuth.toString()+"+'");
+			}
+			if(keyInfo==null) {
+				throw new UtilsException("KeyInfo unavailable");
+			}
+			
+			AuthenticationApiKey auth = (AuthenticationApiKey) creds;
+			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "APIKEY"));
+			BeanUtils.setProperty(ret, "user", keyInfo.getAppId());
+			BeanUtils.setProperty(ret, "password", keyInfo.getPassword());
+			boolean appId = isAppId(auth.isAppId());
+			BeanUtils.setProperty(ret, "appId", appId);
+			BeanUtils.setProperty(ret, "certificateStrictVerification", keyInfo.isCifrata());
 			break;
 		}
 		default:
@@ -445,6 +489,14 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			AuthenticationPrincipal auth = new AuthenticationPrincipal();
 			auth.setUserid(BeanUtils.getProperty(govwayCreds, "user"));
 			auth.setModalitaAccesso(ModalitaAccessoEnum.PRINCIPAL);
+			ret = auth;
+		}
+		else if ("apikey".equals(tipo)) {
+			AuthenticationApiKey auth = new AuthenticationApiKey();
+			Method mAppId = credClass.getMethod("isAppId");
+			boolean appId = (Boolean) mAppId.invoke(govwayCreds);
+			auth.setAppId(appId);
+			auth.setModalitaAccesso(ModalitaAccessoEnum.API_KEY);
 			ret = auth;
 		}
 		
@@ -585,4 +637,11 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		context.getServletResponse().setContentType(mimeType);
 	}
 
+	public static boolean isAppId(Boolean appIdObject) {
+		boolean appId = false;
+		if(appIdObject!=null) {
+			appId = appIdObject;
+		}
+		return appId;
+	}
 }

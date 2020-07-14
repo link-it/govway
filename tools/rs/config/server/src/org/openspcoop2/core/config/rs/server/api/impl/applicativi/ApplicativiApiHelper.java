@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativoRuoli;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.FaultIntegrazioneTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -45,11 +46,14 @@ import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
+import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
+import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -61,6 +65,8 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.pdd.core.autenticazione.ApiKey;
+import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
@@ -87,7 +93,13 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public class ApplicativiApiHelper {
 	
 
-	public static void overrideSAParameters(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, ServizioApplicativo sa, Applicativo applicativo) {
+	public static void overrideSAParameters(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, ServizioApplicativo sa, Applicativo applicativo,
+			ApiKeyInfo apiKeyInfo, boolean updateKey) {
+		overrideSAParameters(wrap, consoleHelper, sa, applicativo.getCredenziali(),
+				apiKeyInfo, updateKey);
+	}
+	public static void overrideSAParameters(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, ServizioApplicativo sa, OneOfBaseCredenzialiCredenziali credenzialiApiRest,
+			ApiKeyInfo apiKeyInfo, boolean updateKey) {
 		Credenziali credenziali = sa.getInvocazionePorta().getCredenziali(0);
 		
 		wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME, sa.getNome());
@@ -96,8 +108,10 @@ public class ApplicativiApiHelper {
 		
 		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, credenziali.getTipo().toString());
 		
-		if(applicativo.getCredenziali()!=null) {
-			Helper.overrideAuthParams(wrap, consoleHelper, applicativo.getCredenziali());
+		if(credenzialiApiRest!=null) {
+			
+			Helper.overrideAuthParams(wrap, consoleHelper, credenzialiApiRest,
+					apiKeyInfo, updateKey);
 		}
 	}
     
@@ -106,7 +120,8 @@ public class ApplicativiApiHelper {
 			Applicativo applicativo,
 			String tipo_protocollo,
 			String soggetto,
-			ControlStationCore stationCore) throws UtilsException, Exception {
+			ControlStationCore stationCore, 
+			ApiKeyInfo keyInfo) throws UtilsException, Exception {
 
 		ServerProperties serverProperties = ServerProperties.getInstance();
 	
@@ -153,7 +168,7 @@ public class ApplicativiApiHelper {
 		
 		// *** Invocazione Porta ***
 		InvocazionePorta invocazionePorta = new InvocazionePorta();
-		Credenziali credenziali = credenzialiFromAuth(applicativo.getCredenziali());
+		Credenziali credenziali = credenzialiFromAuth(applicativo.getCredenziali(), keyInfo);
 
 		invocazionePorta.addCredenziali(credenziali);
 		
@@ -282,21 +297,34 @@ public class ApplicativiApiHelper {
 	 * @throws Exception
 	 */
 	public static OneOfBaseCredenzialiCredenziali translateCredenzialiApplicativo(Applicativo applicativo, boolean create) {
+		if(applicativo.getCredenziali()==null) {
+			return null;
+		}
+		return translateCredenzialiApplicativo(applicativo.getCredenziali(), create);
+	}
+	public static OneOfBaseCredenzialiCredenziali translateCredenzialiApplicativo(BaseCredenziali baseCredenziali, boolean create) {
+		if(baseCredenziali==null) {
+			return null;
+		}
+		return translateCredenzialiApplicativo(baseCredenziali.getCredenziali(), create);
+	}
+	public static OneOfBaseCredenzialiCredenziali translateCredenzialiApplicativo(OneOfBaseCredenzialiCredenziali c, boolean create) {
 		OneOfBaseCredenzialiCredenziali creds = null;
 		
-		if(applicativo.getCredenziali()==null || applicativo.getCredenziali().getModalitaAccesso()==null) {
+		if(c==null || c.getModalitaAccesso()==null) {
 			return null;
 		}
 		
-		String  tipoauthSA = Helper.tipoAuthSAFromModalita.get(applicativo.getCredenziali().getModalitaAccesso().toString());
+		String  tipoauthSA = Helper.tipoAuthSAFromModalita.get(c.getModalitaAccesso().toString());
 		
 		if (tipoauthSA == null)
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo modalità accesso sconosciuto: " + applicativo.getCredenziali().getModalitaAccesso());
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo modalità accesso sconosciuto: " + c.getModalitaAccesso());
 		
 		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) ||
 				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) ||
+				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY) ||
 				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
-			creds = Helper.translateCredenziali(applicativo.getCredenziali(), create);
+			creds = Helper.translateCredenziali(c, create);
 		}
 		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 			creds = null;
@@ -309,6 +337,50 @@ public class ApplicativiApiHelper {
 	}
 	
 	
+	public static ApiKeyInfo createApiKey(OneOfBaseCredenzialiCredenziali creds, IDServizioApplicativo idSA, ServiziApplicativiCore saCore, String protocollo) throws Exception {
+		if(creds!=null && ModalitaAccessoEnum.API_KEY.equals(creds.getModalitaAccesso())) {
+			AuthenticationApiKey apiKey = (AuthenticationApiKey) creds;
+			boolean appId = Helper.isAppId(apiKey.isAppId());
+			ApiKeyInfo keyInfo = new ApiKeyInfo();
+			keyInfo.setMultipleApiKeys(appId);
+			ApiKey apiKeyGenerated = null;
+			if(appId) {
+				apiKeyGenerated = saCore.newMultipleApiKey();
+				keyInfo.setAppId(saCore.toAppId(protocollo, idSA, appId));
+			}
+			else {
+				keyInfo.setAppId(saCore.toAppId(protocollo, idSA, appId));
+				apiKeyGenerated = saCore.newApiKey(protocollo, idSA);
+			}
+			keyInfo.setPassword(apiKeyGenerated.getPassword());
+			keyInfo.setApiKey(apiKeyGenerated.getApiKey());
+			return keyInfo;
+		}
+		return null;
+	}
+	public static ApiKeyInfo getApiKey(ServizioApplicativo sa, boolean setApiKey) throws Exception {
+		if(sa!=null && sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0) {
+			Credenziali c = sa.getInvocazionePorta().getCredenziali(0);
+			if(CredenzialeTipo.APIKEY.equals(c.getTipo())){
+				ApiKeyInfo keyInfo = new ApiKeyInfo();
+				keyInfo.setMultipleApiKeys(c.isAppId());
+				keyInfo.setAppId(c.getUser());
+				keyInfo.setPassword(c.getPassword());
+				keyInfo.setCifrata(c.isCertificateStrictVerification());
+				if(setApiKey) {
+					if(c.isAppId()) {
+						keyInfo.setApiKey(ApiKeyUtilities.encodeMultipleApiKey(c.getPassword()));
+					}
+					else {
+						keyInfo.setApiKey(ApiKeyUtilities.encodeApiKey(c.getUser(), c.getPassword()));
+					}
+				}
+				return keyInfo;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Trasforma le credenziali di autenticazione di un servizio applicativo nelle credenziali
 	 * di un'InvocazionePorta.
@@ -318,7 +390,7 @@ public class ApplicativiApiHelper {
 	 * @throws IllegalAccessException 
 	 * 
 	 */
-	public static Credenziali credenzialiFromAuth(OneOfBaseCredenzialiCredenziali cred) throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
+	public static Credenziali credenzialiFromAuth(OneOfBaseCredenzialiCredenziali cred, ApiKeyInfo keyInfo) throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
 		Credenziali credenziali = null;
 		
@@ -341,7 +413,8 @@ public class ApplicativiApiHelper {
 						cred,
 						modalitaAccesso,
 						Credenziali.class,
-						org.openspcoop2.core.config.constants.CredenzialeTipo.class
+						org.openspcoop2.core.config.constants.CredenzialeTipo.class,
+						keyInfo
 						);	
 			
 			}

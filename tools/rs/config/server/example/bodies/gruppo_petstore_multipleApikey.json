@@ -1,0 +1,30 @@
+{
+    "nome": "GruppoJson",
+    "azioni": ["POST_pet", "PUT_pet"],
+    "configurazione": {
+        "modalita": "nuova",
+    	"autenticazione": {
+		"tipo": "api-key",
+		"app_id": true,
+		"posizione": {
+			"query_parameter": true,
+			"header": true,
+			"cookie": true
+		},
+		"api_key_nomi": {
+			"query_parameter": "QapiKey",
+			"header": "HapiKey",
+			"cookie": "CapiKey"
+		},
+		"app_id_nomi": {
+			"query_parameter": "QappId",
+			"header": "HappId",
+			"cookie": "CappId"
+		},
+		"api_key_forward": false,
+		"app_id_forward": true,
+		"opzionale": true
+        }
+    }
+
+}

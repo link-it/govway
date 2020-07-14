@@ -5741,6 +5741,7 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/dominio"
       - $ref: "#/components/parameters/ruolo"
+      - $ref: "#/components/parameters/tipo_credenziali"
       responses:
         "200":
           description: "Ricerca eseguita correttamente"
@@ -5777,7 +5778,7 @@ paths:
         required: true
       responses:
         "201":
-          $ref: "#/components/responses/201Created"
+          $ref: "#/components/responses/201CreatedKey"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -5839,7 +5840,7 @@ paths:
         required: true
       responses:
         "204":
-          description: "Il soggetto è stato aggiornato correttamente"
+          description: "Soggetto aggiornato con successo"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -5881,6 +5882,41 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/id_simple_name"
+  /soggetti/{nome}/credenziali:
+    put:
+      tags:
+      - "soggetti"
+      summary: "Modifica i dati di un soggetto"
+      description: "Questa operazione consente di aggiornare le credenziali associate\
+        \ ad un soggetto identificato dal nome"
+      operationId: "updateCredenzialiSoggetto"
+      requestBody:
+        description: "Nuove credenziali del soggetto"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BaseCredenziali"
+        required: true
+      responses:
+        "204":
+          $ref: "#/components/responses/204UpdatedKey"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/id_simple_name"
   /applicativi:
     get:
       tags:
@@ -5893,6 +5929,7 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/ruolo"
+      - $ref: "#/components/parameters/tipo_credenziali"
       responses:
         "200":
           description: "Ricerca eseguita correttamente"
@@ -5930,7 +5967,7 @@ paths:
         required: true
       responses:
         "201":
-          $ref: "#/components/responses/201Created"
+          $ref: "#/components/responses/201CreatedKey"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -5993,7 +6030,7 @@ paths:
         required: true
       responses:
         "204":
-          description: "L'applicativo è stato aggiornato correttamente"
+          description: "Applicativo aggiornato con successo"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -6018,6 +6055,42 @@ paths:
       responses:
         "204":
           description: "Applicativo eliminato con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+  /applicativi/{nome}/credenziali:
+    put:
+      tags:
+      - "applicativi"
+      summary: "Modifica i dati di un applicativo"
+      description: "Questa operazione consente di aggiornare le credenziali associate\
+        \ ad un applicativo identificato dal nome e dal soggetto di riferimento"
+      operationId: "updateCredenzialiApplicativo"
+      requestBody:
+        description: "Nuove credenziali dell'applicativo"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BaseCredenziali"
+        required: true
+      responses:
+        "204":
+          $ref: "#/components/responses/204UpdatedKey"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -7188,6 +7261,15 @@ components:
           type: "string"
           example: "idEsterno"
       additionalProperties: false
+    AuthenticationApiKey:
+      type: "object"
+      properties:
+        modalita_accesso:
+          $ref: "#/components/schemas/ModalitaAccessoEnum"
+        app_id:
+          type: "boolean"
+          default: false
+      additionalProperties: false
     BaseCredenziali:
       type: "object"
       properties:
@@ -7199,10 +7281,12 @@ components:
               http-basic: "#/components/schemas/AuthenticationHttpBasic"
               https: "#/components/schemas/AuthenticationHttps"
               principal: "#/components/schemas/AuthenticationPrincipal"
+              api-key: "#/components/schemas/AuthenticationApiKey"
           oneOf:
           - $ref: "#/components/schemas/AuthenticationHttpBasic"
           - $ref: "#/components/schemas/AuthenticationHttps"
           - $ref: "#/components/schemas/AuthenticationPrincipal"
+          - $ref: "#/components/schemas/AuthenticationApiKey"
     ConnettoreConfigurazioneHttpBasic:
       required:
       - "password"
@@ -7402,11 +7486,13 @@ components:
                 http-basic: "#/components/schemas/APIImplAutenticazioneBasic"
                 https: "#/components/schemas/APIImplAutenticazioneHttps"
                 principal: "#/components/schemas/APIImplAutenticazionePrincipal"
+                api-key: "#/components/schemas/APIImplAutenticazioneApiKey"
             oneOf:
             - $ref: "#/components/schemas/APIImplAutenticazioneDisabilitata"
             - $ref: "#/components/schemas/APIImplAutenticazioneBasic"
             - $ref: "#/components/schemas/APIImplAutenticazioneHttps"
             - $ref: "#/components/schemas/APIImplAutenticazionePrincipal"
+            - $ref: "#/components/schemas/APIImplAutenticazioneApiKey"
           autorizzazione:
             type: "object"
             discriminator:
@@ -7488,6 +7574,58 @@ components:
           type: "boolean"
           example: false
           default: false
+      additionalProperties: false
+    APIImplAutenticazioneApiKey:
+      required:
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutenticazioneEnum"
+        app_id:
+          type: "boolean"
+          default: false
+        posizione:
+          $ref: "#/components/schemas/APIImplAutenticazioneApiKeyPosizione"
+        api_key_nomi:
+          $ref: "#/components/schemas/APIImplAutenticazioneApiKeyConfig"
+        app_id_nomi:
+          $ref: "#/components/schemas/APIImplAutenticazioneApiKeyConfig"
+        api_key_forward:
+          type: "boolean"
+          default: false
+        app_id_forward:
+          type: "boolean"
+          default: false
+        opzionale:
+          type: "boolean"
+          default: false
+      additionalProperties: false
+    APIImplAutenticazioneApiKeyPosizione:
+      type: "object"
+      properties:
+        query_parameter:
+          type: "boolean"
+          default: true
+        header:
+          type: "boolean"
+          default: true
+        cookie:
+          type: "boolean"
+          default: true
+      additionalProperties: false
+    APIImplAutenticazioneApiKeyConfig:
+      type: "object"
+      properties:
+        query_parameter:
+          type: "string"
+          example: "custom_key"
+        header:
+          type: "string"
+          example: "X-Custom-Key"
+        cookie:
+          type: "string"
+          example: "X-Custom-Key"
       additionalProperties: false
     APIImplAutenticazioneCustom:
       required:
@@ -7940,11 +8078,13 @@ components:
               http-basic: "#/components/schemas/APIImplAutenticazioneBasic"
               https: "#/components/schemas/APIImplAutenticazioneHttps"
               principal: "#/components/schemas/APIImplAutenticazionePrincipal"
+              api-key: "#/components/schemas/APIImplAutenticazioneApiKey"
           oneOf:
           - $ref: "#/components/schemas/APIImplAutenticazioneDisabilitata"
           - $ref: "#/components/schemas/APIImplAutenticazioneBasic"
           - $ref: "#/components/schemas/APIImplAutenticazioneHttps"
           - $ref: "#/components/schemas/APIImplAutenticazionePrincipal"
+          - $ref: "#/components/schemas/APIImplAutenticazioneApiKey"
     GruppoItem:
       type: "object"
       allOf:
@@ -8067,12 +8207,14 @@ components:
                 http-basic: "#/components/schemas/APIImplAutenticazioneBasic"
                 https: "#/components/schemas/APIImplAutenticazioneHttps"
                 principal: "#/components/schemas/APIImplAutenticazionePrincipal"
+                api-key: "#/components/schemas/APIImplAutenticazioneApiKey"
                 custom: "#/components/schemas/APIImplAutenticazioneCustom"
             oneOf:
             - $ref: "#/components/schemas/APIImplAutenticazioneDisabilitata"
             - $ref: "#/components/schemas/APIImplAutenticazioneBasic"
             - $ref: "#/components/schemas/APIImplAutenticazioneHttps"
             - $ref: "#/components/schemas/APIImplAutenticazionePrincipal"
+            - $ref: "#/components/schemas/APIImplAutenticazioneApiKey"
             - $ref: "#/components/schemas/APIImplAutenticazioneCustom"
           token:
             $ref: "#/components/schemas/ControlloAccessiAutenticazioneToken"
@@ -8705,6 +8847,7 @@ components:
       - "http-basic"
       - "https"
       - "principal"
+      - "api-key"
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
@@ -8790,6 +8933,7 @@ components:
       - "http-basic"
       - "https"
       - "principal"
+      - "api-key"
       - "custom"
     TipoAutenticazioneHttps:
       type: "string"
@@ -8974,6 +9118,34 @@ components:
             \ the problem.\nIt may or may not yield further information if dereferenced.\n"
           format: "uri"
   responses:
+    "201CreatedKey":
+      description: "Resource created"
+      headers:
+        X-Api-Key:
+          $ref: "#/components/headers/X-Api-Key"
+        X-App-Id:
+          $ref: "#/components/headers/X-App-Id"
+        Location:
+          $ref: "#/components/headers/Location"
+        X-RateLimit-Limit:
+          $ref: "#/components/headers/X-RateLimit-Limit"
+        X-RateLimit-Remaining:
+          $ref: "#/components/headers/X-RateLimit-Remaining"
+        X-RateLimit-Reset:
+          $ref: "#/components/headers/X-RateLimit-Reset"
+    "204UpdatedKey":
+      description: "Resource updated"
+      headers:
+        X-Api-Key:
+          $ref: "#/components/headers/X-Api-Key"
+        X-App-Id:
+          $ref: "#/components/headers/X-App-Id"
+        X-RateLimit-Limit:
+          $ref: "#/components/headers/X-RateLimit-Limit"
+        X-RateLimit-Remaining:
+          $ref: "#/components/headers/X-RateLimit-Remaining"
+        X-RateLimit-Reset:
+          $ref: "#/components/headers/X-RateLimit-Reset"
     "400BadRequest":
       description: "Bad Request"
       content:
@@ -9294,6 +9466,13 @@ components:
       schema:
         $ref: "#/components/schemas/NCName"
       example: "AccessoSolaLettura"
+    tipo_credenziali:
+      name: "tipo_credenziali"
+      in: "query"
+      description: "Identifica il tipo di credenziali associato all'oggetto"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ModalitaAccessoEnum"
     fonte:
       name: "fonte"
       in: "query"
@@ -9408,6 +9587,14 @@ components:
         type: "string"
       example: "\"7da7a728-f910-11e6-942a-68f728c1ba70\", *"
   headers:
+    X-Api-Key:
+      description: "API Key creata per l'entita registrata"
+      schema:
+        type: "string"
+    X-App-Id:
+      description: "APP ID associato all'entita registrata"
+      schema:
+        type: "string"
     X-RateLimit-Limit:
       description: "The number of allowed requests in the current period"
       schema:

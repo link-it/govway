@@ -35,7 +35,8 @@ public class APIImpl extends APIBaseImpl {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneDisabilitata.class, name = "disabilitato"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneBasic.class, name = "http-basic"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneHttps.class, name = "https"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazionePrincipal.class, name = "principal")  })
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazionePrincipal.class, name = "principal"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneApiKey.class, name = "api-key")  })
   private OneOfAPIImplAutenticazione autenticazione = null;
   
   @Schema(description = "")

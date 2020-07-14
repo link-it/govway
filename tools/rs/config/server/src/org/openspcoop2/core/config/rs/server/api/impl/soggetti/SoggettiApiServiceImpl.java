@@ -26,15 +26,21 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.SoggettiApi;
+import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
+import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaSoggetti;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
+import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -92,7 +98,6 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				
 				if ( soggetto.getCredenziali() != null && soggetto.getCredenziali().getModalitaAccesso() != null ) {
 					soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), true));
-					SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, soggetto, env.requestWrapper);
 				}
 				
 			}
@@ -103,7 +108,19 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 			
-			org.openspcoop2.core.registry.Soggetto soggettoRegistro = SoggettiApiHelper.soggettoApiToRegistro(soggetto, env);
+			String protocollo = env.protocolFactory.getProtocol();
+			String tipo_soggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo);
+			IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto,soggetto.getNome());
+		
+			ApiKeyInfo keyInfo = null;
+			if ( soggetto.getCredenziali() != null && soggetto.getCredenziali().getModalitaAccesso() != null ) {
+				keyInfo = SoggettiApiHelper.createApiKey(soggetto.getCredenziali(), idSoggetto, env.soggettiCore, protocollo);
+				boolean updateKey = false;
+				SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, soggetto, env.requestWrapper,
+						keyInfo, updateKey);
+			}
+			
+			org.openspcoop2.core.registry.Soggetto soggettoRegistro = SoggettiApiHelper.soggettoApiToRegistro(soggetto, env, keyInfo);
 			
 			IDSoggetto idSogg = new IDSoggetto();
 			idSogg.setNome(soggettoRegistro.getNome());
@@ -135,6 +152,13 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			env.soggettiCore.performCreateOperation(env.userLogin, false, sog);		
         
 			context.getLogger().info("Invocazione completata con successo");   
+			
+			if(keyInfo!=null) {
+				context.getServletResponse().setHeader(ApiKeyInfo.API_KEY, keyInfo.getApiKey());
+				if(keyInfo.isMultipleApiKeys()) {
+					context.getServletResponse().setHeader(ApiKeyInfo.APP_ID, keyInfo.getAppId());
+				}
+			}
 			
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
@@ -214,7 +238,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      *
      */
 	@Override
-    public ListaSoggetti findAllSoggetti(ProfiloEnum profilo, String q, Integer limit, Integer offset, DominioEnum dominio, String ruolo) {
+    public ListaSoggetti findAllSoggetti(ProfiloEnum profilo, String q, Integer limit, Integer offset, DominioEnum dominio, String ruolo, ModalitaAccessoEnum tipoCredenziali) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -230,6 +254,12 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, dominio.toString());
 			if (ruolo != null && ruolo.trim().length() > 0)
 				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO, ruolo.trim());
+			if(tipoCredenziali!=null) {
+				String filtro = Helper.tipoAuthFromModalitaAccesso.get(tipoCredenziali);
+				if(filtro!=null && !"".equals(filtro)) {
+					ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_CREDENZIALI, filtro);
+				}
+			}
 			
 			List<org.openspcoop2.core.registry.Soggetto> soggetti = env.soggettiCore.soggettiRegistroList(null, ricerca);
 			
@@ -306,9 +336,104 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
     /**
      * Modifica i dati di un soggetto
      *
-     * Questa operazione consente di aggiornare i dati di un soggetto identificato dal nome
+     * Questa operazione consente di aggiornare le credenziali associate ad un soggetto identificato dal nome
      *
      */
+	@Override
+    public void updateCredenzialiSoggetto(BaseCredenziali body, String nome, ProfiloEnum profilo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			if (profilo == null)
+				profilo = Helper.getProfiloDefault();
+            
+			OneOfBaseCredenzialiCredenziali credenziali = null;
+			try{
+				credenziali = Helper.translateCredenziali(body.getCredenziali(), true); // metto true, come se fosse create per obbligare la password basic
+			}
+			catch(javax.ws.rs.WebApplicationException e) {
+				throw e;
+			}
+			catch(Throwable e) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
+			}
+
+			final SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);
+			
+			final IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto,nome);			
+			org.openspcoop2.core.registry.Soggetto oldSoggetto = null; 
+			try {
+				oldSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
+			} catch (Exception e) {			
+			}
+			if (oldSoggetto == null)
+				throw FaultCode.NOT_FOUND.toException("Nessun soggetto trovato corrisponde al nome " + nome + " e profilo " + profilo.toString());
+			
+			ApiKeyInfo keyInfo = SoggettiApiHelper.createApiKey(credenziali, idSogg, env.soggettiCore, env.protocolFactory.getProtocol());
+			boolean updateKey = true;
+			
+			SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, credenziali, env.requestWrapper,
+					keyInfo, updateKey);
+						
+			final org.openspcoop2.core.registry.Soggetto newSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
+			
+			try {
+				CredenzialiSoggetto newCredenziali = Helper.apiCredenzialiToGovwayCred(
+							body.getCredenziali(),
+							body.getCredenziali().getModalitaAccesso(),
+							CredenzialiSoggetto.class,
+							org.openspcoop2.core.registry.constants.CredenzialeTipo.class,
+							keyInfo
+				);				
+				newSoggetto.setCredenziali(newCredenziali);
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+			
+			
+			boolean isOk = env.soggettiHelper.soggettiCheckData(
+					TipoOperazione.CHANGE,
+					oldSoggetto.getId().toString(),
+					env.tipo_soggetto, 
+					newSoggetto.getNome(), 
+					newSoggetto.getCodiceIpa(),
+					null,  // this.pd_url_prefix_rewriter, 
+					null, // this.pa_url_prefix_rewriter,
+					oldSoggetto,
+					false,	//IsSupportatoAutenticazione
+					newSoggetto.getDescrizione()
+				);
+			
+			if (!isOk)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			
+			newSoggetto.setOldIDSoggettoForUpdate(new IDSoggetto(oldSoggetto.getTipo(), oldSoggetto.getNome()));
+			env.soggettiCore.performUpdateOperation(env.userLogin, false, newSoggetto);
+
+			if(keyInfo!=null) {
+				context.getServletResponse().setHeader(ApiKeyInfo.API_KEY, keyInfo.getApiKey());
+				if(keyInfo.isMultipleApiKeys()) {
+					context.getServletResponse().setHeader(ApiKeyInfo.APP_ID, keyInfo.getAppId());
+				}
+			}
+			
+			context.getLogger().info("Invocazione completata con successo");
+             
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+	
 	@Override
     public void updateSoggetto(Soggetto body, String nome, ProfiloEnum profilo) {
 		IContext context = this.getContext();
@@ -334,7 +459,6 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			}
 
 			final SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);
-			SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, soggetto, env.requestWrapper);
 			
 			final IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto,nome);
 			org.openspcoop2.core.registry.Soggetto oldSoggetto = null; 
@@ -342,15 +466,20 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				oldSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
 			} catch (Exception e) {			
 			}
-			
 			if (oldSoggetto == null)
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto trovato corrisponde al nome " + nome + " e profilo " + profilo.toString());
 			
+			ApiKeyInfo keyInfo = SoggettiApiHelper.getApiKey(oldSoggetto, false);
+			boolean updateKey = false;
+			
+			SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, soggetto, env.requestWrapper,
+					keyInfo, updateKey);
+						
 			SoggettoCtrlStat oldSoggettoCtrlStat = env.soggettiCore.getSoggettoCtrlStat(oldSoggetto.getId());
 			
 			final org.openspcoop2.core.registry.Soggetto newSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
 			
-			SoggettiApiHelper.convert(body, newSoggetto, env);
+			SoggettiApiHelper.convert(body, newSoggetto, env, keyInfo);
 			
 			if(ModalitaAccessoEnum.HTTP_BASIC.equals(body.getCredenziali().getModalitaAccesso())) {
 				AuthenticationHttpBasic httpBasic = (AuthenticationHttpBasic) body.getCredenziali();
@@ -369,6 +498,13 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 					if(!set) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; indicare la password");
 					}
+				}
+			}
+			else if(ModalitaAccessoEnum.API_KEY.equals(body.getCredenziali().getModalitaAccesso())) {
+				AuthenticationApiKey apiKeyCred = (AuthenticationApiKey) body.getCredenziali();
+				boolean appId = Helper.isAppId(apiKeyCred.isAppId());
+				if(appId != keyInfo.isMultipleApiKeys()) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; modifica del tipo (appId) non consentita");
 				}
 			}
 			

@@ -38,7 +38,8 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 public class PrincipalUtilities {
 
 	public static String getPrincipal(TipoAutenticazionePrincipal tipoAutenticazionePrincipal, String nome, String pattern, TipoCredenzialeMittente token,
-			InfoConnettoreIngresso infoConnettore, PdDContext pddContext, boolean throwException) throws AutenticazioneException {
+			InfoConnettoreIngresso infoConnettore, PdDContext pddContext, boolean throwException,
+			StringBuilder fullCredential) throws AutenticazioneException {
 		
 		String principal = null;
 		switch (tipoAutenticazionePrincipal) {
@@ -51,6 +52,13 @@ public class PrincipalUtilities {
 					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente all'interno delle credenziali");
 				}
 			}
+			/*
+			 * L'info 'container' viene gia' registrata in automatico tra le credenziali come principal.
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append("Principal").append(" (container) '").append(principal).append("'");
+			*/
 			return principal;
 		case HEADER:
 			if(nome==null && throwException) {
@@ -64,6 +72,10 @@ public class PrincipalUtilities {
 					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente nell'header http '"+nome+"'");
 				}
 			}
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append("Principal").append(" (http) '").append(nome).append(": ").append(principal).append("'");
 			return principal;
 		case FORM:
 			if(nome==null && throwException) {
@@ -77,6 +89,10 @@ public class PrincipalUtilities {
 					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente nel parametro della query '"+nome+"'");
 				}
 			}
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append("Principal").append(" (query) '").append(nome).append(": ").append(principal).append("'");
 			return principal;
 		case URL:
 			if(pattern==null && throwException) {
@@ -98,6 +114,13 @@ public class PrincipalUtilities {
 					throw new AutenticazioneException(msgErrore);
 				}
 			}
+			/*
+			 * La url viene gia' registrata in automatico tra le info della transazione
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append("Principal").append(" (url) '").append(principal).append("'");
+			*/
 			return principal;
 		case INDIRIZZO_IP:
 			if(pddContext!=null && pddContext.containsKey(Costanti.CLIENT_IP_REMOTE_ADDRESS)) {
@@ -108,6 +131,13 @@ public class PrincipalUtilities {
 					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client non disponibile");
 				}
 			}
+			/*
+			 * Il client ip viene gia' registrato in automatico tra le info della transazione
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append("Principal").append(" (client-ip) '").append(principal).append("'");
+			*/
 			return principal;
 		case INDIRIZZO_IP_X_FORWARDED_FOR:
 			if(pddContext!=null && pddContext.containsKey(Costanti.CLIENT_IP_TRANSPORT_ADDRESS)) {
@@ -118,6 +148,13 @@ public class PrincipalUtilities {
 					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client, tramite 'X-Forwarded-For', non disponibile");
 				}
 			}
+			/*
+			 * L'indirizzo ip forwared viene gia' registrato in automatico tra le info della transazione
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append("Principal").append(" (forwarded-ip) '").append(principal).append("'");
+			*/
 			return principal;
 		// Ho levato il contenuto, poichè senno devo fare il digest per poterlo poi cachare
 //			case CONTENT:
@@ -181,6 +218,13 @@ public class PrincipalUtilities {
 					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Token claim '"+nomeClaim+"' non disponibile");
 				}
 			}
+			/*
+			 * Le info sul token vengono gia' registrate in automatico tra le info della transazione
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append("Principal").append(" (token) '").append(nomeClaim).append(": ").append(principal).append("'");
+			*/
 			return principal;
 		}
 		return null;

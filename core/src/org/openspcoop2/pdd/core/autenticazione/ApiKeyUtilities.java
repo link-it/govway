@@ -45,7 +45,8 @@ public class ApiKeyUtilities {
 	public static String getKey(boolean apiKey,
 			boolean header, boolean cookie, boolean queryParameter, 
 			String nomeHeader, String nomeCookie, String nomeQueryParameter,
-			InfoConnettoreIngresso infoConnettore, PdDContext pddContext, boolean throwException) throws AutenticazioneException {
+			InfoConnettoreIngresso infoConnettore, PdDContext pddContext, boolean throwException,
+			StringBuilder fullCredential) throws AutenticazioneException {
 		
 		String tipo = apiKey ? "ApiKey" : "AppId";
 		
@@ -65,6 +66,14 @@ public class ApiKeyUtilities {
 			}
 		}
 		if(key!=null) {
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append(tipo).append(" (query) '").append(nomeQueryParameter);
+			if(!apiKey) { // l'api key non deve essere tracciata come per la password.
+				fullCredential.append(": ").append(key);
+			}
+			fullCredential.append("'");
 			return key;
 		}
 		
@@ -80,6 +89,14 @@ public class ApiKeyUtilities {
 			}
 		}
 		if(key!=null) {
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append(tipo).append(" (http) '").append(nomeHeader);
+			if(!apiKey) { // l'api key non deve essere tracciata come per la password.
+				fullCredential.append(": ").append(key);
+			}
+			fullCredential.append("'");
 			return key;
 		}
 		
@@ -95,6 +112,14 @@ public class ApiKeyUtilities {
 			}
 		}
 		if(key!=null) {
+			if(fullCredential.length()>0) {
+				fullCredential.append("\n");
+			}
+			fullCredential.append(tipo).append(" (cookie) '").append(nomeCookie);
+			if(!apiKey) { // l'api key non deve essere tracciata come per la password.
+				fullCredential.append(": ").append(key);
+			}
+			fullCredential.append("'");
 			return key;
 		}
 		

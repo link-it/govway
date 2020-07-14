@@ -30,7 +30,8 @@ public class BaseCredenziali  {
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpBasic.class, name = "http-basic"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttps.class, name = "https"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationPrincipal.class, name = "principal")  })
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationPrincipal.class, name = "principal"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationApiKey.class, name = "api-key")  })
   private OneOfBaseCredenzialiCredenziali credenziali = null;
  /**
    * Get credenziali

@@ -6,6 +6,8 @@ Background:
 
 * def soggetto_http = read('classpath:bodies/soggetto-esterno-http.json')
 * def soggetto_principal = read('classpath:bodies/soggetto-esterno-principal.json')
+* def soggetto_apikey = read('classpath:bodies/soggetto-esterno-apikey.json')
+* def soggetto_multipleapikey = read('classpath:bodies/soggetto-esterno-multipleapikey.json')
 * def ruolo = read('classpath:bodies/ruolo.json')
 
 * eval randomize(soggetto_http, ["nome", "credenziali.username"])
@@ -13,6 +15,8 @@ Background:
 * eval randomize(ruolo, ["nome"])
 * eval soggetto_http.ruoli = [ ruolo.nome ]
 * eval soggetto_principal.ruoli = [ ruolo.nome ]
+* eval soggetto_apikey.ruoli = [ ruolo.nome ]
+* eval soggetto_multipleapikey.ruoli = [ ruolo.nome ]
 
 @CreateCredHttp
 Scenario: Creazione Soggetti 204 OK
@@ -22,10 +26,24 @@ Scenario: Creazione Soggetti 204 OK
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
 
 @CreateCredPrincipal
-Scenario: Creazione Soggetti 204 OK
+Scenario: Creazione Soggetti 204 OK (principal)
 
     * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
     * call create_201 { resourcePath: 'soggetti', body: '#(soggetto_principal)', key: '#(soggetto_principal.nome)' }
+    * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
+
+@CreateCredApiKey
+Scenario: Creazione Soggetti 204 OK (apikey)
+
+    * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
+    * call create_201_apikey { resourcePath: 'soggetti', body: '#(soggetto_apikey)', key: '#(soggetto_apikey.nome)' }
+    * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
+
+@CreateCredMultipleApiKey
+Scenario: Creazione Soggetti 204 OK (multipleapikey)
+
+    * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
+    * call create_201_multipleapikey { resourcePath: 'soggetti', body: '#(soggetto_multipleapikey)', key: '#(soggetto_multipleapikey.nome)' }
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
 
 @CreateSPCoop204

@@ -19,8 +19,10 @@
  */
 package org.openspcoop2.core.config.rs.server.api;
 
+import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaSoggetti;
+import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.Problem;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
@@ -105,7 +107,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaSoggetti findAllSoggetti(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("dominio") DominioEnum dominio, @QueryParam("ruolo") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String ruolo);
+    public ListaSoggetti findAllSoggetti(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("dominio") DominioEnum dominio, @QueryParam("ruolo") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String ruolo, @QueryParam("tipo_credenziali") ModalitaAccessoEnum tipoCredenziali);
 
     /**
      * Restituisce il dettaglio di un soggetto
@@ -131,6 +133,28 @@ public interface SoggettiApi  {
     /**
      * Modifica i dati di un soggetto
      *
+     * Questa operazione consente di aggiornare le credenziali associate ad un soggetto identificato dal nome
+     *
+     */
+    @PUT
+    @Path("/soggetti/{nome}/credenziali")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Modifica i dati di un soggetto", tags={ "soggetti" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Resource updated"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void updateCredenzialiSoggetto(@Valid BaseCredenziali body, @PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
+
+    /**
+     * Modifica i dati di un soggetto
+     *
      * Questa operazione consente di aggiornare i dati di un soggetto identificato dal nome
      *
      */
@@ -140,7 +164,7 @@ public interface SoggettiApi  {
     @Produces({ "application/problem+json" })
     @Operation(summary = "Modifica i dati di un soggetto", tags={ "soggetti" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "204", description = "Il soggetto è stato aggiornato correttamente"),
+        @ApiResponse(responseCode = "204", description = "Soggetto aggiornato con successo"),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),

@@ -834,8 +834,12 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	
 	public boolean isVisualizzaTextAreaCredenziali() {
 		if(StringUtils.isNotEmpty(this.dettaglio.getCredenziali())) {
-			if(this.dettaglio.getCredenziali().length() > 150)
+			if(this.dettaglio.getCredenziali().length() > 150) {
 				return true;
+			}
+			else if(this.dettaglio.getCredenziali().contains("\n")) {
+				return true;
+			}
 		} 
 		return false;
 	}

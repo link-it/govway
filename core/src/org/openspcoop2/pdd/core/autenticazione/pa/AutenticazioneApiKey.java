@@ -116,14 +116,16 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 		try {
 			String apiKey = ApiKeyUtilities.getKey(true, this.header, this.cookie, this.queryParameter, 
 					this.nomeHeaderApiKey, this.nomeCookieApiKey, this.nomeQueryParameterApiKey, 
-					datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), false);
+					datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), false,
+					new StringBuilder());
 			if(apiKey==null) {
 				return null;
 			}
 			if(this.appId) {
 				String appId = ApiKeyUtilities.getKey(false, this.header, this.cookie, this.queryParameter, 
 						this.nomeHeaderAppId, this.nomeCookieAppId, this.nomeQueryParameterAppId, 
-						datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), false);
+						datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), false,
+						new StringBuilder());
 				if(appId==null) {
 					return null;
 				}
@@ -143,12 +145,15 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 
     	EsitoAutenticazionePortaApplicativa esito = new EsitoAutenticazionePortaApplicativa();
     	
+    	StringBuilder fullCredential= new StringBuilder();
+    	
 		// Controllo apiKey fornite
     	String apiKey = null;
     	try {
     		apiKey = ApiKeyUtilities.getKey(true, this.header, this.cookie, this.queryParameter, 
 					this.nomeHeaderApiKey, this.nomeCookieApiKey, this.nomeQueryParameterApiKey, 
-					datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true); 
+					datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
+					fullCredential); 
     	}catch(Exception e) {
     		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey non riuscita",e);
     		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
@@ -168,22 +173,28 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
     		try {
     			appId = ApiKeyUtilities.getKey(false, this.header, this.cookie, this.queryParameter, 
 						this.nomeHeaderAppId, this.nomeCookieAppId, this.nomeQueryParameterAppId, 
-						datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true);
+						datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
+						fullCredential);
         	}catch(Exception e) {
         		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (AppId) non riuscita",e);
         		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
     			esito.setClientAuthenticated(false);
     			esito.setClientIdentified(false);
+    			esito.setFullCredential(fullCredential.toString());
     			return esito;
         	}
         	if( appId==null || "".equals(appId) ){
         		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
         		esito.setClientAuthenticated(false);
     			esito.setClientIdentified(false);
+    			esito.setFullCredential(fullCredential.toString());
     			return esito;
     		}
     	}
     	
+    	// per conoscere la credenziale passata anche in caso di autenticazione fallita
+    	esito.setFullCredential(fullCredential.toString());
+		    	
     	String identitaAutenticata = null;
     	String password = null;
     	try {
@@ -213,7 +224,7 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
     	// !NO!: Essendoci il principal del chiamante, il client e' stato autenticato dal container
     	//esito.setClientAuthenticated(true); come per il basic, per poter essere autenticato bisogna verificare che sia registrato sulla base dati
     	esito.setCredential(identitaAutenticata);
-
+    	
     	IDSoggetto idSoggetto = null;
 		try{
 			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoByCredenzialiApiKey(identitaAutenticata, password, this.appId, cryptConfigSoggetti, null); // all registry

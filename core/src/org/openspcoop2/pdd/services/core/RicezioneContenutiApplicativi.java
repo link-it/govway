@@ -2209,7 +2209,19 @@ public class RicezioneContenutiApplicativi {
 					if(credenzialeTrasporto!=null) {
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO, credenzialeTrasporto);
 					}
-					
+
+					String fullCredential = esito.getFullCredential();
+					if(fullCredential!=null && !"".equals(fullCredential)) {
+						String c = transaction.getCredenziali();
+						if(c!=null && !"".equals(c)) {
+							c = c + "\n" + fullCredential;
+						}
+						else {
+							c = fullCredential;
+						}
+						transaction.setCredenziali(c);
+					}
+				
 					if(esito.isClientAuthenticated() == false) {
 						errore = esito.getErroreIntegrazione();
 						eAutenticazione = esito.getEccezioneProcessamento();

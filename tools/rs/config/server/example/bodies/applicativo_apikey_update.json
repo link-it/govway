@@ -1,0 +1,7 @@
+{
+ 	"nome": "ApplicativoJsonApiKey",
+   	"credenziali": {
+			"modalita_accesso": "api-key"
+	},
+	"ruoli": [ "RuoloDemo", "RuoloDemo2" ]
+}

@@ -30,6 +30,7 @@ DISABILITATO("disabilitato"),
   HTTP_BASIC("http-basic"),
   HTTPS("https"),
   PRINCIPAL("principal"),
+  API_KEY("api-key"),
   CUSTOM("custom");
 
   private String value;

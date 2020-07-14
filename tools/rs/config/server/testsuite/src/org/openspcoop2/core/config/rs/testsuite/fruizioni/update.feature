@@ -1,4 +1,4 @@
-Feature: Update Erogazioni
+Feature: Update Fruizioni
 
 Background:
 
@@ -28,7 +28,7 @@ Background:
 * def erogazione_versione = read('api_versione3.json')
 
 @UpdateConnettore204
-Scenario: Update Erogazioni Connettore 204
+Scenario: Update Fruizioni Connettore 204
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
@@ -49,7 +49,7 @@ Scenario: Update Erogazioni Connettore 204
 
 
 @UpdateInfoGenerali204
-Scenario: Update Erogazioni Info Generali 204
+Scenario: Update Fruizioni Info Generali 204
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
@@ -69,7 +69,7 @@ Scenario: Update Erogazioni Info Generali 204
     * call delete ({ resourcePath: api_petstore_path })
 
 @UpdateUrlInvocazione204
-Scenario: Update Erogazioni Url Invocazione 204
+Scenario: Update Fruizioni Url Invocazione 204
     
     * eval url_invocazione.modalita = "interface-based"
 
@@ -91,7 +91,7 @@ Scenario: Update Erogazioni Url Invocazione 204
 
 
 @UpdateVersione204
-Scenario: Update Erogazioni Versione 204
+Scenario: Update Fruizioni Versione 204
    
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
@@ -117,7 +117,7 @@ Scenario: Update Erogazioni Versione 204
 
 
 @UpdateConnettore404
-Scenario: Update Erogazioni 404
+Scenario: Update Fruizioni 404
 
     Given url configUrl
     And path 'fruizioni', petstore_key, 'connettore'

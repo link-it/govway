@@ -126,6 +126,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
@@ -365,6 +366,11 @@ public class ErogazioniApiHelper {
 		String fruizioneAutorizzazioneRuoliMatch = null;
 		
 		if ( isErogazione ) {
+			
+			ServletUtils.setObjectIntoSession(env.requestWrapper.getSession(),
+					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
+					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			
 			final IDServizio idServizio = asps.getOldIDServizioForUpdate();
 			final IDPortaApplicativa idPA = env.paCore.getIDPortaApplicativaAssociataDefault(idServizio);
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPA);
@@ -386,6 +392,11 @@ public class ErogazioniApiHelper {
 		     }
 			
 		} else {
+			
+			ServletUtils.setObjectIntoSession(env.requestWrapper.getSession(),
+					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
+					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			
 			final IDServizio idServizio = asps.getOldIDServizioForUpdate();
 			final IDPortaDelegata idPD = env.pdCore.getIDPortaDelegataAssociataDefault(idServizio, env.idSoggetto.toIDSoggetto());
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(idPD);
@@ -584,6 +595,9 @@ public class ErogazioniApiHelper {
 			else if(authn instanceof APIImplAutenticazionePrincipal) {
 				return ((APIImplAutenticazionePrincipal)authn).isOpzionale();
 			}
+			else if(authn instanceof APIImplAutenticazioneApiKey) {
+				return ((APIImplAutenticazioneApiKey)authn).isOpzionale();
+			}
 			else if(authn instanceof APIImplAutenticazioneCustom) {
 				return ((APIImplAutenticazioneCustom)authn).isOpzionale();
 			}
@@ -756,9 +770,149 @@ public class ErogazioniApiHelper {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Autenticazione principal non correttamente formata");
 			}
 		}
+		else if(TipoAutenticazioneEnum.API_KEY.equals(tipo)) {
+			
+			APIImplAutenticazioneApiKey authnApiKey = null;
+			if(authn!=null) {
+				if(authn instanceof APIImplAutenticazioneApiKey) {
+					authnApiKey = (APIImplAutenticazioneApiKey) authn;
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+tipo+"' non è correttamente definita (trovata configurazione '"+authn.getClass().getName()+"')"  );
+				}
+			}
+			
+			if(authn!=null) {
+				
+				List<Proprieta> listConfig = new ArrayList<>();
+				
+				// posizione 0: appId
+				_addProprieta(ParametriAutenticazioneApiKey.APP_ID, 
+						authnApiKey.isAppId()!=null && authnApiKey.isAppId() ? ParametriAutenticazioneApiKey.APP_ID_TRUE : ParametriAutenticazioneApiKey.APP_ID_FALSE, 
+								listConfig);
+
+				// posizione 1: queryParameter
+				if(authnApiKey.getPosizione()!=null && authnApiKey.getPosizione().isQueryParameter()!=null) {
+					_addProprieta(ParametriAutenticazioneApiKey.QUERY_PARAMETER, 
+							authnApiKey.getPosizione().isQueryParameter() ? 
+									ParametriAutenticazioneApiKey.QUERY_PARAMETER_TRUE : ParametriAutenticazioneApiKey.QUERY_PARAMETER_FALSE, 
+									listConfig);
+				}
+				else {
+					APIImplAutenticazioneApiKeyPosizione defaultValues = new APIImplAutenticazioneApiKeyPosizione(); // uso i default
+					_addProprieta(ParametriAutenticazioneApiKey.QUERY_PARAMETER, 
+							defaultValues.isQueryParameter() ? 
+									ParametriAutenticazioneApiKey.QUERY_PARAMETER_TRUE : ParametriAutenticazioneApiKey.QUERY_PARAMETER_FALSE, 
+									listConfig);
+				}
+				
+				// posizione 2: header
+				if(authnApiKey.getPosizione()!=null && authnApiKey.getPosizione().isHeader()!=null) {
+					_addProprieta(ParametriAutenticazioneApiKey.HEADER, 
+							authnApiKey.getPosizione().isHeader() ? 
+									ParametriAutenticazioneApiKey.HEADER_TRUE : ParametriAutenticazioneApiKey.HEADER_FALSE, 
+									listConfig);				
+				}
+				else {
+					APIImplAutenticazioneApiKeyPosizione defaultValues = new APIImplAutenticazioneApiKeyPosizione(); // uso i default
+					_addProprieta(ParametriAutenticazioneApiKey.HEADER, 
+							defaultValues.isHeader() ? 
+									ParametriAutenticazioneApiKey.HEADER_TRUE : ParametriAutenticazioneApiKey.HEADER_FALSE, 
+									listConfig);
+				}
+				
+				// posizione 3: cookie
+				if(authnApiKey.getPosizione()!=null && authnApiKey.getPosizione().isCookie()!=null) {
+					_addProprieta(ParametriAutenticazioneApiKey.COOKIE, 
+							authnApiKey.getPosizione().isCookie() ? 
+									ParametriAutenticazioneApiKey.COOKIE_TRUE : ParametriAutenticazioneApiKey.COOKIE_FALSE, 
+									listConfig);	
+				}
+				else {
+					APIImplAutenticazioneApiKeyPosizione defaultValues = new APIImplAutenticazioneApiKeyPosizione(); // uso i default
+					_addProprieta(ParametriAutenticazioneApiKey.COOKIE, 
+							defaultValues.isCookie() ? 
+									ParametriAutenticazioneApiKey.COOKIE_TRUE : ParametriAutenticazioneApiKey.COOKIE_FALSE, 
+									listConfig);
+				}
+				
+				// posizione 4: useOAS3Names
+				boolean apiKeyNamesCustom = false;
+				boolean appIdNamesCustom = false;
+				if(authnApiKey.getApiKeyNomi()!=null) {
+					if(StringUtils.isNotEmpty(authnApiKey.getApiKeyNomi().getQueryParameter()) ||
+							StringUtils.isNotEmpty(authnApiKey.getApiKeyNomi().getHeader()) ||
+							StringUtils.isNotEmpty(authnApiKey.getApiKeyNomi().getCookie())) {
+						apiKeyNamesCustom = true;
+					}
+				}
+				if(authnApiKey.getAppIdNomi()!=null) {
+					if(StringUtils.isNotEmpty(authnApiKey.getAppIdNomi().getQueryParameter()) ||
+							StringUtils.isNotEmpty(authnApiKey.getAppIdNomi().getHeader()) ||
+							StringUtils.isNotEmpty(authnApiKey.getAppIdNomi().getCookie())) {
+						appIdNamesCustom = true;
+					}
+				}
+				_addProprieta(ParametriAutenticazioneApiKey.USE_OAS3_NAMES, 
+						apiKeyNamesCustom || appIdNamesCustom  ? ParametriAutenticazioneApiKey.USE_OAS3_NAMES_FALSE : ParametriAutenticazioneApiKey.USE_OAS3_NAMES_TRUE, 
+								listConfig);
+				
+				// posizione 5: cleanApiKey
+				_addProprieta(ParametriAutenticazioneApiKey.CLEAN_API_KEY, 
+						authnApiKey.isApiKeyForward()!=null && authnApiKey.isApiKeyForward() ? ParametriAutenticazioneApiKey.CLEAN_API_KEY_FALSE : ParametriAutenticazioneApiKey.CLEAN_API_KEY_TRUE, 
+								listConfig);	
+				
+				// posizione 6: cleanAppId
+				_addProprieta(ParametriAutenticazioneApiKey.CLEAN_APP_ID, 
+						authnApiKey.isAppIdForward()!=null && authnApiKey.isAppIdForward() ? ParametriAutenticazioneApiKey.CLEAN_APP_ID_FALSE : ParametriAutenticazioneApiKey.CLEAN_APP_ID_TRUE, 
+								listConfig);
+				
+				// posizione 7: queryParameterApiKey
+				_addProprieta(ParametriAutenticazioneApiKey.NOME_QUERY_PARAMETER_API_KEY, 
+						apiKeyNamesCustom && StringUtils.isNotEmpty(authnApiKey.getApiKeyNomi().getQueryParameter()) ? authnApiKey.getApiKeyNomi().getQueryParameter() : ParametriAutenticazioneApiKey.DEFAULT_QUERY_PARAMETER_API_KEY, 
+								listConfig);
+				
+				// posizione 8: headerApiKey
+				_addProprieta(ParametriAutenticazioneApiKey.NOME_HEADER_API_KEY, 
+						apiKeyNamesCustom && StringUtils.isNotEmpty(authnApiKey.getApiKeyNomi().getHeader()) ? authnApiKey.getApiKeyNomi().getHeader() : ParametriAutenticazioneApiKey.DEFAULT_HEADER_API_KEY, 
+								listConfig);
+				
+				// posizione 9: cookieApiKey
+				_addProprieta(ParametriAutenticazioneApiKey.NOME_COOKIE_API_KEY, 
+						apiKeyNamesCustom && StringUtils.isNotEmpty(authnApiKey.getApiKeyNomi().getCookie()) ? authnApiKey.getApiKeyNomi().getCookie() : ParametriAutenticazioneApiKey.DEFAULT_COOKIE_API_KEY, 
+								listConfig);
+				
+				// posizione 10: queryParameterAppId
+				_addProprieta(ParametriAutenticazioneApiKey.NOME_QUERY_PARAMETER_APP_ID, 
+						appIdNamesCustom && StringUtils.isNotEmpty(authnApiKey.getAppIdNomi().getQueryParameter()) ? authnApiKey.getAppIdNomi().getQueryParameter() : ParametriAutenticazioneApiKey.DEFAULT_QUERY_PARAMETER_APP_ID, 
+								listConfig);
+
+				// posizione 11: headerAppId
+				_addProprieta(ParametriAutenticazioneApiKey.NOME_HEADER_APP_ID, 
+						appIdNamesCustom && StringUtils.isNotEmpty(authnApiKey.getAppIdNomi().getHeader()) ? authnApiKey.getAppIdNomi().getHeader() : ParametriAutenticazioneApiKey.DEFAULT_HEADER_APP_ID, 
+								listConfig);
+
+				// posizione 12: cookieAppId
+				_addProprieta(ParametriAutenticazioneApiKey.NOME_COOKIE_APP_ID, 
+						appIdNamesCustom && StringUtils.isNotEmpty(authnApiKey.getAppIdNomi().getCookie()) ? authnApiKey.getAppIdNomi().getCookie() : ParametriAutenticazioneApiKey.DEFAULT_COOKIE_APP_ID, 
+								listConfig);
+
+        		if(!listConfig.isEmpty()) {
+        			return env.stationCore.getParametroAutenticazione(Enums.tipoAutenticazioneFromRest.get(tipo).toString(), listConfig);
+        		}
+			}
+			
+		}
 		return null;
 	}
 
+	private static final void _addProprieta(String nome, String valore, List<Proprieta> listConfig) {
+		Proprieta propertyAutenticazione = new Proprieta();
+		propertyAutenticazione.setNome(nome);
+		propertyAutenticazione.setValore(valore);
+		listConfig.add(propertyAutenticazione);
+	}
+	
 	public static final void serviziCheckData(	
 			TipoOperazione tipoOp,
 			ErogazioniEnv env,

@@ -1,0 +1,5 @@
+{
+    "autenticazione": {
+        "tipo": "api-key"
+    }
+}

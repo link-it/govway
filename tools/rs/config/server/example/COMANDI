@@ -13,17 +13,35 @@ ESEMPIO:
 	+ CREATE: 
 ./add applicativi bodies/applicativo.json		
 ./add applicativi bodies/applicativo_https.json	
-./add applicativi bodies/applicativo_https_certificate.json	
+./add applicativi bodies/applicativo_https_certificate.json
+./add applicativi bodies/applicativo_apikey.json
+./add applicativi bodies/applicativo_multipleApikey.json
 
 	+ FIND:
 ./get applicativi	
 
 	+ GET:
-./get applicativi/ApplicativoJson	
+./get applicativi/ApplicativoJson
+./get applicativi/ApplicativoJsonApiKey
+./get applicativi/ApplicativoJsonApiKeyAddId	
 
 	+ UPDATE:
+./update applicativi/ApplicativoJson bodies/applicativo_update_noPassword.json
 ./update applicativi/ApplicativoJson bodies/applicativo_update.json
 ./update applicativi/ApplicativoJson bodies/applicativo_updateNome.json
+./update applicativi/ApplicativoJsonApiKey bodies/applicativo_apikey_update.json
+./update applicativi/ApplicativoJsonApiKeyAddId bodies/applicativo_multipleApikey_update.json
+./update applicativi/ApplicativoJsonApiKeyAddId bodies/applicativo_disableMultipleApikey_update.json  // DA ERRORE!
+
+	+ UPDATE CREDENZIALI:
+./update applicativi/ApplicativoJson/credenziali bodies/credenziali_httpBasic_noPassword.json   // DA ERRORE!
+./update applicativi/ApplicativoJson/credenziali bodies/credenziali_httpBasic.json
+./update applicativi/ApplicativoJson/credenziali bodies/credenziali_principal.json
+./update applicativi/ApplicativoJson/credenziali bodies/credenziali_apikey.json
+./update applicativi/ApplicativoJson/credenziali bodies/credenziali_multipleApikey.json
+
+./update applicativi/ApplicativoJsonApiKey/credenziali bodies/credenziali_multipleApikey.json
+./update applicativi/ApplicativoJsonApiKeyAddId/credenziali bodies/credenziali_apikey.json
 
 	+ DELETE: 		
 ./rem applicativi/ApplicativoJson	
@@ -86,6 +104,8 @@ ESEMPIO:
 ./add soggetti bodies/soggetto1.json profilo=SPCoop
 ./add soggetti bodies/soggetto2.json
 ./add soggetti bodies/soggetto2_certificato.json
+./add soggetti bodies/soggetto_apikey.json
+./add soggetti bodies/soggetto_multipleApikey.json
 
 	+ FIND:
 ./get soggetti
@@ -94,7 +114,22 @@ ESEMPIO:
 ./get soggetti/SoggettoJson
 
 	+ UPDATE:
-./update soggetti/SoggettoJson1 bodies/soggetto2.json
+./update soggetti/SoggettoJson bodies/soggetto_update_noPassword.json
+./update soggetti/SoggettoJson bodies/soggetto_update.json
+./update soggetti/SoggettoJson bodies/soggetto2.json
+./update soggetti/SoggettoJsonApiKey bodies/soggetto_apikey_update.json
+./update soggetti/SoggettoJsonApiKeyAddId bodies/soggetto_multipleApikey_update.json
+./update soggetti/SoggettoJsonApiKeyAddId bodies/soggetto_disableMultipleApikey_update.json  // DA ERRORE!
+
+	+ UPDATE CREDENZIALI:
+./update soggetti/SoggettoJson/credenziali bodies/credenziali_httpBasic_noPassword.json   // DA ERRORE!
+./update soggetti/SoggettoJson/credenziali bodies/credenziali_httpBasic.json
+./update soggetti/SoggettoJson/credenziali bodies/credenziali_principal.json
+./update soggetti/SoggettoJson/credenziali bodies/credenziali_apikey.json
+./update soggetti/SoggettoJson/credenziali bodies/credenziali_multipleApikey.json
+
+./update soggetti/SoggettoJsonApiKey/credenziali bodies/credenziali_multipleApikey.json
+./update soggetti/SoggettoJsonApiKeyAddId/credenziali bodies/credenziali_apikey.json
 
 	+ DELETE: 
 ./rem soggetti/SoggettoJson2
@@ -240,6 +275,9 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 	+ CREATE
 ./add erogazioni bodies/erogazione_petstore.json
 ./add erogazioni bodies/erogazione_spcoop.json profilo=SPCoop
+./add erogazioni bodies/erogazione_petstore_apikey.json
+./add erogazioni bodies/erogazione_petstore_multipleApikey.json
+./add erogazioni bodies/erogazione_petstore_multipleApikey2.json
 
 	+ UPDATE VERSIONE
 ./update erogazioni/PetStore/2/api bodies/ApiVersione3.json
@@ -326,6 +364,9 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 ./add erogazioni/PetStore/2/gruppi bodies/gruppo_petstore_eredita.json
 
+./add erogazioni/PetStore/1/gruppi bodies/gruppo_petstore_apikey.json
+./add erogazioni/PetStore/1/gruppi bodies/gruppo_petstore_multipleApikey.json
+
 	+ ADD AZIONE
 ./add erogazioni/PetStore/2/gruppi/GruppoJson/azioni bodies/gruppo_azioni_petstore.json
 
@@ -364,11 +405,15 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ UPDATE AUTENTICAZIONE
 ./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione.json gruppo=GruppoJson
+./update  erogazioni/PetStore/1/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione_apiKey.json
+./update  erogazioni/PetStore/1/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione_multipleApiKey.json gruppo=GruppoJson
 ./update  erogazioni/EsempioServizioComposto/1/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione.json profilo=SPCoop tipo_servizio=ldap
 
 
 	+ GET AUTENTICAZIONE
 ./get  erogazioni/PetStore/2/configurazioni/controllo-accessi/autenticazione gruppo=GruppoJson
+./get  erogazioni/PetStore/1/configurazioni/controllo-accessi/autenticazione
+./get  erogazioni/PetStore/1/configurazioni/controllo-accessi/autenticazione gruppo=GruppoJson
 ./get erogazioni/EsempioServizioComposto/1/configurazioni/controllo-accessi/autenticazione profilo=SPCoop tipo_servizio=ldap
 
 
@@ -516,6 +561,9 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 	+ CREATE
 ./add fruizioni bodies/fruizione_petstore.json
 ./add fruizioni bodies/fruizione_spcoop.json profilo=SPCoop
+./add fruizioni bodies/fruizione_petstore_apikey.json
+./add fruizioni bodies/fruizione_petstore_multipleApikey.json
+./add fruizioni bodies/fruizione_petstore_multipleApikey2.json
 
 	+ UPDATE VERSIONE
 ./update fruizioni/ComuneDiPisa/PetStore/2/api bodies/ApiVersione3.json
@@ -602,6 +650,8 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ CREATE
 ./add fruizioni/ComuneDiPisa/PetStore/2/gruppi bodies/gruppo_petstore.json
+./add fruizioni/ComuneDiPisa/PetStore/2/gruppi bodies/gruppo_petstore_apikey.json
+./add fruizioni/ComuneDiPisa/PetStore/2/gruppi bodies/gruppo_petstore_multipleApikey.json
 
 	+ ADD AZIONE
 ./add fruizioni/ComuneDiPisa/PetStore/2/gruppi/GruppoJson/azioni bodies/gruppo_azioni_petstore.json
@@ -639,9 +689,12 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ UPDATE AUTENTICAZIONE
 ./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione.json gruppo=GruppoJson
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione_apiKey.json
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione_multipleApiKey.json gruppo=GruppoJson
 
 	+ GET AUTENTICAZIONE
 ./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione gruppo=GruppoJson
+./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione
 
 
 	+ UPDATE AUTORIZZAZIONE

@@ -1,0 +1,10 @@
+{
+ 	"nome": "SoggettoJsonApiKeyAddId",
+   	"credenziali": {
+			"modalita_accesso": "api-key",
+			"app_id": true     
+	},
+	"dominio": "interno",
+	"descrizione": "Descrizione Soggetto Json",
+	"ruoli": [ "RuoloDemo" ]
+}

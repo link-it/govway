@@ -10,6 +10,19 @@ Background:
     * def applicativo_update = read('applicativo_update.json')
     * eval applicativo_update.nome = applicativo.nome
 
+    * def credenziali_httpBasic = read('classpath:bodies/credenziali_httpBasic.json')
+    * eval randomize(credenziali_httpBasic, ["credenziali.username"])
+
+    * def credenziali_httpBasic_noPassword = read('classpath:bodies/credenziali_httpBasic_noPassword.json')
+    * eval randomize(credenziali_httpBasic_noPassword, ["credenziali.username"])
+
+    * def credenziali_principal = read('classpath:bodies/credenziali_principal.json')
+    * eval randomize(credenziali_principal, ["credenziali.userid"])
+
+    * def credenziali_apikey = read('classpath:bodies/credenziali_apikey.json')
+
+    * def credenziali_multipleApikey = read('classpath:bodies/credenziali_multipleApikey.json')
+
 @Update204
 Scenario: Applicativi Aggiornamento 204 OK
 
@@ -33,5 +46,124 @@ Scenario: Applicativi Aggiornamento Ruolo Inesistente 400
     And request applicativo_update
     When method put
     Then status 400
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+
+@UpdateCredenzialiHttpBasic
+Scenario: Applicativi Aggiornamento Credenziali HttpBasic
+
+    * def options = { modalita_accesso: 'http-basic', username: '#(credenziali_httpBasic.credenziali.username)' }
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_httpBasic
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    Given url configUrl
+    And path 'applicativi' , applicativo.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.credenziali contains options
+    And match response.credenziali.password == '#notpresent'
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+
+@UpdateCredenzialiHttpBasicNoPassword
+Scenario: Applicativi Aggiornamento Credenziali HttpBasic No Password
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_httpBasic_noPassword
+    When method put
+    Then status 400
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+
+@UpdateCredenzialiPrincipal
+Scenario: Applicativi Aggiornamento Credenziali Principal
+
+    * def options = { modalita_accesso: 'principal', userid: '#(credenziali_principal.credenziali.userid)' }
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_principal
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    Given url configUrl
+    And path 'applicativi' , applicativo.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.credenziali contains options
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+
+@UpdateCredenzialiApiKey
+Scenario: Applicativi Aggiornamento Credenziali ApiKey
+
+    * def options = { modalita_accesso: 'api-key', app_id: false }
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_apikey
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#present' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    Given url configUrl
+    And path 'applicativi' , applicativo.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.credenziali contains options
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+
+@UpdateCredenzialiMultipleApiKey
+Scenario: Applicativi Aggiornamento Credenziali MultipleApiKey
+
+    * def options = { modalita_accesso: 'api-key', app_id: true }
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_multipleApikey
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#present' }
+    And match responseHeaders contains { 'X-App-Id': '#present' }
+
+    Given url configUrl
+    And path 'applicativi' , applicativo.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.credenziali contains options
 
     * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )

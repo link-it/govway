@@ -1,0 +1,23 @@
+{
+    "connettore": {
+        "endpoint": "https://ginovadifretta.it/petstore"
+    },
+    "autenticazione": {
+        "tipo": "api-key",
+	"app_id": true,
+	"posizione": {
+		"query_parameter": false,
+		"header": true,
+		"cookie": false
+	},
+	"api_key_forward": true,
+	"app_id_forward": false,
+	"opzionale": true
+    },
+    "api_nome": "PetStore",
+    "api_versione": 2,
+
+    "erogatore": "ComuneDiPisa",
+    "fruizione_nome": "PetStoreMultipleApiKey",
+    "fruizione_versione": 38
+}

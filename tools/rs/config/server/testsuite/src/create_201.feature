@@ -10,6 +10,8 @@ And request body
 And params query_params
 When method post
 Then assert responseStatus == 201
+And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+And match responseHeaders contains { 'X-App-Id': '#notpresent' }
 
 #DELETE
 Given url configUrl

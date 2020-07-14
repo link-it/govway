@@ -876,7 +876,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				// Messaggio di errore
 				if(soggettoAutenticato!=null){
 					String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
-					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali basic indicate.");
+					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già l'utente (http-basic) indicato");
 					return false;
 				}
 				
@@ -995,7 +995,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				// Messaggio di errore
 				if(soggettoAutenticato!=null){
 					String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
-					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali principal indicate.");
+					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già il principal indicato");
 					return false;
 				}
 			} 

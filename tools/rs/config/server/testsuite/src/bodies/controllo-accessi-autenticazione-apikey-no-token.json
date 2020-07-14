@@ -1,0 +1,6 @@
+{
+    "autenticazione": {
+        "tipo": "api-key",
+        "opzionale": false
+    }
+}

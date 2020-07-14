@@ -24,9 +24,13 @@ import java.util.List;
 
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
+import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
+import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
 import org.openspcoop2.core.config.rs.server.model.SoggettoItem;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -41,6 +45,8 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.pdd.core.autenticazione.ApiKey;
+import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -61,14 +67,67 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
  */
 public class SoggettiApiHelper {
 
-	public static final void overrideAuthParams(ConsoleHelper consoleHelper, Soggetto soggetto, HttpRequestWrapper wrap) {
+	public static ApiKeyInfo createApiKey(OneOfBaseCredenzialiCredenziali creds, IDSoggetto idSoggetto, SoggettiCore soggettiCore, String protocollo) throws Exception {
+		if(creds!=null && ModalitaAccessoEnum.API_KEY.equals(creds.getModalitaAccesso())) {
+			AuthenticationApiKey apiKey = (AuthenticationApiKey) creds;
+			boolean appId = Helper.isAppId(apiKey.isAppId());
+			ApiKeyInfo keyInfo = new ApiKeyInfo();
+			keyInfo.setMultipleApiKeys(appId);
+			ApiKey apiKeyGenerated = null;
+			if(appId) {
+				apiKeyGenerated = soggettiCore.newMultipleApiKey();
+				keyInfo.setAppId(soggettiCore.toAppId(protocollo, idSoggetto, appId));
+			}
+			else {
+				keyInfo.setAppId(soggettiCore.toAppId(protocollo, idSoggetto, appId));
+				apiKeyGenerated = soggettiCore.newApiKey(protocollo, idSoggetto);
+			}
+			keyInfo.setPassword(apiKeyGenerated.getPassword());
+			keyInfo.setApiKey(apiKeyGenerated.getApiKey());
+			return keyInfo;
+		}
+		return null;
+	}
+	public static ApiKeyInfo getApiKey(org.openspcoop2.core.registry.Soggetto soggetto, boolean setApiKey) throws Exception {
+		if(soggetto!=null && soggetto.getCredenziali()!=null) {
+			CredenzialiSoggetto c = soggetto.getCredenziali();
+			if(org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(c.getTipo())){
+				ApiKeyInfo keyInfo = new ApiKeyInfo();
+				keyInfo.setMultipleApiKeys(c.isAppId());
+				keyInfo.setAppId(c.getUser());
+				keyInfo.setPassword(c.getPassword());
+				keyInfo.setCifrata(c.isCertificateStrictVerification());
+				if(setApiKey) {
+					if(c.isAppId()) {
+						keyInfo.setApiKey(ApiKeyUtilities.encodeMultipleApiKey(c.getPassword()));
+					}
+					else {
+						keyInfo.setApiKey(ApiKeyUtilities.encodeApiKey(c.getUser(), c.getPassword()));
+					}
+				}
+				return keyInfo;
+			}
+		}
+		return null;
+	}
+	
+	public static final void overrideAuthParams(ConsoleHelper consoleHelper, Soggetto soggetto, HttpRequestWrapper wrap,
+			ApiKeyInfo apiKeyInfo, boolean updateKey) {
+		if(soggetto!=null) {
+			overrideAuthParams(consoleHelper, soggetto.getCredenziali(), wrap,
+					apiKeyInfo, updateKey);
+		}
+	}
+	public static final void overrideAuthParams(ConsoleHelper consoleHelper, OneOfBaseCredenzialiCredenziali credenziali, HttpRequestWrapper wrap,
+			ApiKeyInfo apiKeyInfo, boolean updateKey) {
 
-		if(soggetto.getCredenziali()!=null && soggetto.getCredenziali().getModalitaAccesso()!=null) {
+		if(credenziali!=null && credenziali.getModalitaAccesso()!=null) {
 			wrap.overrideParameter(
 					ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, 
-					Helper.tipoAuthFromModalitaAccesso.get(soggetto.getCredenziali().getModalitaAccesso())
+					Helper.tipoAuthFromModalitaAccesso.get(credenziali.getModalitaAccesso())
 			);
-			Helper.overrideAuthParams(wrap, consoleHelper, soggetto.getCredenziali());
+			Helper.overrideAuthParams(wrap, consoleHelper, credenziali,
+					apiKeyInfo, updateKey);
 		}
 		
 	}
@@ -80,7 +139,7 @@ public class SoggettiApiHelper {
 	// le informazioni di autenticazione nel caso esso sia un fruitore, noi consideriamo tutti fruitori.
 	
 	
-	public static void convert(Soggetto body, org.openspcoop2.core.registry.Soggetto ret, SoggettiEnv env) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException {
+	public static void convert(Soggetto body, org.openspcoop2.core.registry.Soggetto ret, SoggettiEnv env, ApiKeyInfo keyInfo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		
 		ret.setNome(body.getNome());
 		ret.setDescrizione(body.getDescrizione());		
@@ -109,7 +168,8 @@ public class SoggettiApiHelper {
 							body.getCredenziali(),
 							body.getCredenziali().getModalitaAccesso(),
 							CredenzialiSoggetto.class,
-							org.openspcoop2.core.registry.constants.CredenzialeTipo.class
+							org.openspcoop2.core.registry.constants.CredenzialeTipo.class,
+							keyInfo
 				);		
 				ret.setCredenziali(credenziali);
 			}catch(Exception e) {
@@ -119,11 +179,11 @@ public class SoggettiApiHelper {
 	
 	}
 	
-	public static final org.openspcoop2.core.registry.Soggetto soggettoApiToRegistro(Soggetto body, SoggettiEnv env) 
+	public static final org.openspcoop2.core.registry.Soggetto soggettoApiToRegistro(Soggetto body, SoggettiEnv env, ApiKeyInfo keyInfo) 
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		
 		final org.openspcoop2.core.registry.Soggetto ret = new org.openspcoop2.core.registry.Soggetto();
-		convert(body, ret, env);
+		convert(body, ret, env, keyInfo);
 		
 		final String protocollo = env.tipo_protocollo;
 		final IDSoggetto idSoggetto = new IDSoggetto(env.tipo_soggetto,body.getNome());

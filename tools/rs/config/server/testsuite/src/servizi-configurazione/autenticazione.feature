@@ -4,6 +4,8 @@ Background:
     * def autenticazione = read('classpath:bodies/controllo-accessi-autenticazione-token.json')
     * def authn_basic = read('classpath:bodies/controllo-accessi-autenticazione-http-no-token.json')
     * def authn_principal = read('classpath:bodies/controllo-accessi-autenticazione-principal-no-token.json')
+    * def authn_apikey = read('classpath:bodies/controllo-accessi-autenticazione-apikey-no-token.json')
+    * def authn_apikeycustom = read('classpath:bodies/controllo-accessi-autenticazione-apikeycustom-no-token.json')
 
 @UpdateGestioneToken204
 Scenario: Update Autenticazione con Gestione Token abilitata
@@ -284,6 +286,81 @@ Scenario: Imposta l'autenticazione in modalità principal\token\custom
     And match response.autenticazione.tipo == 'principal'
     And match response.autenticazione contains options
 
+
+@UpdateApiKey
+Scenario: Imposta l'autenticazione in modalità apikey
+    * def options = { app_id: false, api_key_forward: false, app_id_forward: false }
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request authn_apikey
+    And params query_params
+    When method put
+    Then status 204
+
+    #Recupero l'autenticazione e controllo che la forward authorization sia stata abilitata
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200    
+    And match response.autenticazione.tipo == 'api-key'
+    And match response.autenticazione contains options
+
+@UpdateMultipleApiKey
+Scenario: Imposta l'autenticazione in modalità multipleApikey
+    * def options = { app_id: true, api_key_forward: true, app_id_forward: true }
+    * eval authn_apikey.autenticazione.app_id = true
+    * eval authn_apikey.autenticazione.api_key_forward = true
+    * eval authn_apikey.autenticazione.app_id_forward = true
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request authn_apikey
+    And params query_params
+    When method put
+    Then status 204
+
+    #Recupero l'autenticazione e controllo che la forward authorization sia stata abilitata
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200    
+    And match response.autenticazione.tipo == 'api-key'
+    And match response.autenticazione contains options
+
+@UpdateCustopmApiKey
+Scenario: Imposta l'autenticazione in modalità multipleApikey modificando i nomi dei parametri
+    * def options = { app_id: true, api_key_forward: false, app_id_forward: false }
+    * def optionsPosizione = { query_parameter: true, header: true, cookie: true }
+    * def optionsNomiApiKey = { query_parameter: 'QapiKey', header: 'HapiKey', cookie: 'CapiKey' }
+    * def optionsNomiAppId = { query_parameter: 'QappId', header: 'HappId', cookie: 'CappId' }
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request authn_apikeycustom
+    And params query_params
+    When method put
+    Then status 204
+
+    #Recupero l'autenticazione e controllo che la forward authorization sia stata abilitata
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200    
+    And match response.autenticazione.tipo == 'api-key'
+    And match response.autenticazione contains options
+    And match response.autenticazione.posizione contains optionsPosizione
+    And match response.autenticazione.api_key_nomi contains optionsNomiApiKey
+    And match response.autenticazione.app_id_nomi contains optionsNomiAppId
 
 @UpdateAutenticazioneCustom
 Scenario: Imposta l'autenticazione in modalità custom

@@ -571,6 +571,13 @@ public class ControlStationCore {
 	public static void setApplicativiPasswordEncryptEngine_apiMode(CryptConfig applicativiPasswordEncryptEngine_apiMode) {
 		ControlStationCore.applicativiPasswordEncryptEngine_apiMode = applicativiPasswordEncryptEngine_apiMode;
 	}
+	private static Integer applicativiApiKeyPasswordGeneratedLength_apiMode = null;
+	public static Integer getApplicativiApiKeyPasswordGeneratedLength_apiMode() {
+		return applicativiApiKeyPasswordGeneratedLength_apiMode;
+	}
+	public static void setApplicativiApiKeyPasswordGeneratedLength_apiMode(Integer applicativiApiKeyPasswordGeneratedLength_apiMode) {
+		ControlStationCore.applicativiApiKeyPasswordGeneratedLength_apiMode = applicativiApiKeyPasswordGeneratedLength_apiMode;
+	}
 	private static PasswordVerifier applicativiPasswordVerifierEngine_apiMode = null;
 	public static PasswordVerifier getApplicativiPasswordVerifierEngine_apiMode() {
 		return applicativiPasswordVerifierEngine_apiMode;
@@ -651,6 +658,13 @@ public class ControlStationCore {
 	}
 	public static void setSoggettiPasswordEncryptEngine_apiMode(CryptConfig soggettiPasswordEncryptEngine_apiMode) {
 		ControlStationCore.soggettiPasswordEncryptEngine_apiMode = soggettiPasswordEncryptEngine_apiMode;
+	}
+	private static Integer soggettiApiKeyPasswordGeneratedLength_apiMode = null;
+	public static Integer getSoggettiApiKeyPasswordGeneratedLength_apiMode() {
+		return soggettiApiKeyPasswordGeneratedLength_apiMode;
+	}
+	public static void setSoggettiApiKeyPasswordGeneratedLength_apiMode(Integer soggettiApiKeyPasswordGeneratedLength_apiMode) {
+		ControlStationCore.soggettiApiKeyPasswordGeneratedLength_apiMode = soggettiApiKeyPasswordGeneratedLength_apiMode;
 	}
 	private static PasswordVerifier soggettiPasswordVerifierEngine_apiMode = null;
 	public static PasswordVerifier getSoggettiPasswordVerifierEngine_apiMode() {
@@ -1912,11 +1926,13 @@ public class ControlStationCore {
 				
 				this.applicativiPasswordConfiguration = "APIMode";
 				this.applicativiPasswordEncryptEngine = applicativiConfig;
+				this.applicativiApiKeyLunghezzaPasswordGenerate = ControlStationCore.getApplicativiApiKeyPasswordGeneratedLength_apiMode();
 				this.applicativiPasswordVerifierEngine = ControlStationCore.getApplicativiPasswordVerifierEngine_apiMode();
 				this.applicativiBasicPasswordEnableConstraints = (this.applicativiPasswordVerifierEngine!=null);
 				
 				this.soggettiPasswordConfiguration = "APIMode";
 				this.soggettiPasswordEncryptEngine = soggettiConfig;
+				this.soggettiApiKeyLunghezzaPasswordGenerate = ControlStationCore.getSoggettiApiKeyPasswordGeneratedLength_apiMode();
 				this.soggettiPasswordVerifierEngine = ControlStationCore.getSoggettiPasswordVerifierEngine_apiMode();
 				this.soggettiBasicPasswordEnableConstraints = (this.soggettiPasswordVerifierEngine!=null);
 			}

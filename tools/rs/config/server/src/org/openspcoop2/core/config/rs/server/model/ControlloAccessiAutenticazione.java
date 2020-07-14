@@ -34,6 +34,7 @@ public class ControlloAccessiAutenticazione extends ApiImplConfigurazioneStato {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneBasic.class, name = "http-basic"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneHttps.class, name = "https"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazionePrincipal.class, name = "principal"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneApiKey.class, name = "api-key"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneCustom.class, name = "custom")  })
   private OneOfControlloAccessiAutenticazioneAutenticazione autenticazione = null;
   

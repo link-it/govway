@@ -258,6 +258,10 @@ public class ServerProperties  {
 		return applicativiCryptConfig;
 	}
 	
+	public int getApplicativiApiKeyPasswordGeneratedLength() throws UtilsException{
+		return Integer.valueOf(this.readProperty(true, "applicativi.api_key.passwordGenerated.length"));
+	}
+	
 	public boolean isApplicativiBasicPasswordEnableConstraints() throws UtilsException{
 		return "true".equalsIgnoreCase(this.readProperty(true, "applicativi.basic.password.enableConstraints"));
 	}
@@ -290,6 +294,10 @@ public class ServerProperties  {
 			initSoggettiCryptConfig(getSoggettiPassword());
 		}
 		return soggettiCryptConfig;
+	}
+	
+	public int getSoggettiApiKeyPasswordGeneratedLength() throws UtilsException{
+		return Integer.valueOf(this.readProperty(true, "soggetti.api_key.passwordGenerated.length"));
 	}
 	
 	public boolean isSoggettiBasicPasswordEnableConstraints() throws UtilsException{

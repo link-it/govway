@@ -5602,6 +5602,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/dominio"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/ruolo"
+        - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_credenziali"
       summary: Ricerca soggetti
       operationId: findAllSoggetti
       description: Elenca i soggetti registrati
@@ -5641,7 +5642,7 @@ paths:
               $ref: '#/components/schemas/Soggetto'
       responses:
         "201":
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+          $ref: 'govway_rs-api_config-commons.yaml#/components/responses/201CreatedKey'
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -5702,7 +5703,7 @@ paths:
               $ref: '#/components/schemas/Soggetto'
       responses: 
         "204":
-          description: Il soggetto è stato aggiornato correttamente
+          description: Soggetto aggiornato con successo
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -5740,7 +5741,41 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'    
-
+  /soggetti/{nome}/credenziali:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/id_simple_name"
+    put:
+      tags:
+        - soggetti
+      summary: Modifica i dati di un soggetto
+      operationId: updateCredenzialiSoggetto
+      description: Questa operazione consente di aggiornare le credenziali associate ad un soggetto identificato dal nome
+      requestBody:
+        description: Nuove credenziali del soggetto
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseCredenziali'
+      responses: 
+        "204":
+          $ref: 'govway_rs-api_config-commons.yaml#/components/responses/204UpdatedKey'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          
   # ** Applicativi **
   /applicativi:
     parameters:
@@ -5754,6 +5789,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/ruolo"
+        - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_credenziali"
       summary: Ricerca applicativi
       operationId: findAllApplicativi
       description: Elenca gli applicativi registrati
@@ -5793,7 +5829,7 @@ paths:
               $ref: '#/components/schemas/Applicativo'
       responses:
         "201":
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+          $ref: 'govway_rs-api_config-commons.yaml#/components/responses/201CreatedKey'
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -5855,7 +5891,7 @@ paths:
               $ref: '#/components/schemas/Applicativo'
       responses: 
         "204":
-          description: L'applicativo è stato aggiornato correttamente
+          description: Applicativo aggiornato con successo
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -5893,6 +5929,41 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default' 
+  /applicativi/{nome}/credenziali:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+    put:
+      tags:
+        - applicativi
+      summary: Modifica i dati di un applicativo
+      operationId: updateCredenzialiApplicativo
+      description: Questa operazione consente di aggiornare le credenziali associate ad un applicativo identificato dal nome e dal soggetto di riferimento
+      requestBody:
+        description: Nuove credenziali dell'applicativo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseCredenziali'
+      responses: 
+        "204":
+          $ref: 'govway_rs-api_config-commons.yaml#/components/responses/204UpdatedKey'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   
   # ** Ruoli **        
   /ruoli:
@@ -6193,6 +6264,7 @@ paths:
 
    
 components:
+
   schemas:
 
     # API

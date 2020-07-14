@@ -12,6 +12,15 @@ Background:
 * def applicativo_https_certificate = read('classpath:bodies/applicativo_https_certificate.json') 
 * eval randomize(applicativo_https_certificate, ["nome" ])
 
+* def applicativo_principal = read('classpath:bodies/applicativo_principal.json') 
+* eval randomize(applicativo_principal, ["nome" ])
+
+* def applicativo_apikey = read('classpath:bodies/applicativo_apikey.json') 
+* eval randomize(applicativo_apikey, ["nome" ])
+
+* def applicativo_multipleApikey = read('classpath:bodies/applicativo_multipleApikey.json') 
+* eval randomize(applicativo_multipleApikey, ["nome" ])
+
 @Create204
 Scenario: Applicativi Creazione 204 OK
 
@@ -33,7 +42,7 @@ Scenario: Applicativi Creazione 409 Conflitto
     * call create_409 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)' }
 
 @Create400
-Scenario: Applicativi Creazione con gruppo inesistente
+Scenario: Applicativi Creazione con ruolo inesistente
  
     * eval applicativo.ruoli = ['RuoloInesistente' + random() ]
 
@@ -43,3 +52,19 @@ Scenario: Applicativi Creazione con gruppo inesistente
     And request applicativo
     When method post
     Then status 400
+
+@Create204_principal
+Scenario: Applicativi Creazione 204 OK (credenziali principal)
+    
+    * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_principal)', key: '#(applicativo_principal.nome)' }
+
+@Create204_apikey
+Scenario: Applicativi Creazione 204 OK (credenziali apikey)
+    
+    * call create_201_apikey { resourcePath: 'applicativi', body: '#(applicativo_apikey)', key: '#(applicativo_apikey.nome)' }
+
+@Create204_multipleApikey
+Scenario: Applicativi Creazione 204 OK (credenziali multipleApikey)
+    
+    * call create_201_multipleapikey { resourcePath: 'applicativi', body: '#(applicativo_multipleApikey)', key: '#(applicativo_multipleApikey.nome)' }
+

@@ -251,10 +251,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						// Messaggio di errore
 						String labelSoggetto = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 						if(sa.getTipo()!=null && StringUtils.isNotEmpty(sa.getTipo())) {
-							this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già le credenziali basic indicate");
+							this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già l'utente (http-basic) indicato");
 						}
 						else {
-							this.pd.setMessage("L'erogazione "+sa.getNome()+" possiede già le credenziali basic indicate per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+							this.pd.setMessage("L'erogazione "+sa.getNome()+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
 						}
 						return false;
 					}
@@ -1563,10 +1563,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					// Messaggio di errore
 					String labelSoggetto = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 					if(sa.getTipo()!=null && StringUtils.isNotEmpty(sa.getTipo())) {
-						this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già le credenziali basic indicate");
+						this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già l'utente (http-basic) indicato");
 					}
 					else {
-						this.pd.setMessage("L'erogazione "+sa.getNome()+" possiede già le credenziali basic indicate per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+						this.pd.setMessage("L'erogazione "+sa.getNome()+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
 					}
 					return false;
 				}
@@ -1782,7 +1782,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 					// Messaggio di errore
 					String labelSoggetto = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-					this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già le credenziali principal indicate.");
+					this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già il principal indicato");
 					return false;
 				}
 			} 

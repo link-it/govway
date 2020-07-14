@@ -1,0 +1,7 @@
+{
+	"credenziali": {
+		"modalita_accesso": "http-basic",
+		"username": "usernomeNuovo",
+		"password": "passwordNuovo"
+	}
+}

@@ -1009,7 +1009,7 @@ public class ImporterArchiveUtils {
 							c = credenziali.getUser();
 							break;
 						case APIKEY:
-							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiApiKey(credenziali.getUser(), credenziali.isCertificateStrictVerification());
+							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiApiKey(credenziali.getUser(), credenziali.isAppId());
 							c = credenziali.getUser();
 							break;
 						case SSL:
@@ -1247,7 +1247,7 @@ public class ImporterArchiveUtils {
 							c = credenziali.getUser();
 							break;
 						case APIKEY:
-							saFound = this.importerEngine.getServizioApplicativoCredenzialiApiKey(credenziali.getUser(), credenziali.isCertificateStrictVerification());
+							saFound = this.importerEngine.getServizioApplicativoCredenzialiApiKey(credenziali.getUser(), credenziali.isAppId());
 							c = credenziali.getUser();
 							break;
 						case SSL:

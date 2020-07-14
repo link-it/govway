@@ -162,11 +162,13 @@ public class Startup implements ServletContextListener {
 				ControlStationCore.setUtenzePasswordEncryptEngine_apiMode(serverProperties.getUtenzeCryptConfig());
 				
 				ControlStationCore.setApplicativiPasswordEncryptEngine_apiMode(serverProperties.getApplicativiCryptConfig());
+				ControlStationCore.setApplicativiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getApplicativiApiKeyPasswordGeneratedLength());
 				if(serverProperties.isApplicativiBasicPasswordEnableConstraints()) {
 					ControlStationCore.setApplicativiPasswordVerifierEngine_apiMode(serverProperties.getApplicativiPasswordVerifier());
 				}
 				
 				ControlStationCore.setSoggettiPasswordEncryptEngine_apiMode(serverProperties.getSoggettiCryptConfig());
+				ControlStationCore.setSoggettiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getSoggettiApiKeyPasswordGeneratedLength());
 				if(serverProperties.isSoggettiBasicPasswordEnableConstraints()) {
 					ControlStationCore.setSoggettiPasswordVerifierEngine_apiMode(serverProperties.getSoggettiPasswordVerifier());
 				}

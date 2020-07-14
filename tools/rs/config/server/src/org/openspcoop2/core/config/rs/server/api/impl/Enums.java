@@ -95,6 +95,7 @@ public class Enums {
 		Enums.tipoAutenticazioneFromRest.put(TipoAutenticazioneEnum.HTTP_BASIC, TipoAutenticazione.BASIC);
 		Enums.tipoAutenticazioneFromRest.put(TipoAutenticazioneEnum.HTTPS, TipoAutenticazione.SSL);
 		Enums.tipoAutenticazioneFromRest.put(TipoAutenticazioneEnum.PRINCIPAL, TipoAutenticazione.PRINCIPAL);
+		Enums.tipoAutenticazioneFromRest.put(TipoAutenticazioneEnum.API_KEY, TipoAutenticazione.APIKEY);
 	}
 	
 	public static final Map<TipoAutenticazionePrincipal, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal> tipoAutenticazionePrincipalFromRest = new HashMap<>();
@@ -313,6 +314,7 @@ public class Enums {
 		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.HTTP_BASIC, CredenzialeTipo.BASIC);
 		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.HTTPS,  CredenzialeTipo.SSL);
 		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.PRINCIPAL, CredenzialeTipo.PRINCIPAL);
+		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.API_KEY, CredenzialeTipo.APIKEY);
 	}
 
 	public static final TipoAutenticazione toTipoAutenticazione(TipoAutenticazioneEnum authn) {
@@ -323,6 +325,7 @@ public class Enums {
 		case HTTP_BASIC: return TipoAutenticazione.BASIC;
 		case HTTPS: return TipoAutenticazione.SSL;
 		case PRINCIPAL: return TipoAutenticazione.PRINCIPAL;
+		case API_KEY: return TipoAutenticazione.APIKEY;
 		default: return null;
 		}
 		

@@ -1,0 +1,7 @@
+{
+	"nome": "TestSuiteApplicativo",
+	"credenziali": {
+		"modalita_accesso": "api-key",
+		"app_id": "true"  
+	}
+}

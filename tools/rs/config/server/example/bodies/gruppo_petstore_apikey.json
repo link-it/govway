@@ -1,0 +1,11 @@
+{
+    "nome": "GruppoJson",
+    "azioni": ["POST_pet", "PUT_pet"],
+    "configurazione": {
+        "modalita": "nuova",
+    	"autenticazione": {
+            "tipo": "api-key"
+        }
+    }
+
+}
