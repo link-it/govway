@@ -91,6 +91,8 @@ var n = <%= n %>;
 var index = <%= pd.getIndex() %>;
 var pageSize = <%= pd.getPageSize() %>;
 var nr = 0;
+var eseguiOperazioniConGET = false;
+var nomeServletExport = 'export.do';
 
 function checkAll(){
 	if(n > 0){
@@ -143,10 +145,49 @@ function RemoveEntries() {
   }
   if (elemToRemove != '') {
     nr = 1;
-    if (formatPar != null && formatPar != "")
-        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?'+formatPar+'&obj='+elemToRemove+'&iddati='+iddati+params;
-      else
-        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?obj='+elemToRemove+'&iddati='+iddati+params;
+    
+    if(eseguiOperazioniConGET) {
+	    var paramsString = '';
+	    if (formatPar != null && formatPar != "") {
+	    	paramsString = '?'+formatPar+'&obj='+elemToRemove+'&iddati='+iddati+params;
+	    }else {
+	   	    paramsString = '?obj='+elemToRemove+'&iddati='+iddati+params;
+	    }
+	    document.location='<%= request.getContextPath() %>/'+nomeServletDel+paramsString;
+    } else {
+    	
+    	var deleteForm = document.createElement('FORM');
+    	deleteForm.name='deleteForm';
+    	deleteForm.method='POST';
+    	
+    	addHidden(deleteForm, 'obj' , elemToRemove);
+    	addHidden(deleteForm, 'iddati' , iddati);
+    	
+    	// formatParams
+    	  
+   	   if (formatPar != null && formatPar != ""){
+   	  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
+   	  	for (var i = 0; i < pairs.length; i++) {
+   	      	var pair = pairs[i].split('=');
+   	      	addHidden(deleteForm, pair[0] , pair[1]);
+   	  	}
+   	   }
+   	   if (params != null && params != ""){
+   		   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
+   		   for (var i = 0; i < pairs.length; i++) {
+   		       var pair = pairs[i].split('=');
+   		       addHidden(deleteForm, pair[0] , pair[1]);
+   		   }
+   	   }
+   	   
+   		// imposto la destinazione
+   	  deleteForm.action = nomeServletDel;
+   	      
+   	  document.body.appendChild(deleteForm);
+   	  // form submit
+   	  deleteForm.submit();
+    }
+    
   }
 };
 
@@ -309,7 +350,24 @@ function Esporta(tipo) {
 
 	if(elemToExport !== '') {
 		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
+		if(eseguiOperazioniConGET) {
+			document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;
+		} else {
+			
+			var exportForm = document.createElement('FORM');
+			exportForm.name='exportForm';
+			exportForm.method='POST';
+	    	
+	    	addHidden(exportForm, 'obj' , elemToExport);
+	    	addHidden(exportForm, 'tipoExport' , tipo);
+	    	
+	   		// imposto la destinazione
+	   	 	 exportForm.action = nomeServletExport;
+	   	      
+	   	 	 document.body.appendChild(exportForm);
+	   	 	 // form submit
+	   	 	 exportForm.submit();
+		}
 	} else {
 		$( "#selezioneRichiestaModal" ).dialog( "open" );
 	}

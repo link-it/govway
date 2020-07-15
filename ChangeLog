@@ -1,6 +1,12 @@
 2020-07-15  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
+	Modificata la modalità di gestione delle funzioni di delete ed export attraverso l'utilizzo di una form con method POST al posto dell'invocazione di una GET.
+	La nuova modalità consente di evitare il formarsi di una url eccessivamente lunga, che potrebbe essere bloccata in presenza di frontend web che mediano le comunicazioni con l'application server.
+
+2020-07-15  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
 	Aggiunta finestra di dialogo per la visualizzazione e la copia delle credenziali dei soggetti e applicativi autenticati.
 
 2020-07-14  Andrea Poli <apoli@link.it>
