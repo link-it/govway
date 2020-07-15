@@ -10,12 +10,12 @@ servizio. La registrazione di un applicativo, di tipo client, consente di assegn
 delle credenziali che lo identificano ed eventuali ruoli provenienti
 dalla fonte "Registro".
 
-   .. figure:: ../../_figure_console/Applicativo-new.png
-    :scale: 100%
-    :align: center
-    :name: applicativoNew
+.. figure:: ../../_figure_console/Applicativo-new.png
+ :scale: 90%
+ :align: center
+ :name: applicativoNew
 
-    Creazione di un applicativo
+ Creazione di un applicativo
 
 Per registrare l'applicativo posizionarsi nella sezione *Registro >
 Applicativi*, quindi premere il pulsante *Aggiungi*. Compilare il form
@@ -39,5 +39,12 @@ ruoli, tra quelli che sono presenti nel registro e contrassegnati come
 *fonte registro*. Per associare ruoli ad un applicativo seguire il
 collegamento presente nella colonna *Ruoli*, in corrispondenza
 dell'applicativo scelto. Premere quindi il pulsante *Aggiungi*. Nel form
-che si apre è presente una lista dalla quale è possibile selezionare un
+che si apre (:numref:`applicativoRuoli`) è presente una lista dalla quale è possibile selezionare un
 ruolo alla volta, che viene aggiunto confermando con il tasto *Invia*.
+
+.. figure:: ../../_figure_console/ApplicativiAddRuolo.png
+ :scale: 90%
+ :align: center
+ :name: applicativoRuoli
+
+ Assegnazione di ruoli ad un applicativo

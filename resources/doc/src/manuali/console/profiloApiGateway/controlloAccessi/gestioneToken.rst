@@ -18,7 +18,7 @@ previste nella policy stessa (:numref:`gestioneTokenFig`).
     .. _gestioneTokenFig:
 
    .. figure:: ../../_figure_console/GestioneToken.png
-    :scale: 100%
+    :scale: 80%
     :align: center
 
     Configurazione della gestione token

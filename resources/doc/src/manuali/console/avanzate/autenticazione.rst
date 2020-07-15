@@ -1,3 +1,5 @@
+.. _AvanzataAuthPrincipal:
+
 Autenticazione e Autorizzazione Principal (Security Constraint)
 ---------------------------------------------------------------
 

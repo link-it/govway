@@ -10,12 +10,12 @@ registrazione di un soggetto consente di assegnargli delle credenziali
 che lo identificano ed eventuali ruoli provenienti dalla fonte
 "Registro".
 
-   .. figure:: ../../_figure_console/Soggetto-new.png
-    :scale: 100%
-    :align: center
-    :name: soggettoNew
+.. figure:: ../../_figure_console/Soggetto-new-https.png
+ :scale: 80%
+ :align: center
+ :name: soggettoNew
 
-    Creazione di un soggetto
+ Creazione di un soggetto
 
 Per creare il soggetto posizionarsi nella sezione *Registro > Soggetti*,
 quindi premere il pulsante *Aggiungi*. Compilare il form come segue (:numref:`soggettoNew`):
@@ -45,9 +45,9 @@ soggetto scelto. Premere quindi il pulsante *Aggiungi*. Nel form che si
 apre (:numref:`soggettoRuoli`) è presente una lista dalla quale è possibile selezionare un
 ruolo alla volta, che viene aggiunto confermando con il tasto *Invia*.
 
-   .. figure:: ../../_figure_console/SoggettoRuoli.png
-    :scale: 100%
-    :align: center
-    :name: soggettoRuoli
+.. figure:: ../../_figure_console/SoggettoRuoli.png
+ :scale: 90%
+ :align: center
+ :name: soggettoRuoli
 
-    Assegnazione di ruoli ad un soggetto
+ Assegnazione di ruoli ad un soggetto

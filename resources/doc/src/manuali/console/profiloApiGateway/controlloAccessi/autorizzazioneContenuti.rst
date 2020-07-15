@@ -27,6 +27,14 @@ Ogni valore atteso per una risorsa può essere fornito in una delle seguenti mod
 - valore : indica esattamente il valore (case sensitive) che deve possedere la risorsa; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway nella forma descritta precedentemente per le risorse
 - valore1,..,valoreN : è possibile elencare differenti valori ammissibili; come per la precedente opzione il valore può contenere parti dinamiche
 
+.. _controlloAccessiAutorizzazioneContenuti:
+
+.. figure:: ../../_figure_console/AutorizzazioneContenuti.png
+ :scale: 80%
+ :align: center
+
+ Configurazione Autorizzazione Contenuti
+
 Di seguito alcuni esempi:
 
 - ${header:X-Prova}=test : viene verificato che l'header 'X-Prova' possieda il valore 'test'

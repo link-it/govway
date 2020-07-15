@@ -31,7 +31,7 @@ aspetti che compongono il controllo degli accessi.
    autorizzazioneContenuti
    creazioneSoggetto
    creazioneApplicativo
-   modalitaAccesso
+   modalitaAccesso/index
    creazioneRuolo
    attribuzioneRuoli
    tokenClaims

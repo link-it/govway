@@ -11,7 +11,7 @@ servizio.
 I meccanismi supportati, per specificare i criteri di autorizzazione,
 sono i seguenti:
 
--  *Autorizzazione per Richiedente*: superato il processo di autenticazione,
+-  *Autorizzazione per Richiedente*: (:numref:`controlloAccessiAutorizzazioneRichiedente`) superato il processo di autenticazione,
    saranno accettate le sole richieste provenienti dai mittenti indicati
    singolarmente nella lista fornita con il criterio. Dopo aver
    abilitato questa opzione, ed aver confermato tramite il pulsante
@@ -32,7 +32,15 @@ sono i seguenti:
        erogazione, viene utilizzata per gestire l'accesso al servizio da
        parte di applicativi interni al dominio di GovWay.
 
--  *Autorizzazione per Ruoli*: consente di concedere l'autorizzazione
+   .. _controlloAccessiAutorizzazioneRichiedente:
+
+   .. figure:: ../../_figure_console/AutorizzazioneRichiedente.png
+    :scale: 80%
+    :align: center
+
+    Configurazione Autorizzazione per Richiedente
+
+-  *Autorizzazione per Ruoli*: (:numref:`controlloAccessiAutorizzazioneRuoli`) consente di concedere l'autorizzazione
    per il servizio solo ai richiedenti in possesso di determinati ruoli
    nel proprio profilo. Dopo aver barrato questa opzione, ed aver
    confermato tramite il pulsante Invia, sarà possibile fornire una
@@ -48,7 +56,15 @@ sono i seguenti:
 
    Per le indicazioni sul censimento dei ruoli fare riferimento alla sezione :ref:`ruolo`.
 
--  *Autorizzazione per Scope*: criterio di autorizzazione che verifica
+   .. _controlloAccessiAutorizzazioneRuoli:
+
+   .. figure:: ../../_figure_console/AutorizzazioneRuoli.png
+    :scale: 80%
+    :align: center
+
+    Configurazione Autorizzazione per Ruoli
+
+-  *Autorizzazione per Scope*: (:numref:`controlloAccessiAutorizzazioneScope`) criterio di autorizzazione che verifica
    la corrispondenza tra gli scope indicati e quelli estratti dal token
    presente nella richiesta ricevuta. Una volta attivata l'opzione si
    deve effettuare una scelta per l'elemento *Scope Richiesti*, tra i
@@ -60,13 +76,23 @@ sono i seguenti:
    ed abilitati per l'uso nei contesti di erogazione (o qualsiasi
    contesto).
 
+   Per le indicazioni sul censimento degli scope fare riferimento alla sezione :ref:`apiGwScope`.
+
    .. note::
 
        L'opzione di autorizzazione basata sugli scope è disponibile solo
        se è stata preventivamente attivata la Gestione Token e
        selezionata la relativa policy.
 
--  *Autorizzazione per Token Claims*: Se è stata abilitata la gestione
+   .. _controlloAccessiAutorizzazioneScope:
+
+   .. figure:: ../../_figure_console/AutorizzazioneScope.png
+    :scale: 80%
+    :align: center
+
+    Configurazione Autorizzazione per Scope
+
+-  *Autorizzazione per Token Claims*: (:numref:`controlloAccessiAutorizzazioneTokenClaims`) Se è stata abilitata la gestione
    del token si ha la possibilità di autorizzare le richieste inserendo
    i valori ammessi per i claims contenuti nel token. La configurazione
    viene effettuata inserendo nel campo di testo ciascun claim in una
@@ -81,12 +107,28 @@ sono i seguenti:
        se è stata preventivamente attivata la Gestione Token e
        selezionata la relativa policy.
 
--  *XACML-Policy*: È possibile basare il meccanismo di autorizzazione
+   .. _controlloAccessiAutorizzazioneTokenClaims:
+
+   .. figure:: ../../_figure_console/AutorizzazioneTokenClaims.png
+    :scale: 90%
+    :align: center
+
+    Configurazione Autorizzazione per Token Claims
+
+-  *XACML-Policy*: (:numref:`controlloAccessiAutorizzazioneXACML`) È possibile basare il meccanismo di autorizzazione
    sulla valutazione di una policy xacml selezionando la relativa
    opzione sulla lista "Stato".
 
    Per le indicazioni di dettaglio sulla configurazione delle
    xacml-Policy si faccia riferimento alla sezione :ref:`xacml`.
+
+   .. _controlloAccessiAutorizzazioneXACML:
+
+   .. figure:: ../../_figure_console/AutorizzazioneXACML.png
+    :scale: 80%
+    :align: center
+
+    Configurazione Autorizzazione XACML-Policy
 
 -  *Custom*: Sulla lista "Stato", è possibile selezionare questo metodo
    di autorizzazione eventualmente fornito tramite estensione di GovWay.
