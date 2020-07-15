@@ -8,8 +8,8 @@
 
 /* Component containers
 ----------------------------------*/
-.ui-widget { font-family: Verdana,Arial,sans-serif/*{ffDefault}*/; font-size: 1.1em/*{fsDefault}*/; }
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Verdana,Arial,sans-serif/*{ffDefault}*/; font-size: 1em; }
+.ui-widget { font-family: 'Roboto'; font-size: 16px; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: 'Roboto'; font-size: 16px; }
 .ui-widget-header { border: none/*{borderColorHeader}*/; background: ${panel.header.background.color}/*{bgColorHeader}*/; color: ${panel.header.color}/*{fcHeader}*/; font-weight: bold; }
 .ui-widget-header a { color: ${panel.header.color}/*{fcHeader}*/; }
 .ui-widget-content { border: none/*{borderColorContent}*/; background: ${table.background.color}/*{bgColorContent}*/; color: ${body.color}/*{fcContent}*/; }

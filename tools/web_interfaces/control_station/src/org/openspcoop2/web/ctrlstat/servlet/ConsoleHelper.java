@@ -266,6 +266,8 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.Dialog;
+import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.MenuEntry;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -15543,9 +15545,21 @@ public class ConsoleHelper implements IConsoleHelper {
 		return de;
 	}
 	
+	/*
 	public void setSecretPleaseCopy(String secret_password, String secret_user, boolean appId, String tipoAuth, boolean soggetti, String nome) {
 		String labelPassword = null;
 		String labelUtente = null;
+		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
+			labelUtente= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME+": "+secret_user;
+			labelPassword= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD+": "+secret_password;
+		}
+		else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoAuth)) {
+			if(appId) {
+				labelUtente= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+": "+secret_user;
+			}
+			labelPassword= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+": "+secret_password;
+		}
+		
 		String nomeP = nome!=null ? " "+nome : "";
 		String tipoOggetto = null;
 		if(soggetti) {
@@ -15558,16 +15572,6 @@ public class ConsoleHelper implements IConsoleHelper {
 			else {
 				tipoOggetto = "all'erogazione";
 			}
-		}
-		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
-			labelUtente= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME+": "+secret_user;
-			labelPassword= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD+": "+secret_password;
-		}
-		else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoAuth)) {
-			if(appId) {
-				labelUtente= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+": "+secret_user;
-			}
-			labelPassword= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+": "+secret_password;
 		}
 		
 		//String warn = "<b>!! Attenzione !!</b>";
@@ -15585,5 +15589,97 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		sb.append(newLine).append(attenzione);
 		this.pd.setMessage(sb.toString(), org.openspcoop2.web.lib.mvc.MessageType.WARN);
+	}
+	*/
+	public void setSecretPleaseCopy(String secret_password, String secret_user, boolean appId, String tipoAuth, boolean soggetti, String nome) {
+
+		String nomeP = nome!=null ? " "+nome : "";
+		String tipoOggetto = null;
+		if(soggetti) {
+			tipoOggetto = "al soggetto"+nomeP;
+		}
+		else {
+			if(nome!=null) {
+				tipoOggetto = "all'applicativo"+nomeP;
+			}
+			else {
+				tipoOggetto = "all'erogazione";
+			}
+		}
+		
+		String header1= "";
+		BodyElement utente = Dialog.newBodyElement();
+		utente.setVisualizzaCopyAction(true);
+		BodyElement password = Dialog.newBodyElement();
+		password.setVisualizzaCopyAction(true);
+		
+		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
+			utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			utente.setType(DataElementType.TEXT_EDIT);
+			utente.setValue(secret_user);
+			utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME));
+			
+			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			password.setType(DataElementType.TEXT_EDIT);
+			password.setValue(secret_password);
+			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD));
+			
+			header1 = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME+" e " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD + " generata" ;
+		}
+		else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoAuth)) {
+			if(appId) {
+				utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+				utente.setType(DataElementType.TEXT_EDIT);
+				utente.setValue(secret_user);
+				utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
+			} else {
+				utente = null;
+			}
+			
+			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+			password.setType(DataElementType.TEXT_AREA);
+			password.setValue(secret_password);
+			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY));
+			password.setCols(44);
+			
+			header1 = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY + " generata" ;
+			if(appId) {
+				header1 = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" e " + header1;
+			}
+		}
+		
+		boolean unaCredenziale = (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoAuth) && !appId);
+		String singolare = unaCredenziale ? "a" : "e";
+		String verbo = unaCredenziale ? "viene" : "vengono";
+		String oggetto = unaCredenziale ? "la chiave" : "le credenziali";
+		String intestazione = StringEscapeUtils.escapeHtml("Di seguito "+verbo+" riportat"+singolare+" "+oggetto+" associat"+singolare+" "+tipoOggetto+".")
+				+"<BR/>"+
+				StringEscapeUtils.escapeHtml("L'informazione viene visualizzata in questo avviso e successivamente non sarà più consultabile.");
+		String attenzione = StringEscapeUtils.escapeHtml("Si prega di copiarl"+singolare+" e custodirl"+singolare+" attentamente.");
+		
+		Dialog dialog = new Dialog();
+		
+		dialog.setTitolo(Costanti.MESSAGE_TYPE_WARN_TITLE);
+		dialog.setHeaderRiga1(header1);
+		dialog.setHeaderRiga2(intestazione);
+		
+		if(utente!=null) {
+			dialog.addBodyElement(utente);
+		}
+		if(password!=null) {
+			dialog.addBodyElement(password);
+		}
+
+		dialog.setNotaFinale(attenzione);
+		
+		
+		String[][] bottoni = { 
+				{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, "" }
+				};
+		
+		this.pd.setBottoni(bottoni);
+		
+		this.pd.setDialog(dialog);
+		
 	}
 }

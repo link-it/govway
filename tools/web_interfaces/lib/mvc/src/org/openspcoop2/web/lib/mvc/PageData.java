@@ -23,10 +23,10 @@
 
 package org.openspcoop2.web.lib.mvc;
 
-import java.util.Vector;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * PageData
@@ -76,6 +76,7 @@ public class PageData {
 	private boolean showAjaxStatusBottoneFiltra = true;
 	private boolean showAjaxStatusBottoneRipulisci = true;
 	
+	Dialog dialog = null;
 
 	public PageData() {
 		this.pageDescription = "";
@@ -205,6 +206,10 @@ public class PageData {
 			case ERROR_SINTETICO:
 			case WARN_SINTETICO:
 				this.messageTitle = this.message;
+				break;
+			case DIALOG:
+				this.messageTitle = Costanti.MESSAGE_TYPE_DIALOG_TITLE;
+				break;
 			}
 		}
 	}
@@ -542,6 +547,19 @@ public class PageData {
 	
 	public void setDisabilitaAjaxStatusBottoneRipulisci() {
 		this.showAjaxStatusBottoneRipulisci = false;
+	}
+	
+	public Dialog getDialog() {
+		return this.dialog;
+	}
+
+	public void setDialog(Dialog dialog) {
+		this.messageType = MessageType.DIALOG.toString();
+		this.dialog = dialog;
+		if(this.dialog != null) {
+			this.message = this.dialog.getTitolo();
+			this.messageTitle = this.dialog.getTitolo();
+		}
 	}
 	
 }

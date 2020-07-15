@@ -742,27 +742,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							}
 						}
 					}
-					
-					if(!integrationManagerEnabled && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
-						// faccio vedere I.M. anche con interfaccia standard
-						integrationManagerEnabled = true;
-						if(erogazioneServizioApplicativoServerEnabled && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) {
-							if(listaIdSAServer==null) {
-								listaIdSAServer = new ArrayList<IDServizioApplicativoDB>();
-							}
-							boolean found = false;
-							for (IDServizioApplicativoDB idServizioApplicativo : listaIdSAServer) {
-								if(idServizioApplicativo.getNome().equals(idSADB.getNome())) {
-									found = true;
-									break;
-								}
-							}
-							if(!found) {
-								listaIdSAServer.add(idSADB);
-							}
-						}
-					}
-					
+										
 					if(getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 						forceEnableConnettore = false;
 					}
@@ -1078,6 +1058,26 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 					}
 
+				} // init connettore from sa
+				
+				if(!integrationManagerEnabled && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+					// faccio vedere I.M. anche con interfaccia standard
+					integrationManagerEnabled = true;
+					if(erogazioneServizioApplicativoServerEnabled && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) {
+						if(listaIdSAServer==null) {
+							listaIdSAServer = new ArrayList<IDServizioApplicativoDB>();
+						}
+						boolean found = false;
+						for (IDServizioApplicativoDB idServizioApplicativo : listaIdSAServer) {
+							if(idServizioApplicativo.getNome().equals(idSADB.getNome())) {
+								found = true;
+								break;
+							}
+						}
+						if(!found) {
+							listaIdSAServer.add(idSADB);
+						}
+					}
 				}
 
 

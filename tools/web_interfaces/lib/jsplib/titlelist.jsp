@@ -123,7 +123,7 @@ Vector<GeneralLink> titlelist = pd.getTitleList();
 		%>
 		<%
 		// messaggio in cima alla pagina solo se non e' un messaggio di conferma
-		if (!message.equals("") && !messageType.equals(MessageType.CONFIRM.toString())) {
+		if (!message.equals("") && !messageType.equals(MessageType.CONFIRM.toString()) && !messageType.equals(MessageType.DIALOG.toString())) {
 		  %>
 		  	<tr>
 				<td style="width: 50%;">

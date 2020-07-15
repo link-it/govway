@@ -162,6 +162,11 @@ textarea.inputLinkLong {
 	color: ${input.color};
 }
 
+.textAreaNoResize{
+	resize: none;
+	width: 412px !important;
+}
+
 div.txtA_div {
 	margin-left: 232px;
 }
@@ -1371,6 +1376,97 @@ div.prop-slider{
 	 padding: 4px 4px 4px 0px;
 	 list-style-type: disc;
 }
+
+
+/* finestra modal di dialog messaggi con copia campi */
+
+#finestraDialogModalHeader {
+	padding: 10px 0px 10px 0px;
+	display: flex;
+}
+
+#finestraDialogModalBody {
+	padding: 10px 0px 20px 0px;
+}
+
+#finestraDialogModalBodyNota {
+	padding: 10px 10px 10px 10px;
+}
+
+#finestraDialogModalHeaderSx {
+	padding: 10px 10px 10px	10px;
+}
+
+#finestraDialogModalHeaderDx {
+	padding: 10px 10px 10px 10px;
+}
+
+#finestraDialogModalHeaderDxRiga1 {
+	padding: 10px 0px 10px 0px;
+}
+
+span.finestraDialogModalHeaderDxRiga1 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#finestraDialogModalHeaderDxRiga2 {
+	padding: 10px  0px 10px 0px;
+}
+
+div.propDialog{
+    padding: 5px 0px 5px 8px;  /* padding top 0px IE7 fix */
+}
+
+div.propDialog-link{
+	padding-top: 8px;
+}
+
+div.propDialog label{
+/* 	margin-right: 16px;	 */
+	padding-right: 16px;
+	width: 130px;
+	display: block;
+	float: left;
+	text-align: right;
+	position: relative;
+	color: ${label.color};
+	padding-top: 4px;
+	font-size: 16px;
+}
+
+div.propDialog label.labelMedium{
+	width: 200px;
+}
+
+div.propDialog label.labelLong{
+	width: 240px;
+}
+
+div.txtA_div_propDialog {
+	margin-left: 146px;
+}
+
+.iconCopyBox{
+    padding-left: 4px;
+    display: inline;
+    cursor: pointer;
+    position: absolute;
+}
+
+.copyTooltip{
+	color: ${menu.label.color};
+	background-color: ${menu.background.color};
+	border-radius: 3px;
+	margin: 8px;
+	padding: 8px;
+	border: 1px solid ${menu.background.color};;
+	position: absolute;
+	z-index: 2000;
+	font-family: 'Roboto';
+	font-size: 14px;
+}
+
 
 .resource-method-block {
 	width: 50px;

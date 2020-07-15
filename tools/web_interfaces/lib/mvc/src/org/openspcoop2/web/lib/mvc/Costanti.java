@@ -20,8 +20,6 @@
 
 package org.openspcoop2.web.lib.mvc;
 
-import org.openspcoop2.web.lib.mvc.DataElement;
-
 /**
  * Costanti
  * 
@@ -227,6 +225,7 @@ public class Costanti {
 	public final static String MESSAGE_TYPE_WARN_TITLE = "Attenzione";
 	public final static String MESSAGE_TYPE_INFO_TITLE = "Messaggio Informativo";
 	public final static String MESSAGE_TYPE_CONFIRM_TITLE = "Conferma Operazione";
+	public final static String MESSAGE_TYPE_DIALOG_TITLE = "Finestra di Dialogo";
 	
 	/** CLASSI DEFAULT CSS ELEMENTI INPUT */
 	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";
@@ -239,9 +238,12 @@ public class Costanti {
 	
 	public final static String TOOLTIP_VISUALIZZA_FILTRI_RICERCA = "Visualizza Filtri di Ricerca";
 	public final static String TOOLTIP_NASCONDI_FILTRI_RICERCA = "Nascondi Filtri di Ricerca";
+	public final static String TOOLTIP_ICONA_COPIA = "Copia {0}";
 	
 	public final static String INFO_BUTTON_ICON = "&#xE88E;";
 	public final static String INFO_BUTTON_ICON_WHITE = "&#xE88F;";
+	public final static String ICON_DIALOG_HEADER = "&#xE8B2;";
+	public final static String ICON_COPY = "file_copy";
 	
 	public static final int LUNGHEZZA_LABEL_TABS = 30;
 	public static final int LUNGHEZZA_RIGA_TESTO_TABELLA = 150;

@@ -2539,6 +2539,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							showConnettoreLink = true;
 							break;
 						}
+						// controllo che non sia un server
+						if(this.saCore.isApplicativiServerEnabled(this)) {
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setIdSoggettoProprietario(new IDSoggetto(paAssociata.getTipoSoggettoProprietario(), paAssociata.getNomeSoggettoProprietario()));
+							idSA.setNome(portaApplicativaServizioApplicativo.getNome());
+							ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSA);
+							if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+								showConnettoreLink = true;
+								break;
+							}
+						}
+						
 					}
 				}
 			}

@@ -1,3 +1,8 @@
+2020-07-15  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta finestra di dialogo per la visualizzazione e la copia delle credenziali dei soggetti e applicativi autenticati.
+
 2020-07-14  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

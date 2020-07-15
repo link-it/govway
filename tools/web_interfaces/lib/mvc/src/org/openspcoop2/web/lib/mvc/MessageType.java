@@ -35,7 +35,8 @@ public enum MessageType {
 	WARN("warn"),
 	WARN_SINTETICO("warn-sintetico"),
 	ERROR("errors"),
-	ERROR_SINTETICO("errors-sintetico");
+	ERROR_SINTETICO("errors-sintetico"),
+	DIALOG("dialog");
 	
 	private String value;
 	MessageType(String value){
