@@ -71,6 +71,9 @@ public class ItemTransazione extends TransazioneBase {
   
   @Schema(description = "")
   private TransazioneExtInformazioniMittenteBase mittente = null;
+  
+  @Schema(description = "")
+  private String richiedente = null;
  /**
    * Get profilo
    * @return profilo
@@ -302,6 +305,25 @@ public class ItemTransazione extends TransazioneBase {
     return this;
   }
 
+ /**
+   * Get richiedente
+   * @return richiedente
+  **/
+  @JsonProperty("richiedente")
+  @Valid
+  public String getRichiedente() {
+    return this.richiedente;
+  }
+
+  public void setRichiedente(String richiedente) {
+    this.richiedente = richiedente;
+  }
+
+  public ItemTransazione richiedente(String richiedente) {
+    this.richiedente = richiedente;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -320,6 +342,7 @@ public class ItemTransazione extends TransazioneBase {
     sb.append("    risposta: ").append(ItemTransazione.toIndentedString(this.risposta)).append("\n");
     sb.append("    api: ").append(ItemTransazione.toIndentedString(this.api)).append("\n");
     sb.append("    mittente: ").append(ItemTransazione.toIndentedString(this.mittente)).append("\n");
+    sb.append("    richiedente: ").append(ItemTransazione.toIndentedString(this.richiedente)).append("\n");
     sb.append("}");
     return sb.toString();
   }

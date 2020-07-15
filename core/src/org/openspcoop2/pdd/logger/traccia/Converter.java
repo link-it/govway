@@ -114,6 +114,7 @@ public class Converter {
 	private boolean mittente_fruitore = true;
 	private boolean mittente_principal = true;
 	private boolean mittente_utente = true;
+	private boolean mittente_client = true;
 	private boolean mittente_indirizzoClient = true;
 	private boolean mittente_indirizzoClientInoltrato = true;
 	
@@ -635,6 +636,9 @@ public class Converter {
 		if(this.mittente_utente && credenzialiMittente!=null && credenzialiMittente.getToken_username()!=null) {
 			mittente.setUtente(credenzialiMittente.getToken_username().getCredenziale());
 		}
+		if(this.mittente_client && credenzialiMittente!=null && credenzialiMittente.getToken_clientId()!=null) {
+			mittente.setClient(credenzialiMittente.getToken_clientId().getCredenziale());
+		}
 		if(this.mittente_indirizzoClient) {
 			mittente.setIndirizzoClient(transazioneDB.getSocketClientAddress());
 		}
@@ -976,11 +980,16 @@ public class Converter {
 		this.mittente_principal = mittente_principal;
 	}
 
-
+	
 	public void setMittente_utente(boolean mittente_utente) {
 		this.mittente_utente = mittente_utente;
 	}
-
+	
+	
+	public void setMittente_client(boolean mittente_client) {
+		this.mittente_client = mittente_client;
+	}
+	
 
 	public void setMittente_indirizzoClient(boolean mittente_indirizzoClient) {
 		this.mittente_indirizzoClient = mittente_indirizzoClient;

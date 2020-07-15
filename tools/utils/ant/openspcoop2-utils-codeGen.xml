@@ -74,11 +74,19 @@
 			<fileset dir="${src_utils}/org/openspcoop2/utils/service/beans">
 
 				<!-- team -->
+				<include name="Longitude.java"/>
+				<include name="Latitude.java"/>
+				<include name="LongitudeString.java"/>
+				<include name="LatitudeString.java"/>
+				<include name="Coordinates.java"/>
+				<include name="CurrencyCode.java"/>
 				<include name="Person.java"/>
 				<include name="Money.java"/>
 				<include name="TaxCode.java"/>
 
 				<!-- core -->
+				<include name="BaseOggettoWithNCName.java"/>
+				<include name="BaseOggettoWithSimpleName.java"/>
 				<include name="HttpStatusCode.java"/>
 				<include name="NCName.java"/>
 				<include name="SimpleName.java"/>
@@ -90,6 +98,9 @@
 
 			</fileset>
 		</delete>
+
+		<replace dir="${src_utils}/org/openspcoop2/utils/service/beans"
+			token="^[_A-Za-z][\-\._A-Za-z0-9]*$" value="^[_A-Za-z][\\-\\._A-Za-z0-9]*$" includes="*.java"/>
 
 	</target>
 

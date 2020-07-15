@@ -1,3 +1,12 @@
+2020-07-15  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio]
+	L'informazione sul richiedente dell'operazione è stata aggiunta sia nel dettaglio di una transazione che nelle informazioni generali presenti nella lista.
+	Tra le informazioni generali nella lista è stato aggiunto inoltre il client-id presente nei token OAuth2.
+	Nel dettaglio di una transazione è stato aggiunto il dettaglio dell'errore nel caso la transazione non sia completata con successo.
+	Inoltre nel dettaglio sono state riportate le informazioni già presenti nella lista riguardanti la data e le latenze.
+	Infine è stato disabilitato come criterio di default il filtro 'Escludi Richieste Scartate'.
+
 2020-07-15  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

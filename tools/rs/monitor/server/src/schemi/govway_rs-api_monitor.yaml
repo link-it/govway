@@ -279,7 +279,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExt'
+                $ref: '#/components/schemas/DetailTransazione'
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -1504,7 +1504,7 @@ components:
       description: 'informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il parametro esito_transazione non sia fornito o assuma il valore fallite o fallite_e_fault'
       schema:
         type: boolean
-        default: true
+        default: false
 
     severita:
       in: query
@@ -1627,7 +1627,32 @@ components:
               $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtInformazioniApiBase'
             mittente:
               $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtInformazioniMittenteBase'
+            richiedente:
+              type: string
 
+    DetailTransazione:
+      type: object
+      allOf:
+        - $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExt'
+        - type: object      
+          required:
+            - data
+          properties:
+            data:
+              type: string
+              format: date-time
+            latenza_servizio:
+              type: integer
+              format: int64
+              example: 8
+            latenza_totale:
+              type: integer
+              format: int64
+              example: 20
+            richiedente:
+              type: string
+            dettaglio_errore:
+              type: string	
 
     # Eventi
 
@@ -2300,7 +2325,7 @@ components:
           $ref: '#/components/schemas/EsitoTransazioneFullSearchEnum'
         escludi_scartate:
           type: boolean
-          default: true
+          default: false
           description: 'informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite, fallite_e_fault'
         codice: # da utilizzare solamente se il tipo di ricerca e' diverso da personalizzato
           type: integer

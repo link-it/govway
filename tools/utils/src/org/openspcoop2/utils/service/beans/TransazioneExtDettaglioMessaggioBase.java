@@ -38,7 +38,7 @@ import javax.validation.Valid;
 public class TransazioneExtDettaglioMessaggioBase extends TransazioneDettaglioMessaggio {
   @XmlElement(name="data_accettazione")
   
-  @Schema(example = "2017-07-21T17:32:28Z", description = "")
+  @Schema(description = "")
   private DateTime dataAccettazione = null;
   @XmlElement(name="bytes_ingresso")
   

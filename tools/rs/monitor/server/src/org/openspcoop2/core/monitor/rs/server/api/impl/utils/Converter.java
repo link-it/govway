@@ -30,6 +30,7 @@ import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.SoggettiConfig;
+import org.openspcoop2.core.monitor.rs.server.model.DetailTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.Evento;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ItemTransazione;
@@ -119,7 +120,7 @@ public class Converter {
 		return TransazioniDM.COL_DATA_INGRESSO_RICHIESTA;
 	}
 	
-	public static TransazioneExt toTransazioneExt(TransazioneBean transazioneDB, TransazioniService transazioniService, 
+	public static DetailTransazione toTransazioneExt(TransazioneBean transazioneDB, TransazioniService transazioniService, 
 			Connection con, ServiceManagerProperties smp,
 			Logger log) throws Exception {
 		org.openspcoop2.pdd.logger.traccia.Converter converter = new org.openspcoop2.pdd.logger.traccia.Converter(log);
@@ -170,8 +171,54 @@ public class Converter {
 			}
 		}
 		
-		TransazioneExt transazione = converter.toTransazioneExt(transazioneDB, credenzialiMittente, tracciaRichiesta, tracciaRisposta, messaggiDiagnostici);
-		return transazione;
+		TransazioneExt transazioneExt = converter.toTransazioneExt(transazioneDB, credenzialiMittente, tracciaRichiesta, tracciaRisposta, messaggiDiagnostici);
+		
+		// aggiunto campi supplementari
+		
+		DetailTransazione detail = new DetailTransazione();
+		
+		if(transazioneExt.getRichiesta()!=null) {
+			detail.setData(transazioneExt.getRichiesta().getDataRicezione());
+		}
+		if(transazioneExt.getRichiesta()!=null && transazioneExt.getRichiesta().getDataConsegna()!=null &&
+				transazioneExt.getRisposta()!=null && transazioneExt.getRisposta().getDataAccettazione()!=null) {
+			long dataRisposta = transazioneExt.getRisposta().getDataAccettazione().getMillis();
+			long dataRichiesta = transazioneExt.getRichiesta().getDataConsegna().getMillis(); 
+			detail.setLatenzaServizio(dataRisposta-dataRichiesta);
+		}
+		if(transazioneExt.getRichiesta()!=null && transazioneExt.getRichiesta().getDataAccettazione()!=null &&
+				transazioneExt.getRisposta()!=null && transazioneExt.getRisposta().getDataConsegna()!=null) {
+			long dataRisposta = transazioneExt.getRisposta().getDataConsegna().getMillis();
+			long dataRichiesta = transazioneExt.getRichiesta().getDataAccettazione().getMillis(); 
+			detail.setLatenzaTotale(dataRisposta-dataRichiesta);
+		}
+		
+		String richiedente = transazioneDB.getLabelRichiedenteConFruitore();
+		if(StringUtils.isNotEmpty(richiedente)) {
+			detail.setRichiedente(richiedente);
+		}
+		String dettaglioErrore = transazioneDB.getDettaglioErrore(messaggiDiagnostici);
+		if(StringUtils.isNotEmpty(dettaglioErrore)) {
+			detail.setDettaglioErrore(dettaglioErrore);
+		}
+				
+		List<BlackListElement> metodiEsclusi = new ArrayList<>();
+		metodiEsclusi.add(new BlackListElement("setData", DateTime.class));
+		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
+		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
+		metodiEsclusi.add(new BlackListElement("setRichiedente", String.class));
+		metodiEsclusi.add(new BlackListElement("setDettaglioErrore", String.class));
+		org.openspcoop2.utils.beans.BeanUtils.copy(log, detail, transazioneExt, metodiEsclusi, true);
+		
+		// Se presenti, finiscono come informazione del token in detail.getMittente().getInformazioniToken()
+		/*
+		if(detail.getMittente()!=null) {
+			detail.getMittente().setUtente(null);
+			detail.getMittente().setClient(null);
+		}
+		*/
+		
+		return detail;
 	}
 	
 	public static ItemTransazione toItemTransazione(TransazioneBean transazioneDB, Logger log)  throws Exception {
@@ -230,13 +277,18 @@ public class Converter {
 			long dataRichiesta = transazione.getRichiesta().getDataAccettazione().getMillis(); 
 			item.setLatenzaTotale(dataRisposta-dataRichiesta);
 		}
+		String richiedente = transazioneDB.getLabelRichiedenteConFruitore();
+		if(StringUtils.isNotEmpty(richiedente)) {
+			item.setRichiedente(richiedente);
+		}
 		
 		List<BlackListElement> metodiEsclusi = new ArrayList<>();
 		metodiEsclusi.add(new BlackListElement("setData", DateTime.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
+		metodiEsclusi.add(new BlackListElement("setRichiedente", String.class));
 		org.openspcoop2.utils.beans.BeanUtils.copy(log, item, transazione, metodiEsclusi, true );
-		
+				
 		return item;
 	}
 	

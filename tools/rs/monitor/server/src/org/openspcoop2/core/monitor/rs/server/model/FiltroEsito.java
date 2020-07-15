@@ -36,7 +36,7 @@ public class FiltroEsito  {
  /**
    * informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite, fallite_e_fault  
   **/
-  private Boolean escludiScartate = true;
+  private Boolean escludiScartate = false;
   
   @Schema(description = "")
   private Integer codice = null;

@@ -571,6 +571,39 @@ public class TransazioniHelper {
 							throw new UtilsException(e.getMessage(),e);
 						}
 					}
+					
+					// finisce in principal
+					if(transazioneBean.getTrasportoMittenteLabel()==null) {
+						if(transazioneBean.getTrasportoMittente()!=null && !"".equals(transazioneBean.getTrasportoMittente())) {
+							try {
+								transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTrasporto(transazioneBean, transazioneBean);
+							}catch(Exception e) {
+								throw new UtilsException(e.getMessage(),e);
+							}
+						}
+					}
+					
+					// finisce in utente
+					if(transazioneBean.getTokenUsernameLabel()==null) {
+						if(transazioneBean.getTokenUsername()!=null && !"".equals(transazioneBean.getTokenUsername())) {
+							try {
+								transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenUsername(transazioneBean, transazioneBean);
+							}catch(Exception e) {
+								throw new UtilsException(e.getMessage(),e);
+							}
+						}
+					}
+					
+					// finisce in client
+					if(transazioneBean.getTokenClientIdLabel()==null) {
+						if(transazioneBean.getTokenClientId()!=null && !"".equals(transazioneBean.getTokenClientId())) {
+							try {
+								transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(transazioneBean, transazioneBean);
+							}catch(Exception e) {
+								throw new UtilsException(e.getMessage(),e);
+							}
+						}
+					}
 				}
 			}
 			

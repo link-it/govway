@@ -254,7 +254,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TransazioneExt"
+                $ref: "#/components/schemas/DetailTransazione"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -1307,6 +1307,31 @@ components:
             $ref: "#/components/schemas/TransazioneExtInformazioniApiBase"
           mittente:
             $ref: "#/components/schemas/TransazioneExtInformazioniMittenteBase"
+          richiedente:
+            type: "string"
+    DetailTransazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneExt"
+      - required:
+        - "data"
+        type: "object"
+        properties:
+          data:
+            type: "string"
+            format: "date-time"
+          latenza_servizio:
+            type: "integer"
+            format: "int64"
+            example: 8
+          latenza_totale:
+            type: "integer"
+            format: "int64"
+            example: 20
+          richiedente:
+            type: "string"
+          dettaglio_errore:
+            type: "string"
     ListaEventi:
       type: "object"
       allOf:
@@ -1911,7 +1936,7 @@ components:
           description: "informazione utilizzata per escludere le richieste scartate;\
             \ viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite,\
             \ fallite_e_fault"
-          default: true
+          default: false
         codice:
           type: "integer"
           format: "int32"
@@ -2697,6 +2722,8 @@ components:
           $ref: "#/components/schemas/NCName"
         utente:
           type: "string"
+        client:
+          type: "string"
         indirizzo_client:
           type: "string"
         indirizzo_client_inoltrato:
@@ -2936,7 +2963,7 @@ components:
       required: false
       schema:
         type: "boolean"
-        default: true
+        default: false
     severita:
       name: "severita"
       in: "query"

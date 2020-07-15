@@ -35,6 +35,7 @@ import org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.model.DetailTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.Evento;
@@ -53,7 +54,6 @@ import org.openspcoop2.utils.service.authorization.AuthorizationManager;
 import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import org.openspcoop2.utils.service.beans.FiltroRicercaId;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.utils.service.beans.TransazioneExt;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
@@ -445,7 +445,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public TransazioneExt getTransazione(UUID id) {
+    public DetailTransazione getTransazione(UUID id) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -467,7 +467,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				if(transazioneDB==null) {
 					FaultCode.NOT_FOUND.throwException("Traccia con id '"+id+"' non esistente");
 				}
-				TransazioneExt transazione = org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter.toTransazioneExt(transazioneDB, transazioniService, 
+				DetailTransazione transazione = org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter.toTransazioneExt(transazioneDB, transazioniService, 
 						connection, smp,
 						this.log);
 				context.getLogger().info("Invocazione completata con successo");

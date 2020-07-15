@@ -183,6 +183,8 @@ components:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         utente:
           type: string
+        client:
+          type: string
         indirizzo_client:
           type: string
         indirizzo_client_inoltrato:

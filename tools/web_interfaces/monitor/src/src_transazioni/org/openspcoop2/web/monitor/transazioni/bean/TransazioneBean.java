@@ -1014,9 +1014,17 @@ public class TransazioneBean extends Transazione{
 			return this.dettaglioErrore;
 		}
 		
-		return _getDettaglioErrore();
+		return _getDettaglioErrore(null);
 	}
-	private synchronized String _getDettaglioErrore() {
+	public String getDettaglioErrore(List<MsgDiagnostico> msgs) {
+		
+		if(this.dettaglioErrore!=null) {
+			return this.dettaglioErrore;
+		}
+		
+		return _getDettaglioErrore(msgs);
+	}
+	private synchronized String _getDettaglioErrore(List<MsgDiagnostico> msgsParams) {
 		
 		if(this.dettaglioErrore!=null) {
 			return this.dettaglioErrore;
@@ -1047,39 +1055,65 @@ public class TransazioneBean extends Transazione{
 			
 		}
 		
+		// Esito
+		Logger log = null;
+		EsitiProperties esitiProperties = null;
+		EsitoTransazioneName esitoTransactionName = null;
+		try {
+			log = LoggerManager.getPddMonitorCoreLogger();
+			esitiProperties = EsitiProperties.getInstance(log, this.getProtocollo());
+			esitoTransactionName = esitiProperties.getEsitoTransazioneName(this.getEsito());
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il recupero dell'esito della transazione: "+e.getMessage(),e);
+			return ""; // non dovrebbe mai succedere
+		}
+			
 		// lista diagnostici
-		try{
-			Logger log = LoggerManager.getPddMonitorCoreLogger();
-			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(log);
-			IDiagnosticDriver driver = govwayMonitorProperties.getDriverMsgDiagnostici();
-			
-			FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
-			
-			Hashtable<String, String> properties = new Hashtable<String, String>();
-			properties.put("id_transazione",
-					this.getIdTransazione());
-			filter.setProperties(properties);
-			
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(log, this.getProtocollo());
-			EsitoTransazioneName esitoTransactionName = esitiProperties.getEsitoTransazioneName(this.getEsito());
-			filter.setApplicativo(null);
-			if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
-				filter.setCheckApplicativoIsNull(true);
+		List<MsgDiagnostico> msgs = null;
+		if(msgsParams!=null) {
+			msgs = new ArrayList<MsgDiagnostico>();
+			if(!msgsParams.isEmpty()) {
+				for (MsgDiagnostico msgDiagnostico : msgsParams) {
+					if(msgDiagnostico.getSeverita()<=LogLevels.SEVERITA_ERROR_INTEGRATION) {
+						msgs.add(msgDiagnostico);
+					}
+				}
 			}
-			else {
-				filter.setCheckApplicativoIsNull(false);
+		}
+		else {
+			try{
+				PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(log);
+				IDiagnosticDriver driver = govwayMonitorProperties.getDriverMsgDiagnostici();
+				
+				FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
+				
+				Hashtable<String, String> properties = new Hashtable<String, String>();
+				properties.put("id_transazione",
+						this.getIdTransazione());
+				filter.setProperties(properties);
+				
+				filter.setApplicativo(null);
+				if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
+					filter.setCheckApplicativoIsNull(true);
+				}
+				else {
+					filter.setCheckApplicativoIsNull(false);
+				}
+				filter.setSeverita(LogLevels.SEVERITA_ERROR_INTEGRATION);
+				filter.setAsc(true);
+				
+				try {
+					msgs = driver.getMessaggiDiagnostici(filter);
+				}catch(DriverMsgDiagnosticiNotFoundException notFound){
+					msgs = new ArrayList<MsgDiagnostico>();
+					log.debug(notFound.getMessage(), notFound);
+				}
+			}catch(Exception e){
+				LoggerManager.getPddMonitorCoreLogger().error("Errore durante il recupero dei diagnostici per la ricostruzione del motivo dell'errore: "+e.getMessage(),e);
 			}
-			filter.setSeverita(LogLevels.SEVERITA_ERROR_INTEGRATION);
-			filter.setAsc(true);
-			
-			List<MsgDiagnostico> msgs = null;
-			try {
-				msgs = driver.getMessaggiDiagnostici(filter);
-			}catch(DriverMsgDiagnosticiNotFoundException notFound){
-				msgs = new ArrayList<MsgDiagnostico>();
-				log.debug(notFound.getMessage(), notFound);
-			}
-			
+		}
+		
+		try {
 			StringBuilder sb = new StringBuilder();
 			StringBuilder erroreConnessone = new StringBuilder();
 			StringBuilder erroreSegnalaGenerazioneRispostaErrore = new StringBuilder();
