@@ -66,7 +66,7 @@ Gestione di token di autenticazione conformi agli standard JWT, OAuth2 e OIDC. S
 ## Rate Limiting
 Regolazione del traffico in ingresso su GovWay, limitando il numero di richieste o la dimensione di banda occupata per specifiche erogazioni o fruizioni, anche in funzione di parametri come il tempo medio di elaborazione, la quantità di errori o in base a caratteristiche delle specifiche richieste applicative.
 ## Autenticazione
-Gestione dell'autenticazione delle richieste applicative in ingresso e in uscita dal proprio dominio, tramite supporto nativo dei protocolli HTTP-Basic e TLS o tramite integrazione di sistemi esterni di Identity Management.
+Gestione dell'autenticazione delle richieste applicative in ingresso e in uscita dal proprio dominio, tramite supporto nativo dei protocolli HTTP-Basic, TLS e ApiKey o tramite integrazione di sistemi esterni di Identity Management.
 ## Autorizzazione
 Gestione dell'autorizzazione delle richieste applicative, tramite registrazione dei fruitori delle API gestite e dei loro ruoli, o tramite integrazione con sistemi esterni di Identity Management. Supporto dei protocolli di Autorizzazione Oauth2 e XACML, con la possibilità di gestire la valutazione delle policy XACML localmente o utilizzando un Policy Decision Point esterno.
 ## Trasformazione Messaggi

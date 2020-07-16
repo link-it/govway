@@ -35,8 +35,8 @@ description:
         Introspection)
       - 'Rate Limiting: numero di richieste, banda, tempi medi di elaborazione'
       - >-
-        Autenticazione: HTTP-Basic, TLS, integrazione di sistemi esterni di
-        Identity Management
+        Autenticazione: HTTP-Basic, TLS, Api Key, integrazione di sistemi
+        esterni di Identity Management
       - >-
         Autorizzazione: sottoscrizioni puntuali, ruoli, scope, valutazione di
         policy XACML tramite PdD
@@ -137,9 +137,9 @@ maintenance:
 name: GovWay
 platforms:
   - web
-releaseDate: '2020-03-30'
+releaseDate: '2020-07-21'
 softwareType: standalone/web
-softwareVersion: 3.3.1
+softwareVersion: 3.3.2
 url: 'https://github.com/link-it/govway'
 usedBy:
   - MISE - Ministero dello Sviluppo Economico

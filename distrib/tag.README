@@ -40,6 +40,7 @@ Per creare una tag version:
 
 13. Sistemare file publiccode.yml sia come ultima versione stabile che come eventuali nuove funzionalità.
     Non editare il file a mano, ma usare lo strumento: https://publiccode-editor.developers.italia.it/
+    NOTA!!!!! Dentro il file publiccode.yml è presente anche una release date da aggiornare!!!!!!
 
 14. Sistemare migratore delle configurazioni da OpenSPCoop
 
