@@ -1,3 +1,9 @@
+2020-07-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1024
+	Aggiunto supporto per wildfly 20.
+
 2020-07-15  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]

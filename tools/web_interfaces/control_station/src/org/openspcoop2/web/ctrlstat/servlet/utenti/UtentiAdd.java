@@ -37,6 +37,8 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -186,8 +188,16 @@ public final class UtentiAdd extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.ADD());
 			}
 	
+			boolean secret = false;
+			String secret_password  = pwsu;
+			String secret_user = nomesu;
+			boolean secret_appId = false;
+			
 			// Cripto la password
-			pwsu = utentiCore.getUtenzePasswordManager().crypt(pwsu);
+			if(utentiCore.isUtenzePasswordEncryptEnabled()) {
+				secret = true;
+				pwsu = utentiCore.getUtenzePasswordManager().crypt(pwsu);
+			}
 	
 			// Inserisco l'utente nel db
 			User newU = new User();
@@ -263,6 +273,11 @@ public final class UtentiAdd extends Action {
 			
 			utentiCore.performCreateOperation(userLogin, utentiHelper.smista(), newU);
 	
+			// Messaggio 'Please Copy'
+			if(secret) {
+				utentiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.UTENTE, nomesu);
+			}
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 	

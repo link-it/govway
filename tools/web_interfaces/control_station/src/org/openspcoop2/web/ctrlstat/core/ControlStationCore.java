@@ -548,6 +548,9 @@ public class ControlStationCore {
 		}
 		return null;
 	}
+	public boolean isUtenzePasswordEncryptEnabled() {
+		return this.getUtenzePasswordEncrypt()!=null && !CryptType.PLAIN.equals(this.getUtenzePasswordEncrypt().getCryptType());
+	}
 	private int utenzeLunghezzaPasswordGenerate;
 	public int getUtenzeLunghezzaPasswordGenerate() {
 		return this.utenzeLunghezzaPasswordGenerate;

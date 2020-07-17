@@ -88,6 +88,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -1830,7 +1831,7 @@ public final class ServiziApplicativiChange extends Action {
 		
 			// Messaggio 'Please Copy'
 			if(secret) {
-				saHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, tipoauthSA, false, sa.getNome());
+				saHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, tipoauthSA, OggettoDialogEnum.APPLICATIVO, sa.getNome());
 			}
 			
 			// Preparo la lista

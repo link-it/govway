@@ -21,3 +21,4 @@ Funzionalità Avanzate
         autenticazione
 	contentBased
 	validazione
+	password

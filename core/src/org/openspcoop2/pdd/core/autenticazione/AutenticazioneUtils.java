@@ -113,31 +113,37 @@ public class AutenticazioneUtils {
 	    		}
 			}
 		}
-		if(cookie && clean) { // su soap deve essere effettuato il forward solamente se consentito dalle regole
+		if(cookie) { 
 			if(nomeCookie!=null && message.getTransportRequestContext()!=null) {
 				if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
 					String headerValue = message.getTransportRequestContext().getParameterTrasporto(HttpConstants.COOKIE);
 					if(headerValue!=null) {
 						message.getTransportRequestContext().removeParameterTrasporto(HttpConstants.COOKIE);
-						String [] tmp = headerValue.split(HttpConstants.COOKIE_SEPARATOR);
-						StringBuilder sb = new StringBuilder();
-						if(tmp!=null && tmp.length>0) {
-							for (int i = 0; i < tmp.length; i++) {
-								String cNameValue = tmp[i];
-								String [] c = cNameValue.split(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
-								if(c!=null && c.length>0) {
-									String name = c[0];
-									if(!nomeCookie.equalsIgnoreCase(name)) {
-										if(sb.length()>0) {
-											sb.append(HttpConstants.COOKIE_SEPARATOR);
+						if(!clean) {
+							message.getTransportRequestContext().getParametersTrasporto().put(HttpConstants.COOKIE, headerValue); // inserisco anche qua in modo che il valore aggiornato sia disponibile sulle trasformazioni
+							message.forceTransportHeader(HttpConstants.COOKIE, headerValue); // serve soprattutto per soap
+						}
+						else {
+							String [] tmp = headerValue.split(HttpConstants.COOKIE_SEPARATOR);
+							StringBuilder sb = new StringBuilder();
+							if(tmp!=null && tmp.length>0) {
+								for (int i = 0; i < tmp.length; i++) {
+									String cNameValue = tmp[i];
+									String [] c = cNameValue.split(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+									if(c!=null && c.length>0) {
+										String name = c[0];
+										if(!nomeCookie.equalsIgnoreCase(name)) {
+											if(sb.length()>0) {
+												sb.append(HttpConstants.COOKIE_SEPARATOR);
+											}
+											sb.append(cNameValue);
 										}
-										sb.append(cNameValue);
 									}
 								}
 							}
-						}
-						if(sb.length()>0) {
-							message.getTransportRequestContext().getParametersTrasporto().put(HttpConstants.COOKIE, sb.toString());
+							if(sb.length()>0) {
+								message.getTransportRequestContext().getParametersTrasporto().put(HttpConstants.COOKIE, sb.toString());
+							}
 						}
 					}
 	    		}

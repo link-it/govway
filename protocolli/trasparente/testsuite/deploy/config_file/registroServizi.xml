@@ -14,6 +14,10 @@
 		<resource nome="invokeBasicPdD_credenzialiNonBruciate" path="invokeBasicPdD_credenzialiNonBruciate" />
 		<resource nome="invokeWithBasicAuth" path="invokeWithBasicAuth" />
 		<resource nome="invokeWithBasicAuthDomain" path="invokeWithBasicAuthDomain" />
+		<resource nome="invokeApiKey" path="invokeApiKey" />
+		<resource nome="invokeApiKeyForward" path="invokeApiKeyForward" />
+		<resource nome="invokeAppId" path="invokeAppId" />
+		<resource nome="invokeAppIdForward" path="invokeAppIdForward" />
         </accordo-servizio-parte-comune>
 
         <accordo-servizio-parte-comune nome="EsempioCORSviaREST" profilo-collaborazione="sincrono" 
@@ -231,6 +235,20 @@
 			<azione nome="aggiornamentoPrincipalHeaderNotClean"/>
 			<azione nome="aggiornamentoPrincipalQueryClean"/>
 			<azione nome="aggiornamentoPrincipalQueryNotClean"/>
+			<azione nome="aggiornamentoApiKey" />
+			<azione nome="aggiornamentoApiKeyQueryForward" />
+			<azione nome="aggiornamentoApiKeyHeaderForward" />
+			<azione nome="aggiornamentoApiKeyCookieForward" />
+			<azione nome="aggiornamentoApiKeyQueryForwardCustom" />
+			<azione nome="aggiornamentoApiKeyHeaderForwardCustom" />
+			<azione nome="aggiornamentoApiKeyCookieForwardCustom" />
+			<azione nome="aggiornamentoAppId" />
+			<azione nome="aggiornamentoAppIdQueryForward" />
+			<azione nome="aggiornamentoAppIdHeaderForward" />
+			<azione nome="aggiornamentoAppIdCookieForward" />
+			<azione nome="aggiornamentoAppIdQueryForwardCustom" />
+			<azione nome="aggiornamentoAppIdHeaderForwardCustom" />
+			<azione nome="aggiornamentoAppIdCookieForwardCustom" />
                     </port-type>
 	</accordo-servizio-parte-comune>
 
@@ -291,6 +309,15 @@
     	<porta-dominio nome="PdDEsempioSoggettoTrasparentePrincipal" client-auth="disabilitato"/>
 
 	<porta-dominio nome="PdDEsempioSoggettoTrasparentePrincipal2" client-auth="disabilitato"/>
+
+	<porta-dominio nome="PdDEsempioSoggettoTrasparenteApiKey" client-auth="disabilitato"/>
+
+	<porta-dominio nome="PdDEsempioSoggettoTrasparenteApiKey2" client-auth="disabilitato"/>
+
+	<porta-dominio nome="PdDEsempioSoggettoTrasparenteApiKeyAppId" client-auth="disabilitato"/>
+
+	<porta-dominio nome="PdDEsempioSoggettoTrasparenteApiKeyAppId2" client-auth="disabilitato"/>
+
 
 
 	<ruolo nome="role1AllAllOpenSPCoopTest" />
@@ -468,6 +495,41 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ2d0TnorbTk
 
 
 
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteApiKey" porta-dominio="PdDEsempioSoggettoTrasparenteApiKey">
+    
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteApiKey"/>
+
+		<credenziali tipo="apikey" user="EsempioSoggettoTrasparenteApiKey.gw" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
+
+	</soggetto>
+
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteApiKey2" porta-dominio="PdDEsempioSoggettoTrasparenteApiKey2">
+    
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteApiKey2"/>
+
+		<credenziali tipo="apikey" user="EsempioSoggettoTrasparenteApiKey2.gw" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
+
+	</soggetto>
+
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteApiKeyAppId" porta-dominio="PdDEsempioSoggettoTrasparenteApiKeyAppId">
+    
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteApiKeyAppId"/>
+
+		<credenziali tipo="apikey" app-id="true" user="EsempioSoggettoTrasparenteApiKeyAppId.gw" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
+
+	</soggetto>
+
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteApiKeyAppId2" porta-dominio="PdDEsempioSoggettoTrasparenteApiKeyAppId2">
+    
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteApiKeyAppId2"/>
+
+		<credenziali tipo="apikey" app-id="true" user="EsempioSoggettoTrasparenteApiKeyAppId2.gw" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
+
+	</soggetto>
+
+
+
+
 	<soggetto tipo="gw" nome="applicativoComunePisa">
     
 		<connettore tipo="disabilitato" nome="CNT_API_applicativoComunePisa"/>
@@ -535,6 +597,38 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ2d0TnorbTk
 				    </connettore>
 				    <azione>invokeWithBasicAuthDomain</azione>
 			     	</configurazione-azione>
+
+				<configurazione-azione>
+				    <connettore tipo="http" nome="invokeApiKey">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				    </connettore>
+				    <azione>invokeApiKey</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="invokeApiKeyForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;existsCookies=X-API-KEYY&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				    </connettore>
+				    <azione>invokeApiKeyForward</azione>
+			     </configurazione-azione>
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="invokeAppId">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				    </connettore>
+				    <azione>invokeAppId</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="invokeAppIdForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;existsCookies=X-API-KEY&amp;existsCookies=X-APP-ID&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"
+				        />
+				    </connettore>
+				    <azione>invokeAppIdForward</azione>
+			     </configurazione-azione>
+
 		        </configurazione-servizio>
                 </accordo-servizio-parte-specifica>
 
@@ -759,6 +853,125 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ2d0TnorbTk
 				        />
 				    </connettore>
 				    <azione>aggiornamentoPrincipalQueryNotClean</azione>
+			     </configurazione-azione>
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoApiKey">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;notExistsCookies=CustomCookie1,CustomCookie2" />
+<!-- SOLO in REST si propaga il cookie existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"  -->
+				    </connettore>
+				    <azione>aggiornamentoApiKey</azione>
+			     </configurazione-azione>
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoApiKeyQueryForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;existsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoApiKeyQueryForward</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoApiKeyHeaderForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;existsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoApiKeyHeaderForward</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoApiKeyCookieForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;existsCookies=X-API-KEY"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoApiKeyCookieForward</azione>
+			     </configurazione-azione>
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoApiKeyQueryForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsQueryParameters=custom_key_value"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoApiKeyQueryForwardCustom</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoApiKeyHeaderForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsHttpHeaders=X-CUSTOM-KEY-HDR"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoApiKeyHeaderForwardCustom</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoApiKeyCookieForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsCookies=CUSTOM-KEY-Cookie"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoApiKeyCookieForwardCustom</azione>
+			     </configurazione-azione>
+
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoAppId">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;notExistsCookies=CustomCookie1,CustomCookie2" />
+<!-- SOLO in REST si propaga il cookie existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"  -->
+				    </connettore>
+				    <azione>aggiornamentoAppId</azione>
+			     </configurazione-azione>
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoAppIdQueryForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key&amp;existsQueryParameters=app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoAppIdQueryForward</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoAppIdHeaderForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY&amp;existsHttpHeaders=X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoAppIdHeaderForward</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoAppIdCookieForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY&amp;existsCookies=X-APP-ID"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoAppIdCookieForward</azione>
+			     </configurazione-azione>
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoAppIdQueryForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsQueryParameters=custom_key_value,custom_id_value"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoAppIdQueryForwardCustom</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoAppIdHeaderForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsHttpHeaders=X-CUSTOM-KEY-HDR,X-CUSTOM-ID-HDR"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoAppIdHeaderForwardCustom</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoAppIdCookieForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsCookies=CUSTOM-KEY-Cookie,CUSTOM-ID-Cookie"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoAppIdCookieForwardCustom</azione>
 			     </configurazione-azione>
 
                         </configurazione-servizio>

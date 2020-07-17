@@ -19,11 +19,13 @@
  */
 package org.openspcoop2.utils.transport;
 
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -328,6 +330,35 @@ public class TransportUtils {
 		}
 		return value;
 		
+	}
+	
+	public static String getCookie(HttpServletRequest request, String name) {
+		
+		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
+		
+		if(request==null) {
+			return null;
+		}
+		if(name==null) {
+			return null;
+		}
+		Cookie[] c = request.getCookies();
+		if(c==null || c.length<=0) {
+			return null;
+		}
+		for (Cookie cookie : c) {
+			if(cookie!=null && cookie.getName()!=null) {
+				if(cookie.getName().equalsIgnoreCase(name)) {
+					try {
+						return URLDecoder.decode(cookie.getValue(), Charset.UTF_8.getValue());
+					}catch(Exception e) {
+						throw new RuntimeException(e.getMessage(),e);
+					}
+				}
+			}
+		}
+		return null;
+
 	}
 	
 	

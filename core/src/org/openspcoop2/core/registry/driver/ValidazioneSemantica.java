@@ -1030,10 +1030,12 @@ public class ValidazioneSemantica {
 			tipo = c.getTipo();
 		}
 		if ( !tipo.equals(CredenzialeTipo.BASIC) && 
+				!tipo.equals(CredenzialeTipo.APIKEY) && 
 				!tipo.equals(CredenzialeTipo.SSL) && 
 				!tipo.equals(CredenzialeTipo.PRINCIPAL))
 			this.errori.add("Il tipo delle credenziali del "+oggetto+" deve possedere i valori: "+
 					CredenzialeTipo.BASIC.toString()+" o "+
+					CredenzialeTipo.APIKEY.toString()+" o "+
 					CredenzialeTipo.SSL.toString()+" o "+
 					CredenzialeTipo.PRINCIPAL.toString());
 		
@@ -1041,6 +1043,10 @@ public class ValidazioneSemantica {
 		if (c.getTipo().equals(CredenzialeTipo.BASIC)) {
 			if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
 				this.errori.add("Le credenziali di tipo basic del "+oggetto+" devono avere username e password valorizzati");
+		}
+		if (c.getTipo().equals(CredenzialeTipo.APIKEY)) {
+			if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
+				this.errori.add("Le credenziali di tipo apikey del "+oggetto+" devono avere username e password valorizzati");
 		}
 
 		// Se il tipo e' ssl, subject e' OBBLIGATORIO

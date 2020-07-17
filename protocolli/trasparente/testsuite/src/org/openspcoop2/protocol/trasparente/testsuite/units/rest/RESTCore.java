@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.trasparente.testsuite.units.rest;
 
 import java.io.ByteArrayInputStream;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,6 +30,8 @@ import javax.mail.internet.ContentType;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CooperazioneTrasparenteBase;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
@@ -36,6 +39,7 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.trasparente.testsuite.core.TrasparenteTestsuiteLogger;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.FileCache;
+import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PosizioneCredenziale;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.TestFileEntry;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
@@ -45,6 +49,7 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
@@ -80,6 +85,14 @@ public class RESTCore {
 	private String portaApplicativaDelegata;
 	private String basicUsername;
 	private String basicPassword;
+	
+	private String apiKey;
+	private String appId;
+	private boolean appIdEnabled;
+	private PosizioneCredenziale posizioneApiKey = PosizioneCredenziale.HEADER;
+	private PosizioneCredenziale posizioneAppId = PosizioneCredenziale.HEADER;
+	private String nomePosizioneApiKey = null;
+	private String nomePosizioneAppId = null;
 
 	private RUOLO ruolo;
 	
@@ -140,6 +153,73 @@ public class RESTCore {
 		this.basicPassword = password;
 	}
 	
+	public void setCredenzialiApiKey(String username, String password, PosizioneCredenziale posizioneApiKey) throws Exception {
+		setCredenzialiApiKey(username, password, posizioneApiKey, null);
+	}
+	public void setCredenzialiApiKey(String username, String password, PosizioneCredenziale posizioneApiKey, String nomePosizioneApiKey) throws Exception {
+		this.setApiKey(ApiKeyUtilities.encodeApiKey(username, password), posizioneApiKey, nomePosizioneApiKey);
+	}
+	
+	public void setCredenzialiMultipleApiKey(String username, String password, PosizioneCredenziale posizioneApiKey, PosizioneCredenziale posizioneAppId) throws Exception {
+		setCredenzialiMultipleApiKey(username, password, posizioneApiKey, null, posizioneAppId, null);
+	}
+	public void setCredenzialiMultipleApiKey(String username, String password, 
+			PosizioneCredenziale posizioneApiKey, String nomePosizioneApiKey,
+			PosizioneCredenziale posizioneAppId, String nomePosizioneAppId) throws Exception {
+		this.setApiKey(ApiKeyUtilities.encodeMultipleApiKey(password), posizioneApiKey, nomePosizioneApiKey);
+		this.setAppId(username, posizioneAppId, nomePosizioneAppId);
+	}
+	
+	
+	public void setApiKey(String apiKey, PosizioneCredenziale posizioneApiKey) {
+		this.setApiKey(apiKey, posizioneApiKey, null);
+	}
+	public void setApiKey(String apiKey, PosizioneCredenziale posizioneApiKey, String nomePosizioneApiKey) {
+		this.apiKey = apiKey;
+		this.posizioneApiKey = posizioneApiKey;
+		if(this.posizioneApiKey==null) {
+			this.posizioneApiKey = PosizioneCredenziale.HEADER;
+		}
+		this.nomePosizioneApiKey = nomePosizioneApiKey;
+		if(this.nomePosizioneApiKey==null) {
+			switch (this.posizioneApiKey) {
+			case QUERY:
+				this.nomePosizioneApiKey= ParametriAutenticazioneApiKey.DEFAULT_QUERY_PARAMETER_API_KEY;
+				break;
+			case HEADER:
+				this.nomePosizioneApiKey= ParametriAutenticazioneApiKey.DEFAULT_HEADER_API_KEY;
+				break;
+			case COOKIE:
+				this.nomePosizioneApiKey= ParametriAutenticazioneApiKey.DEFAULT_COOKIE_API_KEY;
+				break;
+			}
+		}
+	}
+	public void setAppId(String appId, PosizioneCredenziale posizioneAppId) {
+		this.setAppId(appId, posizioneAppId, null);
+	}
+	public void setAppId(String appId, PosizioneCredenziale posizioneAppId, String nomePosizioneAppId) {
+		this.appId = appId;
+		this.posizioneAppId = posizioneAppId;
+		if(this.posizioneAppId==null) {
+			this.posizioneAppId = PosizioneCredenziale.HEADER;
+		}
+		this.nomePosizioneAppId = nomePosizioneAppId;
+		if(this.nomePosizioneAppId==null) {
+			switch (this.posizioneAppId) {
+			case QUERY:
+				this.nomePosizioneAppId= ParametriAutenticazioneApiKey.DEFAULT_QUERY_PARAMETER_APP_ID;
+				break;
+			case HEADER:
+				this.nomePosizioneAppId= ParametriAutenticazioneApiKey.DEFAULT_HEADER_APP_ID;
+				break;
+			case COOKIE:
+				this.nomePosizioneAppId= ParametriAutenticazioneApiKey.DEFAULT_COOKIE_APP_ID;
+				break;
+			}
+		}
+		this.appIdEnabled = true;
+	}
 	
 	public void postInvokeCheckHeader(HttpResponse httpResponse, HashMap<String, String> headers) throws TestSuiteException, Exception{
 		
@@ -429,12 +509,58 @@ public class RESTCore {
 				}
 				request.addHeader(nomeHeaderHttpInviato, valoreHeaderRichiesto);
 			}
+			if(this.apiKey!=null && PosizioneCredenziale.HEADER.equals(this.posizioneApiKey)){
+				request.addHeader(this.nomePosizioneApiKey, this.apiKey);
+			}
+			if(this.appIdEnabled && this.appId!=null && PosizioneCredenziale.HEADER.equals(this.posizioneAppId)){
+				request.addHeader(this.nomePosizioneAppId, this.appId);
+			}
 
 			// Header HTTP da ricevere
 			String nomeHeaderHttpDaRicevere = "ProvaHeaderResponse";
 			String valoreHeaderHttpDaRicevere = "TEST_RESPONSE_"+org.openspcoop2.utils.id.IDUtilities.getUniqueSerialNumber();
 			if(propertiesRequest!=null && !propertiesRequest.isEmpty()) {
 				valoreHeaderHttpDaRicevere = "TEST_RESPONSE"; // non dinamico, usato in response caching
+			}
+			
+			// Cookie
+			StringBuilder sbCookie = new StringBuilder();
+			if(this.apiKey!=null && (this.portaApplicativaDelegata!=null && 
+					(this.portaApplicativaDelegata.toLowerCase().contains("apikey") || this.portaApplicativaDelegata.toLowerCase().contains("appid")))) {
+				if(sbCookie.length()>0) {
+					sbCookie.append(HttpConstants.COOKIE_SEPARATOR);
+				}
+				sbCookie.append(CostantiTestSuite.COOKIE_CUSTOM1_NAME);
+				sbCookie.append(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+				sbCookie.append(CostantiTestSuite.COOKIE_CUSTOM1_VALUE);
+			}
+			if(this.apiKey!=null && PosizioneCredenziale.COOKIE.equals(this.posizioneApiKey)){
+				if(sbCookie.length()>0) {
+					sbCookie.append(HttpConstants.COOKIE_SEPARATOR);
+				}
+				sbCookie.append(this.nomePosizioneApiKey);
+				sbCookie.append(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+				sbCookie.append(URLEncoder.encode(this.apiKey, Charset.UTF_8.getValue()));
+			}
+			if(this.appIdEnabled && this.appId!=null && PosizioneCredenziale.COOKIE.equals(this.posizioneAppId)){
+				if(sbCookie.length()>0) {
+					sbCookie.append(HttpConstants.COOKIE_SEPARATOR);
+				}
+				sbCookie.append(this.nomePosizioneAppId);
+				sbCookie.append(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+				sbCookie.append(URLEncoder.encode(this.appId, Charset.UTF_8.getValue()));
+			}
+			if(this.apiKey!=null && (this.portaApplicativaDelegata!=null && 
+					(this.portaApplicativaDelegata.toLowerCase().contains("apikey") || this.portaApplicativaDelegata.toLowerCase().contains("appid")))) {
+				if(sbCookie.length()>0) {
+					sbCookie.append(HttpConstants.COOKIE_SEPARATOR);
+				}
+				sbCookie.append(CostantiTestSuite.COOKIE_CUSTOM2_NAME);
+				sbCookie.append(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+				sbCookie.append(CostantiTestSuite.COOKIE_CUSTOM2_VALUE);
+			}
+			if(sbCookie.length()>0) {
+				request.addHeader(HttpConstants.COOKIE, sbCookie.toString());
 			}
 			
 			String action = null;
@@ -457,6 +583,13 @@ public class RESTCore {
 				propertiesURLBased.putAll(propertiesRequest);
 			}
 
+			if(this.apiKey!=null && PosizioneCredenziale.QUERY.equals(this.posizioneApiKey)){
+				propertiesURLBased.put(this.nomePosizioneApiKey, this.apiKey);
+			}
+			if(this.appIdEnabled && this.appId!=null && PosizioneCredenziale.QUERY.equals(this.posizioneAppId)){
+				propertiesURLBased.put(this.nomePosizioneAppId, this.appId);
+			}
+			
 			propertiesURLBased.put("checkEqualsHttpMethod", this.method.name());
 			if(nomeHeaderHttpInviato!=null) {
 				propertiesURLBased.put("checkEqualsHttpHeader", nomeHeaderHttpInviato + ":" + valoreHeaderRichiesto);

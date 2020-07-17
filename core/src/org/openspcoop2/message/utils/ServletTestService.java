@@ -220,6 +220,56 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
+		String existsCookies = getParameter_checkWhiteList(request, whitePropertiesList, "existsCookies");
+		if(existsCookies!=null){
+			existsCookies = existsCookies.trim();
+			if(existsCookies.contains(",")==false) {
+				String v = TransportUtils.getCookie(request, existsCookies);
+				if(v==null){
+					throw new ServletException("Ricevuta una richiesta di verifica esistenza cookie ("+existsCookies+"). Cookie non presente");
+				}
+			}
+			else {
+				String [] split = existsCookies.split(",");
+				if(split==null){
+					throw new ServletException("Ricevuta una richiesta di verifica esistenza cookie non conforme (split null)");
+				}
+				for (String cookie : split) {
+					String v = TransportUtils.getCookie(request, cookie);
+					if(v==null){
+						throw new ServletException("Ricevuta una richiesta di verifica esistenza cookie ("+cookie+"). Cookie non presente");
+					}
+				}
+			}
+		}
+		
+		String notExistsCookies = getParameter_checkWhiteList(request, whitePropertiesList, "notExistsCookies");
+		if(notExistsCookies!=null){
+			notExistsCookies = notExistsCookies.trim();
+			if(notExistsCookies.contains(",")==false) {
+				String v = TransportUtils.getCookie(request, notExistsCookies);
+				if(v!=null){
+					throw new ServletException("Ricevuta una richiesta di verifica non esistenza cookie ("+notExistsCookies+"). Cookie presente");
+				}
+			}
+			else {
+				String [] split = notExistsCookies.split(",");
+				if(split==null){
+					throw new ServletException("Ricevuta una richiesta di verifica non esistenza cookie non conforme (split null)");
+				}
+				for (String header : split) {
+					String v = TransportUtils.getCookie(request, header);
+					if(v!=null){
+						throw new ServletException("Ricevuta una richiesta di verifica non esistenza cookie ("+header+"). Cookie presente");
+					}
+				}
+			}
+		}
+		
+		
+		
+		
+		
 		String checkEqualsHttpHeader = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsHttpHeader");
 		if(checkEqualsHttpHeader!=null){
 			checkEqualsHttpHeader = checkEqualsHttpHeader.trim();
@@ -267,6 +317,31 @@ public class ServletTestService extends HttpServlet {
 			}
 			if(v.equals(valore)==false){
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso");
+			}
+		}
+		
+		String checkEqualsCookie = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsCookie");
+		if(checkEqualsCookie!=null){
+			checkEqualsCookie = checkEqualsCookie.trim();
+			if(checkEqualsCookie.contains(":")==false){
+				throw new ServletException("Ricevuta una richiesta di verifica cookie non conforme (pattern nome:valore)");
+			}
+			String [] split = checkEqualsCookie.split(":");
+			if(split==null){
+				throw new ServletException("Ricevuta una richiesta di verifica cookie non conforme (pattern nome:valore) (split null)");
+			}
+			if(split.length!=2){
+				throw new ServletException("Ricevuta una richiesta di verifica cookie non conforme (pattern nome:valore) (split:"+split.length+")");
+			}
+			String key = split[0];
+			String valore = split[1];
+			
+			String v = TransportUtils.getCookie(request, key);
+			if(v==null){
+				throw new ServletException("Ricevuta una richiesta di verifica cookie ("+key+":"+valore+"). Cookie ["+key+"] non presente");
+			}
+			if(v.equals(valore)==false){
+				throw new ServletException("Ricevuta una richiesta di verifica cookie ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso");
 			}
 		}
 		

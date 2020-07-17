@@ -761,6 +761,29 @@ public class DatabaseMsgDiagnosticiComponent {
 					}
 				}
 				
+				if(!casoSpecialeEmail){
+					if(messaggio.contains("ApiKeyAppId@MinisteroFruitore")){
+						String tmp = new String(messaggio);
+						tmp = tmp.replace("ApiKeyAppId@MinisteroFruitore", "");
+						casoSpecialeEmail = tmp.contains("@")==false;
+					}
+				}
+				
+				if(!casoSpecialeEmail){
+					if(messaggio.contains("ApiKey@MinisteroFruitore")){
+						String tmp = new String(messaggio);
+						tmp = tmp.replace("ApiKey@MinisteroFruitore", "");
+						casoSpecialeEmail = tmp.contains("@")==false;
+					}
+				}
+				
+				if(!casoSpecialeEmail){
+					if(messaggio.contains("V2@prova")){
+						String tmp = new String(messaggio);
+						tmp = tmp.replace("V2@prova", "");
+						casoSpecialeEmail = tmp.contains("@")==false;
+					}
+				}
 				
 				if(casoSpecialeEmail==false){
 					resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+

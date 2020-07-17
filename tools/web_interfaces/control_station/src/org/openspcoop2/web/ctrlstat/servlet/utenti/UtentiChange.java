@@ -46,8 +46,10 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -412,12 +414,20 @@ public final class UtentiChange extends Action {
 
 			} else {
 
+				boolean secret = false;
+				String secret_password  = pwsu;
+				String secret_user = nomesu;
+				boolean secret_appId = false;
+				
 				// Modifico l'utente
 
 				// Cripto la password
 				boolean cpwd = ServletUtils.isCheckBoxEnabled(changepwd);
 				if(cpwd && !"".equals(pwsu)){
-					pwsu = utentiCore.getUtenzePasswordManager().crypt(pwsu);
+					if(utentiCore.isUtenzePasswordEncryptEnabled()) {
+						secret = true;
+						pwsu = utentiCore.getUtenzePasswordManager().crypt(pwsu);
+					}
 				}
 
 				// Modifico i dati dell'utente
@@ -625,11 +635,17 @@ public final class UtentiChange extends Action {
 
 				}
 
+				boolean isLoggedUser = userLogin.equals(user.getLogin());
+				
+				// Messaggio 'Please Copy'
+				if(!isLoggedUser && secret) {
+					utentiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.UTENTE, nomesu);
+				}
 
 				// Se ho modificato l'utente loggato non faccio caricare la lista, degli utente ma una
 				// pagina di info che indica che l'utente e' stato modificato con successo
 				// MOTIVO: Viene effettuato il refresh della colonna a sinistra, se per caso sono cambiati i diritti
-				if (userLogin.equals(user.getLogin())){
+				if (isLoggedUser){
 
 					// Reinit general data per aggiornare lo stato della barra dell'header a dx.
 					gd = generalHelper.initGeneralData(request);
@@ -637,7 +653,7 @@ public final class UtentiChange extends Action {
 					utentiHelper.makeMenu();
 
 					pd.setMessage("Utente '"+userLogin+"' modificato con successo", Costanti.MESSAGE_TYPE_INFO);
-
+					
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 					return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE(),UtentiCostanti.STRUTS_FORWARD_PERMESSI_OK);	

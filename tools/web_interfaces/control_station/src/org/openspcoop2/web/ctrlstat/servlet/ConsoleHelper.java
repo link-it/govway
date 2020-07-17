@@ -15545,66 +15545,26 @@ public class ConsoleHelper implements IConsoleHelper {
 		return de;
 	}
 	
-	/*
-	public void setSecretPleaseCopy(String secret_password, String secret_user, boolean appId, String tipoAuth, boolean soggetti, String nome) {
-		String labelPassword = null;
-		String labelUtente = null;
-		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
-			labelUtente= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME+": "+secret_user;
-			labelPassword= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD+": "+secret_password;
-		}
-		else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoAuth)) {
-			if(appId) {
-				labelUtente= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+": "+secret_user;
-			}
-			labelPassword= "- "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+": "+secret_password;
-		}
-		
-		String nomeP = nome!=null ? " "+nome : "";
-		String tipoOggetto = null;
-		if(soggetti) {
-			tipoOggetto = "al soggetto"+nomeP;
-		}
-		else {
-			if(nome!=null) {
-				tipoOggetto = "all'applicativo"+nomeP;
-			}
-			else {
-				tipoOggetto = "all'erogazione";
-			}
-		}
-		
-		//String warn = "<b>!! Attenzione !!</b>";
-		String intestazione = StringEscapeUtils.escapeHtml("Le credenziali associate "+tipoOggetto+" sono le seguenti: ");
-		String attenzione = StringEscapeUtils.escapeHtml("Si prega di copiarle e custodirle attentamente.");
-		StringBuilder sb = new StringBuilder();
-		String newLine = "<br/>";
-		//sb.append(warn).append(newLine).append(newLine);
-		sb.append(intestazione).append(newLine);
-		if(labelUtente!=null) {
-			sb.append(labelUtente).append(newLine);
-		}
-		if(labelPassword!=null) {
-			sb.append(labelPassword).append(newLine);
-		}
-		sb.append(newLine).append(attenzione);
-		this.pd.setMessage(sb.toString(), org.openspcoop2.web.lib.mvc.MessageType.WARN);
-	}
-	*/
-	public void setSecretPleaseCopy(String secret_password, String secret_user, boolean appId, String tipoAuth, boolean soggetti, String nome) {
+	public void setSecretPleaseCopy(String secret_password, String secret_user, boolean appId, String tipoAuth, OggettoDialogEnum oggettoDialog, String nome) {
 
 		String nomeP = nome!=null ? " "+nome : "";
 		String tipoOggetto = null;
-		if(soggetti) {
+		switch (oggettoDialog) {
+		case UTENTE:
+			tipoOggetto = "all'utente"+nomeP;
+			break;
+		case SOGGETTO:
 			tipoOggetto = "al soggetto"+nomeP;
-		}
-		else {
-			if(nome!=null) {
-				tipoOggetto = "all'applicativo"+nomeP;
-			}
-			else {
-				tipoOggetto = "all'erogazione";
-			}
+			break;
+		case APPLICATIVO:
+			tipoOggetto = "all'applicativo"+nomeP;
+			break;
+		case EROGAZIONE:
+			tipoOggetto = "all'erogazione";
+			break;
+		case CONNETTORE_MULTIPLO:
+			tipoOggetto = "al connettore"+nomeP+" dell'erogazione";
+			break;
 		}
 		
 		String header1= "";

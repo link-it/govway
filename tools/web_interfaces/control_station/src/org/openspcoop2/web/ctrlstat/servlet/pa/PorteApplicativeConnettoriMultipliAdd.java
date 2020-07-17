@@ -39,7 +39,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -47,6 +49,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
@@ -68,6 +71,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -660,37 +664,42 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
 			paSA.setDatiConnettore(datiConnettore);
 			
+			boolean secret = false;
+			String secret_password  = null;
+			String secret_user = null;
+			boolean secret_appId = false;
+			
 			if(erogazioneServizioApplicativoServerEnabled) {
 				paSA.setNome(erogazioneServizioApplicativoServer);
 			} else {
-			// 1. Creo connettore
-			Connettore connettore = null;
-			
-			// Connettore
-			connettore = new Connettore();
-			// this.nomeservizio);
-			if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
-				connettore.setTipo(tipoconn);
-			else
-				connettore.setTipo(endpointtype);
-
-			porteApplicativeHelper.fillConnettore(connettore, connettoreDebug, endpointtype, endpointtype, tipoconn, url,
-					nomeCodaJms, tipoJms, user, password,
-					initcont, urlpgk, provurl, connfact,
-					tipoSendas, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo,
-					httpspwd, httpsalgoritmo, httpsstato,
-					httpskeystore, httpspwdprivatekeytrust,
-					httpspathkey, httpstipokey,
-					httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					token_policy, listExtendedConnettore);
+				// 1. Creo connettore
+				Connettore connettore = null;
+				
+				// Connettore
+				connettore = new Connettore();
+				// this.nomeservizio);
+				if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
+					connettore.setTipo(tipoconn);
+				else
+					connettore.setTipo(endpointtype);
+	
+				porteApplicativeHelper.fillConnettore(connettore, connettoreDebug, endpointtype, endpointtype, tipoconn, url,
+						nomeCodaJms, tipoJms, user, password,
+						initcont, urlpgk, provurl, connfact,
+						tipoSendas, httpsurl, httpstipologia,
+						httpshostverify, httpspath, httpstipo,
+						httpspwd, httpsalgoritmo, httpsstato,
+						httpskeystore, httpspwdprivatekeytrust,
+						httpspathkey, httpstipokey,
+						httpspwdkey, httpspwdprivatekey,
+						httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						token_policy, listExtendedConnettore);
 			
 				// creare un servizio applicativo
 				String nomeServizioApplicativoErogatore = pa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX + 
@@ -764,6 +773,28 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 				else{
 					sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());
 				}
+				
+				if(CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+					sa.setInvocazionePorta(new InvocazionePorta());
+					InvocazionePorta invocazionePorta = sa.getInvocazionePorta();
+					Credenziali c = new Credenziali();
+					c.setTipo(CredenzialeTipo.BASIC);
+					c.setUser(getmsgUsername);
+					c.setPassword(getmsgPassword);
+					
+					c.setCertificateStrictVerification(false); // se è abilitata la cifratura, verrà impostata a true nel perform update
+					if(saCore.isApplicativiPasswordEncryptEnabled()) {
+						secret = true;
+					}
+					
+					if(secret) {
+						secret_user = c.getUser();
+						secret_password = c.getPassword();
+						secret_appId = c.isAppId();
+					}
+					
+					invocazionePorta.addCredenziali(c);
+				}
 	
 				listaOggettiDaCreare.add(sa);
 			
@@ -781,6 +812,11 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			
 			// ricarico la configurazione
 			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			
+			// Messaggio 'Please Copy'
+			if(secret) {
+				porteApplicativeHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.CONNETTORE_MULTIPLO, nomeConnettore);
+			}
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

@@ -27,6 +27,7 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore;
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore.RUOLO;
+import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PosizioneCredenziale;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
@@ -177,6 +178,65 @@ public class RESTAutenticazionePortaDelegata {
 		restCore.invoke("json", 200, repository, true, true, "text/json");
 		restCore.postInvoke(repository);
 	}
+	
+	
+	
+	
+	
+//	ApiKey 1) Invocazione dove il client fornisce le credenziali corrette che vengono "bruciate" dalla PdD, al servizio vengono inoltrati solamente i cookies rimasti. 
+//	Si attende 200 ritornato dal servizio finale.
+	
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAuth"})
+	public void testServiceWithApiKeyAuth() throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APIKEY);
+		restCore.setCredenzialiApiKey("EsempioFruitoreTrasparenteApiKey@MinisteroFruitore.gw", "123456", PosizioneCredenziale.COOKIE);
+		restCore.invoke("json", 200, repository, true, true, "text/json");
+		restCore.postInvoke(repository);
+	}
+
+//	ApiKey 2) Invocazione dove il client fornisce le credenziali corrette che non vengono "bruciate" dalla PdD, al servizio vengono inoltrati tutti i cookies, anche quelli contenente l'api key. 
+//	Si attende 200 ritornato dal servizio finale.
+	
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAuthForward"})
+	public void testServiceWithApiKeyAuthForward() throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APIKEY_FORWARD);
+		restCore.setCredenzialiApiKey("EsempioFruitoreTrasparenteApiKey@MinisteroFruitore.gw", "123456", PosizioneCredenziale.COOKIE);
+		restCore.invoke("json", 200, repository, true, true, "text/json");
+		restCore.postInvoke(repository);
+	}
+
+	
+	
+//	ApiKey + AppId 1) Invocazione dove il client fornisce le credenziali corrette che vengono "bruciate" dalla PdD, al servizio vengono inoltrati solamente i cookies rimasti. 
+//	Si attende 200 ritornato dal servizio finale.
+	
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAppIdAuth"})
+	public void testServiceWithApiKeyAppIdAuth() throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APPID);
+		restCore.setCredenzialiMultipleApiKey("EsempioFruitoreTrasparenteApiKeyAppId@MinisteroFruitore.gw", "123456", PosizioneCredenziale.COOKIE, PosizioneCredenziale.COOKIE);
+		restCore.invoke("json", 200, repository, true, true, "text/json");
+		restCore.postInvoke(repository);
+	}
+
+//	ApiKey + AppId 2) Invocazione dove il client fornisce le credenziali corrette che non vengono "bruciate" dalla PdD, al servizio vengono inoltrati tutti i cookies, anche quelli contenente l'api key. 
+//	Si attende 200 ritornato dal servizio finale.
+	
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAppIdAuthForward"})
+	public void testServiceWithApiKeyAppIdAuthForward() throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APPID_FORWARD);
+		restCore.setCredenzialiMultipleApiKey("EsempioFruitoreTrasparenteApiKeyAppId@MinisteroFruitore.gw", "123456", PosizioneCredenziale.COOKIE, PosizioneCredenziale.COOKIE);
+		restCore.invoke("json", 200, repository, true, true, "text/json");
+		restCore.postInvoke(repository);
+	}
+	
 	
 	
 }

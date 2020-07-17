@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -56,6 +57,8 @@ import org.openspcoop2.testsuite.units.utils.ExceptionCodeExpected;
 import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
 import org.openspcoop2.testsuite.units.utils.ProblemUtilities;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.testng.Assert;
 import org.testng.Reporter;
 
@@ -408,8 +411,8 @@ public class AuthUtilities {
 				}
 			}
 			client.setPortaDelegata(nomePorta);
+			String newUrl = nomePorta;
 			if(generateCredenzialiInvocazioneAsQuery!=null) {
-				String newUrl = nomePorta;
 				if(newUrl.contains("?")) {
 					newUrl = newUrl + "&";
 				}
@@ -419,8 +422,33 @@ public class AuthUtilities {
 				newUrl = newUrl + generateCredenzialiInvocazioneAsQuery;
 				newUrl = newUrl + "=";
 				newUrl = newUrl + credenzialiInvocazione.getUsername();
-				client.setPortaDelegata(newUrl);
 			}
+			if(credenzialiInvocazione!=null && TipoAutenticazione.APIKEY.equals(credenzialiInvocazione.getAutenticazione()) &&
+					PosizioneCredenziale.QUERY.equals(credenzialiInvocazione.getPosizioneApiKey())){
+				if(newUrl.contains("?")) {
+					newUrl = newUrl + "&";
+				}
+				else {
+					newUrl = newUrl + "?";
+				}
+				newUrl = newUrl + credenzialiInvocazione.getNomePosizioneApiKey();
+				newUrl = newUrl + "=";
+				newUrl = newUrl + credenzialiInvocazione.getApiKey();
+			}
+			if(credenzialiInvocazione!=null && TipoAutenticazione.APIKEY.equals(credenzialiInvocazione.getAutenticazione()) &&
+					credenzialiInvocazione.isAppIdEnabled() &&
+					PosizioneCredenziale.QUERY.equals(credenzialiInvocazione.getPosizioneAppId())){
+				if(newUrl.contains("?")) {
+					newUrl = newUrl + "&";
+				}
+				else {
+					newUrl = newUrl + "?";
+				}
+				newUrl = newUrl + credenzialiInvocazione.getNomePosizioneAppId();
+				newUrl = newUrl + "=";
+				newUrl = newUrl + credenzialiInvocazione.getAppId();
+			}
+			client.setPortaDelegata(newUrl);
 			client.connectToSoapEngine();
 			if(generateCredenzialiInvocazioneAsHeader!=null) {
 				if(credenzialiInvocazione.getUsername()!=null) {
@@ -434,6 +462,54 @@ public class AuthUtilities {
 				if(credenzialiInvocazione.getPassword()!=null) {
 					client.setPassword(credenzialiInvocazione.getPassword());
 				}
+			}
+			if(credenzialiInvocazione!=null && TipoAutenticazione.APIKEY.equals(credenzialiInvocazione.getAutenticazione()) &&
+					PosizioneCredenziale.HEADER.equals(credenzialiInvocazione.getPosizioneApiKey())){
+				client.setProperty(credenzialiInvocazione.getNomePosizioneApiKey(), credenzialiInvocazione.getApiKey());
+			}
+			if(credenzialiInvocazione!=null && TipoAutenticazione.APIKEY.equals(credenzialiInvocazione.getAutenticazione()) &&
+					credenzialiInvocazione.isAppIdEnabled() &&
+					PosizioneCredenziale.HEADER.equals(credenzialiInvocazione.getPosizioneAppId())){
+				client.setProperty(credenzialiInvocazione.getNomePosizioneAppId(), credenzialiInvocazione.getAppId());
+			}
+			StringBuilder sbCookie = new StringBuilder();
+			if((nomePorta!=null && (nomePorta.contains("ApiKey") || nomePorta.contains("AppId")))) {
+				if(sbCookie.length()>0) {
+					sbCookie.append(HttpConstants.COOKIE_SEPARATOR);
+				}
+				sbCookie.append(CostantiTestSuite.COOKIE_CUSTOM1_NAME);
+				sbCookie.append(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+				sbCookie.append(CostantiTestSuite.COOKIE_CUSTOM1_VALUE);
+			}
+			if(credenzialiInvocazione!=null && TipoAutenticazione.APIKEY.equals(credenzialiInvocazione.getAutenticazione()) &&
+					PosizioneCredenziale.COOKIE.equals(credenzialiInvocazione.getPosizioneApiKey())){
+				if(sbCookie.length()>0) {
+					sbCookie.append(HttpConstants.COOKIE_SEPARATOR);
+				}
+				sbCookie.append(credenzialiInvocazione.getNomePosizioneApiKey());
+				sbCookie.append(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+				sbCookie.append(URLEncoder.encode(credenzialiInvocazione.getApiKey(), Charset.UTF_8.getValue()));
+			}
+			if(credenzialiInvocazione!=null && TipoAutenticazione.APIKEY.equals(credenzialiInvocazione.getAutenticazione()) &&
+					credenzialiInvocazione.isAppIdEnabled() &&
+					PosizioneCredenziale.COOKIE.equals(credenzialiInvocazione.getPosizioneAppId())){
+				if(sbCookie.length()>0) {
+					sbCookie.append(HttpConstants.COOKIE_SEPARATOR);
+				}
+				sbCookie.append(credenzialiInvocazione.getNomePosizioneAppId());
+				sbCookie.append(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+				sbCookie.append(URLEncoder.encode(credenzialiInvocazione.getAppId(), Charset.UTF_8.getValue()));
+			}
+			if((nomePorta!=null && (nomePorta.contains("ApiKey") || nomePorta.contains("AppId")))) {
+				if(sbCookie.length()>0) {
+					sbCookie.append(HttpConstants.COOKIE_SEPARATOR);
+				}
+				sbCookie.append(CostantiTestSuite.COOKIE_CUSTOM2_NAME);
+				sbCookie.append(HttpConstants.COOKIE_NAME_VALUE_SEPARATOR);
+				sbCookie.append(CostantiTestSuite.COOKIE_CUSTOM2_VALUE);
+			}
+			if(sbCookie.length()>0) {
+				client.setProperty(HttpConstants.COOKIE, sbCookie.toString());
 			}
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -471,6 +547,10 @@ public class AuthUtilities {
 					
 					Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"] found["+error.getFaultActor()+"]");
 					Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+					
+					if(exceptionCodeExpected==null) {
+						throw new Exception("Ricevuta eccezione non attesa");
+					}
 					
 					String codiceErrore = null;
 					if(exceptionCodeExpected.isGenericCode()) {
@@ -525,6 +605,10 @@ public class AuthUtilities {
 						Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"] found["+error.getFaultActor()+"]");
 						Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 							
+						if(exceptionCodeExpected==null) {
+							throw new Exception("Ricevuta eccezione non attesa");
+						}
+						
 						String codiceErrore = null;
 						if(exceptionCodeExpected.isGenericCode()) {
 							codiceErrore = (exceptionCodeExpected.getIntegrationFunctionError().isClientError() ? 

@@ -323,6 +323,62 @@
 		    <azione identificazione="static" nome="invokeWithBasicAuthDomain"/>
 		</porta-delegata>
 
+		<porta-delegata nome="AuthenticationREST_apiKey" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invokeApiKey"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationREST_apiKeyForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invokeApiKeyForward"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_appId" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invokeAppId"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationREST_appIdForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invokeAppIdForward"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-delegata>
+
+
+
 
 		<!-- *** JOSE Signature Compact *** -->
 
@@ -3968,6 +4024,234 @@
 		</porta-delegata>
 
 
+		<porta-delegata nome="AuthenticationApiKey" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKey"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationOptionalApiKey" autenticazione="apikey" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKey"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationApiKeyQueryForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyQueryForward"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationApiKeyHeaderForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyHeaderForward"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationApiKeyCookieForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyCookieForward"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationApiKeyQueryForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyQueryForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameterApiKey" valore="custom_key_value"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationApiKeyHeaderForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyHeaderForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="headerApiKey" valore="X-CUSTOM-KEY-HDR"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationApiKeyCookieForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyCookieForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="cookieApiKey" valore="CUSTOM-KEY-Cookie"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+
+
+		<porta-delegata nome="AuthenticationAppId" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppId"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationOptionalAppId" autenticazione="apikey" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppId"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationAppIdQueryForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdQueryForward"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationAppIdHeaderForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdHeaderForward"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationAppIdCookieForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdCookieForward"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationAppIdQueryForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdQueryForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameterApiKey" valore="custom_key_value"/>
+		    <proprieta-autenticazione nome="queryParameterAppId" valore="custom_id_value"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationAppIdHeaderForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdHeaderForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="headerApiKey" valore="X-CUSTOM-KEY-HDR"/>
+		    <proprieta-autenticazione nome="headerAppId" valore="X-CUSTOM-ID-HDR"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationAppIdCookieForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdCookieForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="cookieApiKey" valore="CUSTOM-KEY-Cookie"/>
+		    <proprieta-autenticazione nome="cookieAppId" valore="CUSTOM-ID-Cookie"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-delegata>
+
+
+
 
 		<!-- Authorization -->
 
@@ -4336,7 +4620,7 @@
 
 		<servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" >
 		      <invocazione-porta>
-		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic" password="123456" />
+		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
 			<ruoli>
 				<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 				<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
@@ -4347,16 +4631,43 @@
 
 		<servizio-applicativo nome="EsempioFruitoreTrasparenteBasic2" >
 		      <invocazione-porta>
-		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic2" password="123456" />
+		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic2" password="123456" /> <!-- Lascio in chiaro per verifica retrocompatibilita' -->
 		      </invocazione-porta>
 		</servizio-applicativo>
 
 		<servizio-applicativo nome="EsempioFruitoreTrasparenteBasic3" >
 		      <invocazione-porta>
-		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic3" password="123456" />
+		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic3" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
 			<ruoli>
 				<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest"/> 
 		    	  </ruoli>
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteBasic4" > <!-- non esiste una credenziale identica per un soggetto -->
+		      <invocazione-porta>
+		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic4" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteApiKey" >
+		      <invocazione-porta>
+		         <credenziali tipo="apikey" user="EsempioFruitoreTrasparenteApiKey@MinisteroFruitore.gw" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
+		      </invocazione-porta>
+		</servizio-applicativo>
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteApiKey2" >
+		      <invocazione-porta>
+		         <credenziali tipo="apikey" app-id="false" user="EsempioFruitoreTrasparenteApiKey2@MinisteroFruitore.gw" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
+		      </invocazione-porta>
+		</servizio-applicativo>
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteApiKeyAppId" >
+		      <invocazione-porta>
+		         <credenziali tipo="apikey" app-id="true" user="EsempioFruitoreTrasparenteApiKeyAppId@MinisteroFruitore.gw" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
+		      </invocazione-porta>
+		</servizio-applicativo>
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteApiKeyAppId2" >
+		      <invocazione-porta>
+		         <credenziali tipo="apikey" app-id="true" user="EsempioFruitoreTrasparenteApiKeyAppId2@MinisteroFruitore.gw" password="$6$DIiEFuwpOv16zy1F$dVv0UOd/SJ1X3DtcIz.0NztlDS2d3jsCRodoDfqGe7JGFfgLbosSngnNGVtl7SKtfrerO0rw.QJVviB5MHYgw/" /> <!-- password="123456" generata con il comando 'openssl passwd -6 123456' -->
 		      </invocazione-porta>
 		</servizio-applicativo>
 
@@ -4766,6 +5077,60 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <servizio tipo="gw" nome="API"/>
 		    <azione nome="invokeWithBasicAuthDomain"/>
 		    <servizio-applicativo nome="api_authBasicWithDomain"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_apiKey" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invokeApiKey"/>
+		    <servizio-applicativo nome="api_invokeApiKey"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationREST_apiKeyForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invokeApiKeyForward"/>
+		    <servizio-applicativo nome="api_invokeApiKeyForward"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_appId" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invokeAppId"/>
+		    <servizio-applicativo nome="api_invokeAppId"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationREST_appIdForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invokeAppIdForward"/>
+		    <servizio-applicativo nome="api_invokeAppIdForward"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-applicativa>
 
 
@@ -8288,6 +8653,234 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 
 
 
+		<porta-applicativa nome="AuthenticationApiKey" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKey"/>
+		    <servizio-applicativo nome="aggiornamentoApiKey"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationOptionalApiKey" autenticazione="apikey" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKey"/>
+		    <servizio-applicativo nome="aggiornamentoApiKey"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationApiKeyQueryForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyQueryForward"/>
+		    <servizio-applicativo nome="aggiornamentoApiKeyQueryForward"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationApiKeyHeaderForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyHeaderForward"/>
+		    <servizio-applicativo nome="aggiornamentoApiKeyHeaderForward"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationApiKeyCookieForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyCookieForward"/>
+		    <servizio-applicativo nome="aggiornamentoApiKeyCookieForward"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationApiKeyQueryForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyQueryForwardCustom"/>
+		    <servizio-applicativo nome="aggiornamentoApiKeyQueryForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameterApiKey" valore="custom_key_value"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationApiKeyHeaderForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyHeaderForwardCustom"/>
+		    <servizio-applicativo nome="aggiornamentoApiKeyHeaderForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="headerApiKey" valore="X-CUSTOM-KEY-HDR"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationApiKeyCookieForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoApiKeyCookieForwardCustom"/>
+		    <servizio-applicativo nome="aggiornamentoApiKeyCookieForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="cookieApiKey" valore="CUSTOM-KEY-Cookie"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+
+
+		<porta-applicativa nome="AuthenticationAppId" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppId"/>
+		    <servizio-applicativo nome="aggiornamentoAppId"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationOptionalAppId" autenticazione="apikey" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppId"/>
+		    <servizio-applicativo nome="aggiornamentoAppId"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationAppIdQueryForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdQueryForward"/>
+		    <servizio-applicativo nome="aggiornamentoAppIdQueryForward"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationAppIdHeaderForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdHeaderForward"/>
+		    <servizio-applicativo nome="aggiornamentoAppIdHeaderForward"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationAppIdCookieForward" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdCookieForward"/>
+		    <servizio-applicativo nome="aggiornamentoAppIdCookieForward"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="true"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="true"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationAppIdQueryForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdQueryForwardCustom"/>
+		    <servizio-applicativo nome="aggiornamentoAppIdQueryForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="true"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="queryParameterApiKey" valore="custom_key_value"/>
+		    <proprieta-autenticazione nome="queryParameterAppId" valore="custom_id_value"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationAppIdHeaderForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdHeaderForwardCustom"/>
+		    <servizio-applicativo nome="aggiornamentoAppIdHeaderForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="true"/>
+		    <proprieta-autenticazione nome="cookie" valore="false"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="headerApiKey" valore="X-CUSTOM-KEY-HDR"/>
+		    <proprieta-autenticazione nome="headerAppId" valore="X-CUSTOM-ID-HDR"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationAppIdCookieForwardCustom" autenticazione="apikey" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoAppIdCookieForwardCustom"/>
+		    <servizio-applicativo nome="aggiornamentoAppIdCookieForwardCustom"/>
+		    <proprieta-autenticazione nome="appId" valore="true"/>
+		    <proprieta-autenticazione nome="queryParameter" valore="false"/>
+		    <proprieta-autenticazione nome="header" valore="false"/>
+		    <proprieta-autenticazione nome="cookie" valore="true"/>
+		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
+		    <proprieta-autenticazione nome="cookieApiKey" valore="CUSTOM-KEY-Cookie"/>
+		    <proprieta-autenticazione nome="cookieAppId" valore="CUSTOM-ID-Cookie"/>
+		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
+		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
+		</porta-applicativa>
+
+
+
 		<!-- Authorization -->
 
 		<!-- 
@@ -8661,6 +9254,42 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         </invocazione-servizio>
                 </servizio-applicativo>
 
+ 		<servizio-applicativo nome="api_invokeApiKey">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="invokeApiKey">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				</connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+ 		<servizio-applicativo nome="api_invokeApiKeyForward">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="invokeApiKeyForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;existsCookies=X-API-KEYY&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				</connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+		<servizio-applicativo nome="api_invokeAppId">
+                        <invocazione-servizio>
+                               <connettore tipo="http" nome="invokeAppId">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				</connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="api_invokeAppIdForward">
+                        <invocazione-servizio>
+                               <connettore tipo="http" nome="invokeAppIdForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;existsCookies=X-API-KEY&amp;existsCookies=X-APP-ID&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"
+				        />
+				</connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+
 		<!-- CORS -->
 
 		<servizio-applicativo nome="apiEchoTrasparente">
@@ -8823,6 +9452,144 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
+
+
+
+
+
+		<servizio-applicativo nome="aggiornamentoApiKey">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoApiKey">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;notExistsCookies=CustomCookie1,CustomCookie2" />
+<!-- SOLO in REST si propaga il cookie existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"  -->
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+		<servizio-applicativo nome="aggiornamentoApiKeyQueryForward">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoApiKeyQueryForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;existsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="aggiornamentoApiKeyHeaderForward">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoApiKeyHeaderForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?existsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="aggiornamentoApiKeyCookieForward">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoApiKeyCookieForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;existsCookies=X-API-KEY"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+		<servizio-applicativo nome="aggiornamentoApiKeyQueryForwardCustom">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoApiKeyQueryForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsQueryParameters=custom_key_value"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="aggiornamentoApiKeyHeaderForwardCustom">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoApiKeyHeaderForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsHttpHeaders=X-CUSTOM-KEY-HDR"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="aggiornamentoApiKeyCookieForwardCustom">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoApiKeyCookieForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsCookies=CUSTOM-KEY-Cookie"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+
+		<servizio-applicativo nome="aggiornamentoAppId">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoAppId">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;notExistsCookies=CustomCookie1,CustomCookie2" />
+<!-- SOLO in REST si propaga il cookie existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"  -->
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+		<servizio-applicativo nome="aggiornamentoAppIdQueryForward">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoAppIdQueryForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key&amp;existsQueryParameters=app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="aggiornamentoAppIdHeaderForward">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoAppIdHeaderForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;existsHttpHeaders=X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="aggiornamentoAppIdCookieForward">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoAppIdCookieForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY&amp;existsCookies=X-APP-ID"
+				        />
+				   </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+		<servizio-applicativo nome="aggiornamentoAppIdQueryForwardCustom">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoAppIdQueryForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsQueryParameters=custom_key_value,custom_id_value"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="aggiornamentoAppIdHeaderForwardCustom">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoAppIdHeaderForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsHttpHeaders=X-CUSTOM-KEY-HDR,X-CUSTOM-ID-HDR"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="aggiornamentoAppIdCookieForwardCustom">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="aggiornamentoAppIdCookieForwardCustom">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsCookies=CUSTOM-KEY-Cookie,CUSTOM-ID-Cookie"
+				        />
+				    </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
 
 
 		<!-- CORS -->

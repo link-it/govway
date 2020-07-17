@@ -106,13 +106,74 @@ Le informazioni da inserire sono:
 
 -  *Password*: sezione per l'impostazione della password dell'utente.
 
+
+.. note::
+    I criteri minimi di sicurezza che una password deve soddisfare sono configurabili agendo sul file <directory-lavoro>/consolePassword.properties:
+
+       ::
+
+          # Abilitare l'opzione seguente per poter autenticare:
+          # La password deve rispettare tutti i vincoli impostati
+
+          # Deve soddisfare le seguenti espressioni regolari
+          #passwordVerifier.regularExpression.EXP1=reg1
+          #..
+          #passwordVerifier.regularExpression.EXPN=regn
+
+          # Non deve contenere il nome di login dell'utente
+          passwordVerifier.notContainsLogin=true
+
+          # Non deve corrispondere ad una delle seguenti parole riservate
+          #passwordVerifier.restrictedWords=root, admin, administrator, amministratore
+
+          # Deve essere composta almeno da x caratteri
+          passwordVerifier.minLength=8
+
+          # Non deve essere composta da più di x caratteri
+          #passwordVerifier.maxLength=20
+
+          # Deve contenere almeno una lettera minuscola (a - z)
+          passwordVerifier.lowerCaseLetter=true
+
+          # Deve contenere almeno una lettera maiuscola (A - Z)
+          passwordVerifier.upperCaseLetter=true
+
+          # Deve contenere almeno un numero (0 - 9)
+          passwordVerifier.includeNumber=true
+
+          # Deve contenere almeno un carattere non alfabetico (ad esempio, !, $, #, %, @)
+          passwordVerifier.includeNotAlphanumericSymbol=true
+
+          # Tutti i caratteri utilizzati devono essere differenti
+          #passwordVerifier.allDistinctCharacters=true
+
+
 La pagina indice della sezione Utenti visualizza gli utenti già presenti
 nel sistema con i relativi permessi e i link per modificarli o assumerne
 l'identità (:numref:`utenteList`)
 
    .. figure:: ../_figure_console/ElencoUtenti.png
-    :scale: 100%
+    :scale: 90%
     :align: center
     :name: utenteList
 
     Lista degli utenti
+
+.. note::
+    La password generata e assegnata all'utente viene visualizzata solamente nell'avviso visualizzato in seguito alla creazione (:numref:`CreazioneUtenteCredenzialiBasic`) e successivamente non è più consultabile. 
+
+    .. figure:: ../_figure_console/CreazioneUtenteCredenzialiBasic.png
+     :scale: 100%
+     :align: center
+     :name: CreazioneUtenteCredenzialiBasic
+
+     Avviso di copia delle credenziali dell'utente
+
+    Nel caso di smarrimento della password è necessario procedere con la generazione di una nuova password (:numref:`AggiornamentoUtenteCredenzialiBasic`).
+
+    .. figure:: ../_figure_console/AggiornamentoUtenteCredenzialiBasic.png
+     :scale: 100%
+     :align: center
+     :name: AggiornamentoUtenteCredenzialiBasic
+
+     Aggiornamento delle credenziali dell'utente

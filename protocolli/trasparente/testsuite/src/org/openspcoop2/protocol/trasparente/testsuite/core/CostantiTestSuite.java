@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.trasparente.testsuite.core;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -169,6 +171,24 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_URL = "AuthenticationOptionalPrincipalUrl";
 	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_IP = "AuthenticationPrincipalIPAddress";
 	
+	public static final String PORTA_DELEGATA_AUTH_APIKEY = "AuthenticationApiKey";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_APIKEY = "AuthenticationOptionalApiKey";
+	public static final String PORTA_DELEGATA_AUTH_APIKEY_QUERY = "AuthenticationApiKeyQueryForward";
+	public static final String PORTA_DELEGATA_AUTH_APIKEY_HEADER = "AuthenticationApiKeyHeaderForward";
+	public static final String PORTA_DELEGATA_AUTH_APIKEY_COOKIE = "AuthenticationApiKeyCookieForward";
+	public static final String PORTA_DELEGATA_AUTH_APIKEY_QUERY_CUSTOM = "AuthenticationApiKeyQueryForwardCustom";
+	public static final String PORTA_DELEGATA_AUTH_APIKEY_HEADER_CUSTOM = "AuthenticationApiKeyHeaderForwardCustom";
+	public static final String PORTA_DELEGATA_AUTH_APIKEY_COOKIE_CUSTOM = "AuthenticationApiKeyCookieForwardCustom";
+	
+	public static final String PORTA_DELEGATA_AUTH_APPID = "AuthenticationAppId";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_APPID = "AuthenticationOptionalAppId";
+	public static final String PORTA_DELEGATA_AUTH_APPID_QUERY = "AuthenticationAppIdQueryForward";
+	public static final String PORTA_DELEGATA_AUTH_APPID_HEADER = "AuthenticationAppIdHeaderForward";
+	public static final String PORTA_DELEGATA_AUTH_APPID_COOKIE = "AuthenticationAppIdCookieForward";
+	public static final String PORTA_DELEGATA_AUTH_APPID_QUERY_CUSTOM = "AuthenticationAppIdQueryForwardCustom";
+	public static final String PORTA_DELEGATA_AUTH_APPID_HEADER_CUSTOM = "AuthenticationAppIdHeaderForwardCustom";
+	public static final String PORTA_DELEGATA_AUTH_APPID_COOKIE_CUSTOM = "AuthenticationAppIdCookieForwardCustom";
+	
 	/** Porte Delegate per autorizzazione */
 	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED = "AuthorizationAuthenticated";
 	public static final String PORTA_DELEGATA_AUTHZ_ROLES_ALL = "AuthorizationRolesAll";
@@ -201,6 +221,12 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH_FORWARD_CREDENTIALS="AuthenticationREST_basic_forwardCredentials";
 	public static final String PORTA_DELEGATA_REST_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_serviceWithBasicAuth";
 	public static final String PORTA_DELEGATA_REST_SERVICE_WITH_BASIC_AUTH_DOMAIN="AuthenticationREST_serviceWithBasicAuthDomain";
+	
+	/** Porte Delegate per il test della propagazione dei cookie in apiKey: API */
+	public static final String PORTA_DELEGATA_REST_APIKEY="AuthenticationREST_apiKey";
+	public static final String PORTA_DELEGATA_REST_APIKEY_FORWARD="AuthenticationREST_apiKeyForward";
+	public static final String PORTA_DELEGATA_REST_APPID="AuthenticationREST_appId";
+	public static final String PORTA_DELEGATA_REST_APPID_FORWARD="AuthenticationREST_appIdForward";
 	
 	/** Porte Delegate per il test degli header CORS */
 	public static final String PORTA_DELEGATA_REST_CORS="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST";
@@ -325,6 +351,24 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_URL = "AuthenticationOptionalPrincipalUrl";
 	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_IP = "AuthenticationPrincipalIPAddress";
 	
+	public static final String PORTA_APPLICATIVA_AUTH_APIKEY = "AuthenticationApiKey";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_APIKEY = "AuthenticationOptionalApiKey";
+	public static final String PORTA_APPLICATIVA_AUTH_APIKEY_QUERY = "AuthenticationApiKeyQueryForward";
+	public static final String PORTA_APPLICATIVA_AUTH_APIKEY_HEADER = "AuthenticationApiKeyHeaderForward";
+	public static final String PORTA_APPLICATIVA_AUTH_APIKEY_COOKIE = "AuthenticationApiKeyCookieForward";
+	public static final String PORTA_APPLICATIVA_AUTH_APIKEY_QUERY_CUSTOM = "AuthenticationApiKeyQueryForwardCustom";
+	public static final String PORTA_APPLICATIVA_AUTH_APIKEY_HEADER_CUSTOM = "AuthenticationApiKeyHeaderForwardCustom";
+	public static final String PORTA_APPLICATIVA_AUTH_APIKEY_COOKIE_CUSTOM = "AuthenticationApiKeyCookieForwardCustom";
+	
+	public static final String PORTA_APPLICATIVA_AUTH_APPID = "AuthenticationAppId";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_APPID = "AuthenticationOptionalAppId";
+	public static final String PORTA_APPLICATIVA_AUTH_APPID_QUERY = "AuthenticationAppIdQueryForward";
+	public static final String PORTA_APPLICATIVA_AUTH_APPID_HEADER = "AuthenticationAppIdHeaderForward";
+	public static final String PORTA_APPLICATIVA_AUTH_APPID_COOKIE = "AuthenticationAppIdCookieForward";
+	public static final String PORTA_APPLICATIVA_AUTH_APPID_QUERY_CUSTOM = "AuthenticationAppIdQueryForwardCustom";
+	public static final String PORTA_APPLICATIVA_AUTH_APPID_HEADER_CUSTOM = "AuthenticationAppIdHeaderForwardCustom";
+	public static final String PORTA_APPLICATIVA_AUTH_APPID_COOKIE_CUSTOM = "AuthenticationAppIdCookieForwardCustom";
+	
 	/** Porte Applicative per autorizzazione */
 	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED = "AuthorizationAuthenticated";
 	public static final String PORTA_APPLICATIVA_AUTHZ_ROLES_ALL = "AuthorizationRolesAll";
@@ -355,6 +399,12 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH_FORWARD_CREDENTIALS="AuthenticationREST_basic_forwardCredentials";
 	public static final String PORTA_APPLICATIVA_REST_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_serviceWithBasicAuth";
 	public static final String PORTA_APPLICATIVA_REST_SERVICE_WITH_BASIC_AUTH_DOMAIN="AuthenticationREST_serviceWithBasicAuthDomain";
+	
+	/** Porte Applicative per il test della propagazione dei cookie in apiKey: API */
+	public static final String PORTA_APPLICATIVA_REST_APIKEY="AuthenticationREST_apiKey";
+	public static final String PORTA_APPLICATIVA_REST_APIKEY_FORWARD="AuthenticationREST_apiKeyForward";
+	public static final String PORTA_APPLICATIVA_REST_APPID="AuthenticationREST_appId";
+	public static final String PORTA_APPLICATIVA_REST_APPID_FORWARD="AuthenticationREST_appIdForward";
 	
 	/** Porte Applicative per il test degli header CORS */
 	public static final String PORTA_APPLICATIVA_REST_CORS="APIMinisteroErogatore/gwCORSviaREST";
@@ -567,6 +617,41 @@ public class CostantiTestSuite {
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_TEST_CREDENZIALI_BRUCIATE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TEST_CREDENZIALI_BRUCIATE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TEST_CREDENZIALI_BRUCIATE);
+	
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteApiKey  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_APIKEY="EsempioSoggettoTrasparenteApiKey";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteApiKey */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_APIKEY=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_APIKEY);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteApiKey */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_APIKEY = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_APIKEY, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_APIKEY);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteApiKey2  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_APIKEY_2="EsempioSoggettoTrasparenteApiKey2";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteApiKey2 */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_APIKEY_2=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_APIKEY_2);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteApiKey2 */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_APIKEY_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_APIKEY_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_APIKEY_2);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteApiKeyAppId  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_APPID="EsempioSoggettoTrasparenteApiKeyAppId";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteApiKeyAppId */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_APPID=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_APPID);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteApiKeyAppId */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_APPID = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_APPID, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_APPID);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteApiKeyAppId2  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_APPID_2="EsempioSoggettoTrasparenteApiKeyAppId2";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteApiKeyAppId2 */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_APPID_2=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_APPID_2);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteApiKeyAppId2 */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_APPID_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_APPID_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_APPID_2);
+	
+	
 	
 	
 	
@@ -895,4 +980,33 @@ public class CostantiTestSuite {
 	}
 	public final static String TEST_CORS_ALLOW_HEADERS_DEFAULT_AS_STRING = TEST_CORS_ALLOW_HEADER_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_HEADER_DEFAULT.toString().length()-1);
 
+	
+	public static final String APIKEY_QUERY_CUSTOM = "custom_key_value";
+	public static final String APIKEY_HEADER_CUSTOM = "X-CUSTOM-KEY-HDR";
+	public static final String APIKEY_COOKIE_CUSTOM = "CUSTOM-KEY-Cookie";
+	
+	public static final String APPID_QUERY_CUSTOM = "custom_id_value";
+	public static final String APPID_HEADER_CUSTOM = "X-CUSTOM-ID-HDR";
+	public static final String APPID_COOKIE_CUSTOM = "CUSTOM-ID-Cookie";
+	
+	public static final String COOKIE_CUSTOM1_NAME = "CustomCookie1";
+	public static String COOKIE_CUSTOM1_VALUE = null;
+	static {
+		try {
+			COOKIE_CUSTOM1_VALUE = URLEncoder.encode("V1", Charset.UTF_8.getValue());
+		}catch(Exception e) {
+			COOKIE_CUSTOM1_VALUE = "V1";
+		}
+	}
+	
+	public static final String COOKIE_CUSTOM2_NAME = "CustomCookie2";
+	public static String COOKIE_CUSTOM2_VALUE = null;
+	static {
+		String v = "V2@prova";
+		try {
+			COOKIE_CUSTOM2_VALUE = URLEncoder.encode(v, Charset.UTF_8.getValue());
+		}catch(Exception e) {
+			COOKIE_CUSTOM2_VALUE = v;
+		}
+	}
 }
