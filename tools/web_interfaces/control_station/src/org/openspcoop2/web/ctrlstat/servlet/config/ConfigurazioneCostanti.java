@@ -723,9 +723,11 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONSEGNA = "lifecacheConsegna";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODI_CLUSTER = "aliasNodi";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO = "nomeMetodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_ALL_NODES = "__resetAllCachesAllNodes__";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_SELECTED_NODES = "__resetAllCachesSelectedNodes__";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "versionePdD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "versioneBaseDati";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA = "vendorJava";
@@ -753,6 +755,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI = "threadsPA";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES = "ResetSelectedCaches";
 	public final static String PARAMETRO_CONFIGURAZIONE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "RecEsitiStato_";
@@ -1115,7 +1118,11 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "Directory di Configurazione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "contesti: ";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Reset Cache";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Svuota tutte le Cache";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_ALL_NODES = "Svuota le Cache di tutti i nodi";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_SELECTED_NODES = "Svuota le Cache dei nodi selezionati";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES_KEYWORD = "GRUPPO";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES = "Svuota le Cache dei nodi '"+LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES_KEYWORD+"'";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL = "Prefill Cache";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO = "Stato";

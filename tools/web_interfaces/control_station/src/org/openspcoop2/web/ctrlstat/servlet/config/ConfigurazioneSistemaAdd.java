@@ -39,14 +39,16 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.Dialog;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * SystemPropertyAdd
+ * ConfigurazioneSistemaAdd
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
@@ -88,9 +90,75 @@ public final class ConfigurazioneSistemaAdd extends Action {
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			
+			String [] aliasNodi = confHelper.getParameterValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODI_CLUSTER);
 			String alias = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 			String nomeCache = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE);
 			String nomeMetodo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO);
+
+			if(alias==null || "".equals(alias)){
+				if(aliases.size()>1){
+					
+					boolean error = false;
+					
+					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES.equals(nomeCache) &&
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_ALL_NODES.equals(nomeMetodo)) {
+						// nessun vincolo
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES.equals(nomeCache) &&
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_SELECTED_NODES.equals(nomeMetodo)) {
+						if((aliasNodi==null || aliasNodi.length<=0)) {
+							pd.setMessage("L'operazione richiesta richiede la selezione di almeno un "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER, MessageType.ERROR);
+							error=true;
+						}
+					}
+					else {
+						if(!confHelper.isEditModeInProgress()) {
+							if((aliasNodi==null || aliasNodi.length<=0)) {
+								pd.setMessage("L'operazione richiesta richiede la selezione di un "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER, MessageType.ERROR);
+								error=true;
+							}
+							else if(aliasNodi.length>1) {
+								pd.setMessage("L'operazione richiesta richiede la selezione di un solo "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"; ne sono stati selezionati "+aliasNodi.length, MessageType.ERROR);
+								error=true;
+							}
+							else {
+								alias = aliasNodi[0];
+							}
+						}
+					}
+
+					if(error) {
+						// setto la barra del titolo
+						List<Parameter> lstParam = new ArrayList<Parameter>();
+	
+						//lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+						lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
+								 null));
+	
+						ServletUtils.setPageDataTitle(pd, lstParam);
+						
+						// preparo i campi
+						Vector<DataElement> dati = new Vector<DataElement>();
+						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+						
+						pd.setLabelBottoneInvia(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME_ACCEDI);
+						
+						dati = confHelper.addConfigurazioneSistemaSelectListNodiCluster(dati, aliasNodi);
+						
+						pd.setDati(dati);
+						
+						//pd.disableEditMode();
+						
+						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
+						return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
+								ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_SISTEMA, 
+								ForwardParams.ADD());
+					}
+					
+				}
+			}
+			
 			
 			String nomeParametroPostBack = confHelper.getPostBackElementName();
 			
@@ -102,12 +170,28 @@ public final class ConfigurazioneSistemaAdd extends Action {
 				}
 				else{
 				
+					List<String> aliasesForResetAllCaches = null;
+					
 					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES.equals(nomeCache) &&
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_ALL_NODES.equals(nomeMetodo)) {
+						aliasesForResetAllCaches = new ArrayList<String>();
+						aliasesForResetAllCaches.addAll(aliases);
+						aliasNodi = null; // svuoto per non creare confusione
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES.equals(nomeCache) &&
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_SELECTED_NODES.equals(nomeMetodo)) {
+						aliasesForResetAllCaches = new ArrayList<String>();
+						for (int i = 0; i < aliasNodi.length; i++) {
+							aliasesForResetAllCaches.add(aliasNodi[i]);
+						}
+						aliasNodi = null; // svuoto
+					}
+					
+					if(aliasesForResetAllCaches!=null && !aliasesForResetAllCaches.isEmpty()) {
 						boolean rilevatoErrore = false;
 						String messagePerOperazioneEffettuata = "";
 						int index = 0;
-						for (String aliasForResetCache : aliases) {
+						for (String aliasForResetCache : aliasesForResetAllCaches) {
 							StringBuilder bfExternal = new StringBuilder();
 							String descrizione = confCore.getJmxPdD_descrizione(aliasForResetCache);
 							if(index>0) {
@@ -197,7 +281,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					
 					pd.setLabelBottoneInvia(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME_ACCEDI);
 					
-					dati = confHelper.addConfigurazioneSistemaSelectListNodiCluster(dati);
+					dati = confHelper.addConfigurazioneSistemaSelectListNodiCluster(dati, aliasNodi);
 					
 					pd.setDati(dati);
 					
@@ -220,7 +304,12 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			boolean rilevatoErrore = false;
 			
 			if(nomeCache!=null && !"".equals(nomeCache) &&
-					nomeMetodo!=null && !"".equals(nomeMetodo)){
+					nomeMetodo!=null && !"".equals(nomeMetodo) &&
+					
+					// fix per evitare che si ricordi l'all cache, dopo una successiva operazione
+					(nomeParametroPostBack==null || "".equals(nomeParametroPostBack))
+					
+					){
 				
 				String nomeMetodoResetCache = confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias);
 				boolean resetMultiplo = false;
@@ -294,6 +383,9 @@ public final class ConfigurazioneSistemaAdd extends Action {
 				}
 			}
 			
+			String labelDialog = null;
+			String noteDialog = null;
+			String messageDialog = null;
 			if(nomeParametroPostBack!=null && !"".equals(nomeParametroPostBack)){
 			
 				String nomeAttributo = null;
@@ -307,23 +399,28 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias);
 						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 						tipo = "livello di severità dei diagnostici";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias);
 						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 						tipo = "livello di severità log4j dei diagnostici";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE));
 						tipo = "stato del tracciamento delle buste";
+						labelDialog = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO+" "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD));
 						tipo = "stato del dump binario della Porta Delegata";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA.equals(nomeParametroPostBack)){
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA;
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA));
 						tipo = "stato del dump binario della Porta Applicativa";
@@ -334,53 +431,64 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							nomeMetodoJmx = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace(alias);
 							nomeRisorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias);
 							tipo = "update configurazione FileTrace";
+							labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL;
 						}
 					}
 					
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE));
-						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE+"'";
+						//tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE;
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE;
+						labelDialog = tipo;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT));
-						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT+"'";
+						//tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT;
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT;
+						labelDialog = tipo;
 					}
 					
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST));
-						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST+"'";
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST;
+						labelDialog = tipo;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias);
 						nomeAttributo_2 = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE));
-						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE+"'";
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE;
+						labelDialog = tipo;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR));
-						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR+"'";
+						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR;
+						labelDialog = tipo;
 					}
 					
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS));
 						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS+"'";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS;
 					}
 					
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID));
 						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID+"'";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE;
 					}
 	
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE));
 						tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP+" '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE+"'";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP;
 					}
 					
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD.equals(nomeParametroPostBack)){
@@ -393,6 +501,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						}
 						nomeRisorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias);
 						tipo = "stato del servizio Porta Applicativa";
+						labelDialog = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA.equals(nomeParametroPostBack)){
 						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
@@ -404,6 +513,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						}
 						nomeRisorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias);
 						tipo = "stato del servizio Integration Manager";
+						labelDialog = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA;
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM.equals(nomeParametroPostBack)){
 						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
@@ -414,7 +524,8 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							nomeMetodoJmx = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(alias);
 						}
 						nomeRisorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias);
-						tipo = "stato del servizio Porta Delegata";
+						tipo = "stato del servizio IntegrationManager";
+						labelDialog = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI+" "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM;
 					}
 				
 					if(nomeAttributo!=null){
@@ -429,20 +540,23 @@ public final class ConfigurazioneSistemaAdd extends Action {
 									nuovoStato);
 						}
 						String tmp = "Configurazione aggiornata con successo ("+tipo+"): "+nuovoStato;
-						tmp += ConfigurazioneCostanti.TEMPORANEE;
+						//tmp += ConfigurazioneCostanti.TEMPORANEE;
+						noteDialog = ConfigurazioneCostanti.TEMPORANEE;
 						if(messagePerOperazioneEffettuata!=null){
 							messagePerOperazioneEffettuata+="\n"+tmp;
 						}
 						else{
 							messagePerOperazioneEffettuata = tmp;
 						}
+						messageDialog = "Configurazione aggiornata con successo";
 					}
 					else if(nomeMetodoJmx!=null){
 						String tmp = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias, confCore.getJmxPdD_cache_type(alias), 
 								nomeRisorsa, 
 								nomeMetodoJmx);
 						if(!ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_UPDATE.equals(nomeParametroPostBack)){
-							tmp += ConfigurazioneCostanti.PERSISTENTI;
+							//tmp += ConfigurazioneCostanti.PERSISTENTI;
+							noteDialog = ConfigurazioneCostanti.PERSISTENTI;
 						}
 						if(messagePerOperazioneEffettuata!=null){
 							messagePerOperazioneEffettuata+="\n"+tmp;
@@ -450,6 +564,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						else{
 							messagePerOperazioneEffettuata = tmp;
 						}
+						messageDialog = tmp;
 					}
 				}catch(Exception e){
 					String errorMessage = "Errore durante l'aggiornamento ("+tipo+"): "+e.getMessage();
@@ -461,14 +576,35 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						messagePerOperazioneEffettuata = errorMessage;
 					}
 					rilevatoErrore = true;
+					messageDialog = "Errore durante l'aggiornamento: "+e.getMessage();
 				}
 			}
 			
 			if(messagePerOperazioneEffettuata!=null){
-				if(rilevatoErrore)
-					pd.setMessage(messagePerOperazioneEffettuata);
-				else 
-					pd.setMessage(messagePerOperazioneEffettuata,Costanti.MESSAGE_TYPE_INFO);
+				if(nomeParametroPostBack!=null && !"".equals(nomeParametroPostBack) && messageDialog!=null){
+					Dialog dialog = new Dialog();
+					
+					dialog.setTitolo(rilevatoErrore ? Costanti.MESSAGE_TYPE_ERROR_TITLE : Costanti.MESSAGE_TYPE_WARN_TITLE);
+					//dialog.setIcona(icona);
+					dialog.setHeaderRiga1(labelDialog);
+					dialog.setHeaderRiga2(messageDialog);
+					
+					dialog.setNotaFinale(noteDialog);
+					
+					String[][] bottoni = { 
+							{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, "" }
+							};
+					
+					pd.setBottoni(bottoni);
+					
+					pd.setDialog(dialog);	
+				}
+				else {
+					if(rilevatoErrore)
+						pd.setMessage(messagePerOperazioneEffettuata);
+					else 
+						pd.setMessage(messagePerOperazioneEffettuata,Costanti.MESSAGE_TYPE_INFO);
+				}
 			}
 			
 			// setto la barra del titolo

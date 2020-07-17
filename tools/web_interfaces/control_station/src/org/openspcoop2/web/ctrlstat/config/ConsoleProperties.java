@@ -26,8 +26,11 @@ package org.openspcoop2.web.ctrlstat.config;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -480,6 +483,45 @@ public class ConsoleProperties {
 			}
 		}
 		return list;
+	}
+	
+	public Map<String,List<String>> getJmxPdD_gruppi_aliases() throws UtilsException {
+		Map<String,List<String>> map = new Hashtable<String, List<String>>();
+		String nomeP = "risorseJmxPdd.aliases.";
+		Properties p = this.reader.readProperties(nomeP);
+		if(p!=null && !p.isEmpty()) {
+			
+			List<String> aliasesRegistrati = getJmxPdD_aliases();
+			
+			Enumeration<?> en = p.keys();
+			while (en.hasMoreElements()) {
+				Object object = (Object) en.nextElement();
+				if(object instanceof String) {
+					String gruppo = (String) object;
+					if(map.containsKey(gruppo)) {
+						throw new UtilsException("Gruppo '"+gruppo+"' definito più di una volta nella proprietà '"+nomeP+"*'");
+					}
+					String aliases = p.getProperty(gruppo);
+					if(aliases!=null && !"".equals(aliases)){
+						String [] tmp = aliases.split(",");
+						if(tmp!=null && tmp.length>0) {
+							List<String> list = new ArrayList<String>();
+							for (int i = 0; i < tmp.length; i++) {
+								String alias = tmp[i].trim();
+								if(aliasesRegistrati.contains(alias)==false) {
+									throw new UtilsException("Alias '"+alias+"' indicato nella proprietà '"+nomeP+""+gruppo+"' non è uno degli alias censiti in 'risorseJmxPdd.aliases'");
+								}
+								list.add(alias);
+							}
+							if(!list.isEmpty()) {
+								map.put(gruppo, list);
+							}
+						}
+					}
+				}
+			}
+		}
+		return map;
 	}
 	
 	public String getJmxPdD_descrizione(String alias) throws UtilsException {

@@ -4102,7 +4102,7 @@
 		    <proprieta-autenticazione nome="header" valore="false"/>
 		    <proprieta-autenticazione nome="cookie" valore="false"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="queryParameterApiKey" valore="custom_key_value"/>
+		    <proprieta-autenticazione nome="queryParameterApiKey" valore="c_key"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
 		</porta-delegata>
@@ -4116,7 +4116,7 @@
 		    <proprieta-autenticazione nome="header" valore="true"/>
 		    <proprieta-autenticazione nome="cookie" valore="false"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="headerApiKey" valore="X-CUSTOM-KEY-HDR"/>
+		    <proprieta-autenticazione nome="headerApiKey" valore="X-CKEY"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
 		</porta-delegata>
@@ -4130,7 +4130,7 @@
 		    <proprieta-autenticazione nome="header" valore="false"/>
 		    <proprieta-autenticazione nome="cookie" valore="true"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="cookieApiKey" valore="CUSTOM-KEY-Cookie"/>
+		    <proprieta-autenticazione nome="cookieApiKey" valore="cKEY"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
 		</porta-delegata>
@@ -4214,8 +4214,8 @@
 		    <proprieta-autenticazione nome="header" valore="false"/>
 		    <proprieta-autenticazione nome="cookie" valore="false"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="queryParameterApiKey" valore="custom_key_value"/>
-		    <proprieta-autenticazione nome="queryParameterAppId" valore="custom_id_value"/>
+		    <proprieta-autenticazione nome="queryParameterApiKey" valore="c_key"/>
+		    <proprieta-autenticazione nome="queryParameterAppId" valore="c_id"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-delegata>
@@ -4229,8 +4229,8 @@
 		    <proprieta-autenticazione nome="header" valore="true"/>
 		    <proprieta-autenticazione nome="cookie" valore="false"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="headerApiKey" valore="X-CUSTOM-KEY-HDR"/>
-		    <proprieta-autenticazione nome="headerAppId" valore="X-CUSTOM-ID-HDR"/>
+		    <proprieta-autenticazione nome="headerApiKey" valore="X-CKEY"/>
+		    <proprieta-autenticazione nome="headerAppId" valore="X-CID"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-delegata>
@@ -4244,8 +4244,8 @@
 		    <proprieta-autenticazione nome="header" valore="false"/>
 		    <proprieta-autenticazione nome="cookie" valore="true"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="cookieApiKey" valore="CUSTOM-KEY-Cookie"/>
-		    <proprieta-autenticazione nome="cookieAppId" valore="CUSTOM-ID-Cookie"/>
+		    <proprieta-autenticazione nome="cookieApiKey" valore="cKEY"/>
+		    <proprieta-autenticazione nome="cookieAppId" valore="cID"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-delegata>
@@ -8731,7 +8731,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <proprieta-autenticazione nome="header" valore="false"/>
 		    <proprieta-autenticazione nome="cookie" valore="false"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="queryParameterApiKey" valore="custom_key_value"/>
+		    <proprieta-autenticazione nome="queryParameterApiKey" valore="c_key"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
 		</porta-applicativa>
@@ -8745,7 +8745,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <proprieta-autenticazione nome="header" valore="true"/>
 		    <proprieta-autenticazione nome="cookie" valore="false"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="headerApiKey" valore="X-CUSTOM-KEY-HDR"/>
+		    <proprieta-autenticazione nome="headerApiKey" valore="X-CKEY"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
 		</porta-applicativa>
@@ -8759,7 +8759,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <proprieta-autenticazione nome="header" valore="false"/>
 		    <proprieta-autenticazione nome="cookie" valore="true"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="cookieApiKey" valore="CUSTOM-KEY-Cookie"/>
+		    <proprieta-autenticazione nome="cookieApiKey" valore="cKEY"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="true"/>
 		</porta-applicativa>
@@ -8843,8 +8843,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <proprieta-autenticazione nome="header" valore="false"/>
 		    <proprieta-autenticazione nome="cookie" valore="false"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="queryParameterApiKey" valore="custom_key_value"/>
-		    <proprieta-autenticazione nome="queryParameterAppId" valore="custom_id_value"/>
+		    <proprieta-autenticazione nome="queryParameterApiKey" valore="c_key"/>
+		    <proprieta-autenticazione nome="queryParameterAppId" valore="c_id"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-applicativa>
@@ -8858,8 +8858,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <proprieta-autenticazione nome="header" valore="true"/>
 		    <proprieta-autenticazione nome="cookie" valore="false"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="headerApiKey" valore="X-CUSTOM-KEY-HDR"/>
-		    <proprieta-autenticazione nome="headerAppId" valore="X-CUSTOM-ID-HDR"/>
+		    <proprieta-autenticazione nome="headerApiKey" valore="X-CKEY"/>
+		    <proprieta-autenticazione nome="headerAppId" valore="X-CID"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-applicativa>
@@ -8873,8 +8873,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <proprieta-autenticazione nome="header" valore="false"/>
 		    <proprieta-autenticazione nome="cookie" valore="true"/>
 		    <proprieta-autenticazione nome="useOAS3Names" valore="false"/>
-		    <proprieta-autenticazione nome="cookieApiKey" valore="CUSTOM-KEY-Cookie"/>
-		    <proprieta-autenticazione nome="cookieAppId" valore="CUSTOM-ID-Cookie"/>
+		    <proprieta-autenticazione nome="cookieApiKey" valore="cKEY"/>
+		    <proprieta-autenticazione nome="cookieAppId" valore="cID"/>
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-applicativa>
@@ -9258,7 +9258,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="invokeApiKey">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsCookies=cC1,cC2&amp;checkEqualsCookie=cC2:V2@prova" />
 				</connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -9266,7 +9266,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="invokeApiKeyForward">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;existsCookies=X-API-KEYY&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;existsCookies=X-API-KEYY&amp;existsCookies=cC1,cC2&amp;checkEqualsCookie=cC2:V2@prova" />
 				</connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -9275,7 +9275,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                <connettore tipo="http" nome="invokeAppId">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova" />
+				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsCookies=cC1,cC2&amp;checkEqualsCookie=cC2:V2@prova" />
 				</connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -9283,7 +9283,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                <connettore tipo="http" nome="invokeAppIdForward">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;existsCookies=X-API-KEY&amp;existsCookies=X-APP-ID&amp;existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"
+				            valore="http://localhost:8080/govwayTestSuite/api?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;existsCookies=X-API-KEY&amp;existsCookies=X-APP-ID&amp;existsCookies=cC1,cC2&amp;checkEqualsCookie=cC2:V2@prova"
 				        />
 				</connettore>
                         </invocazione-servizio>
@@ -9461,8 +9461,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="aggiornamentoApiKey">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;notExistsCookies=CustomCookie1,CustomCookie2" />
-<!-- SOLO in REST si propaga il cookie existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"  -->
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;notExistsCookies=cC1,cC2" />
+<!-- SOLO in REST si propaga il cookie existsCookies=cC1,cC2&amp;checkEqualsCookie=cC2:V2@prova"  -->
 				    </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -9499,7 +9499,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="aggiornamentoApiKeyQueryForwardCustom">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsQueryParameters=custom_key_value"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsQueryParameters=c_key"
 				        />
 				    </connettore>
                         </invocazione-servizio>
@@ -9508,7 +9508,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="aggiornamentoApiKeyHeaderForwardCustom">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsHttpHeaders=X-CUSTOM-KEY-HDR"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsHttpHeaders=X-CKEY"
 				        />
 				    </connettore>
                         </invocazione-servizio>
@@ -9517,7 +9517,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="aggiornamentoApiKeyCookieForwardCustom">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsCookies=CUSTOM-KEY-Cookie"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY&amp;notExistsQueryParameters=api_key&amp;notExistsCookies=X-API-KEY&amp;existsCookies=cKEY"
 				        />
 				    </connettore>
                         </invocazione-servizio>
@@ -9528,8 +9528,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="aggiornamentoAppId">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;notExistsCookies=CustomCookie1,CustomCookie2" />
-<!-- SOLO in REST si propaga il cookie existsCookies=CustomCookie1,CustomCookie2&amp;checkEqualsCookie=CustomCookie2:V2@prova"  -->
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;notExistsCookies=cC1,cC2" />
+<!-- SOLO in REST si propaga il cookie existsCookies=cC1,cC2&amp;checkEqualsCookie=cC2:V2@prova"  -->
 				    </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -9566,7 +9566,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="aggiornamentoAppIdQueryForwardCustom">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsQueryParameters=custom_key_value,custom_id_value"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsQueryParameters=c_key,c_id"
 				        />
 				    </connettore>
                         </invocazione-servizio>
@@ -9575,7 +9575,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="aggiornamentoAppIdHeaderForwardCustom">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsHttpHeaders=X-CUSTOM-KEY-HDR,X-CUSTOM-ID-HDR"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsHttpHeaders=X-CKEY,X-CID"
 				        />
 				    </connettore>
                         </invocazione-servizio>
@@ -9584,7 +9584,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="aggiornamentoAppIdCookieForwardCustom">
 				        <property nome="location"
-				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsCookies=CUSTOM-KEY-Cookie,CUSTOM-ID-Cookie"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=X-API-KEY,X-APP-ID&amp;notExistsQueryParameters=api_key,app_id&amp;notExistsCookies=X-API-KEY,X-APP-ID&amp;existsCookies=cKEY,cID"
 				        />
 				    </connettore>
                         </invocazione-servizio>

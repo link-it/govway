@@ -1,5 +1,11 @@
 2020-07-17  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	In una configurazione in cluster, dalla sezione 'Runtime' è adesso possibile anche selezionare i nodi per cui si intende effettuare il reset delle cache.
+	È stata inoltre aggiunta la possibilità di classificare i nodi del cluster in gruppi, in modo da poter effettuare un reset immediato di un gruppo.
+
+2020-07-17  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità OP-1024
 	Aggiunto supporto per wildfly 20.

@@ -1,0 +1,15 @@
+diff --git a/ant/setup/deploy/resources/core/console_local.properties b/ant/setup/deploy/resources/core/console_local.properties
+index 5bcaf25ad..87e24669b 100644
+--- a/ant/setup/deploy/resources/core/console_local.properties
++++ b/ant/setup/deploy/resources/core/console_local.properties
+@@ -13,6 +13,10 @@
+ #IDGWN.risorseJmxPdd.remoteAccess.url=http://HOSTGWN:PORTGWN/govway/check
+ #IDGWN.risorseJmxPdd.remoteAccess.username=USERNAMEGWN
+ #IDGWN.risorseJmxPdd.remoteAccess.password=PASSWORDGWN
++
++# Classificazione dei nodi in gruppi
++#risorseJmxPdd.aliases.<idGruppo1>=<IDGW1>,<IDGW2>
++#risorseJmxPdd.aliases.<idGruppo2>=<IDGW2>,<IDGWN>
+ # ================================================
+ 
+ # ================================================

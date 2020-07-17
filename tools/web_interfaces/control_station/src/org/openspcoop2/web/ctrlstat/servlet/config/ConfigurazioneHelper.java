@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -4178,20 +4179,27 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public Vector<DataElement> addConfigurazioneSistemaSelectListNodiCluster(Vector<DataElement> dati) throws Exception {
+	public Vector<DataElement> addConfigurazioneSistemaSelectListNodiCluster(Vector<DataElement> dati, String [] nodiSelezionati) throws Exception {
 		
 		DataElement de = new DataElement();
-		de.setType(DataElementType.SELECT);
+		de.setType(DataElementType.MULTI_SELECT);
 		de.setValues(this.confCore.getJmxPdD_aliases());
 		List<String> labels = new ArrayList<String>();
 		for (String alias : this.confCore.getJmxPdD_aliases()) {
 			labels.add(this.confCore.getJmxPdD_descrizione(alias));
 		}
 		de.setLabels(labels);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODI_CLUSTER);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setSize(this.getSize());
-		//de.setPostBack(true);
+		de.setPostBack(true);
+		if(labels.size()>10) {
+			de.setRows(10);
+		}
+		else {
+			de.setRows(labels.size());
+		}
+		de.setSelezionati(nodiSelezionati);
 		dati.addElement(de);
 		
 				
@@ -4235,15 +4243,71 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(resetAllCaches){
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES+
 					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_ALL_NODES);
 			de.setType(DataElementType.LINK);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
-			de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
+			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_ALL_NODES);
 			de.setSize(this.getSize());
 			dati.addElement(de);
+			
+			StringBuilder sb = new StringBuilder("");
+			if(nodiSelezionati!=null && nodiSelezionati.length>0) {
+				for (int i = 0; i < nodiSelezionati.length; i++) {
+					sb.append("&");
+					sb.append(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODI_CLUSTER);
+					sb.append("=");
+					sb.append(nodiSelezionati[i]);
+				}
+			}
+			de = new DataElement();
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES+
+					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_SELECTED_NODES+
+					sb.toString());
+			de.setType(DataElementType.LINK);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES);
+			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_SELECTED_NODES);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			 Map<String, List<String>> map = this.confCore.getJmxPdD_gruppi_aliases();
+			 if(map!=null && !map.isEmpty()) {
+				 List<String> gruppi = new ArrayList<String>();
+				 for (String gruppo : map.keySet()) {
+					 gruppi.add(gruppo);
+				 }
+				 Collections.sort(gruppi);
+				 int indexGr = 0;
+				 for (String gruppo : gruppi) {
+					 
+					 indexGr++;
+					 
+					 List<String> aliases = map.get(gruppo);
+					 StringBuilder sbGruppi = new StringBuilder("");
+					 if(aliases!=null && aliases.size()>0) {
+						 for (int i = 0; i < aliases.size(); i++) {
+							 sbGruppi.append("&");
+							 sbGruppi.append(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODI_CLUSTER);
+							 sbGruppi.append("=");
+							 sbGruppi.append(aliases.get(i));
+						 }
+						 
+						 de = new DataElement();
+						 de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+								 ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES+
+								 "&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_SELECTED_NODES+
+								 sbGruppi.toString());
+						 de.setType(DataElementType.LINK);
+						 de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES+"__gr"+indexGr);
+						 de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES.replace(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES_KEYWORD, gruppo));
+						 de.setSize(this.getSize());
+						 dati.addElement(de);
+					 }
+					 
+				 }
+			 }
 		}		
 		
 		return dati;
@@ -4333,7 +4397,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias));
 			de.setType(DataElementType.LINK);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
-			de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
+			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
 			de.setSize(this.getSize());
 			dati.addElement(de);
 		}		

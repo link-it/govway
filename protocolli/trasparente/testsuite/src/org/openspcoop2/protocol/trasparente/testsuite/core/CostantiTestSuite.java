@@ -981,15 +981,15 @@ public class CostantiTestSuite {
 	public final static String TEST_CORS_ALLOW_HEADERS_DEFAULT_AS_STRING = TEST_CORS_ALLOW_HEADER_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_HEADER_DEFAULT.toString().length()-1);
 
 	
-	public static final String APIKEY_QUERY_CUSTOM = "custom_key_value";
-	public static final String APIKEY_HEADER_CUSTOM = "X-CUSTOM-KEY-HDR";
-	public static final String APIKEY_COOKIE_CUSTOM = "CUSTOM-KEY-Cookie";
+	public static final String APIKEY_QUERY_CUSTOM = "c_key";
+	public static final String APIKEY_HEADER_CUSTOM = "X-CKEY";
+	public static final String APIKEY_COOKIE_CUSTOM = "cKEY";
 	
-	public static final String APPID_QUERY_CUSTOM = "custom_id_value";
-	public static final String APPID_HEADER_CUSTOM = "X-CUSTOM-ID-HDR";
-	public static final String APPID_COOKIE_CUSTOM = "CUSTOM-ID-Cookie";
+	public static final String APPID_QUERY_CUSTOM = "c_id";
+	public static final String APPID_HEADER_CUSTOM = "X-CID";
+	public static final String APPID_COOKIE_CUSTOM = "cID";
 	
-	public static final String COOKIE_CUSTOM1_NAME = "CustomCookie1";
+	public static final String COOKIE_CUSTOM1_NAME = "cC1";
 	public static String COOKIE_CUSTOM1_VALUE = null;
 	static {
 		try {
@@ -999,7 +999,7 @@ public class CostantiTestSuite {
 		}
 	}
 	
-	public static final String COOKIE_CUSTOM2_NAME = "CustomCookie2";
+	public static final String COOKIE_CUSTOM2_NAME = "cC2";
 	public static String COOKIE_CUSTOM2_VALUE = null;
 	static {
 		String v = "V2@prova";

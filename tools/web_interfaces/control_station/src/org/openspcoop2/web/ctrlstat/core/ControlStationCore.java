@@ -1175,6 +1175,7 @@ public class ControlStationCore {
 	
 	/** Opzioni Accesso JMX della PdD */
 	private List<String> jmxPdD_aliases = new ArrayList<String>();
+	private Map<String,List<String>>  jmxPdD_gruppi_aliases = new Hashtable<String, List<String>>();
 	private Map<String, String> jmxPdD_descrizioni = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_tipoAccesso = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_username = new Hashtable<String, String>();
@@ -1277,6 +1278,9 @@ public class ControlStationCore {
 	
 	public List<String> getJmxPdD_aliases() {
 		return this.jmxPdD_aliases;
+	}
+	public Map<String, List<String>> getJmxPdD_gruppi_aliases() {
+		return this.jmxPdD_gruppi_aliases;
 	}
 	public String getJmxPdD_descrizione(String alias) throws Exception {
 		String descrizione = this.jmxPdD_descrizioni.get(alias);
@@ -2185,6 +2189,7 @@ public class ControlStationCore {
 		
 		/** Opzioni Accesso JMX della PdD */
 		this.jmxPdD_aliases = core.jmxPdD_aliases;
+		this.jmxPdD_gruppi_aliases = core.jmxPdD_gruppi_aliases;
 		this.jmxPdD_descrizioni = core.jmxPdD_descrizioni;
 		this.jmxPdD_tipoAccesso = core.jmxPdD_tipoAccesso;
 		this.jmxPdD_remoteAccess_username = core.jmxPdD_remoteAccess_username;
@@ -2703,7 +2708,9 @@ public class ControlStationCore {
 					}
 				}
 			}
-
+			
+			this.jmxPdD_gruppi_aliases = consoleProperties.getJmxPdD_gruppi_aliases();
+			
 		} catch (java.lang.Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::initCoreJmxResources] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
 			throw new ControlStationCoreException("[ControlStationCore::initCoreJmxResources] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
