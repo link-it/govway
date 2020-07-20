@@ -252,6 +252,8 @@ CREATE TABLE transazioni_sa
 
 -- index
 CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
+-- CREATE INDEX INDEX_TRSA_IN_QUEUE ON transazioni_sa (data_registrazione DESC,servizio_applicativo_erogatore,connettore_nome,consegna_terminata,dettaglio_esito,consegna_trasparente,consegna_im,numero_tentativi,codice_risposta,data_uscita_richiesta,data_ingresso_risposta,numero_prelievi_im,data_eliminazione_im);
+-- CREATE INDEX INDEX_TRSA_SEND ON transazioni_sa (data_uscita_richiesta DESC,servizio_applicativo_erogatore,connettore_nome,data_ingresso_risposta,consegna_terminata,dettaglio_esito,consegna_trasparente,consegna_im,numero_tentativi,codice_risposta,data_registrazione);
 
 ALTER TABLE transazioni_sa MODIFY consegna_terminata DEFAULT 0;
 ALTER TABLE transazioni_sa MODIFY consegna_trasparente DEFAULT 0;

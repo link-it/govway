@@ -1566,6 +1566,37 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<linkit:sql-table-index>
 							<linkit:sql-table-index-field name="id-transazione"/>
 						</linkit:sql-table-index>
+						<!-- 
+							Indici per ricerche
+						-->	
+						<linkit:sql-table-index name="INDEX_TRSA_IN_QUEUE">
+							<linkit:sql-table-index-field name="data-registrazione" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+							<linkit:sql-table-index-field name="connettore-nome"/>
+							<linkit:sql-table-index-field name="consegna-terminata"/>
+							<linkit:sql-table-index-field name="dettaglio-esito"/>
+							<linkit:sql-table-index-field name="consegna-trasparente"/>
+							<linkit:sql-table-index-field name="consegna-integration-manager"/>
+							<linkit:sql-table-index-field name="numero-tentativi"/>
+							<linkit:sql-table-index-field name="codice-risposta"/>
+							<linkit:sql-table-index-field name="data-uscita-richiesta" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="data-ingresso-risposta" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="numero-prelievi-im"/>
+							<linkit:sql-table-index-field name="data-eliminazione-im" ignoreTypeCompatibility="true"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_TRSA_SEND">
+							<linkit:sql-table-index-field name="data-uscita-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+							<linkit:sql-table-index-field name="connettore-nome"/>
+							<linkit:sql-table-index-field name="data-ingresso-risposta" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="consegna-terminata"/>
+							<linkit:sql-table-index-field name="dettaglio-esito"/>
+							<linkit:sql-table-index-field name="consegna-trasparente"/>
+							<linkit:sql-table-index-field name="consegna-integration-manager"/>
+							<linkit:sql-table-index-field name="numero-tentativi"/>
+							<linkit:sql-table-index-field name="codice-risposta"/>
+							<linkit:sql-table-index-field name="data-registrazione" ignoreTypeCompatibility="true"/>
+						</linkit:sql-table-index>						
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>
