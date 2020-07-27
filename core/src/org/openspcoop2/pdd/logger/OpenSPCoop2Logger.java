@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -143,11 +144,23 @@ public class OpenSPCoop2Logger {
 	protected static Logger loggerOpenSPCoopControlloTrafficoSql = null;
 	protected static Logger loggerOpenSPCoopControlloTrafficoSqlError = null;
 	/**  Logger log4j utilizzato per le statistiche */
-	protected static Logger loggerOpenSPCoopStatistiche = null;
-	protected static Logger loggerOpenSPCoopStatisticheError = null;
+	protected static Logger loggerOpenSPCoopStatisticheOrarie = null;
+	protected static Logger loggerOpenSPCoopStatisticheOrarieError = null;
+	protected static Logger loggerOpenSPCoopStatisticheGiornaliere = null;
+	protected static Logger loggerOpenSPCoopStatisticheGiornaliereError = null;
+	protected static Logger loggerOpenSPCoopStatisticheSettimanali = null;
+	protected static Logger loggerOpenSPCoopStatisticheSettimanaliError = null;
+	protected static Logger loggerOpenSPCoopStatisticheMensili = null;
+	protected static Logger loggerOpenSPCoopStatisticheMensiliError = null;
 	/**  Logger log4j utilizzato per le statistiche */
-	protected static Logger loggerOpenSPCoopStatisticheSql = null;
-	protected static Logger loggerOpenSPCoopStatisticheSqlError = null;
+	protected static Logger loggerOpenSPCoopStatisticheOrarieSql = null;
+	protected static Logger loggerOpenSPCoopStatisticheOrarieSqlError = null;
+	protected static Logger loggerOpenSPCoopStatisticheGiornaliereSql = null;
+	protected static Logger loggerOpenSPCoopStatisticheGiornaliereSqlError = null;
+	protected static Logger loggerOpenSPCoopStatisticheSettimanaliSql = null;
+	protected static Logger loggerOpenSPCoopStatisticheSettimanaliSqlError = null;
+	protected static Logger loggerOpenSPCoopStatisticheMensiliSql = null;
+	protected static Logger loggerOpenSPCoopStatisticheMensiliSqlError = null;
 	/**  Logger log4j utilizzato per consegna contenuti */
 	protected static Logger loggerOpenSPCoopConsegnaContenuti = null;
 	protected static Logger loggerOpenSPCoopConsegnaContenutiError = null;
@@ -523,26 +536,86 @@ public class OpenSPCoop2Logger {
 			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError==null)
 				throw new Exception("Logger govway.controlloTraffico.sql.error non trovato");
 			
-			// STATISTICHE LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopStatistiche = LoggerWrapperFactory.getLogger("govway.statistiche.generazione");
-			if(OpenSPCoop2Logger.loggerOpenSPCoopStatistiche==null)
+			// STATISTICHE LOG 'Orarie'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarie = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarie==null)
 				throw new Exception("Logger govway.statistiche.generazione non trovato");
 			
-			// STATISTICHE LOG (ERROR)
-			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError = LoggerWrapperFactory.getLogger("govway.statistiche.generazione.error");
-			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError==null)
+			// STATISTICHE LOG (ERROR) 'Orarie'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieError = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieError==null)
 				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
 			
-			// STATISTICHE SQL LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql = LoggerWrapperFactory.getLogger("govway.statistiche.generazione.sql");
-			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql==null)
+			// STATISTICHE SQL LOG 'Orarie'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSql = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSql==null)
 				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
 			
-			// STATISTICHE SQL LOG (ERROR)
-			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError = LoggerWrapperFactory.getLogger("govway.statistiche.generazione.sql.error");
-			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError==null)
+			// STATISTICHE SQL LOG (ERROR) 'Orarie'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSqlError==null)
+				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
+						
+			// STATISTICHE LOG 'Giornaliere'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliere = LoggerWrapperFactory.getLogger("govway.statistiche_giornaliere.generazione");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliere==null)
+				throw new Exception("Logger govway.statistiche.generazione non trovato");
+			
+			// STATISTICHE LOG (ERROR) 'Giornaliere'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereError = LoggerWrapperFactory.getLogger("govway.statistiche_giornaliere.generazione.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereError==null)
+				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
+			
+			// STATISTICHE SQL LOG 'Giornaliere'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSql = LoggerWrapperFactory.getLogger("govway.statistiche_giornaliere.generazione.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSql==null)
+				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
+			
+			// STATISTICHE SQL LOG (ERROR) 'Giornaliere'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_giornaliere.generazione.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSqlError==null)
 				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
 			
+			// STATISTICHE LOG 'Settimanali'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanali = LoggerWrapperFactory.getLogger("govway.statistiche_settimanali.generazione");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanali==null)
+				throw new Exception("Logger govway.statistiche.generazione non trovato");
+			
+			// STATISTICHE LOG (ERROR) 'Settimanali'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliError = LoggerWrapperFactory.getLogger("govway.statistiche_settimanali.generazione.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliError==null)
+				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
+			
+			// STATISTICHE SQL LOG 'Settimanali'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSql = LoggerWrapperFactory.getLogger("govway.statistiche_settimanali.generazione.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSql==null)
+				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
+			
+			// STATISTICHE SQL LOG (ERROR) 'Settimanali'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_settimanali.generazione.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSqlError==null)
+				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
+				
+			// STATISTICHE LOG 'Mensili'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensili = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensili==null)
+				throw new Exception("Logger govway.statistiche.generazione non trovato");
+			
+			// STATISTICHE LOG (ERROR) 'Mensili'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliError = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliError==null)
+				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
+			
+			// STATISTICHE SQL LOG 'Mensili'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSql = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSql==null)
+				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
+			
+			// STATISTICHE SQL LOG (ERROR) 'Mensili'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSqlError==null)
+				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
+				
 			// CONSEGNA_CONTENUTI LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti = LoggerWrapperFactory.getLogger("govway.consegna_messaggi");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti==null)
@@ -1124,22 +1197,60 @@ public class OpenSPCoop2Logger {
 		}
 	}
 	
-	public static Logger getLoggerOpenSPCoopStatistiche(boolean debug) {
+	public static Logger getLoggerOpenSPCoopStatistiche(TipoIntervalloStatistico tipoStatistica, boolean debug) {
 		if(debug) {
-			return OpenSPCoop2Logger.loggerOpenSPCoopStatistiche;
+			switch (tipoStatistica) {
+			case STATISTICHE_ORARIE:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarie;
+			case STATISTICHE_GIORNALIERE:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliere;
+			case STATISTICHE_SETTIMANALI:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanali;
+			case STATISTICHE_MENSILI:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensili;
+			}
 		}
 		else {
-			return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError;
+			switch (tipoStatistica) {
+			case STATISTICHE_ORARIE:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieError;
+			case STATISTICHE_GIORNALIERE:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereError;
+			case STATISTICHE_SETTIMANALI:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliError;
+			case STATISTICHE_MENSILI:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliError;
+			}
 		}
+		return null;
 	}
 	
-	public static Logger getLoggerOpenSPCoopStatisticheSql(boolean debug) {
+	public static Logger getLoggerOpenSPCoopStatisticheSql(TipoIntervalloStatistico tipoStatistica, boolean debug) {
 		if(debug) {
-			return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql;
+			switch (tipoStatistica) {
+			case STATISTICHE_ORARIE:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSql;
+			case STATISTICHE_GIORNALIERE:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSql;
+			case STATISTICHE_SETTIMANALI:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSql;
+			case STATISTICHE_MENSILI:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSql;
+			}
 		}
 		else {
-			return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError;
+			switch (tipoStatistica) {
+			case STATISTICHE_ORARIE:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSqlError;
+			case STATISTICHE_GIORNALIERE:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSqlError;
+			case STATISTICHE_SETTIMANALI:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSqlError;
+			case STATISTICHE_MENSILI:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSqlError;
+			}
 		}
+		return null;
 	}
 	
 	public static Logger getLoggerOpenSPCoopConsegnaContenuti(boolean debug) {

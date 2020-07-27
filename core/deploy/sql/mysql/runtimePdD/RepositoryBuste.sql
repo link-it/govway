@@ -46,6 +46,8 @@ CREATE TABLE REPOSITORY_BUSTE
 	PROFILO INT NOT NULL DEFAULT 0,
 	PDD INT NOT NULL DEFAULT 0,
 	REPOSITORY_ACCESS INT NOT NULL DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	DATA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	-- check constraints
 	CONSTRAINT chk_REPOSITORY_BUSTE_1 CHECK (TIPO IN ('INBOX','OUTBOX')),
@@ -58,6 +60,8 @@ CREATE INDEX REP_BUSTE_SEARCH ON REPOSITORY_BUSTE (SCADENZA_BUSTA,TIPO,HISTORY,P
 CREATE INDEX REP_BUSTE_SEARCH_RA ON REPOSITORY_BUSTE (SCADENZA_BUSTA,TIPO,REPOSITORY_ACCESS);
 CREATE INDEX REP_BUSTE_SEARCH_TIPO ON REPOSITORY_BUSTE (TIPO,HISTORY,PROFILO,PDD);
 CREATE INDEX REP_BUSTE_SEARCH_TIPO_RA ON REPOSITORY_BUSTE (TIPO,REPOSITORY_ACCESS);
+CREATE INDEX REP_BUSTE_DATAREG ON REPOSITORY_BUSTE (DATA_REGISTRAZIONE,TIPO,HISTORY,PROFILO,PDD);
+CREATE INDEX REP_BUSTE_DATAREG_RA ON REPOSITORY_BUSTE (DATA_REGISTRAZIONE,TIPO,REPOSITORY_ACCESS);
 
 CREATE TABLE LISTA_RISCONTRI
 (
@@ -68,6 +72,8 @@ CREATE TABLE LISTA_RISCONTRI
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ORA_REGISTRAZIONE TIMESTAMP(3) DEFAULT 0,
 	TIPO_ORA_REGISTRAZIONE VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	DATA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -93,6 +99,8 @@ CREATE TABLE LISTA_TRASMISSIONI
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ORA_REGISTRAZIONE TIMESTAMP(3) DEFAULT 0,
 	TIPO_ORA_REGISTRAZIONE VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	DATA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -116,6 +124,8 @@ CREATE TABLE LISTA_ECCEZIONI
 	CODICE VARCHAR(255),
 	RILEVANZA VARCHAR(255),
 	POSIZIONE TEXT,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	DATA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -137,6 +147,8 @@ CREATE TABLE LISTA_EXT_PROTOCOL_INFO
 	TIPO VARCHAR(255) NOT NULL,
 	NOME VARCHAR(255) NOT NULL,
 	VALORE TEXT NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	DATA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -179,6 +191,8 @@ CREATE TABLE SEQUENZA_DA_INVIARE
 	AZIONE VARCHAR(255) NOT NULL DEFAULT '',
 	PROSSIMA_SEQUENZA INT NOT NULL,
 	ID_COLLABORAZIONE VARCHAR(255) NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	DATA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	-- fk/pk keys constraints
 	CONSTRAINT pk_SEQUENZA_DA_INVIARE PRIMARY KEY (MITTENTE,TIPO_MITTENTE,DESTINATARIO,TIPO_DESTINATARIO,SERVIZIO,TIPO_SERVIZIO,AZIONE)
@@ -197,6 +211,8 @@ CREATE TABLE SEQUENZA_DA_RICEVERE
 	SERVIZIO VARCHAR(255) NOT NULL,
 	TIPO_SERVIZIO VARCHAR(255) NOT NULL,
 	AZIONE VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	DATA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	-- fk/pk keys constraints
 	CONSTRAINT pk_SEQUENZA_DA_RICEVERE PRIMARY KEY (ID_COLLABORAZIONE)

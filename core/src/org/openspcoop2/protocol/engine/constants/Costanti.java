@@ -54,6 +54,8 @@ public class Costanti {
 	/* Colonne per Repository Buste */
     public static final String REPOSITORY_COLUMN_ID_MESSAGGIO = "ID_MESSAGGIO";
     public static final String REPOSITORY_COLUMN_TIPO_MESSAGGIO = "TIPO";
+    public static final String REPOSITORY_COLUMN_DATA_REGISTRAZIONE = "DATA_REGISTRAZIONE";
+    public static final String REPOSITORY_COLUMN_SCADENZA = "SCADENZA_BUSTA";
     public static final String REPOSITORY_COLUMN_PROTOCOLLO = "PROTOCOLLO";
     public static final String REPOSITORY_COLUMN_RIFERIMENTO_MESSAGGIO = "RIFERIMENTO_MESSAGGIO";
     public static final String REPOSITORY_COLUMN_DUPLICATI = "DUPLICATI";

@@ -753,6 +753,18 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoTransazioniIdProtocollo = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String statoTimerVerificaConnessioni = null;
+		try{
+			statoTimerVerificaConnessioni = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerVerificaConnessioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String statoConnessioniPD = null;
 		try{
 			statoConnessioniPD = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -773,6 +785,18 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoConnessioniPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String statoTimerConsegnaAsincrona = null;
+		try{
+			statoTimerConsegnaAsincrona = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerConsegnaAsincrona = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String statoPoolThread = null;
 		try{
 			statoPoolThread = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -783,6 +807,210 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoPoolThread = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String statoTimerGenerazioneStatisticheOrarie = null;
+		try{
+			statoTimerGenerazioneStatisticheOrarie = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias));
+		}catch(Exception e){
+			String tipo ="stato timer 'Statistiche "+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerGenerazioneStatisticheOrarie = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerGenerazioneStatisticheGiornaliere = null;
+		try{
+			statoTimerGenerazioneStatisticheGiornaliere = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias));
+		}catch(Exception e){
+			String tipo ="stato timer 'Statistiche "+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerGenerazioneStatisticheGiornaliere = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerGenerazioneStatisticheSettimanali = null;
+		try{
+			statoTimerGenerazioneStatisticheSettimanali = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias));
+		}catch(Exception e){
+			String tipo ="stato timer 'Statistiche "+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerGenerazioneStatisticheSettimanali = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerGenerazioneStatisticheMensili = null;
+		try{
+			statoTimerGenerazioneStatisticheMensili = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias));
+		}catch(Exception e){
+			String tipo ="stato timer 'Statistiche "+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerGenerazioneStatisticheMensili = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerMessaggiEliminati = null;
+		try{
+			statoTimerMessaggiEliminati = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerMessaggiEliminati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerMessaggiScaduti = null;
+		try{
+			statoTimerMessaggiScaduti = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerMessaggiScaduti = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerBuste = null;
+		try{
+			statoTimerBuste = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerBuste = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerCorrelazioneApplicativa = null;
+		try{
+			statoTimerCorrelazioneApplicativa = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerCorrelazioneApplicativa = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerMessaggiNonGestiti = null;
+		try{
+			statoTimerMessaggiNonGestiti = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerMessaggiNonGestiti = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerMessaggiAnomali = null;
+		try{
+			statoTimerMessaggiAnomali = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerMessaggiAnomali = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerMonitoraggioRisorse = null;
+		try{
+			statoTimerMonitoraggioRisorse = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerMonitoraggioRisorse = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerThreshold = null;
+		try{
+			statoTimerThreshold = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerThreshold = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerEventi = null;
+		try{
+			statoTimerEventi = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerEventi = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerFileSystemRecovery = null;
+		try{
+			statoTimerFileSystemRecovery = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerFileSystemRecovery = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerBusteOneway = null;
+		try{
+			statoTimerBusteOneway = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerBusteOneway = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerBusteAsincrone = null;
+		try{
+			statoTimerBusteAsincrone = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerBusteAsincrone = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTimerRepositoryStateful = null;
+		try{
+			statoTimerRepositoryStateful = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(alias));
+		}catch(Exception e){
+			String tipo ="stato timer '"+
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD+"'";
+			ControlStationCore.logError("Errore durante la lettura dello stato (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			statoTimerRepositoryStateful = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+
 		String infoInstallazione = null;
 		try{
 			infoInstallazione = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -812,8 +1040,12 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				infoProtocolli,
 				statoConnessioniDB, statoConnessioniAltriDB, statoConnessioniJMS,
 				statoTransazioniId, statoTransazioniIdProtocollo,
-				statoConnessioniPD, statoConnessioniPA, 
-				statoPoolThread,
+				statoTimerVerificaConnessioni, statoConnessioniPD, statoConnessioniPA, 
+				statoTimerConsegnaAsincrona, statoPoolThread,
+				statoTimerGenerazioneStatisticheOrarie, statoTimerGenerazioneStatisticheGiornaliere, statoTimerGenerazioneStatisticheSettimanali, statoTimerGenerazioneStatisticheMensili,
+				statoTimerMessaggiEliminati, statoTimerMessaggiScaduti, statoTimerBuste, statoTimerCorrelazioneApplicativa, statoTimerMessaggiNonGestiti, statoTimerMessaggiAnomali,
+				statoTimerMonitoraggioRisorse, statoTimerThreshold,
+				statoTimerEventi, statoTimerFileSystemRecovery, statoTimerBusteOneway, statoTimerBusteAsincrone, statoTimerRepositoryStateful,
 				infoInstallazione,
 				cacheArray);
 	}

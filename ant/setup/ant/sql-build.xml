@@ -187,6 +187,26 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	</target>
 
 
+	<target name="sql_settings_index_runtime">
+			
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="CREATE INDEX REP_BUSTE_SEARCH ON"/>
+			<param name="value" value="-- CREATE INDEX REP_BUSTE_SEARCH ON"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="CREATE INDEX REP_BUSTE_SEARCH_TIPO ON"/>
+			<param name="value" value="-- CREATE INDEX REP_BUSTE_SEARCH_TIPO ON"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="CREATE INDEX REP_BUSTE_DATAREG ON"/>
+			<param name="value" value="-- CREATE INDEX REP_BUSTE_DATAREG ON"/>
+		</antcall>
+
+	</target>
+
 	<target name="sql_settings_index_transazioni">
 			
 		<if>

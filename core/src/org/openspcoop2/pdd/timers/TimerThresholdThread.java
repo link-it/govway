@@ -23,6 +23,9 @@
 package org.openspcoop2.pdd.timers;
 
 import org.slf4j.Logger;
+
+import java.util.List;
+
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -45,6 +48,8 @@ import org.openspcoop2.utils.resources.Loader;
  */
 public class TimerThresholdThread extends Thread{
 
+	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	
 	/** Indicazione di uno spazio delle risorse di sistema corretto */
 	public static boolean freeSpace = true;
 	
@@ -70,7 +75,7 @@ public class TimerThresholdThread extends Thread{
 	/** Gestore Soglia */
 	private IThreshold[] gestore = null;
 	/** tipi Gestore Soglia */
-	private String[] tipiThreshold = null;
+	private List<String> tipiThreshold = null;
 	/** Logger */
 	private Logger log;
 	/** LastImage */
@@ -86,19 +91,19 @@ public class TimerThresholdThread extends Thread{
 		
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources();
 		this.tipiThreshold = this.propertiesReader.getRepositoryThresholdTypes();
-		this.gestore = new IThreshold[this.tipiThreshold.length];
+		this.gestore = new IThreshold[this.tipiThreshold.size()];
 		Loader loader = Loader.getInstance();
-		for(int i=0;i<this.tipiThreshold.length;i++){
-			String tipoClass = ClassNameProperties.getInstance().getThreshold(this.tipiThreshold[i]);
+		for(int i=0;i<this.tipiThreshold.size();i++){
+			String tipoClass = ClassNameProperties.getInstance().getThreshold(this.tipiThreshold.get(i));
 			if(tipoClass == null){
-				throw new ThresholdException("Riscontrato errore durante l'istanziazione del threshold di tipo ["+this.tipiThreshold[i]+"]: is null");
+				throw new ThresholdException("Riscontrato errore durante l'istanziazione del threshold di tipo ["+this.tipiThreshold.get(i)+"]: is null");
 			}
 			try{
 				this.gestore[i] = (IThreshold) loader.newInstance(tipoClass);
 				this.gestore[i].toString();
 			}catch(Exception e){
 				//e.printStackTrace();
-				throw new ThresholdException("Riscontrato errore durante l'istanziazione del threshold di tipo ["+this.tipiThreshold[i]+"]: "+e.getMessage());
+				throw new ThresholdException("Riscontrato errore durante l'istanziazione del threshold di tipo ["+this.tipiThreshold.get(i)+"]: "+e.getMessage());
 			}
 		}
 	}
@@ -131,30 +136,39 @@ public class TimerThresholdThread extends Thread{
 				continue;
 			}
 			
-			boolean checkThreshold = true;
-			for(int i=0;i<this.tipiThreshold.length;i++){
-				this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_THRESHOLD_TIPO, this.tipiThreshold[i]);
-				this.msgDiag.logPersonalizzato("controlloInCorso");
-				try{
-					checkThreshold = this.gestore[i].check(this.propertiesReader.getRepositoryThresholdParameters(this.tipiThreshold[i]));
-				}catch(Exception e){
-					this.msgDiag.logErroreGenerico(e,"checkThreshold("+this.tipiThreshold[i]+")");
-					this.log.debug("Controllo threshould non riuscito (tipo:"+this.tipiThreshold[i]+")",e);
-					checkThreshold = false;
-				}
-				if(checkThreshold == false)
-					break;
-			}
-				
+			if(TimerState.ENABLED.equals(STATE)) {
 			
-			// avvisi
-			if(checkThreshold==false && this.lastCheck==true){
-				this.msgDiag.logPersonalizzato("risorsaNonDisponibile");
-			}else if(checkThreshold==true && this.lastCheck==false){
-				this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
+				boolean checkThreshold = true;
+				for(int i=0;i<this.tipiThreshold.size();i++){
+					this.log.debug("Verifica '"+this.tipiThreshold.get(i)+"' in corso ...");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_THRESHOLD_TIPO, this.tipiThreshold.get(i));
+					this.msgDiag.logPersonalizzato("controlloInCorso");
+					try{
+						checkThreshold = this.gestore[i].check(this.propertiesReader.getRepositoryThresholdParameters(this.tipiThreshold.get(i)));
+					}catch(Exception e){
+						this.msgDiag.logErroreGenerico(e,"checkThreshold("+this.tipiThreshold.get(i)+")");
+						this.log.debug("Controllo threshould non riuscito (tipo:"+this.tipiThreshold.get(i)+")",e);
+						checkThreshold = false;
+					}
+					this.log.debug("Verifica '"+this.tipiThreshold.get(i)+"' completato con esito "+(checkThreshold?"ok":"ko"));
+					if(checkThreshold == false)
+						break;
+				}
+					
+				
+				// avvisi
+				if(checkThreshold==false && this.lastCheck==true){
+					this.msgDiag.logPersonalizzato("risorsaNonDisponibile");
+				}else if(checkThreshold==true && this.lastCheck==false){
+					this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
+				}
+				this.lastCheck = checkThreshold;
+				TimerThresholdThread.freeSpace = checkThreshold;
+				
 			}
-			this.lastCheck = checkThreshold;
-			TimerThresholdThread.freeSpace = checkThreshold;
+			else {
+				this.log.info("Timer "+ID_MODULO+" disabilitato");
+			}
 			
 			
 			// CheckInterval

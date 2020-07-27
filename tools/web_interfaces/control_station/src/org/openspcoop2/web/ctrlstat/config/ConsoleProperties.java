@@ -726,6 +726,63 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorGenerateHttpHeaderGovWayCode");
+	}	
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerConsegnaContenutiApplicativi");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerEventi");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerFileSystemRecovery");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreBusteOnewayNonRiscontrate");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreBusteAsincroneNonRiscontrate");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiEliminati");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiScaduti");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiNonGestiti");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaCorrelazioneApplicativa");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiVerificaConnessioniAttive");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestorePuliziaMessaggiAnomali");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreRepositoryBuste");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerMonitoraggioRisorseThread");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerRepositoryStatefulThread");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheOrarie");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheGiornaliere");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheSettimanali");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheMensili");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerThresholdThread");
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreById");

@@ -2313,11 +2313,11 @@ public class EJBUtils {
 	private static void _forceSaveMessage(OpenSPCoop2Properties propertiesReader, GestoreMessaggi gestoreMessaggi, Timestamp oraRegistrazione,
 			Busta busta,RichiestaApplicativa richiestaApplicativa,RepositoryBuste repositoryBuste,
 			OpenSPCoop2Message message,IOpenSPCoopState state) throws Exception{
-		gestoreMessaggi.registraInformazioniMessaggio_statelessEngine(oraRegistrazione, 
+		java.sql.Timestamp oraRegistrazioneT = gestoreMessaggi.registraInformazioniMessaggio_statelessEngine(oraRegistrazione, 
 				ConsegnaContenutiApplicativi.ID_MODULO,busta.getRiferimentoMessaggio(),
 				richiestaApplicativa.getIdCorrelazioneApplicativa(),null);
 		boolean consumeMessage= true;
-		gestoreMessaggi.registraMessaggio_statelessEngine(message, !consumeMessage); // senno il dump poi successivo non funziona
+		gestoreMessaggi.registraMessaggio_statelessEngine(message, !consumeMessage, oraRegistrazioneT); // senno il dump poi successivo non funziona
 		String key = "INSERT RegistrazioneBustaForHistory"+Costanti.INBOX+"_"+busta.getID();
 		if(repositoryBuste.isRegistrataIntoInBox(busta.getID())){
 			repositoryBuste.aggiornaBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi());

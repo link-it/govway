@@ -52,7 +52,9 @@ import org.slf4j.Logger;
  */
 public class TimerFileSystemRecoveryThread extends Thread{
 
-	private static final String ID_MODULO = "TimerFileSystemRecovery";
+	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	
+	public static final String ID_MODULO = "TimerFileSystemRecovery";
 	
 	/**
 	 * Timeout che definisce la cadenza di avvio di questo timer. 
@@ -258,45 +260,52 @@ public class TimerFileSystemRecoveryThread extends Thread{
 		
 		while(this.stop == false){
 			
-			DBTransazioniManager dbManager = null;
-	    	Resource r = null;
-			try{
-				dbManager = DBTransazioniManager.getInstance();
-				r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
-				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
-				}
-				Connection con = (Connection) r.getResource();
-				if(con == null)
-					throw new Exception("Connessione non disponibile");	
-	
-				org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
-				if(this.recoveryTransazioni){
-					transazioniSM = (org.openspcoop2.core.transazioni.dao.IServiceManager) 
-							this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), con,
-							this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLogger);
-				}
-
-				org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM = null;
-				if(this.recoveryEventi){
-					pluginsSM = (org.openspcoop2.core.eventi.dao.IServiceManager) 
-							this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), con,
-							this.daoFactoryServiceManagerPropertiesPluginsEventi, this.daoFactoryLogger);
-				}
-									
-				FSRecoveryLibrary.generate(conf, transazioniSM, 
-						this.loggerTracciamentoOpenSPCoopAppender, 
-						this.loggerMsgDiagnosticoOpenSPCoopAppender,
-						this.loggerDumpOpenSPCoopAppender,
-						pluginsSM, con);
-				
-			}catch(Exception e){
-				this.logCore.error("Errore durante il recovery da file system: "+e.getMessage(),e);
-			}finally{
+			if(TimerState.ENABLED.equals(STATE)) {
+			
+				DBTransazioniManager dbManager = null;
+		    	Resource r = null;
 				try{
-					if(r!=null)
-						dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, r);
-				}catch(Exception eClose){}
+					dbManager = DBTransazioniManager.getInstance();
+					r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
+					if(r==null){
+						throw new Exception("Risorsa al database non disponibile");
+					}
+					Connection con = (Connection) r.getResource();
+					if(con == null)
+						throw new Exception("Connessione non disponibile");	
+		
+					org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
+					if(this.recoveryTransazioni){
+						transazioniSM = (org.openspcoop2.core.transazioni.dao.IServiceManager) 
+								this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), con,
+								this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLogger);
+					}
+	
+					org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM = null;
+					if(this.recoveryEventi){
+						pluginsSM = (org.openspcoop2.core.eventi.dao.IServiceManager) 
+								this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), con,
+								this.daoFactoryServiceManagerPropertiesPluginsEventi, this.daoFactoryLogger);
+					}
+										
+					FSRecoveryLibrary.generate(conf, transazioniSM, 
+							this.loggerTracciamentoOpenSPCoopAppender, 
+							this.loggerMsgDiagnosticoOpenSPCoopAppender,
+							this.loggerDumpOpenSPCoopAppender,
+							pluginsSM, con);
+					
+				}catch(Exception e){
+					this.logCore.error("Errore durante il recovery da file system: "+e.getMessage(),e);
+				}finally{
+					try{
+						if(r!=null)
+							dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, r);
+					}catch(Exception eClose){}
+				}
+				
+			}
+			else {
+				this.logCore.info("Timer "+ID_MODULO+" disabilitato");
 			}
 			
 					

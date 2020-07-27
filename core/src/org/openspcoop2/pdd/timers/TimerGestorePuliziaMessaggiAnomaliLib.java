@@ -56,6 +56,8 @@ import org.slf4j.Logger;
 
 public class TimerGestorePuliziaMessaggiAnomaliLib{
 
+	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	
 	private MsgDiagnostico msgDiag = null;
 	private Logger logTimer = null;
 	private OpenSPCoop2Properties propertiesReader = null;
@@ -119,6 +121,13 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 		}
 		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
 			this.logTimer.error("["+TimerGestorePuliziaMessaggiAnomali.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
+			return;
+		}
+		
+		// Controllo che il timer non sia stato momentaneamente disabilitato
+		if(!TimerState.ENABLED.equals(STATE)) {
+			this.msgDiag.logPersonalizzato("disabilitato");
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
 			return;
 		}
 

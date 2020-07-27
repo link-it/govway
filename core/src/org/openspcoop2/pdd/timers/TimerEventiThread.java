@@ -49,7 +49,9 @@ import org.slf4j.Logger;
  */
 public class TimerEventiThread extends Thread{
 
-	private static final String ID_MODULO = "TimerEventi";
+	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	
+	public static final String ID_MODULO = "TimerEventi";
 	
 	/**
 	 * Timeout che definisce la cadenza di avvio di questo timer. 
@@ -179,36 +181,43 @@ public class TimerEventiThread extends Thread{
 		
 		while(this.stop == false){
 			
-			DBTransazioniManager dbManager = null;
-	    	Resource r = null;
-	    	try{
-	    		dbManager = DBTransazioniManager.getInstance();
-				r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
-				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
+			if(TimerState.ENABLED.equals(STATE)) {
+			
+				DBTransazioniManager dbManager = null;
+		    	Resource r = null;
+		    	try{
+		    		dbManager = DBTransazioniManager.getInstance();
+					r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
+					if(r==null){
+						throw new Exception("Risorsa al database non disponibile");
+					}
+					Connection con = (Connection) r.getResource();
+					if(con == null)
+						throw new Exception("Connessione non disponibile");	
+		
+					org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM = 
+							(org.openspcoop2.core.eventi.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), con,
+									this.daoFactoryServiceManagerPropertiesPlugins, this.daoFactoryLogger);
+					IEventoService eventoService = pluginsSM.getEventoService();
+					
+					if(this.properties.isControlloTrafficoEnabled()){
+						this.lastInterval = this.notificatoreEventi.process(this.log,eventoService, this.timeout, this.lastInterval, con, this.debug, this.forceCheckPrimoAvvio);
+					}
+					
+					// Aggiungere in futuro altre gestione degli eventi
+					
+				}catch(Exception e){
+					this.log.error("Errore durante la generazione degli eventi: "+e.getMessage(),e);
+				}finally{
+					try{
+						if(r!=null)
+							dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, r);
+					}catch(Exception eClose){}
 				}
-				Connection con = (Connection) r.getResource();
-				if(con == null)
-					throw new Exception("Connessione non disponibile");	
-	
-				org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM = 
-						(org.openspcoop2.core.eventi.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), con,
-								this.daoFactoryServiceManagerPropertiesPlugins, this.daoFactoryLogger);
-				IEventoService eventoService = pluginsSM.getEventoService();
-				
-				if(this.properties.isControlloTrafficoEnabled()){
-					this.lastInterval = this.notificatoreEventi.process(this.log,eventoService, this.timeout, this.lastInterval, con, this.debug, this.forceCheckPrimoAvvio);
-				}
-				
-				// Aggiungere in futuro altre gestione degli eventi
-				
-			}catch(Exception e){
-				this.log.error("Errore durante la generazione degli eventi: "+e.getMessage(),e);
-			}finally{
-				try{
-					if(r!=null)
-						dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, r);
-				}catch(Exception eClose){}
+		    	
+			}
+			else {
+				this.log.info("Timer "+ID_MODULO+" disabilitato");
 			}
 			
 					

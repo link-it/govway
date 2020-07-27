@@ -509,6 +509,10 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_THREADS = "Thread Attivi";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_STATISTICHE = "Generazione Statistiche";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME = "Pulizia Repository di Runtime";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO = "Monitoraggio Risorse";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA = "Attività di Sistema";
 	
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
@@ -753,6 +757,26 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD = "connessioniPD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA = "connessioniPA";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI = "threadsPA";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI = "timerConsegnaContenutiApplicativi";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI = "timerEventi";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY = "timerFileSystemRecovery";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE = "timerGestoreBusteOnewayNonRiscontrate";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE = "timerGestoreBusteAsincroneNonRiscontrate";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI = "timerGestoreMessaggiPuliziaMessaggiEliminati";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI = "timerGestoreMessaggiPuliziaMessaggiScaduti";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI = "timerGestoreMessaggiPuliziaMessaggiNonGestiti";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA = "timerGestoreMessaggiPuliziaCorrelazioneApplicativa";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE = "timerGestoreMessaggiVerificaConnessioniAttive";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI = "timerGestorePuliziaMessaggiAnomali";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE = "timerGestoreRepositoryBuste";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD = "timerMonitoraggioRisorseThread";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD = "timerRepositoryStatefulThread";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE = "timerStatisticheOrarie";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE = "timerStatisticheGiornaliere";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI = "timerStatisticheSettimanali";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI = "timerStatisticheMensili";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD = "timerThresholdThread";
+	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES = "ResetSelectedCaches";
@@ -1127,6 +1151,30 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
+	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX = "Timer ";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI = "Consegna Asincrona";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE = "Rispedizione Ack Oneway";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE = "Rispedizione Ack Asincroni";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_PREFIX = "Cancellazione ";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI = "Messaggi Gestiti";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI = "Messaggi Scaduti";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI = "Richieste Parziali";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA = "Correlazioni Applicative Scadute";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI = "Messaggi Inconsistenti";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE = "Buste Gestite/Scadute";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE = "Verifica Connessioni Attive";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_PREFIX = "Monitoraggio ";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD = "Risorse di Sistema";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD = "Spazio Disco";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI = "Generazione Eventi";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY = "FileSystem Recovery";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD = "Repository Stateful";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_PREFIX = "Statistiche ";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE = "Orarie";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE = "Giornaliere";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI = "Settimanali";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI = "Mensili";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA = "Utilizzo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA_TEMPLATE = "ISTANZA";

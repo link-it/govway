@@ -125,18 +125,25 @@ import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
+import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventiThread;
 import org.openspcoop2.pdd.timers.TimerFileSystemRecoveryThread;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
+import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateLib;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.pdd.timers.TimerGestoreMessaggiLib;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggiThread;
 import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomali;
+import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliLib;
 import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliThread;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
+import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteLib;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteThread;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerRepositoryStatefulThread;
+import org.openspcoop2.pdd.timers.TimerState;
+import org.openspcoop2.pdd.timers.TimerStatisticheLib;
 import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TimerUtils;
@@ -2294,6 +2301,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						propertiesReader.isAbilitatoControlloRisorseTracciamentiPersonalizzati()){
 					OpenSPCoop2Startup.this.timerMonitoraggioRisorse = new TimerMonitoraggioRisorseThread();
 					OpenSPCoop2Startup.this.timerMonitoraggioRisorse.start();
+					TimerMonitoraggioRisorseThread.STATE = TimerState.ENABLED;
 					OpenSPCoop2Startup.log.info("Inizializzo Timer per il Monitoraggio delle Risorse");
 				}
 			}catch(Exception e){
@@ -2307,10 +2315,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			// Inizializzazione Timer per il check del Threshold
 			try{
-				String [] tipiThreshold = propertiesReader.getRepositoryThresholdTypes();
-				if(tipiThreshold!=null){
+				List<String> tipiThreshold = propertiesReader.getRepositoryThresholdTypes();
+				if(tipiThreshold!=null && !tipiThreshold.isEmpty()){
 					OpenSPCoop2Startup.this.timerThreshold = new TimerThresholdThread();
 					OpenSPCoop2Startup.this.timerThreshold.start();
+					TimerThresholdThread.STATE = TimerState.ENABLED;
 					OpenSPCoop2Startup.log.info("Inizializzo Timer per il Controllo dei Threshold sulle risorse");
 				}
 			}catch(Exception e){
@@ -2451,6 +2460,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						if(OpenSPCoop2Startup.this.timerRiscontri != null) {
 							try {
 								OpenSPCoop2Startup.this.timerRiscontri.start();
+								TimerGestoreBusteNonRiscontrateLib.STATE_ONEWAY = TimerState.ENABLED;
+								TimerGestoreBusteNonRiscontrateLib.STATE_ASINCRONI = TimerState.ENABLED;
 							} catch (RemoteException e) {
 								msgDiag.logStartupError(e,"Avvio timer '"+TimerGestoreBusteNonRiscontrate.ID_MODULO+"'");
 							}
@@ -2488,6 +2499,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						if(OpenSPCoop2Startup.this.timerEliminazioneMsg != null) {
 							try {
 								OpenSPCoop2Startup.this.timerEliminazioneMsg.start();
+								TimerGestoreMessaggiLib.STATE_MESSAGGI_ELIMINATI = propertiesReader.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata() ? TimerState.ENABLED : TimerState.DISABLED;
+								TimerGestoreMessaggiLib.STATE_MESSAGGI_SCADUTI = propertiesReader.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata() ? TimerState.ENABLED : TimerState.DISABLED;
+								TimerGestoreMessaggiLib.STATE_MESSAGGI_NON_GESTITI = propertiesReader.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata() ? TimerState.ENABLED : TimerState.DISABLED;
+								TimerGestoreMessaggiLib.STATE_CORRELAZIONE_APPLICATIVA = propertiesReader.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata() ? TimerState.ENABLED : TimerState.DISABLED;
+								TimerGestoreMessaggiLib.STATE_VERIFICA_CONNESSIONI_ATTIVE = propertiesReader.isTimerGestoreMessaggiVerificaConnessioniAttive() ? TimerState.ENABLED : TimerState.DISABLED;
 							} catch (RemoteException e) {
 								msgDiag.logStartupError(e,"Avvio timer '"+TimerGestoreMessaggi.ID_MODULO+"'");
 							}
@@ -2501,6 +2517,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					try{
 						OpenSPCoop2Startup.this.threadEliminazioneMsg = new TimerGestoreMessaggiThread();
 						OpenSPCoop2Startup.this.threadEliminazioneMsg.start();
+						TimerGestoreMessaggiLib.STATE_MESSAGGI_ELIMINATI = propertiesReader.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata() ? TimerState.ENABLED : TimerState.DISABLED;
+						TimerGestoreMessaggiLib.STATE_MESSAGGI_SCADUTI = propertiesReader.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata() ? TimerState.ENABLED : TimerState.DISABLED;
+						TimerGestoreMessaggiLib.STATE_MESSAGGI_NON_GESTITI = propertiesReader.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata() ? TimerState.ENABLED : TimerState.DISABLED;
+						TimerGestoreMessaggiLib.STATE_CORRELAZIONE_APPLICATIVA = propertiesReader.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata() ? TimerState.ENABLED : TimerState.DISABLED;
+						TimerGestoreMessaggiLib.STATE_VERIFICA_CONNESSIONI_ATTIVE = propertiesReader.isTimerGestoreMessaggiVerificaConnessioniAttive() ? TimerState.ENABLED : TimerState.DISABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerGestoreMessaggi.ID_MODULO+"'");
 					}
@@ -2532,6 +2553,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						if(OpenSPCoop2Startup.this.timerPuliziaMsgAnomali != null) {
 							try {
 								OpenSPCoop2Startup.this.timerPuliziaMsgAnomali.start();
+								TimerGestorePuliziaMessaggiAnomaliLib.STATE = TimerState.ENABLED;
 							} catch (RemoteException e) {
 								msgDiag.logStartupError(e,"Avvio timer '"+TimerGestorePuliziaMessaggiAnomali.ID_MODULO+"'");
 							}
@@ -2545,6 +2567,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					try{
 						OpenSPCoop2Startup.this.threadPuliziaMsgAnomali = new TimerGestorePuliziaMessaggiAnomaliThread();
 						OpenSPCoop2Startup.this.threadPuliziaMsgAnomali.start();
+						TimerGestorePuliziaMessaggiAnomaliLib.STATE = TimerState.ENABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerGestorePuliziaMessaggiAnomali.ID_MODULO+"'");
 					}
@@ -2574,6 +2597,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						if(OpenSPCoop2Startup.this.timerRepositoryBuste != null) {
 							try {
 								OpenSPCoop2Startup.this.timerRepositoryBuste.start();
+								TimerGestoreRepositoryBusteLib.STATE = propertiesReader.isTimerGestoreRepositoryBusteAbilitatoInitialState() ? TimerState.ENABLED : TimerState.DISABLED;
 							} catch (RemoteException e) {
 								msgDiag.logStartupError(e,"Avvio timer '"+TimerGestoreRepositoryBuste.ID_MODULO+"'");
 							}
@@ -2587,6 +2611,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					try{
 						OpenSPCoop2Startup.this.threadRepositoryBuste = new TimerGestoreRepositoryBusteThread();
 						OpenSPCoop2Startup.this.threadRepositoryBuste.start();
+						TimerGestoreRepositoryBusteLib.STATE = propertiesReader.isTimerGestoreRepositoryBusteAbilitatoInitialState() ? TimerState.ENABLED : TimerState.DISABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerGestoreRepositoryBuste.ID_MODULO+"'");
 					}
@@ -2613,6 +2638,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi = new TimerConsegnaContenutiApplicativiThread();
 						OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi.start();
 						OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRef = OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi;
+						TimerConsegnaContenutiApplicativi.STATE = TimerState.ENABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
 					}
@@ -2639,6 +2665,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.this.threadGenerazioneStatisticheOrarie = 
 								new TimerStatisticheThread(propertiesReader.getStatisticheOrarieGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.STATISTICHE_ORARIE);
 						OpenSPCoop2Startup.this.threadGenerazioneStatisticheOrarie.start();
+						TimerStatisticheLib.STATE_STATISTICHE_ORARIE = TimerState.ENABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerStatOrarie+"'");
 					}
@@ -2656,6 +2683,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.this.threadGenerazioneStatisticheGiornaliere = 
 								new TimerStatisticheThread(propertiesReader.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.STATISTICHE_GIORNALIERE);
 						OpenSPCoop2Startup.this.threadGenerazioneStatisticheGiornaliere.start();
+						TimerStatisticheLib.STATE_STATISTICHE_GIORNALIERE = TimerState.ENABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerStatGiornaliere+"'");
 					}
@@ -2673,6 +2701,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.this.threadGenerazioneStatisticheSettimanali = 
 								new TimerStatisticheThread(propertiesReader.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.STATISTICHE_SETTIMANALI);
 						OpenSPCoop2Startup.this.threadGenerazioneStatisticheSettimanali.start();
+						TimerStatisticheLib.STATE_STATISTICHE_SETTIMANALI = TimerState.ENABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerStatSettimanali+"'");
 					}
@@ -2690,6 +2719,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.this.threadGenerazioneStatisticheMensili = 
 								new TimerStatisticheThread(propertiesReader.getStatisticheMensiliGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.STATISTICHE_MENSILI);
 						OpenSPCoop2Startup.this.threadGenerazioneStatisticheMensili.start();
+						TimerStatisticheLib.STATE_STATISTICHE_MENSILI = TimerState.ENABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerStatMensili+"'");
 					}
@@ -2723,6 +2753,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						logTransazioniStateful.debug("Avvio inizializzazione thread per gestione transazioni stateful ...");
 					OpenSPCoop2Startup.this.threadRepositoryStateful = new TimerRepositoryStatefulThread();
 					OpenSPCoop2Startup.this.threadRepositoryStateful.start();
+					TimerRepositoryStatefulThread.STATE = TimerState.ENABLED;
 					forceLogTransazioniStateful.info("Thread per la gestione transazioni stateful avviato correttamente");
 				}
 				else{
@@ -2753,6 +2784,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							OpenSPCoop2Logger.getLoggerOpenSPCoopFileSystemRecoverySql(debug));
 					OpenSPCoop2Startup.this.threadFileSystemRecovery.start();
 					forceLogRecoveryFileSystem.info("Thread per la gestione transazioni stateful avviato correttamente");
+					TimerFileSystemRecoveryThread.STATE = TimerState.ENABLED;
 				}
 				else{
 					forceLogRecoveryFileSystem.info("Thread per il recovery da file system disabilitato");
@@ -2793,6 +2825,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 								logEventi.debug("Avvio inizializzazione thread per Eventi ...");
 							OpenSPCoop2Startup.this.threadEventi = new TimerEventiThread(logEventi);
 							OpenSPCoop2Startup.this.threadEventi.start();
+							TimerEventiThread.STATE = TimerState.ENABLED;
 							forceLogEventi.info("Thread per gli Eventi avviato correttamente");
 						}catch(Exception e){
 							throw new HandlerException("Avvio timer degli eventi fallito: "+e.getMessage(),e);
@@ -2969,50 +3002,53 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		try{
 			if(properties.isStatisticheGenerazioneEnabled()){
 				boolean debugStatistiche = properties.isStatisticheGenerazioneDebug();
-				Logger logStatistiche = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(debugStatistiche);
 				
+				Logger logStatisticheOrarie = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(TipoIntervalloStatistico.STATISTICHE_ORARIE, debugStatistiche);
 				if(debugStatistiche)
-					logStatistiche.debug("Recupero thread per la generazione delle statistiche orarie ...");
+					logStatisticheOrarie.debug("Recupero thread per la generazione delle statistiche orarie ...");
 				if(OpenSPCoop2Startup.this.threadGenerazioneStatisticheOrarie!=null){
 					OpenSPCoop2Startup.this.threadGenerazioneStatisticheOrarie.setStop(true);
 					if(debugStatistiche)
-						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche orarie");
+						logStatisticheOrarie.debug("Richiesto stop al thread per la generazione delle statistiche orarie");
 				}else{
 					if(properties.isStatisticheGenerazioneBaseOrariaEnabled()) {
 						throw new Exception("Thread per la generazione delle statistiche orarie non trovato");
 					}
 				}	
 				
+				Logger logStatisticheGiornaliere = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(TipoIntervalloStatistico.STATISTICHE_GIORNALIERE, debugStatistiche);
 				if(debugStatistiche)
-					logStatistiche.debug("Recupero thread per la generazione delle statistiche giornaliere ...");
+					logStatisticheGiornaliere.debug("Recupero thread per la generazione delle statistiche giornaliere ...");
 				if(OpenSPCoop2Startup.this.threadGenerazioneStatisticheGiornaliere!=null){
 					OpenSPCoop2Startup.this.threadGenerazioneStatisticheGiornaliere.setStop(true);
 					if(debugStatistiche)
-						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche giornaliere");
+						logStatisticheGiornaliere.debug("Richiesto stop al thread per la generazione delle statistiche giornaliere");
 				}else{
 					if(properties.isStatisticheGenerazioneBaseGiornalieraEnabled()) {
 						throw new Exception("Thread per la generazione delle statistiche giornaliere non trovato");
 					}
 				}
 				
+				Logger logStatisticheSettimanali = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(TipoIntervalloStatistico.STATISTICHE_SETTIMANALI, debugStatistiche);
 				if(debugStatistiche)
-					logStatistiche.debug("Recupero thread per la generazione delle statistiche settimanali ...");
+					logStatisticheSettimanali.debug("Recupero thread per la generazione delle statistiche settimanali ...");
 				if(OpenSPCoop2Startup.this.threadGenerazioneStatisticheSettimanali!=null){
 					OpenSPCoop2Startup.this.threadGenerazioneStatisticheSettimanali.setStop(true);
 					if(debugStatistiche)
-						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche settimanali");
+						logStatisticheSettimanali.debug("Richiesto stop al thread per la generazione delle statistiche settimanali");
 				}else{
 					if(properties.isStatisticheGenerazioneBaseSettimanaleEnabled()) {
 						throw new Exception("Thread per la generazione delle statistiche settimanali non trovato");
 					}
 				}
 				
+				Logger logStatisticheMensili = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(TipoIntervalloStatistico.STATISTICHE_MENSILI, debugStatistiche);
 				if(debugStatistiche)
-					logStatistiche.debug("Recupero thread per la generazione delle statistiche mensili ...");
+					logStatisticheMensili.debug("Recupero thread per la generazione delle statistiche mensili ...");
 				if(OpenSPCoop2Startup.this.threadGenerazioneStatisticheMensili!=null){
 					OpenSPCoop2Startup.this.threadGenerazioneStatisticheMensili.setStop(true);
 					if(debugStatistiche)
-						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche mensili");
+						logStatisticheMensili.debug("Richiesto stop al thread per la generazione delle statistiche mensili");
 				}else{
 					if(properties.isStatisticheGenerazioneBaseMensileEnabled()) {
 						throw new Exception("Thread per la generazione delle statistiche mensili non trovato");

@@ -407,7 +407,7 @@ public class OpenSPCoop2Properties {
 			this.getMsgGiaInProcessamento_CheckInterval();
 
 			// Threshold per il Repository
-			String [] tipiThreshold = this.getRepositoryThresholdTypes();
+			List<String> tipiThreshold = this.getRepositoryThresholdTypes();
 			if(tipiThreshold!=null){
 				// CheckInterval in Repository
 				long intervalloCheck = this.getRepositoryThresholdCheckInterval();
@@ -415,20 +415,20 @@ public class OpenSPCoop2Properties {
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.checkInterval', valore non impostato/valido.");			
 					return false;
 				}
-				for(int i=0; i<tipiThreshold.length;i++){
-					if(this.getRepositoryThresholdParameters(tipiThreshold[i])==null)
+				for(int i=0; i<tipiThreshold.size();i++){
+					if(this.getRepositoryThresholdParameters(tipiThreshold.get(i))==null)
 						return false;
 					//	Ricerco connettore
-					String tipoClass = className.getThreshold(tipiThreshold[i]);
+					String tipoClass = className.getThreshold(tipiThreshold.get(i));
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold[i]+"] nelle classi registrate in OpenSPCoop");
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IThreshold t = (IThreshold) loaderOpenSPCoop.newInstance(tipoClass);
 						t.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold[i]+"]: "+e.getMessage(),e);
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -829,6 +829,10 @@ public class OpenSPCoop2Properties {
 			}
 			
 			this.isTimerGestoreMessaggiAbilitato();
+			this.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata();
+			this.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata();
+			this.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata();
+			this.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata();
 			this.isTimerGestoreMessaggiAbilitatoOrderBy();
 			this.isTimerGestoreMessaggiAbilitatoLog();
 			this.getTimerGestoreMessaggiLimit();
@@ -848,6 +852,7 @@ public class OpenSPCoop2Properties {
 			}
 			
 			this.isTimerGestoreRepositoryBusteAbilitato();
+			this.isTimerGestoreRepositoryBusteAbilitatoInitialState();
 			this.isTimerGestoreRepositoryBusteAbilitatoOrderBy();
 			this.isTimerGestoreRepositoryBusteAbilitatoLog();
 			this.getTimerGestoreRepositoryBusteLimit();
@@ -4194,6 +4199,98 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isTimerGestoreMessaggiAbilitato;
 	}
 	
+	private static Boolean isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata = null;
+	public boolean isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata(){
+		if(OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata;
+	}
+	
+	private static Boolean isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata = null;
+	public boolean isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata(){
+		if(OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata;
+	}
+	
+	private static Boolean isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata = null;
+	public boolean isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata(){
+		if(OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata;
+	}
+	
+	private static Boolean isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata = null;
+	public boolean isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata(){
+		if(OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata;
+	}
+	
 	/**
 	 * Restituisce l'indicazione se usare l'order by nelle queries
 	 *
@@ -4568,6 +4665,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isTimerGestoreRepositoryBusteAbilitato;
+	}
+	private static Boolean isTimerGestoreRepositoryBusteAbilitatoInitialState = null;
+	public boolean isTimerGestoreRepositoryBusteAbilitatoInitialState(){
+		if(OpenSPCoop2Properties.isTimerGestoreRepositoryBusteAbilitatoInitialState==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isTimerGestoreRepositoryBusteAbilitatoInitialState = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isTimerGestoreRepositoryBusteAbilitatoInitialState = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerGestoreRepositoryBusteAbilitatoInitialState = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isTimerGestoreRepositoryBusteAbilitatoInitialState;
 	}
 
 	/**
@@ -5603,9 +5722,9 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce l'IThreshold utilizzato da OpenSPCoop.
 	 * 
 	 */
-	private static String[] repositoryThresholdTypes = null;
+	private static List<String> repositoryThresholdTypes = null;
 	private static boolean repositoryThresholdTypesRead = false;
-	public String[] getRepositoryThresholdTypes() {	
+	public List<String> getRepositoryThresholdTypes() {	
 		if(OpenSPCoop2Properties.repositoryThresholdTypesRead == false){
 			try{ 
 				String name = null;
@@ -5614,10 +5733,16 @@ public class OpenSPCoop2Properties {
 					OpenSPCoop2Properties.repositoryThresholdTypes = null;
 				}else{
 					String [] r = name.trim().split(",");
+					List<String> l = new ArrayList<String>();
 					for(int i=0; i<r.length; i++){
 						r[i] = r[i].trim();
+						l.add(r[i]);
 					}
-					OpenSPCoop2Properties.repositoryThresholdTypes = r;
+					
+					if(!l.isEmpty()) {
+						OpenSPCoop2Properties.repositoryThresholdTypes = new ArrayList<String>();
+						OpenSPCoop2Properties.repositoryThresholdTypes.addAll(l);
+					}
 				}
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold.tipi': "+e.getMessage(),e);

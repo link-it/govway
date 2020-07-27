@@ -121,6 +121,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
+import org.openspcoop2.pdd.timers.TimerState;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
@@ -6136,7 +6137,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
-		
+				
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE);
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
@@ -6225,6 +6229,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI);
+				
 		stato = null;
 		try{
 			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -6254,12 +6262,135 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		
-		
-		
+			
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_STATISTICHE);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
 
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI);
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA);
+		
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI);
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD);
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE);
+		
+		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(alias), 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD);
+
+		
 		return dati;
 	}
 
+	private void addTimerState(Vector<DataElement> dati, Object gestoreRisorseJMX, String alias, String nomeAttributo, String nomeParametro, String labelParametro) {
+		try{
+			String stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					nomeAttributo);
+			
+			TimerState timerState = TimerState.valueOf(stato);
+			
+			DataElement de = newDataElementStyleRuntime();
+			de.setName(nomeParametro);
+			de.setLabel(labelParametro);
+			if(TimerState.OFF.equals(timerState)) {
+				de.setType(DataElementType.TEXT);
+				de.setValue(TimerState.OFF.name());
+			}
+			else {
+				String[] labeles = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+				String[] values = { TimerState.ENABLED.name(), TimerState.DISABLED.name() };
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(labeles);
+				de.setSelected(stato);
+				de.setPostBack_viaPOST(true);
+			}
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul '"+nomeAttributo+"' (jmxResourcePdD): "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+		}
+	}
+	
 	public boolean isErroreHttp(String stato, String risorsa){
 		if(stato!=null && stato.startsWith("[httpCode ")){
 			this.log.error("Errore durante la lettura della risorsa ["+risorsa+"]: "+stato);

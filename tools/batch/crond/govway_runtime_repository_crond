@@ -1,0 +1,7 @@
+# [*/]MINUTI [*/]ORA * * * root PDD_BATCH_ABSOLUTE_PATH DIRECTORY_BATCH NOME_SCRIPT DEBUG(true/false)
+#
+# Pulizia del repository di runtime
+# In caso i messaggi giornalieri siano un numero contenuto si consiglia un'esecuzione del batch una volta al giorno, ad esempio alla 01:00
+#0 1 * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/gestoreRuntimeRepository gestisciRepository.sh false
+# In caso i messaggi giornalieri gestiti dal gateway sono un numero elevato si consiglia un'esecuzione del batch più volte al giorno, ad esempio ogni ora
+#0 */1 * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/gestoreRuntimeRepository gestisciRepository.sh false

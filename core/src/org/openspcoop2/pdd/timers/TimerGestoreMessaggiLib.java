@@ -69,6 +69,11 @@ import org.slf4j.Logger;
 
 public class TimerGestoreMessaggiLib  {
 
+	public static TimerState STATE_MESSAGGI_ELIMINATI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState STATE_MESSAGGI_SCADUTI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState STATE_MESSAGGI_NON_GESTITI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState STATE_CORRELAZIONE_APPLICATIVA = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState STATE_VERIFICA_CONNESSIONI_ATTIVE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 
 	private MsgDiagnostico msgDiag = null;
 	private Logger logTimer = null;
@@ -153,6 +158,17 @@ public class TimerGestoreMessaggiLib  {
 			this.logTimer.error("["+TimerGestoreMessaggi.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			return;
 		}
+		
+		// Controllo che il timer non sia stato momentaneamente disabilitato
+		if(!TimerState.ENABLED.equals(STATE_MESSAGGI_ELIMINATI) && 
+				!TimerState.ENABLED.equals(STATE_MESSAGGI_SCADUTI) && 
+				!TimerState.ENABLED.equals(STATE_MESSAGGI_NON_GESTITI) &&
+				!TimerState.ENABLED.equals(STATE_CORRELAZIONE_APPLICATIVA) && 
+				!TimerState.ENABLED.equals(STATE_VERIFICA_CONNESSIONI_ATTIVE)) {
+			this.msgDiag.logPersonalizzato("disabilitato");
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
+			return;
+		}
 
 		// Prendo la gestione
 		this.msgDiag.logPersonalizzato("controlloInCorso");
@@ -188,138 +204,148 @@ public class TimerGestoreMessaggiLib  {
 
 
 				/* --- Messaggi da eliminare (non scaduti) --- */ 
-
-				// Eliminazione Messaggi from INBOX
-				String causaMessaggiINBOXDaEliminareNonScaduti = "Eliminazione messaggi INBOX marcati logicamente da eliminare";
+				
 				List<String> idMsgInutiliINBOX = null;
-				try{
-					GestoreMessaggi.acquireLock(
-							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaMessaggiINBOXDaEliminareNonScaduti, 
-							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-
-					idMsgInutiliINBOX = gestoreMsgSearch.readMessaggiInutiliIntoInbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery);
-					int gestiti = 0;
-					if(idMsgInutiliINBOX.size()>0){
-						if(this.logQuery)
-							this.logTimer.info("Trovati "+idMsgInutiliINBOX.size()+" messaggi (cancellazione logica) da eliminare nel repository (INBOX) ...");
-						trovatiMessaggi = true;
-
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiCompletati");
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.INBOX);
-						for(int i=0; i<idMsgInutiliINBOX.size(); i++){
-
-							String idMsgDaEliminare = idMsgInutiliINBOX.get(i);
-							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
-
-							try{
-								try{
-									GestoreMessaggi.updateLock(
-											this.semaphore, connectionDB, this.timerLock,
-											this.msgDiag, "Eliminazione messaggio INBOX con id ["+idMsgDaEliminare+"] ...");
-								}catch(Throwable e){
-									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioInbox("+idMsgDaEliminare+")-UpdateLock");
-									this.logTimer.error("ErroreEliminazioneMessaggioInbox("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
-									break;
-								}
-
-								// eliminazione messaggio
-								gestoreMsg = new GestoreMessaggi(openspcoopstate, true
-										,idMsgDaEliminare,Costanti.INBOX,this.msgDiag,null);
-								gestoreMsg.deleteMessageWithoutLock();
-
-								this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
-								if(this.logQuery)
-									this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
-
-								gestiti++;
-
-							}catch(Exception e){
-								this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioInbox("+idMsgDaEliminare+")");
-								this.logTimer.error("ErroreEliminazioneMessaggioInbox("+idMsgDaEliminare+"): "+e.getMessage(),e);
-							}
-						}
-
-						if(this.logQuery)
-							this.logTimer.info("Eliminati "+gestiti+" messaggi (cancellazione logica) nel repository (INBOX)");
-					}
-					else{
-						if(this.logQuery)
-							this.logTimer.info("Non sono stati trovati messaggi (cancellazione logica) da eliminare nel repository (INBOX)");
-					}
-				}finally{
-					try{
-						GestoreMessaggi.releaseLock(
-								this.semaphore, connectionDB, this.timerLock,
-								this.msgDiag, causaMessaggiINBOXDaEliminareNonScaduti);
-					}catch(Exception e){}
-				}
-
-				//	Eliminazione Messaggi from OUTBOX
-				String causaMessaggiOUTBOXDaEliminareNonScaduti = "Eliminazione messaggi OUTBOX marcati logicamente da eliminare";
 				List<String> idMsgInutiliOUTBOX = null;
-				try{
-					GestoreMessaggi.acquireLock(
-							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaMessaggiOUTBOXDaEliminareNonScaduti, 
-							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-
-					idMsgInutiliOUTBOX = gestoreMsgSearch.readMessaggiInutiliIntoOutbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery);
-					int gestiti = 0;
-					if(idMsgInutiliOUTBOX.size()>0){
-						if(this.logQuery)
-							this.logTimer.info("Trovati "+idMsgInutiliOUTBOX.size()+" messaggi (cancellazione logica) da eliminare nel repository (OUTBOX) ...");
-						trovatiMessaggi = true;
-
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiCompletati");
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.OUTBOX);
-						for(int i=0; i<idMsgInutiliOUTBOX.size(); i++){
-
-							String idMsgDaEliminare = idMsgInutiliOUTBOX.get(i);
-							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
-
-							try{
-								try{
-									GestoreMessaggi.updateLock(
-											this.semaphore, connectionDB, this.timerLock,
-											this.msgDiag, "Eliminazione messaggio OUTBOX con id ["+idMsgDaEliminare+"] ...");
-								}catch(Throwable e){
-									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioOutbox("+idMsgDaEliminare+")-UpdateLock");
-									this.logTimer.error("ErroreEliminazioneMessaggioOutbox("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
-									break;
-								}
-
-								// eliminazione messaggio
-								gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.OUTBOX,this.msgDiag,null);
-								gestoreMsg.deleteMessageWithoutLock();
-
-								this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
-								if(this.logQuery)
-									this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
-
-								gestiti++;
-
-							}catch(Exception e){
-								this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioOutbox("+idMsgDaEliminare+")");
-								this.logTimer.error("ErroreEliminazioneMessaggioOutbox("+idMsgDaEliminare+"): "+e.getMessage(),e);
-							}		
-						}
-
-						if(this.logQuery)
-							this.logTimer.info("Eliminati "+gestiti+" messaggi (cancellazione logica) nel repository (OUTBOX)");
-					}
-					else{
-						if(this.logQuery)
-							this.logTimer.info("Non sono stati trovati messaggi (cancellazione logica) da eliminare nel repository (OUTBOX)");
-					}
-				}finally{
+				
+				if(TimerState.ENABLED.equals(STATE_MESSAGGI_ELIMINATI)) {
+				
+					// Eliminazione Messaggi from INBOX
+					String causaMessaggiINBOXDaEliminareNonScaduti = "Eliminazione messaggi INBOX marcati logicamente da eliminare";
 					try{
-						GestoreMessaggi.releaseLock(
+						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLock,
-								this.msgDiag, causaMessaggiOUTBOXDaEliminareNonScaduti);
-					}catch(Exception e){}
+								this.msgDiag, causaMessaggiINBOXDaEliminareNonScaduti, 
+								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
+								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+	
+						idMsgInutiliINBOX = gestoreMsgSearch.readMessaggiInutiliIntoInbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery);
+						int gestiti = 0;
+						if(idMsgInutiliINBOX.size()>0){
+							if(this.logQuery)
+								this.logTimer.info("Trovati "+idMsgInutiliINBOX.size()+" messaggi (cancellazione logica) da eliminare nel repository (INBOX) ...");
+							trovatiMessaggi = true;
+	
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiCompletati");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.INBOX);
+							for(int i=0; i<idMsgInutiliINBOX.size(); i++){
+	
+								String idMsgDaEliminare = idMsgInutiliINBOX.get(i);
+								this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
+	
+								try{
+									try{
+										GestoreMessaggi.updateLock(
+												this.semaphore, connectionDB, this.timerLock,
+												this.msgDiag, "Eliminazione messaggio INBOX con id ["+idMsgDaEliminare+"] ...");
+									}catch(Throwable e){
+										this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioInbox("+idMsgDaEliminare+")-UpdateLock");
+										this.logTimer.error("ErroreEliminazioneMessaggioInbox("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
+										break;
+									}
+	
+									// eliminazione messaggio
+									gestoreMsg = new GestoreMessaggi(openspcoopstate, true
+											,idMsgDaEliminare,Costanti.INBOX,this.msgDiag,null);
+									gestoreMsg.deleteMessageWithoutLock();
+	
+									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
+									if(this.logQuery)
+										this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
+	
+									gestiti++;
+	
+								}catch(Exception e){
+									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioInbox("+idMsgDaEliminare+")");
+									this.logTimer.error("ErroreEliminazioneMessaggioInbox("+idMsgDaEliminare+"): "+e.getMessage(),e);
+								}
+							}
+	
+							if(this.logQuery)
+								this.logTimer.info("Eliminati "+gestiti+" messaggi (cancellazione logica) nel repository (INBOX)");
+						}
+						else{
+							if(this.logQuery)
+								this.logTimer.info("Non sono stati trovati messaggi (cancellazione logica) da eliminare nel repository (INBOX)");
+						}
+					}finally{
+						try{
+							GestoreMessaggi.releaseLock(
+									this.semaphore, connectionDB, this.timerLock,
+									this.msgDiag, causaMessaggiINBOXDaEliminareNonScaduti);
+						}catch(Exception e){}
+					}
+	
+					//	Eliminazione Messaggi from OUTBOX
+					String causaMessaggiOUTBOXDaEliminareNonScaduti = "Eliminazione messaggi OUTBOX marcati logicamente da eliminare";
+					try{
+						GestoreMessaggi.acquireLock(
+								this.semaphore, connectionDB, this.timerLock,
+								this.msgDiag, causaMessaggiOUTBOXDaEliminareNonScaduti, 
+								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
+								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+	
+						idMsgInutiliOUTBOX = gestoreMsgSearch.readMessaggiInutiliIntoOutbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery);
+						int gestiti = 0;
+						if(idMsgInutiliOUTBOX.size()>0){
+							if(this.logQuery)
+								this.logTimer.info("Trovati "+idMsgInutiliOUTBOX.size()+" messaggi (cancellazione logica) da eliminare nel repository (OUTBOX) ...");
+							trovatiMessaggi = true;
+	
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiCompletati");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.OUTBOX);
+							for(int i=0; i<idMsgInutiliOUTBOX.size(); i++){
+	
+								String idMsgDaEliminare = idMsgInutiliOUTBOX.get(i);
+								this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
+	
+								try{
+									try{
+										GestoreMessaggi.updateLock(
+												this.semaphore, connectionDB, this.timerLock,
+												this.msgDiag, "Eliminazione messaggio OUTBOX con id ["+idMsgDaEliminare+"] ...");
+									}catch(Throwable e){
+										this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioOutbox("+idMsgDaEliminare+")-UpdateLock");
+										this.logTimer.error("ErroreEliminazioneMessaggioOutbox("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
+										break;
+									}
+	
+									// eliminazione messaggio
+									gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.OUTBOX,this.msgDiag,null);
+									gestoreMsg.deleteMessageWithoutLock();
+	
+									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
+									if(this.logQuery)
+										this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
+	
+									gestiti++;
+	
+								}catch(Exception e){
+									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioOutbox("+idMsgDaEliminare+")");
+									this.logTimer.error("ErroreEliminazioneMessaggioOutbox("+idMsgDaEliminare+"): "+e.getMessage(),e);
+								}		
+							}
+	
+							if(this.logQuery)
+								this.logTimer.info("Eliminati "+gestiti+" messaggi (cancellazione logica) nel repository (OUTBOX)");
+						}
+						else{
+							if(this.logQuery)
+								this.logTimer.info("Non sono stati trovati messaggi (cancellazione logica) da eliminare nel repository (OUTBOX)");
+						}
+					}finally{
+						try{
+							GestoreMessaggi.releaseLock(
+									this.semaphore, connectionDB, this.timerLock,
+									this.msgDiag, causaMessaggiOUTBOXDaEliminareNonScaduti);
+						}catch(Exception e){}
+					}
+					
+				}
+				else {
+					if(this.logQuery) {
+						this.logTimer.info("Gestione messaggi (cancellazione logica) disabilitata");
+					}	
 				}
 
 
@@ -329,441 +355,455 @@ public class TimerGestoreMessaggiLib  {
 
 				/* --- Messaggi scaduti, verra' effettuato anche un rollback delle Buste. --- */
 
-				//	Eliminazione Messaggi from INBOX
-				String causaMessaggiINBOXScaduti = "Eliminazione messaggi INBOX scaduti";
 				List<String> idMsgScadutiINBOX = null;
-				try{
-					GestoreMessaggi.acquireLock(
-							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaMessaggiINBOXScaduti, 
-							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-
-					idMsgScadutiINBOX = gestoreMsgSearch.readMessaggiScadutiIntoInbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery);
-					int gestiti = 0;
-					if(idMsgScadutiINBOX.size()>0){
-						if(this.logQuery)
-							this.logTimer.info("Trovati "+idMsgScadutiINBOX.size()+" messaggi (scaduti) da eliminare nel repository (INBOX) ...");
-						trovatiMessaggi = true;
-
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiScaduti");
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.INBOX);
-						for(int i=0; i<idMsgScadutiINBOX.size(); i++){
-
-							String idMsgDaEliminare = idMsgScadutiINBOX.get(i);
-							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
-
-							try{
+				List<String> idMsgScadutiOUTBOX = null;
+				
+				if(TimerState.ENABLED.equals(STATE_MESSAGGI_SCADUTI)) {
+				
+					//	Eliminazione Messaggi from INBOX
+					String causaMessaggiINBOXScaduti = "Eliminazione messaggi INBOX scaduti";
+					try{
+						GestoreMessaggi.acquireLock(
+								this.semaphore, connectionDB, this.timerLock,
+								this.msgDiag, causaMessaggiINBOXScaduti, 
+								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
+								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+	
+						idMsgScadutiINBOX = gestoreMsgSearch.readMessaggiScadutiIntoInbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery);
+						int gestiti = 0;
+						if(idMsgScadutiINBOX.size()>0){
+							if(this.logQuery)
+								this.logTimer.info("Trovati "+idMsgScadutiINBOX.size()+" messaggi (scaduti) da eliminare nel repository (INBOX) ...");
+							trovatiMessaggi = true;
+	
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiScaduti");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.INBOX);
+							for(int i=0; i<idMsgScadutiINBOX.size(); i++){
+	
+								String idMsgDaEliminare = idMsgScadutiINBOX.get(i);
+								this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
+	
 								try{
-									GestoreMessaggi.updateLock(
-											this.semaphore, connectionDB, this.timerLock,
-											this.msgDiag, "Eliminazione messaggio scaduto INBOX con id ["+idMsgDaEliminare+"] ...");
-								}catch(Throwable e){
-									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioScadutoInbox("+idMsgDaEliminare+")-UpdateLock");
-									this.logTimer.error("ErroreEliminazioneMessaggioScadutoInbox("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
-									break;
-								}
-
-								gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.INBOX,this.msgDiag,null);
-
-								//	rollback messaggio scaduto (eventuale profilo + accesso_pdd)
-								rollbackMessaggio = new RollbackRepositoryBuste(idMsgDaEliminare,openspcoopstate.getStatoRichiesta(),true);
-								rollbackMessaggio.rollbackBustaIntoInBox();
-
-								// rollback repository + // rollback jms receiver
-								String rifMsg = gestoreMsg.getRiferimentoMessaggio();
-								if(rifMsg==null){
-									if(receiverJMS!=null){
-										// rollback jms receiver
-										String strMessageSelector = "ID = '"+idMsgDaEliminare+"'";
-										if (receiverJMS.clean(RicezioneBuste.ID_MODULO,strMessageSelector)){
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
-													RicezioneBuste.ID_MODULO);
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"false");
-											this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
-										}
+									try{
+										GestoreMessaggi.updateLock(
+												this.semaphore, connectionDB, this.timerLock,
+												this.msgDiag, "Eliminazione messaggio scaduto INBOX con id ["+idMsgDaEliminare+"] ...");
+									}catch(Throwable e){
+										this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioScadutoInbox("+idMsgDaEliminare+")-UpdateLock");
+										this.logTimer.error("ErroreEliminazioneMessaggioScadutoInbox("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
+										break;
 									}
-								}else{
-									// rollback repository
-									rollbackRepository = new RollbackRepositoryBuste(rifMsg,openspcoopstate.getStatoRichiesta(),true);
-									rollbackRepository.rollbackBustaIntoOutBox(false); // non effettuo il rollback dell'history (riscontro/ricevuta arrivera...)
-
-									if(receiverJMS!=null){
-										// rollback jms receiver
-										String strMessageSelector = "ID = '"+rifMsg+"'";
-										if (receiverJMS.clean(RicezioneContenutiApplicativi.ID_MODULO,strMessageSelector)){
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
-													RicezioneContenutiApplicativi.ID_MODULO);
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"true");
-											this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
+	
+									gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.INBOX,this.msgDiag,null);
+	
+									//	rollback messaggio scaduto (eventuale profilo + accesso_pdd)
+									rollbackMessaggio = new RollbackRepositoryBuste(idMsgDaEliminare,openspcoopstate.getStatoRichiesta(),true);
+									rollbackMessaggio.rollbackBustaIntoInBox();
+	
+									// rollback repository + // rollback jms receiver
+									String rifMsg = gestoreMsg.getRiferimentoMessaggio();
+									if(rifMsg==null){
+										if(receiverJMS!=null){
+											// rollback jms receiver
+											String strMessageSelector = "ID = '"+idMsgDaEliminare+"'";
+											if (receiverJMS.clean(RicezioneBuste.ID_MODULO,strMessageSelector)){
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
+														RicezioneBuste.ID_MODULO);
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"false");
+												this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
+											}
 										}
-									}
-								}
-
-								// aggiorno eventuali destinatari nella transazione prima di eliminare il messaggio
-								try {
-									List<MessaggioServizioApplicativo> listMsgServiziApplicativi = gestoreMsg.readInfoDestinatari(this.logQuery, this.logTimer);
-									if(listMsgServiziApplicativi!=null && !listMsgServiziApplicativi.isEmpty()) {
-										
-										for (MessaggioServizioApplicativo messaggioServizioApplicativo : listMsgServiziApplicativi) {
-											TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
-											transazioneApplicativoServer.setIdTransazione(messaggioServizioApplicativo.getIdTransazione());
-											transazioneApplicativoServer.setServizioApplicativoErogatore(messaggioServizioApplicativo.getServizioApplicativo());
-											transazioneApplicativoServer.setDataMessaggioScaduto(DateManager.getDate());
-											transazioneApplicativoServer.setProtocollo(this.propertiesReader.getDefaultProtocolName()); // non è importante per impostare la scadenza
-											IDPortaApplicativa idPA = new IDPortaApplicativa();
-											idPA.setNome(messaggioServizioApplicativo.getNomePorta());
-											try {
-												GestoreConsegnaMultipla.getInstance().safeUpdateMessaggioScaduto(transazioneApplicativoServer, idPA, openspcoopstate);
-											}catch(Throwable t) {
-												this.logTimer.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+									}else{
+										// rollback repository
+										rollbackRepository = new RollbackRepositoryBuste(rifMsg,openspcoopstate.getStatoRichiesta(),true);
+										rollbackRepository.rollbackBustaIntoOutBox(false); // non effettuo il rollback dell'history (riscontro/ricevuta arrivera...)
+	
+										if(receiverJMS!=null){
+											// rollback jms receiver
+											String strMessageSelector = "ID = '"+rifMsg+"'";
+											if (receiverJMS.clean(RicezioneContenutiApplicativi.ID_MODULO,strMessageSelector)){
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
+														RicezioneContenutiApplicativi.ID_MODULO);
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"true");
+												this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
 											}
 										}
 									}
-								}catch(Throwable t) {
-									this.logTimer.error("Errore durante l'aggiornamento dello stato degli applicativi nelle transazioni: "+t.getMessage(),t);
-								}
-								
-								// Eliminazione effettiva
-								((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
-								//	eliminazione messaggio
-								gestoreMsg.deleteMessageWithoutLock();
-
-								this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
-								if(this.logQuery)
-									this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
-
-								gestiti++;
-
-							}catch(Exception e){
-
-								((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
-								this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioScadutoInbox("+idMsgDaEliminare+")");
-								this.logTimer.error("ErroreEliminazioneMessaggioScadutoInbox("+idMsgDaEliminare+"): "+e.getMessage(),e);
-							}
-						}
-
-						if(this.logQuery)
-							this.logTimer.info("Eliminati "+gestiti+" messaggi (scaduti) nel repository (INBOX)");
-					}
-					else{
-						if(this.logQuery)
-							this.logTimer.info("Non sono stati trovati messaggi (scaduti) da eliminare nel repository (INBOX)");
-					}
-				}finally{
-					try{
-						GestoreMessaggi.releaseLock(
-								this.semaphore, connectionDB, this.timerLock,
-								this.msgDiag, causaMessaggiINBOXScaduti);
-					}catch(Exception e){}
-				}
-
-				// Eliminazione Messaggi from OUTBOX
-				String causaMessaggiOUTBOXScaduti = "Eliminazione messaggi OUTBOX scaduti";
-				List<String> idMsgScadutiOUTBOX = null;
-				try{
-					GestoreMessaggi.acquireLock(
-							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaMessaggiOUTBOXScaduti, 
-							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-
-					idMsgScadutiOUTBOX = gestoreMsgSearch.readMessaggiScadutiIntoOutbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery);
-					int gestiti = 0;
-					if(idMsgScadutiOUTBOX.size()>0){
-						if(this.logQuery)
-							this.logTimer.info("Trovati "+idMsgScadutiOUTBOX.size()+" messaggi (scaduti) da eliminare nel repository (OUTBOX) ...");
-						trovatiMessaggi = true;
-
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiScaduti");
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.OUTBOX);
-						for(int i=0; i<idMsgScadutiOUTBOX.size(); i++){
-
-							String idMsgDaEliminare = idMsgScadutiOUTBOX.get(i);
-							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
-
-							try{
-								try{
-									GestoreMessaggi.updateLock(
-											this.semaphore, connectionDB, this.timerLock,
-											this.msgDiag, "Eliminazione messaggio scaduto OUTBOX con id ["+idMsgDaEliminare+"] ...");
-								}catch(Throwable e){
-									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioScadutoOutbox("+idMsgDaEliminare+")-UpdateLock");
-									this.logTimer.error("ErroreEliminazioneMessaggioScadutoOutbox("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
-									break;
-								}
-
-								gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.OUTBOX,this.msgDiag,null);
-
-								//	rollback messaggio scaduto (eventuale profilo + accesso_pdd)
-								rollbackMessaggio = new RollbackRepositoryBuste(idMsgDaEliminare,openspcoopstate.getStatoRichiesta(),true);
-								rollbackMessaggio.rollbackBustaIntoOutBox();
-
-								//	rollback repository + // rollback jms receiver
-								String rifMsg = gestoreMsg.getRiferimentoMessaggio();
-								if(rifMsg==null){
-									if(receiverJMS!=null){
-										//	rollback jms receiver
-										String strMessageSelector = "ID = '"+idMsgDaEliminare+"'";
-										if (receiverJMS.clean(RicezioneContenutiApplicativi.ID_MODULO,strMessageSelector)){
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
-													RicezioneContenutiApplicativi.ID_MODULO);
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"false");
-											this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
+	
+									// aggiorno eventuali destinatari nella transazione prima di eliminare il messaggio
+									try {
+										List<MessaggioServizioApplicativo> listMsgServiziApplicativi = gestoreMsg.readInfoDestinatari(this.logQuery, this.logTimer);
+										if(listMsgServiziApplicativi!=null && !listMsgServiziApplicativi.isEmpty()) {
+											
+											for (MessaggioServizioApplicativo messaggioServizioApplicativo : listMsgServiziApplicativi) {
+												TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
+												transazioneApplicativoServer.setIdTransazione(messaggioServizioApplicativo.getIdTransazione());
+												transazioneApplicativoServer.setServizioApplicativoErogatore(messaggioServizioApplicativo.getServizioApplicativo());
+												transazioneApplicativoServer.setDataMessaggioScaduto(DateManager.getDate());
+												transazioneApplicativoServer.setProtocollo(this.propertiesReader.getDefaultProtocolName()); // non è importante per impostare la scadenza
+												IDPortaApplicativa idPA = new IDPortaApplicativa();
+												idPA.setNome(messaggioServizioApplicativo.getNomePorta());
+												try {
+													GestoreConsegnaMultipla.getInstance().safeUpdateMessaggioScaduto(transazioneApplicativoServer, idPA, openspcoopstate);
+												}catch(Throwable t) {
+													this.logTimer.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+												}
+											}
 										}
+									}catch(Throwable t) {
+										this.logTimer.error("Errore durante l'aggiornamento dello stato degli applicativi nelle transazioni: "+t.getMessage(),t);
 									}
-								}else{
-									// rollback repository
-									rollbackRepository = new RollbackRepositoryBuste(rifMsg,openspcoopstate.getStatoRichiesta(),true);
-									rollbackRepository.rollbackBustaIntoInBox(false); // non effettuo il rollback dell'history (busta e' ricevuta)
-
-									if(receiverJMS!=null){
-										//	rollback jms receiver
-										String strMessageSelector = "ID = '"+rifMsg+"'";
-										if (receiverJMS.clean(RicezioneBuste.ID_MODULO,strMessageSelector)){
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
-													RicezioneBuste.ID_MODULO);
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"true");
-											this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
-										}
-									}
-								}
-								((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
-								//	eliminazione messaggio
-								gestoreMsg.deleteMessageWithoutLock();
-
-								this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
-								if(this.logQuery)
-									this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
-
-								gestiti++;
-
-							}catch(Exception e){
-								((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
-								this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioScadutoOutbox("+idMsgDaEliminare+")");
-								this.logTimer.error("ErroreEliminazioneMessaggioScadutoOutbox("+idMsgDaEliminare+"): "+e.getMessage(),e);
-							}		
-						}
-
-						if(this.logQuery)
-							this.logTimer.info("Eliminati "+gestiti+" messaggi (scaduti) nel repository (OUTBOX)");
-
-					}
-					else{
-						if(this.logQuery)
-							this.logTimer.info("Non sono stati trovati messaggi (scaduti) da eliminare nel repository (OUTBOX)");
-					}
-				}finally{
-					try{
-						GestoreMessaggi.releaseLock(
-								this.semaphore, connectionDB, this.timerLock,
-								this.msgDiag, causaMessaggiOUTBOXScaduti);
-					}catch(Exception e){}
-				}
-
-
-
-
-
-
-
-				/* --- Messaggi non gestiti dal servizio web RicezioneContenutiApplicativi, verra' effettuato anche un rollback delle Buste. ---*/
-
-				//	Eliminazione Messaggi from INBOX
-				String causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi = "Eliminazione messaggi INBOX non gestiti dal servizio RicezioneContenutiApplicativi";
-				List<String> idMsgServizioRicezioneContenutiApplicativiNonGestiti = null;
-				try{
-					GestoreMessaggi.acquireLock(
-							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi, 
-							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-
-					idMsgServizioRicezioneContenutiApplicativiNonGestiti = 
-							gestoreMsgSearch.readMsgForRicezioneContenutiApplicativiNonGestiti(timeoutRicezioneContenutiApplicativiNonGestiti, this.limit,this.logQuery,this.orderByQuery);
-					int gestiti = 0;
-					if(idMsgServizioRicezioneContenutiApplicativiNonGestiti.size()>0){
-						if(this.logQuery)
-							this.logTimer.info("Trovati "+idMsgServizioRicezioneContenutiApplicativiNonGestiti.size()+" messaggi (non gestiti da 'RicezioneContenutiApplicativi') da eliminare nel repository (INBOX) ...");
-						trovatiMessaggi = true;
-
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiNonGestitiRicezioneContenutiApplicativi");
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.INBOX);
-						for(int i=0; i<idMsgServizioRicezioneContenutiApplicativiNonGestiti.size(); i++){
-							String idMsgDaEliminare = idMsgServizioRicezioneContenutiApplicativiNonGestiti.get(i);
-							String idBustaDaEliminare = idMsgDaEliminare.split("@")[0];
-							String servizioApplicativoDaEliminare = idMsgDaEliminare.split("@")[1];
-							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idBustaDaEliminare);
-
-							try{
-								try{
-									GestoreMessaggi.updateLock(
-											this.semaphore, connectionDB, this.timerLock,
-											this.msgDiag, "Eliminazione messaggio INBOX non gestiti dal servizio RicezioneContenutiApplicativi con id ["+idMsgDaEliminare+"] ...");
-								}catch(Throwable e){
-									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioRicezioneContenutiApplicativiNonGestiti("+idMsgDaEliminare+")-UpdateLock");
-									this.logTimer.error("ErroreEliminazioneMessaggioRicezioneContenutiApplicativiNonGestiti("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
-									break;
-								}
-
-								gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idBustaDaEliminare,Costanti.INBOX,this.msgDiag,null);
-
-								// pulizia jms receiver
-								if(receiverJMS!=null){
-									String rifMsg = gestoreMsg.getRiferimentoMessaggio();
-									if(rifMsg!=null){
-										// rollback jms receiver
-										String strMessageSelector = "ID = '"+rifMsg+"'";
-										if (receiverJMS.clean(RicezioneContenutiApplicativi.ID_MODULO,strMessageSelector)){
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
-													RicezioneContenutiApplicativi.ID_MODULO);
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"true");
-											this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
-										}
-									}
-								}
-
-								//	eliminazione servizioApplicativo
-								gestoreMsg.eliminaDestinatarioMessaggio(servizioApplicativoDaEliminare,gestoreMsg.getRiferimentoMessaggio());
-
-								// Se non ci sono altri destinatari effettua rollback
-								if(gestoreMsg.existsServiziApplicativiDestinatariMessaggio()==false){
-									rollbackMessaggio = new RollbackRepositoryBuste(idBustaDaEliminare,openspcoopstate.getStatoRichiesta(),true);
-									rollbackMessaggio.rollbackBustaIntoInBox();
+									
+									// Eliminazione effettiva
 									((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
-								}
-
-								this.msgDiag.logPersonalizzato("eliminazioneDestinatarioMessaggio");
-								if(this.logQuery)
-									this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneDestinatarioMessaggio"));
-
-								gestiti++;
-
-							}catch(Exception e){
-								if(rollbackMessaggio!=null){
+									//	eliminazione messaggio
+									gestoreMsg.deleteMessageWithoutLock();
+	
+									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
+									if(this.logQuery)
+										this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
+	
+									gestiti++;
+	
+								}catch(Exception e){
+	
 									((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
-									rollbackMessaggio = null;
+									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioScadutoInbox("+idMsgDaEliminare+")");
+									this.logTimer.error("ErroreEliminazioneMessaggioScadutoInbox("+idMsgDaEliminare+"): "+e.getMessage(),e);
 								}
-								this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioRicezioneContenutiApplicativiNonGestiti("+idMsgDaEliminare+")");
-								this.logTimer.error("ErroreEliminazioneMessaggioRicezioneContenutiApplicativiNonGestiti("+idMsgDaEliminare+"): "+e.getMessage(),e);
 							}
+	
+							if(this.logQuery)
+								this.logTimer.info("Eliminati "+gestiti+" messaggi (scaduti) nel repository (INBOX)");
 						}
-
-						if(this.logQuery)
-							this.logTimer.info("Eliminati "+gestiti+" messaggi (non gestiti da 'RicezioneContenutiApplicativi') nel repository (INBOX)");
-
+						else{
+							if(this.logQuery)
+								this.logTimer.info("Non sono stati trovati messaggi (scaduti) da eliminare nel repository (INBOX)");
+						}
+					}finally{
+						try{
+							GestoreMessaggi.releaseLock(
+									this.semaphore, connectionDB, this.timerLock,
+									this.msgDiag, causaMessaggiINBOXScaduti);
+						}catch(Exception e){}
 					}
-					else{
-						if(this.logQuery)
-							this.logTimer.info("Non sono stati trovati messaggi (non gestiti da 'RicezioneContenutiApplicativi') da eliminare nel repository (INBOX)");
-					}
-				}finally{
+	
+					// Eliminazione Messaggi from OUTBOX
+					String causaMessaggiOUTBOXScaduti = "Eliminazione messaggi OUTBOX scaduti";
 					try{
-						GestoreMessaggi.releaseLock(
+						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLock,
-								this.msgDiag, causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi);
-					}catch(Exception e){}
-				}
-
-
-
-
-
-
-
-				/* --- Messaggi non gestiti dal servizio web RicezioneBuste, verra' effettuato anche un rollback delle Buste. --- */
-
-				//	Eliminazione Messaggi from OUTBOX
-				String causaMessaggiOUTBOXNonGestitiRicezioneBuste = "Eliminazione messaggi OUTBOX non gestiti dal servizio RicezioneBuste";
-				List<String> idMsgServizioRicezioneBusteNonGestiti = null;
-				try{
-					GestoreMessaggi.acquireLock(
-							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaMessaggiOUTBOXNonGestitiRicezioneBuste, 
-							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-
-					idMsgServizioRicezioneBusteNonGestiti = 
-							gestoreMsgSearch.readMsgForRicezioneBusteNonGestiti(timeoutRicezioneBusteNonGestiti, this.limit,this.logQuery,this.orderByQuery);
-					int gestiti = 0;
-					if(idMsgServizioRicezioneBusteNonGestiti.size()>0){
-						if(this.logQuery)
-							this.logTimer.info("Trovati "+idMsgServizioRicezioneBusteNonGestiti.size()+" messaggi (non gestiti da 'RicezioneBuste') da eliminare nel repository (OUTBOX) ...");
-						trovatiMessaggi = true;
-
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiNonGestitiRicezioneBuste");
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.OUTBOX);
-						for(int i=0; i<idMsgServizioRicezioneBusteNonGestiti.size(); i++){
-							String idMsgDaEliminare = idMsgServizioRicezioneBusteNonGestiti.get(i);
-							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
-							try{
+								this.msgDiag, causaMessaggiOUTBOXScaduti, 
+								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
+								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+	
+						idMsgScadutiOUTBOX = gestoreMsgSearch.readMessaggiScadutiIntoOutbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery);
+						int gestiti = 0;
+						if(idMsgScadutiOUTBOX.size()>0){
+							if(this.logQuery)
+								this.logTimer.info("Trovati "+idMsgScadutiOUTBOX.size()+" messaggi (scaduti) da eliminare nel repository (OUTBOX) ...");
+							trovatiMessaggi = true;
+	
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiScaduti");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.OUTBOX);
+							for(int i=0; i<idMsgScadutiOUTBOX.size(); i++){
+	
+								String idMsgDaEliminare = idMsgScadutiOUTBOX.get(i);
+								this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
+	
 								try{
-									GestoreMessaggi.updateLock(
-											this.semaphore, connectionDB, this.timerLock,
-											this.msgDiag, "Eliminazione messaggio OUTBOX non gestiti dal servizio RicezioneBuste con id ["+idMsgDaEliminare+"] ...");
-								}catch(Throwable e){
-									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioRicezioneBusteNonGestiti("+idMsgDaEliminare+")-UpdateLock");
-									this.logTimer.error("ErroreEliminazioneMessaggioRicezioneBusteNonGestiti("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
-									break;
-								}
-
-								gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.OUTBOX,this.msgDiag,null);
-
-								//	rollback messaggio scaduto (eventuale profilo + accesso_pdd)
-								rollbackMessaggio = new RollbackRepositoryBuste(idMsgDaEliminare,openspcoopstate.getStatoRichiesta(),true);
-								rollbackMessaggio.rollbackBustaIntoOutBox();
-								((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
-
-								// ollback jms receiver
-								if(receiverJMS!=null){
+									try{
+										GestoreMessaggi.updateLock(
+												this.semaphore, connectionDB, this.timerLock,
+												this.msgDiag, "Eliminazione messaggio scaduto OUTBOX con id ["+idMsgDaEliminare+"] ...");
+									}catch(Throwable e){
+										this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioScadutoOutbox("+idMsgDaEliminare+")-UpdateLock");
+										this.logTimer.error("ErroreEliminazioneMessaggioScadutoOutbox("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
+										break;
+									}
+	
+									gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.OUTBOX,this.msgDiag,null);
+	
+									//	rollback messaggio scaduto (eventuale profilo + accesso_pdd)
+									rollbackMessaggio = new RollbackRepositoryBuste(idMsgDaEliminare,openspcoopstate.getStatoRichiesta(),true);
+									rollbackMessaggio.rollbackBustaIntoOutBox();
+	
+									//	rollback repository + // rollback jms receiver
 									String rifMsg = gestoreMsg.getRiferimentoMessaggio();
-									if(rifMsg!=null){
-										// rollback jms receiver
-										String strMessageSelector = "ID = '"+rifMsg+"'";
-										if (receiverJMS.clean(RicezioneBuste.ID_MODULO,strMessageSelector)){
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
-													RicezioneBuste.ID_MODULO);
-											this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"false");
-											this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
+									if(rifMsg==null){
+										if(receiverJMS!=null){
+											//	rollback jms receiver
+											String strMessageSelector = "ID = '"+idMsgDaEliminare+"'";
+											if (receiverJMS.clean(RicezioneContenutiApplicativi.ID_MODULO,strMessageSelector)){
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
+														RicezioneContenutiApplicativi.ID_MODULO);
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"false");
+												this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
+											}
+										}
+									}else{
+										// rollback repository
+										rollbackRepository = new RollbackRepositoryBuste(rifMsg,openspcoopstate.getStatoRichiesta(),true);
+										rollbackRepository.rollbackBustaIntoInBox(false); // non effettuo il rollback dell'history (busta e' ricevuta)
+	
+										if(receiverJMS!=null){
+											//	rollback jms receiver
+											String strMessageSelector = "ID = '"+rifMsg+"'";
+											if (receiverJMS.clean(RicezioneBuste.ID_MODULO,strMessageSelector)){
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
+														RicezioneBuste.ID_MODULO);
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"true");
+												this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
+											}
 										}
 									}
-								}
-
-								//	eliminazione messaggio
-								gestoreMsg.deleteMessageWithoutLock();
-
-								this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
-								if(this.logQuery)
-									this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
-
-								gestiti++;
-
-							}catch(Exception e){
-								if(rollbackMessaggio!=null){
+									((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
+									//	eliminazione messaggio
+									gestoreMsg.deleteMessageWithoutLock();
+	
+									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
+									if(this.logQuery)
+										this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
+	
+									gestiti++;
+	
+								}catch(Exception e){
 									((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
-									rollbackMessaggio = null;
-								}
-								this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioRicezioneBusteNonGestiti("+idMsgDaEliminare+")");
-								this.logTimer.error("ErroreEliminazioneMessaggioRicezioneBusteNonGestiti("+idMsgDaEliminare+"): "+e.getMessage(),e);
+									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioScadutoOutbox("+idMsgDaEliminare+")");
+									this.logTimer.error("ErroreEliminazioneMessaggioScadutoOutbox("+idMsgDaEliminare+"): "+e.getMessage(),e);
+								}		
 							}
+	
+							if(this.logQuery)
+								this.logTimer.info("Eliminati "+gestiti+" messaggi (scaduti) nel repository (OUTBOX)");
+	
 						}
-
-						if(this.logQuery)
-							this.logTimer.info("Eliminati "+gestiti+" messaggi (non gestiti da 'RicezioneBuste') nel repository (OUTBOX)");
-
+						else{
+							if(this.logQuery)
+								this.logTimer.info("Non sono stati trovati messaggi (scaduti) da eliminare nel repository (OUTBOX)");
+						}
+					}finally{
+						try{
+							GestoreMessaggi.releaseLock(
+									this.semaphore, connectionDB, this.timerLock,
+									this.msgDiag, causaMessaggiOUTBOXScaduti);
+						}catch(Exception e){}
 					}
-					else{
-						if(this.logQuery)
-							this.logTimer.info("Non sono stati trovati messaggi (non gestiti da 'RicezioneBuste') da eliminare nel repository (OUTBOX)");
-					}
-				}finally{
-					try{
-						GestoreMessaggi.releaseLock(
-								this.semaphore, connectionDB, this.timerLock,
-								this.msgDiag, causaMessaggiOUTBOXNonGestitiRicezioneBuste);
-					}catch(Exception e){}
+
+				}
+				else {
+					if(this.logQuery) {
+						this.logTimer.info("Gestione messaggi (scaduti) disabilitata");
+					}	
 				}
 
+
+
+
+				List<String> idMsgServizioRicezioneContenutiApplicativiNonGestiti = null;
+				List<String> idMsgServizioRicezioneBusteNonGestiti = null;
+				
+				if(TimerState.ENABLED.equals(STATE_MESSAGGI_NON_GESTITI)) {
+
+					/* --- Messaggi non gestiti dal servizio web RicezioneContenutiApplicativi, verra' effettuato anche un rollback delle Buste. ---*/
+	
+					//	Eliminazione Messaggi from INBOX
+					String causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi = "Eliminazione messaggi INBOX non gestiti dal servizio RicezioneContenutiApplicativi";
+					try{
+						GestoreMessaggi.acquireLock(
+								this.semaphore, connectionDB, this.timerLock,
+								this.msgDiag, causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi, 
+								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
+								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+	
+						idMsgServizioRicezioneContenutiApplicativiNonGestiti = 
+								gestoreMsgSearch.readMsgForRicezioneContenutiApplicativiNonGestiti(timeoutRicezioneContenutiApplicativiNonGestiti, this.limit,this.logQuery,this.orderByQuery);
+						int gestiti = 0;
+						if(idMsgServizioRicezioneContenutiApplicativiNonGestiti.size()>0){
+							if(this.logQuery)
+								this.logTimer.info("Trovati "+idMsgServizioRicezioneContenutiApplicativiNonGestiti.size()+" messaggi (non gestiti da 'RicezioneContenutiApplicativi') da eliminare nel repository (INBOX) ...");
+							trovatiMessaggi = true;
+	
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiNonGestitiRicezioneContenutiApplicativi");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.INBOX);
+							for(int i=0; i<idMsgServizioRicezioneContenutiApplicativiNonGestiti.size(); i++){
+								String idMsgDaEliminare = idMsgServizioRicezioneContenutiApplicativiNonGestiti.get(i);
+								String idBustaDaEliminare = idMsgDaEliminare.split("@")[0];
+								String servizioApplicativoDaEliminare = idMsgDaEliminare.split("@")[1];
+								this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idBustaDaEliminare);
+	
+								try{
+									try{
+										GestoreMessaggi.updateLock(
+												this.semaphore, connectionDB, this.timerLock,
+												this.msgDiag, "Eliminazione messaggio INBOX non gestiti dal servizio RicezioneContenutiApplicativi con id ["+idMsgDaEliminare+"] ...");
+									}catch(Throwable e){
+										this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioRicezioneContenutiApplicativiNonGestiti("+idMsgDaEliminare+")-UpdateLock");
+										this.logTimer.error("ErroreEliminazioneMessaggioRicezioneContenutiApplicativiNonGestiti("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
+										break;
+									}
+	
+									gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idBustaDaEliminare,Costanti.INBOX,this.msgDiag,null);
+	
+									// pulizia jms receiver
+									if(receiverJMS!=null){
+										String rifMsg = gestoreMsg.getRiferimentoMessaggio();
+										if(rifMsg!=null){
+											// rollback jms receiver
+											String strMessageSelector = "ID = '"+rifMsg+"'";
+											if (receiverJMS.clean(RicezioneContenutiApplicativi.ID_MODULO,strMessageSelector)){
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
+														RicezioneContenutiApplicativi.ID_MODULO);
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"true");
+												this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
+											}
+										}
+									}
+	
+									//	eliminazione servizioApplicativo
+									gestoreMsg.eliminaDestinatarioMessaggio(servizioApplicativoDaEliminare,gestoreMsg.getRiferimentoMessaggio());
+	
+									// Se non ci sono altri destinatari effettua rollback
+									if(gestoreMsg.existsServiziApplicativiDestinatariMessaggio()==false){
+										rollbackMessaggio = new RollbackRepositoryBuste(idBustaDaEliminare,openspcoopstate.getStatoRichiesta(),true);
+										rollbackMessaggio.rollbackBustaIntoInBox();
+										((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
+									}
+	
+									this.msgDiag.logPersonalizzato("eliminazioneDestinatarioMessaggio");
+									if(this.logQuery)
+										this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneDestinatarioMessaggio"));
+	
+									gestiti++;
+	
+								}catch(Exception e){
+									if(rollbackMessaggio!=null){
+										((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
+										rollbackMessaggio = null;
+									}
+									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioRicezioneContenutiApplicativiNonGestiti("+idMsgDaEliminare+")");
+									this.logTimer.error("ErroreEliminazioneMessaggioRicezioneContenutiApplicativiNonGestiti("+idMsgDaEliminare+"): "+e.getMessage(),e);
+								}
+							}
+	
+							if(this.logQuery)
+								this.logTimer.info("Eliminati "+gestiti+" messaggi (non gestiti da 'RicezioneContenutiApplicativi') nel repository (INBOX)");
+	
+						}
+						else{
+							if(this.logQuery)
+								this.logTimer.info("Non sono stati trovati messaggi (non gestiti da 'RicezioneContenutiApplicativi') da eliminare nel repository (INBOX)");
+						}
+					}finally{
+						try{
+							GestoreMessaggi.releaseLock(
+									this.semaphore, connectionDB, this.timerLock,
+									this.msgDiag, causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi);
+						}catch(Exception e){}
+					}
+	
+	
+	
+					/* --- Messaggi non gestiti dal servizio web RicezioneBuste, verra' effettuato anche un rollback delle Buste. --- */
+	
+					//	Eliminazione Messaggi from OUTBOX
+					String causaMessaggiOUTBOXNonGestitiRicezioneBuste = "Eliminazione messaggi OUTBOX non gestiti dal servizio RicezioneBuste";
+					try{
+						GestoreMessaggi.acquireLock(
+								this.semaphore, connectionDB, this.timerLock,
+								this.msgDiag, causaMessaggiOUTBOXNonGestitiRicezioneBuste, 
+								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
+								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+	
+						idMsgServizioRicezioneBusteNonGestiti = 
+								gestoreMsgSearch.readMsgForRicezioneBusteNonGestiti(timeoutRicezioneBusteNonGestiti, this.limit,this.logQuery,this.orderByQuery);
+						int gestiti = 0;
+						if(idMsgServizioRicezioneBusteNonGestiti.size()>0){
+							if(this.logQuery)
+								this.logTimer.info("Trovati "+idMsgServizioRicezioneBusteNonGestiti.size()+" messaggi (non gestiti da 'RicezioneBuste') da eliminare nel repository (OUTBOX) ...");
+							trovatiMessaggi = true;
+	
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"MessaggiNonGestitiRicezioneBuste");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO,Costanti.OUTBOX);
+							for(int i=0; i<idMsgServizioRicezioneBusteNonGestiti.size(); i++){
+								String idMsgDaEliminare = idMsgServizioRicezioneBusteNonGestiti.get(i);
+								this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idMsgDaEliminare);
+								try{
+									try{
+										GestoreMessaggi.updateLock(
+												this.semaphore, connectionDB, this.timerLock,
+												this.msgDiag, "Eliminazione messaggio OUTBOX non gestiti dal servizio RicezioneBuste con id ["+idMsgDaEliminare+"] ...");
+									}catch(Throwable e){
+										this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioRicezioneBusteNonGestiti("+idMsgDaEliminare+")-UpdateLock");
+										this.logTimer.error("ErroreEliminazioneMessaggioRicezioneBusteNonGestiti("+idMsgDaEliminare+")-UpdateLock: "+e.getMessage(),e);
+										break;
+									}
+	
+									gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.OUTBOX,this.msgDiag,null);
+	
+									//	rollback messaggio scaduto (eventuale profilo + accesso_pdd)
+									rollbackMessaggio = new RollbackRepositoryBuste(idMsgDaEliminare,openspcoopstate.getStatoRichiesta(),true);
+									rollbackMessaggio.rollbackBustaIntoOutBox();
+									((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
+	
+									// ollback jms receiver
+									if(receiverJMS!=null){
+										String rifMsg = gestoreMsg.getRiferimentoMessaggio();
+										if(rifMsg!=null){
+											// rollback jms receiver
+											String strMessageSelector = "ID = '"+rifMsg+"'";
+											if (receiverJMS.clean(RicezioneBuste.ID_MODULO,strMessageSelector)){
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_CODA_JMS_FILTRO_MSG_DA_ELIMINARE,
+														RicezioneBuste.ID_MODULO);
+												this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_RICERCA_MSG_DA_ELIMINARE_PER_RIFERIMENTO,"false");
+												this.msgDiag.logPersonalizzato("messaggioNonConsumato.codaJMS");
+											}
+										}
+									}
+	
+									//	eliminazione messaggio
+									gestoreMsg.deleteMessageWithoutLock();
+	
+									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
+									if(this.logQuery)
+										this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneMessaggio"));
+	
+									gestiti++;
+	
+								}catch(Exception e){
+									if(rollbackMessaggio!=null){
+										((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
+										rollbackMessaggio = null;
+									}
+									this.msgDiag.logErroreGenerico(e,"EliminazioneMessaggioRicezioneBusteNonGestiti("+idMsgDaEliminare+")");
+									this.logTimer.error("ErroreEliminazioneMessaggioRicezioneBusteNonGestiti("+idMsgDaEliminare+"): "+e.getMessage(),e);
+								}
+							}
+	
+							if(this.logQuery)
+								this.logTimer.info("Eliminati "+gestiti+" messaggi (non gestiti da 'RicezioneBuste') nel repository (OUTBOX)");
+	
+						}
+						else{
+							if(this.logQuery)
+								this.logTimer.info("Non sono stati trovati messaggi (non gestiti da 'RicezioneBuste') da eliminare nel repository (OUTBOX)");
+						}
+					}finally{
+						try{
+							GestoreMessaggi.releaseLock(
+									this.semaphore, connectionDB, this.timerLock,
+									this.msgDiag, causaMessaggiOUTBOXNonGestitiRicezioneBuste);
+						}catch(Exception e){}
+					}
+					
+				}
+				else {
+					if(this.logQuery) {
+						this.logTimer.info("Gestione messaggi (non gestiti) disabilitata");
+					}	
+				}
+				
+				
 
 				// log finale  
 				if(trovatiMessaggi){
@@ -786,176 +826,83 @@ public class TimerGestoreMessaggiLib  {
 
 
 
+			if(TimerState.ENABLED.equals(STATE_CORRELAZIONE_APPLICATIVA)) {
 
-			//	CorrelazioniApplicative da eliminare
-			GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(),this.logTimer,null,null);
-
-
-			// -- Scadute (Correlazioni per cui era stata impostata una scadenza) --
-			String causaCorrelazioniApplicativeScadute = "Eliminazione correlazioni applicative scadute";
-			List<Long> correlazioniScadute;
-			try{
-				GestoreMessaggi.acquireLock(
-						this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
-						this.msgDiag, causaCorrelazioniApplicativeScadute, 
-						this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(), 
-						this.propertiesReader.getGestioneSerializableDB_CheckInterval());
-
-				correlazioniScadute = gestoreCorrelazioneApplicativa.getCorrelazioniScadute(this.limit,this.logQuery,this.orderByQuery);
-				this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"CorrelazioniApplicative");
-				if(this.logQuery){
-					if(correlazioniScadute.size()<=0){
-						this.logTimer.info("Non sono state trovate correlazioni applicative (scadute) da eliminare");
-					}
-				}
-
-				while(correlazioniScadute.size()>0){
-
-					if(this.logQuery)
-						this.logTimer.info("Trovate "+correlazioniScadute.size()+" correlazioni applicative (scadute) da eliminare ...");
-
-					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_CORRELAZIONI_APPLICATIVE_SCADUTE, correlazioniScadute.size()+"");
-					this.msgDiag.logPersonalizzato("ricercaCorrelazioniApplicativeScadute");
-
-					int gestiti = 0;
-					while(correlazioniScadute.size()>0){
-						Long idCorrelazioneScaduta = correlazioniScadute.remove(0);
-
-						String idCorrelato = null;
-						String idApplicativo = null;
-
-						try{	
-							String [] id = gestoreCorrelazioneApplicativa.getIDMappingCorrelazioneApplicativa(idCorrelazioneScaduta);
-							idCorrelato = id[0];
-							idApplicativo = id[1];
-							try{
-								GestoreMessaggi.updateLock(
-										this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
-										this.msgDiag, "Eliminazione correlazione applicativa scaduta (id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+") ...");
-							}catch(Throwable e){
-								this.msgDiag.logErroreGenerico(e,"EliminazioneCorrelazioni(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")-UpdateLock");
-								this.logTimer.error("ErroreEliminazioneCorrelazioni(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")-UpdateLock: "+e.getMessage(),e);
-								break;
-							}
-
-							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idCorrelato);
-							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_CORRELAZIONE_APPLICATIVA,idApplicativo);
-
-							gestoreCorrelazioneApplicativa.deleteCorrelazioneApplicativa(idCorrelazioneScaduta);
-							this.msgDiag.logPersonalizzato("eliminazioneCorrelazioneApplicativaScaduta");
-							if(this.logQuery)
-								this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneCorrelazioneApplicativaScaduta"));
-
-							gestiti++;
-
-						}catch(Exception e){
-							this.msgDiag.logErroreGenerico(e,"EliminazioneCorrelazioni(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")");
-							this.logTimer.error("ErroreEliminazioneCorrelazioni(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+"): "+e.getMessage(),e);
-						}
-					}
-
-					if(this.logQuery)
-						this.logTimer.info("Eliminate "+gestiti+" correlazioni applicative (scadute)");
-
-					boolean cerca = true;
-					try{
-						GestoreMessaggi.updateLock(
-								this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
-								this.msgDiag, "Ricerca nuove correlazioni scadute  ...");
-					}catch(Throwable e){
-						this.msgDiag.logErroreGenerico(e,"RicercaNuoveCorrelazioni-UpdateLock");
-						this.logTimer.error("RicercaNuoveCorrelazioni-UpdateLock: "+e.getMessage(),e);
-						cerca = false;
-					}
-					
-					if(cerca) {
-						// Check altre correlazioni da eliminare
-						correlazioniScadute = gestoreCorrelazioneApplicativa.getCorrelazioniScadute(this.limit,this.logQuery,this.orderByQuery);
-					}
-					else {
-						correlazioniScadute = new java.util.Vector<Long>(); // per uscire dal while
-					}
-				}
-			}finally{
-				try{
-					GestoreMessaggi.releaseLock(
-							this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
-							this.msgDiag, causaCorrelazioniApplicativeScadute);
-				}catch(Exception e){}
-			}
-
-
-			// -- Scadute rispetto ora registrazione
-			if(this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione){
-				String causaCorrelazioniApplicativeScaduteRispettoOraRegistrazione = "Eliminazione correlazioni applicative scadute rispetto ora registrazione";
-				List<Long> correlazioniScaduteRispettoOraRegistrazione = null; 
+				//	CorrelazioniApplicative da eliminare
+				GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(),this.logTimer,null,null);
+	
+	
+				// -- Scadute (Correlazioni per cui era stata impostata una scadenza) --
+				String causaCorrelazioniApplicativeScadute = "Eliminazione correlazioni applicative scadute";
+				List<Long> correlazioniScadute;
 				try{
 					GestoreMessaggi.acquireLock(
 							this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
-							this.msgDiag, causaCorrelazioniApplicativeScaduteRispettoOraRegistrazione, 
+							this.msgDiag, causaCorrelazioniApplicativeScadute, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(), 
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval());
-
-					correlazioniScaduteRispettoOraRegistrazione = gestoreCorrelazioneApplicativa.getCorrelazioniScaduteRispettoOraRegistrazione(this.limit, this.scadenzaCorrelazioneApplicativa, 
-							this.logQuery,this.orderByQuery,this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
+	
+					correlazioniScadute = gestoreCorrelazioneApplicativa.getCorrelazioniScadute(this.limit,this.logQuery,this.orderByQuery);
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"CorrelazioniApplicative");
 					if(this.logQuery){
-						if(correlazioniScaduteRispettoOraRegistrazione.size()<=0){
-							this.logTimer.info("Non sono state trovate correlazioni applicative (scadute rispetto ora registrazione) da eliminare");
+						if(correlazioniScadute.size()<=0){
+							this.logTimer.info("Non sono state trovate correlazioni applicative (scadute) da eliminare");
 						}
 					}
-					while(correlazioniScaduteRispettoOraRegistrazione.size()>0){
-
+	
+					while(correlazioniScadute.size()>0){
+	
 						if(this.logQuery)
-							this.logTimer.info("Trovate "+correlazioniScaduteRispettoOraRegistrazione.size()+" correlazioni applicative (scadute rispetto ora registrazione) da eliminare ...");
-
-						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_CORRELAZIONI_APPLICATIVE_SCADUTE, correlazioniScaduteRispettoOraRegistrazione.size()+"");
-						this.msgDiag.logPersonalizzato("ricercaCorrelazioniApplicativeScaduteRispettoOraRegistrazione");
-
+							this.logTimer.info("Trovate "+correlazioniScadute.size()+" correlazioni applicative (scadute) da eliminare ...");
+	
+						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_CORRELAZIONI_APPLICATIVE_SCADUTE, correlazioniScadute.size()+"");
+						this.msgDiag.logPersonalizzato("ricercaCorrelazioniApplicativeScadute");
+	
 						int gestiti = 0;
-						while(correlazioniScaduteRispettoOraRegistrazione.size()>0){
-							Long idCorrelazioneScaduta = correlazioniScaduteRispettoOraRegistrazione.remove(0);
-
+						while(correlazioniScadute.size()>0){
+							Long idCorrelazioneScaduta = correlazioniScadute.remove(0);
+	
 							String idCorrelato = null;
 							String idApplicativo = null;
-
-							try{
+	
+							try{	
 								String [] id = gestoreCorrelazioneApplicativa.getIDMappingCorrelazioneApplicativa(idCorrelazioneScaduta);
 								idCorrelato = id[0];
 								idApplicativo = id[1];
 								try{
 									GestoreMessaggi.updateLock(
 											this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
-											this.msgDiag, "Eliminazione correlazione applicativa scaduta rispetto ora registrazione (id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+") ...");
+											this.msgDiag, "Eliminazione correlazione applicativa scaduta (id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+") ...");
 								}catch(Throwable e){
-									this.msgDiag.logErroreGenerico(e,"EliminazioneCorrelazioniRispettoOraRegistrazione(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")-UpdateLock");
-									this.logTimer.error("ErroreEliminazioneCorrelazioniRispettoOraRegistrazione(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")-UpdateLock: "+e.getMessage(),e);
+									this.msgDiag.logErroreGenerico(e,"EliminazioneCorrelazioni(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")-UpdateLock");
+									this.logTimer.error("ErroreEliminazioneCorrelazioni(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")-UpdateLock: "+e.getMessage(),e);
 									break;
 								}
-
+	
 								this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idCorrelato);
 								this.msgDiag.addKeyword(CostantiPdD.KEY_ID_CORRELAZIONE_APPLICATIVA,idApplicativo);
-
+	
 								gestoreCorrelazioneApplicativa.deleteCorrelazioneApplicativa(idCorrelazioneScaduta);
 								this.msgDiag.logPersonalizzato("eliminazioneCorrelazioneApplicativaScaduta");
 								if(this.logQuery)
 									this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneCorrelazioneApplicativaScaduta"));
-
+	
 								gestiti++;
-								
+	
 							}catch(Exception e){
-								this.msgDiag.logErroreGenerico(e,"EliminazioneCorrelazioniRispettoOraRegistrazione(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")");
-								this.logTimer.error("ErroreEliminazioneCorrelazioniRispettoOraRegistrazione(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+"): "+e.getMessage(),e);
+								this.msgDiag.logErroreGenerico(e,"EliminazioneCorrelazioni(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")");
+								this.logTimer.error("ErroreEliminazioneCorrelazioni(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+"): "+e.getMessage(),e);
 							}
 						}
-
+	
 						if(this.logQuery)
-							this.logTimer.info("Eliminate "+gestiti+" correlazioni applicative (scadute rispetto ora registrazione)");
-
+							this.logTimer.info("Eliminate "+gestiti+" correlazioni applicative (scadute)");
+	
 						boolean cerca = true;
 						try{
 							GestoreMessaggi.updateLock(
 									this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
-									this.msgDiag, "Ricerca nuove correlazioni scadute rispetto ora registrazione ...");													
+									this.msgDiag, "Ricerca nuove correlazioni scadute  ...");
 						}catch(Throwable e){
 							this.msgDiag.logErroreGenerico(e,"RicercaNuoveCorrelazioni-UpdateLock");
 							this.logTimer.error("RicercaNuoveCorrelazioni-UpdateLock: "+e.getMessage(),e);
@@ -964,21 +911,121 @@ public class TimerGestoreMessaggiLib  {
 						
 						if(cerca) {
 							// Check altre correlazioni da eliminare
-							correlazioniScaduteRispettoOraRegistrazione = 
-									gestoreCorrelazioneApplicativa.getCorrelazioniScaduteRispettoOraRegistrazione(this.limit, this.scadenzaCorrelazioneApplicativa, 
-											this.logQuery,this.orderByQuery,this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
+							correlazioniScadute = gestoreCorrelazioneApplicativa.getCorrelazioniScadute(this.limit,this.logQuery,this.orderByQuery);
 						}
 						else {
-							correlazioniScaduteRispettoOraRegistrazione = new java.util.Vector<Long>(); // per uscire dal while
+							correlazioniScadute = new java.util.Vector<Long>(); // per uscire dal while
 						}
 					}
 				}finally{
 					try{
 						GestoreMessaggi.releaseLock(
 								this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
-								this.msgDiag, causaCorrelazioniApplicativeScaduteRispettoOraRegistrazione);
+								this.msgDiag, causaCorrelazioniApplicativeScadute);
 					}catch(Exception e){}
 				}
+	
+	
+				// -- Scadute rispetto ora registrazione
+				if(this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione){
+					String causaCorrelazioniApplicativeScaduteRispettoOraRegistrazione = "Eliminazione correlazioni applicative scadute rispetto ora registrazione";
+					List<Long> correlazioniScaduteRispettoOraRegistrazione = null; 
+					try{
+						GestoreMessaggi.acquireLock(
+								this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
+								this.msgDiag, causaCorrelazioniApplicativeScaduteRispettoOraRegistrazione, 
+								this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(), 
+								this.propertiesReader.getGestioneSerializableDB_CheckInterval());
+	
+						correlazioniScaduteRispettoOraRegistrazione = gestoreCorrelazioneApplicativa.getCorrelazioniScaduteRispettoOraRegistrazione(this.limit, this.scadenzaCorrelazioneApplicativa, 
+								this.logQuery,this.orderByQuery,this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
+						if(this.logQuery){
+							if(correlazioniScaduteRispettoOraRegistrazione.size()<=0){
+								this.logTimer.info("Non sono state trovate correlazioni applicative (scadute rispetto ora registrazione) da eliminare");
+							}
+						}
+						while(correlazioniScaduteRispettoOraRegistrazione.size()>0){
+	
+							if(this.logQuery)
+								this.logTimer.info("Trovate "+correlazioniScaduteRispettoOraRegistrazione.size()+" correlazioni applicative (scadute rispetto ora registrazione) da eliminare ...");
+	
+							this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_CORRELAZIONI_APPLICATIVE_SCADUTE, correlazioniScaduteRispettoOraRegistrazione.size()+"");
+							this.msgDiag.logPersonalizzato("ricercaCorrelazioniApplicativeScaduteRispettoOraRegistrazione");
+	
+							int gestiti = 0;
+							while(correlazioniScaduteRispettoOraRegistrazione.size()>0){
+								Long idCorrelazioneScaduta = correlazioniScaduteRispettoOraRegistrazione.remove(0);
+	
+								String idCorrelato = null;
+								String idApplicativo = null;
+	
+								try{
+									String [] id = gestoreCorrelazioneApplicativa.getIDMappingCorrelazioneApplicativa(idCorrelazioneScaduta);
+									idCorrelato = id[0];
+									idApplicativo = id[1];
+									try{
+										GestoreMessaggi.updateLock(
+												this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
+												this.msgDiag, "Eliminazione correlazione applicativa scaduta rispetto ora registrazione (id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+") ...");
+									}catch(Throwable e){
+										this.msgDiag.logErroreGenerico(e,"EliminazioneCorrelazioniRispettoOraRegistrazione(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")-UpdateLock");
+										this.logTimer.error("ErroreEliminazioneCorrelazioniRispettoOraRegistrazione(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")-UpdateLock: "+e.getMessage(),e);
+										break;
+									}
+	
+									this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_DA_ELIMINARE,idCorrelato);
+									this.msgDiag.addKeyword(CostantiPdD.KEY_ID_CORRELAZIONE_APPLICATIVA,idApplicativo);
+	
+									gestoreCorrelazioneApplicativa.deleteCorrelazioneApplicativa(idCorrelazioneScaduta);
+									this.msgDiag.logPersonalizzato("eliminazioneCorrelazioneApplicativaScaduta");
+									if(this.logQuery)
+										this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("eliminazioneCorrelazioneApplicativaScaduta"));
+	
+									gestiti++;
+									
+								}catch(Exception e){
+									this.msgDiag.logErroreGenerico(e,"EliminazioneCorrelazioniRispettoOraRegistrazione(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+")");
+									this.logTimer.error("ErroreEliminazioneCorrelazioniRispettoOraRegistrazione(id_applicativo:"+idApplicativo+",id_busta:"+idCorrelato+"): "+e.getMessage(),e);
+								}
+							}
+	
+							if(this.logQuery)
+								this.logTimer.info("Eliminate "+gestiti+" correlazioni applicative (scadute rispetto ora registrazione)");
+	
+							boolean cerca = true;
+							try{
+								GestoreMessaggi.updateLock(
+										this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
+										this.msgDiag, "Ricerca nuove correlazioni scadute rispetto ora registrazione ...");													
+							}catch(Throwable e){
+								this.msgDiag.logErroreGenerico(e,"RicercaNuoveCorrelazioni-UpdateLock");
+								this.logTimer.error("RicercaNuoveCorrelazioni-UpdateLock: "+e.getMessage(),e);
+								cerca = false;
+							}
+							
+							if(cerca) {
+								// Check altre correlazioni da eliminare
+								correlazioniScaduteRispettoOraRegistrazione = 
+										gestoreCorrelazioneApplicativa.getCorrelazioniScaduteRispettoOraRegistrazione(this.limit, this.scadenzaCorrelazioneApplicativa, 
+												this.logQuery,this.orderByQuery,this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
+							}
+							else {
+								correlazioniScaduteRispettoOraRegistrazione = new java.util.Vector<Long>(); // per uscire dal while
+							}
+						}
+					}finally{
+						try{
+							GestoreMessaggi.releaseLock(
+									this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
+									this.msgDiag, causaCorrelazioniApplicativeScaduteRispettoOraRegistrazione);
+						}catch(Exception e){}
+					}
+				}
+			}
+			else {
+				if(this.logQuery) {
+					this.logTimer.info("Gestione correlazione applicativa disabilitata");
+				}	
 			}
 
 
@@ -1002,7 +1049,7 @@ public class TimerGestoreMessaggiLib  {
 
 
 		try {
-			if(this.propertiesReader.isTimerGestoreMessaggiVerificaConnessioniAttive()){
+			if(TimerState.ENABLED.equals(STATE_VERIFICA_CONNESSIONI_ATTIVE)) {
 
 				startControlloRepositoryMessaggi = DateManager.getTimeMillis();
 				this.logTimer.info("Verifico connessioni attive...");

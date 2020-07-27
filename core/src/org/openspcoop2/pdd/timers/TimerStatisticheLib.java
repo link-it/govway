@@ -60,6 +60,11 @@ import org.slf4j.Logger;
  */
 public class TimerStatisticheLib {
 
+	public static TimerState STATE_STATISTICHE_ORARIE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState STATE_STATISTICHE_GIORNALIERE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState STATE_STATISTICHE_SETTIMANALI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState STATE_STATISTICHE_MENSILI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	
 	
 	/** Logger utilizzato per debug. */
 	private Logger logCore = null;
@@ -123,8 +128,8 @@ public class TimerStatisticheLib {
 		
 		this.debug = this.op2Properties.isStatisticheGenerazioneDebug();
 		
-		this.logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(this.debug);
-		this.logSql = OpenSPCoop2Logger.getLoggerOpenSPCoopStatisticheSql(this.debug);
+		this.logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(tipoStatistica, this.debug);
+		this.logSql = OpenSPCoop2Logger.getLoggerOpenSPCoopStatisticheSql(tipoStatistica, this.debug);
 		this.logTimer = logTimer;
 		
 		this.generazioneStatisticheCustom = this.op2Properties.isStatisticheGenerazioneCustomEnabled();
@@ -298,6 +303,31 @@ public class TimerStatisticheLib {
 			this.logTimer.error("["+TimerStatisticheThread.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			return;
 		}
+		
+		boolean enabled = false;
+		switch (this.tipoStatistica) {
+		case STATISTICHE_ORARIE:
+			enabled = TimerState.ENABLED.equals(STATE_STATISTICHE_ORARIE);
+			break;
+		case STATISTICHE_GIORNALIERE:
+			enabled = TimerState.ENABLED.equals(STATE_STATISTICHE_GIORNALIERE);
+			break;
+		case STATISTICHE_SETTIMANALI:
+			enabled = TimerState.ENABLED.equals(STATE_STATISTICHE_SETTIMANALI);
+			break;
+		case STATISTICHE_MENSILI:
+			enabled = TimerState.ENABLED.equals(STATE_STATISTICHE_MENSILI);
+			break;
+		default:
+			break;
+		}
+		if(!enabled) {
+			this.msgDiag.logPersonalizzato("disabilitato");
+			this.logCore.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
+			return;
+		}
+		
 		
 		
 		this.msgDiag.logPersonalizzato("generazioneStatistiche");

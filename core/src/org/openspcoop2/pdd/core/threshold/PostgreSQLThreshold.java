@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
 /**
  * Implementazione che definisce un meccanismo di Soglia sullo spazio libero rimasto
@@ -50,7 +51,6 @@ public class PostgreSQLThreshold implements IThreshold {
 
 	public static OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 	public static String ID_MODULO = "PostgreSQLThreshold";
-	private static final String Query="SELECT SUM(pg_database_size(pg_database.datname)) as size FROM pg_database JOIN pg_shadow ON pg_database.datdba = pg_shadow.usesysid;";
 	
 	
 	/**
@@ -73,9 +73,20 @@ public class PostgreSQLThreshold implements IThreshold {
 		Statement s=null;
 		ResultSet rs=null;
 		
+		String debugS = parametri.getProperty("debug");
+		boolean debug = false;
+		if(debugS!=null){
+			debug = Boolean.valueOf(debugS);
+		}
+		
+		String query = parametri.getProperty("query");
+		if(query==null){
+			throw new ThresholdException("Parametro 'query' non presente");
+		}
+		
 		String valoreSoglia = parametri.getProperty("valore");
 		if(valoreSoglia==null){
-			throw new ThresholdException("Parametro ["+valoreSoglia+"] non presente");
+			throw new ThresholdException("Parametro 'valore' non presente");
 		}
 		else{
 			valoreSoglia = valoreSoglia.trim();
@@ -139,7 +150,7 @@ public class PostgreSQLThreshold implements IThreshold {
 			
 			//Interrogazione del database
 			s=connection.createStatement();
-			if(!s.execute(PostgreSQLThreshold.Query))
+			if(!s.execute(query))
 				throw new Exception("Impossibile verficare lo spazio occupato");
 			
 			rs=s.getResultSet();
@@ -171,7 +182,17 @@ public class PostgreSQLThreshold implements IThreshold {
 					}
 			}catch(SQLException ex){}		
 		}
-		msgDiag.highDebug("Spazio occupato da tutti i databse: "+size+"; Spazio entro la soglia: "+result);
+		
+		String prefix = "";
+		if(datasource!=null) {
+			prefix = "["+datasource+"] ";
+		}
+		String msg = prefix+"Spazio occupato: "+size+"; soglia: "+result+"; risultato:"+(result?"ok":"ko");
+		if(debug) {
+			OpenSPCoop2Logger.getLoggerOpenSPCoopResources().info(msg);
+		}
+		msgDiag.highDebug(msg);
+		
 		return result;
 		
 	}

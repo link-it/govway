@@ -173,17 +173,18 @@ public class ConsegnaInOrdine  {
 					queryInsert.append(Costanti.SEQUENZA_DA_INVIARE);
 					queryInsert.append(" SET PROSSIMA_SEQUENZA = ? WHERE MITTENTE=? AND TIPO_MITTENTE=? AND DESTINATARIO=? AND TIPO_DESTINATARIO=? AND SERVIZIO=? AND TIPO_SERVIZIO=? AND AZIONE=?");
 					pstmtInsert = connectionDB.prepareStatement(queryInsert.toString());
-					pstmtInsert.setLong(1,next_sequenza);
-					pstmtInsert.setString(2,busta.getMittente());
-					pstmtInsert.setString(3,busta.getTipoMittente());
-					pstmtInsert.setString(4,busta.getDestinatario());
-					pstmtInsert.setString(5,busta.getTipoDestinatario());
-					pstmtInsert.setString(6,busta.getServizio());
-					pstmtInsert.setString(7,busta.getTipoServizio());
+					int index = 1;
+					pstmtInsert.setLong(index++,next_sequenza);
+					pstmtInsert.setString(index++,busta.getMittente());
+					pstmtInsert.setString(index++,busta.getTipoMittente());
+					pstmtInsert.setString(index++,busta.getDestinatario());
+					pstmtInsert.setString(index++,busta.getTipoDestinatario());
+					pstmtInsert.setString(index++,busta.getServizio());
+					pstmtInsert.setString(index++,busta.getTipoServizio());
 					if(busta.getAzione()!=null){
-						pstmtInsert.setString(8,busta.getAzione());
+						pstmtInsert.setString(index++,busta.getAzione());
 					}else{
-						pstmtInsert.setString(8,NOT_USED);
+						pstmtInsert.setString(index++,NOT_USED);
 					}
 
 					stateful.getPreparedStatement().put("UPDATE setNextSequenza_daInviare"+busta.getCollaborazione(), pstmtInsert);
@@ -201,21 +202,23 @@ public class ConsegnaInOrdine  {
 					StringBuilder queryInsert = new StringBuilder();
 					queryInsert.append("INSERT INTO  ");
 					queryInsert.append(Costanti.SEQUENZA_DA_INVIARE);
-					queryInsert.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )");
+					queryInsert.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )");
 					pstmtInsert = connectionDB.prepareStatement(queryInsert.toString());
-					pstmtInsert.setString(1,busta.getMittente());
-					pstmtInsert.setString(2,busta.getTipoMittente());
-					pstmtInsert.setString(3,busta.getDestinatario());
-					pstmtInsert.setString(4,busta.getTipoDestinatario());
-					pstmtInsert.setString(5,busta.getServizio());
-					pstmtInsert.setString(6,busta.getTipoServizio());
+					int index = 1;
+					pstmtInsert.setString(index++,busta.getMittente());
+					pstmtInsert.setString(index++,busta.getTipoMittente());
+					pstmtInsert.setString(index++,busta.getDestinatario());
+					pstmtInsert.setString(index++,busta.getTipoDestinatario());
+					pstmtInsert.setString(index++,busta.getServizio());
+					pstmtInsert.setString(index++,busta.getTipoServizio());
 					if(busta.getAzione()!=null){
-						pstmtInsert.setString(7,busta.getAzione());
+						pstmtInsert.setString(index++,busta.getAzione());
 					}else{
-						pstmtInsert.setString(7,NOT_USED);
+						pstmtInsert.setString(index++,NOT_USED);
 					}
-					pstmtInsert.setLong(8,2); // next sequence is 2
-					pstmtInsert.setString(9,busta.getID()); // idCollaborazione is idRequest
+					pstmtInsert.setLong(index++,2); // next sequence is 2
+					pstmtInsert.setString(index++,busta.getID()); // idCollaborazione is idRequest
+					pstmtInsert.setTimestamp(index++, DateManager.getTimestamp());
 
 					stateful.getPreparedStatement().put("INSERT setNextSequenza_daInviare"+busta.getCollaborazione(), pstmtInsert);
 
@@ -580,17 +583,19 @@ public class ConsegnaInOrdine  {
 					StringBuilder queryInsert = new StringBuilder();
 					queryInsert.append("INSERT INTO  ");
 					queryInsert.append(Costanti.SEQUENZA_DA_RICEVERE);
-					queryInsert.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )");
+					queryInsert.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )");
 					pstmtInsert =  connectionDB.prepareStatement(queryInsert.toString());
-					pstmtInsert.setString(1,busta.getCollaborazione());
-					pstmtInsert.setLong(2,(busta.getSequenza()+1)); //prossima sequenza attesa
-					pstmtInsert.setString(3,busta.getMittente());
-					pstmtInsert.setString(4,busta.getTipoMittente());
-					pstmtInsert.setString(5,busta.getDestinatario());
-					pstmtInsert.setString(6,busta.getTipoDestinatario());
-					pstmtInsert.setString(7,busta.getServizio());
-					pstmtInsert.setString(8,busta.getTipoServizio());
-					pstmtInsert.setString(9,busta.getAzione());
+					int index = 1;
+					pstmtInsert.setString(index++,busta.getCollaborazione());
+					pstmtInsert.setLong(index++,(busta.getSequenza()+1)); //prossima sequenza attesa
+					pstmtInsert.setString(index++,busta.getMittente());
+					pstmtInsert.setString(index++,busta.getTipoMittente());
+					pstmtInsert.setString(index++,busta.getDestinatario());
+					pstmtInsert.setString(index++,busta.getTipoDestinatario());
+					pstmtInsert.setString(index++,busta.getServizio());
+					pstmtInsert.setString(index++,busta.getTipoServizio());
+					pstmtInsert.setString(index++,busta.getAzione());
+					pstmtInsert.setTimestamp(index++, DateManager.getTimestamp());
 
 				}else{
 					// aggiorno prossima sequenza attesa

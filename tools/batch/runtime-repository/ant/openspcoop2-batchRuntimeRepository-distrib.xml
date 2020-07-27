@@ -1,0 +1,124 @@
+<project name="openspcoop2-distrib-batchRuntimeRepository">
+    <description>
+        Produzione del batch
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	
+	<!-- Crea la distribuzione del batch -->
+	<target name="distrib_openspcoop2_batchRuntimeRepository" description="Crea la distribuzione del batch">
+
+		<delete dir="${distrib_batchRuntimeRepository}"/>
+		<mkdir dir="${distrib_batchRuntimeRepository}"/>
+
+		<copy todir="${distrib_batchRuntimeRepository}/properties">
+			<fileset dir="${properties_batchRuntimeRepository}"/>
+		</copy>
+
+		<copy todir="${distrib_batchRuntimeRepository}/lib">
+			<fileset dir="${dist_batchRuntimeRepository}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib_batchRuntimeRepository}/lib">
+			<fileset dir="${openspcoop2.dist}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib_batchRuntimeRepository}/lib" flatten="true">
+			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang-2.6.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jax/jaxb-*.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="saaj/javax.xml.soap-api-1.4.0.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="saaj/saaj-impl-1.5.1-gov4j-2.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="shared/jakarta.activation-1.2.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.10.5.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="shared/xercesImpl-2.12.0.jar"/>
+		</copy>
+
+		<mkdir dir="${distrib_batchRuntimeRepository}/jdbc"/>
+		
+		<antcall target="-distrib_openspcoop2_batchRuntimeRepository_mainScript"/>
+
+		<mkdir dir="${distrib_batchRuntimeRepository}/script"/>
+		<antcall target="-distrib_openspcoop2_batchRuntimeRepository_script">
+			<param name="TipoRuntimeRepository" value="messaggi"/>
+                </antcall>
+		<antcall target="-distrib_openspcoop2_batchRuntimeRepository_script">
+			<param name="TipoRuntimeRepository" value="buste"/>
+                </antcall>
+
+	</target>
+
+	<target name="-distrib_openspcoop2_batchRuntimeRepository_mainScript">
+
+		<copy file="${script_batchRuntimeRepository}/run.sh" tofile="${distrib_batchRuntimeRepository}/gestisciRepository.sh"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchRuntimeRepository}/gestisciRepository.sh"/>
+			<param name="token" value="TIPOGESTORE"/>
+			<param name="value" value="all"/>
+                </antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchRuntimeRepository}/gestisciRepository.sh"/>
+			<param name="token" value="DIRGESTORE"/>
+			<param name="value" value="."/>
+                </antcall>
+		<chmod file="${distrib_batchRuntimeRepository}/gestisciRepository.sh" perm="a+x"/>
+
+		<copy file="${script_batchRuntimeRepository}/run.cmd" tofile="${distrib_batchRuntimeRepository}/gestisciRepository.cmd"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchRuntimeRepository}/gestisciRepository.cmd"/>
+			<param name="token" value="TIPOGESTORE"/>
+			<param name="value" value="all"/>
+                </antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchRuntimeRepository}/gestisciRepository.cmd"/>
+			<param name="token" value="DIRGESTORE"/>
+			<param name="value" value="."/>
+                </antcall>
+		<chmod file="${distrib_batchRuntimeRepository}/gestisciRepository.cmd" perm="a+x"/>
+
+
+	</target>
+	
+
+	<target name="-distrib_openspcoop2_batchRuntimeRepository_script">
+
+		<copy file="${script_batchRuntimeRepository}/run.sh" tofile="${distrib_batchRuntimeRepository}/script/gestisciRepository_${TipoRuntimeRepository}.sh"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchRuntimeRepository}/script/gestisciRepository_${TipoRuntimeRepository}.sh"/>
+			<param name="token" value="TIPOGESTORE"/>
+			<param name="value" value="${TipoRuntimeRepository}"/>
+                </antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchRuntimeRepository}/script/gestisciRepository_${TipoRuntimeRepository}.sh"/>
+			<param name="token" value="DIRGESTORE"/>
+			<param name="value" value=".."/>
+                </antcall>
+		<chmod file="${distrib_batchRuntimeRepository}/script/gestisciRepository_${TipoRuntimeRepository}.sh" perm="a+x"/>
+
+		<copy file="${script_batchRuntimeRepository}/run.cmd" tofile="${distrib_batchRuntimeRepository}/script/gestisciRepository_${TipoRuntimeRepository}.cmd"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchRuntimeRepository}/script/gestisciRepository_${TipoRuntimeRepository}.cmd"/>
+			<param name="token" value="TIPOGESTORE"/>
+			<param name="value" value="${TipoRuntimeRepository}"/>
+                </antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchRuntimeRepository}/script/gestisciRepository_${TipoRuntimeRepository}.cmd"/>
+			<param name="token" value="DIRGESTORE"/>
+			<param name="value" value=".."/>
+                </antcall>
+		<chmod file="${distrib_batchRuntimeRepository}/script/gestisciRepository_${TipoRuntimeRepository}.cmd" perm="a+x"/>
+
+
+	</target>
+
+
+	
+</project>

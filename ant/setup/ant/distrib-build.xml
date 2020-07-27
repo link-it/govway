@@ -482,9 +482,29 @@
 				<mkdir dir="${dist}/batch"/>
 				<copy todir="${dist}/batch">
 					<fileset dir="${deploy_sw}/batch">
-				    		<include name="crond/**"/>
+				    		<include name="crond/govway_batch.sh"/>
 					</fileset>
 				</copy>
+				<if>
+					<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+					<then>
+						<copy todir="${dist}/batch">
+							<fileset dir="${deploy_sw}/batch">
+						    		<include name="crond/govway_stats_crond"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+					<then>
+						<copy todir="${dist}/batch">
+							<fileset dir="${deploy_sw}/batch">
+						    		<include name="crond/govway_runtime_repository_crond"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
 				<copy todir="${dist}/batch">
 					<fileset dir="${tmp_batch}">
 				    		<include name="**"/>
@@ -500,18 +520,48 @@
 						<equals arg1="${batch_dir}" arg2="" />
 					</not>
 					<then>
-						<antcall target="replace_token">
-						    <param name="file" value="${dist}/batch/crond/govway_batch_crond"/>
-							<param name="token" value="/var/govway/log"/>
-							<param name="value" value="${batch_dir}"/>
-						</antcall>
+						<if>
+							<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+							<then>
+								<antcall target="replace_token">
+								    <param name="file" value="${dist}/batch/crond/govway_stats_crond"/>
+									<param name="token" value="/var/govway/log"/>
+									<param name="value" value="${batch_dir}"/>
+								</antcall>
+							</then>
+						</if>
+						<if>
+							<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+							<then>
+								<antcall target="replace_token">
+								    <param name="file" value="${dist}/batch/crond/govway_runtime_repository_crond"/>
+									<param name="token" value="/var/govway/log"/>
+									<param name="value" value="${batch_dir}"/>
+								</antcall>
+							</then>
+						</if>
 					</then>
 					<else>
-						<antcall target="replace_token">
-						    <param name="file" value="${dist}/batch/crond/govway_batch_crond"/>
-							<param name="token" value="/var/govway/log"/>
-							<param name="value" value="${log_dir}"/>
-						</antcall>
+						<if>
+							<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+							<then>
+								<antcall target="replace_token">
+								    <param name="file" value="${dist}/batch/crond/govway_stats_crond"/>
+									<param name="token" value="/var/govway/log"/>
+									<param name="value" value="${log_dir}"/>
+								</antcall>
+							</then>
+						</if>
+						<if>
+							<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+							<then>
+								<antcall target="replace_token">
+								    <param name="file" value="${dist}/batch/crond/govway_runtime_repository_crond"/>
+									<param name="token" value="/var/govway/log"/>
+									<param name="value" value="${log_dir}"/>
+								</antcall>
+							</then>
+						</if>
 					</else>
 				</if>
 			</then>

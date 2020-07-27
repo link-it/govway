@@ -35,6 +35,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -81,6 +82,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -1139,7 +1141,7 @@ public class GestoreMessaggi  {
 			try {
 				msgSoap = new SavedMessage(this.idBusta, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
 				boolean consume = true;
-				msgSoap.save(message, this.isRichiesta, salvaNelloStateless, consume);
+				msgSoap.save(message, this.isRichiesta, salvaNelloStateless, consume, oraRegistrazioneT);
 			} catch (Exception e) {
 				String errorMsg = "GESTORE_MESSAGGI, Errore di registrazione (SoapMessage) " + this.tipo + "/" + this.idBusta + ": " + e.getMessage();
 				if (msgSoap != null) {
@@ -1151,11 +1153,11 @@ public class GestoreMessaggi  {
 		}
 	}
 
-	public void registraInformazioniMessaggio_statelessEngine(Date oraRegistrazione,String proprietarioMessaggio,
+	public java.sql.Timestamp registraInformazioniMessaggio_statelessEngine(Date oraRegistrazione,String proprietarioMessaggio,
 			String correlazioneApplicativaRichiesta) throws GestoreMessaggiException {
-		this.registraInformazioniMessaggio_statelessEngine(oraRegistrazione, proprietarioMessaggio, null,correlazioneApplicativaRichiesta,null);
+		return this.registraInformazioniMessaggio_statelessEngine(oraRegistrazione, proprietarioMessaggio, null,correlazioneApplicativaRichiesta,null);
 	}
-	public void registraInformazioniMessaggio_statelessEngine(Date oraRegistrazione,String proprietarioMessaggio,String riferimentoMessaggio,
+	public java.sql.Timestamp registraInformazioniMessaggio_statelessEngine(Date oraRegistrazione,String proprietarioMessaggio,String riferimentoMessaggio,
 			String correlazioneApplicativaRichiesta,String correlazioneApplicativaRisposta) throws GestoreMessaggiException {
 
 		// OraRegistrazione
@@ -1269,9 +1271,10 @@ public class GestoreMessaggi  {
 			throw new GestoreMessaggiException(errorMsg, e);
 		}
 
+		return oraRegistrazioneT;
 	}
 
-	public void registraMessaggio_statelessEngine(OpenSPCoop2Message message, boolean consumeMessage) throws GestoreMessaggiException {
+	public void registraMessaggio_statelessEngine(OpenSPCoop2Message message, boolean consumeMessage, java.sql.Timestamp oraRegistrazioneT) throws GestoreMessaggiException {
 		// Salvo contenuto messaggio 
 		if (message != null) {
 
@@ -1282,7 +1285,7 @@ public class GestoreMessaggi  {
 			SavedMessage msgSoap = null;
 			try {
 				msgSoap = new SavedMessage(this.idBusta, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
-				msgSoap.save(message, this.isRichiesta, false, consumeMessage);
+				msgSoap.save(message, this.isRichiesta, false, consumeMessage, oraRegistrazioneT);
 			} catch (Exception e) {
 				String errorMsg = "GESTORE_MESSAGGI, Errore di registrazione (SoapMessage) " + this.tipo + "/" + this.idBusta + ": " + e.getMessage();
 				if (msgSoap != null) {
@@ -1325,8 +1328,8 @@ public class GestoreMessaggi  {
 					columnErroreProcessamento = ",ERRORE_PROCESSAMENTO,ERRORE_PROCESSAMENTO_COMPACT";
 					valueErroreProcessamento = ", ? , ?";
 				}
-				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,RISPEDIZIONE,NOME_PORTA,ATTESA_ESITO"+columnErroreProcessamento+
-						") VALUES ( ? , ? , ? , ? , ? , ? , ? , ?, ?"+valueErroreProcessamento+")");
+				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,ORA_REGISTRAZIONE,RISPEDIZIONE,NOME_PORTA,ATTESA_ESITO"+columnErroreProcessamento+
+						") VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ?, ?"+valueErroreProcessamento+")");
 
 				pstmt = connectionDB.prepareStatement(query.toString());
 				int index = 1;
@@ -1347,6 +1350,8 @@ public class GestoreMessaggi  {
 				pstmt.setString(index++,tipoConsegna);
 
 				pstmt.setTimestamp(index++,oraRegistrazioneMessaggio);
+
+				pstmt.setTimestamp(index++,oraRegistrazioneMessaggio); // rispedizione, verra aggiornata
 				
 				pstmt.setString(index++,nomePorta);
 				
@@ -4847,6 +4852,721 @@ public class GestoreMessaggi  {
 
 
 
+	
+	
+	/* ------------- UTILITY PER LETTURA MESSAGGI DA ELIMINARE -------------- */
+	
+	public static Date getOraRegistrazioneMassima(Connection connectionDB , String tipoDatabase, boolean logQuery, Logger logger) throws GestoreMessaggiException{
+		return _getOraRegistrazione(false, connectionDB , tipoDatabase, logQuery, logger);
+	}
+	public static Date getOraRegistrazioneMinima(Connection connectionDB , String tipoDatabase, boolean logQuery, Logger logger) throws GestoreMessaggiException{
+		return _getOraRegistrazione(true, connectionDB , tipoDatabase, logQuery, logger);
+	}
+	private static Date _getOraRegistrazione(boolean min, Connection connectionDB , String tipoDatabase, boolean logQuery, Logger logger) throws GestoreMessaggiException{
+	
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String queryString = null;
+		try{	
+		
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			if(min) {
+				sqlQueryObject.addSelectMinField(MESSAGGI_COLUMN_ORA_REGISTRAZIONE, "check_data");
+			}
+			else {
+				sqlQueryObject.addSelectMaxField(MESSAGGI_COLUMN_ORA_REGISTRAZIONE, "check_data");
+			}
+			sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			if(logQuery) {
+				logger.debug("Esecuzione query ["+queryString+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") ...");
+			}
+			
+			pstmt = connectionDB.prepareStatement(queryString);
+			rs = pstmt.executeQuery();
+			
+			if(logQuery) {
+				logger.debug("Esecuzione query ["+queryString+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") completata");
+			}
+			
+			if(rs.next()) {
+				return rs.getTimestamp("check_data");
+			}
+			return null;
+		
+		} catch(Exception e) {
+			String errorMsg = "[GestoreMessaggi.getOraRegistrazione] errore, queryString["+queryString+"]: "+e.getMessage();
+			throw new GestoreMessaggiException(errorMsg,e);
+		}
+		finally {
+			try{
+				if(rs != null)
+					rs.close();
+			} catch(Exception er) {}
+			try{
+				if(pstmt != null)
+					pstmt.close();
+			} catch(Exception er) {	}
+		}
+	}
+	
+	public static int countMessaggiInutiliIntoInBox(Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate) throws GestoreMessaggiException{
+		return _countMessaggiIntoBox(true, connectionDB, tipoDatabase, logQuery, logger, leftDate, rightDate, null);
+	}
+	public static int countMessaggiInutiliIntoOutBox(Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate) throws GestoreMessaggiException{
+		return _countMessaggiIntoBox(false, connectionDB, tipoDatabase, logQuery, logger, leftDate, rightDate, null);
+	}
+	public static int countMessaggiScadutiIntoInBox(Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate,
+			long scadenzaMsg) throws GestoreMessaggiException{
+		return _countMessaggiIntoBox(true, connectionDB, tipoDatabase, logQuery, logger, leftDate, rightDate, scadenzaMsg);
+	}
+	public static int countMessaggiScadutiIntoOutBox(Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate,
+			long scadenzaMsg) throws GestoreMessaggiException{
+		return _countMessaggiIntoBox(false, connectionDB, tipoDatabase, logQuery, logger, leftDate, rightDate, scadenzaMsg);
+	}
+	private static int _countMessaggiIntoBox(boolean searchIntoInbox, Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate,
+			Long scadenzaMsg) throws GestoreMessaggiException{
+		
+		String tipo = null; 
+		if(searchIntoInbox)
+			tipo = Costanti.INBOX;
+		else
+			tipo = Costanti.OUTBOX;
+		
+		String idModuloCleaner = TimerGestoreMessaggi.ID_MODULO;
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String queryString = null;
+		try{	
+		
+			// Query per Ricerca messaggi scaduti
+			// Algoritmo:
+			//    if( (now-timeout) > oraRegistrazione )
+			//       msgScaduto
+			java.sql.Timestamp scandenzaT = null;
+			if(scadenzaMsg!=null) {
+				long scadenza = DateManager.getTimeMillis() - (scadenzaMsg * 60 * 1000);
+				scandenzaT = new java.sql.Timestamp(scadenza);
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addSelectCountField("totale_msg");
+			sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
+			if(leftDate!=null) {
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_ORA_REGISTRAZIONE+">=?");
+			}
+			if(rightDate!=null) {
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_ORA_REGISTRAZIONE+"<=?");
+			}
+			if(scadenzaMsg!=null) {
+				sqlQueryObject.addWhereCondition("? > "+MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+			}
+			else {
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_PROPRIETARIO+"=?");
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+
+			pstmt = connectionDB.prepareStatement(queryString);
+			int index = 1;
+			List<Object> objects = new ArrayList<Object>();
+			if(leftDate!=null) {
+				java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
+				pstmt.setTimestamp(index++, leftDateT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(leftDateT));
+				}
+			}
+			if(rightDate!=null) {
+				java.sql.Timestamp rightDateT = new java.sql.Timestamp(rightDate.getTime());
+				pstmt.setTimestamp(index++, rightDateT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(rightDateT));
+				}
+			}
+			if(scadenzaMsg!=null) {
+				pstmt.setTimestamp(index++,scandenzaT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(scandenzaT));
+				}
+				
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+			}
+			else {
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+				pstmt.setString(index++,idModuloCleaner);
+				if(logQuery) {
+					objects.add(idModuloCleaner);
+				}
+			}
+			
+			String query = null;
+			if(logQuery) {
+				query = DBUtils.formatSQLString(queryString, objects.toArray());
+				logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") ...");
+			}
+			rs = pstmt.executeQuery();
+			
+			int res = 0;
+			if(rs.next()) {
+				res = rs.getInt("totale_msg");
+			}
+			
+			if(logQuery) {
+				logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") completata; trovati "+res+" risultati");
+			}
+			
+			return res;
+		
+		} catch(Exception e) {
+			String errorMsg = "[GestoreMessaggi.countMessaggiIntoBox] errore, queryString["+queryString+"]: "+e.getMessage();
+			throw new GestoreMessaggiException(errorMsg,e);
+		}
+		finally {
+			try{
+				if(rs != null)
+					rs.close();
+			} catch(Exception er) {}
+			try{
+				if(pstmt != null)
+					pstmt.close();
+			} catch(Exception er) {	}
+		}
+	}
+	
+	public static SortedMap<Integer> deleteMessaggiInutiliIntoInBox(Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate, IGestoreRepository repository) throws GestoreMessaggiException{
+		return _deleteMessaggiIntoBox(true, connectionDB, tipoDatabase, logQuery, logger, leftDate, rightDate, null, repository);
+	}
+	public static SortedMap<Integer> deleteMessaggiInutiliIntoOutBox(Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate, IGestoreRepository repository) throws GestoreMessaggiException{
+		return _deleteMessaggiIntoBox(false, connectionDB, tipoDatabase, logQuery, logger, leftDate, rightDate, null, repository);
+	}
+	public static SortedMap<Integer> deleteMessaggiScadutiIntoInBox(Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate,
+			long scadenzaMsg, IGestoreRepository repository) throws GestoreMessaggiException{
+		return _deleteMessaggiIntoBox(true, connectionDB, tipoDatabase, logQuery, logger, leftDate, rightDate, scadenzaMsg, repository);
+	}
+	public static SortedMap<Integer> deleteMessaggiScadutiIntoOutBox(Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate,
+			long scadenzaMsg, IGestoreRepository repository) throws GestoreMessaggiException{
+		return _deleteMessaggiIntoBox(false, connectionDB, tipoDatabase, logQuery, logger, leftDate, rightDate, scadenzaMsg, repository);
+	}
+	private static SortedMap<Integer> _deleteMessaggiIntoBox(boolean searchIntoInbox, Connection connectionDB , String tipoDatabase, 
+			boolean logQuery, Logger logger,
+			Date leftDate, Date rightDate,
+			Long scadenzaMsg, IGestoreRepository repository) throws GestoreMessaggiException{
+		
+		SortedMap<Integer> mapTabelleRigheEliminate = new SortedMap<Integer>();
+		
+		String tipo = null; 
+		if(searchIntoInbox)
+			tipo = Costanti.INBOX;
+		else
+			tipo = Costanti.OUTBOX;
+		
+		String idModuloCleaner = TimerGestoreMessaggi.ID_MODULO;
+		
+		PreparedStatement pstmt = null;
+		String deleteString = null;
+		try{	
+		
+			// Query per Ricerca messaggi scaduti
+			// Algoritmo:
+			//    if( (now-timeout) > oraRegistrazione )
+			//       msgScaduto
+			java.sql.Timestamp scandenzaT = null;
+			if(scadenzaMsg!=null) {
+				long scadenza = DateManager.getTimeMillis() - (scadenzaMsg * 60 * 1000);
+				scandenzaT = new java.sql.Timestamp(scadenza);
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addSelectField(MESSAGGI_COLUMN_ID_MESSAGGIO);
+			sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
+			if(leftDate!=null) {
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_ORA_REGISTRAZIONE+">=?");
+			}
+			if(rightDate!=null) {
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_ORA_REGISTRAZIONE+"<=?");
+			}
+			if(scadenzaMsg!=null) {
+				sqlQueryObject.addWhereCondition("? > "+MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+			}
+			else {
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+				sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_PROPRIETARIO+"=?");
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			
+			// **** Prima prova ad eliminare eventuali SIL rimasti appesi al messaggio, se il messaggio e' di tipo INBOX ****
+			if(searchIntoInbox){
+				
+				ISQLQueryObject sqlQueryObjectMsgServiziApplicativi = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+				sqlQueryObjectMsgServiziApplicativi.addDeleteTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+				sqlQueryObjectMsgServiziApplicativi.addWhereINSelectSQLCondition(false, MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO, sqlQueryObject);
+				sqlQueryObjectMsgServiziApplicativi.setANDLogicOperator(true);
+				
+				deleteString = sqlQueryObjectMsgServiziApplicativi.createSQLDelete();
+				pstmt = connectionDB.prepareStatement(deleteString);
+				int index = 1;
+				List<Object> objects = new ArrayList<Object>();
+				if(leftDate!=null) {
+					java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
+					pstmt.setTimestamp(index++, leftDateT);
+					if(logQuery) {
+						objects.add(DateUtils.getSimpleDateFormatMs().format(leftDate));
+					}
+				}
+				if(rightDate!=null) {
+					java.sql.Timestamp rightDateT = new java.sql.Timestamp(rightDate.getTime());
+					pstmt.setTimestamp(index++, rightDateT);
+					if(logQuery) {
+						objects.add(DateUtils.getSimpleDateFormatMs().format(rightDate));
+					}
+				}
+				if(scadenzaMsg!=null) {
+					pstmt.setTimestamp(index++,scandenzaT);
+					if(logQuery) {
+						objects.add(DateUtils.getSimpleDateFormatMs().format(scandenzaT));
+					}
+					
+					pstmt.setString(index++,tipo);
+					if(logQuery) {
+						objects.add(tipo);
+					}
+				}
+				else {
+					pstmt.setString(index++,tipo);
+					if(logQuery) {
+						objects.add(tipo);
+					}
+					pstmt.setString(index++,idModuloCleaner);
+					if(logQuery) {
+						objects.add(idModuloCleaner);
+					}
+				}
+				
+				String query = null;
+				if(logQuery) {
+					query = DBUtils.formatSQLString(deleteString, objects.toArray());
+					logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") ...");
+				}
+				int result = pstmt.executeUpdate();
+				pstmt.close();
+				pstmt = null;
+				
+				if(logQuery) {
+					logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") completata; "+result+" righe eliminate");
+				}
+				mapTabelleRigheEliminate.add(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI, result);
+			}
+			
+			
+			// **** Prova poi ad eliminare il messaggio su DB ****
+			
+			ISQLQueryObject sqlQueryObjectDefinizioneMessaggi = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObjectDefinizioneMessaggi.addDeleteTable(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
+			sqlQueryObjectDefinizioneMessaggi.addWhereCondition(DEFINIZIONE_MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+			sqlQueryObjectDefinizioneMessaggi.addWhereINSelectSQLCondition(false, DEFINIZIONE_MESSAGGI_COLUMN_ID_MESSAGGIO, sqlQueryObject);
+			sqlQueryObjectDefinizioneMessaggi.setANDLogicOperator(true);
+			
+			deleteString = sqlQueryObjectDefinizioneMessaggi.createSQLDelete();
+			pstmt = connectionDB.prepareStatement(deleteString);
+			int index = 1;
+			List<Object> objects = new ArrayList<Object>();
+			pstmt.setString(index++,tipo);
+			if(logQuery) {
+				objects.add(tipo);
+			}
+			if(leftDate!=null) {
+				java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
+				pstmt.setTimestamp(index++, leftDateT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(leftDate));
+				}
+			}
+			if(rightDate!=null) {
+				java.sql.Timestamp rightDateT = new java.sql.Timestamp(rightDate.getTime());
+				pstmt.setTimestamp(index++, rightDateT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(rightDate));
+				}
+			}
+			if(scadenzaMsg!=null) {
+				pstmt.setTimestamp(index++,scandenzaT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(scandenzaT));
+				}
+				
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+			}
+			else {
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+				pstmt.setString(index++,idModuloCleaner);
+				if(logQuery) {
+					objects.add(idModuloCleaner);
+				}
+			}
+			
+			String query = null;
+			if(logQuery) {
+				query = DBUtils.formatSQLString(deleteString, objects.toArray());
+				logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") ...");
+			}
+			int result = pstmt.executeUpdate();
+			pstmt.close();
+			pstmt = null;
+			
+			if(logQuery) {
+				logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") completata; "+result+" righe eliminate");
+			}
+			mapTabelleRigheEliminate.add(GestoreMessaggi.DEFINIZIONE_MESSAGGI, result);
+			
+			
+			
+			if(repository!=null) {
+				
+				// **** Eliminazione buste (non possiedono l'accesso da history o l'accesso da profilo) ****
+				
+				
+				// lista 
+				ISQLQueryObject sqlQueryObjectRepositoryBusteJoin = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+				sqlQueryObjectRepositoryBusteJoin.addSelectField(org.openspcoop2.protocol.engine.constants.Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO);
+				sqlQueryObjectRepositoryBusteJoin.addFromTable(org.openspcoop2.protocol.engine.constants.Costanti.REPOSITORY);
+				sqlQueryObjectRepositoryBusteJoin.addWhereCondition(org.openspcoop2.protocol.engine.constants.Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+				sqlQueryObjectRepositoryBusteJoin.addWhereINSelectSQLCondition(false, org.openspcoop2.protocol.engine.constants.Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO, sqlQueryObject);
+				sqlQueryObjectRepositoryBusteJoin.addWhereCondition(false, repository.createSQLCondition_enableOnlyPdd(), repository.createSQLCondition_disabledAll());
+				sqlQueryObjectRepositoryBusteJoin.setANDLogicOperator(true);
+				
+				_deleteListaRepositoryBuste(tipoDatabase, connectionDB, logQuery, logger,
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_RISCONTRI, 
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_RISCONTRI_COLUMN_TIPO_MESSAGGIO, 
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_RISCONTRI_COLUMN_ID_MESSAGGIO,
+						tipo, leftDate, rightDate, scandenzaT, idModuloCleaner, sqlQueryObjectRepositoryBusteJoin,
+						mapTabelleRigheEliminate);
+				
+				_deleteListaRepositoryBuste(tipoDatabase, connectionDB, logQuery, logger,
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_TRASMISSIONI, 
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_TRASMISSIONI_COLUMN_TIPO_MESSAGGIO, 
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_TRASMISSIONI_COLUMN_ID_MESSAGGIO,
+						tipo, leftDate, rightDate, scandenzaT, idModuloCleaner, sqlQueryObjectRepositoryBusteJoin,
+						mapTabelleRigheEliminate);
+				
+				_deleteListaRepositoryBuste(tipoDatabase, connectionDB, logQuery, logger,
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_ECCEZIONI, 
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_ECCEZIONI_COLUMN_TIPO_MESSAGGIO, 
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_ECCEZIONI_COLUMN_ID_MESSAGGIO,
+						tipo, leftDate, rightDate, scandenzaT, idModuloCleaner, sqlQueryObjectRepositoryBusteJoin,
+						mapTabelleRigheEliminate);
+				
+				_deleteListaRepositoryBuste(tipoDatabase, connectionDB, logQuery, logger,
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_EXT_INFO, 
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_EXT_INFO_COLUMN_TIPO_MESSAGGIO, 
+						org.openspcoop2.protocol.engine.constants.Costanti.LISTA_EXT_INFO_COLUMN_ID_MESSAGGIO,
+						tipo, leftDate, rightDate, scandenzaT, idModuloCleaner, sqlQueryObjectRepositoryBusteJoin,
+						mapTabelleRigheEliminate);
+				
+				_deleteListaRepositoryBuste(tipoDatabase, connectionDB, logQuery, logger,
+						org.openspcoop2.protocol.engine.constants.Costanti.PROFILO_ASINCRONO, 
+						org.openspcoop2.protocol.engine.constants.Costanti.PROFILO_ASINCRONO_COLUMN_TIPO_MESSAGGIO, 
+						org.openspcoop2.protocol.engine.constants.Costanti.PROFILO_ASINCRONO_COLUMN_ID_MESSAGGIO,
+						tipo, leftDate, rightDate, scandenzaT, idModuloCleaner, sqlQueryObjectRepositoryBusteJoin,
+						mapTabelleRigheEliminate);
+				
+				if(!searchIntoInbox){
+					_deleteListaRepositoryBuste(tipoDatabase, connectionDB, logQuery, logger,
+							org.openspcoop2.protocol.engine.constants.Costanti.RISCONTRI_DA_RICEVERE, 
+							null, 
+							org.openspcoop2.protocol.engine.constants.Costanti.RISCONTRI_COLUMN_ID_MESSAGGIO,
+							tipo, leftDate, rightDate, scandenzaT, idModuloCleaner, sqlQueryObjectRepositoryBusteJoin,
+							mapTabelleRigheEliminate);
+				}
+				
+				
+				// Eliminazione busta reale
+				
+				ISQLQueryObject sqlQueryObjectRepositoryBuste = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+				sqlQueryObjectRepositoryBuste.addDeleteTable(org.openspcoop2.protocol.engine.constants.Costanti.REPOSITORY);
+				sqlQueryObjectRepositoryBuste.addWhereCondition(org.openspcoop2.protocol.engine.constants.Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+				sqlQueryObjectRepositoryBuste.addWhereINSelectSQLCondition(false, org.openspcoop2.protocol.engine.constants.Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO, sqlQueryObject);
+				sqlQueryObjectRepositoryBuste.addWhereCondition(false, repository.createSQLCondition_enableOnlyPdd(), repository.createSQLCondition_disabledAll());
+				sqlQueryObjectRepositoryBuste.setANDLogicOperator(true);
+				
+				deleteString = sqlQueryObjectRepositoryBuste.createSQLDelete();
+				pstmt = connectionDB.prepareStatement(deleteString);
+				index = 1;
+				objects = new ArrayList<Object>();
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+				if(leftDate!=null) {
+					java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
+					pstmt.setTimestamp(index++, leftDateT);
+					if(logQuery) {
+						objects.add(DateUtils.getSimpleDateFormatMs().format(leftDate));
+					}
+				}
+				if(rightDate!=null) {
+					java.sql.Timestamp rightDateT = new java.sql.Timestamp(rightDate.getTime());
+					pstmt.setTimestamp(index++, rightDateT);
+					if(logQuery) {
+						objects.add(DateUtils.getSimpleDateFormatMs().format(rightDate));
+					}
+				}
+				if(scadenzaMsg!=null) {
+					pstmt.setTimestamp(index++,scandenzaT);
+					if(logQuery) {
+						objects.add(DateUtils.getSimpleDateFormatMs().format(scandenzaT));
+					}
+					
+					pstmt.setString(index++,tipo);
+					if(logQuery) {
+						objects.add(tipo);
+					}
+				}
+				else {
+					pstmt.setString(index++,tipo);
+					if(logQuery) {
+						objects.add(tipo);
+					}
+					pstmt.setString(index++,idModuloCleaner);
+					if(logQuery) {
+						objects.add(idModuloCleaner);
+					}
+				}
+				
+				query = null;
+				if(logQuery) {
+					query = DBUtils.formatSQLString(deleteString, objects.toArray());
+					logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") ...");
+				}
+				result = pstmt.executeUpdate();
+				pstmt.close();
+				pstmt = null;
+				
+				if(logQuery) {
+					logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") completata; "+result+" righe eliminate");
+				}
+				mapTabelleRigheEliminate.add(org.openspcoop2.protocol.engine.constants.Costanti.REPOSITORY, result);
+			}
+			
+			
+			
+			
+			// **** Eliminazione finale ****
+			
+			ISQLQueryObject sqlQueryObjectMessaggi = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObjectMessaggi.addDeleteTable(GestoreMessaggi.MESSAGGI);
+			if(leftDate!=null) {
+				sqlQueryObjectMessaggi.addWhereCondition(MESSAGGI_COLUMN_ORA_REGISTRAZIONE+">=?");
+			}
+			if(rightDate!=null) {
+				sqlQueryObjectMessaggi.addWhereCondition(MESSAGGI_COLUMN_ORA_REGISTRAZIONE+"<=?");
+			}
+			if(scadenzaMsg!=null) {
+				sqlQueryObjectMessaggi.addWhereCondition("? > "+MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
+				sqlQueryObjectMessaggi.addWhereCondition(MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+			}
+			else {
+				sqlQueryObjectMessaggi.addWhereCondition(MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+				sqlQueryObjectMessaggi.addWhereCondition(MESSAGGI_COLUMN_PROPRIETARIO+"=?");
+			}
+			sqlQueryObjectMessaggi.setANDLogicOperator(true);
+			
+			deleteString = sqlQueryObjectMessaggi.createSQLDelete();
+			pstmt = connectionDB.prepareStatement(deleteString);
+			index = 1;
+			objects = new ArrayList<Object>();
+			if(leftDate!=null) {
+				java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
+				pstmt.setTimestamp(index++, leftDateT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(leftDate));
+				}
+			}
+			if(rightDate!=null) {
+				java.sql.Timestamp rightDateT = new java.sql.Timestamp(rightDate.getTime());
+				pstmt.setTimestamp(index++, rightDateT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(rightDate));
+				}
+			}
+			if(scadenzaMsg!=null) {
+				pstmt.setTimestamp(index++,scandenzaT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(scandenzaT));
+				}
+				
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+			}
+			else {
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+				pstmt.setString(index++,idModuloCleaner);
+				if(logQuery) {
+					objects.add(idModuloCleaner);
+				}
+			}
+			
+			query = null;
+			if(logQuery) {
+				query = DBUtils.formatSQLString(deleteString, objects.toArray());
+				logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") ...");
+			}
+			result = pstmt.executeUpdate();
+			pstmt.close();
+			pstmt = null;
+			
+			if(logQuery) {
+				logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") completata; "+result+" righe eliminate");
+			}
+			mapTabelleRigheEliminate.add(GestoreMessaggi.MESSAGGI, result);
+			
+			
+			
+			return mapTabelleRigheEliminate;
+		
+		} catch(Exception e) {
+			String errorMsg = "[GestoreMessaggi.deleteMessaggiIntoBox] errore, deleteString["+deleteString+"]: "+e.getMessage();
+			throw new GestoreMessaggiException(errorMsg,e);
+		} finally {
+			try{
+				if(pstmt != null)
+					pstmt.close();
+			} catch(Exception er) {	}
+		}
+	}
+	
+	
+	private static void _deleteListaRepositoryBuste(String tipoDatabase, Connection connectionDB, boolean logQuery, Logger logger,
+			String nomeTabella, String nomeColonnaTipoMessaggio, String nomeColonnaIdMessaggio,
+			String tipo, Date leftDate, Date rightDate, Timestamp scandenzaT, String idModuloCleaner, ISQLQueryObject sqlQueryObjectRepositoryBusteJoin,
+			SortedMap<Integer> mapTabelleRigheEliminate) throws Exception {
+		
+		// Eliminazione busta reale
+		
+		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+		sqlQueryObject.addDeleteTable(nomeTabella);
+		if(nomeColonnaTipoMessaggio!=null) {
+			sqlQueryObject.addWhereCondition(nomeColonnaTipoMessaggio+"=?");
+		}
+		sqlQueryObject.addWhereINSelectSQLCondition(false, nomeColonnaIdMessaggio, sqlQueryObjectRepositoryBusteJoin);
+		sqlQueryObject.setANDLogicOperator(true);
+		
+		String deleteString = sqlQueryObject.createSQLDelete();
+		PreparedStatement pstmt = null;
+		try{	
+			pstmt = connectionDB.prepareStatement(deleteString);
+			int index = 1;
+			List<Object> objects = new ArrayList<Object>();
+			if(nomeColonnaTipoMessaggio!=null) {
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+			}
+			pstmt.setString(index++,tipo); // due volte per via della ricerca ciclica
+			if(logQuery) {
+				objects.add(tipo);
+			}
+			if(leftDate!=null) {
+				java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
+				pstmt.setTimestamp(index++, leftDateT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(leftDate));
+				}
+			}
+			if(rightDate!=null) {
+				java.sql.Timestamp rightDateT = new java.sql.Timestamp(rightDate.getTime());
+				pstmt.setTimestamp(index++, rightDateT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(rightDate));
+				}
+			}
+			if(scandenzaT!=null) {
+				pstmt.setTimestamp(index++,scandenzaT);
+				if(logQuery) {
+					objects.add(DateUtils.getSimpleDateFormatMs().format(scandenzaT));
+				}
+				
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+			}
+			else {
+				pstmt.setString(index++,tipo);
+				if(logQuery) {
+					objects.add(tipo);
+				}
+				pstmt.setString(index++,idModuloCleaner);
+				if(logQuery) {
+					objects.add(idModuloCleaner);
+				}
+			}
+			
+			String query = null;
+			if(logQuery) {
+				query = DBUtils.formatSQLString(deleteString, objects.toArray());
+				logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") ...");
+			}
+			int result = pstmt.executeUpdate();
+			pstmt.close();
+			pstmt = null;
+			
+			if(logQuery) {
+				logger.debug("Esecuzione query ["+query+"] ("+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+") completata; "+result+" righe eliminate");
+			}
+			mapTabelleRigheEliminate.add(nomeTabella, result);
+		} finally {
+			try{
+				if(pstmt != null)
+					pstmt.close();
+			} catch(Exception er) {	}
+		}
+	}
+	
+	
+	
 
 
 
@@ -4984,7 +5704,6 @@ public class GestoreMessaggi  {
 			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
 		}
 	}
-
 
 
 
@@ -5221,7 +5940,7 @@ public class GestoreMessaggi  {
 					sqlQueryObject.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
 					sqlQueryObject.addSelectAliasField(GestoreMessaggi.MESSAGGI,"ID_MESSAGGIO","identificativoBusta");
 					sqlQueryObject.addSelectField("SERVIZIO_APPLICATIVO");
-					sqlQueryObject.addSelectField("ORA_REGISTRAZIONE");
+					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"ORA_REGISTRAZIONE");
 					sqlQueryObject.addSelectField("RIFERIMENTO_MSG");
 					sqlQueryObject.addSelectAliasField(GestoreMessaggi.MESSAGGI,"TIPO","TipoMessaggio");
 					sqlQueryObject.addSelectField("TIPO_CONSEGNA");

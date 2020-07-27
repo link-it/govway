@@ -1,4 +1,4 @@
-# */MINUTI * * * * root PDD_BATCH_ABSOLUTE_PATH DIRECTORY_BATCH NOME_SCRIPT DEBUG(true/false)
+# [*/]MINUTI [*/]ORA * * * root PDD_BATCH_ABSOLUTE_PATH DIRECTORY_BATCH NOME_SCRIPT DEBUG(true/false)
 #
 # Per la generazione delle statistiche orarie si consiglia un'esecuzione ogni 5 minuti del batch
 #*/5 * * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaStatisticheOrarie.sh false

@@ -181,6 +181,31 @@
 			<param name="value" value="auto-bytewise"/>
 		</antcall>
 
+		<!-- Timer disabilitati, poichè le attività verranno effettuate sul batch -->
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<concat destfile="${file}" append="yes" >
+# La pulizia dei messaggi e buste da eliminare è disabilitata. Verrà gestita tramite l'applicazione batch.
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable"/>
+					<param name="value" value="true"/> <!-- lasciarla fare sul runtime -->
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</then>
+		</if>
+
 		<!-- Autenticazione Applicativi/Soggetti -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

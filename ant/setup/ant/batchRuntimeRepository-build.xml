@@ -1,0 +1,245 @@
+
+<project name="setup-batchRuntimeRepository" basedir=".">
+	
+	<description>
+        	SETUP BATCH RUNTIME REPOSITORY
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<!-- batch-runtime-repository.properties -->
+	<target name="batch_runtimeRepository_properties_settings">
+
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+		
+		<!-- LOG (sul batch li lascio attivi) -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="repository.debug"/>
+			<param name="value" value="true"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="repository.logQuery"/>
+			<param name="value" value="true"/>
+		</antcall>
+
+		<!-- Disattivo la scadenza messaggi (operazione da fare solo in condizioni critiche) -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="repository.scadenzaMessaggio.minuti"/>
+			<param name="value" value="-1"/>
+		</antcall>
+
+		<!-- REPOSITORY BUSTE (imposto l'auto bytewise il quale utilizza la factory con il tipo di database) -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="repository.gestoreBuste"/>
+			<param name="value" value="auto-bytewise"/>
+		</antcall>
+
+		<!-- 
+		  PROTOCOL DEFAULT
+		  se abilitati verrano scelto nell'ordine:
+		  - trasparente
+		  - modipa
+		  - spcoop
+		  - as4
+		  - sdi
+		-->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="protocolloDefault"/>
+					<param name="value" value="trasparente"/>
+				</antcall>
+			</then>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_modipa}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="modipa"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="spcoop"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_as4}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="as4"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_sdi}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="sdi"/>
+					</antcall>
+				</then>
+			</elseif>
+		</if>
+		
+	</target>
+	
+	<!-- daoFactory.properties -->
+	<target name="batch_runtimeRepository_dao_factory_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+				
+		<!-- TIPO DATABASE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.tipoDatabase"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>
+
+		<!-- Driver JDBC -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.connection.driver"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
+		</antcall>
+
+		<!-- Connection URL -->
+		<antcall target="-set_connection_url_jdbc">
+		    <param name="file" value="${file}"/>
+			<param name="jdbc_token" value="db.connection.url"/>
+			<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+			<param name="jdbc_dbhost" value="${antinstaller_dbhost}"/>
+			<param name="jdbc_dbport" value="${antinstaller_dbport}"/>
+			<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
+			<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.connection.user"/>
+			<param name="value" value="${antinstaller_dbusername}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.connection.password"/>
+			<param name="value" value="${antinstaller_dbpassword}"/>
+		</antcall>
+				
+	</target>
+
+	<target name="-set_connection_url_jdbc">
+		
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="db2"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:db2://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="hsql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:hsqldb:hsql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="mysql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:mysql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}?zeroDateTimeBehavior=convertToNull"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="oracle"/>
+			<then>
+				<if>
+					<equals arg1="${jdbc_oracle_mode}" arg2="serviceName" />
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="${jdbc_token}"/>
+							<param name="value" value="jdbc:oracle:thin:@${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="${jdbc_token}"/>
+							<param name="value" value="jdbc:oracle:thin:@${jdbc_dbhost}:${jdbc_dbport}:${jdbc_dbname}"/>
+						</antcall>
+					</else>
+				</if>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="postgresql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:postgresql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="sqlserver"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:sqlserver://${jdbc_dbhost}:${jdbc_dbport};databaseName=${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+	
+	
+	<!-- batch-runtime-repository.log4j2.properties -->
+	<target name="batch_runtimeRepository_log4j_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+		
+		<!-- WORKING DIR -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="/var/govway/log"/>
+			<param name="value" value="${log_dir}"/>
+		</antcall>
+	
+	</target>
+		
+</project>

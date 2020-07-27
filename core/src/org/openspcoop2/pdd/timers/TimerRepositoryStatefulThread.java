@@ -43,7 +43,9 @@ import org.slf4j.Logger;
  */
 public class TimerRepositoryStatefulThread extends Thread{
 
-	private static final String ID_MODULO = "TimerRepositoryStateful";
+	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	
+	public static final String ID_MODULO = "TimerRepositoryStateful";
 	
 	/**
 	 * Timeout che definisce la cadenza di avvio di questo timer. 
@@ -140,34 +142,41 @@ public class TimerRepositoryStatefulThread extends Thread{
 		
 		while(this.stop == false){
 			
-			DBTransazioniManager dbManager = null;
-	    	Resource r = null;
-			try{
-				dbManager = DBTransazioniManager.getInstance();
-				r = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, null);
-				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
-				}
-				Connection con = (Connection) r.getResource();
-				if(con == null)
-					throw new Exception("Connessione non disponibile");	
-				
-				if(this.debug){
-					this.log.debug("Esecuzione thread per gestione delle transazioni stateful....");
-				}
-				
-				this.gestore.verificaOggettiPresentiRepository(this.daoFactory,this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLoggerTransazioni, con);
-				if(this.debug){
-					this.log.debug("Esecuzione thread per gestione delle transazioni stateful terminata");
-				}
-				
-			}catch(Exception e){
-				this.log.error("Errore durante la gestione delle transazioni stateful: "+e.getMessage(),e);
-			}finally{
+			if(TimerState.ENABLED.equals(STATE)) {
+			
+				DBTransazioniManager dbManager = null;
+		    	Resource r = null;
 				try{
-					if(r!=null)
-						dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, r);
-				}catch(Exception eClose){}
+					dbManager = DBTransazioniManager.getInstance();
+					r = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, null);
+					if(r==null){
+						throw new Exception("Risorsa al database non disponibile");
+					}
+					Connection con = (Connection) r.getResource();
+					if(con == null)
+						throw new Exception("Connessione non disponibile");	
+					
+					if(this.debug){
+						this.log.debug("Esecuzione thread per gestione delle transazioni stateful....");
+					}
+					
+					this.gestore.verificaOggettiPresentiRepository(this.daoFactory,this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLoggerTransazioni, con);
+					if(this.debug){
+						this.log.debug("Esecuzione thread per gestione delle transazioni stateful terminata");
+					}
+					
+				}catch(Exception e){
+					this.log.error("Errore durante la gestione delle transazioni stateful: "+e.getMessage(),e);
+				}finally{
+					try{
+						if(r!=null)
+							dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, r);
+					}catch(Exception eClose){}
+				}
+				
+			}
+			else {
+				this.log.info("Timer "+ID_MODULO+" disabilitato");
 			}
 			
 					

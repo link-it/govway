@@ -90,6 +90,9 @@ import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 
 public class TimerGestoreBusteNonRiscontrateLib {
 
+	public static TimerState STATE_ONEWAY = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState STATE_ASINCRONI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	
 	private MsgDiagnostico msgDiag = null;
 	private Logger logTimer = null;
 	private OpenSPCoop2Properties propertiesReader = null;
@@ -164,7 +167,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 			this.logTimer.error("["+TimerGestoreBusteNonRiscontrate.ID_MODULO+"] Rilevato sistema in shutdown");
 			return;
 		}
-
+		
 		// Controllo che l'inizializzazione corretta delle risorse sia effettuata
 		if(OpenSPCoop2Startup.initialize==false){
 			this.msgDiag.logFatalError("inizializzazione di OpenSPCoop non effettuata", "Check Inizializzazione");
@@ -183,6 +186,13 @@ public class TimerGestoreBusteNonRiscontrateLib {
 			return;
 		}
 
+		// Controllo che il timer non sia stato momentaneamente disabilitato
+		if(!TimerState.ENABLED.equals(STATE_ONEWAY) && !TimerState.ENABLED.equals(STATE_ASINCRONI)) {
+			this.msgDiag.logPersonalizzato("disabilitato");
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
+			return;
+		}
+		
 		// refresh
 		if( this.configurazionePdDReader.getTimeoutRiscontro() < 1  )	{
 			String msgErrore = "Riscontrato errore durante la lettura del timeout per le buste non riscontrate (<=0 ??)";
@@ -218,284 +228,291 @@ public class TimerGestoreBusteNonRiscontrateLib {
 
 
 			/* ----- Gestione Riscontri per profilo OneWay ----- */
-			Riscontri rBuste = new Riscontri(openspcoopState.getStatoRichiesta(),this.logTimer);
-			int offsetRiscontri = 0;
-			String causaBusteOneWayToSend = "Rispedizione buste con profilo oneway non riscontrate";
-			List<BustaNonRiscontrata> busteOneWayToSend = null;
-			try{
-				GestoreMessaggi.acquireLock(
-						this.semaphore, connectionDB, this.timerLock,
-						this.msgDiag, causaBusteOneWayToSend, 
-						this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-						this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-				
-				busteOneWayToSend = rBuste.getBustePerUlterioreInoltro(this.timeout,this.limit,offsetRiscontri,this.logQuery);
-				if(this.logQuery){
-					if( (busteOneWayToSend != null) && (busteOneWayToSend.size()<=0)){
-						this.logTimer.info("Non sono state trovate buste con profilo oneway non riscontrate da rispedire");
-					}
-				}
-	
-				// Gestione buste da re-spedire
-				while ( (busteOneWayToSend != null) && (busteOneWayToSend.size()>0) ) {
-	
-					if(this.logQuery)
-						this.logTimer.info("Trovate "+busteOneWayToSend.size()+" buste con profilo oneway non riscontrate da rispedire ...");
-	
-					int gestiti = 0;
-					for (int i = 0; i < busteOneWayToSend.size(); i++) {
-	
-						BustaNonRiscontrata bustaNonRiscontrata = busteOneWayToSend.get(i);
-						String idBustaDaRispedire = bustaNonRiscontrata.getIdentificativo();
-						this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBustaDaRispedire);
-						this.msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, bustaNonRiscontrata.getProfiloCollaborazione().name());
-	
-						// Busta da rispedire
-						this.msgDiag.logPersonalizzato("bustaNonRiscontrata");
-						if(this.logQuery){
-							this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("bustaNonRiscontrata"));
+			if(TimerState.ENABLED.equals(STATE_ONEWAY)) {
+				Riscontri rBuste = new Riscontri(openspcoopState.getStatoRichiesta(),this.logTimer);
+				int offsetRiscontri = 0;
+				String causaBusteOneWayToSend = "Rispedizione buste con profilo oneway non riscontrate";
+				List<BustaNonRiscontrata> busteOneWayToSend = null;
+				try{
+					GestoreMessaggi.acquireLock(
+							this.semaphore, connectionDB, this.timerLock,
+							this.msgDiag, causaBusteOneWayToSend, 
+							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
+							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+					
+					busteOneWayToSend = rBuste.getBustePerUlterioreInoltro(this.timeout,this.limit,offsetRiscontri,this.logQuery);
+					if(this.logQuery){
+						if( (busteOneWayToSend != null) && (busteOneWayToSend.size()<=0)){
+							this.logTimer.info("Non sono state trovate buste con profilo oneway non riscontrate da rispedire");
 						}
-						
+					}
+		
+					// Gestione buste da re-spedire
+					while ( (busteOneWayToSend != null) && (busteOneWayToSend.size()>0) ) {
+		
+						if(this.logQuery)
+							this.logTimer.info("Trovate "+busteOneWayToSend.size()+" buste con profilo oneway non riscontrate da rispedire ...");
+		
+						int gestiti = 0;
+						for (int i = 0; i < busteOneWayToSend.size(); i++) {
+		
+							BustaNonRiscontrata bustaNonRiscontrata = busteOneWayToSend.get(i);
+							String idBustaDaRispedire = bustaNonRiscontrata.getIdentificativo();
+							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBustaDaRispedire);
+							this.msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, bustaNonRiscontrata.getProfiloCollaborazione().name());
+		
+							// Busta da rispedire
+							this.msgDiag.logPersonalizzato("bustaNonRiscontrata");
+							if(this.logQuery){
+								this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("bustaNonRiscontrata"));
+							}
+							
+							try{
+								GestoreMessaggi.updateLock(
+										this.semaphore, connectionDB, this.timerLock,
+										this.msgDiag, "Rispedizione busta con profilo oneway con id ["+idBustaDaRispedire+"] ...");
+							}catch(Throwable e){
+								this.msgDiag.logErroreGenerico(e,"RispedizioneBustaNonRiscontrataOneWay("+idBustaDaRispedire+")-UpdateLock");
+								this.logTimer.error("ErroreRispedizioneBustaNonRiscontrataOneWay("+idBustaDaRispedire+")-UpdateLock: "+e.getMessage(),e);
+								break;
+							}
+		
+							// Controllo che al riscontro corrisponda effettivamente un messaggio nel repository
+							messaggioDaInviare = new GestoreMessaggi(openspcoopState,true,idBustaDaRispedire,Costanti.OUTBOX,
+									this.logTimer,this.msgDiag,null);
+							if(messaggioDaInviare.existsMessage_noCache()==false){
+								this.msgDiag.logPersonalizzato("bustaNonRiscontrata.messaggioNonEsistente");
+								this.logTimer.error(this.msgDiag.getMessaggio_replaceKeywords("bustaNonRiscontrata.messaggioNonEsistente"));
+								try{
+									repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,null);
+									repositoryBuste.eliminaUtilizzoPdDFromOutBox(idBustaDaRispedire);
+		
+									gestoreRiscontri = new Riscontri(openspcoopState.getStatoRichiesta(),null);
+									gestoreRiscontri.validazioneRiscontroRicevuto(idBustaDaRispedire);
+		
+									((StateMessage)openspcoopState.getStatoRichiesta()).executePreparedStatement();
+									
+									gestiti++;
+									
+								}catch(Exception e){
+									this.msgDiag.logErroreGenerico(e,"EliminazioneBustaNonRiscontrataNonEsistente("+idBustaDaRispedire+")");
+									this.logTimer.error("ErroreEliminazioneBustaNonRiscontrataNonEsistente("+idBustaDaRispedire+"): "+e.getMessage(),e);
+								}
+							}
+							else{
+		
+								try{
+		
+									// PdDContext
+									PdDContext pddContext = messaggioDaInviare.getPdDContext();
+									IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+		
+									// Recupero busta
+									repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(),this.logTimer, true,protocolFactory);
+									Busta bustaToSend = repositoryBuste.getBustaFromOutBox(idBustaDaRispedire);
+									this.msgDiag.addKeywords(bustaToSend, true);	
+		
+									// Controllo se la busta e' scaduta
+									Date scadenza = bustaToSend.getScadenza();
+									Timestamp now = DateManager.getTimestamp();
+		
+									// Eventuale msg Scaduto.
+									if (scadenza.before(now)) {
+										// Busta scaduta
+		
+										this.msgDiag.logPersonalizzato("bustaNonRiscontrataScaduta");
+										if(this.logQuery)
+											this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("bustaNonRiscontrataScaduta"));
+		
+										try{
+											repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,protocolFactory);
+											repositoryBuste.eliminaUtilizzoPdDFromOutBox(bustaToSend.getID());
+											((StateMessage)openspcoopState.getStatoRichiesta()).executePreparedStatement();
+											gestoreMsg = new GestoreMessaggi(openspcoopState, true, bustaToSend.getID(),Costanti.OUTBOX,this.msgDiag,pddContext);
+											gestoreMsg.validateAndDeleteMsgOneWayRiscontrato();
+										}catch(Exception e){
+											this.msgDiag.logErroreGenerico(e,"EliminazioneBustaNonRiscontrataScaduta("+bustaToSend.getID()+")");
+											this.logTimer.error("ErroreEliminazioneBustaNonRiscontrataScaduta("+bustaToSend.getID()+"): "+e.getMessage(),e);
+										}
+		
+									}
+									else {
+		
+										// Dati
+										IDSoggetto soggettoBustaNonRiscontrata = new IDSoggetto(bustaToSend.getTipoMittente(),
+												bustaToSend.getMittente());
+										IDSoggetto identitaPdD = null;
+										String dominioRD = null;
+										try{
+											dominioRD = this.configurazionePdDReader.getIdentificativoPorta(soggettoBustaNonRiscontrata,protocolFactory);
+											if(dominioRD==null){
+												throw new Exception("Dominio is null");
+											}
+										}catch(Exception e){
+											this.msgDiag.logErroreGenerico(e,"BustaNonRiscontrata getDominio("+soggettoBustaNonRiscontrata+")");
+										}
+										if(dominioRD==null){
+											identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null);
+										}else{
+											identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
+													bustaToSend.getMittente(),dominioRD);
+										}
+	                                    IDServizio servizioBusta = IDServizioFactory.getInstance().getIDServizioFromValues(bustaToSend.getTipoServizio(),
+	                                            bustaToSend.getServizio(),
+	                                            bustaToSend.getTipoDestinatario(), 
+	                                            bustaToSend.getDestinatario(), 
+	                                            bustaToSend.getVersioneServizio()); 
+	                                    servizioBusta.setAzione(bustaToSend.getAzione()); 
+		
+										// Dati integrazione
+										repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,protocolFactory);
+										Integrazione infoIntegrazione = repositoryBuste.getInfoIntegrazioneFromOutBox(bustaToSend.getID());
+										ProprietaErroreApplicativo erroreAppl = this.propertiesReader.getProprietaGestioneErrorePD(protocolFactory.createProtocolManager());
+										erroreAppl.setDominio(identitaPdD.getCodicePorta());
+		
+										// RichiestaDelegata
+										IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), protocolFactory);
+	                                    RichiestaDelegata richiestaDelegata = new RichiestaDelegata(
+	                                            idPD,infoIntegrazione.getServizioApplicativo(),
+	                                            infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
+										richiestaDelegata.setScenario(infoIntegrazione.getScenario());
+										richiestaDelegata.setUtilizzoConsegnaAsincrona(true); // i riscontri sono utilizzati solo con il profilo oneway
+										richiestaDelegata.setIdCollaborazione(bustaToSend.getCollaborazione());
+										richiestaDelegata.setProfiloCollaborazione(bustaToSend.getProfiloDiCollaborazione(),bustaToSend.getProfiloDiCollaborazioneValue());
+										try{
+											richiestaDelegata.setIdCorrelazioneApplicativa(messaggioDaInviare.getIDCorrelazioneApplicativa());
+										}catch(Exception e){}
+		
+										// Lettura servizio applicativo
+										ServizioApplicativo sa = null;
+										String servizioApplicativo = richiestaDelegata.getServizioApplicativo();
+										try{
+	                                        if(servizioApplicativo!=null){
+	                                            IDServizioApplicativo idSA = new IDServizioApplicativo();
+	                                            idSA.setNome(servizioApplicativo);
+	                                            idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
+	                                            sa = this.configurazionePdDReader.getServizioApplicativo(idSA);
+	                                        }
+										}catch (Exception e) {
+											if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
+												throw e;
+											}
+										}
+		
+										String implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null);
+										String implementazioneDestinatario = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoDestinatario(),bustaToSend.getDestinatario()), null);
+		
+										// Gestione errore del servizio applicativo
+										this.configurazionePdDReader.aggiornaProprietaGestioneErrorePD(erroreAppl,sa);
+		
+										// Profilo Gestione
+										String profiloGestione = this.registroServiziReader.getProfiloGestioneFruizioneServizio(servizioBusta, null);
+										richiestaDelegata.setProfiloGestione(profiloGestione);
+		
+										// Comprensione modalita di gestione (oneway 11 o 10)
+										PortaDelegata pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+										boolean oneWayStateless = this.configurazionePdDReader.isModalitaStateless(pd, bustaToSend.getProfiloDiCollaborazione());
+										boolean oneWayVersione11 = this.propertiesReader.isGestioneOnewayStateful_1_1() && !oneWayStateless;
+		
+										// costruzione InoltroBuste_MEssage
+										InoltroBusteMessage inoltroMSG = new InoltroBusteMessage();
+										inoltroMSG.setRichiestaDelegata(richiestaDelegata);
+										inoltroMSG.setBusta(bustaToSend);
+										inoltroMSG.setOneWayVersione11(oneWayVersione11);
+										if(oneWayVersione11){
+											OpenSPCoopStateless stateless = new OpenSPCoopStateless();
+											StatelessMessage statelessMessage = new StatelessMessage();
+											statelessMessage.setBusta(bustaToSend);
+											stateless.setStatoRichiesta(statelessMessage);
+											inoltroMSG.setOpenspcoopstate(stateless);
+										}
+										inoltroMSG.setImplementazionePdDSoggettoMittente(implementazioneMittente);
+										inoltroMSG.setImplementazionePdDSoggettoDestinatario(implementazioneDestinatario);
+										inoltroMSG.setPddContext(pddContext);
+		
+										gestoreMsg = new GestoreMessaggi(openspcoopState, true, bustaToSend.getID(),Costanti.OUTBOX,this.msgDiag,pddContext);
+		
+										// Send Message on Queue
+										if(CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_DB.equals(TimerGestoreBusteNonRiscontrateLib.tipoNodeSender)){
+											gestoreMsg.ripristinaMessaggio();
+										}else{
+											try{
+		
+												String classTypeNodeSender = null;
+												INodeSender nodeSender = null;
+												try{
+													classTypeNodeSender = ClassNameProperties.getInstance().getNodeSender(TimerGestoreBusteNonRiscontrateLib.tipoNodeSender);
+													nodeSender = (INodeSender) Loader.getInstance().newInstance(classTypeNodeSender);
+													AbstractCore.init(nodeSender, pddContext, protocolFactory);
+												}catch(Exception e){
+													throw new EJBUtilsException("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
+															"] da utilizzare per la spedizione nell'infrastruttura: "+e.getMessage(),e);
+												}
+		
+												nodeSender.send(inoltroMSG, InoltroBuste.ID_MODULO, this.msgDiag, 
+														this.propertiesReader.getIdentitaPortaDefault(null),TimerGestoreBusteNonRiscontrate.ID_MODULO, bustaToSend.getID(), gestoreMsg);
+											}catch(Exception e){
+												this.msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(InoltroBuste)");
+												this.logTimer.error("Spedizione->InoltroBuste non riuscita",e);
+												return;
+											}
+										}
+		
+									}
+		
+									if(this.logQuery)
+										this.logTimer.debug("Gestita/Reinviata busta OneWay non riscontrata con ID ["+ bustaToSend.getID() + "]");
+		
+									gestiti++;
+									
+								}catch(Exception e){
+									String msgErrore = "RespedizioneBustaNonRiscontrata ErroreGenerale("+idBustaDaRispedire+")";
+									this.msgDiag.logErroreGenerico(e,msgErrore);
+									this.logTimer.error(msgErrore+": "+e.getMessage(),e);
+								}		
+		
+		
+							}
+		
+						}
+		
+						if(this.logQuery)
+							this.logTimer.info("Gestite "+gestiti+" buste con profilo oneway non riscontrate da rispedire");
+		
+						boolean cerca = true;
 						try{
 							GestoreMessaggi.updateLock(
 									this.semaphore, connectionDB, this.timerLock,
-									this.msgDiag, "Rispedizione busta con profilo oneway con id ["+idBustaDaRispedire+"] ...");
+									this.msgDiag, "Ricerca nuovo buste con profilo oneway non riscontrate ...");						
 						}catch(Throwable e){
-							this.msgDiag.logErroreGenerico(e,"RispedizioneBustaNonRiscontrataOneWay("+idBustaDaRispedire+")-UpdateLock");
-							this.logTimer.error("ErroreRispedizioneBustaNonRiscontrataOneWay("+idBustaDaRispedire+")-UpdateLock: "+e.getMessage(),e);
-							break;
+							this.msgDiag.logErroreGenerico(e,"RicercaNuoveBusteOneWayNonRiscontrate-UpdateLock");
+							this.logTimer.error("ErroreRicercaNuoveBusteOneWayNonRiscontrate-UpdateLock: "+e.getMessage(),e);
+							cerca = false;
 						}
-	
-						// Controllo che al riscontro corrisponda effettivamente un messaggio nel repository
-						messaggioDaInviare = new GestoreMessaggi(openspcoopState,true,idBustaDaRispedire,Costanti.OUTBOX,
-								this.logTimer,this.msgDiag,null);
-						if(messaggioDaInviare.existsMessage_noCache()==false){
-							this.msgDiag.logPersonalizzato("bustaNonRiscontrata.messaggioNonEsistente");
-							this.logTimer.error(this.msgDiag.getMessaggio_replaceKeywords("bustaNonRiscontrata.messaggioNonEsistente"));
-							try{
-								repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,null);
-								repositoryBuste.eliminaUtilizzoPdDFromOutBox(idBustaDaRispedire);
-	
-								gestoreRiscontri = new Riscontri(openspcoopState.getStatoRichiesta(),null);
-								gestoreRiscontri.validazioneRiscontroRicevuto(idBustaDaRispedire);
-	
-								((StateMessage)openspcoopState.getStatoRichiesta()).executePreparedStatement();
-								
-								gestiti++;
-								
-							}catch(Exception e){
-								this.msgDiag.logErroreGenerico(e,"EliminazioneBustaNonRiscontrataNonEsistente("+idBustaDaRispedire+")");
-								this.logTimer.error("ErroreEliminazioneBustaNonRiscontrataNonEsistente("+idBustaDaRispedire+"): "+e.getMessage(),e);
-							}
+						
+						// Check altri riscontri da inviare
+						if(cerca) {
+							offsetRiscontri = offsetRiscontri + busteOneWayToSend.size(); 
+							busteOneWayToSend = 
+									rBuste.getBustePerUlterioreInoltro(this.timeout, this.limit, offsetRiscontri, this.logQuery);
 						}
-						else{
-	
-							try{
-	
-								// PdDContext
-								PdDContext pddContext = messaggioDaInviare.getPdDContext();
-								IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
-	
-								// Recupero busta
-								repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(),this.logTimer, true,protocolFactory);
-								Busta bustaToSend = repositoryBuste.getBustaFromOutBox(idBustaDaRispedire);
-								this.msgDiag.addKeywords(bustaToSend, true);	
-	
-								// Controllo se la busta e' scaduta
-								Date scadenza = bustaToSend.getScadenza();
-								Timestamp now = DateManager.getTimestamp();
-	
-								// Eventuale msg Scaduto.
-								if (scadenza.before(now)) {
-									// Busta scaduta
-	
-									this.msgDiag.logPersonalizzato("bustaNonRiscontrataScaduta");
-									if(this.logQuery)
-										this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("bustaNonRiscontrataScaduta"));
-	
-									try{
-										repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,protocolFactory);
-										repositoryBuste.eliminaUtilizzoPdDFromOutBox(bustaToSend.getID());
-										((StateMessage)openspcoopState.getStatoRichiesta()).executePreparedStatement();
-										gestoreMsg = new GestoreMessaggi(openspcoopState, true, bustaToSend.getID(),Costanti.OUTBOX,this.msgDiag,pddContext);
-										gestoreMsg.validateAndDeleteMsgOneWayRiscontrato();
-									}catch(Exception e){
-										this.msgDiag.logErroreGenerico(e,"EliminazioneBustaNonRiscontrataScaduta("+bustaToSend.getID()+")");
-										this.logTimer.error("ErroreEliminazioneBustaNonRiscontrataScaduta("+bustaToSend.getID()+"): "+e.getMessage(),e);
-									}
-	
-								}
-								else {
-	
-									// Dati
-									IDSoggetto soggettoBustaNonRiscontrata = new IDSoggetto(bustaToSend.getTipoMittente(),
-											bustaToSend.getMittente());
-									IDSoggetto identitaPdD = null;
-									String dominioRD = null;
-									try{
-										dominioRD = this.configurazionePdDReader.getIdentificativoPorta(soggettoBustaNonRiscontrata,protocolFactory);
-										if(dominioRD==null){
-											throw new Exception("Dominio is null");
-										}
-									}catch(Exception e){
-										this.msgDiag.logErroreGenerico(e,"BustaNonRiscontrata getDominio("+soggettoBustaNonRiscontrata+")");
-									}
-									if(dominioRD==null){
-										identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null);
-									}else{
-										identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
-												bustaToSend.getMittente(),dominioRD);
-									}
-                                    IDServizio servizioBusta = IDServizioFactory.getInstance().getIDServizioFromValues(bustaToSend.getTipoServizio(),
-                                            bustaToSend.getServizio(),
-                                            bustaToSend.getTipoDestinatario(), 
-                                            bustaToSend.getDestinatario(), 
-                                            bustaToSend.getVersioneServizio()); 
-                                    servizioBusta.setAzione(bustaToSend.getAzione()); 
-	
-									// Dati integrazione
-									repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,protocolFactory);
-									Integrazione infoIntegrazione = repositoryBuste.getInfoIntegrazioneFromOutBox(bustaToSend.getID());
-									ProprietaErroreApplicativo erroreAppl = this.propertiesReader.getProprietaGestioneErrorePD(protocolFactory.createProtocolManager());
-									erroreAppl.setDominio(identitaPdD.getCodicePorta());
-	
-									// RichiestaDelegata
-									IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), protocolFactory);
-                                    RichiestaDelegata richiestaDelegata = new RichiestaDelegata(
-                                            idPD,infoIntegrazione.getServizioApplicativo(),
-                                            infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
-									richiestaDelegata.setScenario(infoIntegrazione.getScenario());
-									richiestaDelegata.setUtilizzoConsegnaAsincrona(true); // i riscontri sono utilizzati solo con il profilo oneway
-									richiestaDelegata.setIdCollaborazione(bustaToSend.getCollaborazione());
-									richiestaDelegata.setProfiloCollaborazione(bustaToSend.getProfiloDiCollaborazione(),bustaToSend.getProfiloDiCollaborazioneValue());
-									try{
-										richiestaDelegata.setIdCorrelazioneApplicativa(messaggioDaInviare.getIDCorrelazioneApplicativa());
-									}catch(Exception e){}
-	
-									// Lettura servizio applicativo
-									ServizioApplicativo sa = null;
-									String servizioApplicativo = richiestaDelegata.getServizioApplicativo();
-									try{
-                                        if(servizioApplicativo!=null){
-                                            IDServizioApplicativo idSA = new IDServizioApplicativo();
-                                            idSA.setNome(servizioApplicativo);
-                                            idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
-                                            sa = this.configurazionePdDReader.getServizioApplicativo(idSA);
-                                        }
-									}catch (Exception e) {
-										if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
-											throw e;
-										}
-									}
-	
-									String implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null);
-									String implementazioneDestinatario = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoDestinatario(),bustaToSend.getDestinatario()), null);
-	
-									// Gestione errore del servizio applicativo
-									this.configurazionePdDReader.aggiornaProprietaGestioneErrorePD(erroreAppl,sa);
-	
-									// Profilo Gestione
-									String profiloGestione = this.registroServiziReader.getProfiloGestioneFruizioneServizio(servizioBusta, null);
-									richiestaDelegata.setProfiloGestione(profiloGestione);
-	
-									// Comprensione modalita di gestione (oneway 11 o 10)
-									PortaDelegata pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
-									boolean oneWayStateless = this.configurazionePdDReader.isModalitaStateless(pd, bustaToSend.getProfiloDiCollaborazione());
-									boolean oneWayVersione11 = this.propertiesReader.isGestioneOnewayStateful_1_1() && !oneWayStateless;
-	
-									// costruzione InoltroBuste_MEssage
-									InoltroBusteMessage inoltroMSG = new InoltroBusteMessage();
-									inoltroMSG.setRichiestaDelegata(richiestaDelegata);
-									inoltroMSG.setBusta(bustaToSend);
-									inoltroMSG.setOneWayVersione11(oneWayVersione11);
-									if(oneWayVersione11){
-										OpenSPCoopStateless stateless = new OpenSPCoopStateless();
-										StatelessMessage statelessMessage = new StatelessMessage();
-										statelessMessage.setBusta(bustaToSend);
-										stateless.setStatoRichiesta(statelessMessage);
-										inoltroMSG.setOpenspcoopstate(stateless);
-									}
-									inoltroMSG.setImplementazionePdDSoggettoMittente(implementazioneMittente);
-									inoltroMSG.setImplementazionePdDSoggettoDestinatario(implementazioneDestinatario);
-									inoltroMSG.setPddContext(pddContext);
-	
-									gestoreMsg = new GestoreMessaggi(openspcoopState, true, bustaToSend.getID(),Costanti.OUTBOX,this.msgDiag,pddContext);
-	
-									// Send Message on Queue
-									if(CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_DB.equals(TimerGestoreBusteNonRiscontrateLib.tipoNodeSender)){
-										gestoreMsg.ripristinaMessaggio();
-									}else{
-										try{
-	
-											String classTypeNodeSender = null;
-											INodeSender nodeSender = null;
-											try{
-												classTypeNodeSender = ClassNameProperties.getInstance().getNodeSender(TimerGestoreBusteNonRiscontrateLib.tipoNodeSender);
-												nodeSender = (INodeSender) Loader.getInstance().newInstance(classTypeNodeSender);
-												AbstractCore.init(nodeSender, pddContext, protocolFactory);
-											}catch(Exception e){
-												throw new EJBUtilsException("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
-														"] da utilizzare per la spedizione nell'infrastruttura: "+e.getMessage(),e);
-											}
-	
-											nodeSender.send(inoltroMSG, InoltroBuste.ID_MODULO, this.msgDiag, 
-													this.propertiesReader.getIdentitaPortaDefault(null),TimerGestoreBusteNonRiscontrate.ID_MODULO, bustaToSend.getID(), gestoreMsg);
-										}catch(Exception e){
-											this.msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(InoltroBuste)");
-											this.logTimer.error("Spedizione->InoltroBuste non riuscita",e);
-											return;
-										}
-									}
-	
-								}
-	
-								if(this.logQuery)
-									this.logTimer.debug("Gestita/Reinviata busta OneWay non riscontrata con ID ["+ bustaToSend.getID() + "]");
-	
-								gestiti++;
-								
-							}catch(Exception e){
-								String msgErrore = "RespedizioneBustaNonRiscontrata ErroreGenerale("+idBustaDaRispedire+")";
-								this.msgDiag.logErroreGenerico(e,msgErrore);
-								this.logTimer.error(msgErrore+": "+e.getMessage(),e);
-							}		
-	
-	
+						else {
+							busteOneWayToSend = new ArrayList<BustaNonRiscontrata>(); // per uscire dal while
 						}
-	
+						
 					}
-	
-					if(this.logQuery)
-						this.logTimer.info("Gestite "+gestiti+" buste con profilo oneway non riscontrate da rispedire");
-	
-					boolean cerca = true;
+				}finally{
 					try{
-						GestoreMessaggi.updateLock(
+						GestoreMessaggi.releaseLock(
 								this.semaphore, connectionDB, this.timerLock,
-								this.msgDiag, "Ricerca nuovo buste con profilo oneway non riscontrate ...");						
-					}catch(Throwable e){
-						this.msgDiag.logErroreGenerico(e,"RicercaNuoveBusteOneWayNonRiscontrate-UpdateLock");
-						this.logTimer.error("ErroreRicercaNuoveBusteOneWayNonRiscontrate-UpdateLock: "+e.getMessage(),e);
-						cerca = false;
-					}
-					
-					// Check altri riscontri da inviare
-					if(cerca) {
-						offsetRiscontri = offsetRiscontri + busteOneWayToSend.size(); 
-						busteOneWayToSend = 
-								rBuste.getBustePerUlterioreInoltro(this.timeout, this.limit, offsetRiscontri, this.logQuery);
-					}
-					else {
-						busteOneWayToSend = new ArrayList<BustaNonRiscontrata>(); // per uscire dal while
-					}
-					
+								this.msgDiag, causaBusteOneWayToSend);
+					}catch(Exception e){}
 				}
-			}finally{
-				try{
-					GestoreMessaggi.releaseLock(
-							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaBusteOneWayToSend);
-				}catch(Exception e){}
+			}
+			else {
+				if(this.logQuery) {
+					this.logTimer.info("Gestione buste, con profilo oneway, disabilitata");
+				}	
 			}
 
 
@@ -503,265 +520,272 @@ public class TimerGestoreBusteNonRiscontrateLib {
 
 
 			/* ----- Gestione RicevuteAsincrone per profili Asincroni ----- */
-			ProfiloDiCollaborazione pBuste = new ProfiloDiCollaborazione(openspcoopState.getStatoRichiesta(),this.logTimer,null);
-			int offsetBusteAsincrone = 0;
-			String causaBusteAsincroneToSend = "Rispedizione buste con profilo asincrono non riscontrate";
-			try{
-				GestoreMessaggi.acquireLock(
-						this.semaphore, connectionDB, this.timerLock,
-						this.msgDiag, causaBusteAsincroneToSend, 
-						this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-						this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-				
-				List<BustaNonRiscontrata> busteAsincroneToSend = null;
-				busteAsincroneToSend = pBuste.asincrono_getBusteAsincronePerUlterioreInoltro(this.timeout,this.limit,offsetBusteAsincrone,this.logQuery);
-				if(this.logQuery){
-					if( (busteAsincroneToSend != null) && (busteAsincroneToSend.size()<=0)){
-						this.logTimer.info("Non sono state trovate buste con profilo asincrono non riscontrate da rispedire");
-					}
-				}
-	
-				// Gestione buste da re-spedire
-				while ( (busteAsincroneToSend != null) && (busteAsincroneToSend.size()>0) ) {
-	
-					if(this.logQuery)
-						this.logTimer.info("Trovate "+busteAsincroneToSend.size()+" buste con profilo asincrono non riscontrate da rispedire ...");
-	
-					int gestiti = 0;
-					for (int i = 0; i < busteAsincroneToSend.size(); i++) {
-	
-						BustaNonRiscontrata bustaNonRiscontrata = busteAsincroneToSend.get(i);
-						String idBustaDaRispedire = bustaNonRiscontrata.getIdentificativo();
-						this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBustaDaRispedire);
-						this.msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, bustaNonRiscontrata.getProfiloCollaborazione().name()); 
-	
-						// Busta da rispedire
-						this.msgDiag.logPersonalizzato("ricevutaAsincronaNonRicevuta");
-						if(this.logQuery){
-							this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("ricevutaAsincronaNonRicevuta"));
+			if(TimerState.ENABLED.equals(STATE_ASINCRONI)) {
+				ProfiloDiCollaborazione pBuste = new ProfiloDiCollaborazione(openspcoopState.getStatoRichiesta(),this.logTimer,null);
+				int offsetBusteAsincrone = 0;
+				String causaBusteAsincroneToSend = "Rispedizione buste con profilo asincrono non riscontrate";
+				try{
+					GestoreMessaggi.acquireLock(
+							this.semaphore, connectionDB, this.timerLock,
+							this.msgDiag, causaBusteAsincroneToSend, 
+							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
+							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+					
+					List<BustaNonRiscontrata> busteAsincroneToSend = null;
+					busteAsincroneToSend = pBuste.asincrono_getBusteAsincronePerUlterioreInoltro(this.timeout,this.limit,offsetBusteAsincrone,this.logQuery);
+					if(this.logQuery){
+						if( (busteAsincroneToSend != null) && (busteAsincroneToSend.size()<=0)){
+							this.logTimer.info("Non sono state trovate buste con profilo asincrono non riscontrate da rispedire");
 						}
-						
+					}
+		
+					// Gestione buste da re-spedire
+					while ( (busteAsincroneToSend != null) && (busteAsincroneToSend.size()>0) ) {
+		
+						if(this.logQuery)
+							this.logTimer.info("Trovate "+busteAsincroneToSend.size()+" buste con profilo asincrono non riscontrate da rispedire ...");
+		
+						int gestiti = 0;
+						for (int i = 0; i < busteAsincroneToSend.size(); i++) {
+		
+							BustaNonRiscontrata bustaNonRiscontrata = busteAsincroneToSend.get(i);
+							String idBustaDaRispedire = bustaNonRiscontrata.getIdentificativo();
+							this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBustaDaRispedire);
+							this.msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, bustaNonRiscontrata.getProfiloCollaborazione().name()); 
+		
+							// Busta da rispedire
+							this.msgDiag.logPersonalizzato("ricevutaAsincronaNonRicevuta");
+							if(this.logQuery){
+								this.logTimer.debug(this.msgDiag.getMessaggio_replaceKeywords("ricevutaAsincronaNonRicevuta"));
+							}
+							
+							try{
+								GestoreMessaggi.updateLock(
+										this.semaphore, connectionDB, this.timerLock,
+										this.msgDiag, "Rispedizione busta con profilo asincrono con id ["+idBustaDaRispedire+"] ...");
+							}catch(Throwable e){
+								this.msgDiag.logErroreGenerico(e,"RispedizioneBustaNonRiscontrataAsincrona("+idBustaDaRispedire+")-UpdateLock");
+								this.logTimer.error("ErroreRispedizioneBustaNonRiscontrataAsincrona("+idBustaDaRispedire+")-UpdateLock: "+e.getMessage(),e);
+								break;
+							}
+		
+							// Controllo che alla busta corrisponda effettivamente un messaggio nel repository
+							messaggioDaInviare = new GestoreMessaggi(openspcoopState,true,idBustaDaRispedire,Costanti.OUTBOX,
+									this.logTimer,this.msgDiag,null);
+							if(messaggioDaInviare.existsMessage_noCache()==false){
+								this.msgDiag.logPersonalizzato("ricevutaAsincronaNonRicevuta.messaggioNonEsistente");
+								this.logTimer.error(this.msgDiag.getMessaggio_replaceKeywords("ricevutaAsincronaNonRicevuta.messaggioNonEsistente"));
+								try{
+									repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,null);
+									repositoryBuste.eliminaUtilizzoPdDFromOutBox(idBustaDaRispedire);
+		
+									//if(bustaToSend.getRiferimentoMessaggio()==null){
+									// richiesta
+									rollbackRepositoryBuste = new RollbackRepositoryBuste(idBustaDaRispedire,openspcoopState.getStatoRichiesta(),true);
+									rollbackRepositoryBuste.rollbackBustaIntoOutBox();
+									((StateMessage)openspcoopState.getStatoRichiesta()).executePreparedStatement();
+									//}
+		
+									gestiti++;
+									
+								}catch(Exception e){
+									this.msgDiag.logErroreGenerico(e,"EliminazioneBustaAsincronaNonEsistente("+idBustaDaRispedire+")");
+									this.logTimer.error("ErroreEliminazioneBustaAsincronaNonEsistente("+idBustaDaRispedire+"): "+e.getMessage(),e);
+								}
+							}else{
+		
+								try{
+		
+									// PdDContext
+									PdDContext pddContext = messaggioDaInviare.getPdDContext();
+									IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+		
+									// Recupero busta
+									repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(),this.logTimer, true,protocolFactory);
+									Busta bustaToSend = repositoryBuste.getBustaFromOutBox(idBustaDaRispedire);
+									this.msgDiag.addKeywords(bustaToSend, true);	
+		
+									// Controllo se la busta e' scaduta
+									Date scadenza = bustaToSend.getScadenza();
+									Timestamp now = DateManager.getTimestamp();
+		
+									// Eventuale msg Scaduto.
+									if (scadenza.before(now)) {
+										// Busta scaduta
+		
+										this.msgDiag.logPersonalizzato("ricevutaAsincronaNonRicevuta.bustaScaduta");
+										if(this.logQuery){
+											this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("ricevutaAsincronaNonRicevuta.bustaScaduta"));
+										}
+										try{
+											//if(bustaToSend.getRiferimentoMessaggio()==null){
+											// richiesta
+											rollbackRepositoryBuste = new RollbackRepositoryBuste(bustaToSend.getID(),openspcoopState.getStatoRichiesta(),true);
+											rollbackRepositoryBuste.rollbackBustaIntoOutBox();
+											((StateMessage)openspcoopState.getStatoRichiesta()).executePreparedStatement();
+											//}
+											gestoreMsg = new GestoreMessaggi(openspcoopState, true, bustaToSend.getID(),Costanti.OUTBOX,this.msgDiag,pddContext);
+											gestoreMsg.logicDeleteMessage();
+										}catch(Exception e){
+											this.msgDiag.logErroreGenerico(e,"EliminazioneBustaAsincronaScaduta("+bustaToSend.getID()+")");
+											this.logTimer.error("ErroreEliminazioneBustaAsincronaScaduta("+bustaToSend.getID()+"): "+e.getMessage(),e);
+										}
+		
+									}
+									else {
+										// Busta da rispedire
+		
+										// Dati
+										IDSoggetto soggettoBustaNonRiscontrata = new IDSoggetto(bustaToSend.getTipoMittente(),
+												bustaToSend.getMittente());
+										IDSoggetto identitaPdD = null;
+										String dominioRD = null;
+										try{
+											dominioRD = this.configurazionePdDReader.getIdentificativoPorta(soggettoBustaNonRiscontrata,protocolFactory);
+											if(dominioRD==null){
+												throw new Exception("Dominio is null");
+											}
+										}catch(Exception e){
+											this.msgDiag.logErroreGenerico(e,"BustaAsincrona getDominio("+soggettoBustaNonRiscontrata+")");
+											this.logTimer.error("ErroreBustaAsincrona getDominio("+soggettoBustaNonRiscontrata+"): "+e.getMessage(),e);
+										}
+										if(dominioRD==null){
+											identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null);
+										}else{
+											identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
+													bustaToSend.getMittente(),dominioRD);
+										}
+	                                    IDServizio servizioBusta = IDServizioFactory.getInstance().getIDServizioFromValues(bustaToSend.getTipoServizio(),
+	                                            bustaToSend.getServizio(),
+	                                            bustaToSend.getTipoDestinatario(), 
+	                                            bustaToSend.getDestinatario(), 
+	                                            bustaToSend.getVersioneServizio()); 
+	                                    servizioBusta.setAzione(bustaToSend.getAzione());
+		
+										// Dati integrazione
+										repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,protocolFactory);
+										Integrazione infoIntegrazione = repositoryBuste.getInfoIntegrazioneFromOutBox(bustaToSend.getID());
+										ProprietaErroreApplicativo erroreAppl = this.propertiesReader.getProprietaGestioneErrorePD(protocolFactory.createProtocolManager());
+										erroreAppl.setDominio(identitaPdD.getCodicePorta());
+		
+										// RichiestaDelegata
+	                                    IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), protocolFactory);
+	                                    RichiestaDelegata richiestaDelegata = new RichiestaDelegata(idPD,infoIntegrazione.getServizioApplicativo(),
+	                                                    infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
+										richiestaDelegata.setScenario(infoIntegrazione.getScenario());
+										if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaToSend.getProfiloDiCollaborazione()) &&
+												bustaToSend.getRiferimentoMessaggio() ==null)
+											richiestaDelegata.setUtilizzoConsegnaAsincrona(false); // una richiesta asincrona simmetrica non deve utilizzare la consegna asincrona della ricevuta applicativa/ok
+										else
+											richiestaDelegata.setUtilizzoConsegnaAsincrona(true); 
+										richiestaDelegata.setRicevutaAsincrona(false); // solo in caso di non-gestione della ricevuta applicativa, viene attivato il timer
+		
+										// Lettura servizio applicativo
+										ServizioApplicativo sa = null;
+										String servizioApplicativo = richiestaDelegata.getServizioApplicativo();
+										try{
+	                                        if(servizioApplicativo!=null){
+	                                            IDServizioApplicativo idSA = new IDServizioApplicativo();
+	                                            idSA.setNome(servizioApplicativo);
+	                                            idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
+	                                            sa = this.configurazionePdDReader.getServizioApplicativo(idSA);
+	                                        }
+										}catch (Exception e) {
+											if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
+												throw e;
+											}
+										}
+		
+										// Aggiornamento informazioni integrazioni servizio applicativo
+										this.configurazionePdDReader.aggiornaProprietaGestioneErrorePD(erroreAppl,sa);
+		
+										// costruzione InoltroBuste_MEssage
+										InoltroBusteMessage inoltroMSG = new InoltroBusteMessage();
+										inoltroMSG.setRichiestaDelegata(richiestaDelegata);
+										inoltroMSG.setBusta(bustaToSend);
+		
+										gestoreMsg = new GestoreMessaggi(openspcoopState, true, bustaToSend.getID(),Costanti.OUTBOX,this.msgDiag,pddContext);
+										inoltroMSG.setPddContext(pddContext);
+		
+										// Send Message on Queue
+										if(CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_DB.equals(TimerGestoreBusteNonRiscontrateLib.tipoNodeSender)){
+											gestoreMsg.ripristinaMessaggio();
+										}else{
+											try{
+		
+												String classTypeNodeSender = null;
+												INodeSender nodeSender = null;
+												try{
+													classTypeNodeSender = ClassNameProperties.getInstance().getNodeSender(TimerGestoreBusteNonRiscontrateLib.tipoNodeSender);
+													nodeSender = (INodeSender) Loader.getInstance().newInstance(classTypeNodeSender);
+													AbstractCore.init(nodeSender, pddContext, protocolFactory);
+												}catch(Exception e){
+													throw new EJBUtilsException("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
+															"] da utilizzare per la spedizione nell'infrastruttura: "+e.getMessage(),e);
+												}
+		
+												nodeSender.send(inoltroMSG, InoltroBuste.ID_MODULO, this.msgDiag, 
+														this.propertiesReader.getIdentitaPortaDefault(null),TimerGestoreBusteNonRiscontrate.ID_MODULO, bustaToSend.getID(), gestoreMsg);
+											}catch(Exception e){
+												this.msgDiag.logErroreGenerico(e,"Asincrono GenericLib.nodeSender.send(InoltroBuste)");
+												this.logTimer.error("Spedizione->InoltroBuste non riuscita",e);
+												return;
+											}
+										}
+									}
+		
+									if(this.logQuery){
+										this.logTimer.info("Gestita/Reinviata busta asincrona, la cui ricevuta non e' pervenuta, con ID ["+ bustaToSend.getID() + "]");
+									}
+		
+									gestiti++;
+		
+								}catch(Exception e){
+									String msgErrore = "RespedizioneBustaAsincrona ErroreGenerale("+idBustaDaRispedire+")";
+									this.msgDiag.logErroreGenerico(e,msgErrore);
+									this.logTimer.error(msgErrore+": "+e.getMessage(),e);
+								}
+							}
+		
+						}
+		
+						if(this.logQuery)
+							this.logTimer.info("Gestite "+gestiti+" buste con profilo asincrono non riscontrate da rispedire");
+		
+						boolean cerca = true;
 						try{
 							GestoreMessaggi.updateLock(
 									this.semaphore, connectionDB, this.timerLock,
-									this.msgDiag, "Rispedizione busta con profilo asincrono con id ["+idBustaDaRispedire+"] ...");
+									this.msgDiag, "Ricerca nuovo buste con profilo asincrono non riscontrate ...");						
 						}catch(Throwable e){
-							this.msgDiag.logErroreGenerico(e,"RispedizioneBustaNonRiscontrataAsincrona("+idBustaDaRispedire+")-UpdateLock");
-							this.logTimer.error("ErroreRispedizioneBustaNonRiscontrataAsincrona("+idBustaDaRispedire+")-UpdateLock: "+e.getMessage(),e);
-							break;
+							this.msgDiag.logErroreGenerico(e,"RicercaNuoveBusteAsincroneNonRiscontrate-UpdateLock");
+							this.logTimer.error("ErroreRicercaNuoveBusteAsincroneNonRiscontrate-UpdateLock: "+e.getMessage(),e);
+							cerca = false;
 						}
-	
-						// Controllo che alla busta corrisponda effettivamente un messaggio nel repository
-						messaggioDaInviare = new GestoreMessaggi(openspcoopState,true,idBustaDaRispedire,Costanti.OUTBOX,
-								this.logTimer,this.msgDiag,null);
-						if(messaggioDaInviare.existsMessage_noCache()==false){
-							this.msgDiag.logPersonalizzato("ricevutaAsincronaNonRicevuta.messaggioNonEsistente");
-							this.logTimer.error(this.msgDiag.getMessaggio_replaceKeywords("ricevutaAsincronaNonRicevuta.messaggioNonEsistente"));
-							try{
-								repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,null);
-								repositoryBuste.eliminaUtilizzoPdDFromOutBox(idBustaDaRispedire);
-	
-								//if(bustaToSend.getRiferimentoMessaggio()==null){
-								// richiesta
-								rollbackRepositoryBuste = new RollbackRepositoryBuste(idBustaDaRispedire,openspcoopState.getStatoRichiesta(),true);
-								rollbackRepositoryBuste.rollbackBustaIntoOutBox();
-								((StateMessage)openspcoopState.getStatoRichiesta()).executePreparedStatement();
-								//}
-	
-								gestiti++;
-								
-							}catch(Exception e){
-								this.msgDiag.logErroreGenerico(e,"EliminazioneBustaAsincronaNonEsistente("+idBustaDaRispedire+")");
-								this.logTimer.error("ErroreEliminazioneBustaAsincronaNonEsistente("+idBustaDaRispedire+"): "+e.getMessage(),e);
-							}
-						}else{
-	
-							try{
-	
-								// PdDContext
-								PdDContext pddContext = messaggioDaInviare.getPdDContext();
-								IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
-	
-								// Recupero busta
-								repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(),this.logTimer, true,protocolFactory);
-								Busta bustaToSend = repositoryBuste.getBustaFromOutBox(idBustaDaRispedire);
-								this.msgDiag.addKeywords(bustaToSend, true);	
-	
-								// Controllo se la busta e' scaduta
-								Date scadenza = bustaToSend.getScadenza();
-								Timestamp now = DateManager.getTimestamp();
-	
-								// Eventuale msg Scaduto.
-								if (scadenza.before(now)) {
-									// Busta scaduta
-	
-									this.msgDiag.logPersonalizzato("ricevutaAsincronaNonRicevuta.bustaScaduta");
-									if(this.logQuery){
-										this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("ricevutaAsincronaNonRicevuta.bustaScaduta"));
-									}
-									try{
-										//if(bustaToSend.getRiferimentoMessaggio()==null){
-										// richiesta
-										rollbackRepositoryBuste = new RollbackRepositoryBuste(bustaToSend.getID(),openspcoopState.getStatoRichiesta(),true);
-										rollbackRepositoryBuste.rollbackBustaIntoOutBox();
-										((StateMessage)openspcoopState.getStatoRichiesta()).executePreparedStatement();
-										//}
-										gestoreMsg = new GestoreMessaggi(openspcoopState, true, bustaToSend.getID(),Costanti.OUTBOX,this.msgDiag,pddContext);
-										gestoreMsg.logicDeleteMessage();
-									}catch(Exception e){
-										this.msgDiag.logErroreGenerico(e,"EliminazioneBustaAsincronaScaduta("+bustaToSend.getID()+")");
-										this.logTimer.error("ErroreEliminazioneBustaAsincronaScaduta("+bustaToSend.getID()+"): "+e.getMessage(),e);
-									}
-	
-								}
-								else {
-									// Busta da rispedire
-	
-									// Dati
-									IDSoggetto soggettoBustaNonRiscontrata = new IDSoggetto(bustaToSend.getTipoMittente(),
-											bustaToSend.getMittente());
-									IDSoggetto identitaPdD = null;
-									String dominioRD = null;
-									try{
-										dominioRD = this.configurazionePdDReader.getIdentificativoPorta(soggettoBustaNonRiscontrata,protocolFactory);
-										if(dominioRD==null){
-											throw new Exception("Dominio is null");
-										}
-									}catch(Exception e){
-										this.msgDiag.logErroreGenerico(e,"BustaAsincrona getDominio("+soggettoBustaNonRiscontrata+")");
-										this.logTimer.error("ErroreBustaAsincrona getDominio("+soggettoBustaNonRiscontrata+"): "+e.getMessage(),e);
-									}
-									if(dominioRD==null){
-										identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null);
-									}else{
-										identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
-												bustaToSend.getMittente(),dominioRD);
-									}
-                                    IDServizio servizioBusta = IDServizioFactory.getInstance().getIDServizioFromValues(bustaToSend.getTipoServizio(),
-                                            bustaToSend.getServizio(),
-                                            bustaToSend.getTipoDestinatario(), 
-                                            bustaToSend.getDestinatario(), 
-                                            bustaToSend.getVersioneServizio()); 
-                                    servizioBusta.setAzione(bustaToSend.getAzione());
-	
-									// Dati integrazione
-									repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,protocolFactory);
-									Integrazione infoIntegrazione = repositoryBuste.getInfoIntegrazioneFromOutBox(bustaToSend.getID());
-									ProprietaErroreApplicativo erroreAppl = this.propertiesReader.getProprietaGestioneErrorePD(protocolFactory.createProtocolManager());
-									erroreAppl.setDominio(identitaPdD.getCodicePorta());
-	
-									// RichiestaDelegata
-                                    IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), protocolFactory);
-                                    RichiestaDelegata richiestaDelegata = new RichiestaDelegata(idPD,infoIntegrazione.getServizioApplicativo(),
-                                                    infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
-									richiestaDelegata.setScenario(infoIntegrazione.getScenario());
-									if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaToSend.getProfiloDiCollaborazione()) &&
-											bustaToSend.getRiferimentoMessaggio() ==null)
-										richiestaDelegata.setUtilizzoConsegnaAsincrona(false); // una richiesta asincrona simmetrica non deve utilizzare la consegna asincrona della ricevuta applicativa/ok
-									else
-										richiestaDelegata.setUtilizzoConsegnaAsincrona(true); 
-									richiestaDelegata.setRicevutaAsincrona(false); // solo in caso di non-gestione della ricevuta applicativa, viene attivato il timer
-	
-									// Lettura servizio applicativo
-									ServizioApplicativo sa = null;
-									String servizioApplicativo = richiestaDelegata.getServizioApplicativo();
-									try{
-                                        if(servizioApplicativo!=null){
-                                            IDServizioApplicativo idSA = new IDServizioApplicativo();
-                                            idSA.setNome(servizioApplicativo);
-                                            idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
-                                            sa = this.configurazionePdDReader.getServizioApplicativo(idSA);
-                                        }
-									}catch (Exception e) {
-										if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
-											throw e;
-										}
-									}
-	
-									// Aggiornamento informazioni integrazioni servizio applicativo
-									this.configurazionePdDReader.aggiornaProprietaGestioneErrorePD(erroreAppl,sa);
-	
-									// costruzione InoltroBuste_MEssage
-									InoltroBusteMessage inoltroMSG = new InoltroBusteMessage();
-									inoltroMSG.setRichiestaDelegata(richiestaDelegata);
-									inoltroMSG.setBusta(bustaToSend);
-	
-									gestoreMsg = new GestoreMessaggi(openspcoopState, true, bustaToSend.getID(),Costanti.OUTBOX,this.msgDiag,pddContext);
-									inoltroMSG.setPddContext(pddContext);
-	
-									// Send Message on Queue
-									if(CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_DB.equals(TimerGestoreBusteNonRiscontrateLib.tipoNodeSender)){
-										gestoreMsg.ripristinaMessaggio();
-									}else{
-										try{
-	
-											String classTypeNodeSender = null;
-											INodeSender nodeSender = null;
-											try{
-												classTypeNodeSender = ClassNameProperties.getInstance().getNodeSender(TimerGestoreBusteNonRiscontrateLib.tipoNodeSender);
-												nodeSender = (INodeSender) Loader.getInstance().newInstance(classTypeNodeSender);
-												AbstractCore.init(nodeSender, pddContext, protocolFactory);
-											}catch(Exception e){
-												throw new EJBUtilsException("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
-														"] da utilizzare per la spedizione nell'infrastruttura: "+e.getMessage(),e);
-											}
-	
-											nodeSender.send(inoltroMSG, InoltroBuste.ID_MODULO, this.msgDiag, 
-													this.propertiesReader.getIdentitaPortaDefault(null),TimerGestoreBusteNonRiscontrate.ID_MODULO, bustaToSend.getID(), gestoreMsg);
-										}catch(Exception e){
-											this.msgDiag.logErroreGenerico(e,"Asincrono GenericLib.nodeSender.send(InoltroBuste)");
-											this.logTimer.error("Spedizione->InoltroBuste non riuscita",e);
-											return;
-										}
-									}
-								}
-	
-								if(this.logQuery){
-									this.logTimer.info("Gestita/Reinviata busta asincrona, la cui ricevuta non e' pervenuta, con ID ["+ bustaToSend.getID() + "]");
-								}
-	
-								gestiti++;
-	
-							}catch(Exception e){
-								String msgErrore = "RespedizioneBustaAsincrona ErroreGenerale("+idBustaDaRispedire+")";
-								this.msgDiag.logErroreGenerico(e,msgErrore);
-								this.logTimer.error(msgErrore+": "+e.getMessage(),e);
-							}
+						
+						// Check altri riscontri da inviare
+						if(cerca) {					
+							// Check altre buste da inviare
+							offsetBusteAsincrone = offsetBusteAsincrone + busteAsincroneToSend.size();
+							busteAsincroneToSend = 
+									pBuste.asincrono_getBusteAsincronePerUlterioreInoltro(this.timeout,this.limit,offsetBusteAsincrone,this.logQuery);
 						}
-	
+						else {
+							busteAsincroneToSend = new ArrayList<BustaNonRiscontrata>(); // per uscire dal while
+						}
 					}
-	
-					if(this.logQuery)
-						this.logTimer.info("Gestite "+gestiti+" buste con profilo asincrono non riscontrate da rispedire");
-	
-					boolean cerca = true;
+				}finally{
 					try{
-						GestoreMessaggi.updateLock(
+						GestoreMessaggi.releaseLock(
 								this.semaphore, connectionDB, this.timerLock,
-								this.msgDiag, "Ricerca nuovo buste con profilo asincrono non riscontrate ...");						
-					}catch(Throwable e){
-						this.msgDiag.logErroreGenerico(e,"RicercaNuoveBusteAsincroneNonRiscontrate-UpdateLock");
-						this.logTimer.error("ErroreRicercaNuoveBusteAsincroneNonRiscontrate-UpdateLock: "+e.getMessage(),e);
-						cerca = false;
-					}
-					
-					// Check altri riscontri da inviare
-					if(cerca) {					
-						// Check altre buste da inviare
-						offsetBusteAsincrone = offsetBusteAsincrone + busteAsincroneToSend.size();
-						busteAsincroneToSend = 
-								pBuste.asincrono_getBusteAsincronePerUlterioreInoltro(this.timeout,this.limit,offsetBusteAsincrone,this.logQuery);
-					}
-					else {
-						busteAsincroneToSend = new ArrayList<BustaNonRiscontrata>(); // per uscire dal while
-					}
+								this.msgDiag, causaBusteAsincroneToSend);
+					}catch(Exception e){}
 				}
-			}finally{
-				try{
-					GestoreMessaggi.releaseLock(
-							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaBusteAsincroneToSend);
-				}catch(Exception e){}
+			}
+			else {
+				if(this.logQuery) {
+					this.logTimer.info("Gestione buste, con profilo asincrono, disabilitata");
+				}	
 			}
 			
 

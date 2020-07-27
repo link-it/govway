@@ -50,6 +50,24 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
+import org.openspcoop2.pdd.timers.TimerEventiThread;
+import org.openspcoop2.pdd.timers.TimerFileSystemRecoveryThread;
+import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
+import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateLib;
+import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.pdd.timers.TimerGestoreMessaggiLib;
+import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomali;
+import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliLib;
+import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
+import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteLib;
+import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
+import org.openspcoop2.pdd.timers.TimerRepositoryStatefulThread;
+import org.openspcoop2.pdd.timers.TimerState;
+import org.openspcoop2.pdd.timers.TimerStatisticheLib;
+import org.openspcoop2.pdd.timers.TimerStatisticheThread;
+import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.resources.Loader;
@@ -87,6 +105,26 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String ERRORI_FORCE_SPECIFIC_DETAILS = "transactionErrorForceSpecificDetails";
 	public final static String ERRORI_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE = "transactionErrorUseGovWayStatusAsSoapFaultCode";
 	public final static String ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = "transactionErrorGenerateHttpHeaderGovWayCode";
+	
+	public final static String TIMER_CONSEGNA_CONTENUTI_APPLICATIVI = "timerConsegnaContenutiApplicativi";
+	public final static String TIMER_EVENTI = "timerEventi";
+	public final static String TIMER_FILE_SYSTEM_RECOVERY = "timerFileSystemRecovery";
+	public final static String TIMER_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE = "timerGestoreBusteOnewayNonRiscontrate";
+	public final static String TIMER_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE = "timerGestoreBusteAsincroneNonRiscontrate";
+	public final static String TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI = "timerGestoreMessaggiPuliziaMessaggiEliminati";
+	public final static String TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI = "timerGestoreMessaggiPuliziaMessaggiScaduti";
+	public final static String TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI = "timerGestoreMessaggiPuliziaMessaggiNonGestiti";
+	public final static String TIMER_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA = "timerGestoreMessaggiPuliziaCorrelazioneApplicativa";
+	public final static String TIMER_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE = "timerGestoreMessaggiVerificaConnessioniAttive";
+	public final static String TIMER_GESTORE_PULIZIA_MESSAGGI_ANOMALI = "timerGestorePuliziaMessaggiAnomali";
+	public final static String TIMER_GESTORE_REPOSITORY_BUSTE = "timerGestoreRepositoryBuste";
+	public final static String TIMER_MONITORAGGIO_RISORSE_THREAD = "timerMonitoraggioRisorseThread";
+	public final static String TIMER_REPOSITORY_STATEFUL_THREAD = "timerRepositoryStatefulThread";
+	public final static String TIMER_STATISTICHE_ORARIE = "timerStatisticheOrarie";
+	public final static String TIMER_STATISTICHE_GIORNALIERE = "timerStatisticheGiornaliere";
+	public final static String TIMER_STATISTICHE_SETTIMANALI = "timerStatisticheSettimanali";
+	public final static String TIMER_STATISTICHE_MENSILI = "timerStatisticheMensili";
+	public final static String TIMER_THRESHOLD_THREAD = "timerThresholdThread";
 		
 	/** Nomi metodi' */
 	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
@@ -112,6 +150,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	private boolean log4jIntegrationManagerAbilitato = false;
 	private boolean log4jTracciamentoAbilitato = false;
 	private boolean log4jDumpAbilitato = false;
+		
 	
 	/** getAttribute */
 	@Override
@@ -186,6 +225,63 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		if(attributeName.equals(ConfigurazionePdD.ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE))
 			return Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE;
 		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_CONSEGNA_CONTENUTI_APPLICATIVI))
+			return TimerConsegnaContenutiApplicativi.STATE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_EVENTI))
+			return TimerEventiThread.STATE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_FILE_SYSTEM_RECOVERY))
+			return TimerFileSystemRecoveryThread.STATE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE))
+			return TimerGestoreBusteNonRiscontrateLib.STATE_ONEWAY.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE))
+			return TimerGestoreBusteNonRiscontrateLib.STATE_ASINCRONI.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI))
+			return TimerGestoreMessaggiLib.STATE_MESSAGGI_ELIMINATI.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI))
+			return TimerGestoreMessaggiLib.STATE_MESSAGGI_SCADUTI.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI))
+			return TimerGestoreMessaggiLib.STATE_MESSAGGI_NON_GESTITI.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA))
+			return TimerGestoreMessaggiLib.STATE_CORRELAZIONE_APPLICATIVA.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE))
+			return TimerGestoreMessaggiLib.STATE_VERIFICA_CONNESSIONI_ATTIVE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_PULIZIA_MESSAGGI_ANOMALI))
+			return TimerGestorePuliziaMessaggiAnomaliLib.STATE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_REPOSITORY_BUSTE))
+			return TimerGestoreRepositoryBusteLib.STATE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_MONITORAGGIO_RISORSE_THREAD))
+			return TimerMonitoraggioRisorseThread.STATE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_REPOSITORY_STATEFUL_THREAD))
+			return TimerRepositoryStatefulThread.STATE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_ORARIE))
+			return TimerStatisticheLib.STATE_STATISTICHE_ORARIE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_GIORNALIERE))
+			return TimerStatisticheLib.STATE_STATISTICHE_GIORNALIERE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_SETTIMANALI))
+			return TimerStatisticheLib.STATE_STATISTICHE_SETTIMANALI.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI))
+			return TimerStatisticheLib.STATE_STATISTICHE_MENSILI.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
+			return TimerThresholdThread.STATE.name();
+				
 		throw new AttributeNotFoundException("Attributo "+attributeName+" non trovato");
 	}
 	
@@ -278,6 +374,63 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE))
 				Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = (Boolean) attribute.getValue();
 			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_CONSEGNA_CONTENUTI_APPLICATIVI))
+				TimerConsegnaContenutiApplicativi.STATE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_EVENTI))
+				TimerEventiThread.STATE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_FILE_SYSTEM_RECOVERY))
+				TimerFileSystemRecoveryThread.STATE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE))
+				TimerGestoreBusteNonRiscontrateLib.STATE_ONEWAY = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE))
+				TimerGestoreBusteNonRiscontrateLib.STATE_ASINCRONI = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI))
+				TimerGestoreMessaggiLib.STATE_MESSAGGI_ELIMINATI = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI))
+				TimerGestoreMessaggiLib.STATE_MESSAGGI_SCADUTI = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI))
+				TimerGestoreMessaggiLib.STATE_MESSAGGI_NON_GESTITI = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA))
+				TimerGestoreMessaggiLib.STATE_CORRELAZIONE_APPLICATIVA = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE))
+				TimerGestoreMessaggiLib.STATE_VERIFICA_CONNESSIONI_ATTIVE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_PULIZIA_MESSAGGI_ANOMALI))
+				TimerGestorePuliziaMessaggiAnomaliLib.STATE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_REPOSITORY_BUSTE))
+				TimerGestoreRepositoryBusteLib.STATE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_MONITORAGGIO_RISORSE_THREAD))
+				TimerMonitoraggioRisorseThread.STATE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_REPOSITORY_STATEFUL_THREAD))
+				TimerRepositoryStatefulThread.STATE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_ORARIE))
+				TimerStatisticheLib.STATE_STATISTICHE_ORARIE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_GIORNALIERE))
+				TimerStatisticheLib.STATE_STATISTICHE_GIORNALIERE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_SETTIMANALI))
+				TimerStatisticheLib.STATE_STATISTICHE_SETTIMANALI = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI))
+				TimerStatisticheLib.STATE_STATISTICHE_MENSILI = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
+				TimerThresholdThread.STATE = getTimerState(attribute.getValue());
+			
 			else
 				throw new AttributeNotFoundException("Attributo "+attribute.getName()+" non trovato");
 			
@@ -287,6 +440,16 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			throw new MBeanException(j);
 		}
 		
+	}
+	private TimerState getTimerState(Object o) throws ClassCastException {
+		TimerState state = TimerState.valueOf((String)o);
+		if(state==null) {
+			throw new ClassCastException("Valore indicato '"+o+"' non valido");
+		}
+		if(TimerState.OFF.equals(state)) {
+			throw new ClassCastException("Valore indicato '"+o+"' non supportato");
+		}
+		return state;
 	}
 	
 	/** setAttributes */
@@ -648,6 +811,120 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 						"Indicazione se è abilitato la generazione del codice http di errore in un header http negli errori SOAP generati dal Gateway",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
+		// MetaData per l'attributo timerConsegnaContenutiApplicativiVAR
+		MBeanAttributeInfo timerConsegnaContenutiApplicativiVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_CONSEGNA_CONTENUTI_APPLICATIVI,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+
+		// MetaData per l'attributo timerEventiVAR
+		MBeanAttributeInfo timerEventiVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_EVENTI,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerEventiThread.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+
+		// MetaData per l'attributo timerFileSystemRecoveryVAR
+		MBeanAttributeInfo timerFileSystemRecoveryVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_FILE_SYSTEM_RECOVERY,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerFileSystemRecoveryThread.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreBusteOnewayNonRiscontrateVAR
+		MBeanAttributeInfo timerGestoreBusteOnewayNonRiscontrateVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreBusteNonRiscontrate.ID_MODULO+"' (oneway) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreBusteAsincroneNonRiscontrateVAR
+		MBeanAttributeInfo timerGestoreBusteAsincroneNonRiscontrateVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreBusteNonRiscontrate.ID_MODULO+"' (asincroni) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreMessaggiPuliziaMessaggiEliminatiVAR
+		MBeanAttributeInfo timerGestoreMessaggiPuliziaMessaggiEliminatiVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreMessaggi.ID_MODULO+"' (eliminazione logica) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreMessaggiPuliziaMessaggiScadutiVAR
+		MBeanAttributeInfo timerGestoreMessaggiPuliziaMessaggiScadutiVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreMessaggi.ID_MODULO+"' (scaduti) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreMessaggiPuliziaMessaggiNonGestitiVAR
+		MBeanAttributeInfo timerGestoreMessaggiPuliziaMessaggiNonGestitiVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreMessaggi.ID_MODULO+"' (non gestiti) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreMessaggiPuliziaCorrelazioneApplicativaVAR
+		MBeanAttributeInfo timerGestoreMessaggiPuliziaCorrelazioneApplicativaVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreMessaggi.ID_MODULO+"' (correlazione applicativa) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreMessaggiVerificaConnessioniAttiveVAR
+		MBeanAttributeInfo timerGestoreMessaggiVerificaConnessioniAttiveVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreMessaggi.ID_MODULO+"' (verifica connessioni attive) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestorePuliziaMessaggiAnomaliVAR
+		MBeanAttributeInfo timerGestorePuliziaMessaggiAnomaliVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_PULIZIA_MESSAGGI_ANOMALI,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestorePuliziaMessaggiAnomali.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreRepositoryBusteVAR
+		MBeanAttributeInfo timerGestoreRepositoryBusteVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_REPOSITORY_BUSTE,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreRepositoryBuste.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerMonitoraggioRisorseThreadVAR
+		MBeanAttributeInfo timerMonitoraggioRisorseThreadVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_MONITORAGGIO_RISORSE_THREAD,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerMonitoraggioRisorseThread.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerRepositoryStatefulThreadVAR
+		MBeanAttributeInfo timerRepositoryStatefulThreadVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_REPOSITORY_STATEFUL_THREAD,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerRepositoryStatefulThread.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerStatisticheOrarieVAR
+		MBeanAttributeInfo timerStatisticheOrarieVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_STATISTICHE_ORARIE,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerStatisticheThread.ID_MODULO+"' (orarie) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerStatisticheGiornaliereVAR
+		MBeanAttributeInfo timerStatisticheGiornaliereVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_STATISTICHE_GIORNALIERE,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerStatisticheThread.ID_MODULO+"' (giornaliere) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerStatisticheSettimanaliVAR
+		MBeanAttributeInfo timerStatisticheSettimanaliVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_STATISTICHE_SETTIMANALI,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerStatisticheThread.ID_MODULO+"' (settimanali) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerStatisticheMensiliVAR
+		MBeanAttributeInfo timerStatisticheMensiliVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerStatisticheThread.ID_MODULO+"' (mensili) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+
+		// MetaData per l'attributo timerThresholdThreadVAR
+		MBeanAttributeInfo timerThresholdThreadVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_THRESHOLD_THREAD,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerThresholdThread.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
 		// MetaData per l'operazione resetCache
 		MBeanOperationInfo resetCacheOP = JMXUtils.MBEAN_OPERATION_RESET_CACHE;
 				
@@ -759,7 +1036,16 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				erroriForceSpecificErrorTypeBadResponseVAR, erroriForceSpecificErrorTypeInternalResponseErrorVAR,
 				erroriForceSpecificErrorTypeInternalErrorVAR,
 				erroriForceSpecificDetailsVAR,
-				erroriSoapUseGovWayStatusAsFaultCodeVAR, erroriSoapGenerateHttpHeaderGovWayCodeVAR};
+				erroriSoapUseGovWayStatusAsFaultCodeVAR, erroriSoapGenerateHttpHeaderGovWayCodeVAR,
+				timerConsegnaContenutiApplicativiVAR, 
+				timerStatisticheOrarieVAR,timerStatisticheGiornaliereVAR,timerStatisticheSettimanaliVAR,timerStatisticheMensiliVAR,
+				timerEventiVAR, timerFileSystemRecoveryVAR,
+				timerGestoreBusteOnewayNonRiscontrateVAR, timerGestoreBusteAsincroneNonRiscontrateVAR,
+				timerGestoreMessaggiPuliziaMessaggiEliminatiVAR, timerGestoreMessaggiPuliziaMessaggiScadutiVAR, timerGestoreMessaggiPuliziaMessaggiNonGestitiVAR,
+				timerGestoreMessaggiPuliziaCorrelazioneApplicativaVAR, timerGestoreMessaggiVerificaConnessioniAttiveVAR,
+				timerGestorePuliziaMessaggiAnomaliVAR, timerGestoreRepositoryBusteVAR,
+				timerMonitoraggioRisorseThreadVAR, timerThresholdThreadVAR,
+				timerRepositoryStatefulThreadVAR};
 		
 		// Lista Costruttori
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};

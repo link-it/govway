@@ -99,6 +99,12 @@
 	<property name="src_batchStatistiche" value="${batchStatistiche}/src" />
 	<import file="${batchStatistiche}/build.xml"/>
 
+	<!-- BatchRuntimeRepository -->
+	<property name="batchRuntimeRepository" value="${rootDir}/tools/batch/runtime-repository/" />
+	<property name="required_lib_batchRuntimeRepository" location="${required_lib}"/>
+	<property name="src_batchRuntimeRepository" value="${batchRuntimeRepository}/src" />
+	<import file="${batchRuntimeRepository}/build.xml"/>
+
 	<!-- Trasparente -->
 	<property name="trasparente" value="${rootDir}/protocolli/trasparente"/>
 	<property name="src_trasparente" value="${trasparente}/src" />

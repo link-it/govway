@@ -59,6 +59,22 @@ public class Generator {
 			throw new Exception("ERROR: tipo di statistica fornita ("+tipo+") sconosciuta"+usage);
 		}
 
+		String nomeLogger = null;
+		switch (tipoStatistica) {
+		case STATISTICHE_ORARIE:
+			nomeLogger = "statistiche_orarie";
+			break;
+		case STATISTICHE_GIORNALIERE:
+			nomeLogger = "statistiche_giornaliere";
+			break;
+		case STATISTICHE_SETTIMANALI:
+			nomeLogger = "statistiche_settimanali";
+			break;
+		case STATISTICHE_MENSILI:
+			nomeLogger = "statistiche_mensili";
+			break;
+		}
+		
 		Logger logCore = null;
 		Logger logSql = null;
 		try{
@@ -67,16 +83,16 @@ public class Generator {
 			props.load(fis);
 			LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
 			LoggerWrapperFactory.setLogConfiguration(props);
-			logCore = LoggerWrapperFactory.getLogger("govway.batch.statistiche.generazione.error");
-			logSql = LoggerWrapperFactory.getLogger("govway.batch.statistiche.generazione.sql.error");
+			logCore = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.error");
+			logSql = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.sql.error");
 		}catch(Exception e) {
 			throw new Exception("Impostazione logging fallita: "+e.getMessage());
 		}
 		
 		GeneratorProperties generatorProperties = GeneratorProperties.getInstance();
 		if(generatorProperties.isStatisticheGenerazioneDebug()) {
-			logCore = LoggerWrapperFactory.getLogger("govway.batch.statistiche.generazione");
-			logSql = LoggerWrapperFactory.getLogger("govway.batch.statistiche.generazione.sql");
+			logCore = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione");
+			logSql = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.sql");
 		}
 		
 		try {

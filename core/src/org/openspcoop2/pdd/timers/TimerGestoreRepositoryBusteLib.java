@@ -55,6 +55,8 @@ import org.slf4j.Logger;
 
 public class TimerGestoreRepositoryBusteLib {
 
+	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	
 	private MsgDiagnostico msgDiag = null;
 	private Logger logTimer = null;
 	private OpenSPCoop2Properties propertiesReader = null;
@@ -120,6 +122,14 @@ public class TimerGestoreRepositoryBusteLib {
 			this.logTimer.error("["+TimerGestoreRepositoryBuste.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			return;
 		}
+		
+		// Controllo che il timer non sia stato momentaneamente disabilitato
+		if(!TimerState.ENABLED.equals(STATE)) {
+			this.msgDiag.logPersonalizzato("disabilitato");
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
+			return;
+		}
+		
 
 		this.msgDiag.logPersonalizzato("controlloInCorso");
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("controlloInCorso"));

@@ -76,6 +76,8 @@ CREATE TABLE MSG_SERVIZI_APPLICATIVI
 	LOCK_CONSEGNA TIMESTAMP(3) DEFAULT 0,
 	CLUSTER_ID VARCHAR(255),
 	ATTESA_ESITO INT,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	ORA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	-- check constraints
 	CONSTRAINT chk_MSG_SERVIZI_APPLICATIVI_1 CHECK (TIPO IN ('INBOX','OUTBOX')),
@@ -98,6 +100,8 @@ CREATE TABLE DEFINIZIONE_MESSAGGI
 	CONTENT_TYPE VARCHAR(255) NOT NULL,
 	MSG_BYTES MEDIUMBLOB,
 	MSG_CONTEXT MEDIUMBLOB,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	ORA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	-- check constraints
 	CONSTRAINT chk_DEFINIZIONE_MESSAGGI_1 CHECK (TIPO IN ('INBOX','OUTBOX')),

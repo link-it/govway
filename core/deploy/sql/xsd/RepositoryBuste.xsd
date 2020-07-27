@@ -76,6 +76,18 @@
                             <linkit:sql-table-index-field name="tipo"/>
                             <linkit:sql-table-index-field name="repository_access"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index name="REP_BUSTE_DATAREG">
+                            <linkit:sql-table-index-field name="data_registrazione" ignoreTypeCompatibility="true"/>
+                            <linkit:sql-table-index-field name="tipo"/>
+                            <linkit:sql-table-index-field name="history"/>
+                            <linkit:sql-table-index-field name="profilo"/>
+                            <linkit:sql-table-index-field name="pdd"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="REP_BUSTE_DATAREG_RA">
+                            <linkit:sql-table-index-field name="data_registrazione" ignoreTypeCompatibility="true"/>
+                            <linkit:sql-table-index-field name="tipo"/>
+                            <linkit:sql-table-index-field name="repository_access"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -475,6 +487,17 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="data_registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_REGISTRAZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della busta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -565,6 +588,17 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="TIPO_ORA_REGISTRAZIONE"/>
                                 <linkit:sql-ddl-column-comment>Tipologia di sorgente della data relativa alla ricevuta (es. sincronizzata tramite ntp server, locale alla macchina ...)</linkit:sql-ddl-column-comment></linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_REGISTRAZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della busta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
@@ -684,6 +718,17 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="data_registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_REGISTRAZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della busta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -795,6 +840,17 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="data_registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_REGISTRAZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della busta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -863,6 +919,17 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="VALORE" text="true"/>
                                 <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_REGISTRAZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della busta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1041,6 +1108,17 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="data_registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_REGISTRAZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della busta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -1158,6 +1236,17 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="AZIONE"/>
                                 <linkit:sql-ddl-column-comment>Identificativo dell'azione</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data_registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="DATA_REGISTRAZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della busta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

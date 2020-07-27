@@ -25,6 +25,7 @@ SDI_PROTOCOL=${ROOT}/protocolli/sdi
 RS_CONFIG=${ROOT}/tools/rs/config/server
 RS_MONITOR=${ROOT}/tools/rs/monitor/server
 BATCH_STATISTICHE=${ROOT}/tools/batch/statistiche
+BATCH_RUNTIME_REPOSITORY=${ROOT}/tools/batch/runtime-repository
 
 # Core
 if [ ! -f ${CORE}/local_env.xml  ]
@@ -121,6 +122,12 @@ fi
 if [ ! -f ${BATCH_STATISTICHE}/local_env.xml  ]
 then
         cp ${BATCH_STATISTICHE}/local_env.xml.template ${BATCH_STATISTICHE}/local_env.xml
+fi
+
+# Batch Runtime Repository
+if [ ! -f ${BATCH_RUNTIME_REPOSITORY}/local_env.xml  ]
+then
+        cp ${BATCH_RUNTIME_REPOSITORY}/local_env.xml.template ${BATCH_RUNTIME_REPOSITORY}/local_env.xml
 fi
 
 

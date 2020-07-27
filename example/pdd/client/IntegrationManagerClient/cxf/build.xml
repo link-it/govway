@@ -66,6 +66,7 @@
 			<include name="saaj/*.jar"/>
 			<include name="jax/jaxb*.jar"/>
 			<include name="jax/jaxws*.jar"/>
+			<include name="javax/javax.annotation-api-1.3.2.jar"/>
 			<include name="security/*.jar"/>
 			<include name="shared/*.jar"/>
 			<include name="httpcore/*.jar"/>

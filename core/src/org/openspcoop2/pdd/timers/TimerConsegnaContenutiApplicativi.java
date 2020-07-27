@@ -64,6 +64,7 @@ import org.openspcoop2.utils.threads.RunnableLogger;
 
 public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableInstance  {
 
+	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 
 	private MsgDiagnostico msgDiag = null;
 	private RunnableLogger log;
@@ -192,7 +193,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 	
 	@Override
 	public List<Runnable> nextRunnable(int limit) throws UtilsException{
-	
+			
 		// Controllo che il sistema non sia andando in shutdown
 		if(OpenSPCoop2Startup.contextDestroyed){
 			this.log.error("Rilevato sistema in shutdown");
@@ -214,6 +215,13 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		}
 		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
 			this.log.error("Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
+			return null;
+		}
+		
+		// Controllo che il timer non sia stato momentaneamente disabilitato
+		if(!TimerState.ENABLED.equals(STATE)) {
+			this.msgDiag.logPersonalizzato("disabilitato");
+			this.log.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
 			return null;
 		}
 		

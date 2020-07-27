@@ -251,6 +251,20 @@
 		</then>
 	</if>
 	<import file="${batch.statistiche.dir}/build.xml" />
+
+	<!-- Tools - batch - runtime_repository -->
+	<property name="batch.runtimeRepository.dir" location="${rootDir}/tools/batch/runtime-repository" />
+	<available file="${batch.runtimeRepository.dir}/local_env.xml" property="batch_runtimeRepository_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${batch_runtimeRepository_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${batch.runtimeRepository.dir}/local_env.xml.template" tofile="${batch.runtimeRepository.dir}/local_env.xml"/>
+			<replace file="${batch.runtimeRepository.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${batch.runtimeRepository.dir}/build.xml" />
 	
 	
 	
@@ -459,6 +473,14 @@
 		<antcall target="compile_batchStatistiche">
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_batchStatistiche" value="${batch.statistiche.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false" />
+		</antcall>
+
+		<antcall target="compile_batchRuntimeRepository">
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_batchRuntimeRepository" value="${batch.runtimeRepository.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false" />

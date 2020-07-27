@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -285,7 +286,7 @@ public class SavedMessage implements java.io.Serializable {
 	 * @param msg Messaggio.
 	 * 
 	 */
-	public void save(OpenSPCoop2Message msg, boolean isRichiesta, boolean portaDiTipoStateless, boolean consumeMessage) throws UtilsException{
+	public void save(OpenSPCoop2Message msg, boolean isRichiesta, boolean portaDiTipoStateless, boolean consumeMessage, Timestamp oraRegistrazione) throws UtilsException{
 
 		if( !portaDiTipoStateless ) {
 			StateMessage stateMsg = (isRichiesta) ?  
@@ -300,9 +301,9 @@ public class SavedMessage implements java.io.Serializable {
 				query.append("INSERT INTO  ");
 				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
 				if(this.saveOnFS)
-					query.append(" (ID_MESSAGGIO,TIPO,CONTENT_TYPE) VALUES ( ? , ? , ? )");
+					query.append(" (ID_MESSAGGIO,TIPO,CONTENT_TYPE,ORA_REGISTRAZIONE) VALUES ( ? , ? , ? , ? )");
 				else
-					query.append(" (ID_MESSAGGIO,TIPO,CONTENT_TYPE,MSG_BYTES,MSG_CONTEXT) VALUES ( ? , ? , ? , ? , ?)");
+					query.append(" (ID_MESSAGGIO,TIPO,CONTENT_TYPE,ORA_REGISTRAZIONE,MSG_BYTES,MSG_CONTEXT) VALUES ( ? , ? , ? , ? , ? , ?)");
 
 				pstmt = connectionDB.prepareStatement(query.toString());
 				pstmt.setString(1,this.idMessaggio);
@@ -340,7 +341,7 @@ public class SavedMessage implements java.io.Serializable {
 					bout.flush();
 					bout.close();
 					//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
-					this.adapter.setBinaryData(pstmt,4,bout.toByteArray());
+					this.adapter.setBinaryData(pstmt,5,bout.toByteArray());
 					
 					// Save message context
 					bout = new java.io.ByteArrayOutputStream();
@@ -348,11 +349,14 @@ public class SavedMessage implements java.io.Serializable {
 					bout.flush();
 					bout.close();
 					//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
-					this.adapter.setBinaryData(pstmt,5,bout.toByteArray());
+					this.adapter.setBinaryData(pstmt,6,bout.toByteArray());
 				}
 
 				// Set del contentType nella query
 				pstmt.setString(3,msg.getContentType());
+				
+				// Set Ora Registrazione
+				pstmt.setTimestamp(4,oraRegistrazione);
 
 				// Add PreparedStatement
 				stateMsg.getPreparedStatement().put("INSERT (MSG_OP_STEP1a) saveMessage["+this.idMessaggio+","+this.box+"]",pstmt);

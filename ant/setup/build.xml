@@ -24,6 +24,7 @@
 	<import file="./ant/govwayAPIConfig-build.xml" />
 	<import file="./ant/govwayAPIMonitor-build.xml" />
 	<import file="./ant/batchStatistiche-build.xml" />
+	<import file="./ant/batchRuntimeRepository-build.xml" />
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/patch-build.xml" />
 	<import file="./ant/jar-build.xml" />
@@ -978,6 +979,11 @@
 		  <filelist dir="${deploy_sql}"
                            files="${antinstaller_tipo_database}/GovWayRuntime.sql"/>
 		</concat>
+
+		<!-- Correggo e ripulisco indici inutili -->
+		<antcall target="sql_settings_index_runtime">
+		    <param name="file" value="${tmp_sql}/${runtimeSqlScriptName}"/>
+		</antcall>
 
 
 		<!-- *** Configurazione *** -->
@@ -2519,6 +2525,100 @@
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
 				    <param name="archiveFile" value="${tmp_batch}/generatoreStatistiche"/>
+					<param name="as" value="BATCH"/>
+					<param name="archiveType" value="BATCH"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+
+	<target name="setup_batchRuntimeRepository" depends="_setup_batchRuntimeRepository"/>
+	<target name="_setup_batchRuntimeRepository">
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<mkdir dir="${tmp_batch}" /> 
+				<copy todir="${tmp_batch}/gestoreRuntimeRepository">
+					<fileset dir="${deploy_sw}/batch/gestoreRuntimeRepository"/>
+				</copy>
+
+				<antcall target="batch_runtimeRepository_properties_settings">
+				    <param name="file" value="${tmp_batch}/gestoreRuntimeRepository/properties/batch-runtime-repository.properties"/>
+				</antcall>
+				<antcall target="batch_runtimeRepository_dao_factory_properties_settings">
+				    <param name="file" value="${tmp_batch}/gestoreRuntimeRepository/properties/daoFactory.properties"/>
+				</antcall>
+				<antcall target="batch_runtimeRepository_log4j_properties_settings">
+				    <param name="file" value="${tmp_batch}/gestoreRuntimeRepository/properties/batch-runtime-repository.log4j2.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_batch}/gestoreRuntimeRepository/properties"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_batch}/gestoreRuntimeRepository"/>
 					<param name="as" value="BATCH"/>
 					<param name="archiveType" value="BATCH"/>
 				</antcall>

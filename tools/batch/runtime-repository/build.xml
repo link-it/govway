@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="BatchRuntimeRepository" default="build" basedir=".">
+
+	<description>
+        	Ambiente di compilazione del Progetto batchRuntimeRepository
+	</description>
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-batchRuntimeRepository-build.xml" />
+	<import file="./ant/openspcoop2-batchRuntimeRepository-distrib.xml" />
+
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+	<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+	
+	<property name="src_batchRuntimeRepository" location="src" />
+	<property name="build_batchRuntimeRepository" location="build" />
+	<property name="dist_batchRuntimeRepository" location="dist" />
+	<property name="doc_batchRuntimeRepository" location="doc" />
+	<property name="properties_batchRuntimeRepository" location="properties" />
+	<property name="script_batchRuntimeRepository" location="script" />
+	<property name="distrib_batchRuntimeRepository" location="distrib/gestoreRuntimeRepository" />
+
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/applicationServer/**/*.jar"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<!-- <fileset dir="${openspcoop2}/core/dist" > -->
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="openspcoop2_*.jar"/>
+		</fileset>
+	</path>	
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_batchRuntimeRepository">
+		<delete dir="${build_batchRuntimeRepository}" />
+		<delete dir="build" />
+		<delete dir="${dist_batchRuntimeRepository}" />
+		<delete dir="${doc_batchRuntimeRepository}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_batchRuntimeRepository">
+		<mkdir dir="${build_batchRuntimeRepository}" />
+		<mkdir dir="${build_batchRuntimeRepository}/tmp" />
+		<mkdir dir="${dist_batchRuntimeRepository}" />
+	</target>
+	
+	
+	
+	
+	<!-- Compilazione della PddConsole-->
+	<target name="compile_batchRuntimeRepository" depends="init_compile_batchRuntimeRepository,compile_openspcoop2_batchRuntimeRepository" />
+	
+	<!-- alias -->
+	<target name="distrib_batchRuntimeRepository" depends="compile_batchRuntimeRepository, distrib_openspcoop2_batchRuntimeRepository"/>
+	<target name="build" depends="distrib_batchRuntimeRepository"/>
+	<target name="build_openspcoop2_batchRuntimeRepository_jar" depends="compile_openspcoop2_batchRuntimeRepository"/>
+	<target name="clean" depends="clean_batchRuntimeRepository"/>
+	
+</project>

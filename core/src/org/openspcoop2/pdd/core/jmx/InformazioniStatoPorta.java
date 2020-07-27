@@ -74,8 +74,12 @@ public class InformazioniStatoPorta {
 				infoProtocolli,
 				null,null,null,
 				null,null,
-				null,null,
-				null,
+				null, null,null,
+				null, null,
+				null, null, null, null,
+				null, null, null, null, null, null,
+				null, null,
+				null, null, null, null, null,
 				informazioniInstallazione,
 				cache);
 	}
@@ -101,9 +105,13 @@ public class InformazioniStatoPorta {
 			String infoProtocolli,
 			String statoConnessioniDB, Map<String, String> statoConnessioniAltriDB, String statoConnessioniJMS,
 			String statoTransazioniId, String statoTransazioniIdProtocollo,
-			String statoConnessioniPD, String statoConnessioniPA, 
-			String statoPoolThread,
-			String informazioniInstallazione,
+			String statoTimerVerificaConnessioni, String statoConnessioniPD, String statoConnessioniPA, 
+			String statoTimerConsegnaAsincrona, String statoPoolThread,
+			String statoTimerGenerazioneStatisticheOrarie, String statoTimerGenerazioneStatisticheGiornaliere, String statoTimerGenerazioneSettimanali, String statoTimerGenerazioneMensili,
+			String statoTimerMessaggiEliminati, String statoTimerMessaggiScaduti, String statoTimerBuste, String statoTimerCorrelazioneApplicativa, String statoTimerMessaggiNonGestiti, String statoTimerMessaggiAnomali,
+			String statoTimerMonitoraggioRisorse, String statoTimerThreshold,
+			String statoTimerEventi, String statoTimerFileSystemRecovery, String statoTimerBusteOneway, String statoTimerBusteAsincrone, String statoTimerRepositoryStateful,
+			String informazioniInstallazione,			
 			InformazioniStatoPortaCache ... cache){
 		
 		StringBuilder bf = new StringBuilder();
@@ -357,36 +365,132 @@ public class InformazioniStatoPorta {
 			bf.append("\n");
 		}
 		
-		if(statoConnessioniPD!=null){
+		if(statoConnessioniPD!=null || statoTimerVerificaConnessioni!=null){
 			bf.append("=========================================================\n");
 			bf.append("Connessioni HTTP Attive in uscita dal modulo InoltroBuste\n");
 			bf.append("=========================================================\n");
 			bf.append("\n");
-			bf.append(statoConnessioniPD);
+			bf.append("Timer Verifica Connessioni: ").append(statoTimerVerificaConnessioni);
+			if(statoConnessioniPD!=null){
+				bf.append("\n");
+				bf.append(statoConnessioniPD);
+			}
 			bf.append("\n");
 			bf.append("\n");
 		}
 		
-		if(statoConnessioniPA!=null){
+		if(statoConnessioniPA!=null || statoTimerVerificaConnessioni!=null){
 			bf.append("=========================================================================\n");
 			bf.append("Connessioni HTTP Attive in uscita dal modulo ConsegnaContenutiApplicativi\n");
 			bf.append("=========================================================================\n");
 			bf.append("\n");
-			bf.append(statoConnessioniPA);
+			bf.append("Timer Verifica Connessioni: ").append(statoTimerVerificaConnessioni);
+			if(statoConnessioniPA!=null){
+				bf.append("\n");
+				bf.append(statoConnessioniPA);
+			}
 			bf.append("\n");
 			bf.append("\n");
 		}
 		
-		if(statoPoolThread!=null){
+		if(statoPoolThread!=null || statoTimerConsegnaAsincrona!=null){
 			bf.append("=========================================================\n");
-			bf.append("Stato Thread Pool per la Consegna agli Applicativi\n");
+			if(statoPoolThread!=null){
+				bf.append("Stato Thread Pool per la Consegna agli Applicativi\n");
+			}
+			else {
+				bf.append("Consegna Asincrona agli Applicativi\n");
+			}
 			bf.append("=========================================================\n");
 			bf.append("\n");
-			bf.append(statoPoolThread);
+			bf.append("Timer: ").append(statoTimerConsegnaAsincrona);
+			if(statoPoolThread!=null){
+				bf.append("\n");
+				bf.append(statoPoolThread);
+			}
+			bf.append("\n");
+			bf.append("\n");
+		}
+	
+		if(statoTimerGenerazioneStatisticheOrarie!=null || 
+				statoTimerGenerazioneStatisticheGiornaliere!=null ||
+				statoTimerGenerazioneSettimanali!=null ||
+				statoTimerGenerazioneMensili!=null) {
+			bf.append("===================================\n");
+			bf.append("Timers Generazione delle Statistiche\n");
+			bf.append("===================================\n");
+			bf.append("\n");
+			bf.append("Orarie: ").append(statoTimerGenerazioneStatisticheOrarie);
+			bf.append("\n");
+			bf.append("Giornaliere: ").append(statoTimerGenerazioneStatisticheGiornaliere);
+			bf.append("\n");
+			bf.append("Settimanali: ").append(statoTimerGenerazioneSettimanali);
+			bf.append("\n");
+			bf.append("Mensili: ").append(statoTimerGenerazioneMensili);
 			bf.append("\n");
 			bf.append("\n");
 		}
 		
+		if(statoTimerMessaggiEliminati!=null || 
+				statoTimerMessaggiScaduti!=null ||
+				statoTimerBuste!=null ||
+				statoTimerCorrelazioneApplicativa!=null ||
+				statoTimerMessaggiNonGestiti!=null ||
+				statoTimerMessaggiAnomali!=null) {
+			bf.append("====================================\n");
+			bf.append("Timers Pulizia Repository di Runtime\n");
+			bf.append("====================================\n");
+			bf.append("\n");
+			bf.append("Messaggi Gestiti: ").append(statoTimerMessaggiEliminati);
+			bf.append("\n");
+			bf.append("Messaggi Scaduti: ").append(statoTimerMessaggiScaduti);
+			bf.append("\n");
+			bf.append("Buste Gestite/Scadute: ").append(statoTimerBuste);
+			bf.append("\n");
+			bf.append("Correlazioni Applicative Scadute: ").append(statoTimerCorrelazioneApplicativa);
+			bf.append("\n");
+			bf.append("Richieste Parziali: ").append(statoTimerMessaggiNonGestiti);
+			bf.append("\n");
+			bf.append("Messaggi Inconsistenti: ").append(statoTimerMessaggiAnomali);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
+		if(statoTimerMonitoraggioRisorse!=null || 
+				statoTimerThreshold!=null) {
+			bf.append("==================================\n");
+			bf.append("Timers Monitoraggio delle Risorse\n");
+			bf.append("==================================\n");
+			bf.append("\n");
+			bf.append("Risorse di Sistema: ").append(statoTimerMonitoraggioRisorse);
+			bf.append("\n");
+			bf.append("Spazio Disco: ").append(statoTimerThreshold);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
+		if(statoTimerEventi!=null || 
+				statoTimerFileSystemRecovery!=null ||
+				statoTimerBusteOneway!=null ||
+				statoTimerBusteAsincrone!=null ||
+				statoTimerRepositoryStateful!=null) {
+			bf.append("====================================\n");
+			bf.append("Timers Pulizia Repository di Runtime\n");
+			bf.append("====================================\n");
+			bf.append("\n");
+			bf.append("Generazione Eventi: ").append(statoTimerEventi);
+			bf.append("\n");
+			bf.append("FileSystem Recovery: ").append(statoTimerFileSystemRecovery);
+			bf.append("\n");
+			bf.append("Rispedizione Ack Oneway: ").append(statoTimerBusteOneway);
+			bf.append("\n");
+			bf.append("Rispedizione Ack Asincroni: ").append(statoTimerBusteAsincrone);
+			bf.append("\n");
+			bf.append("Repository Stateful: ").append(statoTimerRepositoryStateful);
+			bf.append("\n");
+			bf.append("\n");
+		}
+
 		bf.append("===========================\n");
 		bf.append("Informazioni Installazione\n");
 		bf.append("===========================\n");
