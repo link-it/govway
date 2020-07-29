@@ -62,13 +62,15 @@ public class LatenzaConverter  implements Converter {
 						return DurataConverter.convertSystemTimeIntoString_millisecondi(t, true);
 				}
 			} else {
-				return "N.D.";
+				//return "N.D.";
+				return DurataConverter.convertSystemTimeIntoString_millisecondi(0, true);
 			}
 		}catch(Exception e){
 			log.error(e.getMessage(), e); 
 		}
 
-		return "N.D.";
+		//return "N.D.";
+		return DurataConverter.convertSystemTimeIntoString_millisecondi(0, true);
 	}
 
 

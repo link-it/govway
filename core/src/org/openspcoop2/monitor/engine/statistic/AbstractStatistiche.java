@@ -484,6 +484,9 @@ public abstract class AbstractStatistiche {
 			if(this.debug){
 				this.logger.debug(notFound.getMessage(),notFound);
 			}
+			stat.setLatenzaPorta(Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE);
+			stat.setLatenzaServizio(Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE);
+			stat.setLatenzaTotale(Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE);
 		}
 	}
 	
@@ -1049,9 +1052,15 @@ public abstract class AbstractStatistiche {
 		statisticaBase.setDimensioniBytesBandaInterna(stat.getBytesBandaInterna());
 		statisticaBase.setDimensioniBytesBandaEsterna(stat.getBytesBandaEsterna());
 		
-		statisticaBase.setLatenzaServizio(stat.getLatenzaServizio());
-		statisticaBase.setLatenzaPorta(stat.getLatenzaPorta());
-		statisticaBase.setLatenzaTotale(stat.getLatenzaTotale());
+		if(stat.getLatenzaServizio()!=Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE) {
+			statisticaBase.setLatenzaServizio(stat.getLatenzaServizio());
+		}
+		if(stat.getLatenzaPorta()!=Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE) {
+			statisticaBase.setLatenzaPorta(stat.getLatenzaPorta());
+		}
+		if(stat.getLatenzaTotale()!=Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE) {
+			statisticaBase.setLatenzaTotale(stat.getLatenzaTotale());
+		}
 		
 		Long id = insertStatistica(statisticaBase);
 		if(id!=null && id >0){

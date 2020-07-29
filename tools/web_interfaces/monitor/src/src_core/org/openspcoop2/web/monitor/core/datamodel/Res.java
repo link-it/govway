@@ -22,6 +22,7 @@ package org.openspcoop2.web.monitor.core.datamodel;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +38,7 @@ public class Res extends ResBase implements Serializable{
 	private static final long serialVersionUID = 4601647394984864541L;
 	private Date risultato;
 	private Long id;
+	private List<Number> sommeMediaPesata;
 	
 	public Res() {
 		super();
@@ -62,6 +64,14 @@ public class Res extends ResBase implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public List<Number> getSommeMediaPesata() {
+		return this.sommeMediaPesata;
+	}
+
+	public void setSommeMediaPesata(List<Number> sommeMediaPesata) {
+		this.sommeMediaPesata = sommeMediaPesata;
 	}
 	
 	@Override

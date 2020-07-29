@@ -50,6 +50,7 @@ public class Costanti {
 	public static final String SERVIZIO_APPLICATIVO_ANONIMO = "Applicativo Anonimo";
 	public static final String INFORMAZIONE_NON_DISPONIBILE = "-";
 	public static final Integer INFORMAZIONE_VERSIONE_NON_DISPONIBILE = 0;
+	public static final Integer INFORMAZIONE_LATENZA_NON_DISPONIBILE = -1;
 	public static final String TRANSAZIONE_SENZA_STATO = "Senza Stato";
 	
 	

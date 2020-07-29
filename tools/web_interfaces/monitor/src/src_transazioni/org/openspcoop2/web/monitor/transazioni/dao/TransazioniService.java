@@ -2560,7 +2560,7 @@ public class TransazioniService implements ITransazioniService {
 		
 		
 		// esito
-		EsitoUtils esitoUtils = new EsitoUtils(this.log, this.searchForm.getProtocollo());
+		EsitoUtils esitoUtils = new EsitoUtils(this.log, this.searchForm.getSafeProtocol());
 		esitoUtils.setExpression(filter, this.searchForm.getEsitoGruppo(), 
 				this.searchForm.getEsitoDettaglio(),
 				this.searchForm.getEsitoDettaglioPersonalizzato(),
@@ -2829,20 +2829,59 @@ public class TransazioniService implements ITransazioniService {
 				} else {
 					// nessun filtro da impostare
 					
-					if(ricercaLibera && StringUtils.isNotBlank(this.searchForm.getRicercaLiberaSoggettoRemoto())) {
-						IExpression erogatore = this.transazioniSearchDAO.newExpression();
-						IExpression fruitore = this.transazioniSearchDAO.newExpression();
-						if(ricercaLiberaCaseSensitive) {
-							erogatore.and().like(Transazione.model().NOME_SOGGETTO_EROGATORE, this.searchForm.getRicercaLiberaSoggettoRemoto(), ricercaLiberaLikeMode);
-							fruitore.and().like(Transazione.model().NOME_SOGGETTO_FRUITORE, this.searchForm.getRicercaLiberaSoggettoRemoto(), ricercaLiberaLikeMode);
+					if(ricercaLibera) {
+						if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaSoggettoRemoto()) && StringUtils.isNotBlank(this.searchForm.getRicercaLiberaSoggettoLocale()) ){
+							
+							String nomeSoggettoLocale = this.searchForm.getRicercaLiberaSoggettoLocale();
+							String nomeSoggettoRemoto = this.searchForm.getRicercaLiberaSoggettoRemoto();
+							
+							IExpression erogazione = this.transazioniSearchDAO.newExpression();
+							IExpression fruizione = this.transazioniSearchDAO.newExpression();
+							if(ricercaLiberaCaseSensitive) {
+								erogazione.and().
+									like(Transazione.model().NOME_SOGGETTO_EROGATORE, nomeSoggettoLocale, ricercaLiberaLikeMode).
+									like(Transazione.model().NOME_SOGGETTO_FRUITORE, nomeSoggettoRemoto, ricercaLiberaLikeMode);
+								fruizione.and().
+									like(Transazione.model().NOME_SOGGETTO_FRUITORE, nomeSoggettoLocale, ricercaLiberaLikeMode).
+									like(Transazione.model().NOME_SOGGETTO_EROGATORE, nomeSoggettoRemoto, ricercaLiberaLikeMode);
+							}
+							else {
+								erogazione.and().
+									ilike(Transazione.model().NOME_SOGGETTO_EROGATORE, nomeSoggettoLocale, ricercaLiberaLikeMode).
+									ilike(Transazione.model().NOME_SOGGETTO_FRUITORE, nomeSoggettoRemoto, ricercaLiberaLikeMode);
+								fruizione.and().
+									ilike(Transazione.model().NOME_SOGGETTO_FRUITORE, nomeSoggettoLocale, ricercaLiberaLikeMode).
+									ilike(Transazione.model().NOME_SOGGETTO_EROGATORE, nomeSoggettoRemoto, ricercaLiberaLikeMode);
+							}
+							IExpression soggetti = this.transazioniSearchDAO.newExpression();
+							soggetti.or(erogazione, fruizione);
+							filter.and(soggetti);
+							
 						}
-						else {
-							erogatore.and().ilike(Transazione.model().NOME_SOGGETTO_EROGATORE, this.searchForm.getRicercaLiberaSoggettoRemoto(), ricercaLiberaLikeMode);
-							fruitore.and().ilike(Transazione.model().NOME_SOGGETTO_FRUITORE, this.searchForm.getRicercaLiberaSoggettoRemoto(), ricercaLiberaLikeMode);
+						else if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaSoggettoRemoto()) || StringUtils.isNotBlank(this.searchForm.getRicercaLiberaSoggettoLocale())){
+							
+							String nomeSoggetto = null;
+							if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaSoggettoRemoto())) {
+								nomeSoggetto = this.searchForm.getRicercaLiberaSoggettoRemoto();
+							}
+							else {
+								nomeSoggetto = this.searchForm.getRicercaLiberaSoggettoLocale();
+							}
+							
+							IExpression erogatore = this.transazioniSearchDAO.newExpression();
+							IExpression fruitore = this.transazioniSearchDAO.newExpression();
+							if(ricercaLiberaCaseSensitive) {
+								erogatore.and().like(Transazione.model().NOME_SOGGETTO_EROGATORE, nomeSoggetto, ricercaLiberaLikeMode);
+								fruitore.and().like(Transazione.model().NOME_SOGGETTO_FRUITORE, nomeSoggetto, ricercaLiberaLikeMode);
+							}
+							else {
+								erogatore.and().ilike(Transazione.model().NOME_SOGGETTO_EROGATORE, nomeSoggetto, ricercaLiberaLikeMode);
+								fruitore.and().ilike(Transazione.model().NOME_SOGGETTO_FRUITORE, nomeSoggetto, ricercaLiberaLikeMode);
+							}
+							IExpression soggetti = this.transazioniSearchDAO.newExpression();
+							soggetti.or(erogatore, fruitore);
+							filter.and(soggetti);
 						}
-						IExpression soggetti = this.transazioniSearchDAO.newExpression();
-						soggetti.or(erogatore, fruitore);
-						filter.and(soggetti);
 					}
 					
 				}
@@ -2873,6 +2912,15 @@ public class TransazioniService implements ITransazioniService {
 						filter.and().ilike(Transazione.model().NOME_SOGGETTO_FRUITORE, this.searchForm.getRicercaLiberaSoggettoRemoto(), ricercaLiberaLikeMode);
 					}
 				}
+				
+				if(ricercaLibera && StringUtils.isNotBlank(this.searchForm.getRicercaLiberaSoggettoLocale())) {
+					if(ricercaLiberaCaseSensitive) {
+						filter.and().like(Transazione.model().NOME_SOGGETTO_EROGATORE, this.searchForm.getRicercaLiberaSoggettoLocale(), ricercaLiberaLikeMode);
+					}
+					else {
+						filter.and().ilike(Transazione.model().NOME_SOGGETTO_EROGATORE, this.searchForm.getRicercaLiberaSoggettoLocale(), ricercaLiberaLikeMode);
+					}
+				}
 
 			} else {
 				// FRUIZIONE
@@ -2901,6 +2949,15 @@ public class TransazioniService implements ITransazioniService {
 					}
 				}
 				
+				if(ricercaLibera && StringUtils.isNotBlank(this.searchForm.getRicercaLiberaSoggettoLocale())) {
+					if(ricercaLiberaCaseSensitive) {
+						filter.and().like(Transazione.model().NOME_SOGGETTO_FRUITORE, this.searchForm.getRicercaLiberaSoggettoLocale(), ricercaLiberaLikeMode);
+					}
+					else {
+						filter.and().ilike(Transazione.model().NOME_SOGGETTO_FRUITORE, this.searchForm.getRicercaLiberaSoggettoLocale(), ricercaLiberaLikeMode);
+					}
+				}
+				
 			}
 
 		}
@@ -2911,7 +2968,6 @@ public class TransazioniService implements ITransazioniService {
 		
 		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
 		// protocollo e' impostato anche scegliendo la modalita'
-//		if (StringUtils.isNotEmpty(this.searchForm.getProtocollo()) && this.searchForm.isShowListaProtocolli()) {
 		if (this.searchForm.isSetFiltroProtocollo()) {
 			filter.and().equals(Transazione.model().PROTOCOLLO,	this.searchForm.getProtocollo());
 		}

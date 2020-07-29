@@ -37,6 +37,7 @@ import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.monitor.engine.statistic.StatisticheSettimanali;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -575,7 +576,9 @@ public class StatsUtils {
 		} else if (StatisticType.SETTIMANALE.equals(tempo)) {
 			// settimanale
 			sdf.applyPattern("dd/MM/yy");
-			dataInizioAsString = sdf.format(dataInizio);
+			StatisticheSettimanali statisticheSettimanaliUtils = StatisticheSettimanali.getInstanceForUtils();
+			Date dataInizioSettimanale = (Date) dataInizio.clone();
+			dataInizioAsString = sdf.format(statisticheSettimanaliUtils.truncDate(dataInizioSettimanale, false));
 			risultatoLowerAsString = sdf.format(risultatoLower);
 		} else if (StatisticType.MENSILE.equals(tempo)) {
 			// mensile
@@ -605,7 +608,9 @@ public class StatsUtils {
 		} else if (StatisticType.SETTIMANALE.equals(tempo)) {
 			// settimanale
 			sdf.applyPattern("dd/MM/yy");
-			dataFineAsString = sdf.format(dataFine);
+			StatisticheSettimanali statisticheSettimanaliUtils = StatisticheSettimanali.getInstanceForUtils();
+			Date dataInizioSettimanale = (Date) dataFine.clone();
+			dataFineAsString = sdf.format(statisticheSettimanaliUtils.truncDate(dataInizioSettimanale, false));
 			risultatoHighAsString = sdf.format(risultatoHigh);
 		} else if (StatisticType.MENSILE.equals(tempo)) {
 			// mensile

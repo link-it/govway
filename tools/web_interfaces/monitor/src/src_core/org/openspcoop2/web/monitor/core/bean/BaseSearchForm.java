@@ -133,7 +133,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private boolean statistichePersonalizzateAttive = false;
 
 	private String protocollo;
-	private List<SelectItem> protocolli= null;
+	protected List<SelectItem> protocolli= null;
 	private String modalita = null;
 	private String soggettoPddMonitor = null;
 	private boolean checkSoggettoPddMonitor = true;
@@ -967,7 +967,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			// devo verificare il dettaglio che sia compatibile con il nuovo esito
 			if(EsitoUtils.ALL_VALUE != this.esitoGruppo){
 				try{
-					EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
+					EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
 					List<Integer> codes = null;
 					if(EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo){
 						codes = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
@@ -1029,7 +1029,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			else {
 				if(this.escludiRichiesteScartate){
 					try{
-						EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
+						EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
 						List<Integer> escludiEsitiRichiesteMalformate = esitiProperties.getEsitiCodeRichiestaScartate();
 						boolean found = false;
 						if(escludiEsitiRichiesteMalformate!=null) {
@@ -1352,7 +1352,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public List<SelectItem> getEsitiGruppo() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 		try{
-			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
+			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, getSafeProtocol());
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE,false)));
 			list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE,false)));
 			list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,false)));
@@ -1380,11 +1380,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
 		try{
-			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
+			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, getSafeProtocol());
 			
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE, statistiche)));
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
 
 			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
 
@@ -1489,7 +1489,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		try{
 			ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
 
 			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
 
@@ -1538,11 +1538,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 		try{
 
-			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
+			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, getSafeProtocol());
 			
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING,esitoUtils.getEsitoContestoLabelFromValue(EsitoUtils.ALL_VALUE_AS_STRING)));
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
 
 			List<String> esiti = esitiProperties.getEsitiTransactionContextCodeOrderLabel();
 			for (String esito : esiti) {
@@ -1846,7 +1846,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 	
 	public boolean isSetFiltroProtocollo() {
-		boolean setFilter = StringUtils.isNotEmpty(this.getProtocollo()) ;
+		String protocollo = this.getProtocollo();
+		boolean setFilter = StringUtils.isNotEmpty(protocollo) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(protocollo) ;
 //		&& (this.isShowListaProtocolli() || !Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL));
 		
 		return setFilter;
@@ -2266,6 +2267,51 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_KEY);
 			} else {
 				return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_LOCALE_KEY);
+			}
+		}
+	}
+	
+	public boolean isAllProtocol() {
+		return Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.protocollo);
+	}
+	
+	public String getSafeProtocol() {
+		
+		if(this.isCloned) {
+			return this.protocolCloned;
+		}
+		else {
+			if(this.protocollo==null || this.protocollo.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+			
+				User utente =  Utility.getLoggedUtente();
+				IProtocolFactory<?> protocolFactory = null;
+				if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() > 0) {
+					try {
+						if(utente.getProtocolliSupportati().contains(ProtocolFactoryManager.getInstance().getDefaultProtocolFactory().getProtocol())) {
+							protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+						} else {
+							protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(utente.getProtocolliSupportati().get(0));
+						}
+					}catch(Exception e) {
+						BaseSearchForm.log.error("Errore durante l'impostazione del default per il protocollo: " + e.getMessage(),e);
+					}
+				} else {
+					try {
+						protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+					}catch(Exception e) {
+						BaseSearchForm.log.error("Errore durante l'impostazione del default per il protocollo: " + e.getMessage(),e);
+					}
+				}
+				if(protocolFactory!=null) {
+					return protocolFactory.getProtocol();
+				}
+				else {
+					return this.protocollo;
+				}
+				
+			}
+			else {
+				return this.protocollo;
 			}
 		}
 	}

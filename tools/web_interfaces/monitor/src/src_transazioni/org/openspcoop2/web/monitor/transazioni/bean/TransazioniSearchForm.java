@@ -101,6 +101,7 @@ Context, Cloneable {
 	private TipoMatch ricercaLiberaMatchingType = TipoMatch.LIKE;
 	private CaseSensitiveMatch ricercaLiberaCaseSensitiveType = CaseSensitiveMatch.INSENSITIVE;
 	
+	private String ricercaLiberaSoggettoLocale;
 	private String ricercaLiberaSoggettoRemoto;
 	private String ricercaLiberaGruppo;
 	private String ricercaLiberaServizio;
@@ -205,6 +206,27 @@ Context, Cloneable {
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public List<SelectItem> getProtocolli() throws Exception {
+		
+		if(ModalitaRicercaTransazioni.RICERCA_LIBERA.getValue().equals(this.modalitaRicercaStorico)) {
+			List<SelectItem> lista = super.getProtocolli();
+			if(lista.size()>1) {
+				this.protocolli = new ArrayList<SelectItem>();
+				this.protocolli.add(new SelectItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL,Costanti.LABEL_PARAMETRO_MODALITA_ALL));
+				this.protocolli.addAll(lista);
+				return this.protocolli;
+			}
+			else{
+				return lista;
+			}
+		}
+		else {
+			return super.getProtocolli();
+		}
+
 	}
 
 	public List<SelectItem> getEsitiDettaglio() {
@@ -327,6 +349,7 @@ Context, Cloneable {
 		this.ricercaLiberaMatchingType = TipoMatch.LIKE;
 		this.ricercaLiberaCaseSensitiveType = CaseSensitiveMatch.INSENSITIVE;
 		
+		this.ricercaLiberaSoggettoLocale = null;
 		this.ricercaLiberaSoggettoRemoto = null;
 		this.ricercaLiberaGruppo = null;
 		this.ricercaLiberaServizio = null;
@@ -359,6 +382,15 @@ Context, Cloneable {
 
 	public void setModalitaRicercaStorico(String modalitaRicercaStorico) {
 		this.modalitaRicercaStorico = modalitaRicercaStorico;
+		if(ModalitaRicercaTransazioni.RICERCA_LIBERA.getValue().equals(this.modalitaRicercaStorico)) {
+			if(this.isShowListaProtocolli()) { // viene visualizzata se non e' stato selezionato alcun profilo
+				setProtocollo(Costanti.VALUE_PARAMETRO_MODALITA_ALL); // default: tutti
+			}
+		}
+	}
+	
+	public boolean isRicercaLiberaTuttiProfili() {
+		return ModalitaRicercaTransazioni.RICERCA_LIBERA.getValue().equals(this.modalitaRicercaStorico) && this.isAllProtocol();
 	}
 	
 	public String getTipoStoricoLabel() {
@@ -1278,6 +1310,14 @@ Context, Cloneable {
 		if(ricercaLiberaCaseSensitiveType!=null){
 			this.ricercaLiberaCaseSensitiveType = CaseSensitiveMatch.valueOf(ricercaLiberaCaseSensitiveType);
 		}
+	}
+	
+	public String getRicercaLiberaSoggettoLocale() {
+		return this.ricercaLiberaSoggettoLocale;
+	}
+
+	public void setRicercaLiberaSoggettoLocale(String ricercaLiberaSoggettoLocale) {
+		this.ricercaLiberaSoggettoLocale = ricercaLiberaSoggettoLocale;
 	}
 	
 	public String getRicercaLiberaSoggettoRemoto() {

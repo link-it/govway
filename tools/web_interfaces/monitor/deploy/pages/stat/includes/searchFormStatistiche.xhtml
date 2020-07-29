@@ -58,7 +58,7 @@
 					<h:outputText id="idTemporale" value="#{msg['stats.search.sezioneFiltroTemporale.label']}" styleClass="subtitle"/>
 				</div>
 				
-				<link:prop label="Unità di tempo">
+				<link:prop label="Unità di tempo" rendered="#{sf_bean.showUnitaTempo}">
 		 			<rich:comboBox id="visualizzaStatisticheCombo" value="#{sf_bean._value_modalitaTemporale}" defaultLabel="Seleziona Tipo Visualizzazione"
 						converter="selectItemConverter"  width="416" enableManualInput="false">
 			 			<f:selectItem itemLabel="Oraria" itemValue="oraria"/>
@@ -73,20 +73,27 @@
 					<rich:comboBox id="periodoCombo" value="#{sf_periodo}" defaultLabel="Seleziona Periodo"
 						required="true"
 						requiredMessage="E' necessario selezionare un periodo" width="416" enableManualInput="false">
-						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='oraria'}">
+						<c:if test="#{sf_bean.showUnitaTempo and not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='oraria'}">
 							<f:selectItem itemValue="Ultime 12 ore" />
 							<f:selectItem itemValue="Ieri" />
 							<f:selectItem itemValue="Ultima settimana" />
 							<f:selectItem itemValue="Ultimo mese" />
 						</c:if>
-						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='giornaliera'}">
+						<c:if test="#{sf_bean.showUnitaTempo and not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='giornaliera'}">
 							<f:selectItem itemValue="Ultima settimana" />
 							<f:selectItem itemValue="Ultimo mese" />
 						</c:if>
-						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='settimanale'}">
+						<c:if test="#{sf_bean.showUnitaTempo and not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='settimanale'}">
 							<f:selectItem itemValue="Ultimo mese" />
 						</c:if>
-						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='mensile'}">
+						<c:if test="#{sf_bean.showUnitaTempo and not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='mensile'}">
+							<f:selectItem itemValue="Ultimo anno" />
+						</c:if>
+						<c:if test="#{not sf_bean.showUnitaTempo}">
+							<f:selectItem itemValue="Ultime 12 ore" />
+							<f:selectItem itemValue="Ieri" />
+							<f:selectItem itemValue="Ultima settimana" />
+							<f:selectItem itemValue="Ultimo mese" />
 							<f:selectItem itemValue="Ultimo anno" />
 						</c:if>
 						<f:selectItem itemValue="Personalizzato" />
@@ -94,6 +101,15 @@
 					</rich:comboBox>
 					<rich:toolTip for="labelPeriodoCombo" value="#{sf_bean.printPeriodo}"/>
 				</link:prop>
+				
+				<link:prop label="Unità di tempo" rendered="#{sf_bean.showUnitaTempoPersonalizzato}">
+		 			<rich:comboBox id="visualizzaStatisticheComboPersonalizzato" value="#{sf_bean._value_modalitaTemporale}" defaultLabel="Seleziona Unità di tempo"
+						converter="selectItemConverter"  width="416" enableManualInput="false">
+			 			<f:selectItem itemLabel="Oraria" itemValue="oraria"/>
+			 			<f:selectItem itemLabel="Giornaliera" itemValue="giornaliera"/>
+			 			<a4j:support event="onselect" actionListener="#{sf_bean.modalitaTemporaleListenerPersonalizzato}" reRender="periodoCtr"/>
+			 		</rich:comboBox>
+		 		</link:prop>
 				
 				<a4j:outputPanel id="dataInizioCtr" layout="block" >
 					<link:prop label="Data Inizio"

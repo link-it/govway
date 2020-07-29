@@ -324,7 +324,18 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 
 
 	}
-
+	
+	public boolean isPeriodoPersonalizzato() {
+		return "Personalizzato".equals(this.periodo);
+	}
+	public boolean isPeriodoUltime12ore() {
+		return "Ultime 12 ore".equals(this.periodo);
+	}
+	
+	public boolean isLastPeriodoPersonalizzato() {
+		return "Personalizzato".equals(this.lastPeriodo);
+	}
+	
 	public Date getDataInizio() {
 		return this.dataInizio;
 	}

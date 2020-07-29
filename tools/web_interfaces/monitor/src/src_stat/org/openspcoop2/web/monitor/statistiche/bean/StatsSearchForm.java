@@ -44,11 +44,13 @@ import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.filters.BrowserFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.slf4j.Logger;
 
 /**
  * StatsSearchForm
@@ -60,6 +62,8 @@ import org.openspcoop2.web.monitor.core.utils.MessageUtils;
  */
 public class StatsSearchForm extends BaseSearchForm{
 
+	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
+	
 	// Tipo di report da visualizzare
 	private TipoReport tipoReport;
 	protected String _value_tipoReport;
@@ -96,6 +100,8 @@ public class StatsSearchForm extends BaseSearchForm{
 	// Vale solo nell'andamento temporale e nella distribuzione per esiti
 	private boolean andamentoTemporalePerEsiti = false; 
 
+	private boolean isMostraUnitaTempoDistribuzioneNonTemporale = false;
+	
 	public boolean isAndamentoTemporalePerEsiti() {
 		return this.andamentoTemporalePerEsiti;
 	}
@@ -122,6 +128,13 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.tipoBanda = TipoBanda.COMPLESSIVA;
 		this.modalitaTemporale =StatisticType.GIORNALIERA;
 		this.setTipiLatenza(new String[3]);
+		
+		try {
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(StatsSearchForm.log);
+			this.isMostraUnitaTempoDistribuzioneNonTemporale = govwayMonitorProperties.isMostraUnitaTempoDistribuzioneNonTemporale();
+		} catch (Exception e) {
+			StatsSearchForm.log.error("Errore il calcolo della proprieta' 'useDistribuzioneStatisticaGiornalieraPerElaborazioneSettimanaleMensile': " + e.getMessage(),e);
+		}
 	}
 
 	protected Date dataInizioDellaRicerca = null;
@@ -305,6 +318,20 @@ public class StatsSearchForm extends BaseSearchForm{
 
 	@Override
 	public void periodoListener(ActionEvent ae){
+		
+		if(!this.isShowUnitaTempo()) {
+			if(!this.isPeriodoPersonalizzato()) {
+				if(this.isPeriodoUltime12ore()) {
+					this.modalitaTemporale = StatisticType.ORARIA;
+				}
+				else {
+					this.modalitaTemporale  = StatisticType.GIORNALIERA;
+				}
+				//System.out.println("PERIODO LISTENER: "+this.modalitaTemporale);
+			}
+		}
+		
+		
 		_setPeriodo();
 
 		this.dataInizioDellaRicerca = this.getDataInizio();
@@ -325,6 +352,29 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.dataFineDellaRicerca = this.getDataFine();
 		this.periodoDellaRicerca = this.getPeriodo();
 	}
+	
+	@SuppressWarnings("incomplete-switch")
+	public void modalitaTemporaleListenerPersonalizzato(ActionEvent ae){
+
+		this.periodoListener(ae);
+
+		switch(this.modalitaTemporale){
+		case ORARIA:  
+			if(this.dataFine!=null) {
+				Calendar fine = Calendar.getInstance();
+				fine.setTime(this.dataFine);
+				fine.set(Calendar.HOUR_OF_DAY,23);
+				fine.set(Calendar.MINUTE,59);
+				this.dataFine = fine.getTime();
+			}
+			break;
+		}
+		
+		this.dataInizioDellaRicerca = this.getDataInizio();
+		this.dataFineDellaRicerca = this.getDataFine();
+		this.periodoDellaRicerca = this.getPeriodo();
+	}
+	
 
 	@Override
 	public void initSearchListener(ActionEvent ae) {
@@ -736,7 +786,11 @@ public class StatsSearchForm extends BaseSearchForm{
 		if(this.dataInizio!=null) {
 			Calendar inizio = Calendar.getInstance();
 			inizio.setTime(this.dataInizio);
-			inizio.clear(Calendar.MINUTE);
+			// Fix: l'impostazione dei minuti non ha senso nelle statistiche poichè non esiste un campionamento sui minuti. La soluzione è di impostare l'intervallo più esterno '00' in data inizio e '59' in data fine.
+			boolean esisteCampionamentoStatisticoMinuti = false;
+			if(!esisteCampionamentoStatisticoMinuti || !StatisticType.ORARIA.equals(this.modalitaTemporale) || (!this.isPeriodoPersonalizzato()) || (!this.isLastPeriodoPersonalizzato())) {
+				inizio.clear(Calendar.MINUTE);
+			}
 			inizio.clear(Calendar.SECOND);
 			inizio.clear(Calendar.MILLISECOND);
 			
@@ -760,7 +814,11 @@ public class StatsSearchForm extends BaseSearchForm{
 		if(this.dataFine!=null) {
 			Calendar fine = Calendar.getInstance();
 			fine.setTime(this.dataFine);
-			fine.set(Calendar.MINUTE,59);
+			// Fix: l'impostazione dei minuti non ha senso nelle statistiche poichè non esiste un campionamento sui minuti. La soluzione è di impostare l'intervallo più esterno '00' in data inizio e '59' in data fine.
+			boolean esisteCampionamentoStatisticoMinuti = false;
+			if(!esisteCampionamentoStatisticoMinuti || !StatisticType.ORARIA.equals(this.modalitaTemporale) || (!this.isPeriodoPersonalizzato()) || (!this.isLastPeriodoPersonalizzato())) {
+				fine.set(Calendar.MINUTE,59);
+			}
 			fine.set(Calendar.SECOND,59);
 			fine.set(Calendar.MILLISECOND,999);
 			
@@ -838,6 +896,7 @@ public class StatsSearchForm extends BaseSearchForm{
 		if(this.modalitaTemporale!=null) {
 			switch (this.modalitaTemporale) {
 			case ORARIA:
+				// Fix: l'impostazione dei minuti non ha senso nelle statistiche poichè non esiste un campionamento sui minuti. La soluzione è di impostare l'intervallo più esterno '00' in data inizio e '59' in data fine.
 				return "yyyy-MM-dd HH:mm";
 			default:
 				return "yyyy-MM-dd";
@@ -848,5 +907,13 @@ public class StatsSearchForm extends BaseSearchForm{
 	
 	public boolean isShowGroupByDatiMittente() {
 		return this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
+	}
+	
+	
+	public boolean isShowUnitaTempo() {
+		return TipoStatistica.ANDAMENTO_TEMPORALE.equals(this.tipoStatistica) || this.isMostraUnitaTempoDistribuzioneNonTemporale;
+	}
+	public boolean isShowUnitaTempoPersonalizzato() {
+		return !this.isShowUnitaTempo() && this.isPeriodoPersonalizzato();
 	}
 }

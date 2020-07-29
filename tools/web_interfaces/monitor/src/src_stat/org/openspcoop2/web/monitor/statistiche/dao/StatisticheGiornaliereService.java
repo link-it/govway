@@ -80,6 +80,8 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.condition.FilterImpl;
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.monitor.engine.statistic.StatisticByResource;
+import org.openspcoop2.monitor.engine.statistic.StatisticheMensili;
+import org.openspcoop2.monitor.engine.statistic.StatisticheSettimanali;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -145,6 +147,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private PddMonitorProperties govwayMonitorProperties;
 	
+	private boolean useStatisticheGiornaliereCalcoloDistribuzioneSettimanale;
+	private boolean useStatisticheGiornaliereCalcoloDistribuzioneMensile;
+	private boolean isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere;
+	
 	public StatisticheGiornaliereService() {
 
 		try {
@@ -166,6 +172,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.credenzialiMittenteDAO = this.transazioniServiceManager.getCredenzialeMittenteService();
 
 			this.govwayMonitorProperties = PddMonitorProperties.getInstance(StatisticheGiornaliereService.log);
+			
+			this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneSettimanale();
+			this.useStatisticheGiornaliereCalcoloDistribuzioneMensile = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneMensile();
+			this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere = this.govwayMonitorProperties.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere();
 			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -203,6 +213,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.govwayMonitorProperties = PddMonitorProperties.getInstance(StatisticheGiornaliereService.log);
 			
+			this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneSettimanale();
+			this.useStatisticheGiornaliereCalcoloDistribuzioneMensile = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneMensile();
+			this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere = this.govwayMonitorProperties.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere();
+						
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -239,6 +253,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.govwayMonitorProperties = PddMonitorProperties.getInstance(StatisticheGiornaliereService.log);
 			
+			this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneSettimanale();
+			this.useStatisticheGiornaliereCalcoloDistribuzioneMensile = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneMensile();
+			this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere = this.govwayMonitorProperties.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere();
+									
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -382,30 +400,52 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private NonNegativeNumber countAndamentoTemporale() throws ServiceException {
 		try {
-			StatisticType tipologia = this.andamentoTemporaleSearch.getModalitaTemporale();
+			StatisticType tipologiaSearch = this.andamentoTemporaleSearch.getModalitaTemporale();
 			IExpression gByExpr = null;
 
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
-			switch (tipologia) {
-			case GIORNALIERA:
-				model = StatisticaGiornaliera.model().STATISTICA_BASE;
-				dao = this.statGiornaliereSearchDAO;
-				break;
-			case MENSILE:
-				model = StatisticaMensile.model().STATISTICA_BASE;
-				dao = this.statMensileSearchDAO;
-				break;
+			boolean forceUseDistribGiornaliera = false;
+			StatisticType tipologia = tipologiaSearch;
+			StatisticheSettimanali statisticheSettimanaliUtils = null;
+			StatisticheMensili statisticheMensiliUtils = null;
+			
+			switch (tipologiaSearch) {
 			case ORARIA:
 				model = StatisticaOraria.model().STATISTICA_BASE;
 				dao = this.statOrariaSearchDAO;
 				break;
-			case SETTIMANALE:
-				model = StatisticaSettimanale.model().STATISTICA_BASE;
-				dao = this.statSettimanaleSearchDAO;
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
 				break;
-
+			case SETTIMANALE:
+				forceUseDistribGiornaliera = this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale;
+				if(forceUseDistribGiornaliera) {
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = this.statGiornaliereSearchDAO;
+					tipologia = StatisticType.GIORNALIERA;
+					statisticheSettimanaliUtils = StatisticheSettimanali.getInstanceForUtils();	
+				}
+				else {
+					model = StatisticaSettimanale.model().STATISTICA_BASE;
+					dao = this.statSettimanaleSearchDAO;
+				}
+				break;
+			case MENSILE:
+				forceUseDistribGiornaliera = this.useStatisticheGiornaliereCalcoloDistribuzioneMensile;
+				if(forceUseDistribGiornaliera) {
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = this.statGiornaliereSearchDAO;
+					tipologia = StatisticType.GIORNALIERA;
+					statisticheMensiliUtils = StatisticheMensili.getInstanceForUtils();
+				}
+				else {
+					model = StatisticaMensile.model().STATISTICA_BASE;
+					dao = this.statMensileSearchDAO;
+				}
+				break;
 			}
 			
 			List<Index> forceIndexes = null;
@@ -452,8 +492,47 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 			
-			NonNegativeNumber nnn = dao.count(gByExpr);
-			return nnn;
+			if(forceUseDistribGiornaliera) {
+				List<Map<String, Object>> list = null;
+				try {
+					FunctionField fCount = new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma"); // uso sempre e comunque la somma, non e' importante
+					list = dao.groupBy(gByExpr, fCount);
+				} catch (NotFoundException e) {
+					StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+					return new NonNegativeNumber(0);
+				}
+				if(list==null || list.isEmpty()) {
+					return new NonNegativeNumber(0);
+				}
+				List<Date> dateFound = new ArrayList<Date>();
+				for (Map<String, Object> row : list) {
+					Date data = (Date) row.get(JDBCUtilities.getAlias(model.DATA));
+					Date truncDate = null;
+					if(statisticheSettimanaliUtils!=null) {
+						truncDate = statisticheSettimanaliUtils.truncDate(data, false);
+					}
+					else {
+						truncDate = statisticheMensiliUtils.truncDate(data, false);
+					}
+					boolean found = false;
+					for (Date date : dateFound) {
+						if(truncDate.equals(date)) {
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						dateFound.add(truncDate);
+					}
+				}
+				NonNegativeNumber nnn = new NonNegativeNumber(dateFound.size());
+				return nnn; 
+			}
+			else {
+				NonNegativeNumber nnn = dao.count(gByExpr);
+				return nnn;
+			}
+			
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		} catch (NotImplementedException e) {
@@ -468,28 +547,54 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private List<Res> executeAndamentoTemporaleSearch(boolean isCount,	boolean isPaginated, int offset, int limit) {
 		try {
-			StatisticType tipologia = this.andamentoTemporaleSearch.getModalitaTemporale();
+			StatisticType tipologiaSearch = this.andamentoTemporaleSearch.getModalitaTemporale();
 			IExpression gByExpr = null;
 
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
-			switch (tipologia) {
-			case GIORNALIERA:
-				model = StatisticaGiornaliera.model().STATISTICA_BASE;
-				dao = this.statGiornaliereSearchDAO;
-				break;
-			case MENSILE:
-				model = StatisticaMensile.model().STATISTICA_BASE;
-				dao = this.statMensileSearchDAO;
-				break;
+			boolean forceUseDistribGiornaliera = false;
+			StatisticType tipologia = tipologiaSearch;
+			StatisticheSettimanali statisticheSettimanaliUtils = null;
+			StatisticheMensili statisticheMensiliUtils = null;
+			boolean calcolaSommeMediaPesata = false;
+			
+			switch (tipologiaSearch) {
 			case ORARIA:
 				model = StatisticaOraria.model().STATISTICA_BASE;
 				dao = this.statOrariaSearchDAO;
 				break;
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
 			case SETTIMANALE:
-				model = StatisticaSettimanale.model().STATISTICA_BASE;
-				dao = this.statSettimanaleSearchDAO;
+				forceUseDistribGiornaliera = this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale;
+				if(forceUseDistribGiornaliera) {
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = this.statGiornaliereSearchDAO;
+					tipologia = StatisticType.GIORNALIERA;
+					statisticheSettimanaliUtils = StatisticheSettimanali.getInstanceForUtils();	
+					calcolaSommeMediaPesata = this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere;
+				}
+				else {
+					model = StatisticaSettimanale.model().STATISTICA_BASE;
+					dao = this.statSettimanaleSearchDAO;
+				}
+				break;
+			case MENSILE:
+				forceUseDistribGiornaliera = this.useStatisticheGiornaliereCalcoloDistribuzioneMensile;
+				if(forceUseDistribGiornaliera) {
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = this.statGiornaliereSearchDAO;
+					tipologia = StatisticType.GIORNALIERA;
+					statisticheMensiliUtils = StatisticheMensili.getInstanceForUtils();
+					calcolaSommeMediaPesata = this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere;
+				}
+				else {
+					model = StatisticaMensile.model().STATISTICA_BASE;
+					dao = this.statMensileSearchDAO;
+				}
 				break;
 			}
 			
@@ -572,17 +677,35 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							gByExpr.isNotNull(model.LATENZA_PORTA);
 							listaFunzioni.add(new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
 							isLatenza_porta = true;
+							
+							if(calcolaSommeMediaPesata) {
+								// per media pesata
+								listaFunzioni.add(new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma_media_pesata"));
+							}
+							
 							break;
 						case LATENZA_SERVIZIO:
 							gByExpr.isNotNull(model.LATENZA_SERVIZIO);
 							listaFunzioni.add(new FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
 							isLatenza_servizio = true;
+							
+							if(calcolaSommeMediaPesata) {
+								// per media pesata
+								listaFunzioni.add(new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma_media_pesata"));
+							}
+							
 							break;
 						case LATENZA_TOTALE:
 						default:
 							gByExpr.isNotNull(model.LATENZA_TOTALE);
 							listaFunzioni.add(new  FunctionField(model.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
 							isLatenza_totale = true;
+							
+							if(calcolaSommeMediaPesata) {
+								// per media pesata
+								listaFunzioni.add(new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma_media_pesata"));
+							}
+							
 							break;
 						}
 					}
@@ -609,6 +732,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								break;
 							}
 						}
+						
+						if(calcolaSommeMediaPesata) {
+							// per media pesata
+							listaFunzioni.add(new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma_media_pesata"));
+						}
 					}
 				}
 			}
@@ -628,14 +756,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IPaginatedExpression pagExpr = dao
 							.toPaginatedExpression(gByExpr);
 
-					pagExpr.offset(offset).limit(limit);
+					if(!forceUseDistribGiornaliera) {
+						pagExpr.offset(offset).limit(limit);
+					}
 					list = dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
 				}
 			} catch (NotFoundException e) {
 				StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
 				list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
 			} 
-
+			
 			List<Res> res = new ArrayList<Res>();
 			for (Map<String, Object> row : list) {
 
@@ -643,39 +773,63 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				Date data = (Date) row.get(JDBCUtilities.getAlias(model.DATA));
 				r.setId(data != null ? data.getTime() : null);
 				r.setRisultato(data);
-
+				List<Number> rSommaMediaPesata = new ArrayList<Number>();
+				
 				//collezione dei risultati
 				if(isLatenza){
 					Number obLT = StatsUtils.converToNumber(row.get("somma_latenza_totale"));
 					Number obLS = StatsUtils.converToNumber(row.get("somma_latenza_servizio"));
 					Number obLP = StatsUtils.converToNumber(row.get("somma_latenza_porta"));
+					Number obSommaMediaPesata = null;
+					if(calcolaSommeMediaPesata) {
+						obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
+					}
 
 					if(obLT!=null){
 						r.inserisciSomma(obLT);
+						if(calcolaSommeMediaPesata) {
+							rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+						}
 					}
 					else{
 						if(isLatenza_totale){
 							r.inserisciSomma(0);
+							if(calcolaSommeMediaPesata) {
+								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+							}
 						}
 					}
 
 					if(obLS!=null){
 						r.inserisciSomma(obLS);
+						if(calcolaSommeMediaPesata) {
+							rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+						}
 					}
 					else{
 						if(isLatenza_servizio){
 							r.inserisciSomma(0);
+							if(calcolaSommeMediaPesata) {
+								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+							}
 						}
 					}
 
 					if(obLP!=null){
 						r.inserisciSomma(obLP);
+						if(calcolaSommeMediaPesata) {
+							rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+						}
 					}
 					else{
 						if(isLatenza_porta){
 							r.inserisciSomma(0);
+							if(calcolaSommeMediaPesata) {
+								rSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+							}
 						}
 					}
+					
 				}
 				else if(isBanda){
 					Number obComplessiva = StatsUtils.converToNumber(row.get("somma_banda_complessiva"));
@@ -778,6 +932,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					Res rEsito = new Res();
 					rEsito.setId(data.getTime());
 					rEsito.setRisultato(data);
+					List<Number> rEsitoSommaMediaPesata = new ArrayList<Number>();
 					try{
 						listOk = dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
 					} catch (NotFoundException e) {
@@ -800,31 +955,53 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							Number obLT = StatsUtils.converToNumber(rowOk.get("somma_latenza_totale"));
 							Number obLS = StatsUtils.converToNumber(rowOk.get("somma_latenza_servizio"));
 							Number obLP = StatsUtils.converToNumber(rowOk.get("somma_latenza_porta"));
+							Number obSommaMediaPesata = null;
+							if(calcolaSommeMediaPesata) {
+								obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
+							}
 
 							if(obLT != null){
 								rEsito.inserisciSomma(obLT);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_totale){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
 
 							if(obLS != null){
 								rEsito.inserisciSomma(obLS);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_servizio){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
 
 							if(obLP != null){
 								rEsito.inserisciSomma(obLP);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_porta){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
 						}
@@ -892,33 +1069,56 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							Number obLT = StatsUtils.converToNumber(rowFault.get("somma_latenza_totale"));
 							Number obLS = StatsUtils.converToNumber(rowFault.get("somma_latenza_servizio"));
 							Number obLP = StatsUtils.converToNumber(rowFault.get("somma_latenza_porta"));
+							Number obSommaMediaPesata = null;
+							if(calcolaSommeMediaPesata) {
+								obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
+							}
 
 							if(obLT != null){
 								rEsito.inserisciSomma(obLT);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_totale){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
 
 							if(obLS != null){
 								rEsito.inserisciSomma(obLS);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_servizio){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
 
 							if(obLP != null){
 								rEsito.inserisciSomma(obLP);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_porta){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
+							
 						}
 						else if(isBanda){
 							Number obComplessiva = StatsUtils.converToNumber(rowFault.get("somma_banda_complessiva"));
@@ -985,33 +1185,56 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							Number obLT = StatsUtils.converToNumber(rowKo.get("somma_latenza_totale"));
 							Number obLS = StatsUtils.converToNumber(rowKo.get("somma_latenza_servizio"));
 							Number obLP = StatsUtils.converToNumber(rowKo.get("somma_latenza_porta"));
+							Number obSommaMediaPesata = null;
+							if(calcolaSommeMediaPesata) {
+								obSommaMediaPesata = StatsUtils.converToNumber(row.get("somma_media_pesata"));
+							}
 
 							if(obLT != null){
 								rEsito.inserisciSomma(obLT);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_totale){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
 
 							if(obLS != null){
 								rEsito.inserisciSomma(obLS);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_servizio){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
 
 							if(obLP != null){
 								rEsito.inserisciSomma(obLP);
+								if(calcolaSommeMediaPesata) {
+									rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+								}
 							}
 							else{
 								if(isLatenza_porta){
 									rEsito.inserisciSomma(0);
+									if(calcolaSommeMediaPesata) {
+										rEsitoSommaMediaPesata.add((obSommaMediaPesata!=null) ? obSommaMediaPesata : 0);
+									}
 								}
 							}
+
 						}
 						else if(isBanda){
 							Number obComplessiva = StatsUtils.converToNumber(rowKo.get("somma_banda_complessiva"));
@@ -1062,17 +1285,66 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// ************ FINE ESITI ***********************
 
 					//System.out.println("ESITI");
-					res.add(rEsito);
+					if(forceUseDistribGiornaliera) {
+					
+						Date truncDate = null;
+						if(statisticheSettimanaliUtils!=null) {
+							truncDate = statisticheSettimanaliUtils.truncDate(rEsito.getRisultato(), false);
+						}
+						else {
+							truncDate = statisticheMensiliUtils.truncDate(rEsito.getRisultato(), false);
+						}
+						
+						elaboraIntervalloTemporale(truncDate, res, rEsito, isLatenza_porta, rEsitoSommaMediaPesata);
+						
+					}
+					else {
+						res.add(rEsito);
+					}
 
 				}
 				else{
 
 					//System.out.println("NORMALE");
-					res.add(r);
+					if(forceUseDistribGiornaliera) {
+						
+						Date truncDate = null;
+						if(statisticheSettimanaliUtils!=null) {
+							truncDate = statisticheSettimanaliUtils.truncDate(r.getRisultato(), false);
+						}
+						else {
+							truncDate = statisticheMensiliUtils.truncDate(r.getRisultato(), false);
+						}
+						
+						elaboraIntervalloTemporale(truncDate, res, r, isLatenza_porta, rSommaMediaPesata);
+						
+					}
+					else {
+						res.add(r);
+					}
 				}
 
 			}
 
+			if(forceUseDistribGiornaliera) {
+				
+				if(offset<=0 && res.size()<=limit) {
+					return res;
+				}
+				
+				ArrayList<Res> resPaginated = new ArrayList<Res>();
+				for (int i = 0; i < res.size(); i++) {
+					if(i<offset) {
+						continue;
+					}
+					resPaginated.add(res.get(i));
+					if(resPaginated.size()==limit) {
+						break;
+					}
+				}
+				return resPaginated;
+			}
+			
 			return res;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -1091,6 +1363,88 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return new ArrayList<Res>();
 	}
 
+	private void elaboraIntervalloTemporale(Date truncDate, List<Res> res, Res r, boolean isLatenza, List<Number> sommaMediaPesata) throws Exception {
+
+		boolean mediaPesata = this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere;
+		
+		int indexFound = -1;
+		for (int i = 0; i < res.size(); i++) {
+			Res resCheck = res.get(i);
+			if(resCheck.getRisultato().equals(truncDate)) {
+				indexFound = i;
+				break;
+			}
+		}
+		Res alreadyExistsRes = null;
+		if(indexFound>=0) {
+			alreadyExistsRes = res.remove(indexFound);
+		}
+		if(alreadyExistsRes==null) {
+			// prima entry
+			r.setId(truncDate != null ? truncDate.getTime() : null);
+			r.setRisultato(truncDate);
+			r.setSommeMediaPesata(sommaMediaPesata);
+			res.add(r);
+		}
+		else {
+			// devo calcolare la somma o la media con quello esistente
+			
+			List<Number> listaEsistente = alreadyExistsRes.getSomme();
+			List<Number> sommeMediaPesataEsistente = null;
+			List<Number> listaNuovo = r.getSomme();
+			if(listaEsistente.size()!=listaNuovo.size()) {
+				throw new Exception("La dimensione dei risultati è differente; esistente:"+listaEsistente.size()+", nuovo:"+listaNuovo.size());
+			}
+			if(isLatenza && mediaPesata) {
+				if(sommaMediaPesata.size()!=listaNuovo.size()) {
+					throw new Exception("La dimensione dei risultati rispetto alle somme per la media pesata è differente; sommeMediaPesata:"+sommaMediaPesata.size()+", nuovo:"+listaNuovo.size());
+				}
+				sommeMediaPesataEsistente = alreadyExistsRes.getSommeMediaPesata();
+			}
+			Res rEsitoRicalcolato = new Res();
+			rEsitoRicalcolato.setId(truncDate.getTime());
+			rEsitoRicalcolato.setRisultato(truncDate);
+			List<Number> sommaMediaPesataRicalcolata = new ArrayList<Number>();
+			for (int i = 0; i < listaEsistente.size(); i++) {
+				Number nEsistente = listaEsistente.get(i);
+				Number nNuovo = listaNuovo.get(i);
+				if(isLatenza){
+					if(mediaPesata) {
+						Number nSommaMediaEsistente = sommeMediaPesataEsistente.get(i);
+						Number nSommaMediaNuovo = sommaMediaPesata.get(i);
+						
+						log.debug("Latenza già registrata: "+nEsistente+" per un totale di record "+nSommaMediaEsistente);
+						log.debug("Latenza nuova: "+nNuovo+" per un totale di record "+nSommaMediaNuovo);
+						
+						Number totale = nSommaMediaEsistente.longValue() + nSommaMediaNuovo.longValue();
+						sommaMediaPesataRicalcolata.add(totale);
+						log.debug("TOT: "+totale);
+						Number nMediaEsistente = nSommaMediaEsistente.longValue() * nEsistente.longValue();
+						Number nMediaNuovo = nSommaMediaNuovo.longValue() * nNuovo.longValue();
+						Number nMedia = nMediaEsistente.longValue() + nMediaNuovo.longValue();
+						log.debug("MEDIA: esi "+nMediaEsistente+" + nuovo "+nMediaNuovo+" = "+nMedia);
+						Number nMediaPesata = nMedia.longValue() / totale.longValue();
+						log.debug("MEDIA PESATA: "+nMediaPesata);
+						//log.debug("MEDIA REALE: "+((nEsistente.longValue() + nNuovo.longValue())/2));
+						rEsitoRicalcolato.inserisciSomma(nMediaPesata);
+					}
+					else {
+						rEsitoRicalcolato.inserisciSomma((nEsistente.longValue() + nNuovo.longValue())/2);
+					}
+				}
+				else {
+					rEsitoRicalcolato.inserisciSomma(nEsistente.longValue() + nNuovo.longValue());
+				}
+			}
+			if(isLatenza && mediaPesata) {
+				rEsitoRicalcolato.setSommeMediaPesata(sommaMediaPesataRicalcolata);
+			}
+			res.add(rEsitoRicalcolato);
+			
+		}
+		
+	}
+	
 	private IExpression createGenericAndamentoTemporaleExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, 
 			boolean isCount) {
 		return this.createGenericAndamentoTemporaleExpression(dao, model, isCount, null, true);
@@ -1417,14 +1771,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IServiceSearchWithoutId<?> dao = null;
 			StatisticType tipologia = null;
 			
+			boolean forceUseDistribGiornaliera = false;
+			
 			if(periodo.equals(CostantiReport.ULTIMO_ANNO)){
-				model = StatisticaMensile.model().STATISTICA_BASE;
-				dao = this.statMensileSearchDAO;
-				tipologia = StatisticType.MENSILE;
+				forceUseDistribGiornaliera = this.useStatisticheGiornaliereCalcoloDistribuzioneMensile;
+				if(forceUseDistribGiornaliera) {
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = this.statGiornaliereSearchDAO;
+					tipologia = StatisticType.GIORNALIERA;
+				}
+				else {
+					model = StatisticaMensile.model().STATISTICA_BASE;
+					dao = this.statMensileSearchDAO;
+					tipologia = StatisticType.MENSILE;
+				}
 			} else if(periodo.equals(CostantiReport.ULTIMI_30_GIORNI)){
-				model = StatisticaSettimanale.model().STATISTICA_BASE;
-				dao = this.statSettimanaleSearchDAO;
-				tipologia = StatisticType.SETTIMANALE;
+				forceUseDistribGiornaliera = this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale;
+				if(forceUseDistribGiornaliera) {
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = this.statGiornaliereSearchDAO;
+					tipologia = StatisticType.GIORNALIERA;
+				}
+				else {
+					model = StatisticaSettimanale.model().STATISTICA_BASE;
+					dao = this.statSettimanaleSearchDAO;
+					tipologia = StatisticType.SETTIMANALE;
+				}
 			} else if(periodo.equals(CostantiReport.ULTIMI_7_GIORNI)){
 				model = StatisticaGiornaliera.model().STATISTICA_BASE;
 				dao = this.statGiornaliereSearchDAO;
@@ -1551,7 +1923,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 					Number somma = StatsUtils.converToNumber(row.get("somma"));
 					if(somma!=null){
-						s = numOk.longValue() + somma.longValue();
+						s = s + somma.longValue();
 					}
 
 				}
@@ -1571,7 +1943,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 					Number somma = StatsUtils.converToNumber(row.get("somma"));
 					if(somma!=null){
-						s = numFault.longValue() + somma.longValue();
+						s = s + somma.longValue();
 					}
 
 				}
@@ -1591,7 +1963,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 					Number somma = StatsUtils.converToNumber(row.get("somma"));
 					if(somma!=null){
-						s = numKo.longValue() + somma.longValue();
+						s = s + somma.longValue();
 					}
 
 				}
@@ -1784,17 +2156,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if (this.distribSoggettoSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribSoggettoSearch.getTipologiaRicercaEnum())) {
 				// erogazione/fruizione
 
-				// MITTENTE
-				IExpression mitExpr = dao.newExpression();
-
+				// EROGAZIONE
+				IExpression erogazione_portaApplicativa_Expr = dao.newExpression();
 
 				//tipo porta
-				mitExpr.equals(model.TIPO_PORTA,
+				erogazione_portaApplicativa_Expr.equals(model.TIPO_PORTA,
 						"applicativa");
 
-
 				// Data
-				mitExpr.and().between(model.DATA,
+				erogazione_portaApplicativa_Expr.and().between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
 
@@ -1807,7 +2177,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model, mitExpr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
+					impostaTipiCompatibiliConProtocollo(dao, model, erogazione_portaApplicativa_Expr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 				}
 
@@ -1816,7 +2186,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
 							model.TIPO_DESTINATARIO,model.DESTINATARIO,
 							model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
-					mitExpr.and(permessi);
+					erogazione_portaApplicativa_Expr.and(permessi);
 				}
 
 				// soggetto locale
@@ -1825,13 +2195,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-					mitExpr.and().equals(model.ID_PORTA, idPorta);
+					erogazione_portaApplicativa_Expr.and().equals(model.ID_PORTA, idPorta);
 				}
 				
 				// azione
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch
 						.getNomeAzione()))
-					mitExpr.and().equals(model.AZIONE,
+					erogazione_portaApplicativa_Expr.and().equals(model.AZIONE,
 							this.distribSoggettoSearch.getNomeAzione());
 
 				// nome servizio
@@ -1839,7 +2209,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 					
-					mitExpr.and().
+					erogazione_portaApplicativa_Expr.and().
 						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
@@ -1849,7 +2219,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// esito
-				esitoUtils.setExpression(mitExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
@@ -1861,7 +2231,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
 				if (listaSoggettiGestione.size() > 0) {
-					mitExpr.and();
+					erogazione_portaApplicativa_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 					                                           .size()];
@@ -1875,21 +2245,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						orSoggetti[i] = se;
 						i++;
 					}
-					mitExpr.or(orSoggetti);
+					erogazione_portaApplicativa_Expr.or(orSoggetti);
 				}
 				
-				this.impostaFiltroDatiMittente(mitExpr, this.distribSoggettoSearch, model, true);
-				
-				this.impostaFiltroGruppo(mitExpr, this.distribSoggettoSearch, model, true);
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+					// il mittente puo nn essere specificato
+					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
+						erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
+						erogazione_portaApplicativa_Expr.and().equals(	model.MITTENTE, this.distribSoggettoSearch.getTrafficoPerSoggetto());
+					}
+				}
 
-				// DESTINATARIO
-				IExpression destExpr = dao.newExpression();
+				// FRUIZIONE
+				IExpression fruizione_portaDelegata_Expr = dao.newExpression();
 
-				destExpr.equals(model.TIPO_PORTA,
+				fruizione_portaDelegata_Expr.equals(model.TIPO_PORTA,
 						"delegata");
 
 				// Data
-				destExpr.and().between(model.DATA,
+				fruizione_portaDelegata_Expr.and().between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
 
@@ -1900,7 +2274,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model, destExpr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
+					impostaTipiCompatibiliConProtocollo(dao, model, fruizione_portaDelegata_Expr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 				}
 
@@ -1909,7 +2283,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
 							model.TIPO_DESTINATARIO,model.DESTINATARIO,
 							model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
-					destExpr.and(permessi);
+					fruizione_portaDelegata_Expr.and(permessi);
 				}
 				
 				// soggetto locale
@@ -1918,13 +2292,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-					destExpr.and().equals(model.ID_PORTA, idPorta);
+					fruizione_portaDelegata_Expr.and().equals(model.ID_PORTA, idPorta);
 				}
 
 				// azione
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch
 						.getNomeAzione()))
-					destExpr.and().equals(model.AZIONE,
+					fruizione_portaDelegata_Expr.and().equals(model.AZIONE,
 							this.distribSoggettoSearch.getNomeAzione());
 
 				// nome servizio
@@ -1932,7 +2306,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 					
-					destExpr.and().
+					fruizione_portaDelegata_Expr.and().
 						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
@@ -1942,7 +2316,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// esito
-				esitoUtils.setExpression(destExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(fruizione_portaDelegata_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
@@ -1954,7 +2328,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
 				if (listaSoggettiGestione.size() > 0) {
-					destExpr.and();
+					fruizione_portaDelegata_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 					                                           .size()];
@@ -1968,42 +2342,83 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						orSoggetti[i] = se;
 						i++;
 					}
-					destExpr.or(orSoggetti);
+					fruizione_portaDelegata_Expr.or(orSoggetti);
 				}
 				
-				this.impostaFiltroDatiMittente(destExpr, this.distribSoggettoSearch, model, true);
-				
-				this.impostaFiltroGruppo(destExpr, this.distribSoggettoSearch, model, true);
-
-				mitExpr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				mitExpr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				mitExpr.addGroupBy(model.TIPO_MITTENTE);
-				mitExpr.addGroupBy(model.MITTENTE);
-
-				destExpr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				destExpr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				destExpr.addGroupBy(model.TIPO_DESTINATARIO);
-				destExpr.addGroupBy(model.DESTINATARIO);
-
-				if(forceIndexes!=null && forceIndexes.size()>0){
-					for (Index index : forceIndexes) {
-						mitExpr.addForceIndex(index);	
-						destExpr.addForceIndex(index);	
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+					// il destinatario puo nn essere specificato
+					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
+						fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
+						fruizione_portaDelegata_Expr.and().equals(	model.DESTINATARIO, this.distribSoggettoSearch.getTrafficoPerSoggetto());
 					}
 				}
 				
-				UnionExpression mitUnionExpr = new UnionExpression(mitExpr);
-				mitUnionExpr.addSelectField(
-						model.TIPO_MITTENTE, "tipo_soggetto");
-				mitUnionExpr.addSelectField(model.MITTENTE,
-						"soggetto");
+				// filtro dati m
+				this.impostaFiltroDatiMittente(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+				this.impostaFiltroDatiMittente(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+				
+				this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+				this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 
-				UnionExpression destUnionExpr = new UnionExpression(destExpr);
-				destUnionExpr.addSelectField(
-						model.TIPO_DESTINATARIO,
-						"tipo_soggetto");
-				destUnionExpr.addSelectField(
-						model.DESTINATARIO, "soggetto");
+				// UNION
+
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_MITTENTE);
+					erogazione_portaApplicativa_Expr.addGroupBy(model.MITTENTE);
+
+					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_DESTINATARIO);
+					fruizione_portaDelegata_Expr.addGroupBy(model.DESTINATARIO);
+				}
+				else{
+					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_DESTINATARIO);
+					erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
+
+					fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_MITTENTE);
+					fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
+				}
+
+				if(forceIndexes!=null && forceIndexes.size()>0){
+					for (Index index : forceIndexes) {
+						erogazione_portaApplicativa_Expr.addForceIndex(index);	
+						fruizione_portaDelegata_Expr.addForceIndex(index);
+					}
+				}
+				
+				UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.TIPO_MITTENTE,
+							"tipo_soggetto");
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.MITTENTE,
+							"soggetto");
+				}
+				else{
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.TIPO_DESTINATARIO,
+							"tipo_soggetto");
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.DESTINATARIO,
+							"soggetto");
+				}
+
+				UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					fruizione_portaDelegata_UnionExpr.addSelectField(
+							model.TIPO_DESTINATARIO, "tipo_soggetto");
+					fruizione_portaDelegata_UnionExpr.addSelectField(model.DESTINATARIO,
+							"soggetto");
+				}
+				else{
+					fruizione_portaDelegata_UnionExpr.addSelectField(
+							model.TIPO_MITTENTE, "tipo_soggetto");
+					fruizione_portaDelegata_UnionExpr.addSelectField(model.MITTENTE,
+							"soggetto");
+				}
 
 				Union union = new Union();
 				union.setUnionAll(true);
@@ -2013,7 +2428,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addGroupBy("soggetto");
 
 
-				NonNegativeNumber nnn = dao.unionCount(union, mitUnionExpr, destUnionExpr); 
+				NonNegativeNumber nnn = dao.unionCount(union, erogazione_portaApplicativa_UnionExpr, fruizione_portaDelegata_UnionExpr); 
 				return nnn != null ? nnn.longValue() : 0L;
 
 			} else if (TipologiaRicerca.ingresso.equals(this.distribSoggettoSearch.getTipologiaRicercaEnum())) {
@@ -2022,11 +2437,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// sono
 				// admin)
 
-				// MITTENTE
-				IExpression mitExpr = dao.newExpression();
+				// EROGAZIONE
+				IExpression erogazione_portaApplicativa_Expr = dao.newExpression();
 
 				// Data
-				mitExpr.between(model.DATA,
+				erogazione_portaApplicativa_Expr.between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
 
@@ -2037,11 +2452,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model, mitExpr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
+					impostaTipiCompatibiliConProtocollo(dao, model, erogazione_portaApplicativa_Expr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 				}
 
-				mitExpr.and().equals(model.TIPO_PORTA,
+				erogazione_portaApplicativa_Expr.and().equals(model.TIPO_PORTA,
 						"applicativa");
 
 				// permessi utente operatore
@@ -2049,7 +2464,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
 							model.TIPO_DESTINATARIO,model.DESTINATARIO,
 							model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
-					mitExpr.and(permessi);
+					erogazione_portaApplicativa_Expr.and(permessi);
 				}
 				
 				// soggetto locale
@@ -2058,13 +2473,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-					mitExpr.and().equals(model.ID_PORTA, idPorta);
+					erogazione_portaApplicativa_Expr.and().equals(model.ID_PORTA, idPorta);
 				}
 
 				// azione
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch
 						.getNomeAzione()))
-					mitExpr.and().equals(model.AZIONE,
+					erogazione_portaApplicativa_Expr.and().equals(model.AZIONE,
 							this.distribSoggettoSearch.getNomeAzione());
 
 				// nome servizio
@@ -2072,7 +2487,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 					
-					mitExpr.and().
+					erogazione_portaApplicativa_Expr.and().
 						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
@@ -2082,7 +2497,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// esito
-				esitoUtils.setExpression(mitExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
@@ -2094,7 +2509,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
 				if (listaSoggettiGestione.size() > 0) {
-					mitExpr.and();
+					erogazione_portaApplicativa_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 					                                           .size()];
@@ -2108,36 +2523,67 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						orSoggetti[i] = se;
 						i++;
 					}
-					mitExpr.or(orSoggetti);
+					erogazione_portaApplicativa_Expr.or(orSoggetti);
 				}
 				
-				this.impostaFiltroDatiMittente(mitExpr, this.distribSoggettoSearch, model, true);
-				
-				this.impostaFiltroGruppo(mitExpr, this.distribSoggettoSearch, model, true);
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+					// il mittente puo nn essere specificato
+					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeMittente())) {
+						erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoMittente());
+						erogazione_portaApplicativa_Expr.and().equals(	model.MITTENTE, this.distribSoggettoSearch.getNomeMittente());
+					}
+				}
 
-				mitExpr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				mitExpr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				mitExpr.addGroupBy(model.TIPO_MITTENTE);
-				mitExpr.addGroupBy(model.MITTENTE);
+				// filtro dati m
+				this.impostaFiltroDatiMittente(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+				
+				this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+				
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_MITTENTE);
+					erogazione_portaApplicativa_Expr.addGroupBy(model.MITTENTE);
+				}
+				else{
+					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_DESTINATARIO);
+					erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
+				}
 
 				if(forceIndexes!=null && forceIndexes.size()>0){
 					for (Index index : forceIndexes) {
-						mitExpr.addForceIndex(index);		
+						erogazione_portaApplicativa_Expr.addForceIndex(index);		
 					}
 				}
 				
-				UnionExpression mitUnionExpr = new UnionExpression(mitExpr);
-				mitUnionExpr.addSelectField(
-						model.TIPO_MITTENTE, "tipo_soggetto");
-				mitUnionExpr.addSelectField(model.MITTENTE,
-						"soggetto");
+				UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					erogazione_portaApplicativa_UnionExpr.addSelectField(
+							model.TIPO_MITTENTE, "tipo_soggetto");
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.MITTENTE,
+							"soggetto");
+				}
+				else{
+					erogazione_portaApplicativa_UnionExpr.addSelectField(
+							model.TIPO_DESTINATARIO, "tipo_soggetto");
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.DESTINATARIO,
+							"soggetto");
+				}
 
 				// Espressione finta per usare l'ordinamento
 				IExpression fakeExpr = dao.newExpression();
 				UnionExpression unionExprFake = new UnionExpression(fakeExpr);
-				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
-				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
-
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
+					unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
+				}
+				else{
+					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
+					unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
+				}
+				
 				Union union = new Union();
 				union.setUnionAll(true);
 				union.addField("tipo_soggetto");
@@ -2145,17 +2591,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
 
-				NonNegativeNumber nnn = dao.unionCount(union, mitUnionExpr, unionExprFake); 
+				NonNegativeNumber nnn = dao.unionCount(union, erogazione_portaApplicativa_UnionExpr, unionExprFake); 
 				return nnn != null ? nnn.longValue() - 1 : 0L;
 			} else {
 				// FRUIZIONE
 				// il mittente e' l'utente loggato (sempre presente)
 
-				// DESTINATARIO
-				IExpression destExpr = dao.newExpression();
+				// FRUIZIONE
+				IExpression fruizione_portaDelegata_Expr = dao.newExpression();
 
 				// Data
-				destExpr.between(model.DATA,
+				fruizione_portaDelegata_Expr.between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
 
@@ -2166,11 +2612,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model, destExpr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
+					impostaTipiCompatibiliConProtocollo(dao, model, fruizione_portaDelegata_Expr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 				}
 
-				destExpr.and().equals(model.TIPO_PORTA,
+				fruizione_portaDelegata_Expr.and().equals(model.TIPO_PORTA,
 						"delegata");
 
 				// permessi utente operatore
@@ -2178,7 +2624,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
 							model.TIPO_DESTINATARIO,model.DESTINATARIO,
 							model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
-					destExpr.and(permessi);
+					fruizione_portaDelegata_Expr.and(permessi);
 				}
 				
 				// soggetto locale
@@ -2187,13 +2633,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-					destExpr.and().equals(model.ID_PORTA, idPorta);
+					fruizione_portaDelegata_Expr.and().equals(model.ID_PORTA, idPorta);
 				}
 
 				// azione
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch
 						.getNomeAzione()))
-					destExpr.and().equals(model.AZIONE,
+					fruizione_portaDelegata_Expr.and().equals(model.AZIONE,
 							this.distribSoggettoSearch.getNomeAzione());
 
 				// nome servizio
@@ -2201,7 +2647,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 					
-					destExpr.and().
+					fruizione_portaDelegata_Expr.and().
 						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
@@ -2211,7 +2657,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// esito
-				esitoUtils.setExpression(destExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(fruizione_portaDelegata_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
@@ -2223,7 +2669,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
 				if (listaSoggettiGestione.size() > 0) {
-					destExpr.and();
+					fruizione_portaDelegata_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 					                                           .size()];
@@ -2237,37 +2683,69 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						orSoggetti[i] = se;
 						i++;
 					}
-					destExpr.or(orSoggetti);
+					fruizione_portaDelegata_Expr.or(orSoggetti);
 				}
 				
-				this.impostaFiltroDatiMittente(destExpr, this.distribSoggettoSearch, model, true);
-				
-				this.impostaFiltroGruppo(destExpr, this.distribSoggettoSearch, model, true);
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+					// il destinatario puo nn essere specificato
+					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeDestinatario())) {
+						fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoDestinatario());
+						fruizione_portaDelegata_Expr.and().equals(	model.DESTINATARIO, this.distribSoggettoSearch.getNomeDestinatario());
+					}
+				}
 
-				destExpr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				destExpr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				destExpr.addGroupBy(model.TIPO_DESTINATARIO);
-				destExpr.addGroupBy(model.DESTINATARIO);
+				// filtro dati m
+				this.impostaFiltroDatiMittente(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+				
+				this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+				
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_DESTINATARIO);
+					fruizione_portaDelegata_Expr.addGroupBy(model.DESTINATARIO);
+				}
+				else{
+					fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_MITTENTE);
+					fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
+				}
 
 				if(forceIndexes!=null && forceIndexes.size()>0){
 					for (Index index : forceIndexes) {
-						destExpr.addForceIndex(index);	
+						fruizione_portaDelegata_Expr.addForceIndex(index);	
 					}
 				}
 				
-				UnionExpression destUnionExpr = new UnionExpression(destExpr);
-				destUnionExpr.addSelectField(
-						model.TIPO_DESTINATARIO,
-						"tipo_soggetto");
-				destUnionExpr.addSelectField(
-						model.DESTINATARIO, "soggetto");
+				UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					fruizione_portaDelegata_UnionExpr.addSelectField(
+							model.TIPO_DESTINATARIO,
+							"tipo_soggetto");
+					fruizione_portaDelegata_UnionExpr.addSelectField(
+							model.DESTINATARIO, "soggetto");
+				}
+				else{
+					fruizione_portaDelegata_UnionExpr.addSelectField(
+							model.TIPO_MITTENTE,
+							"tipo_soggetto");
+					fruizione_portaDelegata_UnionExpr.addSelectField(
+							model.MITTENTE, "soggetto");
+				}
 
 				// Espressione finta per usare l'ordinamento
 				IExpression fakeExpr = dao.newExpression();
 				UnionExpression unionExprFake = new UnionExpression(fakeExpr);
-				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
-				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
-
+				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
+					unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
+				}
+				else{
+					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
+					unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
+				}
+				
 				Union union = new Union();
 				union.setUnionAll(true);
 				union.addField("tipo_soggetto");
@@ -2275,7 +2753,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
 
-				NonNegativeNumber nnn =  dao.unionCount(union, destUnionExpr, unionExprFake); 
+				NonNegativeNumber nnn =  dao.unionCount(union, fruizione_portaDelegata_UnionExpr, unionExprFake); 
 				return nnn != null ? nnn.longValue() - 1 : 0L;
 
 				//				return dao.count(destExpr);

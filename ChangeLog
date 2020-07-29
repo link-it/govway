@@ -1,3 +1,16 @@
+2020-07-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, BatchStatistiche]
+	Aggiunta funzionalità OP-1031
+	Il campionamento statistico mensile e settimanale, in ambienti con un elevato traffico, non era performante e quindi ne è stata disabilitata la generazione.
+	I report di distribuzione statistica che riguardano un periodo superiore al giorno vengono adesso calcolati con il campionamento giornaliero.
+	Inoltre nei report statistici che non riguardano distribuzioni temporali è stata eliminata la voce 'Unità temporale' tra i criteri di ricerca; la scelta compare solamente, 
+	limitata ai valori 'oraria' e 'giornaliera', nel caso di impostazione di un periodo personalizzato poichè influenza il widget nel quale viene consentito o meno la possibilità di indicare l'orario desiderato.
+	Durante la generazione delle statistiche è stato inoltre corretto il valore attribuito ai tempi di latenza per le transazioni che non possedevano le date dei quattro corner, 
+	utilizzando un valore null al posto di un fuorviante valore 0.
+	Infine nella Ricerca Avanzata delle transazioni è adesso consentito effettuare una ricerca che includa qualsiasi profilo di interoperabiltà; 
+	con questa scelta anche l'indicazione del soggetto locale diventa a campo libero.
+
 2020-07-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

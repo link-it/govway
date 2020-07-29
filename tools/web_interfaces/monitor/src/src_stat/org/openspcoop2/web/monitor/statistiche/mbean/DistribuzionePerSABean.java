@@ -191,17 +191,21 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);
-		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
-			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
-		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
-			sb.append(CostantiGrafici.ORARIA_LABEL).append(CostantiGrafici.WHITE_SPACE);
-		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
-			sb.append( CostantiGrafici.MENSILE_LABEL).append(CostantiGrafici.WHITE_SPACE);
-		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
-			sb.append(CostantiGrafici.SETTIMANALE_LABEL).append(CostantiGrafici.WHITE_SPACE);
-		} else {
-			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
+		
+		if(((StatsSearchForm)this.search).isShowUnitaTempo()) {
+			if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
+				sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
+			} else if (StatisticType.ORARIA.equals(this.getTempo())) {
+				sb.append(CostantiGrafici.ORARIA_LABEL).append(CostantiGrafici.WHITE_SPACE);
+			} else if (StatisticType.MENSILE.equals(this.getTempo())) {
+				sb.append( CostantiGrafici.MENSILE_LABEL).append(CostantiGrafici.WHITE_SPACE);
+			} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
+				sb.append(CostantiGrafici.SETTIMANALE_LABEL).append(CostantiGrafici.WHITE_SPACE);
+			} else {
+				sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
+			}
 		}
+		
 		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		sb.append("(").append(getTipoFiltroDatiMittente()).append(")").append(CostantiGrafici.WHITE_SPACE);
 		return sb.toString();

@@ -50,8 +50,13 @@
 					</rich:comboBox>
 				</link:prop>
 			</a4j:outputPanel>
-			
-			<a4j:outputPanel id="panelSoggettoLocale" layout="block" rendered="#{(applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.showRicercaPanel) }">
+			 
+			<a4j:outputPanel id="panelSoggettoLocaleRicercaLiberaTuttiProfili" layout="block" rendered="#{sf_bean.ricercaLiberaTuttiProfili}">
+				<link:prop label="#{msg['transazioni.search.soggettoLocale']}" rendered="">
+					<h:inputText id="ricercaLiberaSoggettoLocale" value="#{sf_bean.ricercaLiberaSoggettoLocale}"  styleClass="inputLinkLong"/>
+				</link:prop>	
+			</a4j:outputPanel>						
+			<a4j:outputPanel id="panelSoggettoLocaleAmministratore" layout="block" rendered="#{(not sf_bean.ricercaLiberaTuttiProfili) and (applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.showRicercaPanel) }">						
 				<c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
 					<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
 						<h:inputText id="sogLocaleInput" value="#{sf_labelSoggettoLocale}" styleClass="inputLinkLong"/>
@@ -83,7 +88,7 @@
 					</link:prop>
    				</c:if>
 			</a4j:outputPanel>
-			<a4j:outputPanel id="panelSoggettoLocaleNonAmministratore" layout="block" rendered="#{(applicationBean.user and !applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.showRicercaPanel) }">
+			<a4j:outputPanel id="panelSoggettoLocaleNonAmministratore" layout="block" rendered="#{(not sf_bean.ricercaLiberaTuttiProfili) and (applicationBean.user and !applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.showRicercaPanel) }">
 				<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
 					<rich:comboBox width="416" id="sogLocaleSuggestion"  converter="selectItemConverter"
 									value="#{sf_soggettoLocale}" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"

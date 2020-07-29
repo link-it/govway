@@ -612,6 +612,10 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneTemporale.nascondiComandoSelezioneNumeroLabel", true, true));
 	}
 	
+	public boolean isMostraUnitaTempoDistribuzioneNonTemporale() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneNonTemporale.mostraUnitaTempo", true, true));
+	}
+	
 
 
 
@@ -885,6 +889,16 @@ public class PddMonitorProperties {
 
 	public boolean isAttivoUtilizzaCountStatisticheListaConfigurazioni() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.configurazioni.lista.utilizzaCount.enabled", true, true));
+	}
+	
+	public boolean isUseStatisticheGiornaliereCalcoloDistribuzioneSettimanale() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneSettimanale.usaStatisticheGiornaliere", true, true));
+	}
+	public boolean isUseStatisticheGiornaliereCalcoloDistribuzioneMensile() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneMensile.usaStatisticheGiornaliere", true, true));
+	}
+	public boolean isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneSettimanaleMensile.usaStatisticheGiornaliere.latenza.mediaPesata", true, true));
 	}
 	
 	public boolean visualizzaPaginaAboutExtendedInfo() throws Exception{
