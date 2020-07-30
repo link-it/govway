@@ -335,6 +335,12 @@ public abstract class AbstractCacheWrapper {
 	}
 	
 	public Object getObjectCache(Object driverParam,boolean debug,String keyCacheParam,String methodName,Object... arguments) throws Throwable{
+		return _getObjectCache(driverParam,debug,keyCacheParam,methodName,null,arguments);
+	}
+	public Object getObjectCache(Object driverParam,boolean debug,String keyCacheParam,String methodName,Class<?> [] cArguments, Object... arguments) throws Throwable{
+		return _getObjectCache(driverParam,debug,keyCacheParam,methodName,cArguments,arguments);
+	}
+	public Object _getObjectCache(Object driverParam,boolean debug,String keyCacheParam,String methodName,Class<?> [] cArguments, Object... arguments) throws Throwable{
 				
 		
 		Throwable cachableException = null;
@@ -352,7 +358,7 @@ public abstract class AbstractCacheWrapper {
 				this.log.debug("@method:"+methodName+"@ (Cache Disabled) search object with driver...");
 			}
 			try{
-				obj = getObject(driverParam, debug, methodName, arguments);
+				obj = getObject(driverParam, debug, methodName, cArguments, arguments);
 			}catch(Throwable e){
 				if(this.isCachableException(e)){
 					cachableException = e;
@@ -440,7 +446,7 @@ public abstract class AbstractCacheWrapper {
 					boolean nullObject = false;
 					boolean cacheble = false;
 					try{
-						obj = getObject(driverParam, debug, methodName, arguments);
+						obj = getObject(driverParam, debug, methodName, cArguments, arguments);
 						nullObject = true;
 						cacheble = true;
 					}catch(Throwable e){
@@ -526,7 +532,7 @@ public abstract class AbstractCacheWrapper {
 		}
 	}
 	
-	private Object getObject(Object driverParam,boolean debug,String methodName,Object... arguments) throws Throwable{
+	private Object getObject(Object driverParam,boolean debug,String methodName,Class<?> [] cArguments, Object... arguments) throws Throwable{
 
 		
 		// Effettuo le query nella mia gerarchia di registri.
@@ -540,61 +546,292 @@ public abstract class AbstractCacheWrapper {
 				Method method =  driver.getClass().getMethod(methodName);
 				obj = method.invoke(driver);
 			}else if(arguments.length==1){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass());
-				obj = method.invoke(driver,arguments[0]);
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()));
+				obj = method.invoke(driver,
+						arguments[0]);
 			}else if(arguments.length==2){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1]);
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1]);
 			}else if(arguments.length==3){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2]);
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2]);
 			}else if(arguments.length==4){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass(),
-						arguments[3].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2],
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
 						arguments[3]);
 			}else if(arguments.length==5){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass(),
-						arguments[3].getClass(),arguments[4].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2],
-						arguments[3],arguments[4]);
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4]);
 			}else if(arguments.length==6){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass(),
-						arguments[3].getClass(),arguments[4].getClass(),arguments[5].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2],
-						arguments[3],arguments[4],arguments[5]);
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5]);
 			}else if(arguments.length==7){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass(),
-						arguments[3].getClass(),arguments[4].getClass(),arguments[5].getClass(),
-						arguments[6].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2],
-						arguments[3],arguments[4],arguments[5],
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
 						arguments[6]);
 			}else if(arguments.length==8){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass(),
-						arguments[3].getClass(),arguments[4].getClass(),arguments[5].getClass(),
-						arguments[6].getClass(),arguments[7].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2],
-						arguments[3],arguments[4],arguments[5],
-						arguments[6],arguments[7]);
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()),
+						(cArguments!=null ? cArguments[7] :arguments[7].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
+						arguments[6],
+						arguments[7]);
 			}else if(arguments.length==9){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass(),
-						arguments[3].getClass(),arguments[4].getClass(),arguments[5].getClass(),
-						arguments[6].getClass(),arguments[7].getClass(),arguments[8].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2],
-						arguments[3],arguments[4],arguments[5],
-						arguments[6],arguments[7],arguments[8]);
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()),
+						(cArguments!=null ? cArguments[7] :arguments[7].getClass()),
+						(cArguments!=null ? cArguments[8] :arguments[8].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
+						arguments[6],
+						arguments[7],
+						arguments[8]);
 			}else if(arguments.length==10){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass(),
-						arguments[3].getClass(),arguments[4].getClass(),arguments[5].getClass(),
-						arguments[6].getClass(),arguments[7].getClass(),arguments[8].getClass(),
-						arguments[9].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2],
-						arguments[3],arguments[4],arguments[5],
-						arguments[6],arguments[7],arguments[8],
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()),
+						(cArguments!=null ? cArguments[7] :arguments[7].getClass()),
+						(cArguments!=null ? cArguments[8] :arguments[8].getClass()),
+						(cArguments!=null ? cArguments[9] :arguments[9].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
+						arguments[6],
+						arguments[7],
+						arguments[8],
 						arguments[9]);
+			}else if(arguments.length==11){
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()),
+						(cArguments!=null ? cArguments[7] :arguments[7].getClass()),
+						(cArguments!=null ? cArguments[8] :arguments[8].getClass()),
+						(cArguments!=null ? cArguments[9] :arguments[9].getClass()),
+						(cArguments!=null ? cArguments[10] :arguments[10].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
+						arguments[6],
+						arguments[7],
+						arguments[8],
+						arguments[9],
+						arguments[10]);
+			}else if(arguments.length==12){
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()),
+						(cArguments!=null ? cArguments[7] :arguments[7].getClass()),
+						(cArguments!=null ? cArguments[8] :arguments[8].getClass()),
+						(cArguments!=null ? cArguments[9] :arguments[9].getClass()),
+						(cArguments!=null ? cArguments[10] :arguments[10].getClass()),
+						(cArguments!=null ? cArguments[11] :arguments[11].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
+						arguments[6],
+						arguments[7],
+						arguments[8],
+						arguments[9],
+						arguments[10],
+						arguments[11]);	
+			}else if(arguments.length==13){
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()),
+						(cArguments!=null ? cArguments[7] :arguments[7].getClass()),
+						(cArguments!=null ? cArguments[8] :arguments[8].getClass()),
+						(cArguments!=null ? cArguments[9] :arguments[9].getClass()),
+						(cArguments!=null ? cArguments[10] :arguments[10].getClass()),
+						(cArguments!=null ? cArguments[11] :arguments[11].getClass()),
+						(cArguments!=null ? cArguments[12] :arguments[12].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
+						arguments[6],
+						arguments[7],
+						arguments[8],
+						arguments[9],
+						arguments[10],
+						arguments[11],
+						arguments[12]);	
+			}else if(arguments.length==14){
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()),
+						(cArguments!=null ? cArguments[7] :arguments[7].getClass()),
+						(cArguments!=null ? cArguments[8] :arguments[8].getClass()),
+						(cArguments!=null ? cArguments[9] :arguments[9].getClass()),
+						(cArguments!=null ? cArguments[10] :arguments[10].getClass()),
+						(cArguments!=null ? cArguments[11] :arguments[11].getClass()),
+						(cArguments!=null ? cArguments[12] :arguments[12].getClass()),
+						(cArguments!=null ? cArguments[13] :arguments[13].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
+						arguments[6],
+						arguments[7],
+						arguments[8],
+						arguments[9],
+						arguments[10],
+						arguments[11],
+						arguments[12],
+						arguments[13]);	
+			}else if(arguments.length==15){
+				Method method =  driver.getClass().getMethod(methodName,
+						(cArguments!=null ? cArguments[0] :arguments[0].getClass()),
+						(cArguments!=null ? cArguments[1] :arguments[1].getClass()),
+						(cArguments!=null ? cArguments[2] :arguments[2].getClass()),
+						(cArguments!=null ? cArguments[3] :arguments[3].getClass()),
+						(cArguments!=null ? cArguments[4] :arguments[4].getClass()),
+						(cArguments!=null ? cArguments[5] :arguments[5].getClass()),
+						(cArguments!=null ? cArguments[6] :arguments[6].getClass()),
+						(cArguments!=null ? cArguments[7] :arguments[7].getClass()),
+						(cArguments!=null ? cArguments[8] :arguments[8].getClass()),
+						(cArguments!=null ? cArguments[9] :arguments[9].getClass()),
+						(cArguments!=null ? cArguments[10] :arguments[10].getClass()),
+						(cArguments!=null ? cArguments[11] :arguments[11].getClass()),
+						(cArguments!=null ? cArguments[12] :arguments[12].getClass()),
+						(cArguments!=null ? cArguments[13] :arguments[13].getClass()),
+						(cArguments!=null ? cArguments[14] :arguments[14].getClass()));
+				obj = method.invoke(driver,
+						arguments[0],
+						arguments[1],
+						arguments[2],
+						arguments[3],
+						arguments[4],
+						arguments[5],
+						arguments[6],
+						arguments[7],
+						arguments[8],
+						arguments[9],
+						arguments[10],
+						arguments[11],
+						arguments[12],
+						arguments[13],
+						arguments[14]);
 			}else
-				throw new Exception("More than 10 arguments unsupported");
+				throw new Exception("More than 15 arguments unsupported");
 		}catch(java.lang.reflect.InvocationTargetException e){
 			if(e.getTargetException()!=null){
 				throw e.getTargetException();

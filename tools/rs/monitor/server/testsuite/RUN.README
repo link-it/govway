@@ -25,6 +25,8 @@ Configurare l'ambiente di esecuzione dei test:
 	  b) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore config_https/jks/erogatore.jks
   	     Indicazioni descritte per JBoss in config_https/configurazioneTrustStoreJBOSS.txt
 
+	- Copiare il keystore keystore_testsuite/testsuite_petstore.jks in /etc/govway/keys/testsuite_petstore.jks
+
 	- Riavviare GovWay e procedere con i test
 
 Compilare i test con il comando 'ant clean build'

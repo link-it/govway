@@ -36,11 +36,17 @@ import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.cache.Cache;
+import org.openspcoop2.utils.cache.CacheJMXUtils;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.core.InitServlet;
+import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCache;
+import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxDatiConfigurazione;
+import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxRicercheConfigurazione;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.Costanti;
 import org.slf4j.Logger;
 
@@ -149,6 +155,61 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 
 		return this.localLogPropertyName;
 	}
+	
+	
+	
+	/*
+	 * CACHE
+	 */
+	public static boolean debugCache_datiConfigurazione = false;
+	public static DynamicUtilsServiceCache dynamicUtilsServiceCache_datiConfigurazione = null;
+	public static boolean debugCache_ricercheConfigurazione = false;
+	public static DynamicUtilsServiceCache dynamicUtilsServiceCache_ricercheConfigurazione = null;
+	private static final String DEFAULT_CACHE_NAME = "/"+Costanti.APP_CACHE_PROPERTIES_PATH;
+	private static final String DEFAULT_LOCAL_CACHE_NAME = "/"+Costanti.APP_CACHE_PROPERTIES_LOCAL_PATH;
+	private static final String DEFAULT_CACHE_PROPERTY_NAME = Costanti.APP_CACHE_PROPERTIES;
+	private String cacheProperties;
+	public void setCacheProperties(String cacheName) {
+		this.cacheProperties = cacheName;
+	}
+	private String localCacheProperties;
+	public void setLocalCacheProperties(String localCacheProperties) {
+		this.localCacheProperties = localCacheProperties;
+	}
+	private String localCachePropertyName;
+	public void setLocalCachePropertyName(String localCachePropertyName) {
+		this.localCachePropertyName = localCachePropertyName;
+	}
+	public String getCacheProperties() {
+
+		// se il cacheName non e' impostato restituisco il default cache
+		if (this.cacheProperties == null
+				|| "".equals(this.cacheProperties))
+			return AbstractConsoleStartupListener.DEFAULT_CACHE_NAME;
+
+		return this.cacheProperties;
+	}
+	public String getLocalCacheProperties() {
+
+		// se il cacheName non e' impostato restituisco il default cache
+		if (this.localCacheProperties == null
+				|| "".equals(this.localCacheProperties))
+			return AbstractConsoleStartupListener.DEFAULT_LOCAL_CACHE_NAME;
+
+		return this.localCacheProperties;
+	}
+	public String getLocalCachePropertyName() {
+
+		// se il cacheName non e' impostato restituisco il default cache
+		if (this.localCachePropertyName == null
+				|| "".equals(this.localCachePropertyName))
+			return AbstractConsoleStartupListener.DEFAULT_CACHE_PROPERTY_NAME;
+
+		return this.localCachePropertyName;
+	}
+	
+	
+	
 
 
 	private String getStringInitParameter(ServletContext ctx,String name){
@@ -260,6 +321,86 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		}
 
 
+		
+		// *** CACHE PROPERTIES ***
+
+		boolean isInitializeCache = false;
+		boolean cacheEnabled_datiConfigurazione = false;
+		boolean cacheEnabled_ricercheConfigurazione = false;
+		Logger logCore = LoggerManager.getPddMonitorCoreLogger();
+		try {
+			cacheEnabled_datiConfigurazione = appProperties.isAbilitataCache_datiConfigurazione();
+			cacheEnabled_ricercheConfigurazione = appProperties.isAbilitataCache_ricercheConfigurazione();
+			if(cacheEnabled_datiConfigurazione || cacheEnabled_ricercheConfigurazione) {
+			
+				this.setCacheProperties(getStringInitParameter(ctx, "cacheProperties"));
+				this.setLocalCacheProperties(getStringInitParameter(ctx, "localCacheProperties"));
+				this.setLocalCachePropertyName(getStringInitParameter(ctx, "localCachePropertyName"));
+	
+				isInitializeCache = Cache.initialize(AbstractConsoleStartupListener.log, logCore, 
+						getCacheProperties(),
+						appProperties.getConfigurationDir(), null, 
+						org.openspcoop2.utils.Costanti.OPENSPCOOP2_LOCAL_HOME, getLocalCachePropertyName(), getLocalCacheProperties());
+			}
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione della cache "
+					+ getCacheProperties()+": "+e.getMessage();
+			AbstractConsoleStartupListener.log.error(
+					//					throw new ServletException(
+					msgErrore,e);
+			throw new RuntimeException(msgErrore,e);
+		}
+		if((cacheEnabled_datiConfigurazione || cacheEnabled_ricercheConfigurazione) && isInitializeCache == false){
+			String msgErrore = "Errore durante l'inizializzazione della cache "
+					+ getCacheProperties()+": cache non inizializzata";
+			AbstractConsoleStartupListener.log.error(
+					//					throw new ServletException(
+					msgErrore);
+			throw new RuntimeException(msgErrore);
+		}
+		if(cacheEnabled_datiConfigurazione) {
+			try {
+				debugCache_datiConfigurazione = appProperties.isDebugCache_datiConfigurazione();
+				
+				dynamicUtilsServiceCache_datiConfigurazione = new DynamicUtilsServiceCache(DynamicUtilsServiceCache.CACHE_NAME_DATI_CONFIGURAZIONE,
+						logCore, appProperties.getDimensioneCache_datiConfigurazione(), appProperties.getAlgoritmoCache_datiConfigurazione(),
+						appProperties.getItemIdleTimeCache_datiConfigurazione(), appProperties.getItemLifeSecondCache_datiConfigurazione());
+				if(appProperties.isAbilitataJmxCache_datiConfigurazione()) {
+					DynamicUtilsServiceCacheJmxDatiConfigurazione jmxObject = new DynamicUtilsServiceCacheJmxDatiConfigurazione();
+					CacheJMXUtils.register(AbstractConsoleStartupListener.log,jmxObject,DynamicUtilsServiceCache.JMX_DOMAIN,jmxObject.getCacheWrapper().getCacheName());
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante la creazione della cache "
+						+ getCacheProperties()+": "+e.getMessage();
+				AbstractConsoleStartupListener.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
+		}
+		if(cacheEnabled_ricercheConfigurazione) {
+			try {
+				debugCache_ricercheConfigurazione = appProperties.isDebugCache_ricercheConfigurazione();
+				
+				dynamicUtilsServiceCache_ricercheConfigurazione = new DynamicUtilsServiceCache(DynamicUtilsServiceCache.CACHE_NAME_RICERCHE_CONFIGURAZIONE,
+						logCore, appProperties.getDimensioneCache_ricercheConfigurazione(), appProperties.getAlgoritmoCache_ricercheConfigurazione(),
+						appProperties.getItemIdleTimeCache_ricercheConfigurazione(), appProperties.getItemLifeSecondCache_ricercheConfigurazione());
+				if(appProperties.isAbilitataJmxCache_ricercheConfigurazione()) {
+					DynamicUtilsServiceCacheJmxRicercheConfigurazione jmxObject = new DynamicUtilsServiceCacheJmxRicercheConfigurazione();
+					CacheJMXUtils.register(AbstractConsoleStartupListener.log,jmxObject,DynamicUtilsServiceCache.JMX_DOMAIN,jmxObject.getCacheWrapper().getCacheName());
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante la creazione della cache "
+						+ getCacheProperties()+": "+e.getMessage();
+				AbstractConsoleStartupListener.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
+		}
+		
+				
+		
 
 		// inizializza la ProtocolFactoryManager
 		ConfigurazionePdD configPdD = null;
@@ -339,6 +480,10 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		if(AbstractConsoleStartupListener.log!=null)
 			AbstractConsoleStartupListener.log.info("Undeploy govwayMonitor Console in corso...");
 
+		if(dynamicUtilsServiceCache_datiConfigurazione!=null || dynamicUtilsServiceCache_ricercheConfigurazione!=null) {
+			CacheJMXUtils.unregister();
+		}
+		
 		if(AbstractConsoleStartupListener.log!=null)
 			AbstractConsoleStartupListener.log.info("Undeploy govwayMonitor Console effettuato.");
 

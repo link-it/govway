@@ -80,6 +80,7 @@ import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
+import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceEngine;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -1242,7 +1243,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		IExpression expressionTipoServiziCompatibili = null;
 		try {
 			if(protocollo != null) {
-				expressionTipoServiziCompatibili = DynamicUtilsService.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
+				expressionTipoServiziCompatibili = DynamicUtilsServiceEngine.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
 			}
 		} catch (Exception e) {
 			log.error("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
@@ -1255,7 +1256,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		IExpression expressionTipoSoggettiMittenteCompatibili = null;
 		try {
 			if(protocollo != null) {
-				expressionTipoSoggettiMittenteCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.ID_SOGGETTO.TIPO, protocollo);
+				expressionTipoSoggettiMittenteCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.ID_SOGGETTO.TIPO, protocollo);
 			}
 		} catch (Exception e) {
 			log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto mittente compatibili con il protocollo scelto: "+ e.getMessage(), e);
@@ -1269,7 +1270,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		IExpression expressionTipoSoggettiDestinatarioCompatibili = null;
 		try {
 			if(protocollo != null) {
-				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_SOGGETTO_EROGATORE, protocollo);
+				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_SOGGETTO_EROGATORE, protocollo);
 			}
 		} catch (Exception e) {
 			log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);
@@ -1284,7 +1285,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		IExpression expressionTipoServiziCompatibili = null;
 		try {
 			if(protocollo != null) {
-				expressionTipoServiziCompatibili = DynamicUtilsService.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
+				expressionTipoServiziCompatibili = DynamicUtilsServiceEngine.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
 			}
 		} catch (Exception e) {
 			log.error("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
@@ -1297,7 +1298,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		IExpression expressionTipoSoggettiDestinatarioCompatibili = null;
 		try {
 			if(protocollo != null) {
-				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.ID_SOGGETTO.TIPO, protocollo);
+				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.ID_SOGGETTO.TIPO, protocollo);
 			}
 		} catch (Exception e) {
 			log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);

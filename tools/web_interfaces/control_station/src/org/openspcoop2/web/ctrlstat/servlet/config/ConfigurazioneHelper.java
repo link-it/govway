@@ -5871,7 +5871,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias));
 					de.setType(DataElementType.LINK);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
-					de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
+					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_SINGOLA);
 					de.setSize(this.getSize());
 					dati.addElement(de);
 					
@@ -5917,16 +5917,32 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							
 							try{
 								String label = params[i];
+								String labelCorretta = label;
 								String value = "";
 								if(params[i].contains(":")){
 									label = params[i].split(":")[0];
+									labelCorretta = label;
 									value = params[i].split(":")[1];
+									
+									if("ElementiInCache".equals(label)) {
+										labelCorretta = "Elementi in Cache";
+									}
+									else if("MemoriaOccupata".equals(label)) {
+										labelCorretta = "Memoria Occupata";
+									}
+									else if("IdleTime".equals(label)) {
+										labelCorretta = "Idle Time";
+									}
+									else if("LifeTime".equals(label)) {
+										labelCorretta = "Life Time";
+									}
+									
 								}
 								
 								if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.contains(label)){
 								
 									de = newDataElementStyleRuntime();
-									de.setLabel(label);
+									de.setLabel(labelCorretta);
 									if(value!=null){
 										value = StringEscapeUtils.escapeHtml(value);
 									}

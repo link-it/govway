@@ -8,7 +8,7 @@
 	<ui:param value="Informazioni" name="title" />
 	<ui:define name="navbar">
 		<ul>
-			<li><h:outputText value="Informazioni" styleClass="ultimo-path" /></li>
+			<li><h:outputText value="#{msg['about.title']}" styleClass="ultimo-path" /></li>
 		</ul>
 	</ui:define>
 	<ui:define name="body">
@@ -17,35 +17,142 @@
 		</style>
 		<rich:panel id="panelDettaglioInformazioni">
 			<f:facet name="header">
-				<h:outputText id="outDettagliInformazioni" value="Informazioni" />
+				<h:outputText id="outDettagliInformazioni" value="#{msg['about.title']}" />
 			</f:facet>
 			<h:form>
 				<div class="">
 					<div class="form-container">
-						<link:fieldset legend="Prodotto" rendered="#{true}" collapsible="false" closed="false">
+						<link:fieldset legend="#{msg['about.prodotto.section']}" rendered="#{true}" collapsible="false" closed="false">
 						
-							<link:prop label="Versione" rendered="true">
+							<link:prop label="#{msg['about.prodotto.versione']}" rendered="true">
 								<div class="divNoEdit">
 									<h:outputText id="outVersioneProdotto" value="#{applicationBean.idProdotto}" styleClass="spanNoEdit"/>
 								</div>
 							</link:prop>
-							<link:prop label="Sito" rendered="true">
+							<link:prop label="#{msg['about.prodotto.sito']}" rendered="true">
 								<div class="divNoEdit">
 									<h:outputLink id="outSitoProdotto" value="#{applicationBean.sito}" styleClass="spanNoEdit"  target="_blank" >
 										<h:outputText id="outSitoProdottoSpan" value="#{applicationBean.sito}" styleClass="spanNoEdit"/>
 									</h:outputLink>
 								</div>
 							</link:prop>
-							<link:prop label="Copyright" rendered="true">
+							<link:prop label="#{msg['about.prodotto.copyright']}" rendered="true">
 								<div class="divNoEdit">
 									<h:outputText id="outCopyrightProdotto" value="#{applicationBean.copyright}" styleClass="spanNoEdit"/>
 								</div>
 							</link:prop>
-							<link:prop label="Licenza" rendered="true">
+							<link:prop label="#{msg['about.prodotto.licenza']}" rendered="true">
 								<h:inputTextarea id="outLicenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="#{applicationBean.licenzaRows}" styleClass="inputLinkLong" readonly="true" style="width: auto;"/>	
 							</link:prop>
 						
 						</link:fieldset>
+						
+						<a4j:outputPanel id="cachePnl" layout="block" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled or applicationBean.cacheRicercheConfigurazioneEnabled}">
+							<link:fieldset legend="#{msg['about.cache.section']}" rendered="#{true}" collapsible="false" closed="false">
+							
+								<link:prop label="&#160;" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled and applicationBean.cacheRicercheConfigurazioneEnabled}">
+									<div class="divNoEdit">
+										<a4j:commandLink value="#{msg['about.cache.resetAll']}" reRender="cachePnl" action="#{applicationBean.resetAllCache}"/>
+									</div>
+									
+									<rich:spacer id="spacerReset" height="15px"/>
+									
+								</link:prop>
+
+								<a4j:outputPanel id="cacheDatiPnl" layout="block" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled}">
+									<a4j:outputPanel id="idDatiConfigurazioneSubTitle" layout="block" styleClass="subtitle" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<h:outputText id="idDatiConfigurazione" value="#{msg['about.cache.dati.section']}" styleClass="subtitle"/>
+									</a4j:outputPanel>
+									<link:prop label="&#160;" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<a4j:commandLink value="#{msg['about.cache.reset']}" reRender="cachePnl" action="#{applicationBean.resetCacheDatiConfigurazione}"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.stato']}" rendered="#{true}">
+										<div class="divNoEdit">
+											<h:outputText id="outStatoCacheDatiConfigurazione" value="#{applicationBean.cacheDatiConfigurazioneStato}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.algoritmo']}" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outAlgoritmoCacheDatiConfigurazione" value="#{applicationBean.cacheDatiConfigurazioneAlgoritmo}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.dimensione']}" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outDimensioneCacheDatiConfigurazione" value="#{applicationBean.cacheDatiConfigurazioneDimensione}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.elementiInCache']}" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outElementiInCacheCacheDatiConfigurazione" value="#{applicationBean.cacheDatiConfigurazioneElementiInCache}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.memoriaOccupata']}" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outMemoriaOccupataCacheDatiConfigurazione" value="#{applicationBean.cacheDatiConfigurazioneMemoriaOccupata}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.idleTime']}" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outIdleTimeCacheDatiConfigurazione" value="#{applicationBean.cacheDatiConfigurazioneIdleTime}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.lifeTime']}" rendered="#{applicationBean.cacheDatiConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outLifeTimeCacheDatiConfigurazione" value="#{applicationBean.cacheDatiConfigurazioneLifeTime}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="cacheRicerchePnl" layout="block" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+									<a4j:outputPanel id="idRicercheConfigurazioneSubTitle" layout="block" styleClass="subtitle" rendered="#{true}">
+										<h:outputText id="idRicercheConfigurazione" value="#{msg['about.cache.ricerche.section']}" styleClass="subtitle"/>
+									</a4j:outputPanel>
+									<link:prop label="&#160;" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<a4j:commandLink value="#{msg['about.cache.reset']}" reRender="cachePnl" action="#{applicationBean.resetCacheRicercheConfigurazione}"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.stato']}" rendered="#{not applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outStatoCacheRicercheConfigurazione" value="#{applicationBean.cacheRicercheConfigurazioneStato}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.algoritmo']}" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outAlgoritmoCacheRicercheConfigurazione" value="#{applicationBean.cacheRicercheConfigurazioneAlgoritmo}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.dimensione']}" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outDimensioneCacheRicercheConfigurazione" value="#{applicationBean.cacheRicercheConfigurazioneDimensione}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.elementiInCache']}" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outElementiInCacheCacheRicercheConfigurazione" value="#{applicationBean.cacheRicercheConfigurazioneElementiInCache}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.memoriaOccupata']}" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outMemoriaOccupataCacheRicercheConfigurazione" value="#{applicationBean.cacheRicercheConfigurazioneMemoriaOccupata}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.idleTime']}" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outIdleTimeCacheRicercheConfigurazione" value="#{applicationBean.cacheRicercheConfigurazioneIdleTime}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+									<link:prop label="#{msg['about.cache.lifeTime']}" rendered="#{applicationBean.cacheRicercheConfigurazioneEnabled}">
+										<div class="divNoEdit">
+											<h:outputText id="outLifeTimeCacheRicercheConfigurazione" value="#{applicationBean.cacheRicercheConfigurazioneLifeTime}" styleClass="spanNoEdit"/>
+										</div>
+									</link:prop>
+								</a4j:outputPanel>
+							
+							</link:fieldset>
+						</a4j:outputPanel>
 					</div>
 				</div>
 			 </h:form>

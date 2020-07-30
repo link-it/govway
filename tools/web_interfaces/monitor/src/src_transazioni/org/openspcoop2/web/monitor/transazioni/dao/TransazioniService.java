@@ -46,7 +46,6 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.core.transazioni.model.TransazioneModel;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
@@ -107,6 +106,7 @@ import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -869,7 +869,8 @@ public class TransazioniService implements ITransazioniService {
 		String trasportoMittente = t.getTrasportoMittente();
 		if(StringUtils.isNotEmpty(trasportoMittente)) {
 			try {
-				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(trasportoMittente));
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(trasportoMittente));
 				transazioneBean.setTrasportoMittenteLabel(credenzialeMittente.getCredenziale()); 
 				transazioneBean.setTipoTrasportoMittenteLabel(credenzialeMittente.getTipo());
 			} catch(NumberFormatException e) {
@@ -903,7 +904,8 @@ public class TransazioniService implements ITransazioniService {
 		String tokenIssuer = t.getTokenIssuer();
 		if(StringUtils.isNotEmpty(tokenIssuer)) {
 			try {
-				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(tokenIssuer));
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenIssuer));
 				transazioneBean.setTokenIssuerLabel(credenzialeMittente.getCredenziale()); 
 			} catch(NumberFormatException e) {
 				// informazione non valida
@@ -922,7 +924,8 @@ public class TransazioniService implements ITransazioniService {
 		String tokenClientID = t.getTokenClientId();
 		if(StringUtils.isNotEmpty(tokenClientID)) {
 			try {
-				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(tokenClientID));
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenClientID));
 				transazioneBean.setTokenClientIdLabel(credenzialeMittente.getCredenziale()); 
 			} catch(NumberFormatException e) {
 				// informazione non valida
@@ -941,7 +944,8 @@ public class TransazioniService implements ITransazioniService {
 		String tokenSubject = t.getTokenSubject();
 		if(StringUtils.isNotEmpty(tokenSubject)) {
 			try {
-				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(tokenSubject));
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenSubject));
 				transazioneBean.setTokenSubjectLabel(credenzialeMittente.getCredenziale()); 
 			} catch(NumberFormatException e) {
 				// informazione non valida
@@ -960,7 +964,8 @@ public class TransazioniService implements ITransazioniService {
 		String tokenUsername = t.getTokenUsername();
 		if(StringUtils.isNotEmpty(tokenUsername)) {
 			try {
-				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(tokenUsername));
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenUsername));
 				transazioneBean.setTokenUsernameLabel(credenzialeMittente.getCredenziale()); 
 			} catch(NumberFormatException e) {
 				// informazione non valida
@@ -979,7 +984,8 @@ public class TransazioniService implements ITransazioniService {
 		String tokenMail = t.getTokenMail();
 		if(StringUtils.isNotEmpty(tokenMail)) {
 			try {
-				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(tokenMail));
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenMail));
 				transazioneBean.setTokenMailLabel(credenzialeMittente.getCredenziale()); 
 			} catch(NumberFormatException e) {
 				// informazione non valida
@@ -998,7 +1004,8 @@ public class TransazioniService implements ITransazioniService {
 		String eventi = t instanceof TransazioneBean ? ((TransazioneBean)t).getEventiGestioneRawValue() : t.getEventiGestione();
 		if(StringUtils.isNotEmpty(eventi)) {
 			try {
-				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(eventi));
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(eventi));
 				String valore = credenzialeMittente.getCredenziale();
 				transazioneBean.setEventiLabel(AbstractCredenzialeList.normalize(valore)); 
 			} catch(NumberFormatException e) {
@@ -1018,7 +1025,8 @@ public class TransazioniService implements ITransazioniService {
 		String gruppi = t instanceof TransazioneBean ? ((TransazioneBean)t).getGruppiRawValue() : t.getGruppi();
 		if(StringUtils.isNotEmpty(gruppi)) {
 			try {
-				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(gruppi));
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(gruppi));
 				String valore = credenzialeMittente.getCredenziale();
 				transazioneBean.setGruppiLabel(AbstractCredenzialeList.normalize(valore)); 
 			} catch(NumberFormatException e) {

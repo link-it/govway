@@ -37,6 +37,7 @@ import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean.RuoloBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
@@ -1074,4 +1075,134 @@ public class ApplicationBean implements Serializable {
 			return MessageFormat.format("{0} attuale: {1}",getLabelSoggettoCompact(), this.loginBean.getLabelSoggettoSenzaPrefisso());
 		}
 	}
+	
+	private static final String CACHE_SEPARATOR = "\n";
+	private String _getCacheDetails(String stato, String param) {
+		String [] split = stato.split(CACHE_SEPARATOR);
+		for (int i = 0; i < split.length; i++) {
+			String label = split[i];
+			String value = "";
+			if(split[i].contains(":")){
+				label = split[i].split(":")[0];
+				value = split[i].split(":")[1];
+				if(label.equalsIgnoreCase(param)) {
+					return value;
+				}
+			}
+		}
+		return null;
+	}	
+	
+	public String resetAllCache() {
+		this.resetCacheDatiConfigurazione();
+		this.resetCacheRicercheConfigurazione();
+		return null; // DEVE ESSERE NULL PER NON NAVIGARE
+	}
+	
+	public boolean isCacheDatiConfigurazioneEnabled() {
+		return (AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null);
+	}
+	public String getCacheDatiConfigurazioneStato() {
+		return this.isCacheDatiConfigurazioneEnabled() ? "abilitata" : "disabilitata";
+	}
+	public String getCacheDatiConfigurazioneAlgoritmo() {
+		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "Algoritmo") : "-";
+	}
+	public String getCacheDatiConfigurazioneDimensione() {
+		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "Dimensione") : "-";
+	}
+	public String getCacheDatiConfigurazioneElementiInCache() {
+		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "ElementiInCache") : "-";
+	}
+	public String getCacheDatiConfigurazioneMemoriaOccupata() {
+		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "MemoriaOccupata") : "-";
+	}
+	public String getCacheDatiConfigurazioneIdleTime() {
+		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "IdleTime") : "-";
+	}
+	public String getCacheDatiConfigurazioneLifeTime() {
+		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "LifeTime") : "-";
+	}
+	public String getCacheDatiConfigurazioneDetails() {
+		try {
+			return AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.printStatsCache(CACHE_SEPARATOR);
+		}catch(Exception e) {
+			LoggerManager.getPddMonitorCoreLogger().error(e.getMessage(),e);
+			return "Informazioni non disponibili";
+		}
+	}
+	public int getCacheDatiConfigurazioneDetailsRows() {
+		String stato = getCacheDatiConfigurazioneDetails();
+		String [] split = stato.split(CACHE_SEPARATOR);
+		if(split==null || split.length>11) {
+			return 10;
+		}
+		else {
+			return split.length+1;
+		}
+	}
+	public String resetCacheDatiConfigurazione() {
+		if(this.isCacheDatiConfigurazioneEnabled()) {
+			try {
+				AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.resetCache();
+			}catch(Exception e) {
+				LoggerManager.getPddMonitorCoreLogger().error("ResetCache 'dati': "+e.getMessage(),e);
+			}
+		}
+		return null; // DEVE ESSERE NULL PER NON NAVIGARE
+	}
+	
+	public boolean isCacheRicercheConfigurazioneEnabled() {
+		return (AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione!=null);
+	}
+	public String getCacheRicercheConfigurazioneStato() {
+		return this.isCacheRicercheConfigurazioneEnabled() ? "abilitata" : "disabilitata";
+	}
+	public String getCacheRicercheConfigurazioneAlgoritmo() {
+		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "Algoritmo") : "-";
+	}
+	public String getCacheRicercheConfigurazioneDimensione() {
+		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "Dimensione") : "-";
+	}
+	public String getCacheRicercheConfigurazioneElementiInCache() {
+		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "ElementiInCache") : "-";
+	}
+	public String getCacheRicercheConfigurazioneMemoriaOccupata() {
+		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "MemoriaOccupata") : "-";
+	}
+	public String getCacheRicercheConfigurazioneIdleTime() {
+		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "IdleTime") : "-";
+	}
+	public String getCacheRicercheConfigurazioneLifeTime() {
+		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "LifeTime") : "-";
+	}
+	public String getCacheRicercheConfigurazioneDetails() {
+		try {
+			return AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.printStatsCache(CACHE_SEPARATOR);
+		}catch(Exception e) {
+			LoggerManager.getPddMonitorCoreLogger().error(e.getMessage(),e);
+			return "Informazioni non disponibili";
+		}
+	}
+	public int getCacheRicercheConfigurazioneDetailsRows() {
+		String licenza = getLicenza();
+		String [] split = licenza.split(CACHE_SEPARATOR);
+		if(split==null || split.length>11) {
+			return 10;
+		}
+		else {
+			return split.length+1;
+		}
+	}
+	public String resetCacheRicercheConfigurazione() {
+		if(this.isCacheRicercheConfigurazioneEnabled()) {
+			try {
+				AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.resetCache();
+			}catch(Exception e) {
+				LoggerManager.getPddMonitorCoreLogger().error("ResetCache 'ricerche': "+e.getMessage(),e);
+			}
+		}
+		return null; // DEVE ESSERE NULL PER NON NAVIGARE
+	}
+	
 }

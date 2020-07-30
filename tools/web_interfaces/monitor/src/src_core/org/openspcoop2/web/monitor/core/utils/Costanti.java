@@ -39,6 +39,10 @@ public class Costanti {
 	public static final String USER_AGENT_HEADER_NAME = "User-Agent";
 
 	
+	public static final String APP_CACHE_PROPERTIES_PATH = "monitor.jcs.properties";
+	public static final String APP_CACHE_PROPERTIES_LOCAL_PATH = "monitor_local.jcs.properties";
+	public static final String APP_CACHE_PROPERTIES = "MONITOR_CACHE_PROPERTIES";
+	
 	public static final String APP_LOG_PROPERTIES_PATH = "monitor.log4j2.properties";
 	public static final String APP_LOG_PROPERTIES_LOCAL_PATH = "monitor_local.log4j2.properties";
 	public static final String APP_LOG_PROPERTIES = "MONITOR_LOG_PROPERTIES";

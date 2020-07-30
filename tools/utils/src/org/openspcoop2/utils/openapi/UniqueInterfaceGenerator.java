@@ -97,6 +97,9 @@ public class UniqueInterfaceGenerator {
 			if(files[j].getName().equals(fMaster.getName())) {
 				continue;
 			}
+			if(files[j].isDirectory()) {
+                continue;
+            }
 			//System.out.println("READ ["+files[j]+"] ... ");
 			attachments.put(files[j].getName(), FileSystemUtilities.readFile(files[j]));
 			//System.out.println("READ ["+files[j]+"] ok");

@@ -145,7 +145,7 @@ public class StatisticsUtils {
 			
 //			if(TipoPdD.DELEGATA.equals(tipoPdD)){
 			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
-			if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null){
+			if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null || Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(stat.getServizioApplicativo())){
 				expr.isNull(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
 			}
 			else{

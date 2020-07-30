@@ -104,6 +104,19 @@
 			<param-name>localLogPropertyName</param-name>
 			<param-value>MONITOR_LOG_PROPERTIES</param-value>
 		</context-param>
+		<!-- Cache properties -->
+		<context-param>
+			<param-name>cacheProperties</param-name>
+			<param-value>/monitor.jcs.properties</param-value>
+		</context-param>
+		<context-param>
+			<param-name>localCacheProperties</param-name>
+			<param-value>/monitor_local.jcs.properties</param-value>
+		</context-param>
+		<context-param>
+			<param-name>localCachePropertyName</param-name>
+			<param-value>MONITOR_CACHE_PROPERTIES</param-value>
+		</context-param>
 
 
  

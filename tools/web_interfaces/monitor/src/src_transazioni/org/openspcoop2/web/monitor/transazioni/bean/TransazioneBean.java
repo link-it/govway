@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Resource;
-import org.openspcoop2.core.commons.search.dao.IResourceServiceSearch;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
@@ -42,7 +41,6 @@ import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -61,6 +59,7 @@ import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
@@ -906,16 +905,8 @@ public class TransazioneBean extends Transazione{
 					idAPI.setVersione(idAccordo.getVersione());
 					idAPI.setNome(idAccordo.getNome());
 					
-					
-					IResourceServiceSearch resourceServiceSearch = service.getResourceServiceSearch();
-					IPaginatedExpression pagExpr = resourceServiceSearch.newPaginatedExpression();
-					pagExpr.equals(Resource.model().NOME, op).
-						and().
-						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome()).
-						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione()).
-						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).
-						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome());
-					List<Map<String,Object>> l = service.getResourceServiceSearch().select(pagExpr, Resource.model().HTTP_METHOD, Resource.model().PATH);
+					MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(service, log);
+					List<Map<String,Object>> l = mBeanUtilsService.getInfoOperazioneFromCache(op, idAccordo);
 					if(l!=null && l.size()==1) {
 						Map<String,Object> map = l.get(0);
 						String method = (String) map.get(Resource.model().HTTP_METHOD.getFieldName());

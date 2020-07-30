@@ -1,3 +1,9 @@
+2020-07-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità OP-1033
+	I dati delle configurazioni accedute tramite la console di monitoraggio vengono adesso salvati in una cache interna.
+
 2020-07-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor, BatchStatistiche]

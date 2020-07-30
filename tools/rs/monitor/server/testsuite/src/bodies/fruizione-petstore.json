@@ -1,6 +1,14 @@
 {
     "connettore": {
-        "endpoint": "http://petstore.swagger.io/v2"
+        "endpoint": "https://petstore.swagger.io/v2",
+	"autenticazione_https": {
+		"tipologia": "TLSv1.3",
+		"server": {
+			"truststore_path": "/etc/govway/keys/testsuite_petstore.jks",
+			"truststore_tipo": "jks",
+			"truststore_password": "123456"
+		}
+	}
     },
     "api_nome": "PetStore",
     "api_versione": 2,

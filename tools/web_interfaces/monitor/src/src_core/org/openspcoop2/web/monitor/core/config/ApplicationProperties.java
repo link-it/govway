@@ -23,6 +23,8 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.slf4j.Logger;
 
 
@@ -151,4 +153,78 @@ public class ApplicationProperties {
 		return null;
 	}
 	
+	public boolean isAbilitataCache_datiConfigurazione() throws Exception{
+		String cacheEnabled = this.getProperty("cache.datiConfigurazione.enable", true, true);
+		return "true".equalsIgnoreCase(cacheEnabled);
+	}
+	public boolean isAbilitataJmxCache_datiConfigurazione() throws Exception{
+		String cacheEnabled = this.getProperty("cache.datiConfigurazione.jmx.enable", false, true);
+		return "true".equalsIgnoreCase(cacheEnabled);
+	}
+	public boolean isDebugCache_datiConfigurazione() throws Exception{
+		String cacheEnabled = this.getProperty("cache.datiConfigurazione.debug", false, true);
+		return "true".equalsIgnoreCase(cacheEnabled);
+	}
+	
+	public CacheAlgorithm getAlgoritmoCache_datiConfigurazione() throws Exception{
+		String cacheV = this.getProperty("cache.datiConfigurazione.algoritmo", false, true);
+		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
+			return CacheAlgorithm.valueOf(cacheV.toUpperCase());
+		}
+		return null;
+	}
+	
+	public Integer getDimensioneCache_datiConfigurazione() throws Exception{
+		return _getIntegerValueCache("cache.datiConfigurazione.dimensione");
+	}
+	public Integer getItemIdleTimeCache_datiConfigurazione() throws Exception{
+		return _getIntegerValueCache("cache.datiConfigurazione.itemIdleTime");
+	}
+	public Integer getItemLifeSecondCache_datiConfigurazione() throws Exception{
+		return _getIntegerValueCache("cache.datiConfigurazione.itemLifeSecond");
+	}
+	
+	
+	public boolean isAbilitataCache_ricercheConfigurazione() throws Exception{
+		String cacheEnabled = this.getProperty("cache.ricercheConfigurazione.enable", true, true);
+		return "true".equalsIgnoreCase(cacheEnabled);
+	}
+	public boolean isAbilitataJmxCache_ricercheConfigurazione() throws Exception{
+		String cacheEnabled = this.getProperty("cache.ricercheConfigurazione.jmx.enable", false, true);
+		return "true".equalsIgnoreCase(cacheEnabled);
+	}
+	public boolean isDebugCache_ricercheConfigurazione() throws Exception{
+		String cacheEnabled = this.getProperty("cache.ricercheConfigurazione.debug", false, true);
+		return "true".equalsIgnoreCase(cacheEnabled);
+	}
+	
+	public CacheAlgorithm getAlgoritmoCache_ricercheConfigurazione() throws Exception{
+		String cacheV = this.getProperty("cache.ricercheConfigurazione.algoritmo", false, true);
+		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
+			return CacheAlgorithm.valueOf(cacheV.toUpperCase());
+		}
+		return null;
+	}
+	
+	public Integer getDimensioneCache_ricercheConfigurazione() throws Exception{
+		return _getIntegerValueCache("cache.ricercheConfigurazione.dimensione");
+	}
+	public Integer getItemIdleTimeCache_ricercheConfigurazione() throws Exception{
+		return _getIntegerValueCache("cache.ricercheConfigurazione.itemIdleTime");
+	}
+	public Integer getItemLifeSecondCache_ricercheConfigurazione() throws Exception{
+		return _getIntegerValueCache("cache.ricercheConfigurazione.itemLifeSecond");
+	}
+	
+	
+	private Integer _getIntegerValueCache(String name) throws Exception{
+		String cacheV = this.getProperty(name, false, true);
+		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
+			Integer i = Integer.valueOf(cacheV);
+			if(i.intValue()>0) {
+				return i;
+			}
+		}
+		return null;
+	}
 }

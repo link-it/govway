@@ -132,6 +132,7 @@
 				<include name="monitor.log4j2.properties" />
 				<include name="log4j2.properties" />
 				<include name="messages_it.properties" />
+				<include name="monitor.jcs.properties" />
 			</classes>
 			<classes dir="${build_govwayMonitor}/tmp">
 				<include name="daoFactory.properties" />
@@ -168,6 +169,7 @@
 				<include name="jakarta.activation-1.2.1.jar" />
 				<include name="joda-time-2.10.5.jar" />
 				<include name="reactive-streams-1.0.3.jar" />
+				<include name="commons-jcs-core-2.2.1-gov4j-1.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />

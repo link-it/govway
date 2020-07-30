@@ -1143,6 +1143,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "contesti: ";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Svuota tutte le Cache";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_SINGOLA = "Svuota la Cache";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_ALL_NODES = "Svuota le Cache di tutti i nodi";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_SELECTED_NODES = "Svuota le Cache dei nodi selezionati";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES_KEYWORD = "GRUPPO";

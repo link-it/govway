@@ -94,7 +94,7 @@ import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
-import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
+import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceEngine;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
@@ -7114,7 +7114,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		IExpression expressionTipoServiziCompatibili = null;
 		try {
 			if(protocollo != null) {
-				expressionTipoServiziCompatibili = DynamicUtilsService.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
+				expressionTipoServiziCompatibili = DynamicUtilsServiceEngine.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
 			}
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
@@ -7133,10 +7133,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					expressionTipoSoggettiMittenteCompatibili.or();
 					expressionTipoSoggettiMittenteCompatibili.isNull(model.TIPO_MITTENTE);
 					expressionTipoSoggettiMittenteCompatibili.equals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-					expressionTipoSoggettiMittenteCompatibili.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_MITTENTE, protocollo));
+					expressionTipoSoggettiMittenteCompatibili.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_MITTENTE, protocollo));
 				}
 				else {
-					expressionTipoSoggettiMittenteCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_MITTENTE, protocollo);
+					expressionTipoSoggettiMittenteCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_MITTENTE, protocollo);
 				}
 			}
 		} catch (Exception e) {
@@ -7151,7 +7151,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		IExpression expressionTipoSoggettiDestinatarioCompatibili = null;
 		try {
 			if(protocollo != null) {
-				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_DESTINATARIO, protocollo);
+				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_DESTINATARIO, protocollo);
 			}
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);
