@@ -57,6 +57,12 @@
                             <linkit:sql-table-index-field name="tipo"/>
                             <linkit:sql-table-index-field name="proprietario"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index name="MESSAGGI_ACQUIRE_SEND">
+                            <linkit:sql-table-index-field name="ora_registrazione" ignoreTypeCompatibility="true"/>
+                            <linkit:sql-table-index-field name="proprietario"/>
+                            <linkit:sql-table-index-field name="tipo"/>
+                            <linkit:sql-table-index-field name="id_messaggio"/>
+                        </linkit:sql-table-index> 
                         <linkit:sql-table-index name="MESSAGGI_RIFMSG">
                             <linkit:sql-table-index-field name="riferimento_msg"/>
                         </linkit:sql-table-index>
@@ -388,13 +394,17 @@
                         <linkit:sql-table-index name="MSG_SERV_APPL_ACQUIRE_SEND">
                             <linkit:sql-table-index-field name="id_messaggio"/>
                             <linkit:sql-table-index-field name="tipo_consegna"/>
+                            <linkit:sql-table-index-field name="attesa_esito"/>
+                            <linkit:sql-table-index-field name="coda"/>
+                            <linkit:sql-table-index-field name="priorita"/>
+                            <linkit:sql-table-index-field name="servizio_applicativo"/>
                             <linkit:sql-table-index-field name="errore_processamento_compact"/>
                             <linkit:sql-table-index-field name="rispedizione" ignoreTypeCompatibility="true"/>
                             <linkit:sql-table-index-field name="lock_consegna" ignoreTypeCompatibility="true"/>
-                            <linkit:sql-table-index-field name="attesa_esito"/>
                         </linkit:sql-table-index>
                         <linkit:sql-table-index name="MSG_SERV_APPL_RELEASE_SEND">
                             <linkit:sql-table-index-field name="cluster_id"/>
+                            <linkit:sql-table-index-field name="coda"/>
                             <linkit:sql-table-index-field name="lock_consegna" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
@@ -485,7 +495,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="TIPO_CONSEGNA"/>
+                                <linkit:sql-column-mapping name="TIPO_CONSEGNA" varchar="40"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Indica la modalità di consegna del messaggio al servizio applicativo:
 - 'Connettore': indica una consegna effettuata tramite un connettore
 - 'ConnectionReply': indica una consegna da attuare come connectionReply
@@ -565,7 +575,7 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="attesa_esito" type="xsd:int" minOccurs="0">
+                <xsd:element name="attesa_esito" type="xsd:int" default="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -583,6 +593,28 @@
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ORA_REGISTRAZIONE"/>
                                 <linkit:sql-ddl-column-comment>Data di registrazione del messaggio</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="coda" type="xsd:string" minOccurs="0" default="UNSET"> <!-- Uso UNSET invece di DEFAULT, per differenziare con i msg salvati per I.M. o altre funzioni di presa in carico che non impattano sul pool di thread -->
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="CODA" varchar="10"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sulla coda associata al connettore</linkit:sql-ddl-column-comment>      
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="priorita" type="xsd:string" minOccurs="0" default="UNSET">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="PRIORITA" varchar="10"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sulla priorita associata al connettore</linkit:sql-ddl-column-comment>      
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -251,7 +252,7 @@ public final class PorteApplicativeConnettoriMultipliProprietaAdd extends Action
 			
 			if(datiConnettore == null) { // succede solo se e' la prima volta che modifico la configurazione di default
 				datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
-				datiConnettore.setNome(CostantiControlStation.LABEL_DEFAULT);
+				datiConnettore.setNome(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
 			}
 			
 			paSA.setDatiConnettore(datiConnettore);

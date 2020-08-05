@@ -37,6 +37,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerPool;
@@ -266,7 +267,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 			
 			if(datiConnettore == null) { // succede solo se e' la prima volta che modifico la configurazione di default
 				datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
-				datiConnettore.setNome(CostantiControlStation.LABEL_DEFAULT);
+				datiConnettore.setNome(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
 			}
 			
 			paSA.setDatiConnettore(datiConnettore);

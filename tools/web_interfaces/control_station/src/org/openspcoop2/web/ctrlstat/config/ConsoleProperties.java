@@ -36,6 +36,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
+import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -373,6 +374,40 @@ public class ConsoleProperties {
 	
 	public boolean isApplicativiServerEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "applicativiServer.enabled");
+	}
+	
+	public List<String> getConsegnaNotificaCode() throws UtilsException{
+		List<String> l = new ArrayList<String>();
+		String p = this.readProperty(true, "consegnaNotifiche.code");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+				l.add(tmp[i]);
+			}
+		}
+		return l;
+	}
+	public String getConsegnaNotificaCodaLabel(String nome) throws UtilsException{
+		return this.readProperty(true, "consegnaNotifiche.coda."+nome+".label");
+	}
+	
+	public List<String> getConsegnaNotificaPriorita() throws UtilsException{
+		List<String> l = new ArrayList<String>();
+		String p = this.readProperty(true, "consegnaNotifiche.priorita");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+				l.add(tmp[i]);
+			}
+		}
+		return l;
+	}
+	
+	public ConfigurazionePriorita getConsegnaNotificaConfigurazionePriorita(String nome) throws Exception{
+		Properties p = this.reader.readProperties_convertEnvProperties("consegnaNotifiche.priorita."+nome+".");
+		return new ConfigurazionePriorita(nome, p);
 	}
 	
 	
@@ -867,6 +902,21 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getThreadPoolStatus");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getQueueConfig");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getApplicativiPrioritari");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getConnettoriPrioritari");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.updateConnettoriPrioritari");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.resetConnettoriPrioritari");
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaSystemPropertiesPdD");

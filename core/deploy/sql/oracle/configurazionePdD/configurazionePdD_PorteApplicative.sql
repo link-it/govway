@@ -162,6 +162,9 @@ CREATE TABLE porte_applicative_sa
 	connettore_descrizione VARCHAR2(4000),
 	connettore_stato VARCHAR2(255),
 	connettore_filtri CLOB,
+	connettore_coda VARCHAR2(10),
+	connettore_priorita VARCHAR2(10),
+	connettore_max_priorita NUMBER,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -174,6 +177,13 @@ CREATE TABLE porte_applicative_sa
 
 -- index
 CREATE INDEX INDEX_PA_SA ON porte_applicative_sa (id_porta);
+CREATE INDEX INDEX_PA_SA_CODA ON porte_applicative_sa (connettore_coda,connettore_priorita,id_servizio_applicativo);
+CREATE INDEX INDEX_PA_SA_CODA_MAX ON porte_applicative_sa (connettore_coda,connettore_max_priorita,id_servizio_applicativo);
+
+ALTER TABLE porte_applicative_sa MODIFY connettore_coda DEFAULT 'DEFAULT';
+ALTER TABLE porte_applicative_sa MODIFY connettore_priorita DEFAULT 'DEFAULT';
+ALTER TABLE porte_applicative_sa MODIFY connettore_max_priorita DEFAULT 0;
+
 CREATE TRIGGER trg_porte_applicative_sa
 BEFORE
 insert on porte_applicative_sa

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.lib.mvc.PageData;
 
 /**
@@ -33,7 +33,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MonitorHelper  extends ConsoleHelper{
+public class MonitorHelper  extends ConnettoriHelper{
 
 	public MonitorHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {

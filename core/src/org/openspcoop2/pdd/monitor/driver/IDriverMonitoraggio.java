@@ -73,5 +73,14 @@ public interface IDriverMonitoraggio {
      * @throws DriverMonitoraggioException
      */
     public long deleteRichiestePendenti(FilterSearch search) throws DriverMonitoraggioException;
+    
+    /**
+	 * Aggiorna la data di rispedizione delle richieste pendenti che matchano il criterio di filtro.
+	 * 
+	 * @param search criterio di filtro
+	 * @return numero dei messaggi delle richieste pendenti aggiornate
+	 * @throws DriverMonitoraggioException
+	 */
+	public long aggiornaDataRispedizioneRichiestePendenti(FilterSearch search) throws DriverMonitoraggioException;
 	
 }

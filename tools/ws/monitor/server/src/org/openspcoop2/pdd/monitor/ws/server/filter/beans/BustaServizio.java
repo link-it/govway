@@ -29,6 +29,7 @@ package org.openspcoop2.pdd.monitor.ws.server.filter.beans;
  *     &lt;sequence&gt;
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedShort" minOccurs="0" maxOccurs="1" /&gt;
  *     &lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -51,7 +52,8 @@ import javax.xml.bind.annotation.XmlElement;
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "busta-servizio", namespace="http://www.openspcoop2.org/pdd/monitor/management", propOrder = {
     "tipo",
-    "nome"
+    "nome",
+    "versione"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "busta-servizio")
 public class BustaServizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
@@ -81,6 +83,19 @@ public class BustaServizio extends org.openspcoop2.utils.beans.BaseBean implemen
 	
 	public String getNome(){
 		return this.nome;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="unsignedShort")
+  @XmlElement(name="versione",required=false,nillable=false)
+	private Integer versione;
+	
+	public void setVersione(Integer versione){
+		this.versione = versione;
+	}
+	
+	public Integer getVersione(){
+		return this.versione;
 	}
 	
 	

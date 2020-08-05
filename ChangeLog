@@ -1,3 +1,21 @@
+2020-08-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1035
+	Per quanto concerne la funzionalità di consegna delle notifiche prese in carico:
+	- introdotta la gestione delle priorità;
+	- introdotta la possibilità di assegnare una coda di pool di thread differente ad un connettore;
+	- corretto bug che ad ogni consegna incrementava erroneamente 2 volte il numero di rispedizione del messaggio sul database di runtime;
+	- rivista la sezione 'Coda Messaggi' nella govwayConsole al fine di visualizzare tutte le informazioni di interesse: nome dell'erogazione, nome dei connettori, 
+	  data di rispedizione per ogni connettore, nome degli applicativi server;
+	- nella sezione 'Coda Messaggi' aggiunta la funzionalità 'Riconsegna Immediata' utilizzabile per forzare la consegna di un messaggio senza aspettarne la data di rispedizione;
+	- nelle installazioni in cluster, sono stati ridotti i tempi di verifica per l'ottenimento di un lock da parte del timer che consegna le notifiche ed 
+	  è stato corretto un problema che sbilanciava l'acquisizione del lock sempre su un nodo. 
+	  Inoltre è stata corretta la procedura di rilascio dei lock in fase di shutdown dell'A.S., ed è stata inserita anche una pulizia iniziale all'avvio.
+	Sono inoltre stati risolti i seguenti bug:
+	- Utilizzando l'installer in modalità avanzata, il file 'consolePassword.properties' non veniva generato per l'ambiente runtime in caso di disaccoppiamento tra runtime e manager.
+	- L'installer genera adesso un archivio govway.ear contenente nel file application.xml i 'resource-ref' necessari all'A.S. per effettuare un shutdown corretto dei datasource.
+
 2020-07-30  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

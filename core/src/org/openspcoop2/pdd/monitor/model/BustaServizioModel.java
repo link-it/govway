@@ -42,6 +42,7 @@ public class BustaServizioModel extends AbstractModel<BustaServizio> {
 	
 		this.TIPO = new Field("tipo",java.lang.String.class,"busta-servizio",BustaServizio.class);
 		this.NOME = new Field("nome",java.lang.String.class,"busta-servizio",BustaServizio.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"busta-servizio",BustaServizio.class);
 	
 	}
 	
@@ -51,6 +52,7 @@ public class BustaServizioModel extends AbstractModel<BustaServizio> {
 	
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"busta-servizio",BustaServizio.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"busta-servizio",BustaServizio.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"busta-servizio",BustaServizio.class);
 	
 	}
 	
@@ -59,6 +61,8 @@ public class BustaServizioModel extends AbstractModel<BustaServizio> {
 	public IField TIPO = null;
 	 
 	public IField NOME = null;
+	 
+	public IField VERSIONE = null;
 	 
 
 	@Override

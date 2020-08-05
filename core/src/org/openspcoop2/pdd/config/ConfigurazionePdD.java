@@ -73,6 +73,7 @@ import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -1039,6 +1040,16 @@ public class ConfigurazionePdD  {
 		this.log.debug(msg);
 		if(alogConsole!=null){
 			alogConsole.debug(msg);
+		}
+		
+		List<String> code = this.openspcoopProperties.getTimerConsegnaContenutiApplicativiCode();
+		for (String coda : code) {
+			try{
+				this.cache.remove(getKey_getConnettoriConsegnaNotifichePrioritarie(coda));
+				this.getConnettoriConsegnaNotifichePrioritarie(connectionPdD, coda);
+			}
+			catch(DriverConfigurazioneNotFound notFound){}
+			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		}
 		
 		try{
@@ -2790,6 +2801,55 @@ public class ConfigurazionePdD  {
 			return s;
 		else
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
+	}
+	
+	public static String getKey_getConnettoriConsegnaNotifichePrioritarie(String queue){
+		String key = "getConnettoriConsegnaNotifichePrioritarie";
+		if(queue!=null) {
+			key = key +"_"+queue;
+		}
+		return key;
+	}
+	@SuppressWarnings("unchecked")
+	public List<IDConnettore> getConnettoriConsegnaNotifichePrioritarie(Connection connectionPdD, String queue) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = getKey_getConnettoriConsegnaNotifichePrioritarie(queue);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((List<IDConnettore>) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		List<IDConnettore> l = null;
+		if(this.cache!=null){
+			l = (List<IDConnettore>) this.getObjectCache(key,"getConnettoriConsegnaNotifichePrioritarie",connectionPdD,CONFIGURAZIONE_PORTA,queue);
+		}else{
+			l = (List<IDConnettore>) this.getObject("getConnettoriConsegnaNotifichePrioritarie",connectionPdD,CONFIGURAZIONE_PORTA,queue);
+		}
+
+		if(l!=null)
+			return l;
+		else
+			throw new DriverConfigurazioneNotFound("Connettori non trovati");
+	}
+	public void resetConnettoriConsegnaNotifichePrioritarie(Connection connectionPdD, String queue) throws DriverConfigurazioneException{
+		org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
+		if((driver instanceof DriverConfigurazioneDB)){
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			driverDB.resetConnettoriConsegnaNotifichePrioritarie(queue);
+		}
 	}
 	
 

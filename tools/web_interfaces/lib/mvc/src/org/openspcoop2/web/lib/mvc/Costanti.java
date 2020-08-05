@@ -54,6 +54,7 @@ public class Costanti {
 	/** PARAMETER */
 	
 	public final static String PARAMETER_NAME_OBJECTS_FOR_REMOVE = "obj";
+	public final static String PARAMETER_NAME_OBJECTS_FOR_REMOVE_TYPE = "obj_t";
 	public final static String PARAMETER_NAME_MSG_ERROR_EXPORT = "errorExport";
 	
 	/** PARAMETER ATTRIBUTE */

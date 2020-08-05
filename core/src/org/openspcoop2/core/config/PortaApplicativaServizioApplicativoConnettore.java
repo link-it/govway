@@ -46,6 +46,9 @@ import java.util.List;
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="notifica" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/&gt;
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="coda" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="priorita" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="priorita-max" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -179,6 +182,34 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
     this.stato = stato;
   }
 
+  public java.lang.String getCoda() {
+    return this.coda;
+  }
+
+  public void setCoda(java.lang.String coda) {
+    this.coda = coda;
+  }
+
+  public java.lang.String getPriorita() {
+    return this.priorita;
+  }
+
+  public void setPriorita(java.lang.String priorita) {
+    this.priorita = priorita;
+  }
+
+  public boolean isPrioritaMax() {
+    return this.prioritaMax;
+  }
+
+  public boolean getPrioritaMax() {
+    return this.prioritaMax;
+  }
+
+  public void setPrioritaMax(boolean prioritaMax) {
+    this.prioritaMax = prioritaMax;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -264,5 +295,17 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="coda",required=false)
+  protected java.lang.String coda;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="priorita",required=false)
+  protected java.lang.String priorita;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="priorita-max",required=false)
+  protected boolean prioritaMax = false;
 
 }

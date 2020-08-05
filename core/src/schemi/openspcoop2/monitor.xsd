@@ -367,6 +367,20 @@
 			<xsd:element name="sbustamento-soap" type="xsd:boolean" default="false" />
 			<xsd:element name="sbustamento-informazioni-protocollo" type="xsd:boolean" default="true" />
 			<xsd:element name="tipo-consegna" type="xsd:string" />
+			<xsd:element name="data-rispedizione" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="nome-porta" type="xsd:string" />
+			<xsd:element name="coda" type="xsd:string" />
+			<xsd:element name="priorita" type="xsd:string" />
+			<xsd:element name="attesa-esito" type="xsd:boolean" default="false" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -401,6 +415,7 @@
 		<xsd:sequence>
 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" />
 			<xsd:element name="nome" type="xsd:string" minOccurs="0" />
+			<xsd:element name="versione" type="xsd:unsignedShort" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 

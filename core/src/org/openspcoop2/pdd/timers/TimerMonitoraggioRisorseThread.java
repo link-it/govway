@@ -49,10 +49,10 @@ import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
-import org.slf4j.Logger;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.threads.BaseThread;
+import org.slf4j.Logger;
 
 /**
  * Thread per la gestione del monitoraggio delle risorse
@@ -62,7 +62,7 @@ import org.openspcoop2.utils.date.DateManager;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TimerMonitoraggioRisorseThread extends Thread{
+public class TimerMonitoraggioRisorseThread extends BaseThread{
 
 	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 	
@@ -76,17 +76,6 @@ public class TimerMonitoraggioRisorseThread extends Thread{
     public final static String ID_MODULO = "MonitoraggioRisorse";
 	 
     
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
-
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
-	
 	/** Properties Reader */
 	private OpenSPCoop2Properties propertiesReader;
 	/** MessaggioDiagnostico */
@@ -162,221 +151,218 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 	@Override
 	public void run(){
 		
-		String sec = "secondi";
-		if(this.propertiesReader.getControlloRisorseCheckInterval() == 1)
-			sec = "secondo";
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.propertiesReader.getControlloRisorseCheckInterval()+" "+sec);
-		this.msgDiag.logPersonalizzato("avvioEffettuato");
+		try {
 		
-		String risorsaNonDisponibile = null;
-		while(this.stop == false){
-			boolean checkRisorseDisponibili = true;
+			String sec = "secondi";
+			if(this.propertiesReader.getControlloRisorseCheckInterval() == 1)
+				sec = "secondo";
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.propertiesReader.getControlloRisorseCheckInterval()+" "+sec);
+			this.msgDiag.logPersonalizzato("avvioEffettuato");
 			
-			// Controllo che il sistema non sia andando in shutdown
-			if(OpenSPCoop2Startup.contextDestroyed){
-				this.logger.error("["+TimerMonitoraggioRisorseThread.ID_MODULO+"] Rilevato sistema in shutdown");
-				return;
-			}
-			
-			if(TimerState.ENABLED.equals(STATE)) {
-			
-				String descrizione = null;
+			String risorsaNonDisponibile = null;
+			while(this.isStop() == false){
+				boolean checkRisorseDisponibili = true;
 				
-				// Messaggi diagnostici personalizzati
-				// Controllo per prima per sapere se posso usare poi i msg diagnostici per segnalare problemi
-				if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati()){
-					String tipoMsgDiagnostico = null;
-					try{
-						for(int i=0; i< this.tipiMsgDiagnosticiPersonalizzati.size(); i++){
-							tipoMsgDiagnostico = this.tipiMsgDiagnosticiPersonalizzati.get(i);
-							this.logger.debug("Controllo MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"]");
-							this.msgDiagnosticiPersonalizzati.get(i).isAlive();
-						}
-					}catch(Exception e){
-						risorsaNonDisponibile = "[MessaggioDiagnosticoAppender "+tipoMsgDiagnostico+"]";
-						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
-						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
-						descrizione = risorsaNonDisponibile+" "+e.getMessage();
-						checkRisorseDisponibili = false;
-					}
+				// Controllo che il sistema non sia andando in shutdown
+				if(OpenSPCoop2Startup.contextDestroyed){
+					this.logger.error("["+TimerMonitoraggioRisorseThread.ID_MODULO+"] Rilevato sistema in shutdown");
+					return;
 				}
-				// Database
-				if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseDB()){
-					try{
-						this.logger.debug("Controllo Database");
-						this.dbManager.isAlive();
-					}catch(Exception e){
-						risorsaNonDisponibile = "[Database]";
-						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
-						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
-						descrizione = risorsaNonDisponibile+" "+e.getMessage();
-						checkRisorseDisponibili = false;
-					}
-				}
-				// JMS
-				if(this.propertiesReader.isServerJ2EE()){
-					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseJMS()){
+				
+				if(TimerState.ENABLED.equals(STATE)) {
+				
+					String descrizione = null;
+					
+					// Messaggi diagnostici personalizzati
+					// Controllo per prima per sapere se posso usare poi i msg diagnostici per segnalare problemi
+					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati()){
+						String tipoMsgDiagnostico = null;
 						try{
-							this.logger.debug("Controllo BrokerJMS");
-							this.queueManager.isAlive();
+							for(int i=0; i< this.tipiMsgDiagnosticiPersonalizzati.size(); i++){
+								tipoMsgDiagnostico = this.tipiMsgDiagnosticiPersonalizzati.get(i);
+								this.logger.debug("Controllo MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"]");
+								this.msgDiagnosticiPersonalizzati.get(i).isAlive();
+							}
 						}catch(Exception e){
-							risorsaNonDisponibile = "[Broker JMS]";
+							risorsaNonDisponibile = "[MessaggioDiagnosticoAppender "+tipoMsgDiagnostico+"]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
 						}
 					}
-				}
-				// Configurazione
-				if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseConfigurazione()){
-					try{
-						this.logger.debug("Controllo Configurazione");
-						this.configPdDReader.isAlive();
-					}catch(Exception e){
-						risorsaNonDisponibile = "[Configurazione]";
-						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
-						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
-						descrizione = risorsaNonDisponibile+" "+e.getMessage();
-						checkRisorseDisponibili = false;
-					}
-				}
-				// Configurazione, validazione semantica
-				if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloValidazioneSemanticaConfigurazione()){
-					try{
-						this.logger.debug("Controllo Validazione semantica della Configurazione");
-						ClassNameProperties classNameReader = ClassNameProperties.getInstance();
-						this.configPdDReader.validazioneSemantica(classNameReader.getConnettore(), 
-								classNameReader.getMsgDiagnosticoOpenSPCoopAppender(),
-								classNameReader.getTracciamentoOpenSPCoopAppender(),
-								classNameReader.getDumpOpenSPCoopAppender(),
-								classNameReader.getAutenticazionePortaDelegata(), classNameReader.getAutenticazionePortaApplicativa(), 
-								classNameReader.getAutorizzazionePortaDelegata(),classNameReader.getAutorizzazionePortaApplicativa(),
-								classNameReader.getAutorizzazioneContenutoPortaDelegata(),classNameReader.getAutorizzazioneContenutoPortaApplicativa(),
-								classNameReader.getIntegrazionePortaDelegata(),
-								classNameReader.getIntegrazionePortaApplicativa(),
-								true,
-								true,
-								true, null);
-					}catch(Exception e){
-						risorsaNonDisponibile = "[Validazione semantica della Configurazione]";
-						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
-						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
-						descrizione = risorsaNonDisponibile+" "+e.getMessage();
-						checkRisorseDisponibili = false;
-					}
-				}
-				// Registro dei Servizi
-				if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseRegistriServizi()){
-					try{
-						this.logger.debug("Controllo Registri dei Servizi");
-						this.registriPdDReader.isAlive(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale());
-					}catch(Exception e){
-						risorsaNonDisponibile = "[Registri dei Servizi]";
-						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
-						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
-						descrizione = risorsaNonDisponibile+" "+e.getMessage();
-						checkRisorseDisponibili = false;
-					}
-				}
-				// Registro dei Servizi, validazione semantica
-				if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloValidazioneSemanticaRegistriServizi()){
-					try{
-						ProtocolFactoryManager pFactoryManager = ProtocolFactoryManager.getInstance();
-						this.logger.debug("Controllo Validazione semantica del Registri dei Servizi");
-						this.registriPdDReader.validazioneSemantica(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(), 
-								this.propertiesReader.isValidazioneSemanticaRegistroServiziCheckURI(), 
-								pFactoryManager.getOrganizationTypesAsArray(),
-								pFactoryManager.getServiceTypesAsArray(ServiceBinding.SOAP),
-								pFactoryManager.getServiceTypesAsArray(ServiceBinding.REST),
-								ClassNameProperties.getInstance().getConnettore(),
-								true,
-								true,
-								null);
-					}catch(Exception e){
-						risorsaNonDisponibile = "[Validazione semantica del Registri dei Servizi]";
-						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
-						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
-						descrizione = risorsaNonDisponibile+" "+e.getMessage();
-						checkRisorseDisponibili = false;
-					}
-				}
-				// Tracciamenti personalizzati
-				if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseTracciamentiPersonalizzati()){
-					String tipoTracciamento = null;
-					try{
-						for(int i=0; i< this.tipiTracciamentiPersonalizzati.size(); i++){
-							tipoTracciamento = this.tipiTracciamentiPersonalizzati.get(i);
-							this.logger.debug("Controllo TracciamentoPersonalizzato ["+tipoTracciamento+"]");
-							this.tracciamentiPersonalizzati.get(i).isAlive();
-						}
-					}catch(Exception e){
-						risorsaNonDisponibile = "[TracciamentoAppender "+tipoTracciamento+"]";
-						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
-						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
-						descrizione = risorsaNonDisponibile+" "+e.getMessage();
-						checkRisorseDisponibili = false;
-					}
-					
-					// nel tracciamento considero anche le transazioni
-					if(checkRisorseDisponibili && this.propertiesReader.isTransazioniUsePddRuntimeDatasource()==false) {
+					// Database
+					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseDB()){
 						try{
-							this.logger.debug("Controllo Database Transazioni");
-							this.dbTransazioniManager.isAlive();
+							this.logger.debug("Controllo Database");
+							this.dbManager.isAlive();
 						}catch(Exception e){
-							risorsaNonDisponibile = "[DatabaseTransazioni]";
+							risorsaNonDisponibile = "[Database]";
 							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
 						}
 					}
-				}
-				
-			
-				// avvisi
-				if(risorsaNonDisponibile!=null)
-					this.msgDiag.addKeyword(CostantiPdD.KEY_RISORSA_NON_DISPONIBILE, risorsaNonDisponibile);
-				if(checkRisorseDisponibili==false && this.lastCheck==true){
-					if(risorsaNonDisponibile!=null && (risorsaNonDisponibile.startsWith("[MessaggioDiagnosticoAppender")==false) ){
-						if(risorsaNonDisponibile.startsWith("[Validazione semantica")){
-							this.msgDiag.logPersonalizzato("validazioneSemanticaFallita");
-						}else{
-							this.msgDiag.logPersonalizzato("risorsaNonDisponibile");
+					// JMS
+					if(this.propertiesReader.isServerJ2EE()){
+						if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseJMS()){
+							try{
+								this.logger.debug("Controllo BrokerJMS");
+								this.queueManager.isAlive();
+							}catch(Exception e){
+								risorsaNonDisponibile = "[Broker JMS]";
+								TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+								this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+								descrizione = risorsaNonDisponibile+" "+e.getMessage();
+								checkRisorseDisponibili = false;
+							}
 						}
 					}
-					else
-						this.logger.warn("Il Monitoraggio delle risorse ha rilevato che la risorsa "+risorsaNonDisponibile+" non e' raggiungibile, tutti i servizi/moduli della porta di dominio sono momentanemanete sospesi.");
-					
-					registraEvento(false, descrizione);
-					
-				}else if(checkRisorseDisponibili==true && this.lastCheck==false){
-					this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
-					risorsaNonDisponibile = null;
-					
-					registraEvento(true, this.msgDiag.getMessaggio_replaceKeywords("risorsaRitornataDisponibile"));
-				}
-				this.lastCheck = checkRisorseDisponibili;
-				TimerMonitoraggioRisorseThread.risorseDisponibili = checkRisorseDisponibili;
-				
-			}
-			else {
-				this.logger.info("Timer "+ID_MODULO+" disabilitato");
-			}
-			
+					// Configurazione
+					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseConfigurazione()){
+						try{
+							this.logger.debug("Controllo Configurazione");
+							this.configPdDReader.isAlive();
+						}catch(Exception e){
+							risorsaNonDisponibile = "[Configurazione]";
+							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+							descrizione = risorsaNonDisponibile+" "+e.getMessage();
+							checkRisorseDisponibili = false;
+						}
+					}
+					// Configurazione, validazione semantica
+					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloValidazioneSemanticaConfigurazione()){
+						try{
+							this.logger.debug("Controllo Validazione semantica della Configurazione");
+							ClassNameProperties classNameReader = ClassNameProperties.getInstance();
+							this.configPdDReader.validazioneSemantica(classNameReader.getConnettore(), 
+									classNameReader.getMsgDiagnosticoOpenSPCoopAppender(),
+									classNameReader.getTracciamentoOpenSPCoopAppender(),
+									classNameReader.getDumpOpenSPCoopAppender(),
+									classNameReader.getAutenticazionePortaDelegata(), classNameReader.getAutenticazionePortaApplicativa(), 
+									classNameReader.getAutorizzazionePortaDelegata(),classNameReader.getAutorizzazionePortaApplicativa(),
+									classNameReader.getAutorizzazioneContenutoPortaDelegata(),classNameReader.getAutorizzazioneContenutoPortaApplicativa(),
+									classNameReader.getIntegrazionePortaDelegata(),
+									classNameReader.getIntegrazionePortaApplicativa(),
+									true,
+									true,
+									true, null);
+						}catch(Exception e){
+							risorsaNonDisponibile = "[Validazione semantica della Configurazione]";
+							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+							descrizione = risorsaNonDisponibile+" "+e.getMessage();
+							checkRisorseDisponibili = false;
+						}
+					}
+					// Registro dei Servizi
+					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseRegistriServizi()){
+						try{
+							this.logger.debug("Controllo Registri dei Servizi");
+							this.registriPdDReader.isAlive(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale());
+						}catch(Exception e){
+							risorsaNonDisponibile = "[Registri dei Servizi]";
+							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+							descrizione = risorsaNonDisponibile+" "+e.getMessage();
+							checkRisorseDisponibili = false;
+						}
+					}
+					// Registro dei Servizi, validazione semantica
+					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloValidazioneSemanticaRegistriServizi()){
+						try{
+							ProtocolFactoryManager pFactoryManager = ProtocolFactoryManager.getInstance();
+							this.logger.debug("Controllo Validazione semantica del Registri dei Servizi");
+							this.registriPdDReader.validazioneSemantica(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(), 
+									this.propertiesReader.isValidazioneSemanticaRegistroServiziCheckURI(), 
+									pFactoryManager.getOrganizationTypesAsArray(),
+									pFactoryManager.getServiceTypesAsArray(ServiceBinding.SOAP),
+									pFactoryManager.getServiceTypesAsArray(ServiceBinding.REST),
+									ClassNameProperties.getInstance().getConnettore(),
+									true,
+									true,
+									null);
+						}catch(Exception e){
+							risorsaNonDisponibile = "[Validazione semantica del Registri dei Servizi]";
+							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+							descrizione = risorsaNonDisponibile+" "+e.getMessage();
+							checkRisorseDisponibili = false;
+						}
+					}
+					// Tracciamenti personalizzati
+					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseTracciamentiPersonalizzati()){
+						String tipoTracciamento = null;
+						try{
+							for(int i=0; i< this.tipiTracciamentiPersonalizzati.size(); i++){
+								tipoTracciamento = this.tipiTracciamentiPersonalizzati.get(i);
+								this.logger.debug("Controllo TracciamentoPersonalizzato ["+tipoTracciamento+"]");
+								this.tracciamentiPersonalizzati.get(i).isAlive();
+							}
+						}catch(Exception e){
+							risorsaNonDisponibile = "[TracciamentoAppender "+tipoTracciamento+"]";
+							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+							descrizione = risorsaNonDisponibile+" "+e.getMessage();
+							checkRisorseDisponibili = false;
+						}
 						
-			// CheckInterval
-			if(this.stop==false){
-				int i=0;
-				while(i<this.propertiesReader.getControlloRisorseCheckInterval()){
-					Utilities.sleep(1000);		
-					if(this.stop){
-						break; // thread terminato, non lo devo far piu' dormire
+						// nel tracciamento considero anche le transazioni
+						if(checkRisorseDisponibili && this.propertiesReader.isTransazioniUsePddRuntimeDatasource()==false) {
+							try{
+								this.logger.debug("Controllo Database Transazioni");
+								this.dbTransazioniManager.isAlive();
+							}catch(Exception e){
+								risorsaNonDisponibile = "[DatabaseTransazioni]";
+								TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+								this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+								descrizione = risorsaNonDisponibile+" "+e.getMessage();
+								checkRisorseDisponibili = false;
+							}
+						}
 					}
-					i++;
+					
+				
+					// avvisi
+					if(risorsaNonDisponibile!=null)
+						this.msgDiag.addKeyword(CostantiPdD.KEY_RISORSA_NON_DISPONIBILE, risorsaNonDisponibile);
+					if(checkRisorseDisponibili==false && this.lastCheck==true){
+						if(risorsaNonDisponibile!=null && (risorsaNonDisponibile.startsWith("[MessaggioDiagnosticoAppender")==false) ){
+							if(risorsaNonDisponibile.startsWith("[Validazione semantica")){
+								this.msgDiag.logPersonalizzato("validazioneSemanticaFallita");
+							}else{
+								this.msgDiag.logPersonalizzato("risorsaNonDisponibile");
+							}
+						}
+						else
+							this.logger.warn("Il Monitoraggio delle risorse ha rilevato che la risorsa "+risorsaNonDisponibile+" non e' raggiungibile, tutti i servizi/moduli della porta di dominio sono momentanemanete sospesi.");
+						
+						registraEvento(false, descrizione);
+						
+					}else if(checkRisorseDisponibili==true && this.lastCheck==false){
+						this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
+						risorsaNonDisponibile = null;
+						
+						registraEvento(true, this.msgDiag.getMessaggio_replaceKeywords("risorsaRitornataDisponibile"));
+					}
+					this.lastCheck = checkRisorseDisponibili;
+					TimerMonitoraggioRisorseThread.risorseDisponibili = checkRisorseDisponibili;
+					
 				}
-			}
-		} 
+				else {
+					this.logger.info("Timer "+ID_MODULO+" disabilitato");
+				}
+				
+							
+				// CheckInterval
+				this.sleepForNextCheck((int) this.propertiesReader.getControlloRisorseCheckInterval(), 1000);
+				
+			} 
+		}finally {
+			this.finished();
+		}
 	}
 	
 	private void registraEvento(boolean risorseDisponibili, String descrizione) {

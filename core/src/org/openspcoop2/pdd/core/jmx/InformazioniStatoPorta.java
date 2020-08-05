@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.jmx;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
@@ -106,7 +107,7 @@ public class InformazioniStatoPorta {
 			String statoConnessioniDB, Map<String, String> statoConnessioniAltriDB, String statoConnessioniJMS,
 			String statoTransazioniId, String statoTransazioniIdProtocollo,
 			String statoTimerVerificaConnessioni, String statoConnessioniPD, String statoConnessioniPA, 
-			String statoTimerConsegnaAsincrona, String statoPoolThread,
+			String statoTimerConsegnaAsincrona,  List<InformazioniStatoPoolThreads> statoPoolThread,
 			String statoTimerGenerazioneStatisticheOrarie, String statoTimerGenerazioneStatisticheGiornaliere, String statoTimerGenerazioneSettimanali, String statoTimerGenerazioneMensili,
 			String statoTimerMessaggiEliminati, String statoTimerMessaggiScaduti, String statoTimerBuste, String statoTimerCorrelazioneApplicativa, String statoTimerMessaggiNonGestiti, String statoTimerMessaggiAnomali,
 			String statoTimerMonitoraggioRisorse, String statoTimerThreshold,
@@ -393,7 +394,7 @@ public class InformazioniStatoPorta {
 			bf.append("\n");
 		}
 		
-		if(statoPoolThread!=null || statoTimerConsegnaAsincrona!=null){
+		if((statoPoolThread!=null && !statoPoolThread.isEmpty()) || statoTimerConsegnaAsincrona!=null){
 			bf.append("=========================================================\n");
 			if(statoPoolThread!=null){
 				bf.append("Stato Thread Pool per la Consegna agli Applicativi\n");
@@ -404,9 +405,19 @@ public class InformazioniStatoPorta {
 			bf.append("=========================================================\n");
 			bf.append("\n");
 			bf.append("Timer: ").append(statoTimerConsegnaAsincrona);
-			if(statoPoolThread!=null){
-				bf.append("\n");
-				bf.append(statoPoolThread);
+			if(statoPoolThread!=null && !statoPoolThread.isEmpty()){
+				for (InformazioniStatoPoolThreads informazioniStatoPoolThread : statoPoolThread) {
+					bf.append("\n");
+					bf.append(informazioniStatoPoolThread.getNomeCoda());
+					bf.append("\n- ");
+					bf.append("Stato: ").append(informazioniStatoPoolThread.getStato());
+					bf.append("\n- ");
+					bf.append("Configurazione: ").append(informazioniStatoPoolThread.getConfigurazione());
+					bf.append("\n- ");
+					bf.append("Connettori prioritari: ").append(informazioniStatoPoolThread.getConnettoriPrioritari());
+					bf.append("\n- ");
+					bf.append("Applicativi prioritari: ").append(informazioniStatoPoolThread.getApplicativiPrioritari());
+				}
 			}
 			bf.append("\n");
 			bf.append("\n");

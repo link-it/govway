@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.Openspcoop2;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -66,6 +67,7 @@ import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDServizioUtils;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
+import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -1804,15 +1806,62 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		
 		if(listIDServiziApplicativi.size()<=0){
 			if(filtroRicerca!=null)
-				throw new DriverConfigurazioneNotFound("ServiziApplicativi non trovate che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+				throw new DriverConfigurazioneNotFound("ServiziApplicativi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
 			else
-				throw new DriverConfigurazioneNotFound("ServiziApplicativi non trovate");
+				throw new DriverConfigurazioneNotFound("ServiziApplicativi non trovati");
 		}
 		
 		return listIDServiziApplicativi;
 		
 	}
     
+	@Override
+	public List<IDConnettore> getConnettoriConsegnaNotifichePrioritarie(String queueName) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	
+		refreshConfigurazioneXML();
+		
+		List<IDConnettore> listIDServiziApplicativi = new ArrayList<IDConnettore>();
+		
+		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
+			Soggetto soggetto = this.openspcoop.getSoggetto(i);
+			for (int j = 0; j < soggetto.sizePortaApplicativaList(); j++) {
+				PortaApplicativa pa = soggetto.getPortaApplicativa(j);
+				if(pa.sizeServizioApplicativoList()>0) {
+					for (int k = 0; k <pa.sizeServizioApplicativoList(); k++) {
+						PortaApplicativaServizioApplicativo pasa = pa.getServizioApplicativo(k);
+						if(pasa.getDatiConnettore()!=null && pasa.getDatiConnettore().isPrioritaMax()) {
+							if(queueName!=null) {
+								String coda = pasa.getDatiConnettore().getCoda();
+								if(coda==null) {
+									coda = CostantiConfigurazione.CODA_DEFAULT;
+								}
+								if(!queueName.equals(coda)){
+									continue;
+								}
+							}
+							IDConnettore idSA = new IDConnettore();
+							idSA.setNome(pasa.getNome());
+							idSA.setIdSoggettoProprietario(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
+							idSA.setNomeConnettore(pasa.getDatiConnettore().getNome());
+							if(idSA.getNomeConnettore()==null) {
+								idSA.setNomeConnettore(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
+							}
+							listIDServiziApplicativi.add(idSA);
+						}
+					}
+				}
+			}
+		}
+		
+		if(listIDServiziApplicativi.size()<=0){
+			if(queueName!=null)
+				throw new DriverConfigurazioneNotFound("ServiziApplicativi non trovati per la coda '"+queueName+"'");
+			else
+				throw new DriverConfigurazioneNotFound("ServiziApplicativi non trovati");
+		}
+		
+		return listIDServiziApplicativi;
+	}
     
     
     

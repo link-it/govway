@@ -59,13 +59,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatoPdd }
-     */
-    public StatoPdd createStatoPdd() {
-        return new StatoPdd();
-    }
-
-    /**
      * Create an instance of {@link Openspcoop2 }
      */
     public Openspcoop2 createOpenspcoop2() {
@@ -73,10 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BustaServizio }
+     * Create an instance of {@link Filtro }
      */
-    public BustaServizio createBustaServizio() {
-        return new BustaServizio();
+    public Filtro createFiltro() {
+        return new Filtro();
     }
 
     /**
@@ -87,10 +80,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Busta }
+     * Create an instance of {@link StatoPdd }
      */
-    public Busta createBusta() {
-        return new Busta();
+    public StatoPdd createStatoPdd() {
+        return new StatoPdd();
     }
 
     /**
@@ -101,10 +94,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Filtro }
+     * Create an instance of {@link BustaServizio }
      */
-    public Filtro createFiltro() {
-        return new Filtro();
+    public BustaServizio createBustaServizio() {
+        return new BustaServizio();
     }
 
     /**
@@ -119,6 +112,13 @@ public class ObjectFactory {
      */
     public Dettaglio createDettaglio() {
         return new Dettaglio();
+    }
+
+    /**
+     * Create an instance of {@link Busta }
+     */
+    public Busta createBusta() {
+        return new Busta();
     }
 
 

@@ -113,13 +113,18 @@ public class FilterSearch extends Filtro {
 				}
 			}
 			if(this.getBusta().getServizio()!=null){
+				boolean v = false;
 				if(this.getBusta().getServizio().getTipo()!=null && !"".equals(this.getBusta().getServizio().getTipo()) &&
-						this.getBusta().getServizio().getNome()!=null && !"".equals(this.getBusta().getServizio().getNome())){
+						this.getBusta().getServizio().getNome()!=null && !"".equals(this.getBusta().getServizio().getNome()) ){
 					if(bf.length()>0){
 						bf.append(" ");
 					}
 					bf.append("Servizio(");
 					bf.append(this.getBusta().getServizio().getTipo()+"/"+this.getBusta().getServizio().getNome());
+					if(this.getBusta().getServizio().getVersione()!=null && (this.getBusta().getServizio().getVersione().intValue()>0)) {
+						bf.append(" v").append(this.getBusta().getServizio().getVersione().intValue());
+						v = true;
+					}
 					bf.append(")");
 				}else{
 					if(this.getBusta().getServizio().getTipo()!=null && !"".equals(this.getBusta().getServizio().getTipo())){
@@ -136,8 +141,21 @@ public class FilterSearch extends Filtro {
 						}
 						bf.append("Servizio(");
 						bf.append(this.getBusta().getServizio().getNome());
+						if(this.getBusta().getServizio().getVersione()!=null && (this.getBusta().getServizio().getVersione().intValue()>0)) {
+							bf.append(" v").append(this.getBusta().getServizio().getVersione().intValue());
+							v = true;
+						}
 						bf.append(")");
 					}
+				}
+				
+				if(!v && this.getBusta().getServizio().getVersione()!=null && (this.getBusta().getServizio().getVersione().intValue()>0)) {
+					if(bf.length()>0){
+						bf.append(" ");
+					}
+					bf.append("Versione Servizio(");
+					bf.append(this.getBusta().getServizio().getVersione().intValue());
+					bf.append(")");
 				}
 			}
 			if(this.getBusta().getAzione()!=null && !"".equals(this.getBusta().getAzione())){

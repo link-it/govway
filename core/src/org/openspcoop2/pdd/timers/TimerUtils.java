@@ -23,10 +23,25 @@
 
 package org.openspcoop2.pdd.timers;
 
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.rmi.PortableRemoteObject;
 
+import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBStatisticheManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.resources.GestoreJNDI;
+import org.openspcoop2.utils.semaphore.Semaphore;
+import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
+import org.openspcoop2.utils.semaphore.SemaphoreMapping;
+import org.slf4j.Logger;
 
 /**
  * Libreria contenente metodi utili per lo smistamento delle buste 
@@ -150,4 +165,110 @@ public class TimerUtils {
     }
     
 
+    
+    
+    public static void relaseLockTimers(OpenSPCoop2Properties propertiesReader, String ID_MODULO, Logger logCore, boolean logErrorConnection) {
+		if(propertiesReader.isTimerLockByDatabase() && propertiesReader.getDatabaseType()!=null) {
+			
+			// RILASCIO LOCK SUL RUNTIME
+			
+			List<TipoLock> tipiStatistiche = new ArrayList<TipoLock>();
+			tipiStatistiche.add(TipoLock.GENERAZIONE_STATISTICHE_ORARIE);
+			tipiStatistiche.add(TipoLock.GENERAZIONE_STATISTICHE_GIORNALIERE);
+			tipiStatistiche.add(TipoLock.GENERAZIONE_STATISTICHE_SETTIMANALI);
+			tipiStatistiche.add(TipoLock.GENERAZIONE_STATISTICHE_MENSILI);
+			
+			List<TipoLock> tipiRuntime = new ArrayList<TipoLock>();
+			tipiRuntime.add(TipoLock.GESTIONE_BUSTE_NON_RISCONTRATE);
+			tipiRuntime.add(TipoLock.GESTIONE_CORRELAZIONE_APPLICATIVA);
+			tipiRuntime.add(TipoLock.GESTIONE_PULIZIA_MESSAGGI_ANOMALI);
+			tipiRuntime.add(TipoLock.GESTIONE_REPOSITORY_MESSAGGI);
+			if(propertiesReader.isStatisticheGenerazioneEnabled()){
+				if(propertiesReader.isStatisticheUsePddRuntimeDatasource()) {
+					tipiRuntime.addAll(tipiStatistiche);
+				}
+			}
+			if(tipiRuntime!=null && tipiRuntime.size()>0) {
+				Resource resource = null;
+				DBManager dbManager = DBManager.getInstance();
+				try {
+					resource = dbManager.getResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, null, false);
+					
+					for (TipoLock tipoLock : tipiRuntime) {
+						_releaseLock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore);
+					}
+				}catch(Exception e){
+					if(logErrorConnection) {
+						logCore.error("Riscontrato errore durante il rilascio dei lock: "+e.getMessage(),e);
+					}
+					else {
+						logCore.debug("Riscontrato errore durante il rilascio dei lock, in fase di shutdown: "+e.getMessage(),e);
+					}
+				}
+				finally {
+					dbManager.releaseResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, resource, false);
+				}
+			}
+			
+			// RILASCIO LOCK STATISTICHE SE NON SONO SUL RUNTIME
+			if(propertiesReader.isStatisticheGenerazioneEnabled() && !propertiesReader.isStatisticheUsePddRuntimeDatasource()){
+				
+				if(tipiStatistiche!=null && tipiStatistiche.size()>0) {
+					Resource resource = null;
+					DBStatisticheManager dbStatisticheManager = null;
+					DBTransazioniManager dbTransazioniManager = null;
+					if(propertiesReader.isStatisticheUseTransazioniDatasource()) {
+						dbTransazioniManager = DBTransazioniManager.getInstance();
+					}
+					else {
+						dbStatisticheManager = DBStatisticheManager.getInstance();
+					}
+					try {
+						if(dbTransazioniManager!=null) {
+							resource = dbTransazioniManager.getResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, null, false);
+						}
+						else {
+							resource = dbStatisticheManager.getResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, null, false);
+						}
+						
+						for (TipoLock tipoLock : tipiStatistiche) {
+							_releaseLock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore);
+						}
+					}catch(Exception e){
+						if(logErrorConnection) {
+							logCore.error("Riscontrato errore durante il rilascio dei lock: "+e.getMessage(),e);
+						}
+						else {
+							logCore.debug("Riscontrato errore durante il rilascio dei lock, in fase di shutdown: "+e.getMessage(),e);
+						}
+					}
+					finally {
+						if(dbTransazioniManager!=null) {
+							dbTransazioniManager.releaseResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, resource, false);
+						}
+						else {
+							dbStatisticheManager.releaseResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, resource, false);
+						}
+					}
+				}
+				
+			}
+		}
+    }
+    
+	private static void _releaseLock(OpenSPCoop2Properties propertiesReader, Connection connection, TipoLock tipoLock, Logger logCore) {
+		try{
+			InfoStatistics semaphore_statistics = new InfoStatistics();
+			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(propertiesReader.getTimerConsegnaContenutiApplicativi_lockMaxLife(), 
+					propertiesReader.getTimerConsegnaContenutiApplicativi_lockIdleTime());
+			//config.setSerializableLevel(true); // in modo da non avere il lock esclusivo sulla tabella e far funzionare anche se l'entry non esiste proprio
+			TipiDatabase databaseType = TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType());
+			Semaphore semaphore = new Semaphore(semaphore_statistics, SemaphoreMapping.newInstance(tipoLock.getTipo()), 
+					config, databaseType, logCore);
+			boolean unlock = semaphore.releaseLock(connection, "Riavvio application server");
+			logCore.debug("Lock di tipo '"+tipoLock.getTipo()+"' "+(unlock?"rilasciato" :"non rilasciato"));
+		}catch(Exception e){
+			logCore.error("Riscontrato errore durante il rilascio del lock di tipo '"+tipoLock.getTipo()+"': "+e.getMessage(),e);
+		}
+	}
 }

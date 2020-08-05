@@ -423,8 +423,8 @@ public class TimerStatisticheLib {
 				GestoreMessaggi.acquireLock(
 						this.semaphore, conStatistiche, this.timerLock,
 						this.msgDiag, causa, 
-						this.op2Properties.getMsgGiaInProcessamento_AttesaAttiva(), 
-						this.op2Properties.getMsgGiaInProcessamento_CheckInterval());
+						this.op2Properties.getStatisticheGenerazioneTimer_lockAttesaAttiva(), 
+						this.op2Properties.getStatisticheGenerazioneTimer_lockCheckInterval());
 				
 				StatisticsLibrary sLibrary = new StatisticsLibrary(this.statisticsConfig, statisticheSM, transazioniSM, 
 						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM);

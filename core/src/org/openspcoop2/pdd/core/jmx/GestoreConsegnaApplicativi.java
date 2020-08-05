@@ -36,9 +36,15 @@ import javax.management.MBeanConstructorInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.id.IDConnettore;
+import org.openspcoop2.pdd.config.ConfigurazionePdD;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -55,23 +61,18 @@ import org.slf4j.Logger;
 public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi proprieta' */
-	public final static String POOL_SIZE = "poolSize";
-	public final static String QUEUE_SIZE = "queueSize";
-	public final static String CHECK_LIMIT = "limitNuoviMessaggiDaConsegnare";	
-	public final static String CHECK_INTERVAL = "intervalloControlloNuoviMessaggiDaConsegnare";
-	public final static String MIN_INTERVAL = "intervalloMinimoRiconsegna";
 	public final static String MAX_LIFE_PRESA_IN_CONSEGNA = "maxlifePresaInConsegna";
 
 	/** Nomi metodi' */
 	public final static String THREAD_POOL_STATUS = "getThreadPoolStatus";
-	
+	public final static String QUEUE_CONFIG = "getQueueConfig";
+	public final static String GET_APPLICATIVI_PRIORITARI = "getApplicativiPrioritari";
+	public final static String GET_CONNETTORI_PRIORITARI = "getConnettoriPrioritari";
+	public final static String UPDATE_CONNETTORI_PRIORITARI = "updateConnettoriPrioritari";
+	public final static String RESET_CONNETTORI_PRIORITARI = "resetConnettoriPrioritari";
+		
 	/** Attributi */
 	private boolean cacheAbilitata = false;
-	private int poolSize = -1;
-	private int queueSize = -1;
-	private int checkLimit = -1;
-	private int checkInterval = -1;
-	private int minInterval = -1;
 	private int maxLifePresaInConsegna = -1;
 	
 	/** getAttribute */
@@ -83,21 +84,6 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		
 		if(attributeName.equals(JMXUtils.CACHE_ATTRIBUTE_ABILITATA))
 			return this.cacheAbilitata;
-		
-		if(attributeName.equals(GestoreConsegnaApplicativi.POOL_SIZE))
-			return this.poolSize;
-		
-		if(attributeName.equals(GestoreConsegnaApplicativi.QUEUE_SIZE))
-			return this.queueSize;
-		
-		if(attributeName.equals(GestoreConsegnaApplicativi.CHECK_LIMIT))
-			return this.checkLimit;
-		
-		if(attributeName.equals(GestoreConsegnaApplicativi.CHECK_INTERVAL))
-			return this.checkInterval;
-		
-		if(attributeName.equals(GestoreConsegnaApplicativi.MIN_INTERVAL))
-			return this.minInterval;
 		
 		if(attributeName.equals(GestoreConsegnaApplicativi.MAX_LIFE_PRESA_IN_CONSEGNA))
 			return this.maxLifePresaInConsegna;
@@ -264,9 +250,119 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		}
 			
 		if(actionName.equals(THREAD_POOL_STATUS)){
-			return this.getThreadPoolStatus();
+			
+			if(params.length > 1)
+				throw new MBeanException(new Exception("["+THREAD_POOL_STATUS+"] Lunghezza parametri non corretta: "+params.length));
+			
+			if(params.length > 0) {
+				
+				String param1 = null;
+				if(params[0]!=null && !"".equals(params[0])){
+					param1 = (String)params[0];
+				}
+				
+				return this.getThreadPoolStatus(param1);
+			}
+			else {
+				return this.getThreadPoolStatus(CostantiConfigurazione.CODA_DEFAULT);
+			}
 		}
 		
+		if(actionName.equals(QUEUE_CONFIG)){
+			
+			if(params.length > 1)
+				throw new MBeanException(new Exception("["+QUEUE_CONFIG+"] Lunghezza parametri non corretta: "+params.length));
+			
+			if(params.length > 0) {
+				
+				String param1 = null;
+				if(params[0]!=null && !"".equals(params[0])){
+					param1 = (String)params[0];
+				}
+				
+				return this.getQueueConfig(param1);
+			}
+			else {
+				return this.getQueueConfig(CostantiConfigurazione.CODA_DEFAULT);
+			}
+		}
+		
+		if(actionName.equals(GET_APPLICATIVI_PRIORITARI)){
+			
+			if(params.length > 1)
+				throw new MBeanException(new Exception("["+QUEUE_CONFIG+"] Lunghezza parametri non corretta: "+params.length));
+			
+			if(params.length > 0) {
+				
+				String param1 = null;
+				if(params[0]!=null && !"".equals(params[0])){
+					param1 = (String)params[0];
+				}
+				
+				return this.getApplicativiPrioritari(param1);
+			}
+			else {
+				return this.getApplicativiPrioritari(CostantiConfigurazione.CODA_DEFAULT);
+			}
+		}
+		
+		if(actionName.equals(GET_CONNETTORI_PRIORITARI)){
+			
+			if(params.length > 1)
+				throw new MBeanException(new Exception("["+QUEUE_CONFIG+"] Lunghezza parametri non corretta: "+params.length));
+			
+			if(params.length > 0) {
+				
+				String param1 = null;
+				if(params[0]!=null && !"".equals(params[0])){
+					param1 = (String)params[0];
+				}
+				
+				return this.getConnettoriPrioritari(param1);
+			}
+			else {
+				return this.getConnettoriPrioritari(CostantiConfigurazione.CODA_DEFAULT);
+			}
+		}
+		
+		if(actionName.equals(UPDATE_CONNETTORI_PRIORITARI)){
+			
+			if(params.length > 1)
+				throw new MBeanException(new Exception("["+QUEUE_CONFIG+"] Lunghezza parametri non corretta: "+params.length));
+			
+			if(params.length > 0) {
+				
+				String param1 = null;
+				if(params[0]!=null && !"".equals(params[0])){
+					param1 = (String)params[0];
+				}
+				
+				return this.updateConnettoriPrioritari(param1);
+			}
+			else {
+				return this.updateConnettoriPrioritari(CostantiConfigurazione.CODA_DEFAULT);
+			}
+		}
+		
+		if(actionName.equals(RESET_CONNETTORI_PRIORITARI)){
+			
+			if(params.length > 1)
+				throw new MBeanException(new Exception("["+QUEUE_CONFIG+"] Lunghezza parametri non corretta: "+params.length));
+			
+			if(params.length > 0) {
+				
+				String param1 = null;
+				if(params[0]!=null && !"".equals(params[0])){
+					param1 = (String)params[0];
+				}
+				
+				return this.resetConnettoriPrioritari(param1);
+			}
+			else {
+				return this.resetConnettoriPrioritari(CostantiConfigurazione.CODA_DEFAULT);
+			}
+		}
+				
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -281,36 +377,6 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		// MetaData per l'attributo abilitaCache
 		MBeanAttributeInfo cacheAbilitataVAR = JMXUtils.MBEAN_ATTRIBUTE_INFO_CACHE_ABILITATA;
 
-		// MetaData per l'attributo poolSize
-		MBeanAttributeInfo poolSize 
-			= new MBeanAttributeInfo(GestoreConsegnaApplicativi.POOL_SIZE,String.class.getName(),
-						"Dimensione del Pool di Thread",
-							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
-		
-		// MetaData per l'attributo queueSize
-		MBeanAttributeInfo queueSize 
-			= new MBeanAttributeInfo(GestoreConsegnaApplicativi.QUEUE_SIZE,String.class.getName(),
-						"Capacità della coda dei threads",
-							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
-		
-		// MetaData per l'attributo checkLimit
-		MBeanAttributeInfo checkLimit 
-			= new MBeanAttributeInfo(GestoreConsegnaApplicativi.CHECK_LIMIT,String.class.getName(),
-						"Numero di messaggi gestiti a blocco durante il controllo dei messaggi da re-inoltrare",
-							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
-		
-		// MetaData per l'attributo checkInterval
-		MBeanAttributeInfo checkInterval 
-			= new MBeanAttributeInfo(GestoreConsegnaApplicativi.CHECK_INTERVAL,String.class.getName(),
-						"Intervallo in secondi per il controllo dei messaggi da re-inoltrare, quando non ne sono stati trovati altri o la coda è piena",
-							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
-		
-		// MetaData per l'attributo minInterval
-		MBeanAttributeInfo minInterval 
-			= new MBeanAttributeInfo(GestoreConsegnaApplicativi.MIN_INTERVAL,String.class.getName(),
-						"Intervallo in secondi minimo per la riconsegna di un messaggio per il quale la precedente consegna non è andata a buon fine",
-							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
-		
 		// MetaData per l'attributo maxLife
 		MBeanAttributeInfo maxLife 
 			= new MBeanAttributeInfo(GestoreConsegnaApplicativi.MAX_LIFE_PRESA_IN_CONSEGNA,String.class.getName(),
@@ -339,9 +405,98 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		MBeanOperationInfo removeObjectCacheOP = JMXUtils.MBEAN_OPERATION_REMOVE_OBJECT_CACHE;
 				
 		// MetaData per l'operazione threadPoolStatus
-		MBeanOperationInfo threadPoolStatus 
-		= new MBeanOperationInfo(THREAD_POOL_STATUS,"Stato dei thread utilizzati per la consegna dei messaggi",
+		MBeanOperationInfo threadPoolStatusDefault 
+		= new MBeanOperationInfo(THREAD_POOL_STATUS,"Stato dei thread utilizzati per la consegna dei messaggi nella coda di default",
 			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione threadPoolStatus
+		MBeanOperationInfo threadPoolStatus 
+		= new MBeanOperationInfo(THREAD_POOL_STATUS,"Stato dei thread utilizzati per la consegna dei messaggi nella coda indicata",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("coda",String.class.getName(),"Nome della coda"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione threadPoolStatus
+		MBeanOperationInfo queueConfigDefault 
+		= new MBeanOperationInfo(QUEUE_CONFIG,"Configurazione della coda di default",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione threadPoolStatus
+		MBeanOperationInfo queueConfig 
+		= new MBeanOperationInfo(QUEUE_CONFIG,"Configurazione della coda indicata",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("coda",String.class.getName(),"Nome della coda"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione getApplicativiPrioritariDefault
+		MBeanOperationInfo getApplicativiPrioritariDefault 
+		= new MBeanOperationInfo(GET_APPLICATIVI_PRIORITARI,"Applicativi configurati come prioritari nella coda di default",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione getApplicativiPrioritari
+		MBeanOperationInfo getApplicativiPrioritari
+		= new MBeanOperationInfo(GET_APPLICATIVI_PRIORITARI,"Applicativi configurati come prioritari nella coda indicata",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("coda",String.class.getName(),"Nome della coda"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione getConnettoriPrioritariDefault
+		MBeanOperationInfo getConnettoriPrioritariDefault 
+		= new MBeanOperationInfo(GET_CONNETTORI_PRIORITARI,"Connettori configurati come prioritari nella coda di default",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione getConnettoriPrioritari
+		MBeanOperationInfo getConnettoriPrioritari
+		= new MBeanOperationInfo(GET_CONNETTORI_PRIORITARI,"Connettori configurati come prioritari nella coda indicata",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("coda",String.class.getName(),"Nome della coda"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione updateConnettoriPrioritariDefault
+		MBeanOperationInfo updateConnettoriPrioritariDefault 
+		= new MBeanOperationInfo(UPDATE_CONNETTORI_PRIORITARI,"Aggiorna la configurazione dei connettori configurati come prioritari nella coda di default",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione updateConnettoriPrioritari
+		MBeanOperationInfo updateConnettoriPrioritari
+		= new MBeanOperationInfo(UPDATE_CONNETTORI_PRIORITARI,"Aggiorna la configurazione dei connettori configurati come prioritari nella coda indicata",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("coda",String.class.getName(),"Nome della coda"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione resetConnettoriPrioritariDefault
+		MBeanOperationInfo resetConnettoriPrioritariDefault 
+		= new MBeanOperationInfo(RESET_CONNETTORI_PRIORITARI,"Rimuove i connettori configurati come prioritari nella coda di default",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione resetConnettoriPrioritari
+		MBeanOperationInfo resetConnettoriPrioritari
+		= new MBeanOperationInfo(RESET_CONNETTORI_PRIORITARI,"Rimuove i connettori configurati come prioritari nella coda indicata",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("coda",String.class.getName(),"Nome della coda"),
+			},
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
@@ -349,8 +504,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
 		// Lista attributi
-		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[]{cacheAbilitataVAR,poolSize, queueSize,
-				checkLimit,checkInterval,minInterval,maxLife};
+		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[]{cacheAbilitataVAR,maxLife};
 		
 		// Lista Costruttori
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
@@ -364,7 +518,18 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		listOperation.add(listKeysCacheOP);
 		listOperation.add(getObjectCacheOP);
 		listOperation.add(removeObjectCacheOP);
+		listOperation.add(threadPoolStatusDefault);
 		listOperation.add(threadPoolStatus);
+		listOperation.add(queueConfigDefault);
+		listOperation.add(queueConfig);
+		listOperation.add(getApplicativiPrioritariDefault);
+		listOperation.add(getApplicativiPrioritari);
+		listOperation.add(getConnettoriPrioritariDefault);
+		listOperation.add(getConnettoriPrioritari);
+		listOperation.add(updateConnettoriPrioritariDefault);
+		listOperation.add(updateConnettoriPrioritari);
+		listOperation.add(resetConnettoriPrioritariDefault);
+		listOperation.add(resetConnettoriPrioritari);
 		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -385,12 +550,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		}catch(Exception e){
 			this.log.error("Errore durante la comprensione dello stato della cache");
 		}
-			
-		this.poolSize = this.openspcoopProperties.getTimerConsegnaContenutiApplicativiThreadsPoolSize();
-		this.queueSize = this.openspcoopProperties.getTimerConsegnaContenutiApplicativiThreadsQueueSize();
-		this.checkLimit = this.openspcoopProperties.getTimerConsegnaContenutiApplicativiLimit();
-		this.checkInterval = this.openspcoopProperties.getTimerConsegnaContenutiApplicativiInterval();
-		this.minInterval = this.openspcoopProperties.getTimerConsegnaContenutiApplicativiMinIntervalResend();
+		
 		this.maxLifePresaInConsegna = this.openspcoopProperties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife();
 
 	}
@@ -496,9 +656,106 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		}
 	}
 	
-	public String getThreadPoolStatus() {
+	public String getThreadPoolStatus(String queue) {
 		try{
-			return OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRef.getThreadsImage();
+			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+				throw new Exception("Coda '"+queue+"' non esistente");
+			}
+			return OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.get(queue).getThreadsImage();
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getQueueConfig(String queue) {
+		try{
+			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+				throw new Exception("Coda '"+queue+"' non esistente");
+			}
+			return OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.get(queue).getQueueConfig();
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getApplicativiPrioritari(String queue) {
+		try{
+			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+				throw new Exception("Coda '"+queue+"' non esistente");
+			}
+			List<IDConnettore> list = ConfigurazionePdDManager.getInstance().getConnettoriConsegnaNotifichePrioritarie(queue);
+			if(list==null || list.isEmpty()) {
+				return "";
+			}
+			else {
+				StringBuilder sb = new StringBuilder();
+				for (IDConnettore idConnettore : list) {
+					if(sb.length()>0) {
+						sb.append(", ");
+					}
+					sb.append(idConnettore.getNome()).append("@").append(idConnettore.getIdSoggettoProprietario().toString());
+				}
+				return sb.toString();
+			}
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getConnettoriPrioritari(String queue) {
+		try{
+			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+				throw new Exception("Coda '"+queue+"' non esistente");
+			}
+			List<IDConnettore> list = ConfigurazionePdDManager.getInstance().getConnettoriConsegnaNotifichePrioritarie(queue);
+			if(list==null || list.isEmpty()) {
+				return "";
+			}
+			else {
+				StringBuilder sb = new StringBuilder();
+				for (IDConnettore idConnettore : list) {
+					if(sb.length()>0) {
+						sb.append(", ");
+					}
+					sb.append(idConnettore.getNomeConnettore());
+				}
+				return sb.toString();
+			}
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String updateConnettoriPrioritari(String queue) {
+		try{
+			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+				throw new Exception("Coda '"+queue+"' non esistente");
+			}
+			
+			ConfigurazionePdDReader.removeObjectCache(ConfigurazionePdD.getKey_getConnettoriConsegnaNotifichePrioritarie(queue));
+			
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+
+	public String resetConnettoriPrioritari(String queue) {
+		try{
+			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+				throw new Exception("Coda '"+queue+"' non esistente");
+			}
+			
+			ConfigurazionePdDManager.getInstance().resetConnettoriConsegnaNotifichePrioritarie(queue);
+			
+			ConfigurazionePdDReader.removeObjectCache(ConfigurazionePdD.getKey_getConnettoriConsegnaNotifichePrioritarie(queue));
+			
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

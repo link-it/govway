@@ -74,6 +74,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -826,6 +827,18 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.invocazionePortaDelegataSbustamentoInformazioniProtocollo(sa);
 	}
 
+	public List<String> getServiziApplicativiConsegnaNotifichePrioritarie(String queue) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getServiziApplicativiConsegnaNotifichePrioritarie(this.getConnection(),queue);
+	}
+	
+	public List<IDConnettore> getConnettoriConsegnaNotifichePrioritarie(String queue) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getConnettoriConsegnaNotifichePrioritarie(this.getConnection(),queue);
+	}
+	
+	public void resetConnettoriConsegnaNotifichePrioritarie(String queue) throws DriverConfigurazioneException{
+		this.configurazionePdDReader.resetConnettoriConsegnaNotifichePrioritarie(this.getConnection(),queue);
+	}
+	
 
 	/* ********  Servizi Applicativi (InvocazioneServizio)  ******** */
 

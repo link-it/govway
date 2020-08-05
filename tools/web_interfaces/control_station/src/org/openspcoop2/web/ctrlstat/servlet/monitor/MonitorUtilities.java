@@ -42,36 +42,45 @@ import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 */
 public class MonitorUtilities {
 
-	public static long countListaRichiestePendenti(FilterSearch filter,String pddName) throws Exception{
+	public static long countListaRichiestePendenti(FilterSearch filter,String pddName, String sorgenteDati) throws Exception{
 		if(Monitor.singlePdD){
-			return Monitor.driverMonitoraggioLocale.countListaRichiestePendenti(filter);
+			return Monitor.driverMonitoraggioLocale.get(sorgenteDati).countListaRichiestePendenti(filter);
 		}
 		else{
 			return getMessaggioWS(pddName).count(convertToSearchFilterMessaggio(filter));
 		}
 	}
 	
-	public static List<Messaggio> getListaRichiestePendenti(FilterSearch filter,String pddName) throws Exception{
+	public static List<Messaggio> getListaRichiestePendenti(FilterSearch filter,String pddName, String sorgenteDati) throws Exception{
 		if(Monitor.singlePdD){
-			return Monitor.driverMonitoraggioLocale.getListaRichiestePendenti(filter);
+			return Monitor.driverMonitoraggioLocale.get(sorgenteDati).getListaRichiestePendenti(filter);
 		}
 		else{
 			return getMessaggioWS(pddName).findAll(convertToSearchFilterMessaggio(filter));
 		}
 	}
 	
-	public static long deleteRichiestePendenti(FilterSearch filter,String pddName) throws Exception{
+	public static long deleteRichiestePendenti(FilterSearch filter,String pddName, String sorgenteDati) throws Exception{
 		if(Monitor.singlePdD){
-			return Monitor.driverMonitoraggioLocale.deleteRichiestePendenti(filter);
+			return Monitor.driverMonitoraggioLocale.get(sorgenteDati).deleteRichiestePendenti(filter);
 		}
 		else{
 			return getMessaggioWS(pddName).deleteAllByFilter(convertToSearchFilterMessaggio(filter));
 		}
 	}
 	
-	public static StatoPdd getStatoRichiestePendenti(FilterSearch filter,String pddName) throws Exception{
+	public static long aggiornaDataRispedizioneRichiestePendenti(FilterSearch filter,String pddName, String sorgenteDati) throws Exception{
 		if(Monitor.singlePdD){
-			return Monitor.driverMonitoraggioLocale.getStatoRichiestePendenti(filter);
+			return Monitor.driverMonitoraggioLocale.get(sorgenteDati).aggiornaDataRispedizioneRichiestePendenti(filter);
+		}
+		else{
+			throw new Exception("Not Implemented");
+		}
+	}
+	
+	public static StatoPdd getStatoRichiestePendenti(FilterSearch filter,String pddName, String sorgenteDati) throws Exception{
+		if(Monitor.singlePdD){
+			return Monitor.driverMonitoraggioLocale.get(sorgenteDati).getStatoRichiestePendenti(filter);
 		}
 		else{
 			return getStatoPddWS(pddName).find(convertToSearchFilterStatoPdd(filter));
@@ -187,6 +196,7 @@ public class MonitorUtilities {
 				bustaServizio = new org.openspcoop2.pdd.monitor.ws.client.messaggio.all.BustaServizio();
 				bustaServizio.setNome(filter.getBusta().getServizio().getNome());
 				bustaServizio.setTipo(filter.getBusta().getServizio().getTipo());
+				//bustaServizio.setVersione(filter.getBusta().getServizio().getVersione());
 			}
 			busta.setServizio(bustaServizio);
 			
@@ -246,6 +256,7 @@ public class MonitorUtilities {
 				bustaServizio = new org.openspcoop2.pdd.monitor.ws.client.statopdd.all.BustaServizio();
 				bustaServizio.setNome(filter.getBusta().getServizio().getNome());
 				bustaServizio.setTipo(filter.getBusta().getServizio().getTipo());
+				//bustaServizio.setVersione(filter.getBusta().getServizio().getVersione());
 			}
 			busta.setServizio(bustaServizio);
 			

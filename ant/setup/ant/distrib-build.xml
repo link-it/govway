@@ -291,6 +291,8 @@
 						<exclude name="govway_local*properties.new"/>
 						<exclude name="govway.fileTrace*properties"/>
 						<exclude name="govway.fileTrace*properties.new"/>
+						<exclude name="consolePassword.properties"/>
+						<exclude name="consolePassword.properties.new"/>
 						<exclude name="trasparente*"/>
 						<exclude name="modipa*"/>
 						<exclude name="spcoop*"/>
@@ -310,6 +312,8 @@
 				</move>
 				<copy todir="${dist}/cfg/manager">
 					<fileset dir="${dist}/cfg">
+						<include name="consolePassword.properties"/>
+						<include name="consolePassword.properties.new"/>
 						<include name="trasparente*"/>
 						<include name="modipa*"/>
 						<include name="spcoop*"/>
@@ -691,7 +695,7 @@
 			</then>
 		</if>
 				
-		<!-- *** Correzione Application.xml ***-->
+		<!-- *** Correzione Application.xml (aggiunta archivi) ***-->
 		<if>
 			<or>
 				<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
@@ -775,6 +779,84 @@
 			</then>
 		</if>
 		
+		<!-- *** Correzione Application.xml (aggiunta resource-ref) ***-->
+		<replace file="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" token="&lt;/application&gt;" value=""/>
+		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[
+	
+	<!-- resource-ref -->
+
+	<resource-ref>
+		<res-ref-name>govwayds</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<lookup-name>java:/org.govway.datasource</lookup-name>
+	</resource-ref>
+
+	<resource-ref>
+		<res-ref-name>govwayds.console</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<lookup-name>java:/org.govway.datasource.console</lookup-name>
+	</resource-ref>]]>
+		</concat>
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<available file="${dist}/datasource/runtime/govway_tracciamento-ds.xml" type="file" property="dsTracciamento.present"/>
+			</then>
+			<else>
+				<available file="${dist}/datasource/govway_tracciamento-ds.xml" type="file" property="dsTracciamento.present"/>
+			</else>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${dsTracciamento.present}" arg2="true"/>
+				<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			</and>
+			<then>
+				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[	<resource-ref>
+		<res-ref-name>govwayds.tracciamento</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<lookup-name>java:/org.govway.datasource.tracciamento</lookup-name>
+	</resource-ref>]]>
+				</concat>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<available file="${dist}/datasource/runtime/govway_statistiche-ds.xml" type="file" property="dsStatistiche.present"/>
+			</then>
+			<else>
+				<available file="${dist}/datasource/govway_statistiche-ds.xml" type="file" property="dsStatistiche.present"/>
+			</else>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${dsStatistiche.present}" arg2="true"/>
+				<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			</and>
+			<then>
+				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[	<resource-ref>
+		<res-ref-name>govwayds.statistiche</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<lookup-name>java:/org.govway.datasource.statistiche</lookup-name>
+	</resource-ref>]]>
+				</concat>
+			</then>
+		</if>
+		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[	<!-- End resource-ref -->
+		        			
+]]>
+		</concat>
+		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[
+</application>
+]]>
+		</concat>
+
 		<!--*** Correzione jboss-deployment-structure *** -->
 		<if>
 			<and>

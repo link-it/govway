@@ -144,6 +144,9 @@ CREATE TABLE porte_applicative_sa
 	connettore_descrizione VARCHAR(4000),
 	connettore_stato VARCHAR(255),
 	connettore_filtri VARCHAR(max),
+	connettore_coda VARCHAR(10) DEFAULT 'DEFAULT',
+	connettore_priorita VARCHAR(10) DEFAULT 'DEFAULT',
+	connettore_max_priorita INT DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
@@ -156,6 +159,8 @@ CREATE TABLE porte_applicative_sa
 
 -- index
 CREATE INDEX INDEX_PA_SA ON porte_applicative_sa (id_porta);
+CREATE INDEX INDEX_PA_SA_CODA ON porte_applicative_sa (connettore_coda,connettore_priorita,id_servizio_applicativo);
+CREATE INDEX INDEX_PA_SA_CODA_MAX ON porte_applicative_sa (connettore_coda,connettore_max_priorita,id_servizio_applicativo);
 
 
 

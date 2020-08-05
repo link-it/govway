@@ -41,6 +41,7 @@ import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
 * MonitorConsole
@@ -856,6 +857,7 @@ public class MonitorConsole {
 						if(lista.get(i).getBustaInfo().getServizio()!=null){
 							System.out.println("Servizio (tipo): "+lista.get(i).getBustaInfo().getServizio().getTipo());
 							System.out.println("Servizio (nome): "+lista.get(i).getBustaInfo().getServizio().getNome());
+							System.out.println("Servizio (versione): "+lista.get(i).getBustaInfo().getServizio().getVersione());
 						}
 						if(lista.get(i).getBustaInfo().getAzione()!=null)
 							System.out.println("Azione: "+lista.get(i).getBustaInfo().getAzione());
@@ -882,6 +884,12 @@ public class MonitorConsole {
 								System.out.println("\t\ttipo consegna: "+sc.get(j).getTipoConsegna());
 								if(sc.get(j).getErroreProcessamento()!=null)
 									System.out.println("\terrore processamento: "+sc.get(j).getErroreProcessamento());
+								if(sc.get(j).getDataRispedizione()!=null) {
+									System.out.println("\t\tdata rispedizione: "+DateUtils.getSimpleDateFormatMs().format(sc.get(j).getDataRispedizione()));
+								}
+								System.out.println("\t\tnome porta: "+sc.get(j).getNomePorta());
+								System.out.println("\t\tcoda: "+sc.get(j).getCoda());
+								System.out.println("\t\tpriorita: "+sc.get(j).getPriorita());
 							}
 						}else{
 							if(lista.get(i).getDettaglio()!=null && lista.get(i).getDettaglio().getErroreProcessamento()!=null)

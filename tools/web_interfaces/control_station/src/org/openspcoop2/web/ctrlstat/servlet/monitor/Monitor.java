@@ -24,8 +24,10 @@ package org.openspcoop2.web.ctrlstat.servlet.monitor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -34,14 +36,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.monitor.Busta;
 import org.openspcoop2.pdd.monitor.BustaServizio;
 import org.openspcoop2.pdd.monitor.BustaSoggetto;
@@ -52,6 +65,7 @@ import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
 import org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
+import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -62,11 +76,15 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.audit.appender.AuditDisabilitatoException;
 import org.openspcoop2.web.lib.audit.appender.IDOperazione;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
+import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -98,8 +116,9 @@ public final class Monitor extends Action {
 	protected static ConsoleProperties consoleProperties = null;
 	
 	/** Locale */
-	protected static DriverMonitoraggio driverMonitoraggioLocale = null;
-
+	protected static Map<String, DriverMonitoraggio> driverMonitoraggioLocale = null;
+	protected static List<String> sorgentiDriverMonitoraggioLocale = null;
+	protected static List<String> labelSorgentiDriverMonitoraggioLocale = null;
 	
 	/**
 	 * Inizializza il driver di monitoraggio.
@@ -118,29 +137,46 @@ public final class Monitor extends Action {
 			
 				// Inizializzazione locale
 				
-				String jndiName = "";
-				Properties jndiProp = null;
-				String tipoDatabase = null;
 				DatasourceProperties datasourceProperties = null;
 				try {
 					datasourceProperties = DatasourceProperties.getInstance();
-	
-					jndiName = datasourceProperties.getSinglePdD_MonitorDataSource();
-					jndiProp = datasourceProperties.getSinglePdD_MonitorDataSourceContext();
-					tipoDatabase = datasourceProperties.getSinglePdD_MonitorTipoDatabase();
-	
+					sorgentiDriverMonitoraggioLocale = datasourceProperties.getSinglePdD_MonitorSorgentiDati();
+					if(sorgentiDriverMonitoraggioLocale==null || sorgentiDriverMonitoraggioLocale.isEmpty()) {
+						throw new Exception("Nessuna sorgente dati definita");
+					}
 				} catch (java.lang.Exception e) {
 					ControlStationLogger.getPddConsoleCoreLogger().error("[govwayConsole] Lettura proprieta' non riuscita : " + e.getMessage());
 					throw new Exception("[govwayConsole] Lettura proprieta' non riuscita : " + e.getMessage());
 				} 
-	
-				try {
-					Monitor.driverMonitoraggioLocale = new DriverMonitoraggio(jndiName, tipoDatabase, jndiProp);
-				} catch (java.lang.Exception e) {
-					ControlStationLogger.getPddConsoleCoreLogger().error("[govwayConsole] Inizializzazione DriverMonitoraggio non riuscita : " + e.getMessage());
-					throw new Exception("[govwayConsole] Inizializzazione DriverMonitoraggio non riuscita : " + e.getMessage());
-				}
 				
+				labelSorgentiDriverMonitoraggioLocale = new ArrayList<String>();
+				driverMonitoraggioLocale = new HashMap<String, DriverMonitoraggio>();
+				for (String sorgente : sorgentiDriverMonitoraggioLocale) {
+					
+					String label = null;
+					String jndiName = "";
+					Properties jndiProp = null;
+					String tipoDatabase = null;
+					try {
+						label = datasourceProperties.getSinglePdD_MonitorLabel(sorgente);
+						jndiName = datasourceProperties.getSinglePdD_MonitorDataSource(sorgente);
+						jndiProp = datasourceProperties.getSinglePdD_MonitorDataSourceContext(sorgente);
+						tipoDatabase = datasourceProperties.getSinglePdD_MonitorTipoDatabase(sorgente);
+						
+					} catch (java.lang.Exception e) {
+						ControlStationLogger.getPddConsoleCoreLogger().error("[govwayConsole] Lettura proprieta' non riuscita per la sorgente dati '"+sorgente+"' : " + e.getMessage());
+						throw new Exception("[govwayConsole] Lettura proprieta' non riuscita  per la sorgente dati '"+sorgente+"' : " + e.getMessage());
+					} 
+		
+					try {
+						labelSorgentiDriverMonitoraggioLocale.add(label);
+						Monitor.driverMonitoraggioLocale.put(sorgente, new DriverMonitoraggio(jndiName, tipoDatabase, jndiProp));
+					} catch (java.lang.Exception e) {
+						ControlStationLogger.getPddConsoleCoreLogger().error("[govwayConsole] Inizializzazione DriverMonitoraggio non riuscita  per la sorgente dati '"+sorgente+"' : " + e.getMessage());
+						throw new Exception("[govwayConsole] Inizializzazione DriverMonitoraggio non riuscita  per la sorgente dati '"+sorgente+"' : " + e.getMessage());
+					}	
+				}
+								
 			}
 
 			singlePdD = monitorCore.isSinglePdD();
@@ -279,8 +315,8 @@ public final class Monitor extends Action {
 				filter.setSoggettoList(filtroSoggetti);
 
 				// prima richiesta con protocollo
-				long countMessaggi = MonitorUtilities.countListaRichiestePendenti(filter,formBean.getPdd());
-				List<Messaggio> listaMessaggi = MonitorUtilities.getListaRichiestePendenti(filter,formBean.getPdd());
+				long countMessaggi = MonitorUtilities.countListaRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+				List<Messaggio> listaMessaggi = MonitorUtilities.getListaRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
 				if (countMessaggi > 0) {
 					Messaggio messaggio = listaMessaggi.get(0);
 					// visualizzo dettagli messaggio
@@ -296,8 +332,8 @@ public final class Monitor extends Action {
 					// seconda richiesta senza protocollo (NOTA: se l'utente ha visibilita locale, questi msg non li vedra' mai)
 					// Solo l'amministratore con visibilita' globale li puo' vedere.
 					filter.setBusta(null);
-					countMessaggi = MonitorUtilities.countListaRichiestePendenti(filter,formBean.getPdd());
-					listaMessaggi = MonitorUtilities.getListaRichiestePendenti(filter,formBean.getPdd());
+					countMessaggi = MonitorUtilities.countListaRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+					listaMessaggi = MonitorUtilities.getListaRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
 					if (countMessaggi > 0) {
 						Messaggio messaggio = listaMessaggi.get(0);
 						// visualizzo dettagli messaggio
@@ -327,6 +363,7 @@ public final class Monitor extends Action {
 
 			// controllo se cancellazione messaggio
 			String objToRemove = monitorHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemoveType = monitorHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE_TYPE);
 			//String action = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION);
 			if (objToRemove != null) {
 //				if ((action != null) && action.equals(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_MONITOR_ACTION_DELETE)) {
@@ -363,40 +400,59 @@ public final class Monitor extends Action {
 				String msgOK = "Cancellato Messaggio : <br>";
 				for (int i = 0; i < idToRemove.length; i++) {
 
-					DataElement de = (DataElement) ((Vector<?>) pdold.getDati().elementAt(idToRemove[i])).elementAt(0);
+					Vector<?> dataElements = (Vector<?>) pdold.getDati().elementAt(idToRemove[i]);
+					
+					// ID PARAMETRO_MONITOR_ID_MESSAGGIO alla posizione 2
+					DataElement de = (DataElement) dataElements.elementAt(1);
 					String idMessaggio = de.getValue();
 					filter.setIdMessaggio(idMessaggio);
-					// imposto tipo messaggio (inbox/outbox)
-					// il tipo e' indicato nella colonna hidden 'tipo', la
-					// colonna e' la 5a :
-					de = (DataElement) ((Vector<?>) pdold.getDati().elementAt(idToRemove[i])).elementAt(4);
+					
+					// TIPO (inbox/outbox) PARAMETRO_MONITOR_TIPO alla posizione 3
+					de = (DataElement) dataElements.elementAt(2);
 					String tipo = de.getValue();
 					filter.setTipo(tipo);
+					
+					Tipologia tipoOperazione = Tipologia.DEL;
+					//System.out.println("tIPOOO '"+objToRemoveType+"'");
+					if(objToRemoveType!=null && MonitorCostanti.ACTION_RICONSEGNA_IMMEDIATA.equals(objToRemoveType)) {
+						tipoOperazione = Tipologia.CHANGE;
+					}
 
 					IDOperazione [] idOperazione = null;
 					boolean auditDisabiltato = false;
 					try{
-						idOperazione = core.performAuditRequest(new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
+						idOperazione = core.performAuditRequest(new Tipologia []{tipoOperazione}, userLogin, new Object[] {filter});
 					}catch(AuditDisabilitatoException disabilitato){
 						auditDisabiltato = true;
 					}
 					try{
-						long n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd());
+						long n = -1;
+
+						if(Tipologia.CHANGE.equals(tipoOperazione)) {
+							n = MonitorUtilities.aggiornaDataRispedizioneRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+							pd.setMessage("Aggiornata la data di rispedizione di " + n + " messaggi"+(n==1?"o":""), Costanti.MESSAGE_TYPE_INFO);
+						}
+						else {
+							n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+							pd.setMessage("Eliminat"+(n==1?"o":"i")+" " + n + " messaggi"+(n==1?"o":""), Costanti.MESSAGE_TYPE_INFO);
+						}
+						
 						if (n > 0) {
 							msgOK += " -" + idMessaggio + "<br>";
 						} else {
 							msgKO += " - " + idMessaggio + "<br>";
 						}
 						if(!auditDisabiltato){
-							core.performAuditComplete(idOperazione, new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
+							core.performAuditComplete(idOperazione, new Tipologia []{tipoOperazione}, userLogin, new Object[] {filter});
 						}
 					}catch(Exception e){
 						if(!auditDisabiltato){
-							core.performAuditError(idOperazione, e.getMessage(), new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
+							core.performAuditError(idOperazione, e.getMessage(), new Tipologia []{tipoOperazione}, userLogin, new Object[] {filter});
 						}
 						msgKO += " - " + idMessaggio + "<br>";
 						continue;
 					}
+					
 
 				}
 
@@ -452,7 +508,7 @@ public final class Monitor extends Action {
 			// mostro risultati azione in base al tipo di metodo
 			if (formBean.getMethod().equals(MonitorMethods.STATO_RICHIESTE.getNome())) {
 
-				StatoPdd statoPdD = MonitorUtilities.getStatoRichiestePendenti(filter,formBean.getPdd());
+				StatoPdd statoPdD = MonitorUtilities.getStatoRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
 				this.showStatoPdD(pd, monitorHelper,  statoPdD, MonitorMethods.STATO_RICHIESTE.getNome(), formBean);
 
 				//				return mapping.findForward("StatoNalOk");
@@ -486,8 +542,8 @@ public final class Monitor extends Action {
 				filter.setLimit(ricerca.getPageSize(idLista));
 				filter.setOffset(ricerca.getIndexIniziale(idLista));
 
-				long countMessaggi = MonitorUtilities.countListaRichiestePendenti(filter,formBean.getPdd());
-				List<Messaggio> listaMessaggi = MonitorUtilities.getListaRichiestePendenti(filter,formBean.getPdd());
+				long countMessaggi = MonitorUtilities.countListaRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+				List<Messaggio> listaMessaggi = MonitorUtilities.getListaRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
 
 				this.showMessaggi(pd, monitorHelper, countMessaggi, listaMessaggi, MonitorMethods.LISTA_RICHIESTE_PENDENTI.getNome(), ricerca, filter, formBean);
 
@@ -495,6 +551,7 @@ public final class Monitor extends Action {
 				Parameter pMethod = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD, MonitorMethods.LISTA_RICHIESTE_PENDENTI.getNome());
 				Parameter pNewSearch = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH, MonitorCostanti.DEFAULT_VALUE_FALSE);
 				Parameter pPdd = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_PDD, formBean.getPdd());
+				Parameter pSorgente = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE, formBean.getSorgenteDati());
 
 
 				// salvo l'oggetto ricerca nella sessione
@@ -505,7 +562,7 @@ public final class Monitor extends Action {
 				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH, filter);
 
 				if(singlePdD){
-					request.setAttribute(Costanti.REQUEST_ATTIBUTE_PARAMS, ServletUtils.getParametersAsString(false, pMethod, pNewSearch));
+					request.setAttribute(Costanti.REQUEST_ATTIBUTE_PARAMS, ServletUtils.getParametersAsString(false, pMethod, pNewSearch, pSorgente));
 				}
 				else{
 					request.setAttribute(Costanti.REQUEST_ATTIBUTE_PARAMS, ServletUtils.getParametersAsString(false, pMethod, pNewSearch, pPdd));
@@ -519,8 +576,11 @@ public final class Monitor extends Action {
 
 				//				return mapping.findForward("MessaggiOk");
 
-			} else if (formBean.getMethod().equals(MonitorMethods.ELIMINAZIONE_RICHIESTE_PENDENTI.getNome())) {
+			} else if (formBean.getMethod().equals(MonitorMethods.ELIMINAZIONE_RICHIESTE_PENDENTI.getNome()) ||
+					formBean.getMethod().equals(MonitorMethods.RICONSEGNA_IMMEDIATA_RICHIESTE_PENDENTI.getNome())) {
 
+				boolean updateDataRispedizione = formBean.getMethod().equals(MonitorMethods.RICONSEGNA_IMMEDIATA_RICHIESTE_PENDENTI.getNome());
+				
 				if (actionConfirm == null) {
 					monitorHelper.makeMenu();
 
@@ -565,17 +625,23 @@ public final class Monitor extends Action {
 									msg += "<br>Tipo Servizio: "+filter.getBusta().getServizio().getTipo();
 								if (filter.getBusta().getServizio().getNome() != null && !"".equals(filter.getBusta().getServizio().getNome()))
 									msg += "<br>Nome Servizio: "+filter.getBusta().getServizio().getNome();
+								if (filter.getBusta().getServizio().getVersione() != null && filter.getBusta().getServizio().getVersione().intValue()>0)
+									msg += "<br>Versione Servizio: "+filter.getBusta().getServizio().getVersione();
 							}
 							if (filter.getBusta().getAzione() != null && !"".equals(filter.getBusta().getAzione()))
 								msg += "<br>Azione: "+filter.getBusta().getAzione();
 						}
 					}
-					StatoPdd stato =  MonitorUtilities.getStatoRichiestePendenti(filter,formBean.getPdd());
+					StatoPdd stato =  MonitorUtilities.getStatoRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+					String prefixMsg = "Eliminare i";
+					if(updateDataRispedizione) {
+						prefixMsg = "Aggiornare la data di riconsegna dei";
+					}
 					if(stato.getTotMessaggi()>0){
 						if (msg.equals(""))
-							msg = "Eliminare i "+stato.getTotMessaggi()+" messaggi?";
+							msg = prefixMsg+" "+stato.getTotMessaggi()+" messaggi?";
 						else
-							msg = "Eliminare i "+stato.getTotMessaggi()+" messaggi corrispondenti ai filtri selezionati?<br>"+msg;
+							msg = prefixMsg+" "+stato.getTotMessaggi()+" messaggi corrispondenti ai filtri selezionati?<br>"+msg;
 					}else{
 						if (msg.equals(""))
 							msg = "Non esistono messaggi";
@@ -590,7 +656,7 @@ public final class Monitor extends Action {
 					//					params += "&monhid=yes";
 					//					params += "&actionConfirm=yes";
 
-					Parameter pMethod = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD, MonitorMethods.ELIMINAZIONE_RICHIESTE_PENDENTI.getNome());
+					Parameter pMethod = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD, formBean.getMethod());
 					Parameter pActionconfirm = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION_CONFIRM, Costanti.CHECK_BOX_ENABLED);
 
 					session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
@@ -631,22 +697,35 @@ public final class Monitor extends Action {
 
 				} else {
 					if(actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+						
+						Tipologia tipoOperazione = Tipologia.DEL;
+						if(updateDataRispedizione) {
+							tipoOperazione = Tipologia.CHANGE;
+						}
+						
 						IDOperazione [] idOperazione = null;
 						boolean auditDisabiltato = false;
 						try{
-							idOperazione = core.performAuditRequest(new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
+							idOperazione = core.performAuditRequest(new Tipologia []{tipoOperazione}, userLogin, new Object[] {filter});
 						}catch(AuditDisabilitatoException disabilitato){
 							auditDisabiltato = true;
 						}
 						try{
-							long n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd());
-							pd.setMessage("Eliminate " + n + " Richieste Pendenti.", Costanti.MESSAGE_TYPE_INFO);
+							long n = -1;
+							if(Tipologia.CHANGE.equals(tipoOperazione)) {
+								n = MonitorUtilities.aggiornaDataRispedizioneRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+								pd.setMessage("Aggiornata la data di rispedizione di " + n + " messaggi"+(n==1?"o":""), Costanti.MESSAGE_TYPE_INFO);
+							}
+							else {
+								n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+								pd.setMessage("Eliminat"+(n==1?"o":"i")+" " + n + " messaggi"+(n==1?"o":""), Costanti.MESSAGE_TYPE_INFO);
+							}
 							if(!auditDisabiltato){
-								core.performAuditComplete(idOperazione, new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
+								core.performAuditComplete(idOperazione, new Tipologia []{tipoOperazione}, userLogin, new Object[] {filter});
 							}
 						}catch(Exception e){
 							if(!auditDisabiltato){
-								core.performAuditError(idOperazione, e.getMessage(), new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
+								core.performAuditError(idOperazione, e.getMessage(), new Tipologia []{tipoOperazione}, userLogin, new Object[] {filter});
 							}
 							throw e;
 						}	
@@ -805,6 +884,13 @@ public final class Monitor extends Action {
 				servizio.setNome(nomeServizio);
 				servizio.setTipo(tipoServizio);
 			}
+			String versioneServizio = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_VERSIONE_SERVIZIO);
+			if(versioneServizio!=null && !"".equals(versioneServizio)) {
+				if(servizio==null) {
+					servizio = new BustaServizio();
+				}
+				servizio.setVersione(Integer.valueOf(versioneServizio));
+			}
 			form.setServizio(servizio);
 
 			// Azione
@@ -829,8 +915,14 @@ public final class Monitor extends Action {
 				form.setRiscontro(true);
 			}
 
-			// pdd
-			if(singlePdD==false){
+			// pdd/sorgente
+			if(singlePdD){
+				String sorgente = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE);
+				if ((sorgente != null) && !sorgente.equals("")) {
+					form.setSorgenteDati(sorgente);
+				}
+			}
+			else {
 				String pdd = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_PDD);
 				if ((pdd != null) && !pdd.equals("")) {
 					form.setPdd(pdd);
@@ -875,6 +967,10 @@ public final class Monitor extends Action {
 			if (monitorFormBean.getPdd() != null) {
 				lstParam.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_PDD,  monitorFormBean.getPdd()));
 			}
+			// sorgenteDati
+			if (monitorFormBean.getSorgenteDati() != null) {
+				lstParam.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE,  monitorFormBean.getSorgenteDati()));
+			}
 
 			// destinatario
 			if (monitorFormBean.getDestinatario() != null) {
@@ -893,6 +989,7 @@ public final class Monitor extends Action {
 				BustaServizio serv = monitorFormBean.getServizio();
 				lstParam.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO, serv.getTipo()));
 				lstParam.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_NOME_SERVIZIO, serv.getNome()));
+				lstParam.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_VERSIONE_SERVIZIO, serv.getVersione()!=null ? (serv.getVersione().intValue()+"") : null));
 			}
 
 			// idmessaggio
@@ -988,7 +1085,24 @@ public final class Monitor extends Action {
 			de.setValues(metodiMonitor);
 			dati.addElement(de);
 			
-			if(singlePdD==false){
+			if(singlePdD){
+				de = new DataElement();
+                de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SORGENTE);
+                de.setName(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE);
+                String sorgenteSelezionata = mb != null ? mb.getSorgenteDati() : sorgentiDriverMonitoraggioLocale.get(0);
+                if(sorgentiDriverMonitoraggioLocale.size()>1) {
+	                de.setType(DataElementType.SELECT);
+	                de.setValues(sorgentiDriverMonitoraggioLocale);
+	                de.setLabels(labelSorgentiDriverMonitoraggioLocale);
+	                de.setSelected(sorgenteSelezionata);
+                }
+                else {
+                	de.setType(DataElementType.HIDDEN);
+                	de.setValue(sorgenteSelezionata);
+                }
+                dati.addElement(de);
+			}
+			else {
                 String user = ServletUtils.getUserLoginFromSession(session);
                 List<PdDControlStation> pdds = pddCore.pddList(user, new Search(true));
                 // String[] nomiPdD = new String[];
@@ -1044,15 +1158,17 @@ public final class Monitor extends Action {
 			dati.addElement(de);
 
 			// Stato
-			String stati[] = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_STATO;
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO);
-			de.setType(DataElementType.SELECT);
-			de.setValues(stati);
-			de.setSelected(mb != null ? mb.getStato() : MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE);
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_STATO);
-			dati.add(de);
-
+			if(monitorCore.isShowJ2eeOptions()) {
+				String stati[] = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_STATO;
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO);
+				de.setType(DataElementType.SELECT);
+				de.setValues(stati);
+				de.setSelected(mb != null ? mb.getStato() : MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE);
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_STATO);
+				dati.add(de);
+			}
+				
 			de = new DataElement();
 			de.setLabel(MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO);
 			de.setType(DataElementType.TITLE);
@@ -1223,9 +1339,16 @@ public final class Monitor extends Action {
 			List<String> list = monitorCore.getProtocolli(session);
 			for (String protocolloL : list) {
 				tipiServizi.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
-				tipiServizi.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.REST));	
 				tipiServizi_label.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
-				tipiServizi_label.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.REST));	
+				List<String> l = aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.REST);
+				if(l!=null && !l.isEmpty()) {
+					for (String tipo : list) {
+						if(!tipiServizi.contains(tipo)) {
+							tipiServizi.add(tipo);
+							tipiServizi_label.add(tipo);
+						}
+					}
+				}	
 			}
 			
 			de = new DataElement();
@@ -1247,6 +1370,17 @@ public final class Monitor extends Action {
 			de.setValue(mb != null ? (mb.getServizio() != null ? mb.getServizio().getNome() : "") : "");
 			dati.addElement(de);
 
+			String versione = null;
+			if(mb!=null && mb.getServizio()!=null && mb.getServizio().getVersione()!=null) {
+				versione = mb.getServizio().getVersione().intValue()+"";
+			}
+			//String versioneSelezionata = ((versione==null || "".equals(versione)) ? "1" : versione);
+			de = monitorHelper.getVersionDataElement(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VERSIONE_SERVIZIO, 
+					MonitorCostanti.PARAMETRO_MONITOR_VERSIONE_SERVIZIO, 
+					versione, false);
+			dati.addElement(de);
+
+			
 			// Azione
 			
 			de = new DataElement();
@@ -1263,6 +1397,9 @@ public final class Monitor extends Action {
 			dati.addElement(de);
 
 			pd.setDati(dati);
+			
+			pd.setLabelBottoneInvia(MonitorCostanti.LABEL_ACCEDI);
+			
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -1455,16 +1592,21 @@ public final class Monitor extends Action {
 			throws Exception {
 		try {
 
-			List<Parameter> lstUrlParam = this.createSearchString(monitorFormBean);
+			PorteApplicativeCore paCore = new PorteApplicativeCore(monitorCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(monitorCore);
+			SoggettiCore soggettiCore = new SoggettiCore(monitorCore);
+				
+			SimpleDateFormat formatterRispedizione = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
+			
+			List<Parameter> newSearchFalse = this.createSearchString(monitorFormBean);
+			newSearchFalse.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH, MonitorCostanti.DEFAULT_VALUE_FALSE));
 
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
-
-			lstUrlParam.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH, MonitorCostanti.DEFAULT_VALUE_FALSE));
-
-			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR));
-			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, MonitorCostanti.SERVLET_NAME_MONITOR,
-					lstUrlParam.toArray(new Parameter[lstUrlParam.size()])));
+			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR,
+					this.createSearchString(monitorFormBean).toArray(new Parameter[lstParam.size()])));
+			lstParam.add(new Parameter(MonitorMethods.LISTA_RICHIESTE_PENDENTI.getNome(), MonitorCostanti.SERVLET_NAME_MONITOR,
+					newSearchFalse.toArray(new Parameter[lstParam.size()])));
 			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR_DETTAGLIO_MESSAGGIO, null));
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
@@ -1494,7 +1636,7 @@ public final class Monitor extends Action {
 			String riferimento = (busta != null ? busta.getRiferimentoMessaggio() : null);
 			boolean riscontro = (busta != null ? busta.isAttesaRiscontro() : false);
 
-			if (mittente != null) {
+			if (mittente != null && mittente.getTipo()!=null && mittente.getNome()!=null) {
 				/* Mittente */
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_MITTENTE);
@@ -1519,7 +1661,9 @@ public final class Monitor extends Action {
 				de = new DataElement();
 				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SERVIZIO);
 				de.setType(DataElementType.TEXT);
-				de.setValue(servizio.getTipo() + "/" + servizio.getNome());
+				de.setValue(servizio.getTipo() + "/" + servizio.getNome()+
+						(servizio.getVersione()!=null ? (" v"+servizio.getVersione().intValue()) : "")
+						);
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_SERVIZIO);
 				dati.add(de);
 			}
@@ -1634,17 +1778,102 @@ public final class Monitor extends Action {
 					ServizioApplicativoConsegna sac1 = messaggio.getDettaglio().getServizioApplicativoConsegnaList().get(i);
 					erroreProcessamento = sac1.getErroreProcessamento();
 
+					String labelSA = null;
+					String nomeConnettore = null;
+					String labelErogazione = null;
+					if(sac1.getNomePorta()!=null) {
+						if(sac1.getNome()!=null) {
+							IDPortaApplicativa idPA = new IDPortaApplicativa();
+							idPA.setNome(sac1.getNomePorta());
+							if(paCore.existsPortaApplicativa(idPA)) {
+								PortaApplicativa pa = null;
+								try {
+									pa = paCore.getPortaApplicativa(idPA);
+								}catch(DriverConfigurazioneNotFound notF) {}
+								if(pa!=null) {
+									if(pa.getBehaviour()!=null) {
+										if(pa.sizeServizioApplicativoList()>0) {
+											for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
+												PortaApplicativaServizioApplicativo pasa = pa.getServizioApplicativo(j);
+												if(pasa.getNome().equals(sac1.getNome())) {
+													if(pasa.getDatiConnettore()!=null) {
+														labelSA = pasa.getDatiConnettore().getNome();
+													}
+													else {
+														labelSA = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+													}
+													nomeConnettore = labelSA;
+													break;
+												}
+											}
+										}
+									}
+									else {
+										IDServizioApplicativo idSA = new IDServizioApplicativo();
+										idSA.setNome(sac1.getNome());
+										idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+										ServizioApplicativo sa = null;
+										try {
+											sa = saCore.getServizioApplicativo(idSA);
+										} catch (Exception notFound) {}
+										if(sa!=null) {
+											if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+												labelSA = sac1.getNome();
+											}
+										}
+									}
+									
+									if(labelErogazione==null) {
+										IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(),
+												pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+												pa.getServizio().getVersione());
+										String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
+										labelErogazione = monitorHelper.getLabelServizioErogazione(protocollo, idServizio);
+									}
+								}
+							}
+						}
+					}
+					
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_DETTAGLI_CONSEGNA+" [" + sac1.getNome() + "]");
+					if(labelSA!=null) {
+						de.setLabel(MonitorCostanti.LABEL_MONITOR_DETTAGLI_CONSEGNA+" [" + labelSA + "]");
+					}
+					else {
+						de.setLabel(MonitorCostanti.LABEL_MONITOR_DETTAGLI_CONSEGNA);
+					}
 					de.setType(DataElementType.TITLE);
 					dati.add(de);
 
+					// erogazione
+					if(labelErogazione!=null || sac1.getNomePorta()!=null) {
+						de = new DataElement();
+						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_PORTA);
+						de.setType(DataElementType.TEXT);
+						if(labelErogazione!=null) {
+							de.setValue(labelErogazione);
+						}
+						else {
+							de.setValue(sac1.getNomePorta());
+						}
+						de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_CONSEGNA_PORTA);
+						dati.add(de);
+					}
+					if(nomeConnettore!=null) {
+						de = new DataElement();
+						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_CONNETTORE);
+						de.setType(DataElementType.TEXT);
+						de.setValue(nomeConnettore);
+						de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_CONSEGNA_CONNETTORE);
+						dati.add(de);
+					}
+										
 					// nome
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA);
+					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_APPLICATIVO_INTERNO);
 					de.setType(DataElementType.TEXT);
 					de.setValue(sac1.getNome());
-					de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_CONSEGNA);
+					de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_CONSEGNA_APPLICATIVO_INTERNO);
 					dati.add(de);
 					
 					// tipo consegna
@@ -1671,6 +1900,44 @@ public final class Monitor extends Action {
 						dati.add(de);
 					}
 
+					// data rispedizione
+					if(GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE.equals(sac1.getTipoConsegna())){
+						if(sac1.getDataRispedizione()!=null) {
+							de = new DataElement();
+							de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CONSEGNA_DA);
+							de.setType(DataElementType.TEXT);
+							de.setValue(formatterRispedizione.format(sac1.getDataRispedizione()));
+							de.setName(MonitorCostanti.PARAMETRO_MONITOR_IN_CONSEGNA_DA);
+							dati.add(de);
+						}
+						
+						// Priorita
+						de = new DataElement();
+						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PRIORITA);
+						de.setType(DataElementType.TEXT);
+						de.setValue(sac1.getPriorita());
+						de.setName(MonitorCostanti.PARAMETRO_MONITOR_PRIORITA);
+						dati.add(de);
+						
+						// Coda
+						de = new DataElement();
+						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_CODA);
+						de.setType(DataElementType.TEXT);
+						de.setValue(sac1.getCoda());
+						de.setName(MonitorCostanti.PARAMETRO_MONITOR_CODA);
+						dati.add(de);
+						
+						// In attesa esito sincrono
+						if(sac1.isAttesaEsito()) { // lo visualizzo solo se true
+							de = new DataElement();
+							de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ATTESA_ESITO);
+							de.setType(DataElementType.TEXT);
+							de.setValue(sac1.isAttesaEsito()+"");
+							de.setName(MonitorCostanti.PARAMETRO_MONITOR_ATTESA_ESITO);
+							dati.add(de);
+						}
+					}
+					
 					// integration manager
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_AUTORIZZAZIONE);
@@ -1694,6 +1961,7 @@ public final class Monitor extends Action {
 					de.setValue("" + sac1.isSbustamentoInformazioniProtocollo());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO);
 					dati.add(de);
+					
 				}
 
 			} else {
@@ -1763,59 +2031,117 @@ public final class Monitor extends Action {
 			long soglia = filterSearch.getSoglia();
 			boolean riscontro = (busta != null ? busta.isAttesaRiscontro() : false);
 
-			String _mittente = (mittente != null ? mittente.getTipo() + "/" + mittente.getNome() : null);
-			String _destinatario = (destinatario != null ? destinatario.getTipo() + "/" + destinatario.getNome() : null);
-			String _servizio = (servizio != null ? servizio.getTipo() + "/" + servizio.getNome() : null);
+			String _mittente = null;
+			if(mittente!=null) {
+				_mittente = this.getIntestazioneFiltroRicerca(mittente.getTipo(), mittente.getNome());
+			}
+			String _destinatario = null;
+			if(destinatario!=null) {
+				_destinatario = this.getIntestazioneFiltroRicerca(destinatario.getTipo(), destinatario.getNome());
+			}
+			String _servizio = null;
+			if(servizio!=null) {
+				_servizio = this.getIntestazioneFiltroRicerca(servizio.getTipo(), servizio.getNome());
+			}
+			if(servizio!=null && servizio.getVersione()!=null) {
+				if(_servizio!=null) {
+					_servizio = _servizio + " v"+servizio.getVersione().intValue();
+				}
+				else {
+					_servizio = "v"+servizio.getVersione().intValue();
+				}
+			}
 
-			List<Parameter> lstParamMsg = new ArrayList<Parameter>();
+			StringBuilder parametriFiltro = new StringBuilder();
 
 			if (correlazioneApplicativa != null) {
-				lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA, correlazioneApplicativa ));
+				if(parametriFiltro.length()>0) {
+					parametriFiltro.append(" and ");
+				}
+				parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA).append("=").append(correlazioneApplicativa);
 			}
 //			if ((msgPattern != null) && !msgPattern.equals("")) {
-//				lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_PATTERN, msgPattern ));
+//				if(parametriFiltro.length()>0) {
+//					parametriFiltro.append(" and ");
+//				}
+//				parametriFiltro.append(MonitorCostanti.PARAMETRO_MONITOR_PATTERN, msgPattern ));
 //			}
 			if (soglia > 0) {
-				lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_SOGLIA, soglia + ""));
+				if(parametriFiltro.length()>0) {
+					parametriFiltro.append(" and ");
+				}
+				parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL).append("=").append(soglia + "");
 			}
-			if (filterSearch.getStato()!=null && !"".equals(filterSearch.getStato()) && !MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE.equals(filterSearch.getStato())) {
-				lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_STATO, filterSearch.getStato() + ""));
+			if(monitorCore.isShowJ2eeOptions()) {
+				if (filterSearch.getStato()!=null && !"".equals(filterSearch.getStato()) && !MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE.equals(filterSearch.getStato())) {
+					if(parametriFiltro.length()>0) {
+						parametriFiltro.append(" and ");
+					}
+					parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO).append("=").append(filterSearch.getStato() + "");
+				}
 			}
 			if (idMessaggio!=null) {
-				lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO, idMessaggio));
+				if(parametriFiltro.length()>0) {
+					parametriFiltro.append(" and ");
+				}
+				parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO).append("=").append(idMessaggio);
 			}
 			if(busta!=null){
 				if (profilo != null) {
-					lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_PROFILO, profilo));
+					if(parametriFiltro.length()>0) {
+						parametriFiltro.append(" and ");
+					}
+					parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PROFILO).append("=").append(profilo);
 				}
 				if (riscontro) {
-					lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_RISCONTRO, riscontro + ""));
+					if(parametriFiltro.length()>0) {
+						parametriFiltro.append(" and ");
+					}
+					parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RISCONTRO).append("=").append(riscontro + "");
 				}
 				if (_mittente != null) {
-					lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_MITTENTE, _mittente));
+					if(parametriFiltro.length()>0) {
+						parametriFiltro.append(" and ");
+					}
+					parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_MITTENTE).append("=").append(_mittente);
 				}
 				if (_destinatario != null) {
-					lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_DESTINATARIO, _destinatario));
+					if(parametriFiltro.length()>0) {
+						parametriFiltro.append(" and ");
+					}
+					parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_DESTINATARIO).append("=").append(_destinatario);
 				}
 				if (_servizio != null) {
-					lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_SERVIZIO, _servizio));
+					if(parametriFiltro.length()>0) {
+						parametriFiltro.append(" and ");
+					}
+					parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SERVIZIO).append("=").append(_servizio);
 				}
 				if ((azione != null) && !azione.equals("")) {
-					lstParamMsg.add(new Parameter(MonitorCostanti.PARAMETRO_MONITOR_AZIONE,azione ));
+					if(parametriFiltro.length()>0) {
+						parametriFiltro.append(" and ");
+					}
+					parametriFiltro.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_AZIONE).append("=").append(azione );
 				}
 			}
 			
 			// se ci sono opzioni di filtraggio impostate allora visualizzo il
 			// filtro
-			if (lstParamMsg.size() > 0) {
+			if (parametriFiltro.length() > 0) {
 				StringBuilder sb = new StringBuilder("Filtro: ");
-				sb.append(ServletUtils.getParametersAsString(false, lstParamMsg.toArray(new Parameter[lstParamMsg.size()])).substring(1));
+				sb.append(parametriFiltro.toString());
 				pd.setMessage(sb.toString(), Costanti.MESSAGE_TYPE_INFO);
 			}
 
-			String[] labels = MonitorCostanti.LABEL_LISTA_MESSAGGI;
-
-			pd.setLabels(labels);
+			List<String> labels = new ArrayList<String>();
+			//labels.add(MonitorCostanti.LABEL_MONITOR_IDMESSAGGIO);
+			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE);
+			if(monitorCore.isShowJ2eeOptions()) {
+				labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO);
+			}
+			labels.add(MonitorCostanti.LABEL_MONITOR_EROGAZIONE);
+			labels.add(MonitorCostanti.LABEL_MONITOR_DETTAGLIO);
+			pd.setLabels(labels.toArray(new String[1]));
 
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 			
@@ -1825,7 +2151,19 @@ public final class Monitor extends Action {
 				DataElement de = null;
 				// Dichiaro il formatter per la data
 				SimpleDateFormat formatter = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm");
+				SimpleDateFormat formatterRispedizione = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss");
 
+				Map<String,PortaApplicativa> mapPA = new HashMap<String, PortaApplicativa>();
+				Map<String,Boolean> mapConsegnaMultipla = new HashMap<String, Boolean>(); 
+				Map<String,Boolean> mapServer = new HashMap<String, Boolean>(); 
+				Map<String,String> mapConnettori = new HashMap<String, String>(); 
+				Map<String,String> mapEndpointConnettori = new HashMap<String, String>(); 
+				Map<String,String> mapErogazione = new HashMap<String, String>(); 
+				
+				PorteApplicativeCore paCore = new PorteApplicativeCore(monitorCore);
+				ServiziApplicativiCore saCore = new ServiziApplicativiCore(monitorCore);
+				SoggettiCore soggettiCore = new SoggettiCore(monitorCore);
+				
 				for (int i = 0; i < listaMessaggi.size(); i++) {
 
 					Vector<DataElement> e = new Vector<DataElement>();
@@ -1835,82 +2173,272 @@ public final class Monitor extends Action {
 					String tipo = messaggio.getDettaglio() != null ? messaggio.getDettaglio().getTipo() : "";
 
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_IDMESSAGGIO);
-					de.setName(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
 					String pdd = "";
 					if(monitorFormBean.getPdd()!=null && !"".equals(monitorFormBean.getPdd())){
 						pdd = monitorFormBean.getPdd();
+					}
+					String sorgente = "";
+					if(monitorFormBean.getSorgenteDati()!=null && !"".equals(monitorFormBean.getSorgenteDati())){
+						sorgente = monitorFormBean.getSorgenteDati();
 					}
 					de.setUrl(
 							MonitorCostanti.SERVLET_NAME_MONITOR,
 							new Parameter(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO, messaggio.getIdMessaggio()),
 							new Parameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD, MonitorCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS),
 							new Parameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO, tipo),
-							new Parameter(MonitorCostanti.PARAMETRO_MONITOR_PDD, pdd)
+							new Parameter(MonitorCostanti.PARAMETRO_MONITOR_PDD, pdd),
+							new Parameter(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE, sorgente)
 							);
-					de.setValue(messaggio.getIdMessaggio());
-					e.addElement(de);
+					//de.setValue(messaggio.getIdMessaggio());
+					//NON SERVE SALVO IL PAGE DATA //de.setIdToRemove(messaggio.getIdMessaggio());
+					de.setToolTip(messaggio.getIdMessaggio());
+					//e.addElement(de);
 
-					// Ora Registrazione
+					// Ora Registrazione come label
 					Date oraRegistrazione = messaggio.getOraRegistrazione();
-					de = new DataElement();
+					//de = new DataElement();
 					de.setValue(formatter.format(oraRegistrazione));
 					e.addElement(de);
-
-					// Stato
+				
+					// serve per l'eliminazione (posizione 2 e 3)
 					de = new DataElement();
-					// recupero informazioni per visualizzare IntegrationManager
-					StatoMessaggio stato = messaggio.getStato();
-					String statoS = "";
-					if(stato!=null)
-						statoS = stato.getValue();
-					Dettaglio dettaglio = messaggio.getDettaglio();
-					if (dettaglio != null) {
-						if (dettaglio.getServizioApplicativoConsegnaList().size()>0) {
-							ServizioApplicativoConsegna sac1 = dettaglio.getServizioApplicativoConsegnaList().get(0);
-							if (sac1 != null && MonitorCostanti.LABEL_MONITOR_INTEGRATION_MANAGER.equals(sac1.getTipoConsegna())) {
-								statoS += "[IM]";
-							}
-						}
-
-					}
-					de.setValue(statoS);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
+					de.setValue(messaggio.getIdMessaggio());
 					e.addElement(de);
-
-					// Dettaglio troncato
-					de = new DataElement();
-					String erroreProcessamento = "";
-					if (dettaglio.getServizioApplicativoConsegnaList().size()>0) {
-						for (int j = 0; j < dettaglio.getServizioApplicativoConsegnaList().size(); j++) {
-							ServizioApplicativoConsegna sac = dettaglio.getServizioApplicativoConsegnaList().get(j);
-							if(sac.getErroreProcessamento()!=null){
-								erroreProcessamento = sac.getErroreProcessamento();
-								break;
-							}
-						}
-					} else {
-						erroreProcessamento = messaggio.getDettaglio().getErroreProcessamento();
-					}
-					String dettagli = messaggio.getDettaglio().getIdModulo();
-					if ((erroreProcessamento != null) && !erroreProcessamento.equals("")) {
-						dettagli += "::" + erroreProcessamento;
-					}
-					if (dettagli.length() > 80) {
-						char[] arr = dettagli.toCharArray();
-						dettagli = "";
-						for (int ci = 0; ci < 80; ci++) {
-							dettagli += arr[ci];
-						}
-						dettagli += "...";
-					}
-					de.setValue(dettagli);
-					de.setSize(80);
-					e.addElement(de);
-
+					
 					de = new DataElement();
 					de.setType(DataElementType.HIDDEN);
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO);
 					de.setValue(tipo);
+					e.addElement(de);
+					
+					// Stato
+					if(monitorCore.isShowJ2eeOptions()) {
+						de = new DataElement();
+						StatoMessaggio stato = messaggio.getStato();
+						String statoS = "";
+						if(stato!=null)
+							statoS = stato.getValue();
+						de.setValue(statoS);
+						e.addElement(de);
+					}
+
+					// Erogazione
+					Dettaglio dettaglio = messaggio.getDettaglio();
+					String nomeErogazione = null;
+					Boolean consegnaMultipla = null;
+					String nomePortaSac0 = null;
+					if (dettaglio != null) {
+						if (dettaglio.getServizioApplicativoConsegnaList().size()>0) {
+							ServizioApplicativoConsegna sac0 = messaggio.getDettaglio().getServizioApplicativoConsegnaList().get(0); // prendo il prima, la porta e' uguale per tutti
+							nomePortaSac0 = sac0.getNomePorta();
+							nomeErogazione = mapErogazione.get(sac0.getNomePorta());
+							consegnaMultipla = mapConsegnaMultipla.get(sac0.getNomePorta());
+							if(nomeErogazione==null || consegnaMultipla==null) {
+								PortaApplicativa pa = mapPA.get(sac0.getNomePorta());
+								if(pa==null) {
+									IDPortaApplicativa idPA = new IDPortaApplicativa();
+									idPA.setNome(sac0.getNomePorta());
+									try {
+										pa = paCore.getPortaApplicativa(idPA);
+										mapPA.put(sac0.getNomePorta(),pa);
+									} catch (DriverConfigurazioneNotFound notFound) {}
+								}
+								if(pa!=null) {
+									if(nomeErogazione==null) {
+										IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(),
+												pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+												pa.getServizio().getVersione());
+										String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
+										nomeErogazione = monitorHelper.getLabelServizioErogazione(protocollo, idServizio);
+										if(nomeErogazione!=null) {
+											mapErogazione.put(sac0.getNomePorta(), nomeErogazione);
+										}
+									}
+									if(consegnaMultipla==null) {
+										consegnaMultipla = pa.getBehaviour()!=null;
+										mapConsegnaMultipla.put(sac0.getNomePorta(), consegnaMultipla);
+									}
+								}
+							}
+						}
+					}
+					de = new DataElement();
+					if(nomeErogazione!=null) {
+						de.setValue(nomeErogazione);
+					}
+					else if(nomePortaSac0!=null) {
+						de.setValue(nomePortaSac0);
+					}
+					else {
+						de.setValue("-");
+					}
+					e.addElement(de);
+					
+					// Dettaglio
+					StringBuilder sbDestinatari = new StringBuilder();
+					if (dettaglio != null) {
+						if (dettaglio.getServizioApplicativoConsegnaList().size()>0) {
+							// visualizzo i dettagli consegna
+							for (int j = 0; j < messaggio.getDettaglio().getServizioApplicativoConsegnaList().size(); j++) {
+								ServizioApplicativoConsegna sac = messaggio.getDettaglio().getServizioApplicativoConsegnaList().get(j);
+								String nome = sac.getNome();
+								Boolean isServer = null;
+								String nomeConnettore = null;
+								String endpointConnettore = null;
+								if(sac.getNomePorta()!=null) {
+									
+									String keyPorta = sac.getNomePorta()+"#"+nome;
+									isServer = mapServer.get(keyPorta);
+									nomeConnettore = mapConnettori.get(keyPorta);
+									endpointConnettore = mapEndpointConnettori.get(keyPorta);
+																		
+									if(nomeConnettore==null) {
+										PortaApplicativa pa = mapPA.get(sac.getNomePorta());
+										if(pa==null) {
+											IDPortaApplicativa idPA = new IDPortaApplicativa();
+											idPA.setNome(sac.getNomePorta());
+											try {
+												pa = paCore.getPortaApplicativa(idPA);
+												mapPA.put(sac.getNomePorta(),pa);
+											} catch (DriverConfigurazioneNotFound notFound) {}
+										}
+										if(pa!=null && pa.getBehaviour() != null) {
+											if(pa.sizeServizioApplicativoList()>0) {
+												for (int k = 0; k < pa.sizeServizioApplicativoList(); k++) {
+													PortaApplicativaServizioApplicativo pasa = pa.getServizioApplicativo(k);
+													if(pasa.getNome().equals(nome)) {
+														if(pasa.getDatiConnettore()!=null) {
+															nomeConnettore = pasa.getDatiConnettore().getNome();
+														}
+														break;
+													}
+												}
+											}
+										}
+										if(nomeConnettore!=null) {
+											mapConnettori.put(keyPorta,nomeConnettore);
+										}
+									}
+									if(nomeConnettore==null) {
+										if(isServer==null) {
+											PortaApplicativa pa = mapPA.get(sac.getNomePorta());
+											if(pa==null) {
+												IDPortaApplicativa idPA = new IDPortaApplicativa();
+												idPA.setNome(sac.getNomePorta());
+												try {
+													pa = paCore.getPortaApplicativa(idPA);
+													mapPA.put(sac.getNomePorta(),pa);
+												} catch (DriverConfigurazioneNotFound notFound) {}
+											}
+											if(pa!=null) {
+												IDServizioApplicativo idSA = new IDServizioApplicativo();
+												idSA.setNome(nome);
+												idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+												ServizioApplicativo sa = null;
+												try {
+													sa = saCore.getServizioApplicativo(idSA);
+												} catch (Exception notFound) {}
+												if(sa!=null) {
+													isServer = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo());
+													mapServer.put(keyPorta, isServer);
+												}
+											}
+										}
+									}
+									if(endpointConnettore==null && GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE.equals(sac.getTipoConsegna())) {
+										PortaApplicativa pa = mapPA.get(sac.getNomePorta());
+										if(pa==null) {
+											IDPortaApplicativa idPA = new IDPortaApplicativa();
+											idPA.setNome(sac.getNomePorta());
+											try {
+												pa = paCore.getPortaApplicativa(idPA);
+												mapPA.put(sac.getNomePorta(),pa);
+											} catch (DriverConfigurazioneNotFound notFound) {}
+										}
+										if(pa!=null) {
+											IDServizioApplicativo idSA = new IDServizioApplicativo();
+											idSA.setNome(nome);
+											idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+											ServizioApplicativo sa = null;
+											try {
+												sa = saCore.getServizioApplicativo(idSA);
+											} catch (Exception notFound) {}
+											if(sa!=null) {
+												endpointConnettore = monitorHelper.getLabelConnettore(sa.getInvocazioneServizio());
+												mapEndpointConnettori.put(keyPorta, endpointConnettore);
+											}
+										}
+									}
+								}
+								
+								if(consegnaMultipla!=null && consegnaMultipla) {
+									
+									if(j>0) {
+										sbDestinatari.append("<BR/>");
+									}
+									
+									sbDestinatari.append("<b>");
+									if(isServer!=null && isServer) {
+										sbDestinatari.append(nome);
+									}
+									else if(nomeConnettore!=null) {
+										sbDestinatari.append(nomeConnettore);
+									}
+									else {
+										sbDestinatari.append(nome);
+									}
+									sbDestinatari.append("</b>");
+									sbDestinatari.append(". ");
+								}
+															
+								boolean appenaPresoInCarico = false;
+								if(GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE.equals(sac.getTipoConsegna())){
+									if(TimerConsegnaContenutiApplicativiThread.ID_MODULO.equals(sac.getErroreProcessamento())) {
+										appenaPresoInCarico = true;
+										sbDestinatari.append("In coda in attesa di essere gestito");
+									}
+									else {
+										if(sac.getDataRispedizione()!=null) {
+											sbDestinatari.append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CONSEGNA_DA).append(": ").
+												append(formatterRispedizione.format(sac.getDataRispedizione()));
+										}	
+									}
+									if(endpointConnettore!=null) {
+										int maxLengthConnettore = 200;
+										sbDestinatari.append("<BR/>- endpoint: ");
+										if(endpointConnettore.length()>maxLengthConnettore) {
+											sbDestinatari.append(endpointConnettore.substring(0, maxLengthConnettore-2)+"...");
+										}
+										else {
+											sbDestinatari.append(endpointConnettore);
+										}
+									}
+								}
+								else if(GestoreMessaggi.CONSEGNA_TRAMITE_INTEGRATION_MANAGER.equals(sac.getTipoConsegna())){
+									sbDestinatari.append("Disponibile tramite "+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
+								}
+								else if(GestoreMessaggi.CONSEGNA_TRAMITE_CONNECTION_REPLY.equals(sac.getTipoConsegna())){
+									sbDestinatari.append(GestoreMessaggi.CONSEGNA_TRAMITE_CONNECTION_REPLY.toLowerCase());
+								}
+								
+								if(!appenaPresoInCarico && sac.getErroreProcessamento()!=null){
+									String erroreProcessamento = sac.getErroreProcessamento();
+									sbDestinatari.append("<BR/>- errore: ");
+									int maxLengthErroreProcessamento = 200;
+									if(erroreProcessamento.length()>maxLengthErroreProcessamento) {
+										sbDestinatari.append(erroreProcessamento.substring(0, maxLengthErroreProcessamento-2)+"...");
+									}
+									else {
+										sbDestinatari.append(erroreProcessamento);
+									}
+								}
+							}
+						}
+					}
+					de = new DataElement();
+					de.setValue(sbDestinatari.toString());
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -1922,10 +2450,37 @@ public final class Monitor extends Action {
 			// pd.setRemoveButton(true);
 
 			pd.setAddButton(false);
-
+			
+			if (listaMessaggi != null && !listaMessaggi.isEmpty()) {
+				Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+				AreaBottoni ab = new AreaBottoni();
+				Vector<DataElement> otherbott = new Vector<DataElement>();
+				DataElement de = new DataElement();
+				de.setValue(MonitorCostanti.LABEL_ACTION_RICONSEGNA_IMMEDIATA);
+				de.setOnClick(MonitorCostanti.ACTION_RICONSEGNA_IMMEDIATA_ONCLICK);
+				de.setDisabilitaAjaxStatus();
+				otherbott.addElement(de);
+				ab.setBottoni(otherbott);
+				bottoni.addElement(ab);
+				pd.setAreaBottoni(bottoni);
+			}
+			
 			pd.setDati(dati);
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
+	}
+	
+	private String getIntestazioneFiltroRicerca(String tipo, String nome) {
+		if(tipo!=null && StringUtils.isNotEmpty(tipo) && nome!=null && StringUtils.isNotEmpty(nome)) {
+			return tipo + "/" + nome;
+		}
+		else if(nome!=null && StringUtils.isNotEmpty(nome)) {
+			return nome;
+		}
+		else if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
+			return "tipo "+tipo;
+		}
+		return null;
 	}
 }

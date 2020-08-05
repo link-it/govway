@@ -22,8 +22,6 @@
 
 package org.openspcoop2.pdd.timers;
 
-import org.slf4j.Logger;
-
 import java.util.List;
 
 import org.openspcoop2.pdd.config.ClassNameProperties;
@@ -35,8 +33,9 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.threads.BaseThread;
+import org.slf4j.Logger;
 
 /**
  * Thread per la gestione del Threshold
@@ -46,7 +45,7 @@ import org.openspcoop2.utils.resources.Loader;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TimerThresholdThread extends Thread{
+public class TimerThresholdThread extends BaseThread{
 
 	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 	
@@ -57,17 +56,6 @@ public class TimerThresholdThread extends Thread{
     public final static String ID_MODULO = "GestoreThreshold";
 	 
     
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
-
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
-	
 	/** Properties Reader */
 	private OpenSPCoop2Properties propertiesReader;
 	/** MessaggioDiagnostico */
@@ -115,77 +103,71 @@ public class TimerThresholdThread extends Thread{
 	@Override
 	public void run(){
 		
-		String sec = "secondi";
-		if(this.propertiesReader.getRepositoryThresholdCheckInterval() == 1)
-			sec = "secondo";
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.propertiesReader.getRepositoryThresholdCheckInterval()+" "+sec);
-		this.msgDiag.logPersonalizzato("avvioEffettuato");
+		try {
 		
-		while(this.stop == false){
+			String sec = "secondi";
+			if(this.propertiesReader.getRepositoryThresholdCheckInterval() == 1)
+				sec = "secondo";
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.propertiesReader.getRepositoryThresholdCheckInterval()+" "+sec);
+			this.msgDiag.logPersonalizzato("avvioEffettuato");
 			
-			// Controllo che il sistema non sia andando in shutdown
-			if(OpenSPCoop2Startup.contextDestroyed){
-				this.log.error("["+TimerThresholdThread.ID_MODULO+"] Rilevato sistema in shutdown");
-				return;
-			}
-			
-			// Controllo risorse di sistema disponibili
-			if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
-				this.log.error("["+TimerThresholdThread.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
-				this.sleep();
-				continue;
-			}
-			
-			if(TimerState.ENABLED.equals(STATE)) {
-			
-				boolean checkThreshold = true;
-				for(int i=0;i<this.tipiThreshold.size();i++){
-					this.log.debug("Verifica '"+this.tipiThreshold.get(i)+"' in corso ...");
-					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_THRESHOLD_TIPO, this.tipiThreshold.get(i));
-					this.msgDiag.logPersonalizzato("controlloInCorso");
-					try{
-						checkThreshold = this.gestore[i].check(this.propertiesReader.getRepositoryThresholdParameters(this.tipiThreshold.get(i)));
-					}catch(Exception e){
-						this.msgDiag.logErroreGenerico(e,"checkThreshold("+this.tipiThreshold.get(i)+")");
-						this.log.debug("Controllo threshould non riuscito (tipo:"+this.tipiThreshold.get(i)+")",e);
-						checkThreshold = false;
+			while(this.isStop() == false){
+				
+				// Controllo che il sistema non sia andando in shutdown
+				if(OpenSPCoop2Startup.contextDestroyed){
+					this.log.error("["+TimerThresholdThread.ID_MODULO+"] Rilevato sistema in shutdown");
+					return;
+				}
+				
+				// Controllo risorse di sistema disponibili
+				if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+					this.log.error("["+TimerThresholdThread.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+					this.sleepForNextCheck((int) this.propertiesReader.getRepositoryThresholdCheckInterval(), 1000);
+					continue;
+				}
+				
+				if(TimerState.ENABLED.equals(STATE)) {
+				
+					boolean checkThreshold = true;
+					for(int i=0;i<this.tipiThreshold.size();i++){
+						this.log.debug("Verifica '"+this.tipiThreshold.get(i)+"' in corso ...");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_THRESHOLD_TIPO, this.tipiThreshold.get(i));
+						this.msgDiag.logPersonalizzato("controlloInCorso");
+						try{
+							checkThreshold = this.gestore[i].check(this.propertiesReader.getRepositoryThresholdParameters(this.tipiThreshold.get(i)));
+						}catch(Exception e){
+							this.msgDiag.logErroreGenerico(e,"checkThreshold("+this.tipiThreshold.get(i)+")");
+							this.log.debug("Controllo threshould non riuscito (tipo:"+this.tipiThreshold.get(i)+")",e);
+							checkThreshold = false;
+						}
+						this.log.debug("Verifica '"+this.tipiThreshold.get(i)+"' completato con esito "+(checkThreshold?"ok":"ko"));
+						if(checkThreshold == false)
+							break;
 					}
-					this.log.debug("Verifica '"+this.tipiThreshold.get(i)+"' completato con esito "+(checkThreshold?"ok":"ko"));
-					if(checkThreshold == false)
-						break;
-				}
+						
 					
-				
-				// avvisi
-				if(checkThreshold==false && this.lastCheck==true){
-					this.msgDiag.logPersonalizzato("risorsaNonDisponibile");
-				}else if(checkThreshold==true && this.lastCheck==false){
-					this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
+					// avvisi
+					if(checkThreshold==false && this.lastCheck==true){
+						this.msgDiag.logPersonalizzato("risorsaNonDisponibile");
+					}else if(checkThreshold==true && this.lastCheck==false){
+						this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
+					}
+					this.lastCheck = checkThreshold;
+					TimerThresholdThread.freeSpace = checkThreshold;
+					
 				}
-				this.lastCheck = checkThreshold;
-				TimerThresholdThread.freeSpace = checkThreshold;
-				
-			}
-			else {
-				this.log.info("Timer "+ID_MODULO+" disabilitato");
-			}
-			
-			
-			// CheckInterval
-			this.sleep();
-		} 
-	}
-	
-	private void sleep(){
-		if(this.stop==false){
-			int i=0;
-			while(i<this.propertiesReader.getRepositoryThresholdCheckInterval()){
-				Utilities.sleep(1000);
-				if(this.stop){
-					break; // thread terminato, non lo devo far piu' dormire
+				else {
+					this.log.info("Timer "+ID_MODULO+" disabilitato");
 				}
-				i++;
-			}
+				
+				
+				// CheckInterval
+				this.sleepForNextCheck((int) this.propertiesReader.getRepositoryThresholdCheckInterval(), 1000);
+				
+			} 
+		}finally {
+			this.finished();
 		}
 	}
+	
 }

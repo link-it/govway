@@ -237,8 +237,8 @@ public class TimerGestoreBusteNonRiscontrateLib {
 					GestoreMessaggi.acquireLock(
 							this.semaphore, connectionDB, this.timerLock,
 							this.msgDiag, causaBusteOneWayToSend, 
-							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva(), 
+							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockCheckInterval());
 					
 					busteOneWayToSend = rBuste.getBustePerUlterioreInoltro(this.timeout,this.limit,offsetRiscontri,this.logQuery);
 					if(this.logQuery){
@@ -304,7 +304,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 								try{
 		
 									// PdDContext
-									PdDContext pddContext = messaggioDaInviare.getPdDContext();
+									PdDContext pddContext = messaggioDaInviare.getPdDContext(true); // aggiorno anche l'istanza dentro l'oggetto messaggioDaInviare stesso.
 									IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		
 									// Recupero busta
@@ -528,8 +528,8 @@ public class TimerGestoreBusteNonRiscontrateLib {
 					GestoreMessaggi.acquireLock(
 							this.semaphore, connectionDB, this.timerLock,
 							this.msgDiag, causaBusteAsincroneToSend, 
-							this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-							this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva(), 
+							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockCheckInterval());
 					
 					List<BustaNonRiscontrata> busteAsincroneToSend = null;
 					busteAsincroneToSend = pBuste.asincrono_getBusteAsincronePerUlterioreInoltro(this.timeout,this.limit,offsetBusteAsincrone,this.logQuery);
@@ -597,7 +597,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 								try{
 		
 									// PdDContext
-									PdDContext pddContext = messaggioDaInviare.getPdDContext();
+									PdDContext pddContext = messaggioDaInviare.getPdDContext(true); // aggiorno anche l'istanza dentro l'oggetto messaggioDaInviare stesso.;
 									IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		
 									// Recupero busta

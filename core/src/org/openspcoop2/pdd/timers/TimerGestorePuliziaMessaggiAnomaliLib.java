@@ -156,8 +156,8 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 				GestoreMessaggi.acquireLock(
 						this.semaphore, connectionDB, this.timerLock,
 						this.msgDiag, causaMessaggiDaRipulire, 
-						this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-						this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+						this.propertiesReader.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva(), 
+						this.propertiesReader.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval());
 				
 				busteInutiliINBOX = gestoreMsgSearch.readBusteNonRiferiteDaMessaggiFromInBox(this.limit,this.logQuery,
 						this.propertiesReader.isForceIndex(),this.orderByQuery);

@@ -334,5 +334,9 @@ public class CostantiConfigurazione {
     public final static String CLIENT = "client";
     public final static String SERVER = "server";
     public final static String CLIENT_OR_SERVER = "clientORserver";
-    
+
+    public final static String CODA_DEFAULT = "DEFAULT";
+    public final static String PRIORITA_DEFAULT = "DEFAULT";
+
+    public static final String NOME_CONNETTORE_DEFAULT = "Default";
 }

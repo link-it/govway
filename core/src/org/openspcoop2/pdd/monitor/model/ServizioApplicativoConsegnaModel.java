@@ -46,6 +46,11 @@ public class ServizioApplicativoConsegnaModel extends AbstractModel<ServizioAppl
 		this.SBUSTAMENTO_SOAP = new Field("sbustamento-soap",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = new Field("sbustamento-informazioni-protocollo",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.TIPO_CONSEGNA = new Field("tipo-consegna",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.DATA_RISPEDIZIONE = new Field("data-rispedizione",java.util.Date.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.NOME_PORTA = new Field("nome-porta",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.CODA = new Field("coda",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.PRIORITA = new Field("priorita",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.ATTESA_ESITO = new Field("attesa-esito",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 	
 	}
 	
@@ -59,6 +64,11 @@ public class ServizioApplicativoConsegnaModel extends AbstractModel<ServizioAppl
 		this.SBUSTAMENTO_SOAP = new ComplexField(father,"sbustamento-soap",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = new ComplexField(father,"sbustamento-informazioni-protocollo",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.TIPO_CONSEGNA = new ComplexField(father,"tipo-consegna",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.DATA_RISPEDIZIONE = new ComplexField(father,"data-rispedizione",java.util.Date.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.NOME_PORTA = new ComplexField(father,"nome-porta",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.CODA = new ComplexField(father,"coda",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.PRIORITA = new ComplexField(father,"priorita",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.ATTESA_ESITO = new ComplexField(father,"attesa-esito",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 	
 	}
 	
@@ -75,6 +85,16 @@ public class ServizioApplicativoConsegnaModel extends AbstractModel<ServizioAppl
 	public IField SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = null;
 	 
 	public IField TIPO_CONSEGNA = null;
+	 
+	public IField DATA_RISPEDIZIONE = null;
+	 
+	public IField NOME_PORTA = null;
+	 
+	public IField CODA = null;
+	 
+	public IField PRIORITA = null;
+	 
+	public IField ATTESA_ESITO = null;
 	 
 
 	@Override

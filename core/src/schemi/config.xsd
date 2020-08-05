@@ -219,6 +219,9 @@
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="notifica" type="xsd:boolean" use="optional"/>
 		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato"/>
+		<xsd:attribute name="coda" type="xsd:string" use="optional"/>
+		<xsd:attribute name="priorita" type="xsd:string" use="optional"/>
+		<xsd:attribute name="priorita-max" type="xsd:boolean" use="optional" default="false"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa Autorizzazione per Soggetti -->
 	<xsd:complexType name="porta-applicativa-autorizzazione-soggetti">

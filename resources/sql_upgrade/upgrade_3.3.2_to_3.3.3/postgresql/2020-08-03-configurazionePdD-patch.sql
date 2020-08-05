@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/postgresql/configurazionePdD/2020-08-03-patch.sql

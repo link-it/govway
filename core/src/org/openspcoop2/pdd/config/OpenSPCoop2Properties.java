@@ -827,6 +827,8 @@ public class OpenSPCoop2Properties {
 				this.getTimerGestoreRiscontriRicevute_lockMaxLife();
 				this.getTimerGestoreRiscontriRicevute_lockIdleTime();
 			}
+			this.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva();
+			this.getTimerGestoreRiscontriRicevute_getLockCheckInterval();
 			
 			this.isTimerGestoreMessaggiAbilitato();
 			this.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata();
@@ -841,6 +843,8 @@ public class OpenSPCoop2Properties {
 				this.getTimerGestoreMessaggi_lockMaxLife();
 				this.getTimerGestoreMessaggi_lockIdleTime();
 			}
+			this.getTimerGestoreMessaggi_getLockAttesaAttiva();
+			this.getTimerGestoreMessaggi_getLockCheckInterval();
 			
 			this.isTimerGestorePuliziaMessaggiAnomaliAbilitato();
 			this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoOrderBy();
@@ -850,6 +854,8 @@ public class OpenSPCoop2Properties {
 				this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife();
 				this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime();
 			}
+			this.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva();
+			this.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval();
 			
 			this.isTimerGestoreRepositoryBusteAbilitato();
 			this.isTimerGestoreRepositoryBusteAbilitatoInitialState();
@@ -860,20 +866,53 @@ public class OpenSPCoop2Properties {
 				this.getTimerGestoreRepositoryBuste_lockMaxLife();
 				this.getTimerGestoreRepositoryBuste_lockIdleTime();
 			}
+			this.getTimerGestoreRepositoryBuste_getLockAttesaAttiva();
+			this.getTimerGestoreRepositoryBuste_getLockCheckInterval();
 			
 			this.isTimerConsegnaContenutiApplicativiAbilitato();
-			this.isTimerConsegnaContenutiApplicativiDebug();
-			this.getTimerConsegnaContenutiApplicativiThreadsPoolSize();
-			this.getTimerConsegnaContenutiApplicativiThreadsQueueSize();
-			this.getTimerConsegnaContenutiApplicativiLimit();
-			this.getTimerConsegnaContenutiApplicativiInterval();
-			this.getTimerConsegnaContenutiApplicativiMinIntervalResend();
+			List<String> code = getTimerConsegnaContenutiApplicativiCode();
+			if(code==null) {
+				return false;
+			}
+			for (String coda : code) {
+				ConfigurazioneCoda conf = getTimerConsegnaContenutiApplicativiConfigurazioneCoda(coda);
+				if(conf==null) {
+					return false;
+				}
+			}
+			List<String> priorita = getTimerConsegnaContenutiApplicativiPriorita();
+			if(priorita==null) {
+				return false;
+			}
+			int sommaPercentuale = 0;
+			for (int i = 0; i < priorita.size(); i++) {
+				String prior = priorita.get(i);
+				ConfigurazionePriorita conf = getTimerConsegnaContenutiApplicativiConfigurazionePriorita(prior);
+				if(conf==null) {
+					return false;
+				}
+				if(!conf.isNessunaPriorita()) {
+					sommaPercentuale = sommaPercentuale + conf.getPercentuale();
+				}
+				if(i==(priorita.size()-1)) {
+					if(!conf.isNessunaPriorita()) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': l'ultima priorità deve rappresentare 'nessuna priorita' e deve quindi avere un valore <=0 (trovato: "+conf.getPercentuale()+")");
+						return false;
+					}
+				}
+			}
+			if(sommaPercentuale>100) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': la somma delle percentuali fornite non deve essere superiore a 100 (trovato: "+sommaPercentuale+")");
+				return false;
+			}
 			this.isLoadBalancerDebug();
 			if(this.isTimerLockByDatabase()) {
 				this.getTimerConsegnaContenutiApplicativi_lockMaxLife();
 				this.getTimerConsegnaContenutiApplicativi_lockIdleTime();
 			}
 			this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife();
+			this.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva();
+			this.getTimerConsegnaContenutiApplicativi_getLockCheckInterval();
 				
 			
 			
@@ -1884,6 +1923,8 @@ public class OpenSPCoop2Properties {
 				this.getStatisticheMensiliGenerazioneTimerIntervalSeconds();
 				this.getStatisticheGenerazioneTimer_lockMaxLife();
 				this.getStatisticheGenerazioneTimer_lockIdleTime();
+				this.getStatisticheGenerazioneTimer_lockAttesaAttiva();
+				this.getStatisticheGenerazioneTimer_lockCheckInterval();
 				this.getStatisticheGenerazioneExternalForceIndexRepository();
 			}
 			
@@ -4165,6 +4206,57 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_lockIdleTime;
 	}
 	
+	private static Long getTimerGestoreRiscontriRicevute_getLockAttesaAttiva = null;
+	public long getTimerGestoreRiscontriRicevute_getLockAttesaAttiva() {	
+		if(OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva==null){
+			String pName = "org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.attesaAttiva";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					long time = java.lang.Long.parseLong(name);
+					OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva = time*1000;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva;
+	}
+
+	private static Integer getTimerGestoreRiscontriRicevute_getLockCheckInterval = null;
+	public int getTimerGestoreRiscontriRicevute_getLockCheckInterval() {	
+		if(OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockCheckInterval==null){
+			String pName = "org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					int time = java.lang.Integer.parseInt(name);
+					OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockCheckInterval = time;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getTimerGestoreRiscontriRicevute_getLockCheckInterval;
+	}
+	
 	
 	
 	
@@ -4460,7 +4552,57 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getTimerGestoreMessaggi_lockIdleTime;
 	}
+	
+	private static Long getTimerGestoreMessaggi_getLockAttesaAttiva = null;
+	public long getTimerGestoreMessaggi_getLockAttesaAttiva() {	
+		if(OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockAttesaAttiva==null){
+			String pName = "org.openspcoop2.pdd.timer.gestoreMessaggi.lock.attesaAttiva";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
 
+				if(name!=null){
+					name = name.trim();
+					long time = java.lang.Long.parseLong(name);
+					OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockAttesaAttiva = time*1000;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockAttesaAttiva;
+	}
+
+	private static Integer getTimerGestoreMessaggi_getLockCheckInterval = null;
+	public int getTimerGestoreMessaggi_getLockCheckInterval() {	
+		if(OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockCheckInterval==null){
+			String pName = "org.openspcoop2.pdd.timer.gestoreMessaggi.lock.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					int time = java.lang.Integer.parseInt(name);
+					OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockCheckInterval = time;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getTimerGestoreMessaggi_getLockCheckInterval;
+	}
 	
 	
 	
@@ -4632,6 +4774,57 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime;
+	}
+	
+	private static Long getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva = null;
+	public long getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva() {	
+		if(OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva==null){
+			String pName = "org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.attesaAttiva";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					long time = java.lang.Long.parseLong(name);
+					OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva = time*1000;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva;
+	}
+
+	private static Integer getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval = null;
+	public int getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval() {	
+		if(OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval==null){
+			String pName = "org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					int time = java.lang.Integer.parseInt(name);
+					OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval = time;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval;
 	}
 	
 	
@@ -4830,6 +5023,56 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_lockIdleTime;
 	}
 
+	private static Long getTimerGestoreRepositoryBuste_getLockAttesaAttiva = null;
+	public long getTimerGestoreRepositoryBuste_getLockAttesaAttiva() {	
+		if(OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockAttesaAttiva==null){
+			String pName = "org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.attesaAttiva";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					long time = java.lang.Long.parseLong(name);
+					OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockAttesaAttiva = time*1000;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockAttesaAttiva;
+	}
+
+	private static Integer getTimerGestoreRepositoryBuste_getLockCheckInterval = null;
+	public int getTimerGestoreRepositoryBuste_getLockCheckInterval() {	
+		if(OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockCheckInterval==null){
+			String pName = "org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					int time = java.lang.Integer.parseInt(name);
+					OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockCheckInterval = time;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getTimerGestoreRepositoryBuste_getLockCheckInterval;
+	}
 	
 
 
@@ -4873,160 +5116,122 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitato;
 	}
 	
-	/**
-	 * Restituisce l'indicazione se attuare una gestione in debug mode
-	 *
-	 * @return Restituisce indicazione se attuare una gestione in debug mode
-	 * 
-	 */
-	private static Boolean isTimerConsegnaContenutiApplicativiDebug = null;
-	public boolean isTimerConsegnaContenutiApplicativiDebug(){
-		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.debug"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug = Boolean.parseBoolean(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.debug' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug = false;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.debug', viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug = false;
-			}
-		}
-
-		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug;
-	}
-
-
-	private static Integer getTimerConsegnaContenutiApplicativiThreadsPoolSize = null;
-	public int getTimerConsegnaContenutiApplicativiThreadsPoolSize(){
-		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.poolSize"); 
-
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize = Integer.parseInt(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.poolSize' non impostata, viene utilizzato il default="+CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE);
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize = CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.poolSize', viene utilizzato il default="+CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize = CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE;
-			}
-		}
-
-		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize;
-	}
-	
-	private static Integer getTimerConsegnaContenutiApplicativiThreadsQueueSize = null;
-	public int getTimerConsegnaContenutiApplicativiThreadsQueueSize(){
-		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.queueSize"); 
-
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize = Integer.parseInt(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.queueSize' non impostata, viene utilizzato il default="+CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE);
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize = CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.queueSize', viene utilizzato il default="+CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize = CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE;
-			}
-		}
-
-		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize;
-	}
-	
-	/**
-	 * Restituisce l'indicazione sul numero di messaggi alla volta processati
-	 *
-	 * @return Restituisce indicazione sul numero di messaggi alla volta processati
-	 * 
-	 */
-	private static Integer getTimerConsegnaContenutiApplicativiLimit = null;
-	public int getTimerConsegnaContenutiApplicativiLimit(){
-		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiLimit==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.query.limit"); 
-
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiLimit = Integer.parseInt(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
-			}
-		}
-
-		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiLimit;
-	}
-	
-	/**
-	 * Restituisce la Frequenza di check 
-	 *
-	 * @return Restituisce la Frequenza di check 
-	 * 
-	 */
-	private static Integer getTimerConsegnaContenutiApplicativiInterval = null;
-	public int getTimerConsegnaContenutiApplicativiInterval() {	
-		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiInterval==null){
+	private static List<String> getTimerConsegnaContenutiApplicativiCode = null;
+	private static boolean getTimerConsegnaContenutiApplicativiCodeRead = false;
+	public List<String> getTimerConsegnaContenutiApplicativiCode() {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiCodeRead == false){
 			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervallo");
 
-				if(name!=null){
-					name = name.trim();
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiInterval = java.lang.Integer.parseInt(name);
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.code");
+				if(name==null){
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode = null;
 				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervallo' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL);
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiInterval = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL;
+					String [] r = name.trim().split(",");
+					List<String> l = new ArrayList<String>();
+					for(int i=0; i<r.length; i++){
+						r[i] = r[i].trim();
+						l.add(r[i]);
+					}
+					
+					if(!l.isEmpty()) {
+						OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode = new ArrayList<String>();
+						OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode.addAll(l);
+					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervallo' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiInterval = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.code': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode = null;
 			}  
+			OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiCodeRead = true;
 		}
 
-		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiInterval;
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode;
 	}
 	
-	private static Integer getTimerConsegnaContenutiApplicativiMinIntervalResend = null;
-	public int getTimerConsegnaContenutiApplicativiMinIntervalResend() {	
-		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervalloMinimoRiconsegna");
+	private static HashMap<String, ConfigurazioneCoda> getTimerConsegnaContenutiApplicativiConfigurazioneCoda = new HashMap<String, ConfigurazioneCoda>();
+	public ConfigurazioneCoda getTimerConsegnaContenutiApplicativiConfigurazioneCoda(String nome) {
+		
+		ConfigurazioneCoda conf = getTimerConsegnaContenutiApplicativiConfigurazioneCoda.get(nome);
+		if(conf!=null) {
+			return conf;
+		}
+		
+		String prefix = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda."+nome+".";
+		try{ 
+			Properties p = this.reader.readProperties_convertEnvProperties(prefix);
+			if(p==null || p.isEmpty()) {
+				throw new Exception("Configurazione non presente");
+			}
+			
+			ConfigurazioneCoda confCoda = new ConfigurazioneCoda(nome, p);
+			getTimerConsegnaContenutiApplicativiConfigurazioneCoda.put(nome, confCoda);
+			return confCoda;
+			
+		}catch(java.lang.Exception e) {
+			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+prefix+"*': "+e.getMessage(),e);
+			return null;
+		}  
 
-				if(name!=null){
-					name = name.trim();
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend = java.lang.Integer.parseInt(name);
+	}
+	
+	private static List<String> getTimerConsegnaContenutiApplicativiPriorita = null;
+	private static boolean getTimerConsegnaContenutiApplicativiPrioritaRead = false;
+	public List<String> getTimerConsegnaContenutiApplicativiPriorita() {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiPrioritaRead == false){
+			try{ 
+
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita");
+				if(name==null){
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiPriorita = null;
 				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervalloMinimoRiconsegna' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL);
-					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL;
+					String [] r = name.trim().split(",");
+					List<String> l = new ArrayList<String>();
+					for(int i=0; i<r.length; i++){
+						r[i] = r[i].trim();
+						l.add(r[i]);
+					}
+					
+					if(!l.isEmpty()) {
+						OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiPriorita = new ArrayList<String>();
+						OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiPriorita.addAll(l);
+					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervalloMinimoRiconsegna' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiPriorita = null;
 			}  
+			OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiPrioritaRead = true;
 		}
 
-		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend;
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiPriorita;
+	}
+	
+	private static HashMap<String, ConfigurazionePriorita> getTimerConsegnaContenutiApplicativiConfigurazionePriorita = new HashMap<String, ConfigurazionePriorita>();
+	public ConfigurazionePriorita getTimerConsegnaContenutiApplicativiConfigurazionePriorita(String nome) {
+		
+		ConfigurazionePriorita conf = getTimerConsegnaContenutiApplicativiConfigurazionePriorita.get(nome);
+		if(conf!=null) {
+			return conf;
+		}
+		
+		String prefix = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita."+nome+".";
+		try{ 
+			Properties p = this.reader.readProperties_convertEnvProperties(prefix);
+			if(p==null || p.isEmpty()) {
+				throw new Exception("Configurazione non presente");
+			}
+			
+			ConfigurazionePriorita confPriorita = new ConfigurazionePriorita(nome, p);
+			getTimerConsegnaContenutiApplicativiConfigurazionePriorita.put(nome, confPriorita);
+			return confPriorita;
+			
+		}catch(java.lang.Exception e) {
+			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+prefix+"*': "+e.getMessage(),e);
+			return null;
+		}  
+
 	}
 	
 	private static Boolean isLoadBalancerDebug = null;
@@ -5132,6 +5337,57 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife;
 	}
 	
+	private static Long getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva = null;
+	public long getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva() {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.attesaAttiva";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					long time = java.lang.Long.parseLong(name);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva = time*1000;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva;
+	}
+
+	private static Integer getTimerConsegnaContenutiApplicativi_getLockCheckInterval = null;
+	public int getTimerConsegnaContenutiApplicativi_getLockCheckInterval() {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockCheckInterval==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					int time = java.lang.Integer.parseInt(name);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockCheckInterval = time;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_getLockCheckInterval;
+	}
+
 	
 
 
@@ -21184,6 +21440,57 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockIdleTime;
+	}
+	
+	private static Long getStatisticheGenerazioneTimer_lockAttesaAttiva = null;
+	public long getStatisticheGenerazioneTimer_lockAttesaAttiva() {	
+		if(OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockAttesaAttiva==null){
+			String pName = "org.openspcoop2.pdd.statistiche.generazione.timer.lock.attesaAttiva";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					long time = java.lang.Long.parseLong(name);
+					OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockAttesaAttiva = time*1000;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockAttesaAttiva;
+	}
+
+	private static Integer getStatisticheGenerazioneTimer_lockCheckInterval = null;
+	public int getStatisticheGenerazioneTimer_lockCheckInterval() {	
+		if(OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockCheckInterval==null){
+			String pName = "org.openspcoop2.pdd.statistiche.generazione.timer.lock.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					int time = java.lang.Integer.parseInt(name);
+					OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockCheckInterval = time;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockCheckInterval;
 	}
 	
 	private static Boolean isStatisticheGenerazioneBaseOrariaEnabled = null;

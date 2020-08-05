@@ -40,9 +40,9 @@ public class IDServizioApplicativo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private IDSoggetto idSoggettoProprietario;
+	protected IDSoggetto idSoggettoProprietario;
 
-	private String nome;
+	protected String nome;
 	
 	
 	public IDSoggetto getIdSoggettoProprietario() {

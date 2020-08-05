@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -43,7 +42,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class GestoreCodaRunnable extends Thread{
+public class GestoreCodaRunnable extends BaseThread{
 	
 	/** Logger utilizzato per debug. */
 	private RunnableLogger log = null;
@@ -64,16 +63,7 @@ public class GestoreCodaRunnable extends Thread{
 	/** Nome */
 	private String name;
 	
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
 
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
 	
 	public String getThreadsImage() {
 		if(this.threadsPool instanceof ThreadPoolExecutor) {
@@ -149,153 +139,143 @@ public class GestoreCodaRunnable extends Thread{
 	@Override
 	public void run(){
 		
-		if(this.threadsPool==null) {
-			return; // termino subito
-		}
+		try {
 		
-		HashMap<String, Object> context = new HashMap<String, Object>();
-		this.gestoreRunnable.logCheckInProgress(context);
-		
-		while(this.stop == false) {
-						
-			// Print actual image status
-			this.log.info("Immagine prima del controllo sui threads terminati: "+this.getThreadsImage());
-			
-			// Verifico se nella tabella dei threads registrati vi sono thread terminati
-			if(!this.threads.isEmpty()) {
-				this.log.debug("Verifico se tra i threads registrati ve ne sono alcuni terminati ...");
-				List<String> ids = new ArrayList<>();
-				ids.addAll(this.threads.keySet());
-				for (String id : ids) {
-					Runnable r = this.threads.get(id);
-					if(r.isFinished()) {
-						this.log.debug("Elimino dalla coda thread '"+id+"' terminato");
-						this.threads.remove(id);
-					}
-				}
+			if(this.threadsPool==null) {
+				return; // termino subito
 			}
 			
-			// Print actual image status
-			this.log.info("Immagine dopo il controllo sui threads terminati: "+this.getThreadsImage());
+			HashMap<String, Object> context = new HashMap<String, Object>();
+			this.gestoreRunnable.logCheckInProgress(context);
 			
-			// Se vi è la possibilità di inserire in coda nuovi threads lo faccio
-			int limit = this.queueSize - this.threads.size();
-			boolean sleep = false;
-			if(limit>0) {
-				if(limit>this.limit) {
-					limit = this.limit;
-				}
-				this.log.info("Ricerco nuovi threads da attivare (limit: "+limit+") ...");
-				List<Runnable> list_nextRunnable = null;
-				try {
-					list_nextRunnable = this.gestoreRunnable.nextRunnable(limit);
-				}catch(Throwable t) {
-					this.log.error("Errore durante la ricerca di nuovi threads (limit: "+limit+"): "+t.getMessage(),t);
-				}
-				if(list_nextRunnable!=null && !list_nextRunnable.isEmpty()) {
-					this.log.info("Trovati "+list_nextRunnable.size()+" threads da attivare");
-					for (Runnable thread : list_nextRunnable) {
-						String threadName = this.name+"-t"+getUniqueSerialNumber();
-						if(thread.getIdentifier()!=null && !"".equals(thread.getIdentifier())) {
-							threadName = threadName+"-"+thread.getIdentifier();
-						}
-						try {
-							this.log.debug("Aggiungo in coda nuovo thread '"+threadName+"' ...");
-							thread.initialize(new RunnableLogger(threadName,this.log.getLog()));
-							this.threadsPool.execute(thread);
-							this.threads.put(threadName, thread);
-							this.log.info("Thread '"+threadName+"' aggiunto in coda");
-						}catch(Throwable t) {
-							this.log.error("Errore durante l'aggiunta in coda del thread '"+threadName+"': "+t.getMessage(),t);
+			while(this.isStop() == false) {
+							
+				// Print actual image status
+				this.log.info("Immagine prima del controllo sui threads terminati: "+this.getThreadsImage());
+				
+				// Verifico se nella tabella dei threads registrati vi sono thread terminati
+				if(!this.threads.isEmpty()) {
+					this.log.debug("Verifico se tra i threads registrati ve ne sono alcuni terminati ...");
+					List<String> ids = new ArrayList<>();
+					ids.addAll(this.threads.keySet());
+					for (String id : ids) {
+						Runnable r = this.threads.get(id);
+						if(r.isFinished()) {
+							this.log.debug("Elimino dalla coda thread '"+id+"' terminato");
+							this.threads.remove(id);
 						}
 					}
-					
-					// Print actual image status
-					this.log.info("Immagine dopo l'inserimento in coda dei nuovi threads: "+this.getThreadsImage());
-					
-					this.gestoreRunnable.logRegisteredThreads(context, list_nextRunnable.size());
+				}
+				
+				// Print actual image status
+				this.log.info("Immagine dopo il controllo sui threads terminati: "+this.getThreadsImage());
+				
+				// Se vi è la possibilità di inserire in coda nuovi threads lo faccio
+				int limit = this.queueSize - this.threads.size();
+				boolean sleep = false;
+				if(limit>0) {
+					if(limit>this.limit) {
+						limit = this.limit;
+					}
+					this.log.info("Ricerco nuovi threads da attivare (limit: "+limit+") ...");
+					List<Runnable> list_nextRunnable = null;
+					try {
+						list_nextRunnable = this.gestoreRunnable.nextRunnable(limit);
+					}catch(Throwable t) {
+						this.log.error("Errore durante la ricerca di nuovi threads (limit: "+limit+"): "+t.getMessage(),t);
+					}
+					if(list_nextRunnable!=null && !list_nextRunnable.isEmpty()) {
+						this.log.info("Trovati "+list_nextRunnable.size()+" threads da attivare");
+						for (Runnable thread : list_nextRunnable) {
+							String threadName = this.name+"-t"+getUniqueSerialNumber();
+							if(thread.getIdentifier()!=null && !"".equals(thread.getIdentifier())) {
+								threadName = threadName+"-"+thread.getIdentifier();
+							}
+							try {
+								this.log.debug("Aggiungo in coda nuovo thread '"+threadName+"' ...");
+								thread.initialize(new RunnableLogger(threadName,this.log.getLog()));
+								this.threadsPool.execute(thread);
+								this.threads.put(threadName, thread);
+								this.log.info("Thread '"+threadName+"' aggiunto in coda");
+							}catch(Throwable t) {
+								this.log.error("Errore durante l'aggiunta in coda del thread '"+threadName+"': "+t.getMessage(),t);
+							}
+						}
+						
+						// Print actual image status
+						this.log.info("Immagine dopo l'inserimento in coda dei nuovi threads: "+this.getThreadsImage());
+						
+						this.gestoreRunnable.logRegisteredThreads(context, list_nextRunnable.size());
+					}
+					else {
+						this.log.info("Trovati "+0+" threads da attivare");
+						sleep = true;
+					}
 				}
 				else {
-					this.log.info("Trovati "+0+" threads da attivare");
+					this.log.info("La coda dei threads ha raggiunto la capacità massima (size: "+this.queueSize+")");
 					sleep = true;
 				}
+				
+				if(sleep) {
+					
+					this.gestoreRunnable.logCheckFinished(context);
+					
+					this.sleepForNextCheck(this.timeoutNextCheck, 1000);
+					
+					context = new HashMap<String, Object>();
+					this.gestoreRunnable.logCheckInProgress(context);
+				}
 			}
-			else {
-				this.log.info("La coda dei threads ha raggiunto la capacità massima (size: "+this.queueSize+")");
-				sleep = true;
-			}
+	
 			
-			if(sleep) {
-				
-				this.gestoreRunnable.logCheckFinished(context);
-				
-				sleepForNextCheck();
-				
-				context = new HashMap<String, Object>();
-				this.gestoreRunnable.logCheckInProgress(context);
+			try {		
+				this.log.debug("Richiedo sospensione threads ...");
+				// Fermo threads
+				Set<String> keySet = this.threads.keySet();
+				for (String threadName : keySet) {
+					Runnable thread = this.threads.get(threadName);
+					thread.setStop(true);
+				}			
+			}catch(Throwable t) {
+				this.log.error("Errore durante lo stop dei threads: "+t.getMessage(),t);
 			}
-		}
-
-		
-		try {		
-			this.log.debug("Richiedo sospensione threads ...");
-			// Fermo threads
-			Set<String> keySet = this.threads.keySet();
-			for (String threadName : keySet) {
-				Runnable thread = this.threads.get(threadName);
-				thread.setStop(true);
-			}			
-		}catch(Throwable t) {
-			this.log.error("Errore durante lo stop dei threads: "+t.getMessage(),t);
-		}
-			
-		try{
-			// Attendo chiusura dei threads
-			int timeout = 10;
-			boolean terminated = false;
-			while(terminated == false){
-				this.log.info((this.threads.size())+" threads avviati correttamente, attendo terminazione (timeout "+timeout+"s) ...");
-				for (int i = 0; i < timeout*4; i++) {
-					boolean tmpTerminated = true;
-					Set<String> keySet = this.threads.keySet();
-					for (String threadName : keySet) {
-						Runnable thread = this.threads.get(threadName);
-						if(thread.isFinished()==false){
-							tmpTerminated = false;
-							break;
+				
+			try{
+				// Attendo chiusura dei threads
+				int timeout = 10;
+				boolean terminated = false;
+				while(terminated == false){
+					this.log.info((this.threads.size())+" threads avviati correttamente, attendo terminazione (timeout "+timeout+"s) ...");
+					for (int i = 0; i < timeout*4; i++) {
+						boolean tmpTerminated = true;
+						Set<String> keySet = this.threads.keySet();
+						for (String threadName : keySet) {
+							Runnable thread = this.threads.get(threadName);
+							if(thread.isFinished()==false){
+								tmpTerminated = false;
+								break;
+							}
+						}
+						if(tmpTerminated==false){
+							org.openspcoop2.utils.Utilities.sleep(250);
+						}
+						else{
+							terminated = true;
 						}
 					}
-					if(tmpTerminated==false){
-						org.openspcoop2.utils.Utilities.sleep(250);
-					}
-					else{
-						terminated = true;
-					}
 				}
+				this.log.info((this.threads.size())+" threads avviati correttamente, attesa della terminazione (timeout "+timeout+"s) completata");
+				
+			}catch(Exception e){
+				this.log.error("Errore durante l'attesa della terminazione dei threads: "+e.getMessage(),e);
+			}finally{
 			}
-			this.log.info((this.threads.size())+" threads avviati correttamente, attesa della terminazione (timeout "+timeout+"s) completata");
-			
-		}catch(Exception e){
-			this.log.error("Errore durante l'attesa della terminazione dei threads: "+e.getMessage(),e);
-		}finally{
+		
+		}finally {
+			this.finished();
 		}
 		
-		
-		
-	}
-	
-	private void sleepForNextCheck() {
-		// CheckInterval
-		if(this.stop==false){
-			int i=0;
-			while(i<this.timeoutNextCheck){
-				Utilities.sleep(1000);
-				if(this.stop){
-					break; // thread terminato, non lo devo far piu' dormire
-				}
-				i++;
-			}
-		}
 	}
 	
 	private long uniqueSerialNumber = 0;

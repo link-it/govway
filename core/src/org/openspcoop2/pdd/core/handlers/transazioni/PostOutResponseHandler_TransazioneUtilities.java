@@ -267,7 +267,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			// ** Esito Transazione **
 			if (context.getEsito()!=null){
-				if(consegnaMultipla) {
+				if(consegnaMultipla && schedulaNotificheDopoConsegnaSincrona) {
 					transactionDTO.setEsito(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA));
 					if(context.getEsito().getCode()!=null){
 						transactionDTO.setEsitoSincrono(context.getEsito().getCode());

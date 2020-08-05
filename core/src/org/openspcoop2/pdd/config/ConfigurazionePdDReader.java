@@ -108,6 +108,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -2932,6 +2933,35 @@ public class ConfigurazionePdDReader {
 		return !CostantiConfigurazione.DISABILITATO.equals(sa.getInvocazionePorta().getSbustamentoInformazioniProtocollo());
 	}
 
+	public List<String> getServiziApplicativiConsegnaNotifichePrioritarie(Connection connectionPdD, String queue) throws DriverConfigurazioneException{
+		try {
+			List<IDConnettore> list = this.configurazionePdD.getConnettoriConsegnaNotifichePrioritarie(connectionPdD, queue);
+			if(list==null || list.isEmpty()) {
+				throw new DriverConfigurazioneNotFound();
+			}
+			List<String> l = new ArrayList<String>();
+			for (IDServizioApplicativo idSA : list) {
+				if(l.contains(idSA.getNome())==false) {
+					l.add(idSA.getNome());
+				}
+			}
+			return l;
+		}catch(DriverConfigurazioneNotFound notFound) {
+			return new ArrayList<String>();
+		}
+	}
+	
+	public List<IDConnettore> getConnettoriConsegnaNotifichePrioritarie(Connection connectionPdD, String queue) throws DriverConfigurazioneException{
+		try {
+			return this.configurazionePdD.getConnettoriConsegnaNotifichePrioritarie(connectionPdD, queue);
+		}catch(DriverConfigurazioneNotFound notFound) {
+			return new ArrayList<IDConnettore>();
+		}
+	}
+	
+	public void resetConnettoriConsegnaNotifichePrioritarie(Connection connectionPdD, String queue) throws DriverConfigurazioneException{
+		this.configurazionePdD.resetConnettoriConsegnaNotifichePrioritarie(connectionPdD, queue);
+	}
 
 
 

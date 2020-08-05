@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in;
 
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+
 /**
  * Costanti
  *
@@ -28,7 +30,7 @@ package org.openspcoop2.pdd.core.behaviour.built_in;
  */
 public class Costanti  {
 
-	public static final String NOME_CONNETTORE_DEFAULT = "Default";
+	public static final String NOME_CONNETTORE_DEFAULT = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
 	
 	public static final String CONSEGNA_MULTIPLA = "__multi";
 	

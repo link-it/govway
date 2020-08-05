@@ -333,8 +333,8 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
 	 * che include le credenziali passate come parametro. 
 	 *
-	 * @param aUser User utilizzato come appId o all'interno del token
-	 * @param aPassword Password presente all'interno del token
+	 * @param user User utilizzato come appId o all'interno del token
+	 * @param password Password presente all'interno del token
 	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
 	 * 
 	 */

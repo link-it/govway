@@ -1126,6 +1126,16 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         <linkit:sql-table-index name="INDEX_PA_SA">
                             <linkit:sql-table-index-field name="id_porta"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index name="INDEX_PA_SA_CODA">
+                            <linkit:sql-table-index-field name="connettore_coda"/>
+                            <linkit:sql-table-index-field name="connettore_priorita"/>
+                            <linkit:sql-table-index-field name="id_servizio_applicativo"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="INDEX_PA_SA_CODA_MAX">
+                            <linkit:sql-table-index-field name="connettore_coda"/>
+                            <linkit:sql-table-index-field name="connettore_max_priorita"/>
+                            <linkit:sql-table-index-field name="id_servizio_applicativo"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1206,6 +1216,39 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="connettore_filtri" text="true"/>
                                 <linkit:sql-ddl-column-comment>Filtri associati al connettore</linkit:sql-ddl-column-comment>      
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="connettore_coda" type="xsd:string" minOccurs="0" default="DEFAULT">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_coda" varchar="10"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sulla coda associata al connettore</linkit:sql-ddl-column-comment>      
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="connettore_priorita" type="xsd:string" minOccurs="0" default="DEFAULT">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_priorita" varchar="10"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sulla priorita associata al connettore</linkit:sql-ddl-column-comment>      
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="connettore_max_priorita" type="xsd:int" minOccurs="0" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_max_priorita" />
+                                <linkit:sql-ddl-column-comment>Indicazione se il connettore ha la precedenza su tutti (1=true, 0=false)</linkit:sql-ddl-column-comment>      
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

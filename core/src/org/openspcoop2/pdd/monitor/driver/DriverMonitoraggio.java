@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -274,7 +275,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				if( (search.getStato()==null) || ("".equals(search.getStato())) || (StatoMessaggio.CONSEGNA.equals(search.getStato())) ){
 					sqlQueryObject = this.newSQLQueryObjectStatoRichiestePendenti(search);
 					if((search.getStato()==null) || ("".equals(search.getStato()))){
-						sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".proprietario='"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
+						sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 					}
 					pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
 					param_index = 0;
@@ -313,8 +314,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				if( (search.getStato()==null) || ("".equals(search.getStato())) || (StatoMessaggio.SPEDIZIONE.equals(search.getStato())) ){
 					sqlQueryObject = this.newSQLQueryObjectStatoRichiestePendenti(search);
 					if( (search.getStato()==null) || ("".equals(search.getStato())) ){
-						sqlQueryObject.addWhereCondition(false,GestoreMessaggi.MESSAGGI+".proprietario='InoltroBuste'",
-								GestoreMessaggi.MESSAGGI+".proprietario='InoltroRisposte'");
+						sqlQueryObject.addWhereCondition(false,GestoreMessaggi.MESSAGGI+".PROPRIETARIO='InoltroBuste'",
+								GestoreMessaggi.MESSAGGI+".PROPRIETARIO='InoltroRisposte'");
 					}
 					pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
 					param_index = 0;
@@ -353,9 +354,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				if( (search.getStato()==null) || ("".equals(search.getStato())) || (StatoMessaggio.PROCESSAMENTO.equals(search.getStato())) ){
 					sqlQueryObject = this.newSQLQueryObjectStatoRichiestePendenti(search);
 					if( (search.getStato()==null) || ("".equals(search.getStato())) ){
-						sqlQueryObject.addWhereCondition(true, GestoreMessaggi.MESSAGGI+".proprietario<>'InoltroBuste'",
-								GestoreMessaggi.MESSAGGI+".proprietario<>'InoltroRisposte'",
-								GestoreMessaggi.MESSAGGI+".proprietario<>'"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
+						sqlQueryObject.addWhereCondition(true, GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'InoltroBuste'",
+								GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'InoltroRisposte'",
+								GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 					}
 					pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
 					param_index = 0;
@@ -459,7 +460,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 			// TotaleMessaggi
 			long totaleMessaggi = 0;
-			String query = "SELECT count(*) as totMessaggi FROM "+GestoreMessaggi.MESSAGGI+" WHERE "+GestoreMessaggi.MESSAGGI+".proprietario<>'"+TimerGestoreMessaggi.ID_MODULO+"'";
+			String query = "SELECT count(*) as totMessaggi FROM "+GestoreMessaggi.MESSAGGI+" WHERE "+GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+TimerGestoreMessaggi.ID_MODULO+"'";
 			pstmt = con.prepareStatement(query);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
@@ -645,7 +646,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				m.setIdMessaggio(rs.getString("id_messaggio"));
 				// Dettaglio
 				Dettaglio dettaglio = new Dettaglio();
-				dettaglio.setIdModulo(rs.getString("proprietario"));
+				dettaglio.setIdModulo(rs.getString("PROPRIETARIO"));
 				dettaglio.setTipo(rs.getString("tipo"));
 				dettaglio.setErroreProcessamento(rs.getString("ERRORE_PROCESSAMENTO"));
 				dettaglio.setIdCorrelazioneApplicativa(rs.getString("CORRELAZIONE_APPLICATIVA"));
@@ -666,11 +667,11 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				// Ora Attuale
 				m.setOraAttuale(DateManager.getDate());
 				// Stato
-				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(rs.getString("proprietario"))){
+				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(rs.getString("PROPRIETARIO"))){
 					m.setStato(StatoMessaggio.CONSEGNA);
-				}else if(InoltroBuste.ID_MODULO.equals(rs.getString("proprietario"))){
+				}else if(InoltroBuste.ID_MODULO.equals(rs.getString("PROPRIETARIO"))){
 					m.setStato(StatoMessaggio.SPEDIZIONE);
-				}else if(InoltroRisposte.ID_MODULO.equals(rs.getString("proprietario"))){
+				}else if(InoltroRisposte.ID_MODULO.equals(rs.getString("PROPRIETARIO"))){
 					m.setStato(StatoMessaggio.SPEDIZIONE);
 				}else {
 					m.setStato(StatoMessaggio.PROCESSAMENTO);
@@ -693,6 +694,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					BustaServizio servizio = new BustaServizio();
 					servizio.setTipo(rs.getString("TIPO_SERVIZIO"));
 					servizio.setNome(rs.getString("SERVIZIO"));
+					try {
+						servizio.setVersione(Integer.valueOf(rs.getString("VERSIONE_SERVIZIO")));
+					}catch(Exception e) {}
 					bustaInfo.setServizio(servizio);
 					// Azione
 					bustaInfo.setAzione(rs.getString("AZIONE"));
@@ -747,6 +751,16 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 						datiConsegna.setNome(rs.getString("SERVIZIO_APPLICATIVO"));
 						datiConsegna.setTipoConsegna(rs.getString("TIPO_CONSEGNA"));
 						datiConsegna.setErroreProcessamento(rs.getString("ERRORE_PROCESSAMENTO"));
+						if(rs.getTimestamp("RISPEDIZIONE")!=null){
+							datiConsegna.setDataRispedizione(rs.getTimestamp("RISPEDIZIONE"));
+						}
+						datiConsegna.setNomePorta(rs.getString("NOME_PORTA"));
+						datiConsegna.setCoda(rs.getString("CODA"));
+						datiConsegna.setPriorita(rs.getString("PRIORITA"));
+						if(rs.getInt("ATTESA_ESITO")==1)
+							datiConsegna.setAttesaEsito(true);
+						else
+							datiConsegna.setAttesaEsito(false);
 						sconsegna.add(datiConsegna);
 					}
 					rs.close();
@@ -873,7 +887,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 
 			// Elimino messaggio
-			String sqlQuery = "UPDATE "+GestoreMessaggi.MESSAGGI + " SET proprietario='"+TimerGestoreMessaggi.ID_MODULO+"' WHERE proprietario<>'"+TimerGestoreMessaggi.ID_MODULO+"' AND ID_MESSAGGIO=?  AND tipo=?";
+			String sqlQuery = "UPDATE "+GestoreMessaggi.MESSAGGI + " SET PROPRIETARIO='"+TimerGestoreMessaggi.ID_MODULO+"' WHERE PROPRIETARIO<>'"+TimerGestoreMessaggi.ID_MODULO+"' AND ID_MESSAGGIO=?  AND tipo=?";
 			pstmt = con.prepareStatement(sqlQuery);
 			pstmt.setString(1, idMessaggio);
 			pstmt.setString(2, tipoMessaggio);
@@ -902,6 +916,91 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}catch(Exception e){}
 		}
 	}
+	
+	private boolean aggiornaDataRispedizioneMessaggio(String idMessaggio,String tipo,Timestamp data) throws DriverMonitoraggioException{
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try{
+
+			// Ottengo connessione
+			if (this.datasource!=null)
+				con = this.datasource.getConnection();
+			else
+				con = this.globalConnection;
+			if(con==null)
+				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+
+			// Raccolta valori chiave
+			// TIPO
+			String tipoMessaggio = tipo;
+			// Ricerco tipoMessaggio se non presenti 
+			if(tipoMessaggio==null){
+				this.log.debug("Ricerco tipo messaggio...");
+				FilterSearch filtro = new FilterSearch();
+				filtro.setIdMessaggio(idMessaggio);
+				List<Messaggio> lista = this.getListaRichiestePendenti(filtro);
+				if(lista==null || lista.size()<=0){
+					return false; // messaggio non presente
+				}
+				if(lista.get(0).getDettaglio()==null ||
+						lista.get(0).getDettaglio().getTipo()==null){
+					throw new Exception("Tipo messaggio non identificato per l'id: "+idMessaggio);
+				}
+				tipoMessaggio = lista.get(0).getDettaglio().getTipo();
+			}
+			this.log.debug("Messaggio con id("+idMessaggio+") da eliminare possiede tipo: "+tipoMessaggio);
+
+			if(Costanti.OUTBOX.equals(tipoMessaggio)){
+				// Aggiorno messaggio
+				String sqlQuery = "UPDATE "+GestoreMessaggi.MESSAGGI + " SET RISPEDIZIONE=? WHERE ID_MESSAGGIO=?  AND TIPO=?";
+				pstmt = con.prepareStatement(sqlQuery);
+				pstmt.setTimestamp(1, data);
+				pstmt.setString(2, idMessaggio);
+				pstmt.setString(3, tipoMessaggio);
+				int operation = pstmt.executeUpdate();
+				boolean result = false;
+				if(operation>0){
+					result = true;
+					this.log.debug("Messaggio "+idMessaggio+" aggiornato");
+				}else{
+					this.log.debug("Messaggio "+idMessaggio+" non aggiornato");
+				}
+				pstmt.close();
+				return result;	
+			}
+			else {
+				// Aggiorno messaggio
+				String sqlQuery = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI + " SET RISPEDIZIONE=? WHERE ID_MESSAGGIO=?  AND TIPO=?";
+				pstmt = con.prepareStatement(sqlQuery);
+				pstmt.setTimestamp(1, data);
+				pstmt.setString(2, idMessaggio);
+				pstmt.setString(3, tipoMessaggio);
+				int operation = pstmt.executeUpdate();
+				boolean result = false;
+				if(operation>0){
+					result = true;
+					this.log.debug("Messaggio "+idMessaggio+" aggiornato");
+				}else{
+					this.log.debug("Messaggio "+idMessaggio+" non aggiornato");
+				}
+				pstmt.close();
+				return result;	
+			}
+
+		}catch(Exception e){
+			this.log.error("deleteMessaggio error",e);
+			throw new DriverMonitoraggioException("deleteMessaggio error: "+e.getMessage());
+		}finally{
+			try{
+				if(pstmt!=null)
+					pstmt.close();
+			}catch(Exception e){}
+			try{
+				if(this.datasource!=null && con!=null)
+					con.close();
+			}catch(Exception e){}
+		}
+	}
 
 
 
@@ -914,6 +1013,25 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	 */
 	@Override
 	public long deleteRichiestePendenti(FilterSearch search) throws DriverMonitoraggioException{
+		return _richiestePendenti(search, true);
+	}
+	
+	/**
+	 * Aggiorna la data di rispedizione delle richieste pendenti che matchano il criterio di filtro.
+	 * 
+	 * @param search criterio di filtro
+	 * @return numero dei messaggi delle richieste pendenti
+	 * @throws DriverMonitoraggioException
+	 */
+	@Override
+	public long aggiornaDataRispedizioneRichiestePendenti(FilterSearch search) throws DriverMonitoraggioException{
+		return _richiestePendenti(search, false);
+	}
+	
+	private long _richiestePendenti(FilterSearch search, boolean delete) throws DriverMonitoraggioException{
+		
+		String nomeMetodo = delete? "deleteRichiestePendenti":"aggiornaDataRispedizioneRichiestePendenti";
+		
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -972,23 +1090,38 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			rs.close();
 			pstmt.close();
 
-			long numeroMsgEliminati = 0;
+			Timestamp now = DateManager.getTimestamp();
+			
+			long numeroMsg = 0;
 			while(msgs.size()>0){
 				Messaggio msgForDelete = msgs.remove(0);
-				if(this.deleteMessaggio(msgForDelete.getIdMessaggio(), msgForDelete.getDettaglio().getTipo()))
-					numeroMsgEliminati++;
+				if(delete) {
+					if(this.deleteMessaggio(msgForDelete.getIdMessaggio(), msgForDelete.getDettaglio().getTipo())) {
+						numeroMsg++;
+					}
+				}
+				else {
+					if(this.aggiornaDataRispedizioneMessaggio(msgForDelete.getIdMessaggio(), msgForDelete.getDettaglio().getTipo(), now)) {
+						numeroMsg++;
+					}
+				}
 			}
-			this.log.debug("eliminati "+numeroMsgEliminati+" messaggi");
+			if(delete) {
+				this.log.debug("eliminati "+numeroMsg+" messaggi");
+			}
+			else {
+				this.log.debug("aggiornati "+numeroMsg+" messaggi");
+			}
 
-			return numeroMsgEliminati;
+			return numeroMsg;
 
 		}catch(Exception e){
 			if(sqlQueryObject!=null){
-				this.log.error("deleteRichiestePendenti error SQL["+sqlQueryObject.toString()+"]",e);
-				throw new DriverMonitoraggioException("deleteRichiestePendenti error SQL["+sqlQueryObject.toString()+"]: "+e.getMessage(),e);
+				this.log.error(nomeMetodo+" error SQL["+sqlQueryObject.toString()+"]",e);
+				throw new DriverMonitoraggioException(nomeMetodo+" error SQL["+sqlQueryObject.toString()+"]: "+e.getMessage(),e);
 			}else{
-				this.log.error("deleteRichiestePendenti error",e);
-				throw new DriverMonitoraggioException("deleteRichiestePendenti error: "+e.getMessage(),e);
+				this.log.error(nomeMetodo+" error",e);
+				throw new DriverMonitoraggioException(nomeMetodo+" error: "+e.getMessage(),e);
 			}
 		}finally{
 			try{
@@ -1038,9 +1171,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 		// Condizione per legare le tabelle
 		String legameTabelleSQL_MSG_ID = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+GestoreMessaggi.DEFINIZIONE_MESSAGGI+".ID_MESSAGGIO";
-		String legameTabelleSQL_MSG_TIPO = GestoreMessaggi.MESSAGGI+".tipo="+GestoreMessaggi.DEFINIZIONE_MESSAGGI+".tipo";
+		String legameTabelleSQL_MSG_TIPO = GestoreMessaggi.MESSAGGI+".TIPO="+GestoreMessaggi.DEFINIZIONE_MESSAGGI+".TIPO";
 		String legameTabelleSQL_BUSTA_ID = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+Costanti.REPOSITORY+".ID_MESSAGGIO";
-		String legameTabelleSQL_BUSTA_TIPO = GestoreMessaggi.MESSAGGI+".tipo="+Costanti.REPOSITORY+".tipo";
+		String legameTabelleSQL_BUSTA_TIPO = GestoreMessaggi.MESSAGGI+".TIPO="+Costanti.REPOSITORY+".TIPO";
 		String legameTabelleSQL_RISCONTRO = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+Costanti.RISCONTRI_DA_RICEVERE+".ID_MESSAGGIO";
 		if( (search.getMessagePattern()!=null) && ("".equals(search.getMessagePattern())==false) ){
 			sqlQueryObject.addWhereCondition(true,legameTabelleSQL_MSG_ID,legameTabelleSQL_MSG_TIPO);
@@ -1074,8 +1207,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 			// Tabella OpenSPCoop.sql.Messaggi
 			sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"ID_MESSAGGIO");
-			sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"tipo");
-			sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"proprietario");
+			sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"TIPO");
+			sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"PROPRIETARIO");
 			sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"ORA_REGISTRAZIONE");
 			sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"ERRORE_PROCESSAMENTO");		
 			sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"CORRELAZIONE_APPLICATIVA");
@@ -1090,7 +1223,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 // Queste due colonne non servono: altrimenti si ottiene un errore column ambiguously defined.
 // se in futuro serviranno, utilizzare degli alias
 //				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"ID_MESSAGGIO");
-//				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"tipo");
+//				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"TIPO");
 				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"MSG_BYTES");
 			}	
 			if(search.getBusta()!=null){
@@ -1098,7 +1231,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 // Queste due colonne non servono: altrimenti si ottiene un errore column ambiguously defined.
 // se in futuro serviranno, utilizzare degli alias
 //				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"ID_MESSAGGIO");
-//				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"tipo");
+//				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO");
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO_MITTENTE");
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"MITTENTE");
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO_DESTINATARIO");
@@ -1130,24 +1263,24 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 		// Proprietario non deve essere GestoreMessaggi, a meno che il filtro non richieda proprio questo
 		if( (search.getStato()==null) || ("".equals(search.getStato())) || ((StatoMessaggio.CANCELLATO.equals(search.getStato())==false)) )
-			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".proprietario<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
+			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
 
 		// Filtri:
 
 		// a) StatoMessaggio
 		if( (search.getStato()!=null) && ("".equals(search.getStato())==false) ){
 			if(StatoMessaggio.CONSEGNA.equals(search.getStato())){
-				sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".proprietario='"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
+				sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 			}else if(StatoMessaggio.SPEDIZIONE.equals(search.getStato())){
 				sqlQueryObject.addWhereCondition(false,
-						GestoreMessaggi.MESSAGGI+".proprietario='"+InoltroBuste.ID_MODULO+"'",
-						GestoreMessaggi.MESSAGGI+".proprietario='"+InoltroRisposte.ID_MODULO+"'");
+						GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+InoltroBuste.ID_MODULO+"'",
+						GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+InoltroRisposte.ID_MODULO+"'");
 			}else if(StatoMessaggio.CANCELLATO.equals(search.getStato())){
-				sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".proprietario='"+TimerGestoreMessaggi.ID_MODULO+"'");
+				sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+TimerGestoreMessaggi.ID_MODULO+"'");
 			}else if(StatoMessaggio.PROCESSAMENTO.equals(search.getStato())){
-				sqlQueryObject.addWhereCondition(true, GestoreMessaggi.MESSAGGI+".proprietario<>'"+InoltroBuste.ID_MODULO+"'",
-						GestoreMessaggi.MESSAGGI+".proprietario<>'"+InoltroRisposte.ID_MODULO+"'",
-						GestoreMessaggi.MESSAGGI+".proprietario<>'"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
+				sqlQueryObject.addWhereCondition(true, GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+InoltroBuste.ID_MODULO+"'",
+						GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+InoltroRisposte.ID_MODULO+"'",
+						GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 			}else{
 				throw new SQLQueryObjectException("Stato per filtro non conosciuto: "+search.getStato());
 			}
@@ -1219,6 +1352,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				}
 				if( (search.getBusta().getServizio().getNome()!=null) && ("".equals(search.getBusta().getServizio().getNome())==false) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".SERVIZIO='"+search.getBusta().getServizio().getNome()+"'");
+				}
+				if( (search.getBusta().getServizio().getVersione()!=null) && (search.getBusta().getServizio().getVersione().intValue()>0) ){
+					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".VERSIONE_SERVIZIO='"+search.getBusta().getServizio().getVersione().intValue()+"'");
 				}
 			}
 
@@ -1329,6 +1465,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				}
 				if( (search.getBusta().getServizio().getNome()!=null) && ("".equals(search.getBusta().getServizio().getNome())==false) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".SERVIZIO='"+search.getBusta().getServizio().getNome()+"'");
+				}
+				if( (search.getBusta().getServizio().getVersione()!=null) && (search.getBusta().getServizio().getVersione().intValue()>0) ){
+					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".VERSIONE_SERVIZIO='"+search.getBusta().getServizio().getVersione().intValue()+"'");
 				}
 			}
 

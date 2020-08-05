@@ -30,6 +30,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.threads.BaseThread;
 
 /**
  * Thread per la gestione del Threshold
@@ -39,7 +40,7 @@ import org.openspcoop2.utils.Utilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TimerGestorePuliziaMessaggiAnomaliThread extends Thread{
+public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 
 	/**
 	 * Timeout che definisce la cadenza di avvio di questo timer. 
@@ -59,20 +60,6 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends Thread{
 	private int limit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 	/** Indicazione se deve essere effettuato l'order by nelle query */
 	private boolean orderByQuery = false;
-	
-	
-    
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
-
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
-	
 	
 	
 	/** Costruttore */
@@ -139,33 +126,31 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends Thread{
 	@Override
 	public void run(){
 		
-		while(this.stop == false){
-			
-			try{
-				// Prendo la gestione
-				TimerGestorePuliziaMessaggiAnomaliLib gestoreMessaggiLib = 
-					new TimerGestorePuliziaMessaggiAnomaliLib(this.msgDiag,this.logTimer,this.propertiesReader,this.logQuery,this.limit,this.orderByQuery);
+		try {
+		
+			while(this.isStop() == false){
 				
-				gestoreMessaggiLib.check();
-				
-			}catch(Exception e){
-				this.msgDiag.logErroreGenerico(e,"TimerGestorePuliziaMessaggiAnomaliLib.check()");
-				this.logTimer.error("Errore generale: "+e.getMessage(),e);
-			}finally{
-			}
-			
+				try{
+					// Prendo la gestione
+					TimerGestorePuliziaMessaggiAnomaliLib gestoreMessaggiLib = 
+						new TimerGestorePuliziaMessaggiAnomaliLib(this.msgDiag,this.logTimer,this.propertiesReader,this.logQuery,this.limit,this.orderByQuery);
 					
-			// CheckInterval
-			if(this.stop==false){
-				int i=0;
-				while(i<this.timeout){
-					Utilities.sleep(1000);
-					if(this.stop){
-						break; // thread terminato, non lo devo far piu' dormire
-					}
-					i++;
+					gestoreMessaggiLib.check();
+					
+				}catch(Exception e){
+					this.msgDiag.logErroreGenerico(e,"TimerGestorePuliziaMessaggiAnomaliLib.check()");
+					this.logTimer.error("Errore generale: "+e.getMessage(),e);
+				}finally{
 				}
+				
+						
+				// CheckInterval
+				this.sleepForNextCheck((int)this.timeout, 1000);
+				
 			}
-		} 
+			
+		}finally {
+			this.finished();
+		}
 	}
 }

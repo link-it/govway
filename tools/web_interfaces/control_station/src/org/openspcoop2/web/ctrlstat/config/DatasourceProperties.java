@@ -23,6 +23,8 @@
 package org.openspcoop2.web.ctrlstat.config;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -190,16 +192,33 @@ public class DatasourceProperties {
 	
 	/* ----- Database di Monitoraggio ------- */
 	
-	public String getSinglePdD_MonitorDataSource() throws UtilsException{
-		return this.readProperty(true, "singlePdD.monitor.dataSource");
+	public List<String> getSinglePdD_MonitorSorgentiDati() throws UtilsException{
+		List<String> l = new ArrayList<String>();
+		String p = this.readProperty(false, "singlePdD.monitor.sorgentiDati");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+				l.add(tmp[i]);
+			}
+		}
+		return l;
 	}
 	
-	public Properties getSinglePdD_MonitorDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("singlePdD.monitor.dataSource.property.");
+	public String getSinglePdD_MonitorLabel(String source) throws UtilsException{
+		return this.readProperty(true, "singlePdD.monitor."+source+".label");
 	}
 	
-	public String getSinglePdD_MonitorTipoDatabase() throws UtilsException{
-		return this.readProperty(true, "singlePdD.monitor.tipoDatabase");
+	public String getSinglePdD_MonitorDataSource(String source) throws UtilsException{
+		return this.readProperty(true, "singlePdD.monitor."+source+".dataSource");
+	}
+	
+	public Properties getSinglePdD_MonitorDataSourceContext(String source) throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("singlePdD.monitor."+source+".dataSource.property.");
+	}
+	
+	public String getSinglePdD_MonitorTipoDatabase(String source) throws UtilsException{
+		return this.readProperty(true, "singlePdD.monitor."+source+".tipoDatabase");
 	}
 	
 	

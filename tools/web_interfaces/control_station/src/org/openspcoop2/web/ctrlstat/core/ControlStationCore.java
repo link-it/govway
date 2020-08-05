@@ -109,6 +109,7 @@ import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
@@ -834,6 +835,24 @@ public class ControlStationCore {
 		return this.isApplicativiServerEnabled;
 	}
 
+	/** Gestione Consegne Asincrone */
+	private List<String> consegnaNotificaCode;
+	private Map<String, String> consegnaNotificaCodaLabel = new HashMap<String, String>();
+	private List<String> consegnaNotificaPriorita;
+	private Map<String, ConfigurazionePriorita> consegnaNotificaConfigurazionePriorita = new HashMap<String, ConfigurazionePriorita>();
+	public List<String> getConsegnaNotificaCode() {
+		return this.consegnaNotificaCode;
+	}
+	public String getConsegnaNotificaCodaLabel(String nome) {
+		return this.consegnaNotificaCodaLabel.get(nome);
+	}
+	public List<String> getConsegnaNotificaPriorita() {
+		return this.consegnaNotificaPriorita;
+	}
+	public ConfigurazionePriorita getConsegnaNotificaConfigurazionePriorita(String nome) {
+		return this.consegnaNotificaConfigurazionePriorita.get(nome);
+	}
+	
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -1285,6 +1304,11 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus  = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig  = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari  = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari  = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari  = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari  = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = new Hashtable<String, String>();
 	private Map<String, List<String>> jmxPdD_caches = new Hashtable<String, List<String>>();
@@ -1659,6 +1683,21 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD.get(alias);
@@ -2178,6 +2217,12 @@ public class ControlStationCore {
 		/** Applicativi Server */
 		this.isApplicativiServerEnabled = core.isApplicativiServerEnabled;		
 		
+		/** Gestione Consegne Asincrone */
+		this.consegnaNotificaCode = core.consegnaNotificaCode;
+		this.consegnaNotificaCodaLabel = core.consegnaNotificaCodaLabel;
+		this.consegnaNotificaPriorita = core.consegnaNotificaPriorita;
+		this.consegnaNotificaConfigurazionePriorita = core.consegnaNotificaConfigurazionePriorita;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -2375,6 +2420,11 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = core.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = core.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus = core.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig = core.jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = core.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration;
 		this.jmxPdD_caches = core.jmxPdD_caches;
@@ -2515,7 +2565,15 @@ public class ControlStationCore {
 			this.isConnettoriMultipliEnabled = consoleProperties.isConnettoriMultipliEnabled();
 			this.isConnettoriMultipliConsegnaMultiplaEnabled = consoleProperties.isConnettoriMultipliConsegnaMultiplaEnabled();
 			this.isApplicativiServerEnabled = consoleProperties.isApplicativiServerEnabled();
-			
+			this.consegnaNotificaCode = consoleProperties.getConsegnaNotificaCode();
+			for (String coda : this.consegnaNotificaCode) {
+				this.consegnaNotificaCodaLabel.put(coda, consoleProperties.getConsegnaNotificaCodaLabel(coda));
+			}
+			this.consegnaNotificaPriorita = consoleProperties.getConsegnaNotificaPriorita();
+			for (String priorita : this.consegnaNotificaPriorita) {
+				this.consegnaNotificaConfigurazionePriorita.put(priorita, consoleProperties.getConsegnaNotificaConfigurazionePriorita(priorita));
+			}
+
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
 			this.consoleNomeEsteso = consoleProperties.getConsoleNomeEsteso();
@@ -2809,6 +2867,11 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaGestioneConsegnaApplicativi(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(alias));
 					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));

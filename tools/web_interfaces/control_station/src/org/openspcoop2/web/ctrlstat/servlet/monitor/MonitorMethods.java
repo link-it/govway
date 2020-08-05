@@ -35,17 +35,25 @@ import java.util.ArrayList;
  */
 public enum MonitorMethods {
 
-	LISTA_RICHIESTE_PENDENTI("Lista"), STATO_RICHIESTE("Stato"), ELIMINAZIONE_RICHIESTE_PENDENTI("Eliminazione");
+	LISTA_RICHIESTE_PENDENTI("Lista"), 
+	STATO_RICHIESTE("Stato"),
+	RICONSEGNA_IMMEDIATA_RICHIESTE_PENDENTI(MonitorCostanti.LABEL_ACTION_RICONSEGNA_IMMEDIATA),
+	ELIMINAZIONE_RICHIESTE_PENDENTI("Eliminazione");
 
 	private String nome;
 
 	private static ArrayList<String> methodNames;
 
+	static boolean stato = false; // RIVEDERNE LE FUNZIONALITA
+	
 	// inizializzo la lista dei nomi
 	static {
 		MonitorMethods.methodNames = new ArrayList<String>();
 		MonitorMethods[] methods = MonitorMethods.values();
 		for (MonitorMethods method : methods) {
+			if(STATO_RICHIESTE.equals(method) && !stato) {
+				continue;
+			}
 			MonitorMethods.methodNames.add(method.getNome());
 		}
 	}
@@ -59,7 +67,7 @@ public enum MonitorMethods {
 	}
 
 	public static String[] getMethodsNames() {
-		return MonitorMethods.methodNames.toArray(new String[MonitorMethods.values().length]);
+		return MonitorMethods.methodNames.toArray(new String[1]);
 	}
 
 	public static ArrayList<String> getMethodNames() {

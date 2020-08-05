@@ -30,6 +30,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
+import org.openspcoop2.pdd.config.ConfigurazioneCoda;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
@@ -83,19 +84,19 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 	
 	private String clusterId;
 	
-	private long minTimeoutResend;
+	private int minTimeoutResend;
 	
 	public TimerConsegnaContenutiApplicativiSender(MessaggioServizioApplicativo messaggioServizioApplicativo,
 			RegistroServiziManager registroServiziReader,
 			ConfigurazionePdDManager configurazionePdDReader,
-			String clusterId) {
+			String clusterId, ConfigurazioneCoda configurazioneCoda) {
 		this.messaggioServizioApplicativo = messaggioServizioApplicativo;
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
 		this.registroServiziReader = registroServiziReader;
 		this.configurazionePdDReader = configurazionePdDReader;
-		this.debug = this.propertiesReader.isTimerConsegnaContenutiApplicativiDebug();
+		this.debug = configurazioneCoda.isDebug();
 		this.clusterId = clusterId;
-		this.minTimeoutResend = this.propertiesReader.getTimerConsegnaContenutiApplicativiMinIntervalResend();
+		this.minTimeoutResend = configurazioneCoda.getConsegnaFallita_intervalloMinimoRiconsegna();
 	}
 	
 	@Override
@@ -112,7 +113,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 	public void initialize(RunnableLogger log) throws UtilsException{
 		this.log = log;
 		this.logSql = new RunnableLogger(log.getThreadName(),  
-				OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(this.propertiesReader.isTimerConsegnaContenutiApplicativiDebug()));
+				OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(this.debug));
 	}
 	
 	
@@ -158,7 +159,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 	
 				messaggioDaInviare = new GestoreMessaggi(openspcoopstateGestore,true,idMsgDaInoltrare,Costanti.INBOX,
 						this.logSql.getLog(),msgDiag,null);
-				pddContext = messaggioDaInviare.getPdDContext(); // aggiorno
+				pddContext = messaggioDaInviare.getPdDContext(true); // aggiorno anche l'istanza dentro l'oggetto messaggioDaInviare stesso.
 	
 				IDSoggetto soggettoFruitore = null;
 				if(bustaToSend.getMittente()!=null) {

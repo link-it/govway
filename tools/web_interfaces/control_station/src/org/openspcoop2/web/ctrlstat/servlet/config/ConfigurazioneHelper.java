@@ -6233,50 +6233,156 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
+		List<String> code = this.confCore.getConsegnaNotificaCode();
 		
+		if(code.size()<=1) {
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
-		de.setType(DataElementType.SUBTITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE);
+		if(code.size()<=1) {
+			de.setType(DataElementType.SUBTITLE);
+		}
+		else {
+			de.setType(DataElementType.TITLE);
+		}
 		dati.addElement(de);
 		
 		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI);
 				
-		stato = null;
-		try{
-			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias));
-			if(this.isErroreHttp(stato, "stato del thread pool per la consegna agli applicativi")){
-				// e' un errore
+		
+		for (String coda : code) {
+
+			String labelCoda = this.confCore.getConsegnaNotificaCodaLabel(coda);
+			
+			if(code.size()>1) {
+				de = newDataElementStyleRuntime();
+				de.setLabel(labelCoda);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
+			
+			stato = null;
+			try{
+				stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias),
+						coda);
+				if(this.isErroreHttp(stato, "stato del thread pool per la consegna agli applicativi")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura dello stato del thread pool per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura dello stato del thread pool per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
-			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_STATO);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI);
+			de.setSize(this.getSize());
+			de.setRows(2);
+			de.setCols(80);
+			dati.addElement(de);
+			
+			String configurazioneCoda = null;
+			try{
+				configurazioneCoda = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias),
+						coda);
+				if(this.isErroreHttp(configurazioneCoda, "Configurazione del thread pool '"+labelCoda+"' per la consegna agli applicativi")){
+					// e' un errore
+					configurazioneCoda = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura della configurazione del thread pool '"+labelCoda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+				configurazioneCoda = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONFIG);
+			if(configurazioneCoda!=null){
+				configurazioneCoda = StringEscapeUtils.escapeHtml(configurazioneCoda);
+			}
+			de.setValue(configurazioneCoda);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI_CONFIG);
+			de.setSize(this.getSize());
+			de.setRows(2);
+			de.setCols(80);
+			dati.addElement(de);
+			
+			String connettoriPrioritari = null;
+			try{
+				connettoriPrioritari = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias),
+						coda);
+				if(this.isErroreHttp(connettoriPrioritari, "Connettori prioritari del thread pool '"+labelCoda+"' per la consegna agli applicativi")){
+					// e' un errore
+					connettoriPrioritari = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura dei connettori prioritari del thread pool '"+labelCoda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+				connettoriPrioritari = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONNNETTORI_PRIORITARI);
+			if(connettoriPrioritari!=null){
+				connettoriPrioritari = StringEscapeUtils.escapeHtml(connettoriPrioritari);
+			}
+			de.setValue(connettoriPrioritari);
+			de.setLabelAffiancata(false);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI_CONNNETTORI_PRIORITARI);
+			if("".equals(connettoriPrioritari)) {
+				de.setType(DataElementType.TEXT);
+				de.setValue("Nessun Connettore");
+			}
+			else {
+				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+				de.setSize(this.getSize());
+				de.setRows(2);
+				de.setCols(80);
+			}
+			dati.addElement(de);
+			
+			if(!"".equals(connettoriPrioritari)) {
+				de = newDataElementStyleRuntime();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+coda+
+						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(alias));
+				de.setType(DataElementType.LINK);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+			}
 		}
 		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
-		}
-		de.setValue(stato);
-		de.setLabelAffiancata(false);
-		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI);
-		de.setSize(this.getSize());
-		de.setRows(6);
-		de.setCols(80);
-		dati.addElement(de);
 		
+		if(code.size()>1) {
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
 		
 			
 		de = newDataElementStyleRuntime();

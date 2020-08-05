@@ -30,6 +30,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.threads.BaseThread;
 
 /**
  * Thread per la gestione del Threshold
@@ -39,7 +40,7 @@ import org.openspcoop2.utils.Utilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TimerGestoreMessaggiThread extends Thread{
+public class TimerGestoreMessaggiThread extends BaseThread{
 
 	/**
 	 * Timeout che definisce la cadenza di avvio di questo timer. 
@@ -73,21 +74,7 @@ public class TimerGestoreMessaggiThread extends Thread{
 	/** Indicazione se devono essere filtrate le correlazioni applicative scadute rispetto all'ora registrazione, escludendo pero' quelle che hanno una scadenza impostata */
 	private boolean filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata = false;
 	
-	
-    
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
-
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
-	
-	
-	
+		
 	/** Costruttore */
 	public TimerGestoreMessaggiThread() throws TimerException{
 		
@@ -156,6 +143,8 @@ public class TimerGestoreMessaggiThread extends Thread{
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
 	}
 	
+
+
 	/**
 	 * Metodo che fa partire il Thread. 
 	 *
@@ -163,37 +152,35 @@ public class TimerGestoreMessaggiThread extends Thread{
 	@Override
 	public void run(){
 		
-		while(this.stop == false){
-			
-			try{
-				// Prendo la gestione
-				TimerGestoreMessaggiLib gestoreMessaggiLib = 
-					new TimerGestoreMessaggiLib(this.msgDiag,this.logTimer,this.propertiesReader,
-						this.scadenzaMessaggio,this.logQuery,
-						this.limit,this.orderByQuery,this.scadenzaCorrelazioneApplicativa, 
-						this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione,
-						this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
+		try {
+		
+			while(this.isStop() == false){
 				
-				gestoreMessaggiLib.check();
-				
-			}catch(Exception e){
-				this.msgDiag.logErroreGenerico(e,"TimerGestoreMessaggiLib.check()");
-				this.logTimer.error("Errore generale: "+e.getMessage(),e);
-			}finally{
-			}
-			
+				try{
+					// Prendo la gestione
+					TimerGestoreMessaggiLib gestoreMessaggiLib = 
+						new TimerGestoreMessaggiLib(this.msgDiag,this.logTimer,this.propertiesReader,
+							this.scadenzaMessaggio,this.logQuery,
+							this.limit,this.orderByQuery,this.scadenzaCorrelazioneApplicativa, 
+							this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione,
+							this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
 					
-			// CheckInterval
-			if(this.stop==false){
-				int i=0;
-				while(i<this.timeout){
-					Utilities.sleep(1000);
-					if(this.stop){
-						break; // thread terminato, non lo devo far piu' dormire
-					}
-					i++;
+					gestoreMessaggiLib.check();
+					
+				}catch(Exception e){
+					this.msgDiag.logErroreGenerico(e,"TimerGestoreMessaggiLib.check()");
+					this.logTimer.error("Errore generale: "+e.getMessage(),e);
+				}finally{
 				}
-			}
-		} 
+				
+						
+				// CheckInterval
+				this.sleepForNextCheck((int)this.timeout, 1000);
+				
+			} 
+			
+		}finally {
+			this.finished();
+		}
 	}
 }

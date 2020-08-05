@@ -155,7 +155,9 @@ public class TimerGestoreRepositoryBusteLib {
 				try{
 					GestoreMessaggi.acquireLock(
 							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaMessaggiINBOX, this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+							this.msgDiag, causaMessaggiINBOX, 
+							this.propertiesReader.getTimerGestoreRepositoryBuste_getLockAttesaAttiva(), 
+							this.propertiesReader.getTimerGestoreRepositoryBuste_getLockCheckInterval());
 
 					idMsgINBOX = repositoryBuste.getBusteDaEliminareFromInBox(this.limit,this.logQuery,
 							this.propertiesReader.isForceIndex(),this.propertiesReader.isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione(),
@@ -218,7 +220,9 @@ public class TimerGestoreRepositoryBusteLib {
 				try{
 					GestoreMessaggi.acquireLock(
 							this.semaphore, connectionDB, this.timerLock,
-							this.msgDiag, causaMessaggiOUTBOX, this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+							this.msgDiag, causaMessaggiOUTBOX, 
+							this.propertiesReader.getTimerGestoreRepositoryBuste_getLockAttesaAttiva(), 
+							this.propertiesReader.getTimerGestoreRepositoryBuste_getLockCheckInterval());
 
 					idMsgOUTBOX = repositoryBuste.getBusteDaEliminareFromOutBox(this.limit,this.logQuery,
 							this.propertiesReader.isForceIndex(),this.propertiesReader.isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione(),

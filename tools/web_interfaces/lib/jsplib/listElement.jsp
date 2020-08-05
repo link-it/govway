@@ -124,7 +124,7 @@ function DeselectAll() {
   }
 };
 
-function RemoveEntries() {
+function RemoveEntries(tipo) {
   if (nr != 0) {
     return false;
   }
@@ -153,6 +153,9 @@ function RemoveEntries() {
 	    }else {
 	   	    paramsString = '?obj='+elemToRemove+'&iddati='+iddati+params;
 	    }
+	    if(tipo) {
+		paramsString+='&obj_t='+tipo;
+	    }
 	    document.location='<%= request.getContextPath() %>/'+nomeServletDel+paramsString;
     } else {
     	
@@ -162,6 +165,9 @@ function RemoveEntries() {
     	
     	addHidden(deleteForm, 'obj' , elemToRemove);
     	addHidden(deleteForm, 'iddati' , iddati);
+	if(tipo) {
+		addHidden(deleteForm, 'obj_t' , tipo);
+	}
     	
     	// formatParams
     	  
@@ -188,6 +194,10 @@ function RemoveEntries() {
    	  deleteForm.submit();
     }
     
+  }else {
+	if(tipo){
+		$( "#selezioneRichiestaModal" ).dialog( "open" );
+	}
   }
 };
 

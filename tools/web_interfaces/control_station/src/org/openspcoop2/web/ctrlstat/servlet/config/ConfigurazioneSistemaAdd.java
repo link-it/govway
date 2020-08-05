@@ -312,11 +312,16 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					){
 				
 				String nomeMetodoResetCache = confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias);
+				String nomeMetodoResetConnettoriPrioritari = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(alias);
 				boolean resetMultiplo = false;
+				boolean resetConnettoriPrioritari = false;
 				if(nomeMetodoResetCache!=null && nomeMetodoResetCache.equals(nomeMetodo)){
 					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES.equals(nomeCache)){
 						resetMultiplo=true;
 					}
+				}
+				else if(nomeMetodoResetConnettoriPrioritari!=null && nomeMetodoResetConnettoriPrioritari.equals(nomeMetodo)){
+					resetConnettoriPrioritari = true;
 				}
 				
 				if(resetMultiplo){
@@ -370,12 +375,25 @@ public final class ConfigurazioneSistemaAdd extends Action {
 				}
 				else{
 					try{
-						String result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
-								nomeCache,
-								nomeMetodo);
-						messagePerOperazioneEffettuata = "Cache ["+nomeCache+"]: "+result;
+						if(resetConnettoriPrioritari) {
+							String result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+									confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+									nomeMetodo,
+									nomeCache);
+							messagePerOperazioneEffettuata = "Coda ["+confCore.getConsegnaNotificaCodaLabel(nomeCache)+"]: "+result;
+						}
+						else {
+							String result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+									nomeCache,
+									nomeMetodo);
+							messagePerOperazioneEffettuata = "Cache ["+nomeCache+"]: "+result;
+						}
 					}catch(Exception e){
-						String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla cache ["+nomeCache+"]: "+e.getMessage();
+						String oggetto = "cache";
+						if(resetConnettoriPrioritari) {
+							oggetto = "coda";
+						}
+						String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla "+oggetto+" ["+nomeCache+"]: "+e.getMessage();
 						ControlStationCore.getLog().error(errorMessage,e);
 						messagePerOperazioneEffettuata = errorMessage;
 						rilevatoErrore = true;
@@ -531,9 +549,9 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias);
 						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI);
-						tipo ="stato del timer '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI+"'";
+						tipo ="stato del timer '"+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE+"'";
 						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX+
-								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI;
+								ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE;
 					}
 					
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE.equals(nomeParametroPostBack)){

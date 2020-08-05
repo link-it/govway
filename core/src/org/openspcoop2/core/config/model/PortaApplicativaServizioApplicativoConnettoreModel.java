@@ -46,6 +46,9 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.NOTIFICA = new Field("notifica",boolean.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.STATO = new Field("stato",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
+		this.CODA = new Field("coda",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
+		this.PRIORITA = new Field("priorita",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
+		this.PRIORITA_MAX = new Field("priorita-max",boolean.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 	
 	}
 	
@@ -59,6 +62,9 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.NOTIFICA = new ComplexField(father,"notifica",boolean.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
+		this.CODA = new ComplexField(father,"coda",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
+		this.PRIORITA = new ComplexField(father,"priorita",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
+		this.PRIORITA_MAX = new ComplexField(father,"priorita-max",boolean.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 	
 	}
 	
@@ -75,6 +81,12 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 	public IField NOTIFICA = null;
 	 
 	public IField STATO = null;
+	 
+	public IField CODA = null;
+	 
+	public IField PRIORITA = null;
+	 
+	public IField PRIORITA_MAX = null;
 	 
 
 	@Override

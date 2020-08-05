@@ -41,6 +41,11 @@ import java.io.Serializable;
  * 			&lt;element name="sbustamento-soap" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
  * 			&lt;element name="sbustamento-informazioni-protocollo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/&gt;
  * 			&lt;element name="tipo-consegna" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="data-rispedizione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="coda" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="priorita" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="attesa-esito" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -59,7 +64,12 @@ import java.io.Serializable;
   	"nome",
   	"sbustamentoSoap",
   	"sbustamentoInformazioniProtocollo",
-  	"tipoConsegna"
+  	"tipoConsegna",
+  	"dataRispedizione",
+  	"nomePorta",
+  	"coda",
+  	"priorita",
+  	"attesaEsito"
   }
 )
 
@@ -143,6 +153,50 @@ public class ServizioApplicativoConsegna extends org.openspcoop2.utils.beans.Bas
     this.tipoConsegna = tipoConsegna;
   }
 
+  public java.util.Date getDataRispedizione() {
+    return this.dataRispedizione;
+  }
+
+  public void setDataRispedizione(java.util.Date dataRispedizione) {
+    this.dataRispedizione = dataRispedizione;
+  }
+
+  public java.lang.String getNomePorta() {
+    return this.nomePorta;
+  }
+
+  public void setNomePorta(java.lang.String nomePorta) {
+    this.nomePorta = nomePorta;
+  }
+
+  public java.lang.String getCoda() {
+    return this.coda;
+  }
+
+  public void setCoda(java.lang.String coda) {
+    this.coda = coda;
+  }
+
+  public java.lang.String getPriorita() {
+    return this.priorita;
+  }
+
+  public void setPriorita(java.lang.String priorita) {
+    this.priorita = priorita;
+  }
+
+  public boolean isAttesaEsito() {
+    return this.attesaEsito;
+  }
+
+  public boolean getAttesaEsito() {
+    return this.attesaEsito;
+  }
+
+  public void setAttesaEsito(boolean attesaEsito) {
+    this.attesaEsito = attesaEsito;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -173,5 +227,26 @@ public class ServizioApplicativoConsegna extends org.openspcoop2.utils.beans.Bas
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-consegna",required=true,nillable=false)
   protected java.lang.String tipoConsegna;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-rispedizione",required=true,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataRispedizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="nome-porta",required=true,nillable=false)
+  protected java.lang.String nomePorta;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="coda",required=true,nillable=false)
+  protected java.lang.String coda;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="priorita",required=true,nillable=false)
+  protected java.lang.String priorita;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="attesa-esito",required=true,nillable=false,defaultValue="false")
+  protected boolean attesaEsito = false;
 
 }

@@ -90,6 +90,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
@@ -8033,7 +8034,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					// Proprieta
 					de = new DataElement();
 					de.setType(DataElementType.TEXT);
-					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE);
+					String label = null;
+					if(behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE) && connettoreDefault) {
+						label = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_CONSEGNA;
+					}
+					else {
+						label = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE;
+					}
+					de.setLabel(label);
 					
 					ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA, this.log);
 					
@@ -8043,6 +8051,41 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						consegnaNotificheLabel = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils.toString(configurazioneGestioneConsegnaNotifiche,
 								serviceBinding.equals(ServiceBinding.SOAP));
 					
+					if(paSA.getDatiConnettore() != null) {
+						
+						if(paSA.getDatiConnettore().isPrioritaMax()) {
+							String consegnaNotificheLabelPriorita = "Priorità con "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_LEFT;
+							if(StringUtils.isBlank(consegnaNotificheLabel)) {
+								consegnaNotificheLabel = consegnaNotificheLabelPriorita;
+							}
+							else {
+								consegnaNotificheLabel = consegnaNotificheLabelPriorita+". " +consegnaNotificheLabel;
+							}
+						}
+						else if(paSA.getDatiConnettore().getPriorita() != null) {
+							ConfigurazionePriorita confPriorita = this.porteApplicativeCore.getConsegnaNotificaConfigurazionePriorita(paSA.getDatiConnettore().getPriorita());
+							if(!confPriorita.isNessunaPriorita()) {
+								String consegnaNotificheLabelPriorita = "Priorità "+confPriorita.getLabel();
+								if(StringUtils.isBlank(consegnaNotificheLabel)) {
+									consegnaNotificheLabel = consegnaNotificheLabelPriorita;
+								}
+								else {
+									consegnaNotificheLabel = consegnaNotificheLabelPriorita+". " +consegnaNotificheLabel;
+								}
+							}
+						} 
+						
+						if(paSA.getDatiConnettore().getCoda() != null && !CostantiConfigurazione.CODA_DEFAULT.equals(paSA.getDatiConnettore().getCoda())) {
+							String consegnaNotificheLabelCoda = "Coda '"+this.porteApplicativeCore.getConsegnaNotificaCodaLabel(paSA.getDatiConnettore().getCoda())+"'";
+							if(StringUtils.isBlank(consegnaNotificheLabel)) {
+								consegnaNotificheLabel = consegnaNotificheLabelCoda;
+							}
+							else {
+								consegnaNotificheLabel = consegnaNotificheLabelCoda+". " +consegnaNotificheLabel;
+							}
+						} 
+					}
+					
 					if(StringUtils.isBlank(consegnaNotificheLabel))
 						consegnaNotificheLabel = " ";
 					
@@ -8051,7 +8094,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					image = new DataElementImage();
 					
 					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pAccessoDaAPS);
-					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE));
+					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, label));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
 					de.addImage(image );
@@ -9607,11 +9650,18 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String codiceRisposta3xx, String codiceRisposta3xxValueMin, String codiceRisposta3xxValueMax, String codiceRisposta3xxValue,
 			String codiceRisposta4xx, String codiceRisposta4xxValueMin, String codiceRisposta4xxValueMax, String codiceRisposta4xxValue,
 			String codiceRisposta5xx, String codiceRisposta5xxValueMin, String codiceRisposta5xxValueMax, String codiceRisposta5xxValue,
-			String gestioneFault, String faultCode, String faultActor, String faultMessage) {
+			String gestioneFault, String faultCode, String faultActor, String faultMessage,
+			boolean consegnaSincrona,
+			String coda, String priorita, String prioritaMax
+	) {
 		
 		DataElement de = new DataElement();
-		
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA);
+		if(consegnaSincrona) {
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA);
+		}
+		else {
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA);
+		}
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
 		
@@ -9622,17 +9672,100 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setValue(nomeSAConnettore);
 		dati.add(de);
 		
-		// cadenza rispedizione
+		// Coda
 		de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE);
-		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE );
-		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE_NOTE);
-		de.setType(DataElementType.NUMBER);
-		de.setValue(cadenzaRispedizione);
-		de.setMinValue(0);
-		de.reloadMinValue(false);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA);
+		if(consegnaSincrona) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			List<String> code = this.porteApplicativeCore.getConsegnaNotificaCode();
+			if(code==null || code.size()<=1) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(code);
+				List<String> labels = new ArrayList<String>();
+				for (String codaNome : code) {
+					labels.add(this.porteApplicativeCore.getConsegnaNotificaCodaLabel(codaNome));
+				}
+				de.setLabels(labels);
+				de.setSelected(coda);
+			}
+		}
+		de.setValue(coda);
 		dati.add(de);
 		
+		// Priorita
+		de = new DataElement();
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA);
+		if(consegnaSincrona) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			if(ServletUtils.isCheckBoxEnabled(prioritaMax)) {
+				de.setType(DataElementType.HIDDEN);
+				
+				DataElement deLABEL = new DataElement();
+				deLABEL.setType(DataElementType.TEXT);
+				deLABEL.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA+"__LABEL");
+				deLABEL.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA);
+				deLABEL.setValue(this.porteApplicativeCore.getConsegnaNotificaConfigurazionePriorita(priorita).getLabel());
+				dati.add(deLABEL);
+				
+			}
+			else {
+				List<String> prioritaList = this.porteApplicativeCore.getConsegnaNotificaPriorita();
+				de.setType(DataElementType.SELECT);
+				de.setValues(prioritaList);
+				List<String> labels = new ArrayList<String>();
+				List<String> listPriorita = new ArrayList<String>();
+				for (String prioritaNome : prioritaList) {
+					ConfigurazionePriorita conf = this.porteApplicativeCore.getConsegnaNotificaConfigurazionePriorita(prioritaNome);
+					labels.add(conf.getLabel());
+					if(conf.isNessunaPriorita()) {
+						listPriorita.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_INFO_NESSUNA_PRIORITA.
+								replace(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL, conf.getLabel()));
+					}
+					else {
+						listPriorita.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_INFO_PRIORITA.
+								replace(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL, conf.getLabel()).
+								replace(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_PERCENTUALE, conf.getPercentuale()+""));
+					}
+				}
+				de.setLabels(labels);
+				de.setSelected(priorita);
+				DataElementInfo deInfo = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA);
+				deInfo.setListBody(listPriorita);
+				de.setInfo(deInfo);
+			}
+		}
+		de.setValue(priorita);
+		dati.add(de);
+		
+		// Priorita Max
+		de = new DataElement();
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_LEFT);
+		if(consegnaSincrona) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.CHECKBOX);
+			de.setPostBack(true);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(prioritaMax));
+			de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_RIGHT);
+			de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_NOTE);
+			DataElementInfo deInfo = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_LEFT);
+			deInfo.setBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_INFO);
+			de.setInfo(deInfo);
+		}
+		de.setValue(priorita);
+		dati.add(de);
+				
 		
 		// subtitolo Codice Risposta HTTP
 		de = new DataElement();
@@ -9924,6 +10057,30 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setInfo(dInfo);
 			dati.add(de);
 		}
+		
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONSEGNA_FALLITA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.add(de);
+		
+		// cadenza rispedizione
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE );
+		if(consegnaSincrona) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE_NOTE);
+			de.setType(DataElementType.NUMBER);
+			de.setMinValue(0);
+			de.reloadMinValue(false);
+		}
+		de.setValue(cadenzaRispedizione);
+		dati.add(de);
 		
 		return dati;
 	}

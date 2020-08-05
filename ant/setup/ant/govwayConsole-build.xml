@@ -227,7 +227,7 @@
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="singlePdD.monitor.tipoDatabase"/>
+			<param name="token" value="singlePdD.monitor.default.tipoDatabase"/>
 			<param name="value" value="${antinstaller_tipo_database}"/>
 		</antcall>
 		<antcall target="set_property">
@@ -249,7 +249,7 @@
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="singlePdD.monitor.dataSource"/>
+			<param name="token" value="singlePdD.monitor.default.dataSource"/>
 			<param name="value" value="${datasource_pdd_name}"/>
 		</antcall>
 		<!-- TRACCE ENGINE -->

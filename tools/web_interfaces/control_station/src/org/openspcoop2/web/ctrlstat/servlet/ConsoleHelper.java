@@ -15347,7 +15347,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(sbConnettoriMultipli.length() >0)
 				sbConnettoriMultipli.append(", ");
 			if(paSA.getDatiConnettore() == null) {
-				sbConnettoriMultipli.append(CostantiControlStation.LABEL_DEFAULT);
+				sbConnettoriMultipli.append(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
 			} else {
 				sbConnettoriMultipli.append(paSA.getDatiConnettore().getNome());
 			}
@@ -15414,7 +15414,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public String getLabelNomePortaApplicativaServizioApplicativo(PortaApplicativaServizioApplicativo paSA) {
-		String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+		String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
 		return nomePaSA;
 	}
 	

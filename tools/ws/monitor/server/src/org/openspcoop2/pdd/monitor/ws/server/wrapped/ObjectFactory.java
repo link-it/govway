@@ -42,17 +42,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CountMessaggioResponse }
+     * Create an instance of {@link FindStatoPdd }
      */
-    public CountMessaggioResponse createCountMessaggioResponse() {
-        return new CountMessaggioResponse();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllMessaggioResponse }
-     */
-    public FindAllMessaggioResponse createFindAllMessaggioResponse() {
-        return new FindAllMessaggioResponse();
+    public FindStatoPdd createFindStatoPdd() {
+        return new FindStatoPdd();
     }
     
     /**
@@ -63,10 +56,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link DeleteAllByFilterMessaggio }
+     * Create an instance of {@link FindAllMessaggioResponse }
      */
-    public DeleteAllByFilterMessaggio createDeleteAllByFilterMessaggio() {
-        return new DeleteAllByFilterMessaggio();
+    public FindAllMessaggioResponse createFindAllMessaggioResponse() {
+        return new FindAllMessaggioResponse();
     }
     
     /**
@@ -77,10 +70,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link FindStatoPdd }
+     * Create an instance of {@link CountMessaggioResponse }
      */
-    public FindStatoPdd createFindStatoPdd() {
-        return new FindStatoPdd();
+    public CountMessaggioResponse createCountMessaggioResponse() {
+        return new CountMessaggioResponse();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllByFilterMessaggioResponse }
+     */
+    public DeleteAllByFilterMessaggioResponse createDeleteAllByFilterMessaggioResponse() {
+        return new DeleteAllByFilterMessaggioResponse();
     }
     
     /**
@@ -91,10 +91,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link DeleteAllByFilterMessaggioResponse }
+     * Create an instance of {@link DeleteAllByFilterMessaggio }
      */
-    public DeleteAllByFilterMessaggioResponse createDeleteAllByFilterMessaggioResponse() {
-        return new DeleteAllByFilterMessaggioResponse();
+    public DeleteAllByFilterMessaggio createDeleteAllByFilterMessaggio() {
+        return new DeleteAllByFilterMessaggio();
     }
     
 

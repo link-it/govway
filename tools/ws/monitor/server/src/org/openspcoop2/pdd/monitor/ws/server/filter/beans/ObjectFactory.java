@@ -42,20 +42,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BustaServizio }
-     */
-    public BustaServizio createBustaServizio() {
-        return new BustaServizio();
-    }
-    
-    /**
-     * Create an instance of {@link Busta }
-     */
-    public Busta createBusta() {
-        return new Busta();
-    }
-    
-    /**
      * Create an instance of {@link Filtro }
      */
     public Filtro createFiltro() {
@@ -63,10 +49,24 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link BustaServizio }
+     */
+    public BustaServizio createBustaServizio() {
+        return new BustaServizio();
+    }
+    
+    /**
      * Create an instance of {@link BustaSoggetto }
      */
     public BustaSoggetto createBustaSoggetto() {
         return new BustaSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link Busta }
+     */
+    public Busta createBusta() {
+        return new Busta();
     }
     
 

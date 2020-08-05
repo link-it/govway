@@ -216,8 +216,8 @@ public class TimerGestoreMessaggiLib  {
 						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLock,
 								this.msgDiag, causaMessaggiINBOXDaEliminareNonScaduti, 
-								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
+								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
 						idMsgInutiliINBOX = gestoreMsgSearch.readMessaggiInutiliIntoInbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery);
 						int gestiti = 0;
@@ -282,8 +282,8 @@ public class TimerGestoreMessaggiLib  {
 						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLock,
 								this.msgDiag, causaMessaggiOUTBOXDaEliminareNonScaduti, 
-								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
+								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
 						idMsgInutiliOUTBOX = gestoreMsgSearch.readMessaggiInutiliIntoOutbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery);
 						int gestiti = 0;
@@ -366,8 +366,8 @@ public class TimerGestoreMessaggiLib  {
 						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLock,
 								this.msgDiag, causaMessaggiINBOXScaduti, 
-								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
+								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
 						idMsgScadutiINBOX = gestoreMsgSearch.readMessaggiScadutiIntoInbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery);
 						int gestiti = 0;
@@ -494,8 +494,8 @@ public class TimerGestoreMessaggiLib  {
 						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLock,
 								this.msgDiag, causaMessaggiOUTBOXScaduti, 
-								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
+								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
 						idMsgScadutiOUTBOX = gestoreMsgSearch.readMessaggiScadutiIntoOutbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery);
 						int gestiti = 0;
@@ -613,8 +613,8 @@ public class TimerGestoreMessaggiLib  {
 						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLock,
 								this.msgDiag, causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi, 
-								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
+								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
 						idMsgServizioRicezioneContenutiApplicativiNonGestiti = 
 								gestoreMsgSearch.readMsgForRicezioneContenutiApplicativiNonGestiti(timeoutRicezioneContenutiApplicativiNonGestiti, this.limit,this.logQuery,this.orderByQuery);
@@ -712,8 +712,8 @@ public class TimerGestoreMessaggiLib  {
 						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLock,
 								this.msgDiag, causaMessaggiOUTBOXNonGestitiRicezioneBuste, 
-								this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
-								this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
+								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
 						idMsgServizioRicezioneBusteNonGestiti = 
 								gestoreMsgSearch.readMsgForRicezioneBusteNonGestiti(timeoutRicezioneBusteNonGestiti, this.limit,this.logQuery,this.orderByQuery);

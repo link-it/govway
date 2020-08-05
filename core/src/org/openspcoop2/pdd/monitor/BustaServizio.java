@@ -37,6 +37,7 @@ import java.io.Serializable;
  * 		&lt;sequence&gt;
  * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedShort" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -51,7 +52,8 @@ import java.io.Serializable;
 @XmlType(name = "busta-servizio", 
   propOrder = {
   	"tipo",
-  	"nome"
+  	"nome",
+  	"versione"
   }
 )
 
@@ -91,6 +93,14 @@ public class BustaServizio extends org.openspcoop2.utils.beans.BaseBean implemen
     this.nome = nome;
   }
 
+  public java.lang.Integer getVersione() {
+    return this.versione;
+  }
+
+  public void setVersione(java.lang.Integer versione) {
+    this.versione = versione;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -105,5 +115,9 @@ public class BustaServizio extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=false,nillable=false)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedShort")
+  @XmlElement(name="versione",required=false,nillable=false)
+  protected java.lang.Integer versione;
 
 }

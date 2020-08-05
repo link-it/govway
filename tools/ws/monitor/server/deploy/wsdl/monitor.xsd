@@ -165,6 +165,13 @@
 			<xsd:element default="false" name="sbustamento-soap" type="xsd:boolean"/>
 			<xsd:element default="true" name="sbustamento-informazioni-protocollo" type="xsd:boolean"/>
 			<xsd:element name="tipo-consegna" type="xsd:string"/>
+			<xsd:element name="data-rispedizione" type="xsd:dateTime">
+				
+			</xsd:element>
+			<xsd:element name="nome-porta" type="xsd:string"/>
+			<xsd:element name="coda" type="xsd:string"/>
+			<xsd:element name="priorita" type="xsd:string"/>
+			<xsd:element default="false" name="attesa-esito" type="xsd:boolean"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -192,6 +199,7 @@
 		<xsd:sequence>
 			<xsd:element minOccurs="0" name="tipo" type="xsd:string"/>
 			<xsd:element minOccurs="0" name="nome" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="versione" type="xsd:unsignedShort"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

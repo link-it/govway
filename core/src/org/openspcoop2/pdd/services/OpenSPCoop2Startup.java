@@ -31,7 +31,9 @@ import java.rmi.RemoteException;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -75,6 +77,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.pdd.config.ClassNameProperties;
+import org.openspcoop2.pdd.config.ConfigurazioneCoda;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.DBManager;
@@ -227,8 +230,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerMonitoraggioRisorseThread timerMonitoraggioRisorse = null;
 
 	/** Timer per la gestione di riconsegna ContenutiApplicativi */
-	private TimerConsegnaContenutiApplicativiThread threadConsegnaContenutiApplicativi;
-	public static TimerConsegnaContenutiApplicativiThread threadConsegnaContenutiApplicativiRef;
+	private Map<String, TimerConsegnaContenutiApplicativiThread> threadConsegnaContenutiApplicativiMap;
+	public static Map<String, TimerConsegnaContenutiApplicativiThread> threadConsegnaContenutiApplicativiRefMap;
 	
 	/** Gestore risorse JMX */
 	private GestoreRisorseJMX gestoreRisorseJMX = null;
@@ -1016,6 +1019,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(OpenSPCoop2Startup.ID_MODULO);
 
 
+			
+			
+			
+			
+			
+			
+			
+			
+			/* -------------- Rilascio lock -------------------- */
+			// Il rilascio serve a ripulire eventuali lock presi e non rilasciati durante lo shutdown, poiche' la connessione non era piu' disponibile o vi e' stato un kill
+			TimerUtils.relaseLockTimers(propertiesReader, ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), true);
+			
+			
+			
 			
 			
 			
@@ -2634,14 +2651,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/* ------------ Avvia il thread per la riconsegna dei messaggi per ContenutiApplicativi  ------------ */
 			if(OpenSPCoop2Startup.this.serverJ2EE==false){
 				if(propertiesReader.isTimerConsegnaContenutiApplicativiAbilitato()){
+					OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativiMap = new HashMap<String, TimerConsegnaContenutiApplicativiThread>();
+					List<String> code = propertiesReader.getTimerConsegnaContenutiApplicativiCode();
 					try{
-						OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi = new TimerConsegnaContenutiApplicativiThread();
-						OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi.start();
-						OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRef = OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi;
+						for (String coda : code) {
+							ConfigurazioneCoda configurazioneCoda = propertiesReader.getTimerConsegnaContenutiApplicativiConfigurazioneCoda(coda);
+							TimerConsegnaContenutiApplicativiThread timer = new TimerConsegnaContenutiApplicativiThread(configurazioneCoda);
+							timer.start();
+							OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativiMap.put(coda, timer);
+						}
 						TimerConsegnaContenutiApplicativi.STATE = TimerState.ENABLED;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
 					}
+					OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap = OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativiMap;
 				}else{
 					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI);
 					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
@@ -2907,7 +2930,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		try {
 			properties = OpenSPCoop2Properties.getInstance();
 		}catch(Throwable e){}
-		
+				
 		// Eventi
 		try{
 			String clusterID = properties.getClusterId(false);
@@ -3144,8 +3167,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			} catch (Throwable e) {}
 		}else{
 			try{
-				if(this.threadEliminazioneMsg!=null)
+				if(this.threadEliminazioneMsg!=null) {
 					this.threadEliminazioneMsg.setStop(true);
+				}
 			}catch (Throwable e) {}
 			try{
 				if(this.threadPuliziaMsgAnomali!=null)
@@ -3155,11 +3179,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(this.threadRepositoryBuste!=null)
 					this.threadRepositoryBuste.setStop(true);
 			}catch (Throwable e) {}
-			try{
-				if(this.threadConsegnaContenutiApplicativi!=null)
-					this.threadConsegnaContenutiApplicativi.setStop(true);
-			}catch (Throwable e) {}
 		}
+		try{
+			if(this.threadConsegnaContenutiApplicativiMap!=null && !this.threadConsegnaContenutiApplicativiMap.isEmpty()) {
+				for (String coda : this.threadConsegnaContenutiApplicativiMap.keySet()) {
+					TimerConsegnaContenutiApplicativiThread timer = this.threadConsegnaContenutiApplicativiMap.get(coda);
+					timer.setStop(true);
+				}
+			}
+		}catch (Throwable e) {}
 
 		// fermo timer Monitoraggio Risorse
 		try{
@@ -3178,6 +3206,51 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			this.gestoreRisorseJMX.unregisterMBeans();
 		}
 
+		// Verifico che i timer siano conclusi prima di rilasciare i lock
+		if(this.serverJ2EE){ // TODO ATTESA ATTIVA CHE SI FERMINO PER J2EE
+			Utilities.sleep(5000); // aspetto che i timer terminano la loro gestione.
+		}
+		else {
+			try{
+				if(this.threadEliminazioneMsg!=null) {
+					this.threadEliminazioneMsg.waitShutdown();
+				}
+			}catch (Throwable e) {}
+			try{
+				if(this.threadPuliziaMsgAnomali!=null) {
+					this.threadPuliziaMsgAnomali.waitShutdown();
+				}
+			}catch (Throwable e) {}
+			try{
+				if(this.threadRepositoryBuste!=null) {
+					this.threadRepositoryBuste.waitShutdown();
+				}
+			}catch (Throwable e) {}
+		}
+		try{
+			if(this.threadConsegnaContenutiApplicativiMap!=null && !this.threadConsegnaContenutiApplicativiMap.isEmpty()) {
+				for (String coda : this.threadConsegnaContenutiApplicativiMap.keySet()) {
+					TimerConsegnaContenutiApplicativiThread timer = this.threadConsegnaContenutiApplicativiMap.get(coda);
+					timer.waitShutdown();
+				}
+			}
+		}catch (Throwable e) {}
+		try{
+			if(this.timerMonitoraggioRisorse!=null) {
+				this.timerMonitoraggioRisorse.waitShutdown();
+			}
+		}catch (Throwable e) {}
+		try{
+			if(this.timerThreshold!=null) {
+				this.timerThreshold.waitShutdown();
+			}
+		}catch (Throwable e) {}
+		
+		// Rilascio lock (da fare dopo che i timer sono stati fermati)
+		// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
+		boolean logErrorConnection = false;
+		TimerUtils.relaseLockTimers(properties, ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), logErrorConnection);
+		
 		// DataManger
 		DateManager.close();
 

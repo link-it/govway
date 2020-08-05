@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -37,6 +38,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -45,6 +47,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaTrasporto;
+import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -103,6 +106,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			}
 
 			String nomeSAConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
+			String coda = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA);
+			String priorita = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA);
+			String prioritaMax = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX);
 			String cadenzaRispedizione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE);
 			String codiceRisposta2xx = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX); 
 			String codiceRisposta2xxValueMin = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE_MIN); 
@@ -161,11 +167,18 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 
 			// valora iniziale della configurazione
 			PortaApplicativaServizioApplicativo oldPaSA = null;
+			boolean connettoreDefault = false;
+			BehaviourType behaviourType = null;
+			if(pa.getBehaviour()!=null) {
+				behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+			}
 			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
 				if(paSATmp.getNome().equals(nomeSAConnettore)) {
-					oldPaSA = paSATmp;					
+					oldPaSA = paSATmp;
+					connettoreDefault = porteApplicativeHelper.isConnettoreDefault(oldPaSA);
 				}
 			}
+			boolean consegnaSincrona = connettoreDefault && BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
 			
 			ConfigurazioneGestioneConsegnaNotifiche oldConfigurazioneGestioneConsegnaNotifiche =
 					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(oldPaSA, ControlStationCore.getLog());
@@ -262,10 +275,17 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 
 			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
 
+			String labelDi = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE_DI;
+			String label = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE;
+			if(consegnaSincrona) {
+				labelDi = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_CONSEGNA_DI;
+				label = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_CONSEGNA;
+			}
+			
 			// Label diversa in base all'operazione
 			String labelPagina = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE_DI,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE,
+					labelDi,
+					label,
 					oldPaSA);
 
 			lstParam.add(new Parameter(labelPagina, null));
@@ -277,6 +297,24 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 
+				if(coda==null) {
+					if(oldPaSA!=null && oldPaSA.getDatiConnettore()!=null) {
+						coda = oldPaSA.getDatiConnettore().getCoda();
+					}
+					if(coda==null) {
+						coda = CostantiConfigurazione.CODA_DEFAULT;
+					}
+				}
+				if(priorita==null) {
+					if(oldPaSA!=null && oldPaSA.getDatiConnettore()!=null) {
+						priorita = oldPaSA.getDatiConnettore().getPriorita();
+						prioritaMax = oldPaSA.getDatiConnettore().isPrioritaMax() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+					}
+					if(priorita==null) {
+						priorita = CostantiConfigurazione.PRIORITA_DEFAULT;
+					}
+				}
+				
 				if(cadenzaRispedizione == null) {
 					if(oldConfigurazioneGestioneConsegnaNotifiche != null) {
 						// cadenza rispedizione
@@ -458,7 +496,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
 						codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
 						codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
-						gestioneFault, faultCode, faultActor, faultMessage);
+						gestioneFault, faultCode, faultActor, faultMessage,
+						consegnaSincrona,
+						coda, priorita, prioritaMax);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta,idAsps, dati);
 
@@ -493,7 +533,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
 						codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
 						codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
-						gestioneFault, faultCode, faultActor, faultMessage);
+						gestioneFault, faultCode, faultActor, faultMessage,
+						consegnaSincrona,
+						coda, priorita, prioritaMax);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -518,10 +560,21 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			
 			PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
 			
+			boolean oldValuePrioritaMax = false;
+			String oldCoda = null;
+			
 			if(datiConnettore == null) { // succede solo se e' la prima volta che modifico la configurazione di default
 				datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
-				datiConnettore.setNome(CostantiControlStation.LABEL_DEFAULT);
+				datiConnettore.setNome(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
 			}
+			else {
+				oldValuePrioritaMax = datiConnettore.isPrioritaMax();
+				oldCoda = datiConnettore.getCoda();
+			}
+			
+			datiConnettore.setCoda(coda);
+			datiConnettore.setPriorita(priorita);
+			datiConnettore.setPrioritaMax(ServletUtils.isCheckBoxEnabled(prioritaMax));
 			
 			paSA.setDatiConnettore(datiConnettore);
 			
@@ -538,6 +591,18 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
+			boolean resetCoda = false;
+			if(oldValuePrioritaMax != datiConnettore.isPrioritaMax()) {
+				resetConnettoriPrioritari(coda, porteApplicativeCore);
+				resetCoda = true;
+			}
+			if(!coda.equals(oldCoda)) {
+				resetConnettoriPrioritari(oldCoda, porteApplicativeCore);
+				if(!resetCoda) {
+					resetConnettoriPrioritari(coda, porteApplicativeCore);
+				}
+			}
+			
 			// ricarico la configurazione
 			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 
@@ -731,7 +796,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 					codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
 					codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
 					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
-					gestioneFault, faultCode, faultActor, faultMessage);
+					gestioneFault, faultCode, faultActor, faultMessage,
+					consegnaSincrona,
+					coda, priorita, prioritaMax);
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -751,5 +818,30 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE,
 					ForwardParams.OTHER(""));
 		}  
+	}
+	
+	private void resetConnettoriPrioritari(String coda, PorteApplicativeCore porteApplicativeCore) {
+		List<String> aliasJmx = porteApplicativeCore.getJmxPdD_aliases();
+		if(aliasJmx!=null && !aliasJmx.isEmpty()) {
+			for (String alias : aliasJmx) {
+				String metodo = porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(alias);
+				try{
+					String stato = porteApplicativeCore.invokeJMXMethod(porteApplicativeCore.getGestoreRisorseJMX(alias), alias, 
+							porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
+							porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias), 
+							metodo, 
+							coda);
+					if(stato==null) {
+						throw new ServletException("Aggiornamento fallito");
+					}
+					if(!JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)) {
+						throw new ServletException(stato);
+					}
+				}catch(Exception e){
+					String msgErrore = "Errore durante l'aggiornamento dei connettori prioritari (coda:"+coda+") via jmx (jmxMethod '"+metodo+"') (node:"+alias+"): "+e.getMessage();
+					ControlStationCore.logError(msgErrore, e);
+				}
+			}
+		}
 	}
 }

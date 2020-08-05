@@ -873,7 +873,8 @@ public class EJBUtils {
 				// ---- Registra SIL Destinatario del Messaggio
 				msgResponse.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
-						nomePorta, false, false);
+						nomePorta, false, false,
+						null, null);
 
 			} // end Gestione Risposta
 
@@ -1122,7 +1123,8 @@ public class EJBUtils {
 				// --- Registra SIL Destinatario del Messaggio
 				msgResponse.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
-						nomePorta, false, false);
+						nomePorta, false, false,
+						null, null);
 			} // end Gestione Risposta
 
 
@@ -1374,7 +1376,8 @@ public class EJBUtils {
 
 			gestoreMessaggi.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 					sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
-					nomePorta, false, false);
+					nomePorta, false, false,
+					null, null);
 
 			// Aggiungo costante servizio applicativo
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
@@ -1927,6 +1930,13 @@ public class EJBUtils {
 			consegnaMSG.setPddContext(this.pddContext);
 			consegnaMSG.setRichiestaDelegata(localForwardRichiestaDelegata);
 			
+			String coda = null;
+			String priorita = null;
+			if(presaInCarico) {
+				coda = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_CODA_DEFAULT;
+				priorita = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRIORITA_DEFAULT;
+			}
+			
 			if(idBustaPreBehaviourNewMessage!=null || behaviourForwardToConfiguration!=null) {
 				ConsegnaContenutiApplicativiBehaviourMessage behaviourMsg = new ConsegnaContenutiApplicativiBehaviourMessage();
 				behaviourMsg.setIdMessaggioPreBehaviour(idBustaPreBehaviourNewMessage);
@@ -1939,6 +1949,14 @@ public class EJBUtils {
 						if(pasa.getNome().equals(servizioApplicativo)) {
 							if(pasa.getDatiConnettore()!=null) {
 								idTransazioneApplicativoServer.setConnettoreNome(pasa.getDatiConnettore().getNome());
+								if(presaInCarico) {
+									if(pasa.getDatiConnettore().getCoda()!=null) {
+										coda = pasa.getDatiConnettore().getCoda();
+									}
+									if(pasa.getDatiConnettore().getPriorita()!=null) {
+										priorita = pasa.getDatiConnettore().getPriorita();
+									}
+								}
 							}
 							ConfigurazioneGestioneConsegnaNotifiche configGestioneConsegna = MultiDeliverUtils.read(pasa, this.log); 
 							GestioneErrore gestioneErroreBehaviour = GestioneConsegnaNotificheUtils.toGestioneErrore(configGestioneConsegna);		
@@ -2065,7 +2083,8 @@ public class EJBUtils {
 			gestoreMessaggi.registraDestinatarioMessaggio(servizioApplicativo,
 					sbustamento_soap,sbustamento_informazioni_protocollo,
 					getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio, nomePorta,
-					attendiEsitoTransazioneSincronaPrimaDiSpedire, (servizioApplicativoConConnettore && !spedizioneConsegnaContenuti));
+					attendiEsitoTransazioneSincronaPrimaDiSpedire, (servizioApplicativoConConnettore && !spedizioneConsegnaContenuti),
+					coda, priorita);
 			
 			mapServizioApplicativoConConnettore.put(servizioApplicativo, servizioApplicativoConConnettore);
 			mapSbustamentoSoap.put(servizioApplicativo, sbustamento_soap);
@@ -2294,7 +2313,8 @@ public class EJBUtils {
 					gestoreMessaggi.registraDestinatarioMessaggio(servizioApplicativo,
 							sbustamento_soap,sbustamento_informazioni_protocollo,
 							getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
-							nomePorta, false, false);
+							nomePorta, false, false,
+							null, null);
 					gestoreMessaggi.setOneWayVersione11(false);
 				}
 

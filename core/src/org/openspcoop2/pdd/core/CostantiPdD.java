@@ -162,7 +162,9 @@ public class CostantiPdD {
     
     /** PddContext in Header HTTP */
 	public final static String OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP = "OPENSPCOOP2_CONTEXT_HEADER_HTTP";
-        
+	
+	public final static String OPENSPCOOP2_PDD_CONTEXT_NUMERO_TENTATIVI_RICONSEGNA_UPDATED = "NUMERO_TENTATIVI_RICONSEGNA_UPDATED";
+	        
     /** Costante che indica il valore dell'header di integrazione: tipo mittente*/
     public final static String HEADER_INTEGRAZIONE_TIPO_MITTENTE = "tipoMittente";
     /** Costante che indica il valore dell'header di integrazione: mittente*/
@@ -233,6 +235,11 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_TOKEN_EMAIL = "email";
     
     
+    /** Attesa attiva di default effettuata per ottenere un lock, in millisecondi */
+    public final static long GET_LOCK_ATTESA_ATTIVA = 90 * 1000; // 2 minuti
+    /** Intervallo maggiore per frequenza di check per ottenere un lock, in millisecondi */
+    public final static int GET_LOCK_CHECK_INTERVAL = 50;
+    
     /** Attesa attiva di default effettuata per messaggi gia in processamento, in millisecondi */
     public final static long MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA = 90 * 1000; // 2 minuti
     /** Intervallo maggiore per frequenza di check per messaggi gia in processamento, in millisecondi */
@@ -253,9 +260,10 @@ public class CostantiPdD {
     public final static int TIMER_EJB_CHECK_INTERVAL = 200; 
     
     /** Intervallo per riconsegna messaggi verso ConsegnaContenutiApplicativi */
-    public final static int TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL = 60; 
     public final static int TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE = 1800; 
     public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE = "CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE";
+    public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_CODA_DEFAULT = CostantiConfigurazione.CODA_DEFAULT;
+    public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRIORITA_DEFAULT = CostantiConfigurazione.PRIORITA_DEFAULT;
     
     /** Tempi di gestione dei lock da parte del Timer */
     public final static int TIMER_LOCK_MAX_LIFE = -1; 
@@ -334,8 +342,6 @@ public class CostantiPdD {
     /** Limit messaggi processati dai Gestori */
     public static final int LIMIT_MESSAGGI_GESTORI = 50;
     
-    /** Limit thread pool size per ConsegnaContenuti */
-    public static final int CONSEGNA_CONTENUTI_THREADS_POOL_SIZE = 10;
     
     /** Tipo WSDL */
     public final static String SCHEMA_XSD = "Schema xsd dei messaggi";

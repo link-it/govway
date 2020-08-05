@@ -27,6 +27,8 @@
 -- DROP INDEX INDEX_PA_AUTH_PROP ON pa_auth_properties ;
 -- DROP INDEX INDEX_PA_BEHAVIOUR_PROP ON pa_behaviour_props ;
 -- DROP INDEX INDEX_PA_SA_PROP ON pa_sa_properties ;
+-- DROP INDEX INDEX_PA_SA_CODA_MAX ON porte_applicative_sa ;
+-- DROP INDEX INDEX_PA_SA_CODA ON porte_applicative_sa ;
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
 -- DROP INDEX index_porte_applicative_2 ON porte_applicative ;
 DROP TABLE pa_transform_risp_hdr;

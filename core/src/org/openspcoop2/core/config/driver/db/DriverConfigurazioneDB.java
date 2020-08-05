@@ -82,6 +82,7 @@ import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -19756,6 +19757,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					String descrizioneConnettore = rs.getString("connettore_descrizione");
 					String statoConnettore = rs.getString("connettore_stato");
 					String filtriConnettore = rs.getString("connettore_filtri");
+					String codaConnettore = rs.getString("connettore_coda");
+					String prioritaConnettore = rs.getString("connettore_priorita");
+					int maxPrioritaConnettore = rs.getInt("connettore_max_priorita");
 					
 					if (idSA != 0) {
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -19784,6 +19788,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 								servizioApplicativo.getDatiConnettore().setNotifica(notificaConnettore == CostantiDB.TRUE);
 								servizioApplicativo.getDatiConnettore().setDescrizione(descrizioneConnettore);
 								servizioApplicativo.getDatiConnettore().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoConnettore));
+								servizioApplicativo.getDatiConnettore().setCoda(codaConnettore);
+								servizioApplicativo.getDatiConnettore().setPriorita(prioritaConnettore);
+								servizioApplicativo.getDatiConnettore().setPrioritaMax(maxPrioritaConnettore == CostantiDB.TRUE);
 								
 								List<String> l = convertToList(filtriConnettore);
 								if(!l.isEmpty()) {
@@ -26048,6 +26055,164 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		}
 
+	}
+	
+	@Override
+	public List<IDConnettore> getConnettoriConsegnaNotifichePrioritarie(String queueName) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		this.log.debug("getConnettoriConsegnaNotifichePrioritarie...");
+
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if (this.atomica)
+				con = getConnectionFromDatasource("getConnettoriConsegnaNotifichePrioritarie");
+			else
+				con = this.globalConnection;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".nome");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_SA+".connettore_nome");
+			if(queueName!=null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".connettore_coda = ?");
+			}
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".connettore_max_priorita = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			this.log.debug("eseguo query : " + sqlQuery );
+			stm = con.prepareStatement(sqlQuery);
+			
+			int indexStmt = 1;
+			if(queueName!=null) {
+				this.log.debug("queue stmt.setString("+queueName+")");
+				stm.setString(indexStmt, queueName);
+				indexStmt++;
+			}
+			this.log.debug("connettore_max_priorita stmt.setInt("+CostantiDB.TRUE+")");
+			stm.setInt(indexStmt, CostantiDB.TRUE);
+			indexStmt++;
+			
+			rs = stm.executeQuery();
+			List<IDConnettore> idsSA = new ArrayList<IDConnettore>();
+			while (rs.next()) {
+				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
+				IDConnettore idSA = new IDConnettore();
+				idSA.setIdSoggettoProprietario(idS);
+				idSA.setNome(rs.getString("nome"));
+				idSA.setNomeConnettore(rs.getString("connettore_nome"));
+				if(idSA.getNomeConnettore()==null) {
+					idSA.setNomeConnettore(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
+				}
+				idsSA.add(idSA);
+			}
+			if(idsSA.size()==0){
+				if(queueName!=null)
+					throw new DriverConfigurazioneNotFound("Connettori non trovati per la coda '"+queueName+"'");
+				else
+					throw new DriverConfigurazioneNotFound("Connettori non trovati");
+			}else{
+				return idsSA;
+			}
+		}catch(DriverConfigurazioneNotFound de){
+			throw de;
+		}
+		catch(Exception e){
+			throw new DriverConfigurazioneException("getConnettoriConsegnaNotifichePrioritarie error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessione al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+
+		}
+	}
+	
+	public int resetConnettoriConsegnaNotifichePrioritarie(String queueName) throws DriverConfigurazioneException {
+		Connection con = null;
+		PreparedStatement stm = null;
+		
+		this.log.debug("resetConnettoriConsegnaNotifichePrioritarie...");
+
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if (this.atomica)
+				con = getConnectionFromDatasource("getConnettoriConsegnaNotifichePrioritarie");
+			else
+				con = this.globalConnection;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addUpdateTable(CostantiDB.PORTE_APPLICATIVE_SA);
+			sqlQueryObject.addUpdateField("connettore_max_priorita", "?");
+			if(queueName!=null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".connettore_coda = ?");
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			String sqlQuery = sqlQueryObject.createSQLUpdate();
+			this.log.debug("eseguo query : " + sqlQuery );
+			stm = con.prepareStatement(sqlQuery);
+			
+			int indexStmt = 1;
+			this.log.debug("connettore_max_priorita stmt.setInt("+CostantiDB.FALSE+")");
+			stm.setInt(indexStmt, CostantiDB.FALSE);
+			indexStmt++;
+			if(queueName!=null) {
+				this.log.debug("queue stmt.setString("+queueName+")");
+				stm.setString(indexStmt, queueName);
+				indexStmt++;
+			}
+
+			
+			int rows = stm.executeUpdate();
+			return rows;
+			
+		}
+		catch(Exception e){
+			throw new DriverConfigurazioneException("resetConnettoriConsegnaNotifichePrioritarie error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessione al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+
+		}
 	}
 	
 	

@@ -93,6 +93,10 @@ public class Connection implements java.sql.Connection {
 	}
 	
 	
+	public java.sql.Connection getWrappedConnection() {
+		return this.connection;
+	}
+	
 	protected void closeWrappedConnection() throws SQLException{
 		if(this.connection.isClosed()==false){
 			this.connection.close();

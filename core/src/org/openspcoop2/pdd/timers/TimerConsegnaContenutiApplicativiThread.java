@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.timers;
 
 import org.slf4j.Logger;
+import org.openspcoop2.pdd.config.ConfigurazioneCoda;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -55,6 +56,7 @@ public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable
 	 */
 	private long timeout = 10; // ogni 10 secondi avvio il Thread
 	/** Properties Reader */
+	@SuppressWarnings("unused")
 	private OpenSPCoop2Properties propertiesReader;
 	/** MsgDiagnostico */
 	private MsgDiagnostico msgDiag;
@@ -66,7 +68,11 @@ public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable
 	private boolean debug = false;
 	/** Numero di messaggi prelevati sulla singola query */
 	private int limit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
-		
+
+	private ConfigurazioneCoda configurazioneCoda;
+	public String getQueueConfig() {
+		return this.configurazioneCoda.toString(false, ", ");
+	}
 
 	private static String getModuleId() throws TimerException {
 		
@@ -99,10 +105,10 @@ public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable
 		return msgDiag_staticInstance;
 	}
 	
-	private static TimerConsegnaContenutiApplicativi newTimerConsegnaContenutiApplicativi() throws TimerException {
-		return new TimerConsegnaContenutiApplicativi(getMsgDiagnostico(), 
-				new RunnableLogger(ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenuti(OpenSPCoop2Properties.getInstance().isTimerConsegnaContenutiApplicativiDebug())), 
-				new RunnableLogger(ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(OpenSPCoop2Properties.getInstance().isTimerConsegnaContenutiApplicativiDebug())), 
+	private static TimerConsegnaContenutiApplicativi newTimerConsegnaContenutiApplicativi(ConfigurazioneCoda configurazioneCoda) throws TimerException {
+		return new TimerConsegnaContenutiApplicativi(configurazioneCoda, getMsgDiagnostico(), 
+				new RunnableLogger(ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenuti(configurazioneCoda.isDebug())), 
+				new RunnableLogger(ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(configurazioneCoda.isDebug())), 
 				OpenSPCoop2Properties.getInstance(), 
 				ConfigurazionePdDManager.getInstance(),
 				RegistroServiziManager.getInstance());
@@ -110,19 +116,21 @@ public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable
 	
 	
 	/** Costruttore */
-	public TimerConsegnaContenutiApplicativiThread() throws TimerException, UtilsException{
+	public TimerConsegnaContenutiApplicativiThread(ConfigurazioneCoda configurazioneCoda) throws TimerException, UtilsException{
 		
 		super(getModuleId(), 
-				OpenSPCoop2Properties.getInstance().getTimerConsegnaContenutiApplicativiThreadsPoolSize(),
-				OpenSPCoop2Properties.getInstance().getTimerConsegnaContenutiApplicativiThreadsQueueSize(),
-				OpenSPCoop2Properties.getInstance().getTimerConsegnaContenutiApplicativiLimit(),
-				OpenSPCoop2Properties.getInstance().getTimerConsegnaContenutiApplicativiInterval(),
-				newTimerConsegnaContenutiApplicativi(),
-				OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenuti(OpenSPCoop2Properties.getInstance().isTimerConsegnaContenutiApplicativiDebug()));
+				configurazioneCoda.getPoolSize(),
+				configurazioneCoda.getQueueSize(),
+				configurazioneCoda.getNextMessages_limit(),
+				configurazioneCoda.getNextMessages_intervalloControllo(),
+				newTimerConsegnaContenutiApplicativi(configurazioneCoda),
+				OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenuti(configurazioneCoda.isDebug()));
 			
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
 		
-		this.debug = this.propertiesReader.isTimerConsegnaContenutiApplicativiDebug();
+		this.configurazioneCoda = configurazioneCoda;
+		
+		this.debug = configurazioneCoda.isDebug();
 		
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenuti(this.debug);
 		
@@ -137,13 +145,13 @@ public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable
 		this.msgDiag.logPersonalizzato("avvioInCorso");
 		this.log.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
 		
-		this.timeout = this.propertiesReader.getTimerConsegnaContenutiApplicativiInterval();
+		this.timeout = configurazioneCoda.getNextMessages_intervalloControllo();
 		String s = "secondi";
 		if(this.timeout == 1)
 			s = "secondo";
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.timeout+" "+s);
 		
-		this.limit = this.propertiesReader.getTimerConsegnaContenutiApplicativiLimit();
+		this.limit = configurazioneCoda.getNextMessages_limit();
 		if(this.limit<=0){
 			this.limit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 		}

@@ -508,6 +508,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP = "Connessioni HTTP Attive";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE = "Consegna Notifiche";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_THREADS = "Thread Attivi";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_STATISTICHE = "Generazione Statistiche";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME = "Pulizia Repository di Runtime";
@@ -750,6 +751,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "ResetCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL = "PrefillCache";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI = "EliminaConnettoriPrioritari";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB = "connessioniDB";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS = "connessioniJMS";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID = "transazioniID";
@@ -757,6 +759,8 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD = "connessioniPD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA = "connessioniPA";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI = "threadsPA";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI_CONFIG = "threadsPACfg";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI_CONNNETTORI_PRIORITARI = "threadsPAPrio";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI = "timerConsegnaContenutiApplicativi";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI = "timerEventi";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY = "timerFileSystemRecovery";
@@ -1149,12 +1153,16 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES_KEYWORD = "GRUPPO";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES = "Svuota le Cache dei nodi '"+LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES_KEYWORD+"'";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL = "Prefill Cache";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_STATO = "Threads Pool";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI = "Disattiva la 'Consegna Immediata' da tutti i connettori";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONFIG = "Configurazione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONNNETTORI_PRIORITARI = "Consegna Immediata";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX = "Timer ";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI = "Consegna Asincrona";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE = "Rispedizione Ack Oneway";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE = "Rispedizione Ack Asincroni";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_PREFIX = "Cancellazione ";

@@ -92,14 +92,16 @@ public class MonitorCostanti {
 	public final static String LABEL_MONITOR_NESSUN_MESSAGGIO_PROCESSAMENTO =  "Nessun Messaggio in Processamento";
 	public final static String LABEL_MONITOR_MESSAGGI_DUPLICATI = "Messaggi Duplicati";
 	public final static String LABEL_MONITOR_NESSUN_MESSAGGIO_DUPLICATO = "Nessun Messaggio Duplicato";
+	public final static String LABEL_MONITOR_EROGAZIONE = "Erogazione"; 
 	public final static String LABEL_MONITOR_DETTAGLIO = "Dettaglio"; 
 	public final static String LABEL_MONITOR_DETTAGLI_CONSEGNA = "Dettagli Consegna";
 	public final static String LABEL_MONITOR_IDMESSAGGIO = "IDMessaggio";
-	public final static String LABEL_MONITOR_INTEGRATION_MANAGER = "IntegrationManager";
+//	public final static String LABEL_MONITOR_INTEGRATION_MANAGER = "IntegrationManager";
 	
 	
 	/*LABEL PULSANTI */
 
+	public final static String LABEL_ACCEDI = "Conferma";
 //	public final static String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma"; // TODO cancellami
 	
 //	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
@@ -128,18 +130,23 @@ public class MonitorCostanti {
 	public final static String PARAMETRO_MONITOR_NOME_DESTINATARIO = "nomeDestinatario";
 	public final static String PARAMETRO_MONITOR_TIPO_SERVIZIO = "tipoServizio";
 	public final static String PARAMETRO_MONITOR_NOME_SERVIZIO = "nomeServizio";
+	public final static String PARAMETRO_MONITOR_VERSIONE_SERVIZIO = "versioneServizio";
 	public final static String PARAMETRO_MONITOR_AZIONE = "azione";
 	public final static String PARAMETRO_MONITOR_SOGLIA = "soglia";
 	public final static String PARAMETRO_MONITOR_STATO = "stato";
 	public final static String PARAMETRO_MONITOR_PDD = "pdd";
+	public final static String PARAMETRO_MONITOR_SORGENTE = "sorgente";
 	public final static String PARAMETRO_MONITOR_RISCONTRO = "riscontro";
 	//public final static String PARAMETRO_MONITOR_PATTERN = "pattern";
 	public final static String PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA = "correlazioneApplicativa";
 	public final static String PARAMETRO_MONITOR_MODULO = "modulo";
 	public final static String PARAMETRO_MONITOR_ERRORE = "errore";
 	public final static String PARAMETRO_MONITOR_TIPO_CONSEGNA = "tipoConsegna";
-	public final static String PARAMETRO_MONITOR_NOME_CONSEGNA = "nomeConsegna";
+	public final static String PARAMETRO_MONITOR_NOME_CONSEGNA_PORTA = "nomeConsegnaPorta";
+	public final static String PARAMETRO_MONITOR_NOME_CONSEGNA_APPLICATIVO_INTERNO = "nomeConsegnaApp";
+	public final static String PARAMETRO_MONITOR_NOME_CONSEGNA_CONNETTORE = "nomeConsegnaConnettore";
 	public final static String PARAMETRO_MONITOR_AUTORIZZAZIONE = "autorizzazione";
+	public final static String PARAMETRO_MONITOR_IN_CONSEGNA_DA = "dataRispedizione";
 	public final static String PARAMETRO_MONITOR_SBUSTAMENTO = "sbustamento";
 	public final static String PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = "sbustamentoProtocollo";
 	public final static String PARAMETRO_MONITOR_ORA_REGISTRAZIONE = "oraReg";
@@ -149,20 +156,25 @@ public class MonitorCostanti {
 	public final static String PARAMETRO_MONITOR_SERVIZIO = "servizio";
 	public final static String PARAMETRO_MONITOR_RIFERIMENTO = "riferimento";
 	public final static String PARAMETRO_MONITOR_PROFILO = "profilo";
+	public final static String PARAMETRO_MONITOR_CODA = "coda";
+	public final static String PARAMETRO_MONITOR_PRIORITA = "priorita";
+	public final static String PARAMETRO_MONITOR_ATTESA_ESITO = "attesaEsito";
 	
 	
 	/* LABEL PARAMETRI */
 	
 	public final static String LABEL_PARAMETRO_MONITOR_METHOD = "Metodo";
+	public final static String LABEL_PARAMETRO_MONITOR_SORGENTE = "Runtime";
 	public final static String LABEL_PARAMETRO_MONITOR_PORTA_DOMINIO = "Porta di Dominio";
 	public final static String LABEL_PARAMETRO_MONITOR_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE = "Profilo di collaborazione";
-	public final static String LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE = "Tipo Mittente";
-	public final static String LABEL_PARAMETRO_MONITOR_NOME_MITTENTE = "Nome Mittente";
-	public final static String LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO = "Tipo Destinatario";
-	public final static String LABEL_PARAMETRO_MONITOR_NOME_DESTINATARIO = "Nome Destinatario";
-	public final static String LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO = "Tipo Servizio";
-	public final static String LABEL_PARAMETRO_MONITOR_NOME_SERVIZIO = "Nome Servizio";
+	public final static String LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE = "Tipo";
+	public final static String LABEL_PARAMETRO_MONITOR_NOME_MITTENTE = "Nome";
+	public final static String LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO = "Tipo";
+	public final static String LABEL_PARAMETRO_MONITOR_NOME_DESTINATARIO = "Nome";
+	public final static String LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO = "Tipo";
+	public final static String LABEL_PARAMETRO_MONITOR_NOME_SERVIZIO = "Nome";
+	public final static String LABEL_PARAMETRO_MONITOR_VERSIONE_SERVIZIO = "Versione";
 	public final static String LABEL_PARAMETRO_MONITOR_AZIONE = "Azione";
 	public final static String LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL = "Anzianità Messaggi (Minuti)";
 	public final static String LABEL_PARAMETRO_MONITOR_SOGLIA_NOTE = "Permette di selezionare i messaggi più vecchi dei minuti indicati";
@@ -175,7 +187,10 @@ public class MonitorCostanti {
 	public final static String LABEL_PARAMETRO_MONITOR_MODULO = "ID Modulo";
 	public final static String LABEL_PARAMETRO_MONITOR_ERRORE = "Errore Processamento";
 	public final static String LABEL_PARAMETRO_MONITOR_TIPO_CONSEGNA = "Tipo";
-	public final static String LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA = "Nome";
+	public final static String LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_APPLICATIVO_INTERNO = "Nome Applicativo";
+	public final static String LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_PORTA = "Erogazione";
+	public final static String LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_CONNETTORE = "Connettore";
+	public final static String LABEL_PARAMETRO_MONITOR_IN_CONSEGNA_DA = "Prossima Consegna";
 	public final static String LABEL_PARAMETRO_MONITOR_AUTORIZZAZIONE = "Authz MessageBox";
 	public final static String LABEL_PARAMETRO_MONITOR_SBUSTAMENTO = "Sbustamento SOAP";
 	public final static String LABEL_PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = "Sbustamento Protocollo";
@@ -186,6 +201,9 @@ public class MonitorCostanti {
 	public final static String LABEL_PARAMETRO_MONITOR_SERVIZIO = "Servizio";
 	public final static String LABEL_PARAMETRO_MONITOR_RIFERIMENTO = "Riferimento Messaggio";
 	public final static String LABEL_PARAMETRO_MONITOR_PROFILO = "Profilo Collaborazione";
+	public final static String LABEL_PARAMETRO_MONITOR_CODA = "Coda";
+	public final static String LABEL_PARAMETRO_MONITOR_PRIORITA = "Priorita";
+	public final static String LABEL_PARAMETRO_MONITOR_ATTESA_ESITO = "Attesa Esito Sincrono";
 	
 	/* DEFAULT VALUE PARAMETRI */
 
@@ -219,17 +237,9 @@ public class MonitorCostanti {
 		DEFAULT_VALUE_PARAMETRO_STATO_NONE,DEFAULT_VALUE_PARAMETRO_STATO_CONSEGNA,
 		DEFAULT_VALUE_PARAMETRO_STATO_SPEDIZIONE, DEFAULT_VALUE_PARAMETRO_STATO_PROCESSAMENTO
 	};
-	 
-	public final static String [] LABEL_LISTA_MESSAGGI = {
-		LABEL_MONITOR_IDMESSAGGIO, LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE,
-		LABEL_PARAMETRO_MONITOR_STATO, LABEL_MONITOR_DETTAGLIO 
-	};
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+	 	
+	public final static String LABEL_ACTION_RICONSEGNA_IMMEDIATA = "Riconsegna Immediata";
+	public final static String ACTION_RICONSEGNA_IMMEDIATA = "resend";
+	public final static String ACTION_RICONSEGNA_IMMEDIATA_ONCLICK = "RemoveEntries('"+ACTION_RICONSEGNA_IMMEDIATA+"')";
+
 }

@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -283,7 +284,15 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	public List<IDServizioApplicativo> getAllIdServiziApplicativi(
 			FiltroRicercaServiziApplicativi filtroRicerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 	
-	
+	/**
+	 * Restituisce la lista degli identificativi dei servizi applicativi configurati per consegna prioritaria
+	 * 
+	 * @param queueName queueName
+	 * @return lista degli identificativi dei servizi applicativi configurati con consegna prioritaria
+	 * @throws DriverConfigurazioneException
+	 * @throws DriverConfigurazioneNotFound
+	 */
+	public List<IDConnettore> getConnettoriConsegnaNotifichePrioritarie(String queueName) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 	
 	
 	

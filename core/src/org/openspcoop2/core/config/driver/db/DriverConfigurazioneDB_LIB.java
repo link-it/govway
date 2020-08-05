@@ -5214,6 +5214,9 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("connettore_descrizione", "?");
 				sqlQueryObject.addInsertField("connettore_stato", "?");
 				sqlQueryObject.addInsertField("connettore_filtri", "?");
+				sqlQueryObject.addInsertField("connettore_coda", "?");
+				sqlQueryObject.addInsertField("connettore_priorita", "?");
+				sqlQueryObject.addInsertField("connettore_max_priorita", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 
@@ -5260,6 +5263,17 @@ public class DriverConfigurazioneDB_LIB {
 						}
 					}
 					stm.setString(indexSA++, filtri);
+					
+					if(servizioApplicativo.getDatiConnettore()!=null) {
+						stm.setString(indexSA++, servizioApplicativo.getDatiConnettore().getCoda()!=null ? servizioApplicativo.getDatiConnettore().getCoda() : CostantiConfigurazione.CODA_DEFAULT);
+						stm.setString(indexSA++, servizioApplicativo.getDatiConnettore().getPriorita()!=null ? servizioApplicativo.getDatiConnettore().getPriorita() : CostantiConfigurazione.PRIORITA_DEFAULT);
+						stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore().isPrioritaMax() ? CostantiDB.TRUE : CostantiDB.FALSE);
+					}
+					else {
+						stm.setString(indexSA++, CostantiConfigurazione.CODA_DEFAULT);
+						stm.setString(indexSA++, CostantiConfigurazione.PRIORITA_DEFAULT);
+						stm.setInt(indexSA++, CostantiDB.FALSE);
+					}
 					
 					stm.executeUpdate();
 					
@@ -6263,6 +6277,9 @@ public class DriverConfigurazioneDB_LIB {
 					sqlQueryObject.addInsertField("connettore_descrizione", "?");
 					sqlQueryObject.addInsertField("connettore_stato", "?");
 					sqlQueryObject.addInsertField("connettore_filtri", "?");
+					sqlQueryObject.addInsertField("connettore_coda", "?");
+					sqlQueryObject.addInsertField("connettore_priorita", "?");
+					sqlQueryObject.addInsertField("connettore_max_priorita", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 				
@@ -6288,6 +6305,17 @@ public class DriverConfigurazioneDB_LIB {
 						}
 					}
 					stm.setString(indexSA++, filtri);
+					
+					if(servizioApplicativo.getDatiConnettore()!=null) {
+						stm.setString(indexSA++, servizioApplicativo.getDatiConnettore().getCoda()!=null ? servizioApplicativo.getDatiConnettore().getCoda() : CostantiConfigurazione.CODA_DEFAULT);
+						stm.setString(indexSA++, servizioApplicativo.getDatiConnettore().getPriorita()!=null ? servizioApplicativo.getDatiConnettore().getPriorita() : CostantiConfigurazione.PRIORITA_DEFAULT);
+						stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore().isPrioritaMax() ? CostantiDB.TRUE : CostantiDB.FALSE);
+					}
+					else {
+						stm.setString(indexSA++, CostantiConfigurazione.CODA_DEFAULT);
+						stm.setString(indexSA++, CostantiConfigurazione.PRIORITA_DEFAULT);
+						stm.setInt(indexSA++, CostantiDB.FALSE);
+					}
 
 					stm.executeUpdate();
 					stm.close();

@@ -37,6 +37,9 @@ import org.openspcoop2.pdd.monitor.BustaSoggetto;
  */
 public class MonitorFormBean {
 
+	private String pdd;
+	private String sorgenteDati;
+	
 	private String idMessaggio;
 	private String messagePattern;
 	private BustaSoggetto mittente;
@@ -48,10 +51,25 @@ public class MonitorFormBean {
 	private String method;
 	private boolean riscontro;
 	private String stato;
-	private String pdd;
 	private String tipo;
 	private String correlazioneApplicativa;
 
+	public String getPdd() {
+		return this.pdd;
+	}
+
+	public void setPdd(String pdd) {
+		this.pdd = pdd;
+	}
+	
+	public String getSorgenteDati() {
+		return this.sorgenteDati;
+	}
+
+	public void setSorgenteDati(String sorgenteDati) {
+		this.sorgenteDati = sorgenteDati;
+	}
+	
 	public String getTipo() {
 		return this.tipo;
 	}
@@ -74,14 +92,6 @@ public class MonitorFormBean {
 
 	public void setStato(String stato) {
 		this.stato = stato;
-	}
-
-	public String getPdd() {
-		return this.pdd;
-	}
-
-	public void setPdd(String pdd) {
-		this.pdd = pdd;
 	}
 
 	public String getMethod() {
