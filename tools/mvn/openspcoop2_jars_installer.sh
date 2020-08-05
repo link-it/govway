@@ -18,6 +18,23 @@ OPENSPCOOP_VERSION="3.2"
 #utilizzare per le versioni di svn >= 1.8
 #OPENSPCOOP_VERSION="$(svn info | grep 'URL: svn' | cut -d '/' -f 7)"
 
+# ATTENZIONE!!!! Se si ottiene:
+# Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file (default-cli) on project standalone-pom: Failed to deploy artifacts/metadata: Cannot access scpexe://poli-dev.link.it/opt/local/maven/thirdparty-releases with type default using the available connector factories: BasicRepositoryConnectorFactory: Cannot access scpexe://poli-dev.link.it/opt/local/maven/thirdparty-releases using the registered transporter factories: WagonTransporterFactory: java.util.NoSuchElementException
+# cd $M2_HOME/lib/ext
+# wget https://repo1.maven.org/maven2/org/apache/maven/wagon/wagon-ssh-common/3.3.4/wagon-ssh-common-3.3.4.jar
+# wget https://repo1.maven.org/maven2/org/apache/maven/wagon/wagon-ssh-external/3.3.4/wagon-ssh-external-3.3.4.jar
+
+# Check maven version
+# Per il deploy serve maven, versione 2, altrimenti non sono riuscito a farlo funzionare
+MVN_VERSION=$(mvn -v | grep "Apache Maven" | cut -d ' ' -f 3)
+MVN_MAJOR_VERSION=$(echo "${MVN_VERSION}" | cut -d '.' -f 1)
+if [ ! "${MVN_MAJOR_VERSION}" == "3" ]
+then
+	echo "Versione di Maven non supporta, utilizzare la versione 3 per il deploy! (versione '${MVN_MAJOR_VERSION}' trovata: ${MVN_VERSION})"
+        echo "NOTA: in caso di errore durante l'upload 'Cannot access scpexe.....WagonTransporterFactory....' aggiungere in $M2_HOME/lib/ext i jar wagon-ssh-common-3.3.4.jar e wagon-ssh-external-3.3.4.jar"
+	exit 1
+fi
+
 PREFIX_URL="scpexe://${MVN_DEPLOY_HOSTNAME}/opt/local/maven"
 SNAPSHOT_SUFFIX=""
 if [ "$IS_SNAPSHOT" == "true" ]

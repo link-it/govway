@@ -1,3 +1,8 @@
+2020-08-05  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta possibiltà di accedere alla wrapped connection nell'oggetto org.openspcoop2.utils.datasource.Connection
+
 2019-03-17  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]
