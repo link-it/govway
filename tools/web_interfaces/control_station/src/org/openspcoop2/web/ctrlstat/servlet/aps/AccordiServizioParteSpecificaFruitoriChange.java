@@ -244,6 +244,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			boolean httpshostverify = false;
 			if (httpshostverifyS != null && httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
 				httpshostverify = true;
+			String httpsTrustVerifyCertS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -788,6 +790,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					if(httpshostverifyS!=null){
 						httpshostverify = Boolean.valueOf(httpshostverifyS);
 					}
+					httpsTrustVerifyCertS = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+					if(httpsTrustVerifyCertS!=null){
+						httpsTrustVerifyCert = !Boolean.valueOf(httpsTrustVerifyCertS);
+					}
+					else {
+						httpsTrustVerifyCert = true; // backward compatibility
+					}
 					httpspath = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 					httpstipo = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 					httpspwd = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -827,6 +836,10 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 					httpshostverify = true;
+				}
+				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 				}
 				
 				// file
@@ -908,8 +921,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					if(modificaProfilo) {
 						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
-								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-								httpstipologia, httpshostverify, httpspath, httpstipo,
+								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
+								httpsurl, httpstipologia, httpshostverify, 
+								httpsTrustVerifyCert, httpspath, httpstipo,
 								httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 								httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
@@ -929,8 +943,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
-								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-								httpstipologia, httpshostverify, httpspath, httpstipo,
+								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
+								httpsurl, httpstipologia, httpshostverify, 
+								httpsTrustVerifyCert, httpspath, httpstipo,
 								httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 								httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
@@ -975,7 +990,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					endpointtype, url, nome, tipo, user, password, initcont,
 					urlpgk, provurl, connfact, sendas, this.wsdlimpler, this.wsdlimplfru,
 					idServizioFruitore, httpsurl,
-					httpstipologia, httpshostverify, httpspath, httpstipo,
+					httpstipologia, httpshostverify,
+					httpsTrustVerifyCert, httpspath, httpstipo,
 					httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
@@ -1055,8 +1071,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				if(modificaProfilo) {
 					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
-							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-							httpstipologia, httpshostverify, httpspath, httpstipo,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo,
 							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
@@ -1076,8 +1093,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
-							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-							httpstipologia, httpshostverify, httpspath, httpstipo,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo,
 							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
@@ -1148,8 +1166,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
-							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-							httpstipologia, httpshostverify, httpspath, httpstipo,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo,
 							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
@@ -1177,8 +1196,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
-							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-							httpstipologia, httpshostverify, httpspath, httpstipo,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo,
 							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
@@ -1264,8 +1284,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			apsHelper.fillConnettore(connettoreNew, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nome, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
-					sendas, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo,
+					sendas, httpsurl, httpstipologia, httpshostverify, 
+					httpsTrustVerifyCert, httpspath, httpstipo,
 					httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust,
 					httpspathkey, httpstipokey,
@@ -1365,8 +1385,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					if(modificaProfilo) {
 						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
-								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-								httpstipologia, httpshostverify, httpspath, httpstipo,
+								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
+								httpsurl, httpstipologia, httpshostverify, 
+								httpsTrustVerifyCert, httpspath, httpstipo,
 								httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 								httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
@@ -1387,8 +1408,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								url,
 								nome, tipo, user, password, initcont, urlpgk,
 								provurl, connfact, sendas,
-								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-								httpstipologia, httpshostverify, httpspath,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
+								httpsurl, httpstipologia, httpshostverify, 
+								httpsTrustVerifyCert, httpspath,
 								httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 								httpskeystore, httpspwdprivatekeytrust,
 								httpspathkey, httpstipokey, httpspwdkey,

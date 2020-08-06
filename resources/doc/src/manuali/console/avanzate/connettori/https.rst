@@ -32,12 +32,14 @@ il significato dei parametri:
 
    -  **Tipologia** (es. TLSv1.2): Tipo e versione del protocollo di trasporto. Sono selezionabili tutti i tipi supportati dalla versione della jvm utilizzata.
 
-   -  **Hostname Verifier** (true/false): Attiva la verifica in fase di
+   -  **Verifica Hostname** (true/false): Attiva la verifica in fase di
       autenticazione server della corrispondenza tra l'hostname indicato
       nella url e quello presente nel certificato server ritornato dal
       server (nel subject CN=hostname)
 
 -  *Autenticazione Server*
+
+   I certificati server saranno validati tramite la configurazione indicata di seguito. Per accettare qualsiasi certificato restituito dal server è possibile disattivare la **Verifica**.
 
    -  **Path**: Path dove è localizzato il truststore contenente i
       certificati server trusted.
@@ -50,6 +52,8 @@ il significato dei parametri:
    -  **CRL File(s)**: Path dove è presente una CRL da utilizzare per validare i certificati server. L'indicazione di una CRL è opzionale e ne possono essere indicate più di una separando i path con la virgola.
 
 -  *Autenticazione Client (opzionale)*
+
+   Abilitando la checkbox **Abilitato** è possibile configurare il certificato client che verrà inoltrato al server.
 
    -  **Dati di Accesso al KeyStore** (usa valori del TrustStore,
       Ridefinisci): Consente di riutilizzare i medesimi riferimenti del

@@ -203,6 +203,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String httpstipologia = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+			String httpsTrustVerifyCertS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -630,6 +632,13 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					if(httpshostverifyS!=null){
 						httpshostverify = Boolean.valueOf(httpshostverifyS);
 					}
+					httpsTrustVerifyCertS = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+					if(httpsTrustVerifyCertS!=null){
+						httpsTrustVerifyCert = !Boolean.valueOf(httpsTrustVerifyCertS);
+					}
+					else {
+						httpsTrustVerifyCert = true; // backward compatibility
+					}
 					httpspath = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 					httpstipo = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 					httpspwd = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -669,6 +678,10 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 					httpshostverifyS = "true";
 					httpshostverify = true;
+				}
+				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 				}
 				
 				// file
@@ -729,8 +742,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
-						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo, httpspwd,
+						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
+						httpsurl, httpstipologia, httpshostverify, 
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
@@ -789,8 +803,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, "", "", initcont, urlpgk, provurl, connfact,
-						sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo, httpspwd,
+						sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
+						httpsurl, httpstipologia, httpshostverify, 
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
@@ -869,8 +884,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			saHelper.fillConnettore(connra, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nome, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
-					sendas, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo,
+					sendas, httpsurl, httpstipologia, httpshostverify, 
+					httpsTrustVerifyCert, httpspath, httpstipo,
 					httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust,
 					httpspathkey, httpstipokey,

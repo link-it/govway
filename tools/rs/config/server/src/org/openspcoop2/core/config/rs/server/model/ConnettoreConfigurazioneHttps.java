@@ -36,7 +36,10 @@ public class ConnettoreConfigurazioneHttps  {
   @Schema(example = "false", description = "")
   private Boolean hostnameVerifier = true;
   
-  @Schema(required = true, description = "")
+  @Schema(example = "false", description = "")
+  private Boolean trustAllServerCerts = false;
+  
+  @Schema(description = "")
   private ConnettoreConfigurazioneHttpsServer server = null;
   
   @Schema(description = "")
@@ -81,11 +84,29 @@ public class ConnettoreConfigurazioneHttps  {
   }
 
  /**
+   * Get trustAllServerCerts
+   * @return trustAllServerCerts
+  **/
+  @JsonProperty("trust_all_server_certs")
+  @Valid
+  public Boolean isTrustAllServerCerts() {
+    return this.trustAllServerCerts;
+  }
+
+  public void setTrustAllServerCerts(Boolean trustAllServerCerts) {
+    this.trustAllServerCerts = trustAllServerCerts;
+  }
+
+  public ConnettoreConfigurazioneHttps trustAllServerCerts(Boolean trustAllServerCerts) {
+    this.trustAllServerCerts = trustAllServerCerts;
+    return this;
+  }
+
+ /**
    * Get server
    * @return server
   **/
   @JsonProperty("server")
-  @NotNull
   @Valid
   public ConnettoreConfigurazioneHttpsServer getServer() {
     return this.server;
@@ -127,6 +148,7 @@ public class ConnettoreConfigurazioneHttps  {
     
     sb.append("    tipologia: ").append(ConnettoreConfigurazioneHttps.toIndentedString(this.tipologia)).append("\n");
     sb.append("    hostnameVerifier: ").append(ConnettoreConfigurazioneHttps.toIndentedString(this.hostnameVerifier)).append("\n");
+    sb.append("    trustAllServerCerts: ").append(ConnettoreConfigurazioneHttps.toIndentedString(this.trustAllServerCerts)).append("\n");
     sb.append("    server: ").append(ConnettoreConfigurazioneHttps.toIndentedString(this.server)).append("\n");
     sb.append("    client: ").append(ConnettoreConfigurazioneHttps.toIndentedString(this.client)).append("\n");
     sb.append("}");

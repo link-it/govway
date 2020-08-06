@@ -443,6 +443,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String httpsurl = null;
 			String httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE ;
 			boolean httpshostverify = true;
+			boolean httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 			String httpspath = "";
 			String httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
 			String httpspwd = "";
@@ -664,6 +665,13 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 					httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
 					httpshostverify = Boolean.valueOf(props.get(CostantiDB.CONNETTORE_HTTPS_HOSTNAME_VERIFIER));
+					String httpsTrustVerifyCertS = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+					if(httpsTrustVerifyCertS!=null){
+						httpsTrustVerifyCert = !Boolean.valueOf(httpsTrustVerifyCertS);
+					}
+					else {
+						httpsTrustVerifyCert = true; // backward compatibility
+					}
 					httpspath = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 					httpstipo = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 					httpspwd = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -813,8 +821,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,
 					this.tipo, user, password, initcont, urlpgk, provurl,
-					connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.CHANGE, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo, httpspwd,
+					connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.CHANGE, 
+					httpsurl, httpstipologia, httpshostverify, 
+					httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 					httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 

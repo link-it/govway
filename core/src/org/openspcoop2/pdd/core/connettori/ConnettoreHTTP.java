@@ -366,6 +366,15 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					}
 				}
 				
+				if(!this.sslContextProperties.isSecureRandomSet()) {
+					if(this.openspcoopProperties.isConnettoreHttps_useSecureRandom()) {
+						this.sslContextProperties.setSecureRandom(true);
+						if(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo()!=null) {
+							this.sslContextProperties.setSecureRandomAlgorithm(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo());
+						}
+					}
+				}
+				
 				StringBuilder bfSSLConfig = new StringBuilder();
 				sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);
 				

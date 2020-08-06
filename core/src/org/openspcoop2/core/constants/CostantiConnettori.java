@@ -96,20 +96,24 @@ public class CostantiConnettori {
     
     /** HTTPS PROPERTIES */
     
+    public static final String CONNETTORE_HTTPS_TRUST_ALL_CERTS = "trustAllCerts";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_LOCATION = "trustStoreLocation";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = "trustStorePassword";
-    public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = "trustManagementAlgorithm";
+    public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM = "trustManagementAlgorithm";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = "trustStoreType";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLs = "trustStoreCRLs";
     public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = "keyStoreLocation";
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = "keyStorePassword";
-    public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = "keyManagementAlgorithm";
+    public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM = "keyManagementAlgorithm";
     public static final String CONNETTORE_HTTPS_KEY_STORE_TYPE = "keyStoreType";
     public static final String CONNETTORE_HTTPS_KEY_PASSWORD = "keyPassword";
     public static final String CONNETTORE_HTTPS_KEY_ALIAS = "keyAlias";
     public static final String CONNETTORE_HTTPS_HOSTNAME_VERIFIER = "hostnameVerifier";
     public static final String CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER = "classNameHostnameVerifier";
     public static final String CONNETTORE_HTTPS_SSL_TYPE = "sslType";
+    public static final String CONNETTORE_HTTPS_SECURE_RANDOM = "secureRandom";
+    public static final String CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM = "secureRandomAlgorithm";
+
     
     public static final String CONNETTORE_HTTPS_SSL_TYPE_DEFAULT_VALUE=SSLUtilities.getSafeDefaultProtocol();
 	

@@ -464,6 +464,7 @@ public class ErogazioniApiHelper {
         		endpoint_url,	// httpsurl, 
         		evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
         		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
+        		(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
 				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
@@ -1217,7 +1218,8 @@ public class ErogazioniApiHelper {
         		conn.getEndpoint(),	// httpsurl, 
         		evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
         		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
-				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+        		(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
+        		evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
 				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
@@ -1358,6 +1360,7 @@ public class ErogazioniApiHelper {
 				conn.getEndpoint(), 													// this.httpsurl, 
 				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
+				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
 				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
@@ -1471,6 +1474,7 @@ public class ErogazioniApiHelper {
 				conn.getEndpoint(), 													// this.httpsurl, 
 				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
+				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
 				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
@@ -1582,6 +1586,7 @@ public class ErogazioniApiHelper {
 				conn.getEndpoint(), 													// this.httpsurl, 
 				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
+				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
 				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,

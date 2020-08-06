@@ -96,10 +96,12 @@ public class TimerThresholdThread extends BaseThread{
 		}
 	}
 	
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
+
+	@Override
+	public void process(){
+		// nop: ho ridefinito il metodo run
+	}
+	
 	@Override
 	public void run(){
 		

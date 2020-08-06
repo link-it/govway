@@ -42,10 +42,6 @@ import org.openspcoop2.utils.threads.BaseThread;
  */
 public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 
-	/**
-	 * Timeout che definisce la cadenza di avvio di questo timer. 
-	 */
-	private long timeout = 10; // ogni 10 secondi avvio il Thread
 	/** Properties Reader */
 	private OpenSPCoop2Properties propertiesReader;
 	/** MsgDiagnostico */
@@ -100,11 +96,11 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 			throw new TimerException(msgErrore,e);
 		}
 
-		this.timeout = this.propertiesReader.getRepositoryIntervalloEliminazioneMessaggi();
+		this.setTimeout((int) this.propertiesReader.getRepositoryIntervalloEliminazioneMessaggi());
 		String s = "secondi";
-		if(this.timeout == 1)
+		if(this.getTimeout() == 1)
 			s = "secondo";
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.timeout+" "+s);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+s);
 		
 		this.logQuery = this.propertiesReader.isTimerGestorePuliziaMessaggiAnomaliAbilitatoLog();
 		this.orderByQuery = this.propertiesReader.isTimerGestorePuliziaMessaggiAnomaliAbilitatoOrderBy();
@@ -119,38 +115,19 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends BaseThread{
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
 	}
 	
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
 	@Override
-	public void run(){
-		
-		try {
-		
-			while(this.isStop() == false){
-				
-				try{
-					// Prendo la gestione
-					TimerGestorePuliziaMessaggiAnomaliLib gestoreMessaggiLib = 
-						new TimerGestorePuliziaMessaggiAnomaliLib(this.msgDiag,this.logTimer,this.propertiesReader,this.logQuery,this.limit,this.orderByQuery);
-					
-					gestoreMessaggiLib.check();
-					
-				}catch(Exception e){
-					this.msgDiag.logErroreGenerico(e,"TimerGestorePuliziaMessaggiAnomaliLib.check()");
-					this.logTimer.error("Errore generale: "+e.getMessage(),e);
-				}finally{
-				}
-				
-						
-				// CheckInterval
-				this.sleepForNextCheck((int)this.timeout, 1000);
-				
-			}
+	public void process(){
+		try{
+			// Prendo la gestione
+			TimerGestorePuliziaMessaggiAnomaliLib gestoreMessaggiLib = 
+				new TimerGestorePuliziaMessaggiAnomaliLib(this.msgDiag,this.logTimer,this.propertiesReader,this.logQuery,this.limit,this.orderByQuery);
 			
-		}finally {
-			this.finished();
+			gestoreMessaggiLib.check();
+			
+		}catch(Exception e){
+			this.msgDiag.logErroreGenerico(e,"TimerGestorePuliziaMessaggiAnomaliLib.check()");
+			this.logTimer.error("Errore generale: "+e.getMessage(),e);
+		}finally{
 		}
 	}
 }

@@ -45,7 +45,7 @@ public class ConnettoreHTTPSUtils {
 
 	public static void fillConnettoreConfig(org.openspcoop2.core.config.Connettore connettore,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
-			String httpspath, String httpstipo, String httpspwd,
+			boolean httpsTrustVerifyCert, String httpspath, String httpstipo, String httpspwd,
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
@@ -70,34 +70,48 @@ public class ConnettoreHTTPSUtils {
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
-		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-		prop.setValore(httpspath);
-		connettore.addProperty(prop);
-
-		prop = new org.openspcoop2.core.config.Property();
-		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-		prop.setValore(httpstipo);
-		connettore.addProperty(prop);
-
-		prop = new org.openspcoop2.core.config.Property();
-		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-		prop.setValore(httpspwd);
-		connettore.addProperty(prop);
-		
-		if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
-			prop = new org.openspcoop2.core.config.Property();
-			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
-			prop.setValore(httpsTrustStoreCRLs);
-			connettore.addProperty(prop);
+		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+		if(httpsTrustVerifyCert) {
+			prop.setValore(String.valueOf(false));
 		}
-		
-		prop = new org.openspcoop2.core.config.Property();
-		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-		if (httpsalgoritmo == null || "".equals(httpsalgoritmo))
-			prop.setValore(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
-		else
-			prop.setValore(httpsalgoritmo);
+		else {
+			prop.setValore(String.valueOf(true));
+		}
 		connettore.addProperty(prop);
+		
+		if(httpsTrustVerifyCert) {
+		
+			prop = new org.openspcoop2.core.config.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+			prop.setValore(httpspath);
+			connettore.addProperty(prop);
+	
+			prop = new org.openspcoop2.core.config.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			prop.setValore(httpstipo);
+			connettore.addProperty(prop);
+	
+			prop = new org.openspcoop2.core.config.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			prop.setValore(httpspwd);
+			connettore.addProperty(prop);
+			
+			if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				prop.setValore(httpsTrustStoreCRLs);
+				connettore.addProperty(prop);
+			}
+			
+			prop = new org.openspcoop2.core.config.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+			if (httpsalgoritmo == null || "".equals(httpsalgoritmo))
+				prop.setValore(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
+			else
+				prop.setValore(httpsalgoritmo);
+			connettore.addProperty(prop);
+		
+		}
 
 		if (httpsstato) {
 
@@ -165,7 +179,7 @@ public class ConnettoreHTTPSUtils {
 	
 	public static void fillConnettoreRegistry(org.openspcoop2.core.registry.Connettore connettore,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
-			String httpspath, String httpstipo, String httpspwd,
+			boolean httpsTrustVerifyCert, String httpspath, String httpstipo, String httpspwd,
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
@@ -205,35 +219,49 @@ public class ConnettoreHTTPSUtils {
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
-		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-		prop.setValore(httpspath);
+		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+		if(httpsTrustVerifyCert) {
+			prop.setValore(String.valueOf(false));
+		}
+		else {
+			prop.setValore(String.valueOf(true));
+		}
 		connettore.addProperty(prop);
-
-		prop = new org.openspcoop2.core.registry.Property();
-		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-		prop.setValore(httpstipo);
-		connettore.addProperty(prop);
-
-		prop = new org.openspcoop2.core.registry.Property();
-		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-		prop.setValore(httpspwd);
-		connettore.addProperty(prop);
-
-		if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+		
+		if(httpsTrustVerifyCert) {
+			
 			prop = new org.openspcoop2.core.registry.Property();
-			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
-			prop.setValore(httpsTrustStoreCRLs);
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+			prop.setValore(httpspath);
 			connettore.addProperty(prop);
+	
+			prop = new org.openspcoop2.core.registry.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			prop.setValore(httpstipo);
+			connettore.addProperty(prop);
+	
+			prop = new org.openspcoop2.core.registry.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			prop.setValore(httpspwd);
+			connettore.addProperty(prop);
+	
+			if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				prop.setValore(httpsTrustStoreCRLs);
+				connettore.addProperty(prop);
+			}
+		
+			prop = new org.openspcoop2.core.registry.Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+			if (httpsalgoritmo == null || "".equals(httpsalgoritmo))
+				prop.setValore(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
+			else
+				prop.setValore(httpsalgoritmo);
+			connettore.addProperty(prop);
+
 		}
 		
-		prop = new org.openspcoop2.core.registry.Property();
-		prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-		if (httpsalgoritmo == null || "".equals(httpsalgoritmo))
-			prop.setValore(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
-		else
-			prop.setValore(httpsalgoritmo);
-		connettore.addProperty(prop);
-
 		if (httpsstato) {
 
 			prop = new org.openspcoop2.core.registry.Property();
@@ -300,7 +328,7 @@ public class ConnettoreHTTPSUtils {
 	
 	public static void addHTTPSDati(Vector<DataElement> dati,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
-			String httpspath, String httpstipo, String httpspwd,
+			boolean httpsTrustVerifyCert, String httpspath, String httpstipo, String httpspwd,
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
@@ -378,70 +406,104 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
+		de.setValue(httpsTrustVerifyCert ? Costanti.CHECK_BOX_ENABLED : "");
+		de.setSelected(httpsTrustVerifyCert);
+		de.setType(DataElementType.CHECKBOX);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		de.setValue(httpspath);
-		if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-			de.setType(DataElementType.TEXT_AREA);
-			de.setRequired(true);	
-		}else{
-			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		if(httpsTrustVerifyCert) {
+			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+				de.setType(DataElementType.TEXT_AREA);
+				de.setRequired(true);	
+			}else{
+				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			}
+			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION_SIZE);
+			de.setSize(pageSize);
 		}
-		de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION_SIZE);
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-		de.setSize(pageSize);
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-		de.setType(DataElementType.SELECT);
-		de.setValues(ConnettoriCostanti.TIPOLOGIE_KEYSTORE);
-		de.setSelected(httpstipo);
+		if(httpsTrustVerifyCert) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(ConnettoriCostanti.TIPOLOGIE_KEYSTORE);
+			de.setSelected(httpstipo);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 		de.setValue(httpspwd);
-		if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setRequired(true);	
-		}else{
-			de.setType(DataElementType.TEXT);
-		}
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-		de.setSize(pageSize);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
-		de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_NOTE);
-		de.setValue(httpsTrustStoreCRLs);
-		if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-			de.setType(DataElementType.TEXT_AREA);	
-		}else{
-			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		}
-		de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_SIZE);
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
-		de.setSize(pageSize);
-		dati.addElement(de);
-		
-		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-		de.setValue(httpsalgoritmo);
-		if(!consoleHelper.isModalitaStandard()) {
+		if(httpsTrustVerifyCert) {
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);	
 			}else{
 				de.setType(DataElementType.TEXT);
 			}
+			de.setSize(pageSize);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+		de.setValue(httpsTrustStoreCRLs);
+		if(httpsTrustVerifyCert) {
+			de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_NOTE);
+			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+				de.setType(DataElementType.TEXT_AREA);	
+			}else{
+				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			}
+			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_SIZE);
+			de.setSize(pageSize);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+		de.setValue(httpsalgoritmo);
+		if(httpsTrustVerifyCert) {
+			if(!consoleHelper.isModalitaStandard()) {
+				if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setRequired(true);	
+				}else{
+					de.setType(DataElementType.TEXT);
+				}
+				de.setSize(pageSize);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-		de.setSize(pageSize);
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -470,12 +532,19 @@ public class ConnettoreHTTPSUtils {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
 		if (httpsstato) {
-			de.setType(DataElementType.SELECT);
-			de.setValues(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODES);
-			de.setLabels(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_LABEL_MODES);
-			de.setSelected(httpskeystore);
-			//				de.setOnChange("CambiaKeyStore('" + tipoOp + "')");
-			de.setPostBack(true);
+			if(httpsTrustVerifyCert) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODES);
+				de.setLabels(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_LABEL_MODES);
+				de.setSelected(httpskeystore);
+				//				de.setOnChange("CambiaKeyStore('" + tipoOp + "')");
+				de.setPostBack(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;
+				de.setValue(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI);
+			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue("");
@@ -599,7 +668,7 @@ public class ConnettoreHTTPSUtils {
 	
 	public static void addHTTPSDatiAsHidden(Vector<DataElement> dati,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
-			String httpspath, String httpstipo, String httpspwd,
+			boolean httpsTrustVerifyCert, String httpspath, String httpstipo, String httpspwd,
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
@@ -631,6 +700,14 @@ public class ConnettoreHTTPSUtils {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 		dati.addElement(de);
 
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
+		de.setValue(httpsTrustVerifyCert ? Costanti.CHECK_BOX_ENABLED : "");
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
+		de.setSize(pageSize);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		de.setValue(httpspath);

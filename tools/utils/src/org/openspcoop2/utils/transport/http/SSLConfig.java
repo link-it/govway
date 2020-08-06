@@ -41,6 +41,8 @@ public class SSLConfig implements Serializable  {
 	private static final long serialVersionUID = 1L;
 	
 	// AUTENTICAZIONE SERVER:
+	// TrustAllCerts
+	private boolean trustAllCerts = false;
 	// TrustStore
 	private KeyStore trustStore;
 	// Path del trustStore che contiene il certificato del server.
@@ -81,7 +83,19 @@ public class SSLConfig implements Serializable  {
 	// TipologiaSSL
 	private String sslType= null;
 	
+	// Use Secure Random
+	private boolean secureRandomSet = false;
+	private boolean secureRandom = false;
+	private String secureRandomAlgorithm = null;
+	
 
+	public boolean isTrustAllCerts() {
+		return this.trustAllCerts;
+	}
+
+	public void setTrustAllCerts(boolean trustAllCerts) {
+		this.trustAllCerts = trustAllCerts;
+	}
 	
 	public KeyStore getTrustStore() {
 		return this.trustStore;
@@ -217,5 +231,26 @@ public class SSLConfig implements Serializable  {
 
 	public void setSslType(String sslType) {
 		this.sslType = sslType;
+	}
+	
+	public boolean isSecureRandom() {
+		return this.secureRandom;
+	}
+
+	public void setSecureRandom(boolean secureRandom) {
+		this.secureRandom = secureRandom;
+		this.secureRandomSet = true;
+	}
+
+	public boolean isSecureRandomSet() {
+		return this.secureRandomSet;
+	}
+
+	public String getSecureRandomAlgorithm() {
+		return this.secureRandomAlgorithm;
+	}
+
+	public void setSecureRandomAlgorithm(String secureRandomAlgorithm) {
+		this.secureRandomAlgorithm = secureRandomAlgorithm;
 	}
 }

@@ -53,10 +53,7 @@ public class GestoreCodaRunnable extends BaseThread{
 	private int queueSize = -1;
 	private int limit = -1;
 	private Map<String, Runnable> threads = new HashMap<>();
-    
-	/** Sleep */
-	private int timeoutNextCheck;
-	
+    	
 	/** Instance */
 	private IGestoreCodaRunnableInstance gestoreRunnable;
 	
@@ -119,7 +116,7 @@ public class GestoreCodaRunnable extends BaseThread{
 				this.log.error("Non è stata definito il limite di quanti thread creare per volta");
 			}
 			
-			this.timeoutNextCheck = timeoutNextCheck;
+			this.setTimeout(timeoutNextCheck);
 			if(this.limit<=0) {
 				this.log.error("Non è stata definito il timeout di attesa prima di verificare la presenza di nuovi threads da attivare");
 			}
@@ -131,11 +128,11 @@ public class GestoreCodaRunnable extends BaseThread{
 		
 	}
 	
-
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
+	@Override
+	public void process(){
+		// nop: ho ridefinito il metodo run
+	}
+	
 	@Override
 	public void run(){
 		
@@ -221,7 +218,7 @@ public class GestoreCodaRunnable extends BaseThread{
 					
 					this.gestoreRunnable.logCheckFinished(context);
 					
-					this.sleepForNextCheck(this.timeoutNextCheck, 1000);
+					this.sleepForNextCheck(this.getTimeout(), 1000);
 					
 					context = new HashMap<String, Object>();
 					this.gestoreRunnable.logCheckInProgress(context);

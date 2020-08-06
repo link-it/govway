@@ -43,10 +43,6 @@ import org.openspcoop2.utils.threads.BaseThread;
 public class TimerGestoreRepositoryBusteThread extends BaseThread{
 
 	/**
-	 * Timeout che definisce la cadenza di avvio di questo timer. 
-	 */
-	private long timeout = 10; // ogni 10 secondi avvio il Thread
-	/**
 	 * Timeout che definisce la scadenza di un messaggio
 	 */
 	private long scadenzaMessaggio = 60 * 24 * 5; // cablato a 5 giorni (60m * 24h * 5giorni).
@@ -104,11 +100,11 @@ public class TimerGestoreRepositoryBusteThread extends BaseThread{
 			throw new TimerException(msgErrore,e);
 		}
 
-		this.timeout = this.propertiesReader.getRepositoryIntervalloEliminazioneMessaggi();
+		this.setTimeout((int)this.propertiesReader.getRepositoryIntervalloEliminazioneMessaggi());
 		String sec = "secondi";
-		if(this.timeout == 1)
+		if(this.getTimeout() == 1)
 			sec = "secondo";
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.timeout+" "+sec);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+sec);
 		
 		this.scadenzaMessaggio = this.propertiesReader.getRepositoryIntervalloScadenzaMessaggi();
 		String s = "minuti";
@@ -129,37 +125,19 @@ public class TimerGestoreRepositoryBusteThread extends BaseThread{
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
 	}
 	
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
 	@Override
-	public void run(){
-		
-		try {
-		
-			while(this.isStop() == false){
-				
-				try{
-					// Prendo la gestione
-					TimerGestoreRepositoryBusteLib gestoreMessaggiLib = 
-						new TimerGestoreRepositoryBusteLib(this.msgDiag,this.logTimer,this.propertiesReader,this.logQuery,this.limit,this.orderByQuery);
-					
-					gestoreMessaggiLib.check();
-					
-				}catch(Exception e){
-					this.msgDiag.logErroreGenerico(e,"TimerGestoreRepositoryBusteLib.check()");
-					this.logTimer.error("Errore generale: "+e.getMessage(),e);
-				}finally{
-				}
-				
-						
-				// CheckInterval
-				this.sleepForNextCheck((int)this.timeout, 1000);
-			} 
+	public void process(){
+		try{
+			// Prendo la gestione
+			TimerGestoreRepositoryBusteLib gestoreMessaggiLib = 
+				new TimerGestoreRepositoryBusteLib(this.msgDiag,this.logTimer,this.propertiesReader,this.logQuery,this.limit,this.orderByQuery);
 			
-		}finally {
-			this.finished();
+			gestoreMessaggiLib.check();
+			
+		}catch(Exception e){
+			this.msgDiag.logErroreGenerico(e,"TimerGestoreRepositoryBusteLib.check()");
+			this.logTimer.error("Errore generale: "+e.getMessage(),e);
+		}finally{
 		}
 	}
 }

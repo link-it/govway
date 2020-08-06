@@ -29,6 +29,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
 
@@ -39,14 +40,10 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TimerStatisticheThread extends Thread{
+public class TimerStatisticheThread extends BaseThread{
 
 	public static final String ID_MODULO = "TimerStatistiche";
 	
-	/**
-	 * Timeout che definisce la cadenza di avvio di questo timer. 
-	 */
-	private long timeout = 10; // ogni 10 secondi avvio il Thread
 	
 	/** Tipo di Intervallo Statistico */
 	private TipoIntervalloStatistico tipoStatistica;
@@ -57,18 +54,7 @@ public class TimerStatisticheThread extends Thread{
 
 	/** OpenSPCoop2Properties */
 	private OpenSPCoop2Properties op2Properties = null;
-	
-	
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
 
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
 	
 	
 	
@@ -112,52 +98,32 @@ public class TimerStatisticheThread extends Thread{
 
 		this.tipoStatistica = tipo;
 		
-		this.timeout = timeout;
+		this.setTimeout((int)timeout);
 		String sec = "secondi";
-		if(this.timeout == 1)
+		if(this.getTimeout() == 1)
 			sec = "secondo";
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.timeout+" "+sec);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+sec);
 		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
 	}
 	
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
+
 	@Override
-	public void run(){
+	public void process(){
 		
-		while(this.stop == false){
+		try{
+			// Prendo la gestione
+			TimerStatisticheLib timerStatistiche = 
+				new TimerStatisticheLib(this.tipoStatistica,this.msgDiag,this.logTimer,this.op2Properties);
 			
-			try{
-				// Prendo la gestione
-				TimerStatisticheLib timerStatistiche = 
-					new TimerStatisticheLib(this.tipoStatistica,this.msgDiag,this.logTimer,this.op2Properties);
-				
-				timerStatistiche.check();
-				
-			}catch(Exception e){
-				this.msgDiag.logErroreGenerico(e,"TimerStatisticheLib.check()");
-				this.logTimer.error("Errore generale: "+e.getMessage(),e);
-			}finally{
-			}
+			timerStatistiche.check();
 			
-					
-			// CheckInterval
-			if(this.stop==false){
-				int i=0;
-				while(i<this.timeout){
-					Utilities.sleep(1000);		
-					if(this.stop){
-						break; // thread terminato, non lo devo far piu' dormire
-					}
-					i++;
-				}
-			}
-		} 
-		
+		}catch(Exception e){
+			this.msgDiag.logErroreGenerico(e,"TimerStatisticheLib.check()");
+			this.logTimer.error("Errore generale: "+e.getMessage(),e);
+		}finally{
+		}
 		
 	}
 	

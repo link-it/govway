@@ -394,7 +394,6 @@ components:
       type: object
       required: 
         - tipologia
-        - server
       properties:
         tipologia:
           $ref: '#/components/schemas/SslTipologiaEnum'
@@ -402,6 +401,10 @@ components:
           type: boolean
           example: false
           default: true
+        trust_all_server_certs:
+          type: boolean
+          example: false
+          default: false
         server:
           $ref: '#/components/schemas/ConnettoreConfigurazioneHttpsServer'
         client: 

@@ -3011,8 +3011,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				Logger logTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(debugTransazioniStateful);
 				if(debugTransazioniStateful)
 					logTransazioniStateful.debug("Recupero thread per la gestione delle transazioni stateful ...");
-				if(OpenSPCoop2Startup.this.threadFileSystemRecovery!=null){
-					OpenSPCoop2Startup.this.threadFileSystemRecovery.setStop(true);
+				if(OpenSPCoop2Startup.this.threadRepositoryStateful!=null){
+					OpenSPCoop2Startup.this.threadRepositoryStateful.setStop(true);
 					if(debugTransazioniStateful)
 						logTransazioniStateful.debug("Richiesto stop al thread per la gestione delle transazioni stateful");
 				}else{
@@ -3147,7 +3147,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 		}
 		
-		// Fermo timer
+		// Fermo timer runtime
 		if(this.serverJ2EE){
 			try {
 				if(this.timerRiscontri!=null)
@@ -3207,6 +3207,34 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		}
 
 		// Verifico che i timer siano conclusi prima di rilasciare i lock
+		try{
+			if(this.threadEventi!=null)
+				this.threadEventi.waitShutdown();
+		}catch (Throwable e) {}
+		try{
+			if(this.threadFileSystemRecovery!=null)
+				this.threadFileSystemRecovery.waitShutdown();
+		}catch (Throwable e) {}
+		try{
+			if(this.threadRepositoryStateful!=null)
+				this.threadRepositoryStateful.waitShutdown();
+		}catch (Throwable e) {}
+		try{
+			if(this.threadGenerazioneStatisticheOrarie!=null)
+				this.threadGenerazioneStatisticheOrarie.waitShutdown();
+		}catch (Throwable e) {}
+		try{
+			if(this.threadGenerazioneStatisticheGiornaliere!=null)
+				this.threadGenerazioneStatisticheGiornaliere.waitShutdown();
+		}catch (Throwable e) {}
+		try{
+			if(this.threadGenerazioneStatisticheSettimanali!=null)
+				this.threadGenerazioneStatisticheSettimanali.waitShutdown();
+		}catch (Throwable e) {}
+		try{
+			if(this.threadGenerazioneStatisticheMensili!=null)
+				this.threadGenerazioneStatisticheMensili.waitShutdown();
+		}catch (Throwable e) {}
 		if(this.serverJ2EE){ // TODO ATTESA ATTIVA CHE SI FERMINO PER J2EE
 			Utilities.sleep(5000); // aspetto che i timer terminano la loro gestione.
 		}

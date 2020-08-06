@@ -1219,6 +1219,10 @@ public class OpenSPCoop2Properties {
 			this.getConnectionLife_consegnaContenutiApplicativi();
 			this.getConnectionLife_inoltroBuste();
 			
+			// Connettore https
+			this.getConnettoreHttps_secureRandomAlgo();
+			this.isConnettoreHttps_useSecureRandom();
+			
 			// Connettore http (url https)
 			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste()) {
 				this.getConnettoreHttp_urlHttps_repository_inoltroBuste();
@@ -11633,6 +11637,50 @@ public class OpenSPCoop2Properties {
 
 
 	/* ***************** HTTPS  ************* */
+	
+	private static Boolean isConnettoreHttps_useSecureRandom = null;
+	public boolean isConnettoreHttps_useSecureRandom() {	
+		if(OpenSPCoop2Properties.isConnettoreHttps_useSecureRandom==null){
+			String pName = "org.openspcoop2.pdd.connettori.secureRandom";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isConnettoreHttps_useSecureRandom = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.isConnettoreHttps_useSecureRandom = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isConnettoreHttps_useSecureRandom = false;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isConnettoreHttps_useSecureRandom;
+	}
+	private static String getConnettoreHttps_secureRandomAlgo = null;
+	private static Boolean getConnettoreHttps_secureRandomAlgoRead = null;
+	public String getConnettoreHttps_secureRandomAlgo() {	
+		if(OpenSPCoop2Properties.getConnettoreHttps_secureRandomAlgoRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.secureRandomAlgorithm";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getConnettoreHttps_secureRandomAlgo = name;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"', errore:"+e.getMessage(),e);
+			}  
+			
+			OpenSPCoop2Properties.getConnettoreHttps_secureRandomAlgoRead=true;
+		}
+
+		return OpenSPCoop2Properties.getConnettoreHttps_secureRandomAlgo;
+	}
 	
 	private static Boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste = null;
 	public boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste() {	

@@ -108,11 +108,11 @@ public class TestCodecCrypt {
 			String passwordEncrypted = "$1$il$SPDpFtwmXna8U/e.t9IuP.";
 			boolean verifica = passwordEngine.check("123456", passwordEncrypted);
 			if(!verifica) {
-				throw new Exception("Verifica password di default fallita");
+				throw new Exception("["+sb.toString()+"] Verifica password di default fallita");
 			}
 			verifica = passwordEngine.check("1234567", passwordEncrypted);
 			if(verifica) {
-				throw new Exception("Attesa verifica fallita per password di default");
+				throw new Exception("["+sb.toString()+"] Attesa verifica fallita per password di default");
 			}
 			
 			System.out.println("OK; password di default 123456");
@@ -162,11 +162,11 @@ public class TestCodecCrypt {
 		}
 		boolean verifica = passwordEngine.check("123456", passwordEncrypted);
 		if(!verifica) {
-			throw new Exception("Verifica password 'openssl' fallita");
+			throw new Exception("["+sb.toString()+"] Verifica password 'openssl' fallita");
 		}
 		verifica = passwordEngine.check("1234567", passwordEncrypted);
 		if(verifica) {
-			throw new Exception("Attesa verifica fallita per password 'openssl'");
+			throw new Exception("["+sb.toString()+"] Attesa verifica fallita per password 'openssl'");
 		}
 		
 		System.out.println("OK; verifica openssl: "+passwordEncrypted);
@@ -183,25 +183,25 @@ public class TestCodecCrypt {
 		String passwordEncrypted2 = passwordEngine.crypt(password);
 		String passwordEncrypted3 = passwordEngine.crypt(password);
 		if(passwordEncrypted.equals(passwordEncrypted2) ) {
-			throw new Exception("Attesa generazione di una password cifrata differente; trovata sempre '1' "+passwordEncrypted);
+			throw new Exception("["+sb.toString()+"] Attesa generazione di una password cifrata differente; trovata sempre '1' "+passwordEncrypted);
 		}
 		if(passwordEncrypted.equals(passwordEncrypted3) ) {
-			throw new Exception("Attesa generazione di una password cifrata differente; trovata sempre '2' "+passwordEncrypted);
+			throw new Exception("["+sb.toString()+"] Attesa generazione di una password cifrata differente; trovata sempre '2' "+passwordEncrypted);
 		}
 		if(passwordEncrypted2.equals(passwordEncrypted3) ) {
-			throw new Exception("Attesa generazione di una password cifrata differente; trovata sempre '3' "+passwordEncrypted2);
+			throw new Exception("["+sb.toString()+"] Attesa generazione di una password cifrata differente; trovata sempre '3' "+passwordEncrypted2);
 		}
 		verifica = passwordEngine.check(password, passwordEncrypted);
 		if(!verifica) {
-			throw new Exception("Verifica password '"+password+"' fallita");
+			throw new Exception("["+sb.toString()+"] Verifica password '"+password+"' fallita");
 		}
 		verifica = passwordEngine.check(password+"7", passwordEncrypted);
 		if(verifica) {
-			throw new Exception("Attesa verifica fallita per password '"+password+"7'");
+			throw new Exception("["+sb.toString()+"] Attesa verifica fallita per password '"+password+"7'");
 		}
 		verifica = passwordEngine.check(password+"ERR", passwordEncrypted);
 		if(verifica) {
-			throw new Exception("Attesa verifica fallita per password '"+password+"ERR'");
+			throw new Exception("["+sb.toString()+"] Attesa verifica fallita per password '"+password+"ERR'");
 		}
 		
 		String salt = null;
@@ -237,12 +237,12 @@ public class TestCodecCrypt {
 			
 			if(saltLengthVerify> maxSaltLength) {
 				if(salt.length()!=defaultSaltLength) {
-					throw new Exception("Lunghezza salt attesa '"+defaultSaltLength+"' (force default) differente da quella trovata '"+salt.length()+"': "+salt);
+					throw new Exception("["+sb.toString()+"] Lunghezza salt attesa '"+defaultSaltLength+"' (force default) differente da quella trovata '"+salt.length()+"': "+salt);
 				}
 			}
 			else {
 				if(salt.length()!=saltLengthVerify) {
-					throw new Exception("Lunghezza salt attesa '"+saltLengthVerify+"' differente da quella trovata '"+salt.length()+"': "+salt);
+					throw new Exception("["+sb.toString()+"] Lunghezza salt attesa '"+saltLengthVerify+"' differente da quella trovata '"+salt.length()+"': "+salt);
 				}
 			}
 		}

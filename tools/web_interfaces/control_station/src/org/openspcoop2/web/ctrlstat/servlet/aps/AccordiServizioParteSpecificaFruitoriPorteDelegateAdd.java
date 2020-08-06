@@ -240,6 +240,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String httpsurl = url;
 			String httpstipologia = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
 			String httpshostverifyS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpsTrustVerifyCertS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
 			String httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -518,6 +520,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 						httpshostverify = true;
+						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 						httpspath = "";
 						httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
 						httpspwd = "";
@@ -537,8 +540,23 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
 							}
 						}
+												
+						tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
+						tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
+
+						autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 						
-						// default
+						tempiRisposta_enabled=null;
+						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
+						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
+						tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+						tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+						tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+							
+					}
+					
+					// default (da inizializzare cmq)
+					if (TipiConnettore.HTTPS.toString().equals(endpointtype)) {
 						if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
 							httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
 						}
@@ -552,20 +570,12 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 							httpshostverify = true;
 						}
-						
-						 tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
-						tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
-
-						autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
-						
-						tempiRisposta_enabled=null;
-						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
-						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-						tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
-						tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
-						tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
-							
+						if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+							httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+							httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+						}
 					}
+					
 					// Devo cmq rileggere i valori se non definiti
 					if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
 							|| 
@@ -609,8 +619,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								tipoJms, user,
 								password, initcont, urlpgk,
 								provurl, connfact, tipoSendas,
-								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.ADD, httpsurl, httpstipologia,
-								httpshostverify, httpspath, httpstipo, httpspwd,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.ADD, 
+								httpsurl, httpstipologia, httpshostverify, 
+								httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 								httpsalgoritmo, httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey, 
@@ -648,7 +659,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						endpointtype, url, nome, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
-						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
@@ -696,8 +707,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							tipoJms, user,
 							password, initcont, urlpgk,
 							provurl, connfact, tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.ADD, httpsurl, httpstipologia,
-							httpshostverify, httpspath, httpstipo, httpspwd,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.ADD, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
@@ -752,7 +764,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					initcont, urlpgk, provurl, connfact, tipoSendas, 
 					user, password,
 					httpsurl, httpstipologia, httpshostverify,
-					httpspath, httpstipo, httpspwd,
+					httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 					httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey,

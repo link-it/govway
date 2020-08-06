@@ -31,7 +31,7 @@ import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.transazioni.GestoreTransazioniStateful;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
 /**     
@@ -41,16 +41,12 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TimerRepositoryStatefulThread extends Thread{
+public class TimerRepositoryStatefulThread extends BaseThread{
 
 	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 	
 	public static final String ID_MODULO = "TimerRepositoryStateful";
 	
-	/**
-	 * Timeout che definisce la cadenza di avvio di questo timer. 
-	 */
-	private long timeout = 10; // ogni 10 secondi avvio il Thread
 	
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
@@ -74,17 +70,6 @@ public class TimerRepositoryStatefulThread extends Thread{
 	/** Gestore */
 	private GestoreTransazioniStateful gestore = null;
 	
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
-
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
-	
 	
 	
 	/** Costruttore */
@@ -92,7 +77,7 @@ public class TimerRepositoryStatefulThread extends Thread{
 	
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		
-		this.timeout = this.openspcoopProperties.getTransazioniStatefulTimerIntervalSeconds();
+		this.setTimeout(this.openspcoopProperties.getTransazioniStatefulTimerIntervalSeconds());
 		
 		this.debug = this.openspcoopProperties.isTransazioniStatefulDebug();
 
@@ -128,72 +113,51 @@ public class TimerRepositoryStatefulThread extends Thread{
 		
 	}
 	
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
 	@Override
-	public void run(){
-		
+	public boolean initialize(){
 		if(this.gestore==null){
 			this.log.error("Gestore non correttamente inizializzato");
-			return;
+			return false;
 		}
-		
-		while(this.stop == false){
+		return true;
+	}
+	@Override
+	public void process(){
+		if(TimerState.ENABLED.equals(STATE)) {
 			
-			if(TimerState.ENABLED.equals(STATE)) {
-			
-				DBTransazioniManager dbManager = null;
-		    	Resource r = null;
-				try{
-					dbManager = DBTransazioniManager.getInstance();
-					r = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, null);
-					if(r==null){
-						throw new Exception("Risorsa al database non disponibile");
-					}
-					Connection con = (Connection) r.getResource();
-					if(con == null)
-						throw new Exception("Connessione non disponibile");	
-					
-					if(this.debug){
-						this.log.debug("Esecuzione thread per gestione delle transazioni stateful....");
-					}
-					
-					this.gestore.verificaOggettiPresentiRepository(this.daoFactory,this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLoggerTransazioni, con);
-					if(this.debug){
-						this.log.debug("Esecuzione thread per gestione delle transazioni stateful terminata");
-					}
-					
-				}catch(Exception e){
-					this.log.error("Errore durante la gestione delle transazioni stateful: "+e.getMessage(),e);
-				}finally{
-					try{
-						if(r!=null)
-							dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, r);
-					}catch(Exception eClose){}
+			DBTransazioniManager dbManager = null;
+	    	Resource r = null;
+			try{
+				dbManager = DBTransazioniManager.getInstance();
+				r = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, null);
+				if(r==null){
+					throw new Exception("Risorsa al database non disponibile");
+				}
+				Connection con = (Connection) r.getResource();
+				if(con == null)
+					throw new Exception("Connessione non disponibile");	
+				
+				if(this.debug){
+					this.log.debug("Esecuzione thread per gestione delle transazioni stateful....");
 				}
 				
-			}
-			else {
-				this.log.info("Timer "+ID_MODULO+" disabilitato");
+				this.gestore.verificaOggettiPresentiRepository(this.daoFactory,this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLoggerTransazioni, con);
+				if(this.debug){
+					this.log.debug("Esecuzione thread per gestione delle transazioni stateful terminata");
+				}
+				
+			}catch(Exception e){
+				this.log.error("Errore durante la gestione delle transazioni stateful: "+e.getMessage(),e);
+			}finally{
+				try{
+					if(r!=null)
+						dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, r);
+				}catch(Exception eClose){}
 			}
 			
-					
-			// CheckInterval
-			if(this.stop==false){
-				int i=0;
-				while(i<this.timeout){
-					Utilities.sleep(1000);		
-					if(this.stop){
-						break; // thread terminato, non lo devo far piu' dormire
-					}
-					i++;
-				}
-			}
-		} 
-		
-		this.log.info("Thread per la gestione delle transazioni stateful terminato");
-
+		}
+		else {
+			this.log.info("Timer "+ID_MODULO+" disabilitato");
+		}
 	}
 }

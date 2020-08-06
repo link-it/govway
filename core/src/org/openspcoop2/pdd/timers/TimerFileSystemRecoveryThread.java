@@ -39,7 +39,7 @@ import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
 
@@ -50,17 +50,12 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TimerFileSystemRecoveryThread extends Thread{
+public class TimerFileSystemRecoveryThread extends BaseThread{
 
 	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 	
 	public static final String ID_MODULO = "TimerFileSystemRecovery";
-	
-	/**
-	 * Timeout che definisce la cadenza di avvio di questo timer. 
-	 */
-	private long timeout = 10; // ogni 10 secondi avvio il Thread
-	
+		
 	/** Logger utilizzato per debug. */
 	private Logger logCore = null;
 	private Logger logSql = null;
@@ -87,17 +82,7 @@ public class TimerFileSystemRecoveryThread extends Thread{
 	/** Appender personalizzati per i dump di OpenSPCoop2 */
 	private IDumpProducer loggerDumpOpenSPCoopAppender = null; 
 	
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
 
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
-	
 	/** Costruttore */
 	public TimerFileSystemRecoveryThread(Logger logCore, Logger logSql) throws Exception{
 	
@@ -106,7 +91,7 @@ public class TimerFileSystemRecoveryThread extends Thread{
 		this.logCore = logCore;
 		this.logSql = logSql;
 	
-		this.timeout = this.properties.getFileSystemRecoveryTimerIntervalSeconds();
+		this.setTimeout(this.properties.getFileSystemRecoveryTimerIntervalSeconds());
 		
 		this.debug = this.properties.isFileSystemRecoveryDebug();
 		
@@ -227,102 +212,92 @@ public class TimerFileSystemRecoveryThread extends Thread{
 		}
 	}
 	
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
+	private FSRecoveryConfig conf = null;
+	
 	@Override
-	public void run(){
-		
-		FSRecoveryConfig conf = null;
+	public boolean initialize(){
 		try{
-			conf = new FSRecoveryConfig(false);
+			this.conf = new FSRecoveryConfig(false);
 			
-			conf.setLogCore(this.logCore);
+			this.conf.setLogCore(this.logCore);
 			
-			conf.setLogSql(this.logSql);
+			this.conf.setLogSql(this.logSql);
 			
-			conf.setDebug(this.debug);
+			this.conf.setDebug(this.debug);
 			
-			conf.setDefaultProtocol(this.properties.getDefaultProtocolName());
+			this.conf.setDefaultProtocol(this.properties.getDefaultProtocolName());
 			
-			conf.setRepository(this.properties.getFileSystemRecovery_repository().getAbsolutePath());
+			this.conf.setRepository(this.properties.getFileSystemRecovery_repository().getAbsolutePath());
 			
-			conf.setRipristinoEventi(this.recoveryEventi);
+			this.conf.setRipristinoEventi(this.recoveryEventi);
 			
-			conf.setRipristinoTransazioni(this.recoveryTransazioni);
+			this.conf.setRipristinoTransazioni(this.recoveryTransazioni);
 			
-			conf.setTentativi(this.properties.getFileSystemRecoveryMaxAttempts());
-			
+			this.conf.setTentativi(this.properties.getFileSystemRecoveryMaxAttempts());
+			return true;
 		}catch(Exception e){
 			this.logCore.error("Errore durante il recovery da file system (InitConfigurazione): "+e.getMessage(),e);
+			return false;
 		}
-		
-		while(this.stop == false){
-			
-			if(TimerState.ENABLED.equals(STATE)) {
-			
-				DBTransazioniManager dbManager = null;
-		    	Resource r = null;
-				try{
-					dbManager = DBTransazioniManager.getInstance();
-					r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
-					if(r==null){
-						throw new Exception("Risorsa al database non disponibile");
-					}
-					Connection con = (Connection) r.getResource();
-					if(con == null)
-						throw new Exception("Connessione non disponibile");	
-		
-					org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
-					if(this.recoveryTransazioni){
-						transazioniSM = (org.openspcoop2.core.transazioni.dao.IServiceManager) 
-								this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), con,
-								this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLogger);
-					}
+	}
 	
-					org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM = null;
-					if(this.recoveryEventi){
-						pluginsSM = (org.openspcoop2.core.eventi.dao.IServiceManager) 
-								this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), con,
-								this.daoFactoryServiceManagerPropertiesPluginsEventi, this.daoFactoryLogger);
-					}
-										
-					FSRecoveryLibrary.generate(conf, transazioniSM, 
-							this.loggerTracciamentoOpenSPCoopAppender, 
-							this.loggerMsgDiagnosticoOpenSPCoopAppender,
-							this.loggerDumpOpenSPCoopAppender,
-							pluginsSM, con);
-					
-				}catch(Exception e){
-					this.logCore.error("Errore durante il recovery da file system: "+e.getMessage(),e);
-				}finally{
-					try{
-						if(r!=null)
-							dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, r);
-					}catch(Exception eClose){}
-				}
+	@Override
+	public void process(){
 				
-			}
-			else {
-				this.logCore.info("Timer "+ID_MODULO+" disabilitato");
+		if(TimerState.ENABLED.equals(STATE)) {
+		
+			DBTransazioniManager dbManager = null;
+	    	Resource r = null;
+			try{
+				dbManager = DBTransazioniManager.getInstance();
+				r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
+				if(r==null){
+					throw new Exception("Risorsa al database non disponibile");
+				}
+				Connection con = (Connection) r.getResource();
+				if(con == null)
+					throw new Exception("Connessione non disponibile");	
+	
+				org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
+				if(this.recoveryTransazioni){
+					transazioniSM = (org.openspcoop2.core.transazioni.dao.IServiceManager) 
+							this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), con,
+							this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLogger);
+				}
+
+				org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM = null;
+				if(this.recoveryEventi){
+					pluginsSM = (org.openspcoop2.core.eventi.dao.IServiceManager) 
+							this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), con,
+							this.daoFactoryServiceManagerPropertiesPluginsEventi, this.daoFactoryLogger);
+				}
+									
+				FSRecoveryLibrary.generate(this.conf, transazioniSM, 
+						this.loggerTracciamentoOpenSPCoopAppender, 
+						this.loggerMsgDiagnosticoOpenSPCoopAppender,
+						this.loggerDumpOpenSPCoopAppender,
+						pluginsSM, con);
+				
+			}catch(Exception e){
+				this.logCore.error("Errore durante il recovery da file system: "+e.getMessage(),e);
+			}finally{
+				try{
+					if(r!=null)
+						dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, r);
+				}catch(Exception eClose){}
 			}
 			
-					
-			// CheckInterval
-			if(this.stop==false){
-				int i=0;
-				while(i<this.timeout){
-					Utilities.sleep(1000);
-					if(this.stop){
-						break; // thread terminato, non lo devo far piu' dormire
-					}
-					i++;
-				}
-			}
-		} 
-		
-		this.logCore.info("Thread per il recovery da file system terminato");
-
+		}
+		else {
+			this.logCore.info("Timer "+ID_MODULO+" disabilitato");
+		}
+				
+	}
+	
+	@Override
+	public void close(){			
+			
+			this.logCore.info("Thread per il recovery da file system terminato");
+			
 	}
 }

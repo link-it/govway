@@ -1194,6 +1194,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String httpstipologia = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+			String httpsTrustVerifyCertS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -1238,8 +1240,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			this.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nomeCodaJMS, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
-					sendas, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo,
+					sendas, httpsurl, httpstipologia, httpshostverify, 
+					httpsTrustVerifyCert, httpspath, httpstipo,
 					httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust,
 					httpspathkey, httpstipokey,
@@ -1334,6 +1336,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String httpstipologia = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+			String httpsTrustVerifyCertS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -1375,8 +1379,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			this.fillConnettore(connettore, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nomeCodaJMS, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
-					sendas, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo,
+					sendas, httpsurl, httpstipologia, httpshostverify, 
+					httpsTrustVerifyCert, httpspath, httpstipo,
 					httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust,
 					httpspathkey, httpstipokey,
@@ -2604,6 +2608,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String httpsurl = null;
 			String httpstipologia = null;
 			String httpshostverifyS = null;
+			boolean httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 			String httpspath = null;
 			String httpstipo = null;
 			String httpspwd = null;
@@ -2715,6 +2720,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			httpstipologia = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			httpshostverifyS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+			String httpsTrustVerifyCertS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			httpspath = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			httpstipo = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			httpspwd = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -2760,8 +2767,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 					url, nomeCodaJMS,
 					tipo, user, password, initcont, urlpgk, provurl,
-					connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo, httpspwd,
+					connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
+					httpsurl, httpstipologia, httpshostverify, 
+					httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 					httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 

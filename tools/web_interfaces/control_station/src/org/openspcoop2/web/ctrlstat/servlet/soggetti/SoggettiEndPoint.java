@@ -151,6 +151,8 @@ public final class SoggettiEndPoint extends Action {
 			String httpstipologia = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+			String httpsTrustVerifyCertS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -396,6 +398,13 @@ public final class SoggettiEndPoint extends Action {
 					if(httpshostverifyS!=null){
 						httpshostverify = Boolean.valueOf(httpshostverifyS);
 					}
+					httpsTrustVerifyCertS = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+					if(httpsTrustVerifyCertS!=null){
+						httpsTrustVerifyCert = !Boolean.valueOf(httpsTrustVerifyCertS);
+					}
+					else {
+						httpsTrustVerifyCert = true; // backward compatibility
+					}
 					httpspath = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 					httpstipo = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 					httpspwd = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -435,6 +444,10 @@ public final class SoggettiEndPoint extends Action {
 				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 					httpshostverifyS = Costanti.CHECK_BOX_ENABLED;
 					httpshostverify = true;
+				}
+				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 				}
 
 				// file
@@ -490,8 +503,9 @@ public final class SoggettiEndPoint extends Action {
 				dati = soggettiHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl, 
-						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo, httpspwd,
+						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, 
+						httpsurl, httpstipologia, httpshostverify, 
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
@@ -541,8 +555,9 @@ public final class SoggettiEndPoint extends Action {
 				dati = soggettiHelper.addEndPointToDati(dati,  connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
-						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo, httpspwd,
+						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, 
+						httpsurl, httpstipologia, httpshostverify, 
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
@@ -577,8 +592,8 @@ public final class SoggettiEndPoint extends Action {
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			soggettiHelper.fillConnettore(c, connettoreDebug, endpointtype, oldConnT, tipoconn, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,
-					httpsurl, httpstipologia, httpshostverify, httpspath,
-					httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+					httpsurl, httpstipologia, httpshostverify, 
+					httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey,	httpsalgoritmokey,

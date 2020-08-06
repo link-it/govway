@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -343,6 +345,8 @@ public final class ServiziApplicativiAdd extends Action {
 			String httpstipologia = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+			String httpsTrustVerifyCertS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -781,6 +785,28 @@ public final class ServiziApplicativiAdd extends Action {
 				if(dominio==null) {
 					dominio = SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
 				}
+				
+				// default (da inizializzare cmq)
+				if (TipiConnettore.HTTPS.toString().equals(endpointtype)) {
+					if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
+						httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
+					}
+					if(httpsalgoritmokey==null || "".equals(httpsalgoritmokey)){
+						httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
+					}
+					if(httpstipologia==null || "".equals(httpstipologia)){
+						httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
+					}
+					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
+						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+						httpshostverify = true;
+					}
+					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+					}
+				}
+				
 								
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -801,7 +827,7 @@ public final class ServiziApplicativiAdd extends Action {
 						user, password, initcont, urlpgk,
 						provurl, connfact, sendas, 
 						httpsurl, httpstipologia, httpshostverify,
-						httpspath, httpstipo, httpspwd,
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
@@ -912,7 +938,7 @@ public final class ServiziApplicativiAdd extends Action {
 						user, password, initcont, urlpgk,
 						provurl, connfact, sendas, 
 						httpsurl, httpstipologia, httpshostverify,
-						httpspath, httpstipo, httpspwd,
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
@@ -956,7 +982,13 @@ public final class ServiziApplicativiAdd extends Action {
 			try {
 				// con.setAutoCommit(false);
 				if(isApplicativiServerEnabled && tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
-					tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
+					StatoFunzionalita im = StatoFunzionalita.toEnumConstant(getmsg);
+					if(StatoFunzionalita.ABILITATO.equals(im)) {
+						tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
+					}
+					else {
+						tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
+					}
 				}
 
 				int idProv = Integer.parseInt(provider);
@@ -1098,8 +1130,8 @@ public final class ServiziApplicativiAdd extends Action {
 					saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 							nomeCodaJMS, tipoCodaJMS, user, password,
 							initcont, urlpgk, provurl, connfact,
-							sendas, httpsurl, httpstipologia,
-							httpshostverify, httpspath, httpstipo,
+							sendas, httpsurl, httpstipologia, httpshostverify,
+							httpsTrustVerifyCert, httpspath, httpstipo,
 							httpspwd, httpsalgoritmo, httpsstato,
 							httpskeystore, httpspwdprivatekeytrust,
 							httpspathkey, httpstipokey,

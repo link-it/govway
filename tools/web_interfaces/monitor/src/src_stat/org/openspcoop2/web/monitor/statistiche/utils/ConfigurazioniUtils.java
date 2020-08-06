@@ -262,8 +262,21 @@ public class ConfigurazioniUtils {
 				lst.add(p);
 				p = new Property();
 				p.setId(idx++);
-				p.setNome(CostantiConfigurazioni.LABEL_TRUST_STORE + " ("+getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE, connettore.getPropertyList())+")");
-				p.setValore(getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, connettore.getPropertyList()));
+				boolean trustAllCerts = false;
+				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS)) {
+					String v = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS, connettore.getPropertyList());
+					if("true".equalsIgnoreCase(v)) {
+						trustAllCerts = true;
+					}
+				}
+				if(trustAllCerts) {
+					p.setNome(CostantiConfigurazioni.LABEL_TRUST_STORE);
+					p.setValore("Trust all certificates");
+				}
+				else {
+					p.setNome(CostantiConfigurazioni.LABEL_TRUST_STORE + " ("+getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE, connettore.getPropertyList())+")");
+					p.setValore(getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, connettore.getPropertyList()));
+				}
 				lst.add(p);
 				boolean invioCertificatoClient = false;
 				String cert = getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION, connettore.getPropertyList());

@@ -44,6 +44,7 @@ public class HttpRequest extends AbstractHttp {
 	
 	private Boolean followRedirects;
 	
+	private boolean trustAllCerts = false;
 	private KeyStore trustStore;
 	private String trustStorePath;
 	private String trustStorePassword;
@@ -51,6 +52,9 @@ public class HttpRequest extends AbstractHttp {
 	
 	private CertStore crlStore;
 	private String crlPath;
+	
+	private boolean secureRandom = false;
+	private String secureRandomAlgorithm = null;
 	
 	public Boolean getFollowRedirects() {
 		return this.followRedirects;
@@ -108,6 +112,14 @@ public class HttpRequest extends AbstractHttp {
 		this.method = method;
 	}
 	
+	public boolean isTrustAllCerts() {
+		return this.trustAllCerts;
+	}
+
+	public void setTrustAllCerts(boolean trustAllCerts) {
+		this.trustAllCerts = trustAllCerts;
+	}
+	
 	public String getTrustStorePath() {
 		return this.trustStorePath;
 	}
@@ -156,4 +168,19 @@ public class HttpRequest extends AbstractHttp {
 		this.crlPath = crlPath;
 	}
 
+	public boolean isSecureRandom() {
+		return this.secureRandom;
+	}
+
+	public void setSecureRandom(boolean secureRandom) {
+		this.secureRandom = secureRandom;
+	}
+
+	public String getSecureRandomAlgorithm() {
+		return this.secureRandomAlgorithm;
+	}
+
+	public void setSecureRandomAlgorithm(String secureRandomAlgorithm) {
+		this.secureRandomAlgorithm = secureRandomAlgorithm;
+	}
 }

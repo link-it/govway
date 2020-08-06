@@ -52,6 +52,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
+import org.openspcoop2.utils.random.RandomGenerator;
 import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -884,6 +885,64 @@ public class HttpUtilities {
 	}
 	
 	
+	
+	
+	public static byte[] requestHTTPSFile_trustAllCerts(String path) throws UtilsException{
+		return requestHTTPSFile_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+	}
+	
+	public static byte[] requestHTTPSFile_trustAllCerts(String path,int readTimeout,int connectTimeout) throws UtilsException{
+		return requestHTTPSFile_trustAllCerts(path, readTimeout, connectTimeout, null, null);
+	}
+	
+	public static byte[] requestHTTPSFile_trustAllCerts(String path,String username,String password) throws UtilsException{
+		return requestHTTPSFile_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+	}
+
+	public static byte[] requestHTTPSFile_trustAllCerts(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
+		HttpResponse res = getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, username, password);
+		return res.getContent();
+	}
+	
+	public static HttpResponse getHTTPSResponse_trustAllCerts(String path) throws UtilsException{
+		return getHTTPSResponse_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+	}
+	
+	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,int readTimeout,int connectTimeout) throws UtilsException{
+		return getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, null, null);
+	}
+	
+	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,String username,String password) throws UtilsException{
+		return getHTTPSResponse_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+	}	
+	
+	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
+		
+		HttpRequest httpRequest = new HttpRequest();
+		httpRequest.setUrl(path);
+		httpRequest.setReadTimeout(readTimeout);
+		httpRequest.setConnectTimeout(connectTimeout);
+		httpRequest.setUsername(username);
+		httpRequest.setPassword(password);
+		httpRequest.setMethod(HttpRequestMethod.GET);
+		
+		httpRequest.setTrustAllCerts(true);
+		
+		HttpResponse response = null;
+		try{
+			response = httpInvoke(httpRequest);
+			
+		}catch(Exception e){
+			throw new UtilsException("Utilities.requestHTTPFile error "+e.getMessage(),e);
+		}
+		if(response.getResultHTTPOperation()==404){
+			throw new UtilsException("404");
+		}
+		return response;
+		
+	}
+	
+	
 	public static HttpResponse httpInvoke(HttpRequest request) throws UtilsException{
 		
 		String path = request.getUrl();
@@ -913,42 +972,62 @@ public class HttpUtilities {
 		InputStream finTrustStore = null;
 		try {
 			SSLContext sslContext = null;
-			if(request.getTrustStore()!=null || request.getTrustStorePath()!=null){
+			if(request.isTrustAllCerts() || request.getTrustStore()!=null || request.getTrustStorePath()!=null){
+				
+				KeyManager[] km = null;
+				TrustManager[] tm = null;
 				
 				KeyStore truststore = null;
-				if(request.getTrustStore()!=null ) {
-					truststore = request.getTrustStore();
+				if(request.isTrustAllCerts()) {
+					tm = SSLUtilities.getTrustAllCertsManager();
 				}
 				else {
-					if(request.getTrustStoreType()==null) {
-						throw new UtilsException("Ssl TrustStore type required");
-					}
-					if(request.getTrustStorePassword()==null) {
-						throw new UtilsException("Ssl TrustStore password required");
-					}
-					File file = new File(request.getTrustStorePath());
-					if(file.exists()) {
-						finTrustStore = new FileInputStream(file);
+					if(request.getTrustStore()!=null ) {
+						truststore = request.getTrustStore();
 					}
 					else {
-						finTrustStore = SSLUtilities.class.getResourceAsStream(request.getTrustStorePath());
+						if(request.getTrustStoreType()==null) {
+							throw new UtilsException("Ssl TrustStore type required");
+						}
+						if(request.getTrustStorePassword()==null) {
+							throw new UtilsException("Ssl TrustStore password required");
+						}
+						File file = new File(request.getTrustStorePath());
+						if(file.exists()) {
+							finTrustStore = new FileInputStream(file);
+						}
+						else {
+							finTrustStore = SSLUtilities.class.getResourceAsStream(request.getTrustStorePath());
+						}
+						if(finTrustStore == null) {
+							throw new Exception("Keystore ["+request.getTrustStorePath()+"] not found");
+						}
+						truststore = KeyStore.getInstance(request.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
+						truststore.load(finTrustStore, request.getTrustStorePassword().toCharArray());
 					}
-					if(finTrustStore == null) {
-						throw new Exception("Keystore ["+request.getTrustStorePath()+"] not found");
-					}
-					truststore = KeyStore.getInstance(request.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-					truststore.load(finTrustStore, request.getTrustStorePassword().toCharArray());
+					TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
+					CertPathTrustManagerParameters params = SSLUtilities.buildCertPathTrustManagerParameters(truststore, request.getCrlStore(), request.getCrlPath());
+					trustManagerFactory.init(params);
+					//trustManagerFactory.init(truststore);
+					tm = trustManagerFactory.getTrustManagers();
 				}
 				
 				sslContext = SSLContext.getInstance(SSLUtilities.getSafeDefaultProtocol()); // ritorna l'ultima versione disponibile
-				KeyManager[] km = null;
-				TrustManager[] tm = null;
-				TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
-				CertPathTrustManagerParameters params = SSLUtilities.buildCertPathTrustManagerParameters(truststore, request.getCrlStore(), request.getCrlPath());
-				trustManagerFactory.init(params);
-				//trustManagerFactory.init(truststore);
-				tm = trustManagerFactory.getTrustManagers();
-				sslContext.init(km, tm, null);	
+				
+				if(request.isSecureRandom()) {
+					RandomGenerator randomGenerator = null;
+					if(request.getSecureRandomAlgorithm()!=null && !"".equals(request.getSecureRandomAlgorithm())) {
+						randomGenerator = new RandomGenerator(true, request.getSecureRandomAlgorithm());
+					}
+					else {
+						randomGenerator = new RandomGenerator(true);
+					}
+					java.security.SecureRandom secureRandom = (java.security.SecureRandom) randomGenerator.getRandomEngine();
+					sslContext.init(km, tm, secureRandom);
+				}
+				else {
+					sslContext.init(km, tm, null);
+				}
 			}
 			
 			if(request.getUrl()==null){

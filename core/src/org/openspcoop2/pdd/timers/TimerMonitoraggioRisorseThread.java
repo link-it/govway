@@ -143,11 +143,12 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 			this.gestoreEventi = GestoreEventi.getInstance();
 		}		
 	}
+
+	@Override
+	public void process(){
+		// nop: ho ridefinito il metodo run
+	}
 	
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
 	@Override
 	public void run(){
 		

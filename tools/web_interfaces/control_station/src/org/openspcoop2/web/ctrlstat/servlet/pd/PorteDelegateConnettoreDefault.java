@@ -182,6 +182,8 @@ public class PorteDelegateConnettoreDefault extends Action {
 			String httpsurl = url;
 			String httpstipologia = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
 			String httpshostverifyS = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpsTrustVerifyCertS = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
 			String httpstipo = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -343,6 +345,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 					httpshostverify = true;
+					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					httpspath = "";
 					httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
 					httpspwd = "";
@@ -376,6 +379,10 @@ public class PorteDelegateConnettoreDefault extends Action {
 					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 						httpshostverify = true;
+					}
+					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					}
 					
 					 tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
@@ -427,8 +434,9 @@ public class PorteDelegateConnettoreDefault extends Action {
 							tipoJms, user,
 							password, initcont, urlpgk,
 							provurl, connfact, tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.OTHER, httpsurl, httpstipologia,
-							httpshostverify, httpspath, httpstipo, httpspwd,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.OTHER, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
@@ -467,7 +475,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 						endpointtype, url, nomeCodaJms, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
-						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
@@ -500,8 +508,9 @@ public class PorteDelegateConnettoreDefault extends Action {
 							tipoJms, user,
 							password, initcont, urlpgk,
 							provurl, connfact, tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.OTHER, httpsurl, httpstipologia,
-							httpshostverify, httpspath, httpstipo, httpspwd,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.OTHER, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
@@ -539,8 +548,8 @@ public class PorteDelegateConnettoreDefault extends Action {
 			porteDelegateHelper.fillConnettore(connettore, connettoreDebug, endpointtype, endpointtype, tipoconn, url,
 					nomeCodaJms, tipoJms, user, password,
 					initcont, urlpgk, url, connfact,
-					tipoSendas, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo,
+					tipoSendas, httpsurl, httpstipologia, httpshostverify, 
+					httpsTrustVerifyCert, httpspath, httpstipo,
 					httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust,
 					httpspathkey, httpstipokey,

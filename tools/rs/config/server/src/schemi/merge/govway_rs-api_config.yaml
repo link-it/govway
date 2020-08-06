@@ -7305,7 +7305,6 @@ components:
       additionalProperties: false
     ConnettoreConfigurazioneHttps:
       required:
-      - "server"
       - "tipologia"
       type: "object"
       properties:
@@ -7315,6 +7314,10 @@ components:
           type: "boolean"
           example: false
           default: true
+        trust_all_server_certs:
+          type: "boolean"
+          example: false
+          default: false
         server:
           $ref: "#/components/schemas/ConnettoreConfigurazioneHttpsServer"
         client:

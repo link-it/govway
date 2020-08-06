@@ -49,7 +49,15 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 		ConnettoreHTTPSProperties propertiesHTTPS = new ConnettoreHTTPSProperties();
 		
 		// AUTENTICAZIONE SERVER
-		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION)!=null){
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS)!=null){
+			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS).trim();
+			try{
+				propertiesHTTPS.setTrustAllCerts(Boolean.parseBoolean(tmp));
+			}catch(Exception e){
+				throw new Exception("Valore definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS+"' non valido, valori accettati true/false");
+			}
+		}
+		if(!propertiesHTTPS.isTrustAllCerts() && properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION)!=null){
 			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION).trim();
 			propertiesHTTPS.setTrustStoreLocation(tmp);
 			
@@ -61,8 +69,8 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 				throw new Exception("Valore non definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD+
 						"' nonostante sia stato definito un trustStore attraverso la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION+"'");
 			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM).trim();
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM)!=null){
+				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM).trim();
 				propertiesHTTPS.setTrustManagementAlgorithm(tmp);
 			}else{
 				propertiesHTTPS.setTrustManagementAlgorithm(TrustManagerFactory.getDefaultAlgorithm());
@@ -103,8 +111,8 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS).trim();
 				propertiesHTTPS.setKeyAlias(tmp);
 			}
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM).trim();
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM)!=null){
+				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM).trim();
 				propertiesHTTPS.setKeyManagementAlgorithm(tmp);
 			}else{
 				propertiesHTTPS.setKeyManagementAlgorithm(KeyManagerFactory.getDefaultAlgorithm());
@@ -137,6 +145,21 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 			propertiesHTTPS.setSslType(tmp);
 		}else{
 			propertiesHTTPS.setSslType(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE_DEFAULT_VALUE); 
+		}
+		
+		// SecureRandom
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM)!=null){
+			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM).trim();
+			try{
+				propertiesHTTPS.setSecureRandom(Boolean.parseBoolean(tmp));
+			}catch(Exception e){
+				throw new Exception("Valore definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM+"' non valido, valori accettati true/false");
+			}
+			if(propertiesHTTPS.isSecureRandom()) {
+				if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM)!=null){
+					propertiesHTTPS.setSecureRandomAlgorithm(properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM).trim());
+				}
+			}
 		}
 		
 		return propertiesHTTPS;

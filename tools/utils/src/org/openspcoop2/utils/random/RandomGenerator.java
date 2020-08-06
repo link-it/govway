@@ -174,7 +174,7 @@ public class RandomGenerator {
 		}
 	}
 	
-	private Object getRandomEngine() {
+	public Object getRandomEngine() {
 		if(this.useSecureRandom) {
 			java.security.SecureRandom sr = null;
 			if(this.algorithmSecureRandom!=null) {

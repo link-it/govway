@@ -1,3 +1,12 @@
+2020-08-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1037
+	Sul connettore https è adesso possibile effettuare una configurazione che accetta qualsiasi certificato venga ritornato dal server.
+	È stata inoltre aggiunta la possibilità di configurare un utilizzo di un java.security.SecureRandom con algoritmo personalizzato rispetto al default di java.
+	Infine è stato corretto un problema sulla govwayConsole, durante l'aggiunta di un applicativo di tipo server,
+	che visualizzava erroneamente la finestra di dialogo per la copia delle credenziali con delle credenziali vuote.
+
 2020-08-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

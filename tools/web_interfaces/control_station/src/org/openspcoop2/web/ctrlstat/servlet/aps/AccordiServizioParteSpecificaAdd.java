@@ -137,7 +137,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	httpsKeyAlias,
 	httpsTrustStoreCRLs;
 	private String httpshostverifyS, httpsstatoS;
-	private boolean httpshostverify, httpsstato;
+	private boolean httpshostverify, httpsstato, httpsTrustVerifyCert;
 	private String nomeSoggettoErogatore = "";
 	private String tipoSoggettoErogatore = "";
 	String providerSoggettoFruitore = null;
@@ -325,6 +325,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.httpsurl = this.url;
 			this.httpstipologia = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
 			this.httpshostverifyS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpsTrustVerifyCertS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			this.httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			this.httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
 			this.httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			this.httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -1267,6 +1269,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 					this.httpshostverify = true;
+					this.httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					this.httpspath = "";
 					this.httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
 					this.httpspwd = "";
@@ -1424,6 +1427,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 					this.httpshostverify = true;
 				}
+				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+					this.httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+				}
+
 
 				String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 				String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
@@ -1522,8 +1530,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							tipoJms, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-							this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+							this.httpsurl, this.httpstipologia,	this.httpshostverify, 
+							this.httpsTrustVerifyCert, this.httpspath, this.httpstipo, this.httpspwd,
 							this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
 							this.httpspwdprivatekeytrust, this.httpspathkey,
 							this.httpstipokey, this.httpspwdkey, 
@@ -1591,8 +1600,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.password, this.initcont, this.urlpgk, this.provurl,
 					this.connfact, this.sendas, this.wsdlimpler,
 					this.wsdlimplfru, "0", this.profilo, this.portType, ptList,
-					accordoPrivato,this.privato, this.httpsurl, this.httpstipologia,
-					this.httpshostverify, this.httpspath, this.httpstipo,
+					accordoPrivato,this.privato, 
+					this.httpsurl, this.httpstipologia, this.httpshostverify, 
+					this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
 					this.httpspwd, this.httpsalgoritmo, this.httpsstato,
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
@@ -1724,8 +1734,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, this.sendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-							this.httpshostverify, this.httpspath, this.httpstipo,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+							this.httpsurl, this.httpstipologia, this.httpshostverify, 
+							this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
 							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
 							this.httpskeystore, this.httpspwdprivatekeytrust,
 							this.httpspathkey, this.httpstipokey,
@@ -1860,8 +1871,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
 						this.nome, this.tipo, this.user, this.password,
 						this.initcont, this.urlpgk, this.url, this.connfact,
-						this.sendas, this.httpsurl, this.httpstipologia,
-						this.httpshostverify, this.httpspath, this.httpstipo,
+						this.sendas, this.httpsurl, this.httpstipologia, this.httpshostverify, 
+						this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
 						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
 						this.httpskeystore, this.httpspwdprivatekeytrust,
 						this.httpspathkey, this.httpstipokey,
@@ -1973,8 +1984,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.url, this.nome, this.tipo, this.user,
 								this.password, this.initcont, this.urlpgk,
 								this.provurl, this.connfact, this.sendas,
-								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-								this.httpshostverify, this.httpspath, this.httpstipo,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+								this.httpsurl, this.httpstipologia,	this.httpshostverify, 
+								this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
 								this.httpspwd, this.httpsalgoritmo, this.httpsstato,
 								this.httpskeystore, this.httpspwdprivatekeytrust,
 								this.httpspathkey, this.httpstipokey,

@@ -56,6 +56,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.random.RandomGenerator;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
@@ -262,6 +263,35 @@ public class SSLUtilities {
 		}
 	}
 	
+	private static TrustManager[] trustAllCertsManager;
+	private synchronized static void initTrustAllCertsManager() {
+		if(trustAllCertsManager==null) {
+			// Create a trust manager that does not validate certificate chains
+			trustAllCertsManager = new TrustManager[]{
+			    new X509TrustManager() {
+			        @Override
+					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+			            return null;
+			        }
+			        @Override
+					public void checkClientTrusted(
+			            java.security.cert.X509Certificate[] certs, String authType) {
+			        }
+			        @Override
+					public void checkServerTrusted(
+			            java.security.cert.X509Certificate[] certs, String authType) {
+			        }
+			    }
+			};
+		}
+	}
+	public static TrustManager[] getTrustAllCertsManager() {
+		if(trustAllCertsManager==null) {
+			initTrustAllCertsManager();
+		}
+		return trustAllCertsManager;
+	}
+	
 	public static SSLContext generateSSLContext(SSLConfig sslConfig, StringBuilder bfLog) throws UtilsException{
 
 		// Gestione https
@@ -337,7 +367,12 @@ public class SSLUtilities {
 	
 	
 			// Autenticazione SERVER
-			if(sslConfig.getTrustStore()!=null || sslConfig.getTrustStoreLocation()!=null){
+			if(sslConfig.isTrustAllCerts()) {
+				bfLog.append("Gestione trust all certs...\n");
+				tm = getTrustAllCertsManager();
+				bfLog.append("Gestione trust all certs effettuata\n");
+			}
+			else if(sslConfig.getTrustStore()!=null || sslConfig.getTrustStoreLocation()!=null){
 				bfLog.append("Gestione truststore...\n");
 				bfLog.append("\tTruststore type["+sslConfig.getTrustStoreType()+"]\n");
 				bfLog.append("\tTruststore location["+sslConfig.getTrustStoreLocation()+"]\n");
@@ -404,7 +439,25 @@ public class SSLUtilities {
 			// Creo contesto SSL
 			bfLog.append("Init SSLContext type["+sslConfig.getSslType()+"] ...\n");
 			sslContext = SSLContext.getInstance(sslConfig.getSslType());
-			sslContext.init(km, tm, null);	
+			if(sslConfig.isSecureRandom()) {
+				RandomGenerator randomGenerator = null;
+				if(sslConfig.getSecureRandomAlgorithm()!=null && !"".equals(sslConfig.getSecureRandomAlgorithm())) {
+					bfLog.append("Creazione Secure Random con algoritmo '"+sslConfig.getSecureRandomAlgorithm()+"' ...\n");
+					randomGenerator = new RandomGenerator(true, sslConfig.getSecureRandomAlgorithm());
+					bfLog.append("Creazione Secure Random con algoritmo '"+sslConfig.getSecureRandomAlgorithm()+"' effettuata\n");
+				}
+				else {
+					bfLog.append("Creazione Secure Random ...\n");
+					randomGenerator = new RandomGenerator(true);
+					bfLog.append("Creazione Secure Random effettuata\n");
+				}
+				java.security.SecureRandom secureRandom = (java.security.SecureRandom) randomGenerator.getRandomEngine();
+				bfLog.append("Inizializzazione SSLContext con Secure Random ...\n");
+				sslContext.init(km, tm, secureRandom);
+			}
+			else {
+				sslContext.init(km, tm, null);
+			}
 			bfLog.append("Init SSLContext type["+sslConfig.getSslType()+"] effettuato\n");
 			
 			return sslContext;

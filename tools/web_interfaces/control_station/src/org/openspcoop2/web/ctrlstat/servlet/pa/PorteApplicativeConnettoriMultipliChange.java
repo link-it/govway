@@ -232,6 +232,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String httpsurl = url;
 			String httpstipologia = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
 			String httpshostverifyS = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpsTrustVerifyCertS = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
 			String httpstipo = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -466,6 +468,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								httpstipologia = null;
 								httpshostverifyS = null;
 								httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+								httpsTrustVerifyCertS=null;
+								httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 								httpspath = null;
 								httpstipo = null;
 								httpspwd = null;
@@ -640,6 +644,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 					httpshostverify = true;
+					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					httpspath = "";
 					httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
 					httpspwd = "";
@@ -658,21 +663,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						else {
 							endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
 						}
-					}
-
-					// default
-					if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
-						httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
-					}
-					if(httpsalgoritmokey==null || "".equals(httpsalgoritmokey)){
-						httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
-					}
-					if(httpstipologia==null || "".equals(httpstipologia)){
-						httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
-					}
-					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
-						httpshostverify = true;
 					}
 
 					tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
@@ -705,6 +695,27 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
 							tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 						}
+					}
+				}
+				
+				// default (da inizializzare cmq)
+				if (TipiConnettore.HTTPS.toString().equals(endpointtype)) {
+					if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
+						httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
+					}
+					if(httpsalgoritmokey==null || "".equals(httpsalgoritmokey)){
+						httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
+					}
+					if(httpstipologia==null || "".equals(httpstipologia)){
+						httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
+					}
+					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
+						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+						httpshostverify = true;
+					}
+					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					}
 				}
 
@@ -980,6 +991,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						if(httpshostverifyS!=null){
 							httpshostverify = Boolean.valueOf(httpshostverifyS);
 						}
+						httpsTrustVerifyCertS = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+						if(httpsTrustVerifyCertS!=null){
+							httpsTrustVerifyCert = !Boolean.valueOf(httpsTrustVerifyCertS);
+						}
+						else {
+							httpsTrustVerifyCert = true; // backward compatibility
+						}
 						httpspath = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 						httpstipo = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 						httpspwd = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -1019,6 +1037,10 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 						httpshostverifyS = "true";
 						httpshostverify = true;
+					}
+					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					}
 
 					// file
@@ -1110,8 +1132,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							tipoJms, user,
 							password, initcont, urlpgk,
 							provurl, connfact, tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.CHANGE, httpsurl, httpstipologia,
-							httpshostverify, httpspath, httpstipo, httpspwd,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.CHANGE, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
@@ -1146,7 +1169,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							user, password, initcont, urlpgk,
 							provurl, connfact, tipoSendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.CHANGE,
 							httpsurl, httpstipologia, httpshostverify,
-							httpspath, httpstipo, httpspwd,
+							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey,
@@ -1178,7 +1201,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						endpointtype, url, nomeCodaJms, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
-						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
@@ -1226,8 +1249,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							tipoJms, user,
 							password, initcont, urlpgk,
 							provurl, connfact, tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.CHANGE, httpsurl, httpstipologia,
-							httpshostverify, httpspath, httpstipo, httpspwd,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.CHANGE, 
+							httpsurl, httpstipologia, httpshostverify, 
+							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
@@ -1262,7 +1286,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							user, password, initcont, urlpgk,
 							provurl, connfact, tipoSendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.CHANGE,
 							httpsurl, httpstipologia, httpshostverify,
-							httpspath, httpstipo, httpspwd,
+							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey,
@@ -1564,8 +1588,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						porteApplicativeHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 								nomeCodaJms, tipoJms, user, password,
 								initcont, urlpgk, provurl, connfact,
-								tipoSendas, httpsurl, httpstipologia,
-								httpshostverify, httpspath, httpstipo,
+								tipoSendas, httpsurl, httpstipologia, httpshostverify, 
+								httpsTrustVerifyCert, httpspath, httpstipo,
 								httpspwd, httpsalgoritmo, httpsstato,
 								httpskeystore, httpspwdprivatekeytrust,
 								httpspathkey, httpstipokey,
@@ -1678,8 +1702,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						porteApplicativeHelper.fillConnettore(connettore, connettoreDebug, endpointtype, endpointtype, tipoconn, url,
 								nomeCodaJms, tipoJms, user, password,
 								initcont, urlpgk, provurl, connfact,
-								tipoSendas, httpsurl, httpstipologia,
-								httpshostverify, httpspath, httpstipo,
+								tipoSendas, httpsurl, httpstipologia, httpshostverify, 
+								httpsTrustVerifyCert, httpspath, httpstipo,
 								httpspwd, httpsalgoritmo, httpsstato,
 								httpskeystore, httpspwdprivatekeytrust,
 								httpspathkey, httpstipokey,

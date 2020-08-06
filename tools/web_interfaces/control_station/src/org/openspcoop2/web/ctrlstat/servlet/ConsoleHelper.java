@@ -11766,7 +11766,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		}
 		
-		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION)) {
+		boolean trustAllCerts = false;
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS)) {
+			String v = connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+			if("true".equalsIgnoreCase(v)) {
+				trustAllCerts = true;
+			}
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION) || 
+				trustAllCerts) {
 		
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
@@ -11796,7 +11805,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
 			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE);
-			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION));
+			if(trustAllCerts) {
+				de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS);
+			}
+			else {
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION));
+			}
 			dati.add(de);
 				
 			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)) {

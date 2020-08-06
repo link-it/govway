@@ -51,10 +51,6 @@ public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable
     public final static String ID_MODULO = "TimerConsegnaContenutiApplicativi";
 	
 	
-	/**
-	 * Timeout che definisce la cadenza di avvio di questo timer. 
-	 */
-	private long timeout = 10; // ogni 10 secondi avvio il Thread
 	/** Properties Reader */
 	@SuppressWarnings("unused")
 	private OpenSPCoop2Properties propertiesReader;
@@ -145,11 +141,11 @@ public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable
 		this.msgDiag.logPersonalizzato("avvioInCorso");
 		this.log.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
 		
-		this.timeout = configurazioneCoda.getNextMessages_intervalloControllo();
+		this.setTimeout(configurazioneCoda.getNextMessages_intervalloControllo());
 		String s = "secondi";
-		if(this.timeout == 1)
+		if(this.getTimeout() == 1)
 			s = "secondo";
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.timeout+" "+s);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+s);
 		
 		this.limit = configurazioneCoda.getNextMessages_limit();
 		if(this.limit<=0){

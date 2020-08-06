@@ -43,10 +43,6 @@ import org.openspcoop2.utils.threads.BaseThread;
 public class TimerGestoreMessaggiThread extends BaseThread{
 
 	/**
-	 * Timeout che definisce la cadenza di avvio di questo timer. 
-	 */
-	private long timeout = 10; // ogni 10 secondi avvio il Thread
-	/**
 	 * Timeout che definisce la scadenza di un messaggio
 	 */
 	private long scadenzaMessaggio = 60 * 24 * 5; // cablato a 5 giorni (60m * 24h * 5giorni).
@@ -113,11 +109,11 @@ public class TimerGestoreMessaggiThread extends BaseThread{
 			throw new TimerException(msgErrore,e);
 		}
 
-		this.timeout = this.propertiesReader.getRepositoryIntervalloEliminazioneMessaggi();
+		this.setTimeout((int)this.propertiesReader.getRepositoryIntervalloEliminazioneMessaggi());
 		String s = "secondi";
-		if(this.timeout == 1)
+		if(this.getTimeout() == 1)
 			s = "secondo";
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.timeout+" "+s);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+s);
 		
 		this.scadenzaMessaggio = this.propertiesReader.getRepositoryIntervalloScadenzaMessaggi();
 		s = "minuti";
@@ -145,42 +141,23 @@ public class TimerGestoreMessaggiThread extends BaseThread{
 	
 
 
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
 	@Override
-	public void run(){
-		
-		try {
-		
-			while(this.isStop() == false){
-				
-				try{
-					// Prendo la gestione
-					TimerGestoreMessaggiLib gestoreMessaggiLib = 
-						new TimerGestoreMessaggiLib(this.msgDiag,this.logTimer,this.propertiesReader,
-							this.scadenzaMessaggio,this.logQuery,
-							this.limit,this.orderByQuery,this.scadenzaCorrelazioneApplicativa, 
-							this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione,
-							this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
-					
-					gestoreMessaggiLib.check();
-					
-				}catch(Exception e){
-					this.msgDiag.logErroreGenerico(e,"TimerGestoreMessaggiLib.check()");
-					this.logTimer.error("Errore generale: "+e.getMessage(),e);
-				}finally{
-				}
-				
-						
-				// CheckInterval
-				this.sleepForNextCheck((int)this.timeout, 1000);
-				
-			} 
+	public void process(){
+		try{
+			// Prendo la gestione
+			TimerGestoreMessaggiLib gestoreMessaggiLib = 
+				new TimerGestoreMessaggiLib(this.msgDiag,this.logTimer,this.propertiesReader,
+					this.scadenzaMessaggio,this.logQuery,
+					this.limit,this.orderByQuery,this.scadenzaCorrelazioneApplicativa, 
+					this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione,
+					this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
 			
-		}finally {
-			this.finished();
+			gestoreMessaggiLib.check();
+			
+		}catch(Exception e){
+			this.msgDiag.logErroreGenerico(e,"TimerGestoreMessaggiLib.check()");
+			this.logTimer.error("Errore generale: "+e.getMessage(),e);
+		}finally{
 		}
 	}
 }
