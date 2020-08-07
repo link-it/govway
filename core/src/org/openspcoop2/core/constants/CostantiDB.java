@@ -397,6 +397,7 @@ public final class CostantiDB {
     public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_ID_TRACCIA = "idtraccia";
     public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_NAME = "name";
     public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE = "value";
+    public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_EXT_VALUE = "ext_value";
     public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_GDO = "gdo";
 
 

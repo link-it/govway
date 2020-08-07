@@ -23,6 +23,7 @@ ALTER TABLE ct_active_policy ADD policy_continue SMALLINT NOT NULL DEFAULT 0;
 
 -- Criterio nel filtro permette molteplici azione
 
+-- ALTER TABLE ct_active_policy ALTER COLUMN filtro_azione SET DATA TYPE CLOB;
 ALTER TABLE ct_active_policy ADD temp CLOB; 
 UPDATE ct_active_policy SET temp=filtro_azione; 
 ALTER TABLE ct_active_policy DROP COLUMN filtro_azione ;

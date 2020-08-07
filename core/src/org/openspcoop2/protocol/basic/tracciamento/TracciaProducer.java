@@ -400,18 +400,35 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 				}
 				for (int i = 0; i < propertiesNames.length; i++) {
 	
+					int limit = 4000;
+					
+					String v = busta.getProperty(propertiesNames[i]);
+					String columnExtV = "";
+					String valueExtV = "";
+					if(v.length()>limit) {
+						columnExtV = ", "+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_EXT_VALUE;
+						valueExtV = ", ?";
+					}
+					
 					//Inserimento nel DB
 					sqlString = "INSERT INTO "+CostantiDB.TRACCE_EXT_INFO+" ("+
 						CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_ID_TRACCIA+", "+
 						CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_NAME+", "+
 						CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE+", "+
+						columnExtV+
 						CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_GDO+
-					") VALUES (?, ?, ?, ?)";
+					") VALUES (?, ?, ?"+valueExtV+", ?)";
 					stmt = con.prepareStatement(sqlString);
 					int index = 1;
 					stmt.setLong(index++, idtraccia);
 					JDBCUtilities.setSQLStringValue(stmt,index++, propertiesNames[i]);
-					JDBCUtilities.setSQLStringValue(stmt,index++, busta.getProperty(propertiesNames[i]));
+					if(v.length()>limit) {
+						JDBCUtilities.setSQLStringValue(stmt,index++, v.substring(0, limit));
+						JDBCUtilities.setSQLStringValue(stmt,index++, v);
+					}
+					else {
+						JDBCUtilities.setSQLStringValue(stmt,index++, v);
+					}
 					stmt.setTimestamp(index++, gdoT);
 					stmt.executeUpdate();
 					stmt.close();

@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/archiviComunicazioni/2020-08-07-patch.sql

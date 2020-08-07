@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX TRACCE_EXT_SEARCH;
 -- DROP INDEX TRACCE_EXT_INFO;
 -- DROP INDEX TRACCE_ALLEGATI_INDEX;
 -- DROP INDEX TRACCE_ECC;

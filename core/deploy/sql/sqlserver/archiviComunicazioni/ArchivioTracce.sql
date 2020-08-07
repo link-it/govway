@@ -172,7 +172,8 @@ CREATE TABLE tracce_ext_protocol_info
 (
 	idtraccia BIGINT NOT NULL,
 	name VARCHAR(255) NOT NULL,
-	value VARCHAR(max),
+	value VARCHAR(4000),
+	ext_value VARCHAR(max),
 	-- Data di registrazione
 	gdo DATETIME2 NOT NULL,
 	-- fk/pk columns
@@ -184,5 +185,6 @@ CREATE TABLE tracce_ext_protocol_info
 
 -- index
 CREATE INDEX TRACCE_EXT_INFO ON tracce_ext_protocol_info (idtraccia);
+CREATE INDEX TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value);
 
 

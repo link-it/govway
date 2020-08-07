@@ -1163,6 +1163,10 @@ Il valore presente in questo campo contiene la rappresentazione nel formato prop
                         <linkit:sql-table-index name="TRACCE_EXT_INFO">
                             <linkit:sql-table-index-field name="idtraccia"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index name="TRACCE_EXT_SEARCH">
+                            <linkit:sql-table-index-field name="name"/>
+                            <linkit:sql-table-index-field name="value"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1196,8 +1200,19 @@ Il valore presente in questo campo contiene la rappresentazione nel formato prop
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="value" text="true" />
+                                <linkit:sql-column-mapping name="value" varchar="4000" />
                                 <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ext_value" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ext_value" text="true" />
+                                <linkit:sql-ddl-column-comment>Colonna valorizza se la proprietà ha un valore maggiore di 4000</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

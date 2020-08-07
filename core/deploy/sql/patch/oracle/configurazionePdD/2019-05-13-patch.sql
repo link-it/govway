@@ -24,6 +24,7 @@ ALTER TABLE ct_active_policy MODIFY policy_continue DEFAULT 0;
 
 -- Criterio nel filtro permette molteplici azione
 
+-- ALTER TABLE ct_active_policy MODIFY filtro_azione CLOB;
 ALTER TABLE ct_active_policy ADD temp CLOB; 
 UPDATE ct_active_policy SET temp=filtro_azione; 
 ALTER TABLE ct_active_policy DROP COLUMN filtro_azione ;

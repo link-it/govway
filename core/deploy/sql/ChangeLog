@@ -1,5 +1,14 @@
 2020-08-07  Andrea Poli <apoli@link.it>
 
+	Modificato tipo della colonna 'value' della tabella 'tracce_ext_protocol_info' al fine di poter creare un indice su tale colonna;
+	indice richiesto per migliorare le performance come descritto nell'issue https://github.com/link-it/govway/issues/60
+	
+	ALTER TABLE tracce_ext_protocol_info ALTER COLUMN value TYPE VARCHAR(4000);
+	ALTER TABLE tracce_ext_protocol_info ADD COLUMN ext_value TEXT;
+	CREATE INDEX TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value);
+
+2020-08-07  Andrea Poli <apoli@link.it>
+
 	Modificata colonna 'applicative_id' in OP2_SEMAPHORE per assicurare l'unicità del lock.
 
 	ALTER TABLE OP2_SEMAPHORE ALTER COLUMN applicative_id SET NOT NULL;

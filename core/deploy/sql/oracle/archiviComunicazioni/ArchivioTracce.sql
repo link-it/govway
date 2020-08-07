@@ -242,7 +242,8 @@ CREATE TABLE tracce_ext_protocol_info
 (
 	idtraccia NUMBER NOT NULL,
 	name VARCHAR2(255) NOT NULL,
-	value CLOB,
+	value VARCHAR2(4000),
+	ext_value CLOB,
 	-- Data di registrazione
 	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
@@ -254,6 +255,7 @@ CREATE TABLE tracce_ext_protocol_info
 
 -- index
 CREATE INDEX TRACCE_EXT_INFO ON tracce_ext_protocol_info (idtraccia);
+CREATE INDEX TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value);
 CREATE TRIGGER trg_tracce_ext_protocol_info
 BEFORE
 insert on tracce_ext_protocol_info
