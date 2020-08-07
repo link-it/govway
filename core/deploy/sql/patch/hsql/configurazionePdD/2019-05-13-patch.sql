@@ -24,11 +24,11 @@ ALTER TABLE ct_active_policy ALTER COLUMN policy_continue SET DEFAULT false;
 
 -- Criterio nel filtro permette molteplici azione
 
-ALTER TABLE ct_active_policy ADD COLUMN temp VARCHAR(65535); 
-UPDATE ct_active_policy SET temp=filtro_azione; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_azione; 
-ALTER TABLE ct_active_policy ALTER COLUMN temp RENAME TO filtro_azione;
-
+-- ALTER TABLE ct_active_policy ADD COLUMN temp VARCHAR(65535); 
+-- UPDATE ct_active_policy SET temp=filtro_azione; 
+-- ALTER TABLE ct_active_policy DROP COLUMN filtro_azione; 
+-- ALTER TABLE ct_active_policy ALTER COLUMN temp RENAME TO filtro_azione;
+ALTER TABLE ct_active_policy ALTER COLUMN filtro_azione VARCHAR(65535);
 
 -- Raggruppamento per identificativo autenticato e per token claim
 

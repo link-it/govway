@@ -22,11 +22,11 @@ ALTER TABLE ct_active_policy ADD COLUMN policy_continue BOOLEAN NOT NULL DEFAULT
 
 -- Criterio nel filtro permette molteplici azione
 
-ALTER TABLE ct_active_policy ADD COLUMN temp TEXT; 
-UPDATE ct_active_policy SET temp=filtro_azione; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_azione; 
-ALTER TABLE ct_active_policy CHANGE COLUMN temp filtro_azione TEXT;
-
+-- ALTER TABLE ct_active_policy ADD COLUMN temp TEXT; 
+-- UPDATE ct_active_policy SET temp=filtro_azione; 
+-- ALTER TABLE ct_active_policy DROP COLUMN filtro_azione; 
+-- ALTER TABLE ct_active_policy CHANGE COLUMN temp filtro_azione TEXT;
+ALTER TABLE ct_active_policy MODIFY COLUMN filtro_azione TEXT;
 
 -- Raggruppamento per identificativo autenticato e per token claim
 

@@ -1,4 +1,5 @@
-ALTER TABLE transazioni ADD COLUMN temp VARCHAR(65535);
-UPDATE transazioni SET temp=credenziali;
-ALTER TABLE transazioni DROP COLUMN credenziali;
-ALTER TABLE transazioni ALTER COLUMN temp RENAME TO credenziali;
+-- ALTER TABLE transazioni ADD COLUMN temp VARCHAR(65535);
+-- UPDATE transazioni SET temp=credenziali;
+-- ALTER TABLE transazioni DROP COLUMN credenziali;
+-- ALTER TABLE transazioni ALTER COLUMN temp RENAME TO credenziali;
+ALTER TABLE transazioni ALTER COLUMN credenziali VARCHAR(65535);
