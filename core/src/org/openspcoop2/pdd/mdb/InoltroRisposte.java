@@ -1406,8 +1406,13 @@ public class InoltroRisposte extends GenericLib{
 										msgDiag.getLivello("ricezioneSoapMessage.msgGiaPresente"),
 										msgDiag.getCodice("ricezioneSoapMessage.msgGiaPresente"));
 								String msg = "(http reply)" + msgDiag.getMessaggio_replaceKeywords("ricezioneSoapMessage.msgGiaPresente");
-								msgConnectionReply.deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
-										this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+									msgConnectionReply._deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
+											this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								}
+								else {
+									msgConnectionReply.deleteMessageByNow();
+								}
 							}else{
 								throw new Exception("Altra copia della Busta ricevuta come risposta nella http reply con id["+bustaConnectionReply.getID()+"] in elaborazione dal modulo "+proprietarioMessaggio);
 							}

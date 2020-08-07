@@ -111,8 +111,10 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		this.registroServiziReader = registroServiziReader;
 
 		// deve essere utilizzato lo stesso lock per GestoreMessaggi, ConsegnaContenuti, GestoreBuste per risolvere problema di eliminazione descritto in GestoreMessaggi metodo deleteMessageWithLock 
-		this.timerLock = new TimerLock(TipoLock.GESTIONE_REPOSITORY_MESSAGGI);
-
+		//this.timerLock = new TimerLock(TipoLock.GESTIONE_REPOSITORY_MESSAGGI);
+		// l'utilizzo commentato sopra era ERRATO: i messaggi salvati con il timer di consegna contenuti applicativi vengono salvati con un nuovo identificativo 'gw-0-e20ae327-791c-40ef-84ad-4b141a0ef93f' e quindi non impattano sul problema descritto sopra.
+		this.timerLock = new TimerLock(TipoLock.CONSEGNA_NOTIFICHE, configurazioneCoda.getName());
+		
 		if(this.propertiesReader.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
 

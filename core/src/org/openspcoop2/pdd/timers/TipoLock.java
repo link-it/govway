@@ -35,8 +35,13 @@ import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 
 public enum TipoLock implements Serializable {
 
-	// Utilizzato sia nel GestoreMessaggi, che nel RepositoryBuste, che nel ConsegnaMesssaggi per risolvere il problema descritto in GestoreMessaggi per quanto concerne l'eliminazione messaggi
+	// Utilizzato sia nel GestoreMessaggi, che nel RepositoryBuste, che nel ConsegnaMesssaggi per risolvere il problema descritto in GestoreMessaggi per quanto concerne l'eliminazione messaggi solo se abilitata la gestione tramite lock
+	@Deprecated
 	GESTIONE_REPOSITORY_MESSAGGI ("RepositoryMessaggi"), 
+	
+	GESTIONE_PULIZIA_REPOSITORY_MESSAGGI ("PuliziaRepositoryMessaggi"), 
+	
+	GESTIONE_PULIZIA_REPOSITORY_BUSTE ("PuliziaRepositoryBuste"), 
 	
 	GESTIONE_CORRELAZIONE_APPLICATIVA ("CorrelazioneApplicativa"),
 	
@@ -48,6 +53,8 @@ public enum TipoLock implements Serializable {
 	GENERAZIONE_STATISTICHE_GIORNALIERE (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_GIORNALIERE)), 
 	GENERAZIONE_STATISTICHE_SETTIMANALI (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_SETTIMANALI)), 
 	GENERAZIONE_STATISTICHE_MENSILI (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_MENSILI)), 
+	
+	CONSEGNA_NOTIFICHE ("ConsegnaNotifiche"),
 	
 	CUSTOM ("Custom");
 	
@@ -70,6 +77,10 @@ public enum TipoLock implements Serializable {
 	
 	public boolean equals(TipoLock tipo){
 		return this.tipo.equals(tipo.getTipo());
+	}
+	
+	public static TipoLock _getLockGestioneRepositoryMessaggi() {
+		return TipoLock.GESTIONE_REPOSITORY_MESSAGGI;
 	}
 }
 

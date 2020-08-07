@@ -43,6 +43,10 @@
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="OP2_SEMAPHORE" sequence-cycle="true"
                                               comment="Tabella di appoggio per l'implementazione di un semaforo tramite un database">
+                        <linkit:sql-table-constraint unique="uniq_semaphore" index="idx_semaphore"/>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="applicative-id"/>
+                        </linkit:sql-table-unique>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -79,7 +83,7 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-		<xsd:element name="details" type="xsd:string" minOccurs="0">
+		          <xsd:element name="details" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -90,7 +94,7 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="applicative-id" type="xsd:string" minOccurs="0">
+                <xsd:element name="applicative-id" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator

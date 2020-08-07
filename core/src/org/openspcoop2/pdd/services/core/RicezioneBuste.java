@@ -6224,8 +6224,13 @@ public class RicezioneBuste {
 					if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
 						msgDiag.logPersonalizzato("messaggioInGestione.marcatoDaEliminare");
 						String msg = msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.marcatoDaEliminare");
-						msgRequest.deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
+						if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
+							msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
 								propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+						}
+						else {
+							msgRequest.deleteMessageByNow();
+						}
 					}
 
 					// Altrimenti gestisco il duplicato
@@ -6323,8 +6328,13 @@ public class RicezioneBuste {
 									if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
 										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.forzoEliminazione");
 										String msg = msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.forzoEliminazione");
-										msgRequest.deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamento_AttesaAttiva()-millisecondiTrascorsi,
-												propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+										if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
+											msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamento_AttesaAttiva()-millisecondiTrascorsi,
+													propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+										}
+										else {
+											msgRequest.deleteMessageByNow();
+										}
 										isErrore_MsgGiaRicevuto = false;
 										break;
 									}
@@ -6442,22 +6452,27 @@ public class RicezioneBuste {
 						repositoryBuste.aggiornaBusta(bustaRichiesta,tipoMsg,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),erroriValidazione);
 						repositoryBuste.impostaUtilizzoPdD(bustaRichiesta.getID(),tipoMsg);
 					}catch(Exception e){
-						String causa = "Aggiornamento dati busta con id ["+bustaRichiesta.getID()+"] tipo["+tipoMsg+"] non riuscito: "+e.getMessage();
-						try{
-							GestoreMessaggi.acquireLock(msgRequest,TimerLock.newInstance(TipoLock.GESTIONE_REPOSITORY_MESSAGGI), msgDiag, causa, propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-							// errore che puo' avvenire a causa del Timer delle Buste (vedi spiegazione in classe GestoreMessaggi.deleteMessageWithLock)
-							// Si riesegue tutto il codice isRegistrata e update o create con il lock. Stavolta se avviene un errore non e' dovuto al timer.
-							if(repositoryBuste.isRegistrata(bustaRichiesta.getID(),tipoMsg)){
-								repositoryBuste.aggiornaBusta(bustaRichiesta,tipoMsg,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),erroriValidazione);
-								repositoryBuste.impostaUtilizzoPdD(bustaRichiesta.getID(),tipoMsg);
-							}
-							else{
-								repositoryBuste.registraBusta(bustaRichiesta, tipoMsg, erroriValidazione, propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
-							}
-						}finally{
+						if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
+							String causa = "Aggiornamento dati busta con id ["+bustaRichiesta.getID()+"] tipo["+tipoMsg+"] non riuscito: "+e.getMessage();
 							try{
-								GestoreMessaggi.releaseLock(msgRequest,TimerLock.newInstance(TipoLock.GESTIONE_REPOSITORY_MESSAGGI),msgDiag, causa);
-							}catch(Exception eUnlock){}
+								GestoreMessaggi.acquireLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()), msgDiag, causa, propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								// errore che puo' avvenire a causa del Timer delle Buste (vedi spiegazione in classe GestoreMessaggi.deleteMessageWithLock)
+								// Si riesegue tutto il codice isRegistrata e update o create con il lock. Stavolta se avviene un errore non e' dovuto al timer.
+								if(repositoryBuste.isRegistrata(bustaRichiesta.getID(),tipoMsg)){
+									repositoryBuste.aggiornaBusta(bustaRichiesta,tipoMsg,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),erroriValidazione);
+									repositoryBuste.impostaUtilizzoPdD(bustaRichiesta.getID(),tipoMsg);
+								}
+								else{
+									repositoryBuste.registraBusta(bustaRichiesta, tipoMsg, erroriValidazione, propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+								}
+							}finally{
+								try{
+									GestoreMessaggi.releaseLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()),msgDiag, causa);
+								}catch(Exception eUnlock){}
+							}
+						}
+						else {
+							throw e;
 						}
 					}
 

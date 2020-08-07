@@ -6,12 +6,16 @@ CREATE TABLE OP2_SEMAPHORE
 	creation_time TIMESTAMP,
 	update_time TIMESTAMP,
 	details CLOB,
-	applicative_id VARCHAR(255),
+	applicative_id VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT uniq_semaphore_1 UNIQUE (applicative_id),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_OP2_SEMAPHORE PRIMARY KEY (id)
 );
 
+-- index
+CREATE UNIQUE INDEX idx_semaphore_1 ON OP2_SEMAPHORE (applicative_id);
 
 

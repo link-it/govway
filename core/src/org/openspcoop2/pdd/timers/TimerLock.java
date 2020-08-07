@@ -39,22 +39,40 @@ public class TimerLock {
 	
 	public TimerLock(TipoLock tipoLock) throws TimerException {
 		this(tipoLock,tipoLock.getTipo());
+		check(tipoLock);
+	}
+	private static void check(TipoLock tipoLock) throws TimerException {
+		if(TipoLock.CUSTOM.equals(tipoLock) || TipoLock.CONSEGNA_NOTIFICHE.equals(tipoLock)) {
+			throw new TimerException("Tipo lock '"+tipoLock+"' non utilizzabile senza fornire l'id del lock");
+		}
 	}
 	public TimerLock(TipoLock tipoLock, String idLock) throws TimerException {
 		if(tipoLock==null) {
 			throw new TimerException("Tipo lock non definito");
 		}
-		if(TipoLock.CUSTOM.equals(tipoLock) && (idLock==null || "".equals(idLock)) ) {
-			throw new TimerException("Tipo lock '"+TipoLock.CUSTOM+"' non utilizzabile senza fornire l'id del lock");
+		if( (TipoLock.CUSTOM.equals(tipoLock) || TipoLock.CONSEGNA_NOTIFICHE.equals(tipoLock)) 
+				&& 
+				(idLock==null || "".equals(idLock)) ) {
+			throw new TimerException("Tipo lock '"+tipoLock+"' non utilizzabile senza fornire l'id del lock");
 		}
 		this.tipoLock = tipoLock;
 		if(idLock==null || "".equals(idLock)) {
 			this.idLock = tipoLock.getTipo();
 		}
+		else if(TipoLock.CONSEGNA_NOTIFICHE.equals(tipoLock)) {
+			this.idLock = getIdLockConsegnaNotifica(idLock);
+		}
 		else {
 			this.idLock = idLock;
 		}
 	}
+	
+	public static String getIdLockConsegnaNotifica(String queue) throws TimerException {
+		if(queue==null) {
+			throw new TimerException("Coda non definita");
+		}
+		return TipoLock.CONSEGNA_NOTIFICHE.getTipo()+"-"+queue;
+	}	
 	
 	private TipoLock tipoLock;
 	private String idLock;

@@ -89,6 +89,110 @@ public class SemaphoreEngine {
 		}
 	}
 
+	protected boolean createEmptyLock(Connection conDB, boolean throwExceptionIfExists) throws UtilsException{
+		
+		String table = this.mapping.getTable();
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		boolean exist = false;
+		try{
+			// Lettura attuale valore
+			ISQLQueryObject sqlGet = SQLObjectFactory.createSQLQueryObject(this.databaseType);
+			sqlGet.addFromTable(table);
+			sqlGet.setANDLogicOperator(true);
+			if(this.mapping.sizeUniqueConditionValues()>0) {
+				for (int i = 0; i < this.mapping.sizeUniqueConditionValues(); i++) {
+					Object o = this.mapping.getUniqueConditionValue(i);
+					if(o!=null) {
+						sqlGet.addWhereCondition(this.mapping.getUniqueConditionColumnName(i)+"=?");
+					}
+					else {
+						sqlGet.addWhereIsNullCondition(this.mapping.getUniqueConditionColumnName(i));
+					}
+				}
+			}
+			
+			//System.out.println("SELECT ["+sqlGet.createSQLQuery()+"]");
+			pstmt = conDB.prepareStatement(sqlGet.createSQLQuery());
+			int index = 1;
+			if(this.mapping.sizeUniqueConditionValues()>0) {
+				for (int i = 0; i < this.mapping.sizeUniqueConditionValues(); i++) {
+					Object o = this.mapping.getUniqueConditionValue(i);
+					if(o!=null) {
+						this.jdbcParameterUtils.setParameter(pstmt, index++, 
+								this.mapping.getUniqueConditionValue(i), 
+								this.mapping.getUniqueConditionType(i));
+					}
+				}
+			}
+			rs = pstmt.executeQuery();
+			if(rs == null) {
+				pstmt.close();
+				this.log.error("Creazione empty lock non riuscita: ResultSet is null?");
+				throw new UtilsException("Creazione empty lock non riuscita: ResultSet is null?");		
+			}
+			exist = rs.next();
+		} catch(Throwable e) {
+			this.log.error("Creazione empty lock non riuscita: "+e.getMessage(),e);
+			throw new UtilsException("Creazione empty lock non riuscita: "+e.getMessage(),e);		
+		} finally {
+			try{
+				if( rs != null )
+					rs.close();
+			} catch(Exception er) {}
+			try{
+				if( pstmt != null )
+					pstmt.close();
+			} catch(Exception er) {}
+		}
+			
+		if(exist) {
+			if(throwExceptionIfExists) {
+				throw new UtilsException("Entry already exists");
+			}
+			return false;
+		}
+		else {
+			try{
+				// INSERT
+				ISQLQueryObject sqlGet = SQLObjectFactory.createSQLQueryObject(this.databaseType);
+				sqlGet.addInsertTable(table);
+				if(this.mapping.sizeUniqueConditionValues()>0) {
+					for (int i = 0; i < this.mapping.sizeUniqueConditionValues(); i++) {
+						sqlGet.addInsertField(this.mapping.getUniqueConditionColumnName(i),"?");
+					}
+				}
+				
+				//System.out.println("INSERT ["+sqlGet.createSQLInsert()+"]");
+				pstmt = conDB.prepareStatement(sqlGet.createSQLInsert());
+				int index = 1;
+				if(this.mapping.sizeUniqueConditionValues()>0) {
+					for (int i = 0; i < this.mapping.sizeUniqueConditionValues(); i++) {
+						Object o = this.mapping.getUniqueConditionValue(i);
+						if(o!=null) {
+							this.jdbcParameterUtils.setParameter(pstmt, index++, 
+									this.mapping.getUniqueConditionValue(i), 
+									this.mapping.getUniqueConditionType(i));
+						}
+					}
+				}
+				int n = pstmt.executeUpdate();
+				return n>0;
+			} catch(Throwable e) {
+				this.log.error("Creazione empty lock non riuscita: "+e.getMessage(),e);
+				throw new UtilsException("Creazione empty lock non riuscita: "+e.getMessage(),e);		
+			} finally {
+				try{
+					if( pstmt != null )
+						pstmt.close();
+				} catch(Exception er) {}
+			}
+		}
+		
+	}
+	
 	protected boolean lock(Connection conDB, String details, InfoStatistics infoStatistics,SemaphoreOperationType operationType) throws UtilsException{
 				
 		boolean operazioneConclusaConSuccesso = false; 

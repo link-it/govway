@@ -601,7 +601,7 @@ public class SavedMessage implements java.io.Serializable {
 	 * 
 	 * 
 	 */
-	public void delete(boolean isRichiesta,boolean onewayVersione11) throws UtilsException{
+	public void delete(boolean isRichiesta,boolean onewayVersione11, java.sql.Timestamp data) throws UtilsException{
 		if((this.openspcoopstate instanceof OpenSPCoopStateful) || onewayVersione11) {
 			StateMessage stateMSG = (isRichiesta) ?  (StateMessage)this.openspcoopstate.getStatoRichiesta() 
 					: (StateMessage)this.openspcoopstate.getStatoRisposta();
@@ -635,13 +635,25 @@ public class SavedMessage implements java.io.Serializable {
 				StringBuilder query = new StringBuilder();
 				query.append("DELETE from ");
 				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
-				query.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");	    
+				query.append(" WHERE ");
+				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_ID_MESSAGGIO);
+				query.append(" = ? AND ");
+				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_TIPO_MESSAGGIO);
+				query.append(" = ?");	    
+				if(data!=null) {
+					query.append(" AND ");
+					query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
+					query.append("<=?");
+				}
 				pstmt= connectionDB.prepareStatement(query.toString());
 				pstmt.setString(1,this.idMessaggio);
 				if(Costanti.INBOX.equals(this.box))
 					pstmt.setString(2,Costanti.INBOX);
 				else
 					pstmt.setString(2,Costanti.OUTBOX);
+				if(data!=null) {
+					pstmt.setTimestamp(3, data);
+				}
 				pstmt.execute();
 				pstmt.close();
 

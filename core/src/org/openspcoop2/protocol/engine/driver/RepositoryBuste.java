@@ -444,8 +444,8 @@ public class RepositoryBuste  {
 	 * @param id identificativo della busta.
 	 *
 	 */
-	public void eliminaBustaFromOutBox(String id) throws ProtocolException{
-		eliminaBusta(id,Costanti.OUTBOX);
+	public void eliminaBustaFromOutBox(String id, Date data) throws ProtocolException{
+		eliminaBusta(id,Costanti.OUTBOX, data);
 	}
 
 	public void eliminaBustaStatelessFromOutBox(String id) throws ProtocolException{
@@ -764,8 +764,8 @@ public class RepositoryBuste  {
 	 * @param id identificativo della busta.
 	 *
 	 */
-	public void eliminaBustaFromInBox(String id) throws ProtocolException{
-		eliminaBusta(id,Costanti.INBOX);
+	public void eliminaBustaFromInBox(String id, Date data) throws ProtocolException{
+		eliminaBusta(id,Costanti.INBOX, data);
 	}
 
 	public void eliminaBustaStatelessFromInBox(String id) throws ProtocolException{
@@ -3003,7 +3003,7 @@ public class RepositoryBuste  {
 	 * @param tipoBusta Indicazione sul tipo di busta inviata/ricevuta
 	 *
 	 */
-	private void eliminaBusta(String id, String tipoBusta) throws ProtocolException{
+	private void eliminaBusta(String id, String tipoBusta, Date data) throws ProtocolException{
 
 		StateMessage state = (StateMessage)this.state;
 		Connection connectionDB = state.getConnectionDB();
@@ -3024,7 +3024,7 @@ public class RepositoryBuste  {
 
 				// Eliminazione invio asincrono
 				ProfiloDiCollaborazione profilo = new ProfiloDiCollaborazione(state, this.log, this.protocolFactory);
-				profilo.asincrono_eliminaRegistrazione(id, Costanti.OUTBOX);
+				profilo.asincrono_eliminaRegistrazione(id, Costanti.OUTBOX, data);
 				state.executePreparedStatement();
 
 			}
@@ -3033,10 +3033,14 @@ public class RepositoryBuste  {
 
 				//	Eliminazione ricezione asincrono
 				ProfiloDiCollaborazione profilo = new ProfiloDiCollaborazione(state, this.log, this.protocolFactory);
-				profilo.asincrono_eliminaRegistrazione(id, Costanti.INBOX);
+				profilo.asincrono_eliminaRegistrazione(id, Costanti.INBOX, data);
 				state.executePreparedStatement();
 			}
 
+			java.sql.Timestamp nowT = null;
+			if(data!=null) {
+				nowT = new java.sql.Timestamp(data.getTime());
+			}
 
 			if(this.state instanceof StatefulMessage) {
 			
@@ -3045,9 +3049,15 @@ public class RepositoryBuste  {
 				queryDelete.append("DELETE FROM ");
 				queryDelete.append(Costanti.LISTA_TRASMISSIONI);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
+				if(data!=null) {
+					queryDelete.append(" AND DATA_REGISTRAZIONE<=?");
+				}
 				pstmtDelete = connectionDB.prepareStatement(queryDelete.toString());
 				pstmtDelete.setString(1,id);
 				pstmtDelete.setString(2,tipoBusta);
+				if(data!=null) {
+					pstmtDelete.setTimestamp(3,nowT);
+				}
 				pstmtDelete.execute();
 				pstmtDelete.close();
 	
@@ -3056,9 +3066,15 @@ public class RepositoryBuste  {
 				queryDelete.append("DELETE FROM ");
 				queryDelete.append(Costanti.LISTA_RISCONTRI);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
+				if(data!=null) {
+					queryDelete.append(" AND DATA_REGISTRAZIONE<=?");
+				}
 				pstmtDelete = connectionDB.prepareStatement(queryDelete.toString());
 				pstmtDelete.setString(1,id);
 				pstmtDelete.setString(2,tipoBusta);
+				if(data!=null) {
+					pstmtDelete.setTimestamp(3,nowT);
+				}
 				pstmtDelete.execute();
 				pstmtDelete.close();
 	
@@ -3067,9 +3083,15 @@ public class RepositoryBuste  {
 				queryDelete.append("DELETE FROM ");
 				queryDelete.append(Costanti.LISTA_ECCEZIONI);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
+				if(data!=null) {
+					queryDelete.append(" AND DATA_REGISTRAZIONE<=?");
+				}
 				pstmtDelete = connectionDB.prepareStatement(queryDelete.toString());
 				pstmtDelete.setString(1,id);
 				pstmtDelete.setString(2,tipoBusta);
+				if(data!=null) {
+					pstmtDelete.setTimestamp(3,nowT);
+				}
 				pstmtDelete.execute();
 				pstmtDelete.close();
 				
@@ -3078,9 +3100,15 @@ public class RepositoryBuste  {
 				queryDelete.append("DELETE FROM ");
 				queryDelete.append(Costanti.LISTA_EXT_INFO);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
+				if(data!=null) {
+					queryDelete.append(" AND DATA_REGISTRAZIONE<=?");
+				}
 				pstmtDelete = connectionDB.prepareStatement(queryDelete.toString());
 				pstmtDelete.setString(1,id);
 				pstmtDelete.setString(2,tipoBusta);
+				if(data!=null) {
+					pstmtDelete.setTimestamp(3,nowT);
+				}
 				pstmtDelete.execute();
 				pstmtDelete.close();
 			}
@@ -3090,9 +3118,15 @@ public class RepositoryBuste  {
 			queryDelete.append("DELETE FROM ");
 			queryDelete.append(Costanti.REPOSITORY);
 			queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
+			if(data!=null) {
+				queryDelete.append(" AND DATA_REGISTRAZIONE<=?");
+			}
 			pstmtDelete = connectionDB.prepareStatement(queryDelete.toString());
 			pstmtDelete.setString(1,id);
 			pstmtDelete.setString(2,tipoBusta);
+			if(data!=null) {
+				pstmtDelete.setTimestamp(3,nowT);
+			}
 			pstmtDelete.execute();
 			pstmtDelete.close();
 
@@ -3705,8 +3739,8 @@ public class RepositoryBuste  {
 	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 *
 	 */
-	public List<String> getBusteDaEliminareFromInBox(int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
-		return this.getBusteDaEliminare(Costanti.INBOX,limit,logQuery,forceIndex,filtraBustaScadetureRispettoOraRegistrazione,orderBy);
+	public List<String> getBusteDaEliminareFromInBox(int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy, Date data) throws ProtocolException{
+		return this.getBusteDaEliminare(Costanti.INBOX,limit,logQuery,forceIndex,filtraBustaScadetureRispettoOraRegistrazione,orderBy, data);
 	}
 
 	/**
@@ -3715,8 +3749,8 @@ public class RepositoryBuste  {
 	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 *
 	 */
-	public List<String> getBusteDaEliminareFromOutBox(int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
-		return this.getBusteDaEliminare(Costanti.OUTBOX,limit,logQuery,forceIndex,filtraBustaScadetureRispettoOraRegistrazione,orderBy);
+	public List<String> getBusteDaEliminareFromOutBox(int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy, Date data) throws ProtocolException{
+		return this.getBusteDaEliminare(Costanti.OUTBOX,limit,logQuery,forceIndex,filtraBustaScadetureRispettoOraRegistrazione,orderBy, data);
 	}
 
 
@@ -3727,13 +3761,18 @@ public class RepositoryBuste  {
 	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 *
 	 */
-	private List<String> getBusteDaEliminare(String tipoBusta,int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
+	private List<String> getBusteDaEliminare(String tipoBusta,int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy, Date data) throws ProtocolException{
 
 		if(this.state instanceof StatefulMessage) {
 
 			StatefulMessage stateful = (StatefulMessage)this.state;
 			Connection connectionDB = stateful.getConnectionDB();
 
+			java.sql.Timestamp nowT = null;
+			if(data!=null) {
+				nowT = new java.sql.Timestamp(data.getTime());
+			}
+			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			List<String> idBuste = new ArrayList<String>();
@@ -3773,6 +3812,9 @@ public class RepositoryBuste  {
 						//query.append(" AND ");
 						//query.append(gestorerepositoryBuste.createSQLCondition_PdD(false));
 						query.append(gestorerepositoryBuste.createSQLCondition_enableOnlyHistory());
+						if(data!=null) {
+							query.append(" AND DATA_REGISTRAZIONE<=?");
+						}
 						queryString = query.toString();
 					}else{
 						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());
@@ -3791,6 +3833,9 @@ public class RepositoryBuste  {
 						//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 						//sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
 						sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_enableOnlyHistory());
+						if(data!=null) {
+							sqlQueryObject.addWhereCondition("DATA_REGISTRAZIONE<=?");
+						}
 						sqlQueryObject.setANDLogicOperator(true);
 						if(orderBy){
 							//sqlQueryObject.addOrderBy("ORA_REGISTRAZIONE");
@@ -3806,15 +3851,18 @@ public class RepositoryBuste  {
 					pstmt = connectionDB.prepareStatement(queryString);
 					pstmt.setTimestamp(1,now);
 					pstmt.setString(2,tipoBusta);
+					if(data!=null) {
+						pstmt.setTimestamp(3,nowT);
+					}
 	
 					long startDateSQLCommand = DateManager.getTimeMillis();
 					if(logQuery)
-						this.log.debug("[QUERY] (repositoryBuste.busteScadute) ["+queryString+"] 1["+now+"] 2["+tipoBusta+"]...");
+						this.log.debug("[QUERY] (repositoryBuste.busteScadute) ["+queryString+"] 1["+now+"] 2["+tipoBusta+"] 3["+nowT+"]...");
 					rs = pstmt.executeQuery();
 					long endDateSQLCommand = DateManager.getTimeMillis();
 					long secondSQLCommand = (endDateSQLCommand - startDateSQLCommand) / 1000;
 					if(logQuery)
-						this.log.debug("[QUERY] (repositoryBuste.busteScadute) ["+queryString+"] 1["+now+"] 2["+tipoBusta+"] effettuata in "+secondSQLCommand+" secondi");
+						this.log.debug("[QUERY] (repositoryBuste.busteScadute) ["+queryString+"] 1["+now+"] 2["+tipoBusta+"] 3["+nowT+"] effettuata in "+secondSQLCommand+" secondi");
 	
 					int countLimit = 0;
 					while(rs.next()){
@@ -3847,6 +3895,9 @@ public class RepositoryBuste  {
 //					query.append(" AND ");
 //					query.append(gestorerepositoryBuste.createSQLCondition_PdD(false));
 					query.append(gestorerepositoryBuste.createSQLCondition_disabledAll());
+					if(data!=null) {
+						query.append(" AND DATA_REGISTRAZIONE<=?");
+					}
 					queryString = query.toString();
 				}else{
 					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());
@@ -3864,6 +3915,9 @@ public class RepositoryBuste  {
 //					sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_ProfiloCollaborazione(false));
 //					sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_PdD(false));
 					sqlQueryObject.addWhereCondition(gestorerepositoryBuste.createSQLCondition_disabledAll());
+					if(data!=null) {
+						sqlQueryObject.addWhereCondition("DATA_REGISTRAZIONE<=?");
+					}
 					sqlQueryObject.setANDLogicOperator(true);
 					if(orderBy){
 						//sqlQueryObject.addOrderBy("ORA_REGISTRAZIONE");
@@ -3876,15 +3930,18 @@ public class RepositoryBuste  {
 				//System.out.println("STRING QUERY REPOSITORY2 ["+queryString+"] 1["+tipoBusta+"]");
 				pstmt = connectionDB.prepareStatement(queryString.toString());
 				pstmt.setString(1,tipoBusta);
+				if(data!=null) {
+					pstmt.setTimestamp(2,nowT);
+				}
 
 				long startDateSQLCommand = DateManager.getTimeMillis();
 				if(logQuery)
-					this.log.debug("[QUERY] (repositoryBuste.busteCancellateLogicamente) ["+queryString+"] 1["+tipoBusta+"]...");
+					this.log.debug("[QUERY] (repositoryBuste.busteCancellateLogicamente) ["+queryString+"] 1["+tipoBusta+"] 2["+nowT+"]...");
 				rs = pstmt.executeQuery();
 				long endDateSQLCommand = DateManager.getTimeMillis();
 				long secondSQLCommand = (endDateSQLCommand - startDateSQLCommand) / 1000;
 				if(logQuery)
-					this.log.debug("[QUERY] (repositoryBuste.busteCancellateLogicamente) ["+queryString+"] 1["+tipoBusta+"] effettuata in "+secondSQLCommand+" secondi");
+					this.log.debug("[QUERY] (repositoryBuste.busteCancellateLogicamente) ["+queryString+"] 1["+tipoBusta+"] 2["+nowT+"] effettuata in "+secondSQLCommand+" secondi");
 
 				int countLimit = 0;
 				while(rs.next()){

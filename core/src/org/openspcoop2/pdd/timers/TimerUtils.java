@@ -165,10 +165,17 @@ public class TimerUtils {
     }
     
 
-    
-    
+    public static boolean createEmptyLockTimers(OpenSPCoop2Properties propertiesReader, String ID_MODULO, Logger logCore, boolean logErrorConnection) {
+    	return _lockTimers(propertiesReader, ID_MODULO, logCore, logErrorConnection, false);
+    }
     public static void relaseLockTimers(OpenSPCoop2Properties propertiesReader, String ID_MODULO, Logger logCore, boolean logErrorConnection) {
-		if(propertiesReader.isTimerLockByDatabase() && propertiesReader.getDatabaseType()!=null) {
+    	_lockTimers(propertiesReader, ID_MODULO, logCore, logErrorConnection, true);
+    }
+    public static boolean _lockTimers(OpenSPCoop2Properties propertiesReader, String ID_MODULO, Logger logCore, boolean logErrorConnection, boolean release) {
+		
+    	boolean ok = true;
+    	
+    	if(propertiesReader.isTimerLockByDatabase() && propertiesReader.getDatabaseType()!=null) {
 			
 			// RILASCIO LOCK SUL RUNTIME
 			
@@ -182,12 +189,19 @@ public class TimerUtils {
 			tipiRuntime.add(TipoLock.GESTIONE_BUSTE_NON_RISCONTRATE);
 			tipiRuntime.add(TipoLock.GESTIONE_CORRELAZIONE_APPLICATIVA);
 			tipiRuntime.add(TipoLock.GESTIONE_PULIZIA_MESSAGGI_ANOMALI);
-			tipiRuntime.add(TipoLock.GESTIONE_REPOSITORY_MESSAGGI);
+			if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
+				tipiRuntime.add(TipoLock._getLockGestioneRepositoryMessaggi());
+			}
+			else {
+				tipiRuntime.add(TipoLock.GESTIONE_PULIZIA_REPOSITORY_MESSAGGI);
+				tipiRuntime.add(TipoLock.GESTIONE_PULIZIA_REPOSITORY_BUSTE);
+			}
 			if(propertiesReader.isStatisticheGenerazioneEnabled()){
 				if(propertiesReader.isStatisticheUsePddRuntimeDatasource()) {
 					tipiRuntime.addAll(tipiStatistiche);
 				}
 			}
+
 			if(tipiRuntime!=null && tipiRuntime.size()>0) {
 				Resource resource = null;
 				DBManager dbManager = DBManager.getInstance();
@@ -195,14 +209,30 @@ public class TimerUtils {
 					resource = dbManager.getResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, null, false);
 					
 					for (TipoLock tipoLock : tipiRuntime) {
-						_releaseLock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore);
+						_lock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore, release);
 					}
+					
+					if(propertiesReader.isServerJ2EE()!=null && propertiesReader.isServerJ2EE()==false){
+						if(propertiesReader.isTimerConsegnaContenutiApplicativiAbilitato()){
+							List<String> code = propertiesReader.getTimerConsegnaContenutiApplicativiCode();
+							if(code!=null && !code.isEmpty()) {
+								for (String coda : code) {
+									boolean result = _lock(propertiesReader, (Connection)resource.getResource(), TimerLock.getIdLockConsegnaNotifica(coda), logCore, release);
+									if(!result) {
+										ok = false; // l'errore è registrato all'interno del metodo _lock
+									}
+								}
+							}
+						}
+					}
+					
 				}catch(Exception e){
+					ok = false;
 					if(logErrorConnection) {
-						logCore.error("Riscontrato errore durante il rilascio dei lock: "+e.getMessage(),e);
+						logCore.error("Riscontrato errore durante il "+(release?"il rilascio":"la creazione")+" dei lock: "+e.getMessage(),e);
 					}
 					else {
-						logCore.debug("Riscontrato errore durante il rilascio dei lock, in fase di shutdown: "+e.getMessage(),e);
+						logCore.debug("Riscontrato errore durante il "+(release?"il rilascio":"la creazione")+" dei lock, in fase di shutdown: "+e.getMessage(),e);
 					}
 				}
 				finally {
@@ -232,14 +262,18 @@ public class TimerUtils {
 						}
 						
 						for (TipoLock tipoLock : tipiStatistiche) {
-							_releaseLock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore);
+							boolean result = _lock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore, release);
+							if(!result) {
+								ok = false; // l'errore è registrato all'interno del metodo _lock
+							}
 						}
 					}catch(Exception e){
+						ok = false;
 						if(logErrorConnection) {
-							logCore.error("Riscontrato errore durante il rilascio dei lock: "+e.getMessage(),e);
+							logCore.error("Riscontrato errore durante il "+(release?"il rilascio":"la creazione")+" dei lock: "+e.getMessage(),e);
 						}
 						else {
-							logCore.debug("Riscontrato errore durante il rilascio dei lock, in fase di shutdown: "+e.getMessage(),e);
+							logCore.debug("Riscontrato errore durante il "+(release?"il rilascio":"la creazione")+" dei lock, in fase di shutdown: "+e.getMessage(),e);
 						}
 					}
 					finally {
@@ -254,21 +288,35 @@ public class TimerUtils {
 				
 			}
 		}
+    	
+    	return ok;
     }
     
-	private static void _releaseLock(OpenSPCoop2Properties propertiesReader, Connection connection, TipoLock tipoLock, Logger logCore) {
+    private static boolean _lock(OpenSPCoop2Properties propertiesReader, Connection connection, TipoLock tipoLock, Logger logCore, boolean release) {
+    	return _lock(propertiesReader,connection,tipoLock.getTipo(),logCore, release);
+    }
+	private static boolean _lock(OpenSPCoop2Properties propertiesReader, Connection connection, String idLock, Logger logCore, boolean release) {
+		boolean ok = true; 
 		try{
 			InfoStatistics semaphore_statistics = new InfoStatistics();
 			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(propertiesReader.getTimerConsegnaContenutiApplicativi_lockMaxLife(), 
 					propertiesReader.getTimerConsegnaContenutiApplicativi_lockIdleTime());
 			//config.setSerializableLevel(true); // in modo da non avere il lock esclusivo sulla tabella e far funzionare anche se l'entry non esiste proprio
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType());
-			Semaphore semaphore = new Semaphore(semaphore_statistics, SemaphoreMapping.newInstance(tipoLock.getTipo()), 
+			Semaphore semaphore = new Semaphore(semaphore_statistics, SemaphoreMapping.newInstance(idLock), 
 					config, databaseType, logCore);
-			boolean unlock = semaphore.releaseLock(connection, "Riavvio application server");
-			logCore.debug("Lock di tipo '"+tipoLock.getTipo()+"' "+(unlock?"rilasciato" :"non rilasciato"));
+			if(release) {
+				boolean unlock = semaphore.releaseLock(connection, "Riavvio application server");
+				logCore.debug("Lock di tipo '"+idLock+"' "+(unlock?"rilasciato" :"non rilasciato"));
+			}
+			else {
+				boolean created = semaphore.createEmptyLock(connection, false);
+				logCore.debug("Lock di tipo '"+idLock+"' "+(created?"creato" :"non creato"));
+			}
 		}catch(Exception e){
-			logCore.error("Riscontrato errore durante il rilascio del lock di tipo '"+tipoLock.getTipo()+"': "+e.getMessage(),e);
+			ok = false;
+			logCore.error("Riscontrato errore durante "+(release?"il rilascio":"la creazione")+" del lock di tipo '"+idLock+"': "+e.getMessage(),e);
 		}
+		return ok;
 	}
 }

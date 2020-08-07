@@ -50,6 +50,10 @@ public class Semaphore {
 		this.serializableLevel = config.isSerializableLevel();
 	}
 	
+	public boolean createEmptyLock(Connection conDB, boolean throwExceptionIfExists) throws UtilsException{
+		return this.engine.createEmptyLock(conDB, throwExceptionIfExists);	
+	}
+	
 	
 	public boolean newLock(Connection con,String details) throws UtilsException {
 		return this._engine(con, details, SemaphoreOperationType.NEW);

@@ -154,12 +154,14 @@ public class GestoreMessaggi  {
 	/* Colonne dei Messaggi Servizi Applicativi */
 	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO  = "ID_MESSAGGIO";
 	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO  = "SERVIZIO_APPLICATIVO";
+	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE  = "ORA_REGISTRAZIONE";
 
 	/** Tabella che definisce il contenuto di un messaggio */
 	public static final String DEFINIZIONE_MESSAGGI = "DEFINIZIONE_MESSAGGI";
 	/* Colonne della tabella contenente i bytes dei messaggi */
 	public static final String DEFINIZIONE_MESSAGGI_COLUMN_ID_MESSAGGIO = "ID_MESSAGGIO";
 	public static final String DEFINIZIONE_MESSAGGI_COLUMN_TIPO_MESSAGGIO = "TIPO";
+	public static final String DEFINIZIONE_MESSAGGI_COLUMN_ORA_REGISTRAZIONE  = "ORA_REGISTRAZIONE";
 
 	/** Tipo di consegna verso un servizio applicativo: tramite Connettore*/
 	public static final String CONSEGNA_TRAMITE_CONNETTORE  = "Connettore";
@@ -5703,8 +5705,9 @@ public class GestoreMessaggi  {
 	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public List<String> readMessaggiInutiliIntoInbox(String idModuloCleaner,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
-		return this.readMessaggiInutiliIntoBox(true,idModuloCleaner,limit,logQuery,orderBy);
+	public List<String> readMessaggiInutiliIntoInbox(String idModuloCleaner,int limit,boolean logQuery, boolean orderBy,
+			Date data)throws GestoreMessaggiException{
+		return this.readMessaggiInutiliIntoBox(true,idModuloCleaner,limit,logQuery,orderBy,data);
 	}
 	/**
 	 * Cerca nella tabella MESSAGGI le entry che possiedono come proprietario l'ID del modulo utilizzato per l'eliminazione.
@@ -5716,8 +5719,9 @@ public class GestoreMessaggi  {
 	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public List<String> readMessaggiInutiliIntoOutbox(String idModuloCleaner,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
-		return this.readMessaggiInutiliIntoBox(false,idModuloCleaner,limit,logQuery,orderBy);
+	public List<String> readMessaggiInutiliIntoOutbox(String idModuloCleaner,int limit,boolean logQuery, boolean orderBy,
+			Date data)throws GestoreMessaggiException{
+		return this.readMessaggiInutiliIntoBox(false,idModuloCleaner,limit,logQuery,orderBy,data);
 	}
 
 	/**
@@ -5732,7 +5736,8 @@ public class GestoreMessaggi  {
 	 * 
 	 */
 	private List<String> readMessaggiInutiliIntoBox(boolean searchIntoInbox,
-			String idModuloCleaner,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+			String idModuloCleaner,int limit,boolean logQuery, boolean orderBy,
+			Date data)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;			
@@ -5754,22 +5759,28 @@ public class GestoreMessaggi  {
 				// Query per Ricerca messaggi eliminati (proprietario:EliminatoreMesaggi)
 				if(Configurazione.getSqlQueryObjectType()==null){
 					StringBuilder query = new StringBuilder();
-					query.append("SELECT ID_MESSAGGIO FROM ");
+					query.append("SELECT ").append(GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO).append(" FROM ");
 					query.append(GestoreMessaggi.MESSAGGI);
-					query.append(" WHERE TIPO=? AND PROPRIETARIO=? ");
+					query.append(" WHERE ").append(GestoreMessaggi.MESSAGGI_COLUMN_TIPO_MESSAGGIO).append("=? AND ").append(GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO).append("=? ");
+					if(data!=null) {
+						query.append(" AND ").append(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE).append("<=?");
+					}
 					queryString = query.toString();
 				}else{
 					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
-					sqlQueryObject.addSelectField("ID_MESSAGGIO");
-					sqlQueryObject.addSelectField("ORA_REGISTRAZIONE");
-					sqlQueryObject.addSelectField("PROPRIETARIO");
-					sqlQueryObject.addSelectField("TIPO");
+					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO);
+					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
+					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO);
+					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI_COLUMN_TIPO_MESSAGGIO);
 					sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
-					sqlQueryObject.addWhereCondition("TIPO=?");
-					sqlQueryObject.addWhereCondition("PROPRIETARIO=?");
+					sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+					sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"=?");
+					if(data!=null) {
+						sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE+"<=?");
+					}
 					sqlQueryObject.setANDLogicOperator(true);
 					if(orderBy){
-						sqlQueryObject.addOrderBy("ORA_REGISTRAZIONE");
+						sqlQueryObject.addOrderBy(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
 						sqlQueryObject.setSortType(true);
 					}
 					sqlQueryObject.setLimit(limit);
@@ -5781,15 +5792,20 @@ public class GestoreMessaggi  {
 				pstmtMsgEliminati = connectionDB.prepareStatement(queryString);
 				pstmtMsgEliminati.setString(1,tipo);
 				pstmtMsgEliminati.setString(2,idModuloCleaner);
+				java.sql.Timestamp nowT = null;
+				if(data!=null) {
+					nowT = new java.sql.Timestamp(data.getTime());
+					pstmtMsgEliminati.setTimestamp(3,nowT);
+				}
 
 				long startDateSQLCommand = DateManager.getTimeMillis();
 				if(logQuery)
-					this.log.debug("[QUERY] (Messaggi.eliminatiLogicamente) ["+queryString+"] 1["+tipo+"] 2["+idModuloCleaner+"] ...");
+					this.log.debug("[QUERY] (Messaggi.eliminatiLogicamente) ["+queryString+"] 1["+tipo+"] 2["+idModuloCleaner+"] 3["+nowT+"] ...");
 				rs = pstmtMsgEliminati.executeQuery();
 				long endDateSQLCommand = DateManager.getTimeMillis();
 				long secondSQLCommand = (endDateSQLCommand - startDateSQLCommand) / 1000;
 				if(logQuery)
-					this.log.debug("[QUERY] (Messaggi.eliminatiLogicamente) ["+queryString+"] 1["+tipo+"] 2["+idModuloCleaner+"] effettuata in "+secondSQLCommand+" secondi");
+					this.log.debug("[QUERY] (Messaggi.eliminatiLogicamente) ["+queryString+"] 1["+tipo+"] 2["+idModuloCleaner+"] 3["+nowT+"] effettuata in "+secondSQLCommand+" secondi");
 
 				int countLimit = 0;
 				while(rs.next()){
@@ -5838,8 +5854,8 @@ public class GestoreMessaggi  {
 	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public List<String> readMessaggiScadutiIntoInbox(long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
-		return this.readMessaggiScadutiIntoBox(true,scadenzaMsg,limit,logQuery,orderBy);
+	public List<String> readMessaggiScadutiIntoInbox(long scadenzaMsg,int limit,boolean logQuery, boolean orderBy, Date data)throws GestoreMessaggiException{
+		return this.readMessaggiScadutiIntoBox(true,scadenzaMsg,limit,logQuery,orderBy,data);
 	}
 	/**
 	 * Cerca nella tabella MESSAGGI i messaggi che sono nelle cartelle da un intervallo di tempo definito da: <var>timeout<var>
@@ -5848,8 +5864,8 @@ public class GestoreMessaggi  {
 	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public List<String> readMessaggiScadutiIntoOutbox(long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
-		return this.readMessaggiScadutiIntoBox(false,scadenzaMsg,limit,logQuery,orderBy);
+	public List<String> readMessaggiScadutiIntoOutbox(long scadenzaMsg,int limit,boolean logQuery, boolean orderBy, Date data)throws GestoreMessaggiException{
+		return this.readMessaggiScadutiIntoBox(false,scadenzaMsg,limit,logQuery,orderBy,data);
 	}
 
 	/**
@@ -5860,7 +5876,7 @@ public class GestoreMessaggi  {
 	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	private List<String> readMessaggiScadutiIntoBox(boolean searchIntoInbox,long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+	private List<String> readMessaggiScadutiIntoBox(boolean searchIntoInbox,long scadenzaMsg,int limit,boolean logQuery, boolean orderBy, Date data)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
@@ -5889,21 +5905,27 @@ public class GestoreMessaggi  {
 				// Query per Ricerca messaggi eliminati (proprietario:EliminatoreMesaggi)
 				if(Configurazione.getSqlQueryObjectType()==null){
 					StringBuilder query = new StringBuilder();
-					query.append("SELECT ID_MESSAGGIO FROM ");
+					query.append("SELECT ").append(GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO).append(" FROM ");
 					query.append(GestoreMessaggi.MESSAGGI);
-					query.append(" WHERE ? > ORA_REGISTRAZIONE AND TIPO=?");
+					query.append(" WHERE ? > ").append(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE).append(" AND ").append(GestoreMessaggi.MESSAGGI_COLUMN_TIPO_MESSAGGIO).append("=?");
+					if(data!=null) {
+						query.append(" AND ").append(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE).append("<=?");
+					}
 					queryString = query.toString();
 				}else{
 					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
-					sqlQueryObject.addSelectField("ID_MESSAGGIO");
-					sqlQueryObject.addSelectField("ORA_REGISTRAZIONE");
-					sqlQueryObject.addSelectField("TIPO");
+					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO);
+					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
+					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI_COLUMN_TIPO_MESSAGGIO);
 					sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
-					sqlQueryObject.addWhereCondition("? > ORA_REGISTRAZIONE");
-					sqlQueryObject.addWhereCondition("TIPO=?");
+					sqlQueryObject.addWhereCondition("? > "+GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
+					sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?");
+					if(data!=null) {
+						sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE+"<=?");
+					}
 					sqlQueryObject.setANDLogicOperator(true);
 					if(orderBy){
-						sqlQueryObject.addOrderBy("ORA_REGISTRAZIONE");
+						sqlQueryObject.addOrderBy(GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE);
 						sqlQueryObject.setSortType(true);
 					}
 					sqlQueryObject.setLimit(limit);
@@ -5914,15 +5936,20 @@ public class GestoreMessaggi  {
 				pstmtMsgScaduti = connectionDB.prepareStatement(queryString);
 				pstmtMsgScaduti.setTimestamp(1,scandenzaT);
 				pstmtMsgScaduti.setString(2,tipo);
+				java.sql.Timestamp nowT = null;
+				if(data!=null) {
+					nowT = new java.sql.Timestamp(data.getTime());
+					pstmtMsgScaduti.setTimestamp(3,nowT);
+				}
 
 				long startDateSQLCommand = DateManager.getTimeMillis();
 				if(logQuery)
-					this.log.debug("[QUERY] (Messaggi.scaduti) ["+queryString+"] 1["+scandenzaT+"] 2["+tipo+"]...");
+					this.log.debug("[QUERY] (Messaggi.scaduti) ["+queryString+"] 1["+scandenzaT+"] 2["+tipo+"] 3["+nowT+"]...");
 				rs = pstmtMsgScaduti.executeQuery();
 				long endDateSQLCommand = DateManager.getTimeMillis();
 				long secondSQLCommand = (endDateSQLCommand - startDateSQLCommand) / 1000;
 				if(logQuery)
-					this.log.debug("[QUERY] (Messaggi.scaduti) ["+queryString+"] 1["+scandenzaT+"] 2["+tipo+"] effettuata in "+secondSQLCommand+" secondi");
+					this.log.debug("[QUERY] (Messaggi.scaduti) ["+queryString+"] 1["+scandenzaT+"] 2["+tipo+"] 3["+nowT+"] effettuata in "+secondSQLCommand+" secondi");
 
 				int countLimit = 0;
 				while(rs.next()){
@@ -6711,6 +6738,8 @@ public class GestoreMessaggi  {
 	}
 
 	/*
+	 * !!! NOTA IL PROBLEMA DESCRITTO DI SEGUITO E' STATO RISOLTO UTILIZZANDO UN ALTRA SOLUZIONE descritta nel metodo deleteMessageByOraRegistrazione !!
+	 * 
 	 * Fix problem:
 	 * I servizi RicezioneBuste e RicezioneContenutiApplicativi ed i Moduli InoltroBuste e InoltroRisposte, quando ricevono un messaggio controllano 
 	 * se tale messaggio risulta gia' presente nella base dati.
@@ -6754,9 +6783,13 @@ public class GestoreMessaggi  {
 	/**
 	 * Elimina il messaggio gestito da OpenSPCoop. 
 	 *
-	 * 
+	 * Deprecated: using deleteMessageByOraRegistrazione
 	 */
+	@Deprecated
 	public void deleteMessageWithLock(String causa, long attesaAttivaLock, int checkIntervalLock) throws GestoreMessaggiException{
+		_deleteMessageWithLock(causa, attesaAttivaLock, checkIntervalLock);
+	}
+	public void _deleteMessageWithLock(String causa, long attesaAttivaLock, int checkIntervalLock) throws GestoreMessaggiException{
 		Connection connectionDB = null;
 		if( (this.openspcoopstate instanceof OpenSPCoopStateful) || (this.oneWayVersione11)) {
 			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
@@ -6767,7 +6800,7 @@ public class GestoreMessaggi  {
 		Semaphore semaphoreDB = null;
 		TimerLock timerLock = null;
 		try {
-			timerLock = new TimerLock(TipoLock.GESTIONE_REPOSITORY_MESSAGGI);
+			timerLock = new TimerLock(TipoLock._getLockGestioneRepositoryMessaggi());
 		}catch(Exception e){
 			throw new GestoreMessaggiException(e.getMessage(),e);
 		}
@@ -6786,7 +6819,7 @@ public class GestoreMessaggi  {
 				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
 
-			deleteMessage();
+			deleteMessage(null);
 
 		}finally{
 			try{
@@ -6795,10 +6828,69 @@ public class GestoreMessaggi  {
 			}catch(Exception e){}
 		}
 	}
+	/**
+	 * Elimina il messaggio gestito da OpenSPCoop. 
+	 *
+	 * Deprecated: using deleteMessageByOraRegistrazione
+	 */
+	@Deprecated
 	public void deleteMessageWithoutLock() throws GestoreMessaggiException{
-		deleteMessage();
+		_deleteMessageWithoutLock();
 	}
-	private void deleteMessage()throws GestoreMessaggiException{
+	public void _deleteMessageWithoutLock() throws GestoreMessaggiException{
+		deleteMessage(null);
+	}
+	
+	/*
+	 * Fix problem:
+	 * I servizi RicezioneBuste e RicezioneContenutiApplicativi ed i Moduli InoltroBuste e InoltroRisposte, quando ricevono un messaggio controllano 
+	 * se tale messaggio risulta gia' presente nella base dati.
+	 * In particolare va fatta attenzione quando viene rilevata la presenza di tale messaggio con proprietario 'GestoreMessaggi' che rappresenta l'eliminazione logica.
+	 * 
+	 * Prima della gestione tramite lock poteva succedere che:
+	 * - t1 il timer GestoreMessaggi raccoglie le liste dei messaggi da eliminare tra cui l'id ID_A
+	 * - t2 il servizio es. RicezioneBuste rileva che l'id ID_A risulta esistente nella base dati con con proprietario 'GestoreMessaggi' e forza l'eliminazione fisica.
+	 * - t3 il servizio es. RicezioneBuste continua poi il processamento registrando nuovamente il messaggio con proprietario il modulo successivo, ad es. Sbustamento.
+	 * - t4 il servizio es. RicezioneBuste finisce correttamente l'elaborazione del messaggio, magari con presa in carico, avendolo consegnato alla coda ConsegnaContenutiApplicativi.
+	 * - t5 il timer GestoreMessaggi al tempo t5 processa effettivamente il messaggio con tale id ID_A e lo elimina. Ma questa eliminazione e' ERRATA poiche il proprietario e' cambiato,
+	 *      Tale id era pero' stato identificato al tempo t1.
+	 * - t6 Il Modulo ConsegnaContenutiApplicativi viene attivato dal MDB, ma non trovando info su tale ID_A termina subito e quindi non effettua la consegna.
+	 * 
+	 * Con la gestione tramite data il bug viene superato.
+	 * 
+	 * Il Timer GestoreMessaggi quando avvia l'esecuzione mantiene la DATA_CHECK e acquisisce i messaggi da eliminare la cui ora di registrazione è inferiore alla DATA_CHECK.
+	 * Inoltre ogni delete di un messaggio avviene con le istruzioni su ogni tabella che verificano che l'ora di registrazione sia inferiore a DATA_CHECK.
+	 * Il Servizio puntuale, es. RicezioneBuste, quando rileva un msg con proprietario 'GestoreMessaggi' (eliminato logicamente) deve effettuare una eliminazione fisica forzata per poter proseguire con l'elaborazione.
+	 * In questa maniera:
+	 * - se il messaggio rientra nella lista presa prima dal Timer, questo lo elimina effettivamente. 
+	 *   Quando poi la "cpu" torna al servizio puntuale, l'eliminazione non apportera' modifiche effettive sulla basedati (gia eliminato dal timer).
+	 *   Pero' poi quando il servizio puntuale ne registra una nuova copia, questo non subira' cancellazioni poiche' le eliminazioni del timer verificano che l'ora di registrazione sia inferiore a DATA_CHECK,
+	 *   e invece la nuova copia avrà una ora di registrazione successiva.
+	 * - se il lock viene preso prima dal servizio puntuale,  questo lo elimina effettivamente e poi ne creera' eventualmente una nuova versione.
+	 *   Quando il Timer si attiva, tale messaggio non viene rilevato o perche' non esiste proprio sulla base dati o perche' possiede un proprietario diverso da GestoreMessaggi.
+	 *
+	 * La gestione viene ampliata anche per quanto concerne il repository delle buste.
+	 * Il Timer di GestoreRepositoryBuste lo stesso mantiene una sua DATA_CHECK prima di esaminare se ci sono buste da eliminare.
+	 * Inoltre ogni delete di una busta avviene con le istruzioni su ogni tabella che verificano che la data di registrazione sia inferiore a DATA_CHECK.
+	 * Rimane aperta la possibilita' di avere una inconsistenza nei punti (RicezioneBuste,RicezioneContenutiApplicativi) 
+	 * in cui deve essere registrato il repository delle buste poiche' viene effettuato il seguente codice:
+	 * if(busta.exists)
+	 *     busta.update
+	 * else
+	 *     busta.create
+	 * Quindi potrebbe succedere in un caso limite che quando si appresta ad effettuare l'update il timer elimina la busta e il mittente ottiene un errore.
+	 * Per risolvere questo problema andrebbe utilizzata la soluzione con lock deprecata e descritta in deleteMessageWithLock anche nel codice sopra riportato, pero' questo comporta un blocco su tutto quel punto.
+	 * Comunque anche se avviene questo caso limite, non si ha inconsistenze del database ma solo un errore ritornato al mittente. 
+	 *  
+	 **/
+	public void deleteMessageByOraRegistrazione(Date data) throws GestoreMessaggiException{
+		deleteMessage(data);
+	}
+	public void deleteMessageByNow() throws GestoreMessaggiException{
+		deleteMessage(DateManager.getDate());
+	}
+	
+	private void deleteMessage(Date data)throws GestoreMessaggiException{
 		if( (this.openspcoopstate instanceof OpenSPCoopStateful) || (this.oneWayVersione11)) {
 			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
@@ -6808,28 +6900,43 @@ public class GestoreMessaggi  {
 			try{
 
 				//this.log.debug("DELETE  ID_MESSAGGIO='"+this.idBusta+"' AND TIPO='"+this.tipo+"'");
-
+				java.sql.Timestamp nowT = null;
+				if(data!=null) {
+					nowT = new java.sql.Timestamp(data.getTime());
+				}
 
 				// Prima prova ad eliminare eventuali SIL rimasti appesi al messaggio, se il messaggio e' di tipo INBOX
 				if(Costanti.INBOX.equals(this.tipo)){
-					String query = "DELETE FROM "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" WHERE ID_MESSAGGIO=?";
+					String query = "DELETE FROM "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" WHERE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO+"=?";
+					if(data!=null) {
+						query = query + " AND "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE+"<=?";
+					}
 					//log.debug("Query: "+query);
 					pstmtDeleteSIL= connectionDB.prepareStatement(query);
 					pstmtDeleteSIL.setString(1,this.idBusta);
+					if(data!=null) {
+						pstmtDeleteSIL.setTimestamp(2, nowT);
+					}
 					pstmtDeleteSIL.execute();
 					pstmtDeleteSIL.close();
 				}
 
 				// Prova poi ad eliminare il messaggio su FileSystem/DB
 				SavedMessage msgDelete = new SavedMessage(this.idBusta, this.openspcoopstate ,this.tipo,this.workDir,GestoreMessaggi.adapter,this.log); 
-				msgDelete.delete(this.isRichiesta,this.oneWayVersione11);
+				msgDelete.delete(this.isRichiesta,this.oneWayVersione11, nowT);
 
 				// Elimino il messaggio
-				String query = "DELETE FROM "+GestoreMessaggi.MESSAGGI+" WHERE ID_MESSAGGIO=? AND TIPO=?";
+				String query = "DELETE FROM "+GestoreMessaggi.MESSAGGI+" WHERE "+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"=? AND "+GestoreMessaggi.MESSAGGI_COLUMN_TIPO_MESSAGGIO+"=?";
+				if(data!=null) {
+					query = query + " AND "+GestoreMessaggi.MESSAGGI_COLUMN_ORA_REGISTRAZIONE+"<=?";
+				}
 				//log.debug("Query: "+query);
 				pstmtDeleteMSG= connectionDB.prepareStatement(query);
 				pstmtDeleteMSG.setString(1,this.idBusta);
 				pstmtDeleteMSG.setString(2,this.tipo);
+				if(data!=null) {
+					pstmtDeleteMSG.setTimestamp(3, nowT);
+				}
 				pstmtDeleteMSG.execute();
 				pstmtDeleteMSG.close();
 
@@ -7282,7 +7389,7 @@ public class GestoreMessaggi  {
 		}
 		else {
 		
-			if(TipoLock.GESTIONE_REPOSITORY_MESSAGGI.equals(timerLock.getTipoLock())) {
+			if(TipoLock._getLockGestioneRepositoryMessaggi().equals(timerLock.getTipoLock())) {
 			
 				synchronized (GestoreMessaggi.LOCK) {
 		
@@ -7403,7 +7510,7 @@ public class GestoreMessaggi  {
 		}
 		else {
 		
-			if(TipoLock.GESTIONE_REPOSITORY_MESSAGGI.equals(timerLock.getTipoLock())) {
+			if(TipoLock._getLockGestioneRepositoryMessaggi().equals(timerLock.getTipoLock())) {
 			
 				// Esiste solo un thread attivo, grazie al semaforo
 				// metto il synchronized per garantire il log consistente sopra

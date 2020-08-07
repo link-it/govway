@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.timers;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -79,7 +80,12 @@ public class TimerGestoreRepositoryBusteLib {
 		this.orderByQuery = orderByQuery;
 
 		// deve essere utilizzato lo stesso lock per GestoreMessaggi, ConsegnaContenuti, GestoreBuste per risolvere problema di eliminazione descritto in GestoreMessaggi metodo deleteMessageWithLock 
-		this.timerLock = new TimerLock(TipoLock.GESTIONE_REPOSITORY_MESSAGGI); 
+		if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+			this.timerLock = new TimerLock(TipoLock._getLockGestioneRepositoryMessaggi());
+		}
+		else {
+			this.timerLock = new TimerLock(TipoLock.GESTIONE_PULIZIA_REPOSITORY_BUSTE);
+		}
 
 		if(this.propertiesReader.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
@@ -149,6 +155,13 @@ public class TimerGestoreRepositoryBusteLib {
 
 				trovatiMessaggi = false;
 
+				
+				Date now = null;
+				if(!this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+					now = DateManager.getDate(); // vedi spiegazione nel metodo deleteMessageByOraRegistrazione di GestoreMessaggi
+				}
+				
+				
 				// Eliminazione Messaggi from INBOX
 				String causaMessaggiINBOX = "Eliminazione buste (INBOX) marcate logicamente da eliminare";
 				List<String> idMsgINBOX = null;
@@ -161,7 +174,7 @@ public class TimerGestoreRepositoryBusteLib {
 
 					idMsgINBOX = repositoryBuste.getBusteDaEliminareFromInBox(this.limit,this.logQuery,
 							this.propertiesReader.isForceIndex(),this.propertiesReader.isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione(),
-							this.orderByQuery);
+							this.orderByQuery, now);
 					int gestiti = 0;
 					if(idMsgINBOX.size()>0){
 						if(this.logQuery)
@@ -185,7 +198,7 @@ public class TimerGestoreRepositoryBusteLib {
 									break;
 								}
 
-								repositoryBuste.eliminaBustaFromInBox(idMsgDaEliminare);
+								repositoryBuste.eliminaBustaFromInBox(idMsgDaEliminare,now);
 
 								this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
 								if(this.logQuery)
@@ -226,7 +239,7 @@ public class TimerGestoreRepositoryBusteLib {
 
 					idMsgOUTBOX = repositoryBuste.getBusteDaEliminareFromOutBox(this.limit,this.logQuery,
 							this.propertiesReader.isForceIndex(),this.propertiesReader.isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione(),
-							this.orderByQuery);
+							this.orderByQuery,now);
 					int gestiti = 0;
 					if(idMsgOUTBOX.size()>0){
 						if(this.logQuery)
@@ -250,7 +263,7 @@ public class TimerGestoreRepositoryBusteLib {
 									break;
 								}
 
-								repositoryBuste.eliminaBustaFromOutBox(idMsgDaEliminare);
+								repositoryBuste.eliminaBustaFromOutBox(idMsgDaEliminare,now);
 
 								this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
 								if(this.logQuery)

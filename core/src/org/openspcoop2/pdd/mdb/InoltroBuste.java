@@ -4080,8 +4080,13 @@ public class InoltroBuste extends GenericLib{
 						if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
 							msgDiag.logPersonalizzato("ricezioneSoapMessage.msgGiaPresente");
 							String msg = msgDiag.getMessaggio_replaceKeywords("ricezioneSoapMessage.msgGiaPresente");
-							msgResponse.deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
-									this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+							if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+								msgResponse._deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
+										this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+							}
+							else {
+								msgResponse.deleteMessageByNow();
+							}
 						}else{
 							throw new Exception("Altra copia della Busta ricevuta come risposta con id["+idMessageResponse+"] in elaborazione dal modulo "+proprietarioMessaggio);
 						}

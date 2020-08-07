@@ -1,3 +1,11 @@
+2020-08-07  Andrea Poli <apoli@link.it>
+
+	Modificata colonna 'applicative_id' in OP2_SEMAPHORE per assicurare l'unicità del lock.
+
+	ALTER TABLE OP2_SEMAPHORE ALTER COLUMN applicative_id SET NOT NULL;
+	ALTER TABLE OP2_SEMAPHORE ADD CONSTRAINT uniq_semaphore_1 UNIQUE (applicative_id);
+	CREATE UNIQUE INDEX idx_semaphore_1 ON OP2_SEMAPHORE (applicative_id);
+
 2020-08-03  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonne nel repository dei messaggi per gestire priorita, codice e ottimizzare le ricerche.

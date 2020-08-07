@@ -8,9 +8,11 @@ CREATE TABLE OP2_SEMAPHORE
 	creation_time TIMESTAMP,
 	update_time TIMESTAMP,
 	details CLOB,
-	applicative_id VARCHAR2(255),
+	applicative_id VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_semaphore_1 UNIQUE (applicative_id),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_OP2_SEMAPHORE PRIMARY KEY (id)
 );

@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/mysql/runtimePdD/2020-08-07-patch.sql

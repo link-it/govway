@@ -1025,11 +1025,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			
+			/* -------------- Creazione lock entry non esistenti -------------------- */
+			if(TimerUtils.createEmptyLockTimers(propertiesReader, ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), true)==false) {
+				msgDiag.logStartupError("Inizializzazione lock per i timer fallita","Inizializzazione Lock");
+				return;
+			}
 			
 			/* -------------- Rilascio lock -------------------- */
 			// Il rilascio serve a ripulire eventuali lock presi e non rilasciati durante lo shutdown, poiche' la connessione non era piu' disponibile o vi e' stato un kill
 			TimerUtils.relaseLockTimers(propertiesReader, ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), true);
+			
 			
 			
 			

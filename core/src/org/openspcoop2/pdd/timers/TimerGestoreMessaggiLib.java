@@ -111,8 +111,13 @@ public class TimerGestoreMessaggiLib  {
 		this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata =
 				filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata;
 
-		// deve essere utilizzato lo stesso lock per GestoreMessaggi, ConsegnaContenuti, GestoreBuste per risolvere problema di eliminazione descritto in GestoreMessaggi metodo deleteMessageWithLock 
-		this.timerLock = new TimerLock(TipoLock.GESTIONE_REPOSITORY_MESSAGGI); 
+		// deve essere utilizzato lo stesso lock per GestoreMessaggi, ConsegnaContenuti, GestoreBuste per risolvere problema di eliminazione descritto in GestoreMessaggi metodo deleteMessageWithLock
+		if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+			this.timerLock = new TimerLock(TipoLock._getLockGestioneRepositoryMessaggi());
+		}
+		else {
+			this.timerLock = new TimerLock(TipoLock.GESTIONE_PULIZIA_REPOSITORY_MESSAGGI);
+		}
 
 		this.timerLockCorrelazioneApplicativa = new TimerLock(TipoLock.GESTIONE_CORRELAZIONE_APPLICATIVA); 
 
@@ -201,6 +206,10 @@ public class TimerGestoreMessaggiLib  {
 				trovatiMessaggi = false;
 
 
+				Date now = null;
+				if(!this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+					now = DateManager.getDate(); // vedi spiegazione nel metodo deleteMessageByOraRegistrazione di GestoreMessaggi
+				}
 
 
 				/* --- Messaggi da eliminare (non scaduti) --- */ 
@@ -219,7 +228,7 @@ public class TimerGestoreMessaggiLib  {
 								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
 								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
-						idMsgInutiliINBOX = gestoreMsgSearch.readMessaggiInutiliIntoInbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery);
+						idMsgInutiliINBOX = gestoreMsgSearch.readMessaggiInutiliIntoInbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery,now);
 						int gestiti = 0;
 						if(idMsgInutiliINBOX.size()>0){
 							if(this.logQuery)
@@ -247,7 +256,12 @@ public class TimerGestoreMessaggiLib  {
 									// eliminazione messaggio
 									gestoreMsg = new GestoreMessaggi(openspcoopstate, true
 											,idMsgDaEliminare,Costanti.INBOX,this.msgDiag,null);
-									gestoreMsg.deleteMessageWithoutLock();
+									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+										gestoreMsg._deleteMessageWithoutLock();
+									}
+									else {
+										gestoreMsg.deleteMessageByOraRegistrazione(now);
+									}
 	
 									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
 									if(this.logQuery)
@@ -285,7 +299,7 @@ public class TimerGestoreMessaggiLib  {
 								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
 								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
-						idMsgInutiliOUTBOX = gestoreMsgSearch.readMessaggiInutiliIntoOutbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery);
+						idMsgInutiliOUTBOX = gestoreMsgSearch.readMessaggiInutiliIntoOutbox(TimerGestoreMessaggi.ID_MODULO,this.limit,this.logQuery,this.orderByQuery,now);
 						int gestiti = 0;
 						if(idMsgInutiliOUTBOX.size()>0){
 							if(this.logQuery)
@@ -312,7 +326,12 @@ public class TimerGestoreMessaggiLib  {
 	
 									// eliminazione messaggio
 									gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.OUTBOX,this.msgDiag,null);
-									gestoreMsg.deleteMessageWithoutLock();
+									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+										gestoreMsg._deleteMessageWithoutLock();
+									}
+									else {
+										gestoreMsg.deleteMessageByOraRegistrazione(now);
+									}
 	
 									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
 									if(this.logQuery)
@@ -369,7 +388,7 @@ public class TimerGestoreMessaggiLib  {
 								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
 								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
-						idMsgScadutiINBOX = gestoreMsgSearch.readMessaggiScadutiIntoInbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery);
+						idMsgScadutiINBOX = gestoreMsgSearch.readMessaggiScadutiIntoInbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery,now);
 						int gestiti = 0;
 						if(idMsgScadutiINBOX.size()>0){
 							if(this.logQuery)
@@ -457,7 +476,12 @@ public class TimerGestoreMessaggiLib  {
 									// Eliminazione effettiva
 									((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
 									//	eliminazione messaggio
-									gestoreMsg.deleteMessageWithoutLock();
+									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+										gestoreMsg._deleteMessageWithoutLock();
+									}
+									else {
+										gestoreMsg.deleteMessageByOraRegistrazione(now);
+									}
 	
 									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
 									if(this.logQuery)
@@ -497,7 +521,7 @@ public class TimerGestoreMessaggiLib  {
 								this.propertiesReader.getTimerGestoreMessaggi_getLockAttesaAttiva(), 
 								this.propertiesReader.getTimerGestoreMessaggi_getLockCheckInterval());
 	
-						idMsgScadutiOUTBOX = gestoreMsgSearch.readMessaggiScadutiIntoOutbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery);
+						idMsgScadutiOUTBOX = gestoreMsgSearch.readMessaggiScadutiIntoOutbox(this.scadenzaMessaggio,this.limit,this.logQuery,this.orderByQuery, now);
 						int gestiti = 0;
 						if(idMsgScadutiOUTBOX.size()>0){
 							if(this.logQuery)
@@ -559,7 +583,12 @@ public class TimerGestoreMessaggiLib  {
 									}
 									((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
 									//	eliminazione messaggio
-									gestoreMsg.deleteMessageWithoutLock();
+									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+										gestoreMsg._deleteMessageWithoutLock();
+									}
+									else {
+										gestoreMsg.deleteMessageByOraRegistrazione(now);
+									}
 	
 									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
 									if(this.logQuery)
@@ -762,7 +791,12 @@ public class TimerGestoreMessaggiLib  {
 									}
 	
 									//	eliminazione messaggio
-									gestoreMsg.deleteMessageWithoutLock();
+									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+										gestoreMsg._deleteMessageWithoutLock();
+									}
+									else {
+										gestoreMsg.deleteMessageByOraRegistrazione(now);
+									}
 	
 									this.msgDiag.logPersonalizzato("eliminazioneMessaggio");
 									if(this.logQuery)

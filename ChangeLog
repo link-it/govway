@@ -1,3 +1,8 @@
+2020-08-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Per le installazioni in cluster, sono stati rivisti l'utilizzo dei lock per quanto concerne i timer adibiti alla pulizia del repository messaggi.
+
 2020-08-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]

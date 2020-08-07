@@ -27,6 +27,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDServizio;
@@ -3777,7 +3778,7 @@ public class ProfiloDiCollaborazione {
 	 * @param tipoBusta INBOX/OUTBOX
 	 * 
 	 */
-	public void asincrono_eliminaRegistrazione(String id,String tipoBusta) throws ProtocolException{
+	public void asincrono_eliminaRegistrazione(String id,String tipoBusta, Date data) throws ProtocolException{
 		StateMessage state = (StateMessage)this.state;
 		Connection connectionDB = state.getConnectionDB();
 		PreparedStatement pstmt = null;
@@ -3786,10 +3787,18 @@ public class ProfiloDiCollaborazione {
 			query.append("DELETE FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");
+			if(data!=null) {
+				query.append(" AND ORA_REGISTRAZIONE<=?");
+			}
 			pstmt = connectionDB.prepareStatement(query.toString());
 			pstmt.setString(1,id);
 			pstmt.setString(2,tipoBusta);
-
+			java.sql.Timestamp nowT = null;
+			if(data!=null) {
+				nowT = new java.sql.Timestamp(data.getTime());
+				pstmt.setTimestamp(3,nowT);
+			}
+			
 			//	Add PreparedStatement
 			state.getPreparedStatement().put("DELETE delete_datiAsincroni"+id,pstmt);
 

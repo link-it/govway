@@ -405,6 +405,7 @@ public class OpenSPCoop2Properties {
 			// Msg gia Processati (Warning)
 			this.getMsgGiaInProcessamento_AttesaAttiva();
 			this.getMsgGiaInProcessamento_CheckInterval();
+			this.isMsgGiaInProcessamento_useLock();
 
 			// Threshold per il Repository
 			List<String> tipiThreshold = this.getRepositoryThresholdTypes();
@@ -5974,6 +5975,30 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.msgGiaInProcessamento_CheckInterval;
+	}
+	
+	private static Boolean msgGiaInProcessamento_useLock = null;
+	public boolean isMsgGiaInProcessamento_useLock() {	
+		if(OpenSPCoop2Properties.msgGiaInProcessamento_useLock==null){
+			String pName = "org.openspcoop2.pdd.repository.messaggioInProcessamento.useLock";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.msgGiaInProcessamento_useLock = Boolean.valueOf(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.check' non impostato, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.msgGiaInProcessamento_useLock = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.check' non impostato, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.msgGiaInProcessamento_useLock = false;
+			}  
+		}
+
+		return OpenSPCoop2Properties.msgGiaInProcessamento_useLock;
 	}
 
 	/**

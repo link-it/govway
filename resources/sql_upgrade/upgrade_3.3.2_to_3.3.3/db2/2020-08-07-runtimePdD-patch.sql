@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/runtimePdD/2020-08-07-patch.sql

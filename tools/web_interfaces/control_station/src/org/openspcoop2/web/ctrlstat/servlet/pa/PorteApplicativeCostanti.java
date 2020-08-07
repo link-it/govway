@@ -1065,7 +1065,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_LEFT = "Consegna Immediata";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_RIGHT = "Il 100% dei threads di consegna sono garantiti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_NOTE = "<b>Attenzione</b>: da utilizzare in situazioni di emergenza";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_INFO = "Da utilizzare solamente in situazioni di emergenza, permette di associare l'intero pool di threads dedicato alle consegna delle notifiche per questo connettore bypassando il sistema di priorità.";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_INFO = "Da utilizzare solamente in situazioni di emergenza, permette di associare l'intero pool di threads dedicato alla consegna delle notifiche per questo connettore bypassando il sistema di priorità.";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA = "Regole di Consegna";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA = "Regole di Consegna della Notifica";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP = "Codice Risposta HTTP";
