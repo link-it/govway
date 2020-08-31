@@ -5757,7 +5757,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseCredenziali'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/BaseCredenziali'
       responses: 
         "204":
           $ref: 'govway_rs-api_config-commons.yaml#/components/responses/204UpdatedKey'
@@ -5946,7 +5946,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseCredenziali'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/BaseCredenziali'
       responses: 
         "204":
           $ref: 'govway_rs-api_config-commons.yaml#/components/responses/204UpdatedKey'
