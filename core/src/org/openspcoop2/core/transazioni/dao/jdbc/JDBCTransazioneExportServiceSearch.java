@@ -42,8 +42,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBC_SQLObjectFactory;
 
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager;
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCLimitedServiceManager;
 import org.openspcoop2.core.transazioni.TransazioneExport;
 import org.openspcoop2.core.transazioni.dao.IDBTransazioneExportServiceSearch;
 import org.openspcoop2.core.transazioni.utils.ProjectInfo;

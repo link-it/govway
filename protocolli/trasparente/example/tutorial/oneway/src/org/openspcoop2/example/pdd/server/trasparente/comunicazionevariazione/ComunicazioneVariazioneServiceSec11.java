@@ -26,8 +26,6 @@ import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.Service;
 
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazione;
-
 /**
  * ComunicazioneVariazioneServiceSec11
  * 
@@ -56,7 +54,7 @@ public class ComunicazioneVariazioneServiceSec11 extends Service {
     }
 
     public ComunicazioneVariazioneServiceSec11(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, ComunicazioneVariazioneServiceSec11.SERVICE);
     }
 
     public ComunicazioneVariazioneServiceSec11(URL wsdlLocation, QName serviceName) {
@@ -64,7 +62,7 @@ public class ComunicazioneVariazioneServiceSec11 extends Service {
     }
 
     public ComunicazioneVariazioneServiceSec11() {
-        super(WSDL_LOCATION, SERVICE);
+        super(ComunicazioneVariazioneServiceSec11.WSDL_LOCATION, ComunicazioneVariazioneServiceSec11.SERVICE);
     }
     
     /**
@@ -74,7 +72,7 @@ public class ComunicazioneVariazioneServiceSec11 extends Service {
      */
     @WebEndpoint(name = "ComunicazioneVariazioneSOAP11SecInterfaceEndpoint")
     public ComunicazioneVariazione getComunicazioneVariazioneInterfaceEndpointSec() {
-        return super.getPort(ComunicazioneVariazioneInterfaceEndpointSec, ComunicazioneVariazione.class);
+        return super.getPort(ComunicazioneVariazioneServiceSec11.ComunicazioneVariazioneInterfaceEndpointSec, ComunicazioneVariazione.class);
     }
 
     /**
@@ -86,7 +84,7 @@ public class ComunicazioneVariazioneServiceSec11 extends Service {
      */
     @WebEndpoint(name = "ComunicazioneVariazioneSOAP11SecInterfaceEndpoint")
     public ComunicazioneVariazione getComunicazioneVariazioneInterfaceEndpointSec(WebServiceFeature... features) {
-        return super.getPort(ComunicazioneVariazioneInterfaceEndpointSec, ComunicazioneVariazione.class, features);
+        return super.getPort(ComunicazioneVariazioneServiceSec11.ComunicazioneVariazioneInterfaceEndpointSec, ComunicazioneVariazione.class, features);
     }
 
 }

@@ -45,7 +45,6 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCAttivazionePolicyServiceImpl

@@ -46,7 +46,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCTransazioneServiceImpl

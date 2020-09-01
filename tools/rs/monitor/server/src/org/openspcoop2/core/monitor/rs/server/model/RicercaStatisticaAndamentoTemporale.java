@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
-import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportMultiLine;
-import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatisticaSoggetti;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

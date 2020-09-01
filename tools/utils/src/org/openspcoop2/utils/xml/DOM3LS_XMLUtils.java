@@ -52,7 +52,7 @@ public class DOM3LS_XMLUtils {
 
 	public static AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 	public static synchronized void setXMLUtils(AbstractXMLUtils xmlUtilsParam) {
-		xmlUtils = xmlUtilsParam;
+		DOM3LS_XMLUtils.xmlUtils = xmlUtilsParam;
 	}
 
 	
@@ -98,75 +98,75 @@ public class DOM3LS_XMLUtils {
 	// OUTPUT STREAM
 	
 	public static void serialize(Document document,OutputStream out, boolean prettyPrint){
-		serialize(document, document, out, prettyPrint);
+		DOM3LS_XMLUtils.serialize(document, document, out, prettyPrint);
 	}
 	public static void serialize(Document document,OutputStream out){
-		serialize(document, document, out, false);
+		DOM3LS_XMLUtils.serialize(document, document, out, false);
 	}
 	public static void serialize(Element element,OutputStream out, boolean prettyPrint){
-		serialize(element.getOwnerDocument(), element, out, prettyPrint);
+		DOM3LS_XMLUtils.serialize(element.getOwnerDocument(), element, out, prettyPrint);
 	}
 	public static void serialize(Element element,OutputStream out){
-		serialize(element.getOwnerDocument(), element, out, false);
+		DOM3LS_XMLUtils.serialize(element.getOwnerDocument(), element, out, false);
 	}
 	public static void serialize(Node node,OutputStream out, boolean prettyPrint){
-		serialize(node.getOwnerDocument(), node, out, prettyPrint);
+		DOM3LS_XMLUtils.serialize(node.getOwnerDocument(), node, out, prettyPrint);
 	}
 	public static void serialize(Node node,OutputStream out){
-		serialize(node.getOwnerDocument(), node, out, false);
+		DOM3LS_XMLUtils.serialize(node.getOwnerDocument(), node, out, false);
 	}
 	public static void serialize(Document documentImplementation,Node n, OutputStream out, boolean prettyPrint){
-		_serialize(documentImplementation, n, out, prettyPrint);
+		DOM3LS_XMLUtils._serialize(documentImplementation, n, out, prettyPrint);
 	}
 	
 	
 	// WRITER
 	
 	public static void serialize(Document document,Writer writer, boolean prettyPrint){
-		serialize(document, document, writer, prettyPrint);
+		DOM3LS_XMLUtils.serialize(document, document, writer, prettyPrint);
 	}
 	public static void serialize(Document document,Writer writer){
-		serialize(document, document, writer, false);
+		DOM3LS_XMLUtils.serialize(document, document, writer, false);
 	}
 	public static void serialize(Element element,Writer writer, boolean prettyPrint){
-		serialize(element.getOwnerDocument(), element, writer, prettyPrint);
+		DOM3LS_XMLUtils.serialize(element.getOwnerDocument(), element, writer, prettyPrint);
 	}
 	public static void serialize(Element element,Writer writer){
-		serialize(element.getOwnerDocument(), element, writer, false);
+		DOM3LS_XMLUtils.serialize(element.getOwnerDocument(), element, writer, false);
 	}
 	public static void serialize(Node node,Writer writer, boolean prettyPrint){
-		serialize(node.getOwnerDocument(), node, writer, prettyPrint);
+		DOM3LS_XMLUtils.serialize(node.getOwnerDocument(), node, writer, prettyPrint);
 	}
 	public static void serialize(Node node,Writer writer){
-		serialize(node.getOwnerDocument(), node, writer, false);
+		DOM3LS_XMLUtils.serialize(node.getOwnerDocument(), node, writer, false);
 	}
 	public static void serialize(Document documentImplementation,Node n, Writer writer, boolean prettyPrint){
-		_serialize(documentImplementation, n, writer, prettyPrint);
+		DOM3LS_XMLUtils._serialize(documentImplementation, n, writer, prettyPrint);
 	}
 	
 	
 	// FILE
 	
 	public static void serialize(Document document,File file, boolean prettyPrint) throws FileNotFoundException{
-		serialize(document, document, file, prettyPrint);
+		DOM3LS_XMLUtils.serialize(document, document, file, prettyPrint);
 	}
 	public static void serialize(Document document,File file) throws FileNotFoundException{
-		serialize(document, document, file, false);
+		DOM3LS_XMLUtils.serialize(document, document, file, false);
 	}
 	public static void serialize(Element element,File file, boolean prettyPrint) throws FileNotFoundException{
-		serialize(element.getOwnerDocument(), element, file, prettyPrint);
+		DOM3LS_XMLUtils.serialize(element.getOwnerDocument(), element, file, prettyPrint);
 	}
 	public static void serialize(Element element,File file) throws FileNotFoundException{
-		serialize(element.getOwnerDocument(), element, file, false);
+		DOM3LS_XMLUtils.serialize(element.getOwnerDocument(), element, file, false);
 	}
 	public static void serialize(Node node,File file, boolean prettyPrint) throws FileNotFoundException{
-		serialize(node.getOwnerDocument(), node, file, prettyPrint);
+		DOM3LS_XMLUtils.serialize(node.getOwnerDocument(), node, file, prettyPrint);
 	}
 	public static void serialize(Node node,File file) throws FileNotFoundException{
-		serialize(node.getOwnerDocument(), node, file, false);
+		DOM3LS_XMLUtils.serialize(node.getOwnerDocument(), node, file, false);
 	}
 	public static void serialize(Document documentImplementation,Node n, File file, boolean prettyPrint) throws FileNotFoundException{
-		_serialize(documentImplementation, n, file, prettyPrint);
+		DOM3LS_XMLUtils._serialize(documentImplementation, n, file, prettyPrint);
 	}
 	
 	public static void _serialize(Document documentImplementation,Node n, File file, boolean prettyPrint) throws FileNotFoundException{
@@ -188,25 +188,25 @@ public class DOM3LS_XMLUtils {
 	// TO STRING
 	
 	public static String toString(Document document, boolean prettyPrint){
-		return toString(document, document, prettyPrint);
+		return DOM3LS_XMLUtils.toString(document, document, prettyPrint);
 	}
 	public static String toString(Document document){
-		return toString(document, document, false);
+		return DOM3LS_XMLUtils.toString(document, document, false);
 	}
 	public static String toString(Element element, boolean prettyPrint){
-		return toString(element.getOwnerDocument(), element, prettyPrint);
+		return DOM3LS_XMLUtils.toString(element.getOwnerDocument(), element, prettyPrint);
 	}
 	public static String toString(Element element){
-		return toString(element.getOwnerDocument(), element, false);
+		return DOM3LS_XMLUtils.toString(element.getOwnerDocument(), element, false);
 	}
 	public static String toString(Node node, boolean prettyPrint){
-		return toString(node.getOwnerDocument(), node, prettyPrint);
+		return DOM3LS_XMLUtils.toString(node.getOwnerDocument(), node, prettyPrint);
 	}
 	public static String toString(Node node){
-		return toString(node.getOwnerDocument(), node, false);
+		return DOM3LS_XMLUtils.toString(node.getOwnerDocument(), node, false);
 	}
 	public static String toString(Document documentImplementation,Node n, boolean prettyPrint){
-		return _toString(documentImplementation, n, prettyPrint);
+		return DOM3LS_XMLUtils._toString(documentImplementation, n, prettyPrint);
 	}
 	
 	public static String _toString(Document documentImplementation,Node n, boolean prettyPrint){
@@ -220,25 +220,25 @@ public class DOM3LS_XMLUtils {
 	// TO BYTE ARRAY 
 	
 	public static byte[] toByteArray(Document document, boolean prettyPrint){
-		return toByteArray(document, document, prettyPrint);
+		return DOM3LS_XMLUtils.toByteArray(document, document, prettyPrint);
 	}
 	public static byte[] toByteArray(Document document){
-		return toByteArray(document, document, false);
+		return DOM3LS_XMLUtils.toByteArray(document, document, false);
 	}
 	public static byte[] toByteArray(Element element, boolean prettyPrint){
-		return toByteArray(element.getOwnerDocument(), element, prettyPrint);
+		return DOM3LS_XMLUtils.toByteArray(element.getOwnerDocument(), element, prettyPrint);
 	}
 	public static byte[] toByteArray(Element element){
-		return toByteArray(element.getOwnerDocument(), element, false);
+		return DOM3LS_XMLUtils.toByteArray(element.getOwnerDocument(), element, false);
 	}
 	public static byte[] toByteArray(Node node, boolean prettyPrint){
-		return toByteArray(node.getOwnerDocument(), node, prettyPrint);
+		return DOM3LS_XMLUtils.toByteArray(node.getOwnerDocument(), node, prettyPrint);
 	}
 	public static byte[] toByteArray(Node node){
-		return toByteArray(node.getOwnerDocument(), node, false);
+		return DOM3LS_XMLUtils.toByteArray(node.getOwnerDocument(), node, false);
 	}
 	public static byte[] toByteArray(Document documentImplementation,Node n, boolean prettyPrint){
-		return _toByteArray(documentImplementation, n, prettyPrint);
+		return DOM3LS_XMLUtils._toByteArray(documentImplementation, n, prettyPrint);
 	}
 	
 	public static byte[] _toByteArray(Document documentImplementation,Node n, boolean prettyPrint) {

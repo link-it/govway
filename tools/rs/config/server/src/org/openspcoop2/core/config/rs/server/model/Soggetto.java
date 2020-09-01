@@ -20,8 +20,6 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.List;
-import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
-import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

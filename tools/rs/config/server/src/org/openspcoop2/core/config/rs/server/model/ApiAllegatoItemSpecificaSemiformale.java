@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ApiAllegatoItemGenerico;
-import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -23,7 +23,6 @@ package org.openspcoop2.core.tracciamento.ws.server.config;
 import java.util.Properties;
 
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.core.tracciamento.ws.server.config.ServerProperties;
 
 /**     
  * AuthorizationManager

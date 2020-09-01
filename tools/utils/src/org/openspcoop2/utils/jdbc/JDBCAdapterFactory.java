@@ -59,7 +59,7 @@ public class JDBCAdapterFactory {
 	}
 	
 	public static IJDBCAdapter createJDBCAdapter(String tipoDatabase) throws JDBCAdapterException {
-		return createJDBCAdapter(TipiDatabase.toEnumConstant(tipoDatabase));
+		return JDBCAdapterFactory.createJDBCAdapter(TipiDatabase.toEnumConstant(tipoDatabase));
 	}
 
 }

@@ -70,27 +70,27 @@ public enum SondaStatus implements IEnumeration , Serializable , Cloneable{
 	/** Utilities */
 
 	public static String[] toArray(){
-		String[] res = new String[values().length];
+		String[] res = new String[SondaStatus.values().length];
 		int i=0;
-		for (SondaStatus tmp : values()) {
+		for (SondaStatus tmp : SondaStatus.values()) {
 			res[i]=tmp.getValue();
 			i++;
 		}
 		return res;
 	}	
 	public static String[] toStringArray(){
-		String[] res = new String[values().length];
+		String[] res = new String[SondaStatus.values().length];
 		int i=0;
-		for (SondaStatus tmp : values()) {
+		for (SondaStatus tmp : SondaStatus.values()) {
 			res[i]=tmp.toString();
 			i++;
 		}
 		return res;
 	}
 	public static String[] toEnumNameArray(){
-		String[] res = new String[values().length];
+		String[] res = new String[SondaStatus.values().length];
 		int i=0;
-		for (SondaStatus tmp : values()) {
+		for (SondaStatus tmp : SondaStatus.values()) {
 			res[i]=tmp.name();
 			i++;
 		}
@@ -98,7 +98,7 @@ public enum SondaStatus implements IEnumeration , Serializable , Cloneable{
 	}
 
 	public static boolean contains(String value){
-		return toEnumConstant(value)!=null;
+		return SondaStatus.toEnumConstant(value)!=null;
 	}
 
 	public static SondaStatus toEnumConstant(String value){

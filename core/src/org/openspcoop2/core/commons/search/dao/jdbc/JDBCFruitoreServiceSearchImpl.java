@@ -56,8 +56,6 @@ import org.openspcoop2.core.commons.search.dao.jdbc.converter.FruitoreFieldConve
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.FruitoreFetch;
 import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.Fruitore;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
 

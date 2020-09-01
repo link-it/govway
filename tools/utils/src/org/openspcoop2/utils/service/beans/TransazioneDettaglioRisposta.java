@@ -21,8 +21,6 @@ package org.openspcoop2.utils.service.beans;
 
 import java.util.List;
 import org.joda.time.DateTime;
-import org.openspcoop2.utils.service.beans.TransazioneContenutoMessaggio;
-import org.openspcoop2.utils.service.beans.TransazioneDettaglioMessaggio;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

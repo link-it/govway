@@ -113,19 +113,19 @@ public class XMLDiffClientTest {
 	public static void main(String[] args) throws Exception {
 		
 		File originalFile = File.createTempFile("src", ".xml");
-		FileSystemUtilities.writeFile(originalFile, XML_ORIGINAL.getBytes());
+		FileSystemUtilities.writeFile(originalFile, XMLDiffClientTest.XML_ORIGINAL.getBytes());
 		File compareFile = File.createTempFile("test", ".compare");
-		FileSystemUtilities.writeFile(compareFile, XML_COMPARE.getBytes());
+		FileSystemUtilities.writeFile(compareFile, XMLDiffClientTest.XML_COMPARE.getBytes());
 		
 		XMLDiffOptions xmlDiffOptions = new XMLDiffOptions();
 		XMLDiff xmlDiffEngine = new XMLDiff();
 		
 		xmlDiffEngine.initialize(XMLDiffImplType.XML_UNIT, xmlDiffOptions);
-		test(xmlDiffEngine, originalFile, compareFile, true);
+		XMLDiffClientTest.test(xmlDiffEngine, originalFile, compareFile, true);
 		
 		
 		File compare2File = File.createTempFile("test", ".compare2");
-		FileSystemUtilities.writeFile(compare2File, XML_COMPARE_2.getBytes());
+		FileSystemUtilities.writeFile(compare2File, XMLDiffClientTest.XML_COMPARE_2.getBytes());
 		
 		// NOTA L'implementazione DOM DOCUMENT DIFF non gestisce in maniera ottimale gli '\n' e gli spazi.
 		// Se si usa il file XML_COMPARE che è identico "in xml" al XML_ORIGINAL ma contiene diversi '\n' ...
@@ -134,7 +134,7 @@ public class XMLDiffClientTest {
 		// Conclusioni: USARE XML_UNIT come implementazione
 		
 		xmlDiffEngine.initialize(XMLDiffImplType.ORG_W3C_DOM_DOCUMENT, xmlDiffOptions);
-		test(xmlDiffEngine, originalFile, compare2File, false);
+		XMLDiffClientTest.test(xmlDiffEngine, originalFile, compare2File, false);
 
 	}
 	
@@ -349,7 +349,7 @@ public class XMLDiffClientTest {
 		System.out.println("\n\n\n*************** TESTSUITE CASI ERRATI **********************");
 		
 		File compareErrato = File.createTempFile("compareErrato", ".xml");
-		FileSystemUtilities.writeFile(compareErrato, (XML_COMPARE.replace(" a=", " b=\"3\" a=")).getBytes());
+		FileSystemUtilities.writeFile(compareErrato, (XMLDiffClientTest.XML_COMPARE.replace(" a=", " b=\"3\" a=")).getBytes());
 		
 		result = xmlDiffEngine.diff(originalFile, compareErrato);
 		

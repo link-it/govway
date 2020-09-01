@@ -44,7 +44,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.statistiche.Statistica;
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCStatisticaGiornalieraServiceImpl
@@ -618,7 +617,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.addFromTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI));
 		sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.addWhereCondition("id_stat=?");
-		java.util.List<Object> statisticaGiornaliera_statisticaGiornalieraContenuti_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI, this.getStatisticaGiornalieraFetch(),
+		java.util.List<Object> statisticaGiornaliera_statisticaGiornalieraContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI, this.getStatisticaGiornalieraFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for statisticaGiornaliera_statisticaGiornalieraContenuti

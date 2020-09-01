@@ -49,8 +49,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.monitor.engine.config.base.dao.jdbc.converter.PluginInfoFieldConverter;
 import org.openspcoop2.monitor.engine.config.base.dao.jdbc.fetch.PluginInfoFetch;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.monitor.engine.config.base.PluginInfo;
 
 /**     

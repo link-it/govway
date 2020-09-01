@@ -43,7 +43,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 
 import org.openspcoop2.core.statistiche.StatisticaInfo;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCStatisticaInfoServiceImpl

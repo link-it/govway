@@ -55,66 +55,66 @@ public class StatisticsForceIndexConfig {
 	
 	public StatisticsForceIndexConfig(Properties p) throws Exception{
 		
-		String tmpRepo = p.getProperty(pRepo);
+		String tmpRepo = p.getProperty(StatisticsForceIndexConfig.pRepo);
 		Properties pRepoExternal = this.getExternalRepository(tmpRepo);
 
 		
-		String groupByNumeroDimensione = p.getProperty(pGroupBy_numero_dimensione);
+		String groupByNumeroDimensione = p.getProperty(StatisticsForceIndexConfig.pGroupBy_numero_dimensione);
 		if(groupByNumeroDimensione!=null){
 			groupByNumeroDimensione = groupByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_numero_dimesione = this.getIndexList(pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupBy_numero_dimesione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
 		
-		String groupByLatenza = p.getProperty(pGroupBy_latenza);
+		String groupByLatenza = p.getProperty(StatisticsForceIndexConfig.pGroupBy_latenza);
 		if(groupByLatenza!=null){
 			groupByLatenza = groupByLatenza.trim();
 		}
-		this.transazioniForceIndexGroupBy_latenze = this.getIndexList(pGroupBy_latenza, groupByLatenza, pRepoExternal);
+		this.transazioniForceIndexGroupBy_latenze = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_latenza, groupByLatenza, pRepoExternal);
 		
-		String groupCustomByNumeroDimensione = p.getProperty(pGroupBy_custom_numero_dimensione);
+		String groupCustomByNumeroDimensione = p.getProperty(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione);
 		if(groupCustomByNumeroDimensione!=null){
 			groupCustomByNumeroDimensione = groupCustomByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_numero_dimesione = this.getIndexList(pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupBy_custom_numero_dimesione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
 		
-		String groupCustomByLatenza = p.getProperty(pGroupBy_custom_latenza);
+		String groupCustomByLatenza = p.getProperty(StatisticsForceIndexConfig.pGroupBy_custom_latenza);
 		if(groupCustomByLatenza!=null){
 			groupCustomByLatenza = groupCustomByLatenza.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_latenze = this.getIndexList(pGroupBy_custom_latenza, groupCustomByLatenza, pRepoExternal);
+		this.transazioniForceIndexGroupBy_custom_latenze = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_latenza, groupCustomByLatenza, pRepoExternal);
 		
 	}
 	
 	public StatisticsForceIndexConfig(InstanceProperties p) throws Exception{
 		
-		String tmpRepo = p.getValue_convertEnvProperties(pRepo);
+		String tmpRepo = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pRepo);
 		Properties pRepoExternal = this.getExternalRepository(tmpRepo);
 		
 		
 		
-		String groupByNumeroDimensione = p.getValue_convertEnvProperties(pGroupBy_numero_dimensione);
+		String groupByNumeroDimensione = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_numero_dimensione);
 		if(groupByNumeroDimensione!=null){
 			groupByNumeroDimensione = groupByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_numero_dimesione = this.getIndexList(pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupBy_numero_dimesione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
 		
-		String groupByLatenza = p.getValue_convertEnvProperties(pGroupBy_latenza);
+		String groupByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_latenza);
 		if(groupByLatenza!=null){
 			groupByLatenza = groupByLatenza.trim();
 		}
-		this.transazioniForceIndexGroupBy_latenze = this.getIndexList(pGroupBy_latenza, groupByLatenza, pRepoExternal);
+		this.transazioniForceIndexGroupBy_latenze = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_latenza, groupByLatenza, pRepoExternal);
 		
-		String groupCustomByNumeroDimensione = p.getValue_convertEnvProperties(pGroupBy_custom_numero_dimensione);
+		String groupCustomByNumeroDimensione = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione);
 		if(groupCustomByNumeroDimensione!=null){
 			groupCustomByNumeroDimensione = groupCustomByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_numero_dimesione = this.getIndexList(pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupBy_custom_numero_dimesione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
 		
-		String groupCustomByLatenza = p.getValue_convertEnvProperties(pGroupBy_custom_latenza);
+		String groupCustomByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_custom_latenza);
 		if(groupCustomByLatenza!=null){
 			groupCustomByLatenza = groupCustomByLatenza.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_latenze = this.getIndexList(pGroupBy_custom_latenza, groupCustomByLatenza, pRepoExternal);
+		this.transazioniForceIndexGroupBy_custom_latenze = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_latenza, groupCustomByLatenza, pRepoExternal);
 		
 	}
 	

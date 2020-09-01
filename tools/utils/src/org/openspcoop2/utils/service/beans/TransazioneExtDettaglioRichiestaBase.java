@@ -20,8 +20,6 @@
 package org.openspcoop2.utils.service.beans;
 
 import org.joda.time.DateTime;
-import org.openspcoop2.utils.service.beans.HttpMethodEnum;
-import org.openspcoop2.utils.service.beans.TransazioneExtDettaglioMessaggioBase;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

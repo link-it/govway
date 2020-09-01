@@ -51,7 +51,7 @@ public class NumberConverter implements Converter{
 	private Pattern pattern = null;
 
 	public NumberConverter() {
-		this(NUMBER_PATTERN);
+		this(NumberConverter.NUMBER_PATTERN);
 	}
 	
 	public NumberConverter(String pattern) {
@@ -69,7 +69,7 @@ public class NumberConverter implements Converter{
 		Matcher m = this.pattern.matcher(value);
 
 		if(m.matches())
-			return (Number) Long.parseLong(value);
+			return Long.parseLong(value);
 
 		
 		String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoNonValidoConParametri",value);

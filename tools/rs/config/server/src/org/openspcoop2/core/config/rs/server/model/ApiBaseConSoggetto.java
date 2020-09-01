@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ApiBase;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import javax.validation.constraints.*;
 

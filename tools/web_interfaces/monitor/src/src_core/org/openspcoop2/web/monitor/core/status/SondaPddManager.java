@@ -57,7 +57,7 @@ public class SondaPddManager {
 
 	public static SondaPddManager getInstance(Logger log) throws Exception{
 		if(SondaPddManager.instance == null)
-			init(log);
+			SondaPddManager.init(log);
 
 		return SondaPddManager.instance;
 	}

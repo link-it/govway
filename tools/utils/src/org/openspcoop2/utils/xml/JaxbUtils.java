@@ -47,15 +47,15 @@ public class JaxbUtils {
 
 	private static Hashtable<String, JAXBContext> mapJAXBContext = new Hashtable<String, JAXBContext>();
 	private static synchronized void initJAXBContext(String packageName) throws JAXBException{
-		if(mapJAXBContext.containsKey(packageName)==false){
-			mapJAXBContext.put(packageName, JAXBContext.newInstance(packageName) );
+		if(JaxbUtils.mapJAXBContext.containsKey(packageName)==false){
+			JaxbUtils.mapJAXBContext.put(packageName, JAXBContext.newInstance(packageName) );
 		}
 	}
 	private static JAXBContext getJAXBContext(String packageName) throws JAXBException{
-		if(mapJAXBContext.containsKey(packageName)==false){
-			initJAXBContext(packageName);
+		if(JaxbUtils.mapJAXBContext.containsKey(packageName)==false){
+			JaxbUtils.initJAXBContext(packageName);
 		}
-		return mapJAXBContext.get(packageName);
+		return JaxbUtils.mapJAXBContext.get(packageName);
 	}
 	
 	
@@ -71,7 +71,7 @@ public class JaxbUtils {
 	public static Object xmlToObj(String xmlFileName,Class<?> classType) 
 			throws java.io.FileNotFoundException, JAXBException{  
 
-		JAXBContext jc = getJAXBContext(classType.getPackage().getName());
+		JAXBContext jc = JaxbUtils.getJAXBContext(classType.getPackage().getName());
 		Unmarshaller uctx = jc.createUnmarshaller(); 
 		FileInputStream fis = new FileInputStream(xmlFileName);
 		Object objectRead = null;
@@ -102,7 +102,7 @@ public class JaxbUtils {
 	 */   
 	public static void objToXml(String xmlFileName,Class<?> classType,Object object) 
 			throws java.io.FileNotFoundException, JAXBException{
-		objToXml(xmlFileName,classType,object,false);
+		JaxbUtils.objToXml(xmlFileName,classType,object,false);
 	}
 	public static void objToXml(String xmlFileName,Class<?> classType,Object object,boolean prettyDocument) 
 			throws java.io.FileNotFoundException, JAXBException{
@@ -113,7 +113,7 @@ public class JaxbUtils {
 			file.delete();
 		}  
 
-		JAXBContext jc = getJAXBContext(classType.getPackage().getName());
+		JAXBContext jc = JaxbUtils.getJAXBContext(classType.getPackage().getName());
 		Marshaller uctx = jc.createMarshaller();
 		if(prettyDocument)
 			uctx.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -165,7 +165,7 @@ public class JaxbUtils {
 	public static Object xmlToObj(InputStream i,Class<?> classType) 
 			throws java.io.FileNotFoundException, JAXBException{  
 
-		JAXBContext jc = getJAXBContext(classType.getPackage().getName());
+		JAXBContext jc = JaxbUtils.getJAXBContext(classType.getPackage().getName());
 		Unmarshaller uctx = jc.createUnmarshaller(); 
 		Object objectRead = null;
 		try{
@@ -195,16 +195,16 @@ public class JaxbUtils {
 	 */   
 	public static void objToXml(OutputStream out,Class<?> classType,Object object) 
 			throws java.io.FileNotFoundException, JAXBException{
-		objToXml(out,classType,object,false);
+		JaxbUtils.objToXml(out,classType,object,false);
 	}
 	public static void objToXml(OutputStream out,Class<?> classType,Object object,boolean prettyDocument) 
 			throws java.io.FileNotFoundException, JAXBException{
-		objToXml(out,classType,object,prettyDocument,false);
+		JaxbUtils.objToXml(out,classType,object,prettyDocument,false);
 	}
 	public static void objToXml(OutputStream out,Class<?> classType,Object object,boolean prettyDocument, boolean omitXmlDeclaration) 
 			throws java.io.FileNotFoundException, JAXBException{
 
-		JAXBContext jc = getJAXBContext(classType.getPackage().getName());
+		JAXBContext jc = JaxbUtils.getJAXBContext(classType.getPackage().getName());
 		Marshaller uctx = jc.createMarshaller();
 		if(prettyDocument)
 			uctx.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

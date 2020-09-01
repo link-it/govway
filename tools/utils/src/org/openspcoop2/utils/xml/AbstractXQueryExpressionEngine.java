@@ -70,13 +70,13 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	private static Configuration saxonConfig = null;
 	public static void initXQueryConfiguration() throws XQueryException{
-		_initXQueryConfiguration(null);
+		AbstractXQueryExpressionEngine._initXQueryConfiguration(null);
 	}
 	public static void initXQueryConfiguration(String fileConfig) throws XQueryException{
 		if(fileConfig==null){
 			throw new XQueryException("Configuration file is null");
 		}
-		initXQueryConfiguration(new File(fileConfig));
+		AbstractXQueryExpressionEngine.initXQueryConfiguration(new File(fileConfig));
 	}
 	public static void initXQueryConfiguration(File fileConfig) throws XQueryException{
 		if(fileConfig==null){
@@ -91,7 +91,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		FileInputStream fin = null;
 		try{
 			fin = new FileInputStream(fileConfig);
-			_initXQueryConfiguration(fin);
+			AbstractXQueryExpressionEngine._initXQueryConfiguration(fin);
 		}
 		catch(XQueryException e){
 			throw e;
@@ -109,17 +109,17 @@ public abstract class AbstractXQueryExpressionEngine {
 		if(isConfig==null){
 			throw new XQueryException("Configuration stream is null");
 		}
-		_initXQueryConfiguration(isConfig);
+		AbstractXQueryExpressionEngine._initXQueryConfiguration(isConfig);
 	}
 	private static synchronized void _initXQueryConfiguration(InputStream isConfig) throws XQueryException{
 		try{
 			if(AbstractXQueryExpressionEngine.saxonConfig==null){
 				if(isConfig==null){
-					saxonConfig = Configuration.newConfiguration();
+					AbstractXQueryExpressionEngine.saxonConfig = Configuration.newConfiguration();
 				}
 				else{
 					StreamSource s = new StreamSource(isConfig);
-					saxonConfig = Configuration.readConfiguration(s);
+					AbstractXQueryExpressionEngine.saxonConfig = Configuration.readConfiguration(s);
 				}
 			}
 		}catch(Exception e){
@@ -152,10 +152,10 @@ public abstract class AbstractXQueryExpressionEngine {
 		try{
 			if(AbstractXQueryExpressionEngine.saxonProcessor==null){
 				if(AbstractXQueryExpressionEngine.saxonConfig==null){
-					initXQueryConfiguration();
+					AbstractXQueryExpressionEngine.initXQueryConfiguration();
 				}
 				AbstractXQueryExpressionEngine.saxonProcessor = new Processor(AbstractXQueryExpressionEngine.saxonConfig);
-				AbstractXQueryExpressionEngine.saxonCompiler = saxonProcessor.newXQueryCompiler();
+				AbstractXQueryExpressionEngine.saxonCompiler = AbstractXQueryExpressionEngine.saxonProcessor.newXQueryCompiler();
 			}
 		}catch(Exception e){
 			throw new XQueryException("Inizializzazione XQueryFactory non riuscita",e);
@@ -213,7 +213,7 @@ public abstract class AbstractXQueryExpressionEngine {
 				source = new SAXSource(eis);
 			}
 			else if(xdmNodeParam instanceof String){
-				source = new DOMSource((Document)this.getXMLUtils().newDocument(((String)xdmNodeParam).getBytes()));
+				source = new DOMSource(this.getXMLUtils().newDocument(((String)xdmNodeParam).getBytes()));
 			}
 			else{
 				throw new XQueryException("Type Parameter '"+xdmNodeParam.getClass().getName()+"' not supported");
@@ -368,7 +368,7 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: String
 	public String evaluate(Node source, String xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Node source, String xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -390,7 +390,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Node source, File xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Node source, File xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -412,7 +412,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Node source, InputStream xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Node source, InputStream xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -434,7 +434,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Node source, Reader xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Node source, Reader xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -458,25 +458,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: OutputStream
 	public void evaluate(Node source, String xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, String xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, File xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, File xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, InputStream xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, InputStream xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, Reader xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, Reader xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -484,25 +484,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Writer
 	public void evaluate(Node source, String xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, String xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, File xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, File xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, InputStream xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, InputStream xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, Reader xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, Reader xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -510,25 +510,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: File
 	public void evaluate(Node source, String xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, String xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, File xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, File xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, InputStream xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, InputStream xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, Reader xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, Reader xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -536,25 +536,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Node
 	public void evaluate(Node source, String xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, String xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, File xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, File xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, InputStream xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, InputStream xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Node source, Reader xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Node source, Reader xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -567,7 +567,7 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: String
 	public String evaluate(Document source, String xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Document source, String xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -589,7 +589,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Document source, File xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Document source, File xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -611,7 +611,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Document source, InputStream xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Document source, InputStream xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -633,7 +633,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Document source, Reader xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Document source, Reader xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -657,25 +657,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: OutputStream
 	public void evaluate(Document source, String xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, String xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, File xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, File xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, InputStream xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, InputStream xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, Reader xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, Reader xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -683,25 +683,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Writer
 	public void evaluate(Document source, String xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, String xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, File xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, File xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, InputStream xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, InputStream xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, Reader xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, Reader xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -709,25 +709,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: File
 	public void evaluate(Document source, String xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, String xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, File xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, File xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, InputStream xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, InputStream xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, Reader xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, Reader xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -735,25 +735,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Node
 	public void evaluate(Document source, String xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, String xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, File xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, File xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, InputStream xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, InputStream xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Document source, Reader xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Document source, Reader xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -765,7 +765,7 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: String
 	public String evaluate(InputStream source, String xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(InputStream source, String xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -787,7 +787,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(InputStream source, File xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(InputStream source, File xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -809,7 +809,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(InputStream source, InputStream xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(InputStream source, InputStream xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -831,7 +831,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(InputStream source, Reader xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(InputStream source, Reader xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -855,25 +855,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: OutputStream
 	public void evaluate(InputStream source, String xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, String xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, File xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, File xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, InputStream xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, InputStream xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, Reader xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, Reader xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -881,25 +881,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Writer
 	public void evaluate(InputStream source, String xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, String xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, File xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, File xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, InputStream xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, InputStream xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, Reader xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, Reader xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -907,25 +907,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: File
 	public void evaluate(InputStream source, String xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, String xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, File xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, File xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, InputStream xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, InputStream xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, Reader xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, Reader xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -933,25 +933,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Node
 	public void evaluate(InputStream source, String xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, String xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, File xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, File xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, InputStream xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, InputStream xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(InputStream source, Reader xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(InputStream source, Reader xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -964,7 +964,7 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: String
 	public String evaluate(Reader source, String xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Reader source, String xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -986,7 +986,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Reader source, File xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Reader source, File xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1008,7 +1008,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Reader source, InputStream xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Reader source, InputStream xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1030,7 +1030,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(Reader source, Reader xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(Reader source, Reader xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1054,25 +1054,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: OutputStream
 	public void evaluate(Reader source, String xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, String xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, File xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, File xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, InputStream xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, InputStream xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, Reader xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, Reader xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1080,25 +1080,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Writer
 	public void evaluate(Reader source, String xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, String xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, File xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, File xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, InputStream xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, InputStream xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, Reader xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, Reader xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1106,25 +1106,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: File
 	public void evaluate(Reader source, String xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, String xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, File xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, File xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, InputStream xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, InputStream xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, Reader xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, Reader xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1132,25 +1132,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Node
 	public void evaluate(Reader source, String xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, String xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, File xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, File xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, InputStream xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, InputStream xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(Reader source, Reader xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(Reader source, Reader xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1161,7 +1161,7 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: String
 	public String evaluate(File source, String xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(File source, String xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1183,7 +1183,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(File source, File xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(File source, File xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1205,7 +1205,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(File source, InputStream xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(File source, InputStream xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1227,7 +1227,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(File source, Reader xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(File source, Reader xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1251,25 +1251,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: OutputStream
 	public void evaluate(File source, String xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, String xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, File xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, File xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, InputStream xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, InputStream xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, Reader xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, Reader xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1277,25 +1277,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Writer
 	public void evaluate(File source, String xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, String xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, File xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, File xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, InputStream xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, InputStream xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, Reader xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, Reader xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1303,25 +1303,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: File
 	public void evaluate(File source, String xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, String xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, File xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, File xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, InputStream xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, InputStream xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, Reader xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, Reader xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1329,25 +1329,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Node
 	public void evaluate(File source, String xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, String xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, File xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, File xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, InputStream xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, InputStream xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(File source, Reader xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(File source, Reader xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1359,7 +1359,7 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: String
 	public String evaluate(String source, String xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(String source, String xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1381,7 +1381,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(String source, File xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(String source, File xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1403,7 +1403,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(String source, InputStream xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(String source, InputStream xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1425,7 +1425,7 @@ public abstract class AbstractXQueryExpressionEngine {
 		}
 	}
 	public String evaluate(String source, Reader xquery) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		return this.evaluate(source, xquery, DEFAULT_RESULT_AS_XML);
+		return this.evaluate(source, xquery, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML);
 	}
 	public String evaluate(String source, Reader xquery, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		try{
@@ -1449,25 +1449,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: OutputStream
 	public void evaluate(String source, String xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, String xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, File xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, File xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, InputStream xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, InputStream xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, Reader xquery, OutputStream out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, Reader xquery, OutputStream out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1475,25 +1475,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Writer
 	public void evaluate(String source, String xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, String xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, File xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, File xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, InputStream xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, InputStream xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, Reader xquery, Writer out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, Reader xquery, Writer out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1501,25 +1501,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: File
 	public void evaluate(String source, String xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, String xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, File xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, File xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, InputStream xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, InputStream xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, Reader xquery, File out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, Reader xquery, File out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
@@ -1527,25 +1527,25 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	// Destination: Node
 	public void evaluate(String source, String xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, String xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, File xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, File xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, InputStream xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, InputStream xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));
 	}
 	public void evaluate(String source, Reader xquery, Node out) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
-		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, DEFAULT_RESULT_AS_XML));
+		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, AbstractXQueryExpressionEngine.DEFAULT_RESULT_AS_XML));
 	}
 	public void evaluate(String source, Reader xquery, Node out, boolean resultAsXml) throws XQueryException, XQueryNotValidException, XQueryEvaluateException, XQueryEvaluateNotFoundException{
 		this._evaluate(this._buildXdmNode(source), this._buildEvaluator(xquery), this._buildDestination(out, resultAsXml));

@@ -42,7 +42,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 
 import org.openspcoop2.core.eventi.Evento;
-import org.openspcoop2.core.eventi.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCEventoServiceImpl

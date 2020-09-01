@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltro;
-
 public class RateLimitingPolicyFiltroFruizione extends RateLimitingPolicyFiltro {
 
   @Override

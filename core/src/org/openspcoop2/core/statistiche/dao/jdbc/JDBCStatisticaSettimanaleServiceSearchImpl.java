@@ -482,7 +482,7 @@ public class JDBCStatisticaSettimanaleServiceSearchImpl implements IJDBCServiceS
 		sqlQueryObjectGet_statisticaSettimanaleContenuti.addWhereCondition("id_stat=?");
 
 		// Get statisticaSettimanale_statisticaContenuti
-		java.util.List<Object> statisticaSettimanale_statisticaContenuti_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaSettimanaleContenuti.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI, this.getStatisticaSettimanaleFetch(),
+		java.util.List<Object> statisticaSettimanale_statisticaContenuti_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaSettimanaleContenuti.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI, this.getStatisticaSettimanaleFetch(),
 			new JDBCObject(statisticaSettimanale.getId(),Long.class));
 
 		if(statisticaSettimanale_statisticaContenuti_list != null) {

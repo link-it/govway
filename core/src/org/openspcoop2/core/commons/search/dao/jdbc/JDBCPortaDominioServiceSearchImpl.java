@@ -53,8 +53,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.PortaDominioFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortaDominioFetch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.PortaDominio;
 
 /**     

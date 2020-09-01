@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiSoggetti;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import javax.validation.constraints.*;
 

@@ -53,8 +53,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.SoggettoFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.SoggettoFetch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.Soggetto;
 
 /**     

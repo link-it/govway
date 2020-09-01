@@ -30,7 +30,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.exception.ValidationException;
 import org.openspcoop2.generic_project.expression.IExpression;
 
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazioneGeneraleService;
 import org.openspcoop2.core.controllo_traffico.utils.ProjectInfo;

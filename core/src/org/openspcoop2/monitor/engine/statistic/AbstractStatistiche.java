@@ -137,7 +137,7 @@ public abstract class AbstractStatistiche {
 				throw new ServiceException("ServiceManager ["+org.openspcoop2.core.transazioni.dao.IServiceManager.class.getName()+"] non inizializzato");
 			}
 			
-			this.statisticheSM = (IServiceManager) statisticheSM;
+			this.statisticheSM = statisticheSM;
 			this.statisticaInfoSearchDAO = this.statisticheSM.getStatisticaInfoServiceSearch();
 			this.statisticaInfoDAO = this.statisticheSM.getStatisticaInfoService();
 

@@ -21,7 +21,6 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openspcoop2.core.monitor.rs.server.model.Evento;
 import org.openspcoop2.utils.service.beans.ListaSenzaTotale;
 import javax.validation.constraints.*;
 

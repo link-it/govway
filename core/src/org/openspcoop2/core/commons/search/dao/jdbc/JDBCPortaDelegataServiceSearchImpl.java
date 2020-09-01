@@ -56,8 +56,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.PortaDelegataFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortaDelegataFetch;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.commons.search.PortaDelegataAzione;
@@ -587,7 +585,7 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_portaDelegata_portaDelegataServizioApplicativo.addWhereCondition("id_porta=?");
 
 		// Get portaDelegata_portaDelegataServizioApplicativo
-		java.util.List<Object> portaDelegata_portaDelegataServizioApplicativo_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_portaDelegata_portaDelegataServizioApplicativo.createSQLQuery(), jdbcProperties.isShowSql(), PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO, this.getPortaDelegataFetch(),
+		java.util.List<Object> portaDelegata_portaDelegataServizioApplicativo_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_portaDelegata_portaDelegataServizioApplicativo.createSQLQuery(), jdbcProperties.isShowSql(), PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO, this.getPortaDelegataFetch(),
 			new JDBCObject(portaDelegata.getId(),Long.class));
 
 		if(portaDelegata_portaDelegataServizioApplicativo_list != null) {
@@ -643,7 +641,7 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_portaDelegata_portaDelegataAzione.addWhereCondition("id_porta=?");
 
 		// Get portaDelegata_portaDelegataAzione
-		java.util.List<Object> portaDelegata_portaDelegataAzione_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_portaDelegata_portaDelegataAzione.createSQLQuery(), jdbcProperties.isShowSql(), PortaDelegata.model().PORTA_DELEGATA_AZIONE, this.getPortaDelegataFetch(),
+		java.util.List<Object> portaDelegata_portaDelegataAzione_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_portaDelegata_portaDelegataAzione.createSQLQuery(), jdbcProperties.isShowSql(), PortaDelegata.model().PORTA_DELEGATA_AZIONE, this.getPortaDelegataFetch(),
 			new JDBCObject(portaDelegata.getId(),Long.class));
 
 		if(portaDelegata_portaDelegataAzione_list != null) {

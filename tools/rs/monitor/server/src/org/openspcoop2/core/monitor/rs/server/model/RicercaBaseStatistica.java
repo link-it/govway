@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
-import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

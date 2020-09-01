@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
-import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

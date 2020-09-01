@@ -33,7 +33,6 @@ import org.openspcoop2.generic_project.exception.ValidationException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyService;
 import org.openspcoop2.core.controllo_traffico.utils.ProjectInfo;

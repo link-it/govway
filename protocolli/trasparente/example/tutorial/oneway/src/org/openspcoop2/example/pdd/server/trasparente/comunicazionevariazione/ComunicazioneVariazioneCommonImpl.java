@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione;
 
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazione;
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazione_Type;
-
 /**
  * ComunicazioneVariazioneCommonImpl
  * 

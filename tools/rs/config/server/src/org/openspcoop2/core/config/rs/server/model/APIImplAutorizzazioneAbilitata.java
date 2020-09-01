@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.AllAnyEnum;
-import org.openspcoop2.core.config.rs.server.model.FonteEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoAutorizzazioneEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

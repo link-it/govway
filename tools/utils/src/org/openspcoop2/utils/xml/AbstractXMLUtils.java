@@ -951,7 +951,7 @@ public abstract class AbstractXMLUtils {
 //			}
 			Enumeration<String> decSource = namespace.keys();
 			while (decSource.hasMoreElements()) {
-				String dec = (String) decSource.nextElement();
+				String dec = decSource.nextElement();
 				//System.out.println("TROVATO ["+dec+"]=["+namespace.get(dec)+"]");
 				if(declarationNamespacesDestNode.containsKey(dec)==false){
 					//System.out.println("AGGIUNGO IN SCHEMA");
@@ -971,7 +971,7 @@ public abstract class AbstractXMLUtils {
 		if(namespace!=null && namespace.size()>0){
 			Enumeration<String> decSource = namespace.keys();
 			while (decSource.hasMoreElements()) {
-				String dec = (String) decSource.nextElement();
+				String dec = decSource.nextElement();
 				//System.out.println("RIMUOVO ["+dec+"]=["+namespace.get(dec)+"]");
 				String name = "xmlns:"+dec;
 				if("".equals(dec)){
@@ -1016,11 +1016,11 @@ public abstract class AbstractXMLUtils {
 						Attr attr = (Attr) nAttr;
 						//System.out.println("\t name["+attr.getName()+"] value["+attr.getValue()+"] namespace["+attr.getNamespaceURI()+"] prefix["+attr.getPrefix()+"]");
 						// name[xsi:type] value[ns10:XXXXType] namespace[http://www.w3.org/2001/XMLSchema-instance] prefix[xsi]
-						if(XMLSCHEMA_INSTANCE_NAMESPACE.equals(attr.getNamespaceURI())) {
+						if(AbstractXMLUtils.XMLSCHEMA_INSTANCE_NAMESPACE.equals(attr.getNamespaceURI())) {
 							String prefix = attr.getPrefix();
-							String nameAtteso = prefix+":"+XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE;
+							String nameAtteso = prefix+":"+AbstractXMLUtils.XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE;
 							if(prefix==null || "".equals(prefix)) {
-								nameAtteso = XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE;
+								nameAtteso = AbstractXMLUtils.XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE;
 							}
 							if(nameAtteso.equals(attr.getName())) {
 								if(attr.getValue()!=null && attr.getValue().contains(":")) {

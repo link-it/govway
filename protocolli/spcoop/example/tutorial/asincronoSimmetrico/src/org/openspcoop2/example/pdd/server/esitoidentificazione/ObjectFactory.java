@@ -25,8 +25,6 @@ import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
-import org.openspcoop2.example.pdd.server.esitoidentificazione.PersonaType;
-
 
 /**
  * This object contains factory methods for each 
@@ -73,7 +71,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", name = "risultato")
     public JAXBElement<PersonaType> createRisultato(PersonaType value) {
-        return new JAXBElement<PersonaType>(_Risultato_QNAME, PersonaType.class, null, value);
+        return new JAXBElement<PersonaType>(ObjectFactory._Risultato_QNAME, PersonaType.class, null, value);
     }
 
     /**
@@ -82,7 +80,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", name = "risultatoResponse")
     public JAXBElement<Object> createRisultatoResponse(Object value) {
-        return new JAXBElement<Object>(_RisultatoResponse_QNAME, Object.class, null, value);
+        return new JAXBElement<Object>(ObjectFactory._RisultatoResponse_QNAME, Object.class, null, value);
     }
 
 }

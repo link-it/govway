@@ -20,8 +20,6 @@
 package org.openspcoop2.generic_project.dao.xml;
 
 import org.slf4j.Logger;
-import org.openspcoop2.generic_project.dao.xml.XMLExpression;
-import org.openspcoop2.generic_project.dao.xml.XMLPaginatedExpression;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 

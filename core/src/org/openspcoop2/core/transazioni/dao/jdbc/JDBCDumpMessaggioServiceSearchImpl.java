@@ -54,8 +54,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.transazioni.dao.jdbc.converter.DumpMessaggioFieldConverter;
 import org.openspcoop2.core.transazioni.dao.jdbc.fetch.DumpMessaggioFetch;
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
@@ -638,7 +636,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.addWhereCondition("id_messaggio=?");
 
 		// Get dumpMessaggio_dumpMultipartHeader
-		java.util.List<Object> dumpMessaggio_dumpMultipartHeader_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().MULTIPART_HEADER, this.getDumpMessaggioFetch(),
+		java.util.List<Object> dumpMessaggio_dumpMultipartHeader_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().MULTIPART_HEADER, this.getDumpMessaggioFetch(),
 			new JDBCObject(dumpMessaggio.getId(),Long.class));
 
 		if(dumpMessaggio_dumpMultipartHeader_list != null) {
@@ -668,7 +666,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio_dumpHeaderTrasporto.addWhereCondition("id_messaggio=?");
 
 		// Get dumpMessaggio_dumpHeaderTrasporto
-		java.util.List<Object> dumpMessaggio_dumpHeaderTrasporto_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpHeaderTrasporto.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().HEADER_TRASPORTO, this.getDumpMessaggioFetch(),
+		java.util.List<Object> dumpMessaggio_dumpHeaderTrasporto_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpHeaderTrasporto.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().HEADER_TRASPORTO, this.getDumpMessaggioFetch(),
 			new JDBCObject(dumpMessaggio.getId(),Long.class));
 
 		if(dumpMessaggio_dumpHeaderTrasporto_list != null) {
@@ -701,7 +699,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addWhereCondition("id_messaggio=?");
 
 		// Get dumpMessaggio_dumpAllegato
-		java.util.List<Object> dumpMessaggio_dumpAllegato_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpAllegato.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
+		java.util.List<Object> dumpMessaggio_dumpAllegato_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpAllegato.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
 			new JDBCObject(dumpMessaggio.getId(),Long.class));
 
 		if(dumpMessaggio_dumpAllegato_list != null) {
@@ -721,7 +719,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 				sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.addWhereCondition("id_allegato=?");
 
 				// Get dumpMessaggio_dumpAllegato_dumpHeaderAllegato
-				java.util.List<Object> dumpMessaggio_dumpAllegato_dumpHeaderAllegato_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO.HEADER, this.getDumpMessaggioFetch(),
+				java.util.List<Object> dumpMessaggio_dumpAllegato_dumpHeaderAllegato_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO.HEADER, this.getDumpMessaggioFetch(),
 					new JDBCObject(dumpMessaggio_dumpAllegato.getId(),Long.class));
 
 				if(dumpMessaggio_dumpAllegato_dumpHeaderAllegato_list != null) {
@@ -755,7 +753,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addWhereCondition("id_messaggio=?");
 
 		// Get dumpMessaggio_dumpContenuto
-		java.util.List<Object> dumpMessaggio_dumpContenuto_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpContenuto.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
+		java.util.List<Object> dumpMessaggio_dumpContenuto_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpContenuto.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
 			new JDBCObject(dumpMessaggio.getId(),Long.class));
 
 		if(dumpMessaggio_dumpContenuto_list != null) {

@@ -482,7 +482,7 @@ public class JDBCStatisticaGiornalieraServiceSearchImpl implements IJDBCServiceS
 		sqlQueryObjectGet_statisticaGiornalieraContenuti.addWhereCondition("id_stat=?");
 
 		// Get statisticaGiornaliera_statisticaContenuti
-		java.util.List<Object> statisticaGiornaliera_statisticaContenuti_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaGiornalieraContenuti.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI, this.getStatisticaGiornalieraFetch(),
+		java.util.List<Object> statisticaGiornaliera_statisticaContenuti_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaGiornalieraContenuti.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI, this.getStatisticaGiornalieraFetch(),
 			new JDBCObject(statisticaGiornaliera.getId(),Long.class));
 
 		if(statisticaGiornaliera_statisticaContenuti_list != null) {

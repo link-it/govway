@@ -20,7 +20,6 @@
 package org.openspcoop2.utils.service.beans;
 
 import java.util.List;
-import org.openspcoop2.utils.service.beans.TransazioneContenutoMessaggioHeader;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

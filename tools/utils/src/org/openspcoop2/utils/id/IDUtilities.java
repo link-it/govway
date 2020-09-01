@@ -58,31 +58,31 @@ public class IDUtilities {
 	private static final Hashtable<String, char[]> mapRandom = new Hashtable<String, char[]>();
 	private static synchronized char[] getBufferForRandom(int length){
 		String key = length+"";
-		if(mapRandom.containsKey(key)){
-			return mapRandom.get(key);
+		if(IDUtilities.mapRandom.containsKey(key)){
+			return IDUtilities.mapRandom.get(key);
 		}
 		else{
 			char[] buf = new char[length];
-			mapRandom.put(key, buf);
+			IDUtilities.mapRandom.put(key, buf);
 			return buf;
 		}
 	}
 	public static String generateAlphaNumericRandomString(int length) {
-		char[] buf = getBufferForRandom(length);
+		char[] buf = IDUtilities.getBufferForRandom(length);
 		for (int idx = 0; idx < buf.length; ++idx) 
-			buf[idx] = symbols[random.nextInt(symbols.length)];
+			buf[idx] = IDUtilities.symbols[IDUtilities.random.nextInt(IDUtilities.symbols.length)];
 		return new String(buf);
 	}
 	
 	public static synchronized String generateDateTime(String format, int syncMs) {
-		return generateDateTime(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
+		return IDUtilities.generateDateTime(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
 	}
 	public static synchronized String generateDateTime(DateEngineType type, String format, int syncMs) {
 		Utilities.sleep(syncMs);
 		return DateUtils.getTimeFormatter(type, format).format(DateManager.getDate());
 	}
 	public static synchronized String generateDateTime_ISO_8601_TZ(String format, int syncMs) {
-		return generateDateTime_ISO_8601_TZ(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
+		return IDUtilities.generateDateTime_ISO_8601_TZ(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
 	}
 	public static synchronized String generateDateTime_ISO_8601_TZ(DateEngineType type, String format, int syncMs) {
 		Utilities.sleep(syncMs);

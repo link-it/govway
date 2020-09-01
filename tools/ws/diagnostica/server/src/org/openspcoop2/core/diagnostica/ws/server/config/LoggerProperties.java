@@ -73,7 +73,7 @@ public class LoggerProperties {
 			Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();
 			while (ridefinito.hasMoreElements()) {
 				String key = (String) ridefinito.nextElement();
-				String value = (String) loggerPropertiesRidefinito.get(key);
+				String value = loggerPropertiesRidefinito.get(key);
 				if(loggerProperties.containsKey(key)){
 					//Object o = 
 					loggerProperties.remove(key);

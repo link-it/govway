@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.utils.service.beans;
 
-import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniSoggetto;
-import org.openspcoop2.utils.service.beans.TransazioneInformazioniMittente;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -482,7 +482,7 @@ public class JDBCStatisticaOrariaServiceSearchImpl implements IJDBCServiceSearch
 		sqlQueryObjectGet_statisticaOrariaContenuti.addWhereCondition("id_stat=?");
 
 		// Get statisticaOraria_statisticaContenuti
-		java.util.List<Object> statisticaOraria_statisticaContenuti_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaOrariaContenuti.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, this.getStatisticaOrariaFetch(),
+		java.util.List<Object> statisticaOraria_statisticaContenuti_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaOrariaContenuti.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, this.getStatisticaOrariaFetch(),
 			new JDBCObject(statisticaOraria.getId(),Long.class));
 
 		if(statisticaOraria_statisticaContenuti_list != null) {

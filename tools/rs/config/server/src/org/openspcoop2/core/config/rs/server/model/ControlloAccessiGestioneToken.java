@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ApiImplConfigurazioneStato;
-import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

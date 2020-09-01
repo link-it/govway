@@ -43,7 +43,6 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCConfigurazioneGeneraleServiceImpl

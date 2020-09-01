@@ -60,8 +60,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.monitor.engine.config.transazioni.dao.jdbc.converter.ConfigurazioneTransazioneFieldConverter;
 import org.openspcoop2.monitor.engine.config.transazioni.dao.jdbc.fetch.ConfigurazioneTransazioneFetch;
-import org.openspcoop2.monitor.engine.config.transazioni.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazionePlugin;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
@@ -608,7 +606,7 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 		
 		
 		// Get configurazioneTransazione_configurazioneTransazionePlugin
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazionePlugin_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_configurazioneTransazione_configurazioneTransazionePlugin.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN, this.getConfigurazioneTransazioneFetch(),
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazionePlugin_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_configurazioneTransazione_configurazioneTransazionePlugin.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN, this.getConfigurazioneTransazioneFetch(),
 			new JDBCObject(configurazioneTransazione.getId(),Long.class));
 
 		if(configurazioneTransazione_configurazioneTransazionePlugin_list != null) {
@@ -661,7 +659,7 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 		
 		
 		// Get configurazioneTransazione_configurazioneTransazioneStato
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneStato_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_configurazioneTransazione_configurazioneTransazioneStato.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO, this.getConfigurazioneTransazioneFetch(),
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneStato_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_configurazioneTransazione_configurazioneTransazioneStato.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO, this.getConfigurazioneTransazioneFetch(),
 			new JDBCObject(configurazioneTransazione.getId(),Long.class));
 
 		Hashtable<Long, String> mapIdTransazioneStatoToName = new Hashtable<Long, String>();
@@ -697,7 +695,7 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 				
 		
 		// Get configurazioneTransazione_configurazioneTransazioneRisorsaContenuto
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO, this.getConfigurazioneTransazioneFetch(),
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO, this.getConfigurazioneTransazioneFetch(),
 			new JDBCObject(configurazioneTransazione.getId(),Long.class));
 
 		if(configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_list != null) {

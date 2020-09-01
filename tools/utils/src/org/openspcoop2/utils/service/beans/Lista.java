@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.utils.service.beans;
 
-import org.openspcoop2.utils.service.beans.ListaSenzaTotale;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

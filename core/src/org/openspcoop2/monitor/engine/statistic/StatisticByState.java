@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.monitor.engine.statistic;
 
-import org.openspcoop2.monitor.engine.statistic.CustomStatisticsSdkGenerator;
 import org.openspcoop2.monitor.sdk.exceptions.StatisticException;
 import org.openspcoop2.monitor.sdk.plugins.StatisticProcessing;
 import org.openspcoop2.monitor.sdk.statistic.IStatistic;

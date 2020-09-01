@@ -32,9 +32,6 @@ import java.util.Date;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.jdbc.IJDBCAdapter;
-import org.openspcoop2.utils.jdbc.JDBCAdapterException;
-import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**

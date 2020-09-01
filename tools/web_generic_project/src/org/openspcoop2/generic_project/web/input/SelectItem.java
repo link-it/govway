@@ -20,7 +20,6 @@
 package org.openspcoop2.generic_project.web.input;
 
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactoryManager;
-import org.openspcoop2.generic_project.web.input.HtmlOption;
 
 /**
 * SelectItem Classe che serve come wrapper per gli oggetti complessi da utilizzare come valori nelle pagine

@@ -23,8 +23,6 @@ package org.openspcoop2.generic_project.web.impl.jsf1.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.openspcoop2.generic_project.web.impl.jsf1.converter.SelectListItemConverter;
-
 /**
  * RadioButtonConverter
  * 

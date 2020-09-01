@@ -44,7 +44,6 @@ import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
-import org.openspcoop2.core.registry.ws.server.filter.beans.Connettore;
 
 /**     
  * Servizio

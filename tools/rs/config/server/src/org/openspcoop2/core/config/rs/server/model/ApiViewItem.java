@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ApiItem;
-
 public class ApiViewItem extends ApiItem {
 
   @Override

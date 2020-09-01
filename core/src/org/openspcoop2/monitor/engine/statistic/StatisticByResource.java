@@ -128,7 +128,7 @@ public class StatisticByResource extends StatisticProcessing {
 		
 		List<Parameter<?>> parameters = new ArrayList<Parameter<?>>();
 	
-		Parameter<?> pRisorsa = ParameterFactory.createParameter(ParameterType.SELECT_LIST, PARAM_RESOURCE);
+		Parameter<?> pRisorsa = ParameterFactory.createParameter(ParameterType.SELECT_LIST, StatisticByResource.PARAM_RESOURCE);
 		pRisorsa.getRendering().setLabel("Risorsa");
 		pRisorsa.getRendering().setSuggestion("Indicare la risorsa per cui si vuole visualizzare le informazioni statistiche");
 		pRisorsa.getRendering().setValues(listResources);
@@ -149,7 +149,7 @@ public class StatisticByResource extends StatisticProcessing {
 
 		try{
 			// Recupero valore inserito dall'utente
-			Parameter<?> resource = context.getParameter(PARAM_RESOURCE);
+			Parameter<?> resource = context.getParameter(StatisticByResource.PARAM_RESOURCE);
 			String resourceValue = (String) resource.getValue();
 			if(resourceValue==null){
 				throw new StatisticException("Parameter undefined");

@@ -26,8 +26,6 @@ import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.Service;
 
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazione;
-
 /**
  * ComunicazioneVariazioneService12
  * 
@@ -56,7 +54,7 @@ public class ComunicazioneVariazioneService12 extends Service {
     }
 
     public ComunicazioneVariazioneService12(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, ComunicazioneVariazioneService12.SERVICE);
     }
 
     public ComunicazioneVariazioneService12(URL wsdlLocation, QName serviceName) {
@@ -64,7 +62,7 @@ public class ComunicazioneVariazioneService12 extends Service {
     }
 
     public ComunicazioneVariazioneService12() {
-        super(WSDL_LOCATION, SERVICE);
+        super(ComunicazioneVariazioneService12.WSDL_LOCATION, ComunicazioneVariazioneService12.SERVICE);
     }
     
     /**
@@ -74,7 +72,7 @@ public class ComunicazioneVariazioneService12 extends Service {
      */
     @WebEndpoint(name = "ComunicazioneVariazioneInterfaceSOAP12Endpoint")
     public ComunicazioneVariazione getComunicazioneVariazioneInterfaceEndpoint12() {
-        return super.getPort(ComunicazioneVariazioneInterfaceEndpoint12, ComunicazioneVariazione.class);
+        return super.getPort(ComunicazioneVariazioneService12.ComunicazioneVariazioneInterfaceEndpoint12, ComunicazioneVariazione.class);
     }
 
     /**
@@ -86,7 +84,7 @@ public class ComunicazioneVariazioneService12 extends Service {
      */
     @WebEndpoint(name = "ComunicazioneVariazioneSOAP12InterfaceEndpoint")
     public ComunicazioneVariazione getComunicazioneVariazioneInterfaceEndpoint12(WebServiceFeature... features) {
-        return super.getPort(ComunicazioneVariazioneInterfaceEndpoint12, ComunicazioneVariazione.class, features);
+        return super.getPort(ComunicazioneVariazioneService12.ComunicazioneVariazioneInterfaceEndpoint12, ComunicazioneVariazione.class, features);
     }
 
 }

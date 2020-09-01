@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.utils.service.beans;
 
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.utils.service.beans.TransazioneContestoEnum;
-import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniSoggetto;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

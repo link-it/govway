@@ -23,7 +23,6 @@
 package org.openspcoop2.core.mapping;
 
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 
 /**
  * Implementation

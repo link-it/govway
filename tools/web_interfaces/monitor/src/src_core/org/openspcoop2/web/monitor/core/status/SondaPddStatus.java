@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.web.monitor.core.status;
 
-import org.openspcoop2.web.monitor.core.status.PddStatus;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;

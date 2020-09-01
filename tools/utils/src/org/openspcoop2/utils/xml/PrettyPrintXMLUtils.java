@@ -57,7 +57,7 @@ public class PrettyPrintXMLUtils {
 
 	public static AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 	public static synchronized void setXMLUtils(AbstractXMLUtils xmlUtilsParam) {
-		xmlUtils = xmlUtilsParam;
+		PrettyPrintXMLUtils.xmlUtils = xmlUtilsParam;
 	}
 
 
@@ -315,12 +315,12 @@ public class PrettyPrintXMLUtils {
 		// Note that a stylesheet is needed to make formatting reliable.
 		InputStream is = null;
 		try{
-			is = readPrettyPrintXslt();
+			is = PrettyPrintXMLUtils.readPrettyPrintXslt();
 			Source source = new DOMSource(doc);
 			StreamResult result = new StreamResult(os);
 			Transformer transformer = null;
 			try{
-				transformer = xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
+				transformer = PrettyPrintXMLUtils.xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
 			}catch(Exception e){
 				throw new TransformerException(e.getMessage(),e);
 			}
@@ -342,12 +342,12 @@ public class PrettyPrintXMLUtils {
 		// Note that a stylesheet is needed to make formatting reliable.
 		InputStream is = null;
 		try{
-			is = readPrettyPrintXslt();
+			is = PrettyPrintXMLUtils.readPrettyPrintXslt();
 			Source source = new DOMSource(doc);
 			StreamResult result = new StreamResult(writer);
 			Transformer transformer = null;
 			try{
-				transformer = xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
+				transformer = PrettyPrintXMLUtils.xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
 			}catch(Exception e){
 				throw new TransformerException(e.getMessage(),e);
 			}
@@ -369,12 +369,12 @@ public class PrettyPrintXMLUtils {
 		// Note that a stylesheet is needed to make formatting reliable.
 		InputStream is = null;
 		try{
-			is = readPrettyPrintXslt();
+			is = PrettyPrintXMLUtils.readPrettyPrintXslt();
 			Source source = new DOMSource(doc);
 			StreamResult result = new StreamResult(file);
 			Transformer transformer = null;
 			try{
-				transformer = xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
+				transformer = PrettyPrintXMLUtils.xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
 			}catch(Exception e){
 				throw new TransformerException(e.getMessage(),e);
 			}

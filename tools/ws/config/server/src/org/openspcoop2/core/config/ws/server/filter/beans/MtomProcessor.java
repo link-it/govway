@@ -39,7 +39,6 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.config.ws.server.filter.beans.MtomProcessorFlow;
 
 /**     
  * MtomProcessor

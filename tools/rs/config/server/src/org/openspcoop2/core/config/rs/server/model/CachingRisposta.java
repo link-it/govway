@@ -20,9 +20,6 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.List;
-import org.openspcoop2.core.config.rs.server.model.ApiImplConfigurazioneStato;
-import org.openspcoop2.core.config.rs.server.model.CachingRispostaRegola;
-import org.openspcoop2.core.config.rs.server.model.StatoDefaultRidefinitoEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

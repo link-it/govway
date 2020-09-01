@@ -19,11 +19,6 @@
  */
 package org.openspcoop2.utils.service.beans;
 
-import org.openspcoop2.utils.service.beans.TransazioneBase;
-import org.openspcoop2.utils.service.beans.TransazioneDettaglioRichiesta;
-import org.openspcoop2.utils.service.beans.TransazioneDettaglioRisposta;
-import org.openspcoop2.utils.service.beans.TransazioneInformazioniApi;
-import org.openspcoop2.utils.service.beans.TransazioneInformazioniMittente;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;

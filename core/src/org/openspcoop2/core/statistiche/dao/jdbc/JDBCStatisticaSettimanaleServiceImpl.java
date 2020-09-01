@@ -44,7 +44,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.statistiche.StatisticaSettimanale;
 import org.openspcoop2.core.statistiche.Statistica;
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCStatisticaSettimanaleServiceImpl
@@ -618,7 +617,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 		sqlQueryObjectDelete_statisticaSettimanaleContenuti_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_statisticaSettimanaleContenuti_getToDelete.addFromTable(this.getStatisticaSettimanaleFieldConverter().toTable(StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI));
 		sqlQueryObjectDelete_statisticaSettimanaleContenuti_getToDelete.addWhereCondition("id_stat=?");
-		java.util.List<Object> statisticaSettimanale_statisticaSettimanaleContenuti_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaSettimanaleContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI, this.getStatisticaSettimanaleFetch(),
+		java.util.List<Object> statisticaSettimanale_statisticaSettimanaleContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaSettimanaleContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI, this.getStatisticaSettimanaleFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for statisticaSettimanale_statisticaSettimanaleContenuti

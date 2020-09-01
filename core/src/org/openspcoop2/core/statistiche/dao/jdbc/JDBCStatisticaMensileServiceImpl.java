@@ -44,7 +44,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.statistiche.Statistica;
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaMensile;
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCStatisticaMensileServiceImpl
@@ -618,7 +617,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.addFromTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI));
 		sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.addWhereCondition("id_stat=?");
-		java.util.List<Object> statisticaMensile_statisticaMensileContenuti_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI, this.getStatisticaMensileFetch(),
+		java.util.List<Object> statisticaMensile_statisticaMensileContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI, this.getStatisticaMensileFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for statisticaMensile_statisticaMensileContenuti

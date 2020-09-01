@@ -52,7 +52,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.converter.ConfigurazionePolicyFieldConverter;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.fetch.ConfigurazionePolicyFetch;
 

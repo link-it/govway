@@ -53,8 +53,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.monitor.engine.config.base.dao.jdbc.converter.ConfigurazioneFiltroFieldConverter;
 import org.openspcoop2.monitor.engine.config.base.dao.jdbc.fetch.ConfigurazioneFiltroFetch;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.monitor.engine.config.base.ConfigurazioneFiltro;
 
 /**     

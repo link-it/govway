@@ -22,9 +22,6 @@ package org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazione_Type;
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.PersonaType;
-
 
 /**
  * This object contains factory methods for each 

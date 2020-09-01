@@ -40,7 +40,6 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 
 import org.openspcoop2.monitor.engine.config.base.PluginInfo;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCPluginInfoServiceImpl

@@ -26,7 +26,6 @@ import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.Service;
 
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazione;
 import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazioneService11;
 
 /**
@@ -57,7 +56,7 @@ public class ComunicazioneVariazioneService11 extends Service {
     }
 
     public ComunicazioneVariazioneService11(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, ComunicazioneVariazioneService11.SERVICE);
     }
 
     public ComunicazioneVariazioneService11(URL wsdlLocation, QName serviceName) {
@@ -65,7 +64,7 @@ public class ComunicazioneVariazioneService11 extends Service {
     }
 
     public ComunicazioneVariazioneService11() {
-        super(WSDL_LOCATION, SERVICE);
+        super(ComunicazioneVariazioneService11.WSDL_LOCATION, ComunicazioneVariazioneService11.SERVICE);
     }
     
     /**
@@ -75,7 +74,7 @@ public class ComunicazioneVariazioneService11 extends Service {
      */
     @WebEndpoint(name = "ComunicazioneVariazioneSOAP11InterfaceEndpoint")
     public ComunicazioneVariazione getComunicazioneVariazioneInterfaceEndpoint() {
-        return super.getPort(ComunicazioneVariazioneInterfaceEndpoint, ComunicazioneVariazione.class);
+        return super.getPort(ComunicazioneVariazioneService11.ComunicazioneVariazioneInterfaceEndpoint, ComunicazioneVariazione.class);
     }
 
     /**
@@ -87,7 +86,7 @@ public class ComunicazioneVariazioneService11 extends Service {
      */
     @WebEndpoint(name = "ComunicazioneVariazioneSOAP11InterfaceEndpoint")
     public ComunicazioneVariazione getComunicazioneVariazioneInterfaceEndpoint(WebServiceFeature... features) {
-        return super.getPort(ComunicazioneVariazioneInterfaceEndpoint, ComunicazioneVariazione.class, features);
+        return super.getPort(ComunicazioneVariazioneService11.ComunicazioneVariazioneInterfaceEndpoint, ComunicazioneVariazione.class, features);
     }
 
 }

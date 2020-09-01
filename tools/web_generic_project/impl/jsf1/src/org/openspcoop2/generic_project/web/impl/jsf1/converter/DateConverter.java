@@ -64,7 +64,7 @@ public class DateConverter  implements Converter {
 	public Object getAsObject(FacesContext context, UIComponent component, String value)
 			throws ConverterException {
 		Date result = null;
-		log.debug("getAsObject ["+value+"]"); 
+		DateConverter.log.debug("getAsObject ["+value+"]"); 
 
 		if(StringUtils.isEmpty(value)){
 			if(!this.isConsentiDataVuota()){
@@ -76,13 +76,13 @@ public class DateConverter  implements Converter {
 				return null;
 		}
 
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+		SimpleDateFormat sdf = new SimpleDateFormat(DateConverter.DATE_PATTERN);
 		if(value!= null && value.length() > 0) {
 			try {
 				result = sdf.parse(value);
 			} catch (Exception e) {
-				log.error(e.getMessage());
-				String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DATE_PATTERN);
+				DateConverter.log.error(e.getMessage());
+				String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
 				FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,msg,null);
 				throw new ConverterException(m);
 			}
@@ -95,12 +95,12 @@ public class DateConverter  implements Converter {
 	public String getAsString(FacesContext context, UIComponent component, Object value)
 			throws ConverterException {
 
-		log.debug("getAsString ["+value+"]");
+		DateConverter.log.debug("getAsString ["+value+"]");
 		String result = "";
 		if(value == null)
 			return result;
 
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+		SimpleDateFormat sdf = new SimpleDateFormat(DateConverter.DATE_PATTERN);
 		if(value instanceof String){
 			String valueStr = (String) value;
 
@@ -109,8 +109,8 @@ public class DateConverter  implements Converter {
 					Date date = sdf.parse(valueStr);
 					result = sdf.format(date);
 				} catch (Exception e) {
-					log.error(e.getMessage());
-					String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DATE_PATTERN);
+					DateConverter.log.error(e.getMessage());
+					String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
 					FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,msg,null);
 					throw new ConverterException(m);
 				}
@@ -122,7 +122,7 @@ public class DateConverter  implements Converter {
 			try {
 				result = sdf.format(value);
 			} catch (Exception e) {
-				String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DATE_PATTERN);
+				String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoDataNonValido",value, DateConverter.DATE_PATTERN);
 				FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,msg,null);
 				throw new ConverterException(m);
 			}

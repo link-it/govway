@@ -56,8 +56,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.PortTypeFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortTypeFetch;
 import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteComuneServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.Operation;
 
@@ -552,7 +550,7 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 		sqlQueryObjectGet_portType_operation.addWhereCondition("id_port_type=?");
 
 		// Get portType_operation
-		java.util.List<Object> portType_operation_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_portType_operation.createSQLQuery(), jdbcProperties.isShowSql(), PortType.model().OPERATION, this.getPortTypeFetch(),
+		java.util.List<Object> portType_operation_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_portType_operation.createSQLQuery(), jdbcProperties.isShowSql(), PortType.model().OPERATION, this.getPortTypeFetch(),
 			new JDBCObject(portType.getId(),Long.class));
 
 		if(portType_operation_list != null) {

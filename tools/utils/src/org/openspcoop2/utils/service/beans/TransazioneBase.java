@@ -21,8 +21,6 @@ package org.openspcoop2.utils.service.beans;
 
 import java.util.UUID;
 import org.joda.time.DateTime;
-import org.openspcoop2.utils.service.beans.TransazioneEsito;
-import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

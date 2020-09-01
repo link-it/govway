@@ -20,9 +20,6 @@
 package org.openspcoop2.utils.service.beans;
 
 import java.util.List;
-import org.openspcoop2.utils.service.beans.TransazioneExtContenutoMessaggioBodyMultipart;
-import org.openspcoop2.utils.service.beans.TransazioneExtContenutoMessaggioPorzioneBody;
-import org.openspcoop2.utils.service.beans.TransazioneMessaggioFormatoEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

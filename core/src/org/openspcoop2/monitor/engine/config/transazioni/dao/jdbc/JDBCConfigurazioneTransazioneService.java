@@ -33,7 +33,6 @@ import org.openspcoop2.generic_project.exception.ValidationException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 
-import org.openspcoop2.monitor.engine.config.transazioni.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
 import org.openspcoop2.monitor.engine.config.transazioni.dao.IDBConfigurazioneTransazioneService;
 import org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo;

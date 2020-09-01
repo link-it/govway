@@ -21,7 +21,6 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openspcoop2.core.config.rs.server.model.ApiAzione;
 import org.openspcoop2.utils.service.beans.Lista;
 import javax.validation.constraints.*;
 

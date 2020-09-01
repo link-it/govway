@@ -54,8 +54,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc.converter.ConfigurazioneStatisticaFieldConverter;
 import org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc.fetch.ConfigurazioneStatisticaFetch;
-import org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 
 import org.openspcoop2.monitor.engine.config.base.IdConfigurazioneServizioAzione;

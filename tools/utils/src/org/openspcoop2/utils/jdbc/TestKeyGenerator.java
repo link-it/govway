@@ -120,9 +120,9 @@ public class TestKeyGenerator {
 		File logFile = File.createTempFile("runKeyGeneratorTest_", ".log");
 		System.out.println("LogMessages write in "+logFile.getAbsolutePath());
 		LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%m %n");
-		log = LoggerWrapperFactory.getLogger(TestKeyGenerator.class);
+		TestKeyGenerator.log = LoggerWrapperFactory.getLogger(TestKeyGenerator.class);
 		
-		DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), log);
+		DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), TestKeyGenerator.log);
 		
 		String url = null;
 		String driver = null;
@@ -251,7 +251,7 @@ public class TestKeyGenerator {
 	    		throw new Exception("Nessuna insert effettuata");
 	    	}
 	    	
-	    	info(log,systemOut,"Test effettuato correttamente (id generati: first["+id1+"] second["+id2+"])");
+	    	TestKeyGenerator.info(TestKeyGenerator.log,TestKeyGenerator.systemOut,"Test effettuato correttamente (id generati: first["+id1+"] second["+id2+"])");
 
 	    	
 	    }finally{

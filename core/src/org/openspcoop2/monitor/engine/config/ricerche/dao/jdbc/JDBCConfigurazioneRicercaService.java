@@ -33,7 +33,6 @@ import org.openspcoop2.generic_project.exception.ValidationException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 
-import org.openspcoop2.monitor.engine.config.ricerche.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.ricerche.dao.IDBConfigurazioneRicercaService;
 import org.openspcoop2.monitor.engine.config.ricerche.utils.ProjectInfo;

@@ -50,7 +50,6 @@ import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazio
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazionePlugin;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import org.openspcoop2.monitor.engine.config.transazioni.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCConfigurazioneTransazioneServiceImpl
@@ -782,7 +781,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN));
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.addWhereCondition("id_configurazione_transazione=?");
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazionePlugin_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN, this.getConfigurazioneTransazioneFetch(),
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazionePlugin_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN, this.getConfigurazioneTransazioneFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for configurazioneTransazione_configurazioneTransazionePlugin
@@ -807,7 +806,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO));
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.addWhereCondition("id_configurazione_transazione=?");
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneStato_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO, this.getConfigurazioneTransazioneFetch(),
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneStato_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO, this.getConfigurazioneTransazioneFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for configurazioneTransazione_configurazioneTransazioneStato
@@ -832,7 +831,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO));
 		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.addWhereCondition("id_conf_transazione=?");
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO, this.getConfigurazioneTransazioneFetch(),
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO, this.getConfigurazioneTransazioneFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for configurazioneTransazione_configurazioneTransazioneRisorsaContenuto

@@ -20,7 +20,6 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import java.util.List;
-import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

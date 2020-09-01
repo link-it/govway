@@ -23,7 +23,6 @@
 package org.openspcoop2.core.mapping;
 
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 
 /**
  * Subscription

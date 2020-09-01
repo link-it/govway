@@ -55,8 +55,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.OperationFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.OperationFetch;
 import org.openspcoop2.core.commons.search.dao.IDBPortTypeServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.Operation;
 import org.openspcoop2.core.commons.search.PortType;
 

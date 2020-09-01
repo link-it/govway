@@ -26,9 +26,6 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazione_Type;
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ObjectFactory;
-
 /**
  * ComunicazioneVariazione
  * 

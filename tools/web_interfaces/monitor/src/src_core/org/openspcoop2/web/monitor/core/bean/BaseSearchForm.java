@@ -563,7 +563,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				String tipoProtocollo = this.getProtocollo();
 				IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
 				
-				Map<String, String> findAzioniFromServizio = DynamicPdDBeanUtils.getInstance(log).findAzioniFromServizio(tipoProtocollo, idServizio, null);
+				Map<String, String> findAzioniFromServizio = DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).findAzioniFromServizio(tipoProtocollo, idServizio, null);
 				
 				if(findAzioniFromServizio.containsKey(this.nomeAzione)) {
 					return findAzioniFromServizio.get(this.nomeAzione);

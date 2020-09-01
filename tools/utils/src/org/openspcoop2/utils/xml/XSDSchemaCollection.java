@@ -166,7 +166,7 @@ public class XSDSchemaCollection {
 			if(this.resources!=null && this.resources.size()>0){
 				Enumeration<String> kesy = this.resources.keys();
 				while (kesy.hasMoreElements()) {
-					String name = (String) kesy.nextElement();
+					String name = kesy.nextElement();
 					
 					nomeFile = name;
 					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
@@ -176,7 +176,7 @@ public class XSDSchemaCollection {
 					String namespaceFound = null;
 					String locationFound = null;
 					while (namespaces.hasMoreElements()) {
-						String namespace = (String) namespaces.nextElement();
+						String namespace = namespaces.nextElement();
 						String location = this.mappingNamespaceLocations.get(namespace);
 						String [] split = location.split(" ");
 						if(split!=null){

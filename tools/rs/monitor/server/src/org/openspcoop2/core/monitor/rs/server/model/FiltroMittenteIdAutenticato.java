@@ -20,8 +20,6 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.utils.service.beans.FiltroRicercaId;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteEnum;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIdentificativoAutenticatoEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

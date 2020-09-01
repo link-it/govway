@@ -39,7 +39,6 @@ import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
@@ -397,7 +396,7 @@ public class BaseForm implements Serializable {
 				// Tutti i protocolli
 				Enumeration<String> keys = protocolFactories.keys();
 				while (keys.hasMoreElements()) {
-					String protocolKey = (String) keys.nextElement();
+					String protocolKey = keys.nextElement();
 					if(!listaNomiProtocolli.contains(protocolKey))
 						listaNomiProtocolli.add(protocolKey);
 				}
@@ -409,7 +408,7 @@ public class BaseForm implements Serializable {
 			}
 
 		} catch (ProtocolException e) {
-			log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
+			BaseForm.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
 		}  
 
 
@@ -448,7 +447,7 @@ public class BaseForm implements Serializable {
 				// Tutti i protocolli
 				Enumeration<String> keys = protocolFactories.keys();
 				while (keys.hasMoreElements()) {
-					String protocolKey = (String) keys.nextElement();
+					String protocolKey = keys.nextElement();
 					if(!listaNomiProtocolli.contains(protocolKey))
 						listaNomiProtocolli.add(protocolKey);
 				}
@@ -461,7 +460,7 @@ public class BaseForm implements Serializable {
 				return false;
 
 		} catch (ProtocolException e) {
-			log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
+			BaseForm.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
 		}  
 
 		return true;

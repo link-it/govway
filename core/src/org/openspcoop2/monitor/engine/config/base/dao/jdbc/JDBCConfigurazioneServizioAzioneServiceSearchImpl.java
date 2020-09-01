@@ -54,7 +54,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.monitor.engine.config.base.dao.jdbc.converter.ConfigurazioneServizioAzioneFieldConverter;
 import org.openspcoop2.monitor.engine.config.base.dao.jdbc.fetch.ConfigurazioneServizioAzioneFetch;
 import org.openspcoop2.monitor.engine.config.base.dao.IDBConfigurazioneServizioServiceSearch;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
 import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
 import org.openspcoop2.monitor.engine.config.base.IdConfigurazioneServizio;

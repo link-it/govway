@@ -56,8 +56,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.PortaApplicativaFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortaApplicativaFetch;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.PortaApplicativaAzione;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
@@ -585,7 +583,7 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 		sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo.addWhereCondition("id_porta=?");
 
 		// Get portaApplicativa_portaApplicativaServizioApplicativo
-		java.util.List<Object> portaApplicativa_portaApplicativaServizioApplicativo_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo.createSQLQuery(), jdbcProperties.isShowSql(), PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO, this.getPortaApplicativaFetch(),
+		java.util.List<Object> portaApplicativa_portaApplicativaServizioApplicativo_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo.createSQLQuery(), jdbcProperties.isShowSql(), PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO, this.getPortaApplicativaFetch(),
 			new JDBCObject(portaApplicativa.getId(),Long.class));
 
 		if(portaApplicativa_portaApplicativaServizioApplicativo_list != null) {
@@ -641,7 +639,7 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 		sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.addWhereCondition("id_porta=?");
 
 		// Get portaApplicativa_portaApplicativaAzione
-		java.util.List<Object> portaApplicativa_portaApplicativaAzione_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.createSQLQuery(), jdbcProperties.isShowSql(), PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE, this.getPortaApplicativaFetch(),
+		java.util.List<Object> portaApplicativa_portaApplicativaAzione_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.createSQLQuery(), jdbcProperties.isShowSql(), PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE, this.getPortaApplicativaFetch(),
 			new JDBCObject(portaApplicativa.getId(),Long.class));
 
 		if(portaApplicativa_portaApplicativaAzione_list != null) {

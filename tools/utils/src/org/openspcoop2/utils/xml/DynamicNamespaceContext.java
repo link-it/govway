@@ -60,7 +60,7 @@ public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceCon
 			if(this.context.size()>0){
 				Iterator<?> it = this.context.keySet().iterator();
 				while (it.hasNext()) {
-					Object key = (Object) it.next();
+					Object key = it.next();
 					dnc.context.put(key, this.context.get(key));
 				}
 			}

@@ -78,15 +78,15 @@ public abstract class AbstractXMLDiff {
 	}
 	private static boolean initialized = false;
 	private static synchronized void initialize(AbstractXMLUtils instance) throws XMLException{
-		if(initialized==false){
+		if(AbstractXMLDiff.initialized==false){
 			
-			dbf_org_w3c_dom_document_impl = instance.newDocumentBuilderFactory();
-			dbf_org_w3c_dom_document_impl.setNamespaceAware(true);
-			dbf_org_w3c_dom_document_impl.setCoalescing(AbstractXMLDiff.xmlDiffOptions.isIgnoreDiffBetweenTextAndCDATA());
-			dbf_org_w3c_dom_document_impl.setIgnoringElementContentWhitespace(AbstractXMLDiff.xmlDiffOptions.isIgnoreWhitespace());
-			dbf_org_w3c_dom_document_impl.setIgnoringComments(AbstractXMLDiff.xmlDiffOptions.isIgnoreComments());
+			AbstractXMLDiff.dbf_org_w3c_dom_document_impl = instance.newDocumentBuilderFactory();
+			AbstractXMLDiff.dbf_org_w3c_dom_document_impl.setNamespaceAware(true);
+			AbstractXMLDiff.dbf_org_w3c_dom_document_impl.setCoalescing(AbstractXMLDiff.xmlDiffOptions.isIgnoreDiffBetweenTextAndCDATA());
+			AbstractXMLDiff.dbf_org_w3c_dom_document_impl.setIgnoringElementContentWhitespace(AbstractXMLDiff.xmlDiffOptions.isIgnoreWhitespace());
+			AbstractXMLDiff.dbf_org_w3c_dom_document_impl.setIgnoringComments(AbstractXMLDiff.xmlDiffOptions.isIgnoreComments());
 			
-			if(XMLDiffImplType.XML_UNIT.equals(implType)){
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.implType)){
 				XMLUnit.setIgnoreAttributeOrder(true);
 				XMLUnit.setExpandEntityReferences(true);
 				XMLUnit.setIgnoreComments(AbstractXMLDiff.xmlDiffOptions.isIgnoreComments());
@@ -96,7 +96,7 @@ public abstract class AbstractXMLDiff {
 				XMLUnit.setNormalizeWhitespace(AbstractXMLDiff.xmlDiffOptions.isNormalize());
 			}
 			
-			initialized = true;
+			AbstractXMLDiff.initialized = true;
 		}
 	}
 	private static synchronized void _initialize(XMLDiffImplType implType,XMLDiffOptions xmlDiffOptions,AbstractXMLUtils instance) throws XMLException{
@@ -125,7 +125,7 @@ public abstract class AbstractXMLDiff {
 	private String difference;
 	
 	public String getDifferenceDetails() throws XMLException {
-		if(!XMLDiffImplType.XML_UNIT.equals(implType)){
+		if(!XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.implType)){
 			throw new XMLException("Difference details permit only on implementation: "+XMLDiffImplType.XML_UNIT);
 		}
 		return this.difference;
@@ -140,18 +140,18 @@ public abstract class AbstractXMLDiff {
 	
 	private boolean _diff(Object original, Object compare) throws XMLException{
 		
-		if(initialized==false){
+		if(AbstractXMLDiff.initialized==false){
 			throw new XMLException("Library not initialized. Invoke initialize method");
 		}
 		
-		if(XMLDiffImplType.XML_UNIT.equals(implType)){
+		if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.implType)){
 			return this._diffXmlUnit(original, compare);
 		}
-		else if(XMLDiffImplType.ORG_W3C_DOM_DOCUMENT.equals(implType)){
+		else if(XMLDiffImplType.ORG_W3C_DOM_DOCUMENT.equals(AbstractXMLDiff.implType)){
 			return this._diffW3cDomDocument(original, compare);
 		}
 		else{
-			throw new XMLException("Implementation ["+implType+"] not supported");
+			throw new XMLException("Implementation ["+AbstractXMLDiff.implType+"] not supported");
 		}
 
 	}

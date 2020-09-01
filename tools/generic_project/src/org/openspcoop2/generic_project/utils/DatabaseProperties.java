@@ -20,8 +20,6 @@
 package org.openspcoop2.generic_project.utils;
 
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-
 import java.util.Properties;
 
 import org.openspcoop2.utils.TipiDatabase;
@@ -138,7 +136,7 @@ public class DatabaseProperties {
 	
 	private static final String PROP_TIPO_DATABASE = "db.tipoDatabase";
 	public String getTipoDatabase() throws Exception {
-		return this.getProperty(PROP_TIPO_DATABASE, true, false);
+		return this.getProperty(DatabaseProperties.PROP_TIPO_DATABASE, true, false);
 	}
 	public TipiDatabase getTipoDatabaseEnum() throws Exception {
 		return TipiDatabase.toEnumConstant(this.getTipoDatabase());
@@ -146,17 +144,17 @@ public class DatabaseProperties {
 	
 	private static final String PROP_SHOW_SQL = "db.showSql";
 	public boolean isShowSql() throws Exception {
-		return Boolean.parseBoolean(this.getProperty(PROP_SHOW_SQL, true, false));
+		return Boolean.parseBoolean(this.getProperty(DatabaseProperties.PROP_SHOW_SQL, true, false));
 	}
 	
 	private static final String PROP_GENERATE_DDL = "db.generateDDL";
 	public boolean isGenerateDDL() throws Exception {
-		return Boolean.parseBoolean(this.getProperty(PROP_GENERATE_DDL, true, false));
+		return Boolean.parseBoolean(this.getProperty(DatabaseProperties.PROP_GENERATE_DDL, true, false));
 	}
 	
 	private static final String PROP_AUTO_COMMIT = "db.autoCommit";
 	public boolean isAutoCommit() throws Exception {
-		return Boolean.parseBoolean(this.getProperty(PROP_AUTO_COMMIT, true, false));
+		return Boolean.parseBoolean(this.getProperty(DatabaseProperties.PROP_AUTO_COMMIT, true, false));
 	}
 	
 	public ServiceManagerProperties getServiceManagerProperties() throws Exception{
@@ -172,45 +170,45 @@ public class DatabaseProperties {
 	private static final String PROP_TIPO_VALUE_DATASOURCE = "datasource";
 	private static final String PROP_TIPO_VALUE_CONNECTION = "connection";
 	private String getTipoAccessoDatabase() throws Exception {
-		String v = this.getProperty(PROP_TIPO, true, true);
-		if(!PROP_TIPO_VALUE_DATASOURCE.equals(v) && !PROP_TIPO_VALUE_CONNECTION.equals(v)){
-			throw new Exception("Tipo di accesso al database fornito ["+v+"] non valido (supportati "+PROP_TIPO_VALUE_DATASOURCE+","+PROP_TIPO_VALUE_CONNECTION+")");
+		String v = this.getProperty(DatabaseProperties.PROP_TIPO, true, true);
+		if(!DatabaseProperties.PROP_TIPO_VALUE_DATASOURCE.equals(v) && !DatabaseProperties.PROP_TIPO_VALUE_CONNECTION.equals(v)){
+			throw new Exception("Tipo di accesso al database fornito ["+v+"] non valido (supportati "+DatabaseProperties.PROP_TIPO_VALUE_DATASOURCE+","+DatabaseProperties.PROP_TIPO_VALUE_CONNECTION+")");
 		}
 		return v;
 	}
 	public boolean isTipoAccessoTramiteDatasource() throws Exception{
-		return PROP_TIPO_VALUE_DATASOURCE.equals(this.getTipoAccessoDatabase());
+		return DatabaseProperties.PROP_TIPO_VALUE_DATASOURCE.equals(this.getTipoAccessoDatabase());
 	}
 	public boolean isTipoAccessoTramiteConnection() throws Exception{
-		return PROP_TIPO_VALUE_CONNECTION.equals(this.getTipoAccessoDatabase());
+		return DatabaseProperties.PROP_TIPO_VALUE_CONNECTION.equals(this.getTipoAccessoDatabase());
 	}
 	
 	private static final String PROP_DATASOURCE_JNDI_NAME = "db.datasource.jndiName";
 	public String getDatasourceJNDIName() throws Exception {
-		return this.getProperty(PROP_DATASOURCE_JNDI_NAME, PROP_TIPO_VALUE_DATASOURCE.equals(this.getTipoAccessoDatabase()), true);
+		return this.getProperty(DatabaseProperties.PROP_DATASOURCE_JNDI_NAME, DatabaseProperties.PROP_TIPO_VALUE_DATASOURCE.equals(this.getTipoAccessoDatabase()), true);
 	}
 	private static final String PROP_DATASOURCE_JNDI_CONTEXT = "db.datasource.jndiContext";
 	public Properties getDatasourceJNDIContext() throws Exception {
-		return this.reader.readProperties_convertEnvProperties(PROP_DATASOURCE_JNDI_CONTEXT);
+		return this.reader.readProperties_convertEnvProperties(DatabaseProperties.PROP_DATASOURCE_JNDI_CONTEXT);
 	}
 	
 	private static final String PROP_CONNECTION_URL = "db.connection.url";
 	public String getConnectionUrl() throws Exception {
-		return this.getProperty(PROP_CONNECTION_URL, PROP_TIPO_VALUE_CONNECTION.equals(this.getTipoAccessoDatabase()), true);
+		return this.getProperty(DatabaseProperties.PROP_CONNECTION_URL, DatabaseProperties.PROP_TIPO_VALUE_CONNECTION.equals(this.getTipoAccessoDatabase()), true);
 	}
 	private static final String PROP_CONNECTION_DRIVER = "db.connection.driver";
 	public String getConnectionDriverJDBC() throws Exception {
-		return this.getProperty(PROP_CONNECTION_DRIVER, PROP_TIPO_VALUE_CONNECTION.equals(this.getTipoAccessoDatabase()), true);
+		return this.getProperty(DatabaseProperties.PROP_CONNECTION_DRIVER, DatabaseProperties.PROP_TIPO_VALUE_CONNECTION.equals(this.getTipoAccessoDatabase()), true);
 	}
 	private static final String PROP_CONNECTION_AUTH_USER = "db.connection.user";
 	public String getConnectionAuthUsername() throws Exception {
 		//return this.getProperty(PROP_CONNECTION_AUTH_USER, PROP_TIPO_VALUE_CONNECTION.equals(this.getTipoAccessoDatabase()), true);
-		return this.getProperty(PROP_CONNECTION_AUTH_USER, false, true);
+		return this.getProperty(DatabaseProperties.PROP_CONNECTION_AUTH_USER, false, true);
 	}
 	private static final String PROP_CONNECTION_AUTH_PASSWORD = "db.connection.password";
 	public String getConnectionAuthPassword() throws Exception {
 		//return this.getProperty(PROP_CONNECTION_AUTH_PASSWORD, PROP_TIPO_VALUE_CONNECTION.equals(this.getTipoAccessoDatabase()), true);
-		return this.getProperty(PROP_CONNECTION_AUTH_PASSWORD, false, true);
+		return this.getProperty(DatabaseProperties.PROP_CONNECTION_AUTH_PASSWORD, false, true);
 	}
 	
 }

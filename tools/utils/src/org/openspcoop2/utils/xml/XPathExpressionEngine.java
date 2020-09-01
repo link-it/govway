@@ -22,7 +22,6 @@ package org.openspcoop2.utils.xml;
 
 import javax.xml.soap.SOAPElement;
 
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Element;
 
 /**	

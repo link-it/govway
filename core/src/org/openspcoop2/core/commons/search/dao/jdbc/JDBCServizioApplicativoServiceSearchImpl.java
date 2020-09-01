@@ -56,8 +56,6 @@ import org.openspcoop2.core.commons.search.dao.jdbc.converter.ServizioApplicativ
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.ServizioApplicativoFetch;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.Soggetto;
 

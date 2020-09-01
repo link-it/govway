@@ -19,10 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpBasic;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttps;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneProxy;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneTimeout;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpsClient;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpsServer;
-import org.openspcoop2.core.config.rs.server.model.SslTipologiaEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ApiImplViewItem;
-
 public class ErogazioneViewItem extends ApiImplViewItem {
 
   @Override

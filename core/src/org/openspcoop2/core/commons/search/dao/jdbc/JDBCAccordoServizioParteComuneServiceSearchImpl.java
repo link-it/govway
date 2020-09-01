@@ -55,8 +55,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.AccordoServizioParteComuneFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.AccordoServizioParteComuneFetch;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.PortType;
@@ -643,7 +641,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 		sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneAzione.addWhereCondition("id_accordo=?");
 
 		// Get accordoServizioParteComune_accordoServizioParteComuneAzione
-		java.util.List<Object> accordoServizioParteComune_accordoServizioParteComuneAzione_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneAzione.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE, this.getAccordoServizioParteComuneFetch(),
+		java.util.List<Object> accordoServizioParteComune_accordoServizioParteComuneAzione_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneAzione.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE, this.getAccordoServizioParteComuneFetch(),
 			new JDBCObject(accordoServizioParteComune.getId(),Long.class));
 
 		if(accordoServizioParteComune_accordoServizioParteComuneAzione_list != null) {
@@ -664,7 +662,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 		sqlQueryObjectGet_accordoServizioParteComune_portType.addWhereCondition("id_accordo=?");
 
 		// Get accordoServizioParteComune_portType
-		java.util.List<Object> accordoServizioParteComune_portType_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_portType.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().PORT_TYPE, this.getAccordoServizioParteComuneFetch(),
+		java.util.List<Object> accordoServizioParteComune_portType_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_portType.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().PORT_TYPE, this.getAccordoServizioParteComuneFetch(),
 			new JDBCObject(accordoServizioParteComune.getId(),Long.class));
 
 		if(accordoServizioParteComune_portType_list != null) {
@@ -682,7 +680,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 				sqlQueryObjectGet_accordoServizioParteComune_portType_operation.addWhereCondition("id_port_type=?");
 
 				// Get accordoServizioParteComune_portType_operation
-				java.util.List<Object> accordoServizioParteComune_portType_operation_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_portType_operation.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().PORT_TYPE.OPERATION, this.getAccordoServizioParteComuneFetch(),
+				java.util.List<Object> accordoServizioParteComune_portType_operation_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_portType_operation.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().PORT_TYPE.OPERATION, this.getAccordoServizioParteComuneFetch(),
 					new JDBCObject(accordoServizioParteComune_portType.getId(),Long.class));
 
 				if(accordoServizioParteComune_portType_operation_list != null) {
@@ -708,7 +706,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 		sqlQueryObjectGet_accordoServizioParteComune_resource.addWhereCondition("id_accordo=?");
 
 		// Get accordoServizioParteComune_resource
-		java.util.List<Object> accordoServizioParteComune_resource_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_resource.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().RESOURCE, this.getAccordoServizioParteComuneFetch(),
+		java.util.List<Object> accordoServizioParteComune_resource_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_resource.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().RESOURCE, this.getAccordoServizioParteComuneFetch(),
 			new JDBCObject(accordoServizioParteComune.getId(),Long.class));
 
 		if(accordoServizioParteComune_resource_list != null) {

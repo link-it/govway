@@ -53,8 +53,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.monitor.engine.config.base.dao.jdbc.converter.PluginFieldConverter;
 import org.openspcoop2.monitor.engine.config.base.dao.jdbc.fetch.PluginFetch;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager;
-
 import org.openspcoop2.monitor.engine.config.base.PluginFiltroCompatibilita;
 import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.monitor.engine.config.base.PluginServizioAzioneCompatibilita;
@@ -564,7 +562,7 @@ public class JDBCPluginServiceSearchImpl implements IJDBCServiceSearchWithId<Plu
 		sqlQueryObjectGet_plugin_pluginServizioCompatibilita.addWhereCondition("id_plugin=?");
 
 		// Get plugin_pluginServizioCompatibilita
-		java.util.List<Object> plugin_pluginServizioCompatibilita_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_plugin_pluginServizioCompatibilita.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA, this.getPluginFetch(),
+		java.util.List<Object> plugin_pluginServizioCompatibilita_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_plugin_pluginServizioCompatibilita.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA, this.getPluginFetch(),
 			new JDBCObject(plugin.getId(),Long.class));
 
 		if(plugin_pluginServizioCompatibilita_list != null) {
@@ -582,7 +580,7 @@ public class JDBCPluginServiceSearchImpl implements IJDBCServiceSearchWithId<Plu
 				sqlQueryObjectGet_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.addWhereCondition("id_plugin_servizio_comp=?");
 
 				// Get plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita
-				java.util.List<Object> plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA, this.getPluginFetch(),
+				java.util.List<Object> plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA, this.getPluginFetch(),
 					new JDBCObject(plugin_pluginServizioCompatibilita.getId(),Long.class));
 
 				if(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_list != null) {
@@ -615,7 +613,7 @@ public class JDBCPluginServiceSearchImpl implements IJDBCServiceSearchWithId<Plu
 		sqlQueryObjectGet_plugin_pluginFiltroCompatibilita.addWhereCondition("id_plugin=?");
 
 		// Get plugin_pluginFiltroCompatibilita
-		java.util.List<Object> plugin_pluginFiltroCompatibilita_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_plugin_pluginFiltroCompatibilita.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_FILTRO_COMPATIBILITA, this.getPluginFetch(),
+		java.util.List<Object> plugin_pluginFiltroCompatibilita_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_plugin_pluginFiltroCompatibilita.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_FILTRO_COMPATIBILITA, this.getPluginFetch(),
 			new JDBCObject(plugin.getId(),Long.class));
 
 		if(plugin_pluginFiltroCompatibilita_list != null) {

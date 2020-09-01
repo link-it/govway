@@ -37,7 +37,7 @@ public class KeyGeneratorFactory {
 
 	private static boolean useAutoIncrementPostgresql = false;
 	public static boolean isUseAutoIncrementPostgresql() {
-		return useAutoIncrementPostgresql;
+		return KeyGeneratorFactory.useAutoIncrementPostgresql;
 	}
 	public static void setUseAutoIncrementPostgresql(boolean useAutoIncrementPostgresql) {
 		KeyGeneratorFactory.useAutoIncrementPostgresql = useAutoIncrementPostgresql;
@@ -51,7 +51,7 @@ public class KeyGeneratorFactory {
 				String tmp = p.getProperty("postgresql.autoIncrement");
 				if(tmp!=null) {
 					if("true".equalsIgnoreCase(tmp.trim())) {
-						useAutoIncrementPostgresql = true;
+						KeyGeneratorFactory.useAutoIncrementPostgresql = true;
 					}
 				}
 			}
@@ -65,7 +65,7 @@ public class KeyGeneratorFactory {
 	public static IKeyGenerator toKeyGenerator(String tipoDatabase,Connection connection,IKeyGeneratorObject object) throws KeyGeneratorException{
 		
 		if (TipiDatabase.POSTGRESQL.equals(tipoDatabase)) {
-			if(useAutoIncrementPostgresql) {
+			if(KeyGeneratorFactory.useAutoIncrementPostgresql) {
 				return new PostgreSQLAutoKeyGenerator(connection, object);
 			}
 			else {

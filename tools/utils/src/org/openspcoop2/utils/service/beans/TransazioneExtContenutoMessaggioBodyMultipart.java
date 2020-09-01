@@ -20,7 +20,6 @@
 package org.openspcoop2.utils.service.beans;
 
 import java.util.List;
-import org.openspcoop2.utils.service.beans.TransazioneContenutoMessaggioHeader;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

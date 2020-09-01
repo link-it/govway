@@ -26,8 +26,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.PersonaType;
-
 
 /**
  * <p>Classe Java per anonymous complex type.

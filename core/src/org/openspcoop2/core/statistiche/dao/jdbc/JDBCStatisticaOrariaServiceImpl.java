@@ -44,7 +44,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.statistiche.Statistica;
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCStatisticaOrariaServiceImpl
@@ -618,7 +617,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.addFromTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI));
 		sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.addWhereCondition("id_stat=?");
-		java.util.List<Object> statisticaOraria_statisticaOrariaContenuti_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, this.getStatisticaOrariaFetch(),
+		java.util.List<Object> statisticaOraria_statisticaOrariaContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, this.getStatisticaOrariaFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for statisticaOraria_statisticaOrariaContenuti

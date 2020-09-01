@@ -48,7 +48,6 @@ import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager;
 
 /**     
  * JDBCDumpMessaggioServiceImpl
@@ -942,7 +941,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
 		sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.addWhereCondition("id_messaggio=?");
-		java.util.List<Object> dumpMessaggio_multipartHeader_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().MULTIPART_HEADER, this.getDumpMessaggioFetch(),
+		java.util.List<Object> dumpMessaggio_multipartHeader_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().MULTIPART_HEADER, this.getDumpMessaggioFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for dumpMessaggio_multipartHeader
@@ -967,7 +966,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO));
 		sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.addWhereCondition("id_messaggio=?");
-		java.util.List<Object> dumpMessaggio_headerTrasporto_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().HEADER_TRASPORTO, this.getDumpMessaggioFetch(),
+		java.util.List<Object> dumpMessaggio_headerTrasporto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().HEADER_TRASPORTO, this.getDumpMessaggioFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for dumpMessaggio_headerTrasporto
@@ -992,7 +991,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
 		sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.addWhereCondition("id_messaggio=?");
-		java.util.List<Object> dumpMessaggio_allegato_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
+		java.util.List<Object> dumpMessaggio_allegato_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for dumpMessaggio_allegato
@@ -1004,7 +1003,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.setANDLogicOperator(true);
 			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
 			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.addWhereCondition("id_allegato=?");
-			java.util.List<Object> dumpMessaggio_allegato_header_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO.HEADER, this.getDumpMessaggioFetch(),
+			java.util.List<Object> dumpMessaggio_allegato_header_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO.HEADER, this.getDumpMessaggioFetch(),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(dumpMessaggio_allegato.getId()),Long.class));
 
 			// for dumpMessaggio_allegato_header
@@ -1042,7 +1041,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
 		sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.addWhereCondition("id_messaggio=?");
-		java.util.List<Object> dumpMessaggio_contenuto_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
+		java.util.List<Object> dumpMessaggio_contenuto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for dumpMessaggio_contenuto

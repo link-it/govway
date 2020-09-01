@@ -42,8 +42,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBC_SQLObjectFactory;
 
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCLimitedServiceManager;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
 import org.openspcoop2.core.statistiche.dao.IDBStatisticaGiornalieraServiceSearch;
 import org.openspcoop2.core.statistiche.utils.ProjectInfo;

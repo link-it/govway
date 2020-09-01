@@ -32,7 +32,6 @@ import org.openspcoop2.generic_project.exception.ValidationException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 
-import org.openspcoop2.core.eventi.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.dao.IDBEventoService;
 import org.openspcoop2.core.eventi.utils.ProjectInfo;

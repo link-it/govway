@@ -22,7 +22,6 @@ package org.openspcoop2.generic_project.utils;
 import java.util.Properties;
 
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.generic_project.utils.LoaderProperties;
 import org.openspcoop2.utils.Utilities;
 
 /**

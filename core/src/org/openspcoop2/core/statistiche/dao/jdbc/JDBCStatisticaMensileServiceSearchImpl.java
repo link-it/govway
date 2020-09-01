@@ -482,7 +482,7 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 		sqlQueryObjectGet_statisticaMensileContenuti.addWhereCondition("id_stat=?");
 
 		// Get statisticaMensile_statisticaContenuti
-		java.util.List<Object> statisticaMensile_statisticaContenuti_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaMensileContenuti.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI, this.getStatisticaMensileFetch(),
+		java.util.List<Object> statisticaMensile_statisticaContenuti_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_statisticaMensileContenuti.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI, this.getStatisticaMensileFetch(),
 			new JDBCObject(statisticaMensile.getId(),Long.class));
 
 		if(statisticaMensile_statisticaContenuti_list != null) {

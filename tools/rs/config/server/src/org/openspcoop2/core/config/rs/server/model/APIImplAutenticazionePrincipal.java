@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipal;
-import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipalToken;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

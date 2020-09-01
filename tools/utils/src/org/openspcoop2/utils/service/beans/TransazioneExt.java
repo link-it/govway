@@ -20,15 +20,6 @@
 package org.openspcoop2.utils.service.beans;
 
 import java.util.List;
-import org.openspcoop2.utils.service.beans.Diagnostico;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.utils.service.beans.TransazioneBase;
-import org.openspcoop2.utils.service.beans.TransazioneContestoEnum;
-import org.openspcoop2.utils.service.beans.TransazioneExtDettaglioRichiesta;
-import org.openspcoop2.utils.service.beans.TransazioneExtDettaglioRisposta;
-import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniApi;
-import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniMittente;
-import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniSoggetto;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -19,9 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseConIdentificazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupBy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;

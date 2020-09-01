@@ -26,8 +26,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
-import org.openspcoop2.utils.xml.XQueryExpressionEngine;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -94,9 +92,9 @@ public class XQueryClientTest {
 	public static void main(String[] args) throws Exception {
 		
 		File sourceFile = File.createTempFile("src", ".xml");
-		FileSystemUtilities.writeFile(sourceFile, SOAP_XML.getBytes());
+		FileSystemUtilities.writeFile(sourceFile, XQueryClientTest.SOAP_XML.getBytes());
 		File xqueryFile = File.createTempFile("test", ".xquery");
-		FileSystemUtilities.writeFile(xqueryFile, XQUERY.getBytes());
+		FileSystemUtilities.writeFile(xqueryFile, XQueryClientTest.XQUERY.getBytes());
 		
 		XQueryExpressionEngine xqueryEngine = new XQueryExpressionEngine();
 		
@@ -217,16 +215,16 @@ public class XQueryClientTest {
 		System.out.println("\n\n\n*************** TESTSUITE CASI ERRATI **********************");
 		
 		File sourceFileErrato = File.createTempFile("srcErrato", ".xml");
-		FileSystemUtilities.writeFile(sourceFileErrato, (SOAP_XML+"ALTRO ELEMENTO IN FONDO CHE RENDE INVALIDO XML").getBytes());
+		FileSystemUtilities.writeFile(sourceFileErrato, (XQueryClientTest.SOAP_XML+"ALTRO ELEMENTO IN FONDO CHE RENDE INVALIDO XML").getBytes());
 		
 		File sourceFileNamespaceDifferente = File.createTempFile("srcNamespaceErrato", ".xml");
-		FileSystemUtilities.writeFile(sourceFileNamespaceDifferente, SOAP_XML.replace("www.prova.org", "www.altroNamespace.org").getBytes());
+		FileSystemUtilities.writeFile(sourceFileNamespaceDifferente, XQueryClientTest.SOAP_XML.replace("www.prova.org", "www.altroNamespace.org").getBytes());
 		
 		File xqueryFileErrato = File.createTempFile("testErrato", ".xquery");
-		FileSystemUtilities.writeFile(xqueryFileErrato, (XQUERY+"Codice errato che non significa nulla").getBytes());
+		FileSystemUtilities.writeFile(xqueryFileErrato, (XQueryClientTest.XQUERY+"Codice errato che non significa nulla").getBytes());
 		
 		File xqueryFileCodeExtenral = File.createTempFile("testSenzaExternalCode", ".xquery");
-		FileSystemUtilities.writeFile(xqueryFileCodeExtenral, XQUERY_WITHOUT_CODE_EXTERNAL.getBytes());
+		FileSystemUtilities.writeFile(xqueryFileCodeExtenral, XQueryClientTest.XQUERY_WITHOUT_CODE_EXTERNAL.getBytes());
 		
 		System.out.println("======== SRC ERRATO ===========");
 		

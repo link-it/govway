@@ -30,7 +30,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.exception.ValidationException;
 import org.openspcoop2.generic_project.expression.IExpression;
 
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.monitor.engine.config.base.PluginInfo;
 import org.openspcoop2.monitor.engine.config.base.dao.IPluginInfoService;
 import org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo;

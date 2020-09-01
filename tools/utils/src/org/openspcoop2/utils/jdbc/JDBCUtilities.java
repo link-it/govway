@@ -161,23 +161,23 @@ public class JDBCUtilities {
 		return transactionIsolationLevel == java.sql.Connection.TRANSACTION_SERIALIZABLE;
 	}
 	public static boolean isTransactionIsolationSqlServerSnapshot(int transactionIsolationLevel){
-		return transactionIsolationLevel == SQL_SERVER_TRANSACTION_SNAPSHOT;
+		return transactionIsolationLevel == JDBCUtilities.SQL_SERVER_TRANSACTION_SNAPSHOT;
 	}
 	public static boolean isTransactionIsolationSerializable(int transactionIsolationLevel,TipiDatabase tipoDatabase){
 		if(tipoDatabase!=null && TipiDatabase.SQLSERVER.equals(tipoDatabase)){ 
-			return isTransactionIsolationSqlServerSnapshot(transactionIsolationLevel);
+			return JDBCUtilities.isTransactionIsolationSqlServerSnapshot(transactionIsolationLevel);
 		}
 		else {
-			return isTransactionIsolationSerializable(transactionIsolationLevel);
+			return JDBCUtilities.isTransactionIsolationSerializable(transactionIsolationLevel);
 		}
 	}
 	
 	public static void setTransactionIsolationSerializable(String tipoDatabase,Connection connection) throws SQLException{
-		setTransactionIsolationSerializable(TipiDatabase.toEnumConstant(tipoDatabase), connection);
+		JDBCUtilities.setTransactionIsolationSerializable(TipiDatabase.toEnumConstant(tipoDatabase), connection);
 	}
 	public static void setTransactionIsolationSerializable(TipiDatabase tipoDatabase,Connection connection) throws SQLException{
 		if(tipoDatabase!=null && TipiDatabase.SQLSERVER.equals(tipoDatabase)){ 
-			connection.setTransactionIsolation(SQL_SERVER_TRANSACTION_SNAPSHOT); //4096 corresponds to SQLServerConnection.TRANSACTION_SNAPSHOT }
+			connection.setTransactionIsolation(JDBCUtilities.SQL_SERVER_TRANSACTION_SNAPSHOT); //4096 corresponds to SQLServerConnection.TRANSACTION_SNAPSHOT }
 		}
 		else{ 
 			connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); 

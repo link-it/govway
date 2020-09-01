@@ -74,18 +74,18 @@ public class StatisticsUtils {
 	
 	public static void setExpression(IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
 			ISQLFieldConverter fieldConverter) throws Exception{
-		setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter, false, null,null);
+		StatisticsUtils.setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter, false, null,null);
 	}
 	public static void setExpressionByStato(IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
 			ISQLFieldConverter fieldConverter) throws Exception{
-		setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter, true, null,null);
+		StatisticsUtils.setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter, true, null,null);
 	}
 	public static void setExpressionStatsPersonalizzate(IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
 			ISQLFieldConverter fieldConverter,
 			List<AliasFilter> aliases,
 			String idRisorsa,
 			StatisticResourceFilter ... risorseFiltri) throws Exception{
-		setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter,false,
+		StatisticsUtils.setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter,false,
 				aliases,idRisorsa, risorseFiltri);
 	}
 	private static void setExpressionEngine(IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
@@ -124,23 +124,23 @@ public class StatisticsUtils {
 			// Gestisco i possibili valori null con '-'.
 			// Sono state prese le informazioni anche con null poichè senno non venivano contate nelle statistiche le transazioni che non possedevano info sui servizi. (es porta delegata non trovata)
 			String pddCodice = stat.getIdPorta();
-			setCondition(expr, pddCodice, Transazione.model().PDD_CODICE);
+			StatisticsUtils.setCondition(expr, pddCodice, Transazione.model().PDD_CODICE);
 			String tipoMittente = stat.getMittente()!=null ? stat.getMittente().getTipo() : null;
-			setCondition(expr, tipoMittente, Transazione.model().TIPO_SOGGETTO_FRUITORE);
+			StatisticsUtils.setCondition(expr, tipoMittente, Transazione.model().TIPO_SOGGETTO_FRUITORE);
 			String nomeMittente = stat.getMittente()!=null ? stat.getMittente().getNome() : null;
-			setCondition(expr, nomeMittente, Transazione.model().NOME_SOGGETTO_FRUITORE);
+			StatisticsUtils.setCondition(expr, nomeMittente, Transazione.model().NOME_SOGGETTO_FRUITORE);
 			String tipoDestinatario = stat.getDestinatario()!=null ? stat.getDestinatario().getTipo() : null;
-			setCondition(expr, tipoDestinatario, Transazione.model().TIPO_SOGGETTO_EROGATORE);
+			StatisticsUtils.setCondition(expr, tipoDestinatario, Transazione.model().TIPO_SOGGETTO_EROGATORE);
 			String nomeDestinatario = stat.getDestinatario()!=null ? stat.getDestinatario().getNome() : null;
-			setCondition(expr, nomeDestinatario, Transazione.model().NOME_SOGGETTO_EROGATORE);
+			StatisticsUtils.setCondition(expr, nomeDestinatario, Transazione.model().NOME_SOGGETTO_EROGATORE);
 			String tipoServizio = stat.getTipoServizio();
-			setCondition(expr, tipoServizio, Transazione.model().TIPO_SERVIZIO);
+			StatisticsUtils.setCondition(expr, tipoServizio, Transazione.model().TIPO_SERVIZIO);
 			String nomeServizio = stat.getServizio();
-			setCondition(expr, nomeServizio, Transazione.model().NOME_SERVIZIO);
+			StatisticsUtils.setCondition(expr, nomeServizio, Transazione.model().NOME_SERVIZIO);
 			Integer versioneServizio = stat.getVersioneServizio();
-			setCondition(expr, versioneServizio, Transazione.model().VERSIONE_SERVIZIO);
+			StatisticsUtils.setCondition(expr, versioneServizio, Transazione.model().VERSIONE_SERVIZIO);
 			String azione = stat.getAzione();
-			setCondition(expr, azione, Transazione.model().AZIONE);
+			StatisticsUtils.setCondition(expr, azione, Transazione.model().AZIONE);
 			
 			
 //			if(TipoPdD.DELEGATA.equals(tipoPdD)){
@@ -161,29 +161,29 @@ public class StatisticsUtils {
 //			}
 			
 			String trasportoMittente = stat.getTrasportoMittente();
-			setCondition(expr, trasportoMittente, Transazione.model().TRASPORTO_MITTENTE);
+			StatisticsUtils.setCondition(expr, trasportoMittente, Transazione.model().TRASPORTO_MITTENTE);
 			
 			String tokenIssuer = stat.getTokenIssuer();
-			setCondition(expr, tokenIssuer, Transazione.model().TOKEN_ISSUER);
+			StatisticsUtils.setCondition(expr, tokenIssuer, Transazione.model().TOKEN_ISSUER);
 			String tokenClientId = stat.getTokenClientId();
-			setCondition(expr, tokenClientId, Transazione.model().TOKEN_CLIENT_ID);
+			StatisticsUtils.setCondition(expr, tokenClientId, Transazione.model().TOKEN_CLIENT_ID);
 			String tokenSubject = stat.getTokenSubject();
-			setCondition(expr, tokenSubject, Transazione.model().TOKEN_SUBJECT);
+			StatisticsUtils.setCondition(expr, tokenSubject, Transazione.model().TOKEN_SUBJECT);
 			String tokenUsername = stat.getTokenUsername();
-			setCondition(expr, tokenUsername, Transazione.model().TOKEN_USERNAME);
+			StatisticsUtils.setCondition(expr, tokenUsername, Transazione.model().TOKEN_USERNAME);
 			String tokenMail = stat.getTokenMail();
-			setCondition(expr, tokenMail, Transazione.model().TOKEN_MAIL);
+			StatisticsUtils.setCondition(expr, tokenMail, Transazione.model().TOKEN_MAIL);
 			
 			String clientAddress = stat.getClientAddress();
-			setCondition(expr, clientAddress, Transazione.model().CLIENT_ADDRESS);
+			StatisticsUtils.setCondition(expr, clientAddress, Transazione.model().CLIENT_ADDRESS);
 			
 			String gruppo = stat.getGruppo();
-			setCondition(expr, gruppo, Transazione.model().GRUPPI);
+			StatisticsUtils.setCondition(expr, gruppo, Transazione.model().GRUPPI);
 			
 			expr.equals(Transazione.model().ESITO, stat.getEsito()!=null ? stat.getEsito() : -1);
 			
 			String esitoContesto = stat.getEsitoContesto();
-			setCondition(expr, esitoContesto, Transazione.model().ESITO_CONTESTO);
+			StatisticsUtils.setCondition(expr, esitoContesto, Transazione.model().ESITO_CONTESTO);
 		}
 		else{
 			// Gestisco i possibili valori null con '-'.
@@ -345,7 +345,7 @@ public class StatisticsUtils {
 	
 	public static StatisticBean readStatisticBean(StatisticBean stat,Map<String, Object> row){
 		
-		stat.setIdPorta(getValueFromMap(Transazione.model().PDD_CODICE,row));
+		stat.setIdPorta(StatisticsUtils.getValueFromMap(Transazione.model().PDD_CODICE,row));
 		String TipoPortaS = (String) row.get(Transazione.model().PDD_RUOLO.getFieldName());
 		TipoPdD tipo = TipoPdD.toTipoPdD(TipoPortaS);
 		stat.setTipoPorta(tipo);
@@ -374,19 +374,19 @@ public class StatisticsUtils {
 		// poichè un applicativo viene identificato univocamente se si considera sia il nome dell'applicativo che il soggetto proprietario.
 		// Il group by sulle fruizioni, se si usa l'informazione anonima, non porta problemi perchè l'entry anonima sarà 1 sempre, essendo il soggetto fruitore uno solo (Soggetto locale impostato).
 		// Il group by sulle erogazioni produrrà invece più entry anonime se si hanno più soggetto che la invocano senza un applicativo specifico.
-		stat.setServizioApplicativo(getValueFromMap(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,row));
+		stat.setServizioApplicativo(StatisticsUtils.getValueFromMap(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,row));
 						
-		stat.setTrasportoMittente(getValueFromMap(Transazione.model().TRASPORTO_MITTENTE,row));
+		stat.setTrasportoMittente(StatisticsUtils.getValueFromMap(Transazione.model().TRASPORTO_MITTENTE,row));
 		
-		stat.setTokenIssuer(getValueFromMap(Transazione.model().TOKEN_ISSUER,row));
-		stat.setTokenClientId(getValueFromMap(Transazione.model().TOKEN_CLIENT_ID,row));
-		stat.setTokenSubject(getValueFromMap(Transazione.model().TOKEN_SUBJECT,row));
-		stat.setTokenUsername(getValueFromMap(Transazione.model().TOKEN_USERNAME,row));
-		stat.setTokenMail(getValueFromMap(Transazione.model().TOKEN_MAIL,row));
+		stat.setTokenIssuer(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_ISSUER,row));
+		stat.setTokenClientId(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_CLIENT_ID,row));
+		stat.setTokenSubject(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_SUBJECT,row));
+		stat.setTokenUsername(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_USERNAME,row));
+		stat.setTokenMail(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_MAIL,row));
 		
-		stat.setClientAddress(getValueFromMap(Transazione.model().CLIENT_ADDRESS,row));
+		stat.setClientAddress(StatisticsUtils.getValueFromMap(Transazione.model().CLIENT_ADDRESS,row));
 		
-		stat.setGruppo(getValueFromMap(Transazione.model().GRUPPI,row));
+		stat.setGruppo(StatisticsUtils.getValueFromMap(Transazione.model().GRUPPI,row));
 		
 //		stat.setMittente(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldName()), (String)row.get(Transazione.model().NOME_SOGGETTO_FRUITORE .getFieldName())));
 //		stat.setDestinatario(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_EROGATORE.getFieldName()),(String)row.get(Transazione.model().NOME_SOGGETTO_EROGATORE.getFieldName())));
@@ -401,21 +401,21 @@ public class StatisticsUtils {
 		
 		// Gestisco i possibili valori null con '-'.
 		// Sono state prese le informazioni anche con null poichè senno non venivano contate nelle statistiche le transazioni che non possedevano info sui servizi. (es porta delegata non trovata)
-		stat.setMittente(new IDSoggetto(getValueFromMap(Transazione.model().TIPO_SOGGETTO_FRUITORE,row), 
-										getValueFromMap(Transazione.model().NOME_SOGGETTO_FRUITORE,row)));
+		stat.setMittente(new IDSoggetto(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_FRUITORE,row), 
+										StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_FRUITORE,row)));
 		
-		stat.setDestinatario(new IDSoggetto(getValueFromMap(Transazione.model().TIPO_SOGGETTO_EROGATORE,row), 
-											getValueFromMap(Transazione.model().NOME_SOGGETTO_EROGATORE,row)));
+		stat.setDestinatario(new IDSoggetto(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_EROGATORE,row), 
+											StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_EROGATORE,row)));
 		
-		stat.setTipoServizio(getValueFromMap(Transazione.model().TIPO_SERVIZIO,row));
-		stat.setServizio(getValueFromMap(Transazione.model().NOME_SERVIZIO,row));
-		stat.setVersioneServizio(getVersionValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row));
+		stat.setTipoServizio(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SERVIZIO,row));
+		stat.setServizio(StatisticsUtils.getValueFromMap(Transazione.model().NOME_SERVIZIO,row));
+		stat.setVersioneServizio(StatisticsUtils.getVersionValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row));
 		
-		stat.setAzione(getValueFromMap(Transazione.model().AZIONE,row));
+		stat.setAzione(StatisticsUtils.getValueFromMap(Transazione.model().AZIONE,row));
 		
 		stat.setEsito((Integer)row.get(Transazione.model().ESITO.getFieldName()));
 		
-		stat.setEsitoContesto(getValueFromMap(Transazione.model().ESITO_CONTESTO,row));
+		stat.setEsitoContesto(StatisticsUtils.getValueFromMap(Transazione.model().ESITO_CONTESTO,row));
 		
 		return stat;
 	}
@@ -550,7 +550,7 @@ public class StatisticsUtils {
 		}else{
 			valore = org.openspcoop2.monitor.engine.constants.Costanti.TRANSAZIONE_SENZA_STATO;
 		}
-		setRisorsaValore(statisticaContenuti, idStatisticaPersonalizzata, valore);
+		StatisticsUtils.setRisorsaValore(statisticaContenuti, idStatisticaPersonalizzata, valore);
 	}
 	
 	public static void fillStatisticsContenuti(String idStatisticaPersonalizzata,StatisticaContenuti statisticaContenuti,Map<String, Object> row,
@@ -568,7 +568,7 @@ public class StatisticsUtils {
 				Transazione.model().DUMP_MESSAGGIO.CONTENUTO.getBaseField().getFieldName()+"."+
 				Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE.getFieldName();
 		
-		setRisorsaValore(statisticaContenuti, risorsaNome, (String)row.get(aliasValore));
+		StatisticsUtils.setRisorsaValore(statisticaContenuti, risorsaNome, (String)row.get(aliasValore));
 		
 		
 //		java.util.Iterator<String> itS = row.keySet().iterator();
@@ -588,7 +588,7 @@ public class StatisticsUtils {
 				String aliasFiltroValore = afValore.getAliasTable()+"."+
 						Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE.getFieldName();
 				
-				setFiltro(statisticaContenuti, 
+				StatisticsUtils.setFiltro(statisticaContenuti, 
 						af.getStatisticFilterName(), 
 						(String)row.get(aliasFiltroNome), 
 						(String)row.get(aliasFiltroValore));
@@ -600,13 +600,13 @@ public class StatisticsUtils {
 	
 	public static void fillStatisticsContenuti(String idStatistica,StatisticaContenuti statisticaContenuti,RisorsaAggregata risorsaAggregata) throws EngineException{
 		
-		setRisorsaValore(statisticaContenuti, idStatistica, risorsaAggregata.getValoreRisorsaAggregata());
+		StatisticsUtils.setRisorsaValore(statisticaContenuti, idStatistica, risorsaAggregata.getValoreRisorsaAggregata());
 		if(risorsaAggregata.getFiltri()!=null && risorsaAggregata.getFiltri().size()>0){
 			for (int i = 0; i < risorsaAggregata.getFiltri().size(); i++) {
 				String nome = risorsaAggregata.getFiltri().get(i).getResourceID();
 				String valore = ContentFormatter.toString(risorsaAggregata.getFiltri().get(i).getValue());
 				
-				setFiltro(statisticaContenuti, 
+				StatisticsUtils.setFiltro(statisticaContenuti, 
 						risorsaAggregata.getFiltri().get(i).getStatisticFilterName(), 
 						nome, 
 						valore);

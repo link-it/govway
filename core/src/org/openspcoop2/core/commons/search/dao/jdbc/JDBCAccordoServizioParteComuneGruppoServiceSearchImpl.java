@@ -57,7 +57,6 @@ import org.openspcoop2.core.commons.search.dao.jdbc.converter.AccordoServizioPar
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.AccordoServizioParteComuneGruppoFetch;
 import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IDBGruppoServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.Gruppo;

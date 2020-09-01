@@ -23,10 +23,6 @@ package org.openspcoop2.utils.id;
 
 import java.util.UUID;
 
-import org.openspcoop2.utils.id.IUniqueIdentifier;
-import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
-import org.openspcoop2.utils.id.UniqueIdentifierException;
-
 /**
  * AbstractUniversallyUniqueIdentifierGenerator
  *

@@ -62,7 +62,7 @@ public class ApplicationBean implements Serializable {
 
 	public static ApplicationBean getInstance(){
 		if(ApplicationBean._instance == null)
-			init();
+			ApplicationBean.init();
 
 		return ApplicationBean._instance;
 	}
@@ -115,45 +115,45 @@ public class ApplicationBean implements Serializable {
 
 	private static Map<String, Boolean> funzionalitaStaticInstance = null;
 	private synchronized void initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
-		if(funzionalitaStaticInstance==null){
-			funzionalitaStaticInstance = new HashMap<String, Boolean>();
+		if(ApplicationBean.funzionalitaStaticInstance==null){
+			ApplicationBean.funzionalitaStaticInstance = new HashMap<String, Boolean>();
 			
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE_OPERATORE, govwayMonitorProperties.isAttivoModuloTransazioniBase() && govwayMonitorProperties.isAttivoLiveRuoloOperatore());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE, govwayMonitorProperties.isAttivoModuloTransazioniStatisticheBase());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ALLARMI, govwayMonitorProperties.isAttivoModuloAllarmi());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE_OPERATORE, govwayMonitorProperties.isAttivoModuloTransazioniBase() && govwayMonitorProperties.isAttivoLiveRuoloOperatore());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE, govwayMonitorProperties.isAttivoModuloTransazioniStatisticheBase());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ALLARMI, govwayMonitorProperties.isAttivoModuloAllarmi());
 			boolean attivoModuloTransazioniPersonalizzate = govwayMonitorProperties.isAttivoModuloTransazioniPersonalizzate();
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI, attivoModuloTransazioniPersonalizzate); 
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI, attivoModuloTransazioniPersonalizzate); 
 			boolean attivoModuloRicerchePersonalizzate = govwayMonitorProperties.isAttivoModuloRicerchePersonalizzate();
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE, attivoModuloRicerchePersonalizzate);
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE, attivoModuloRicerchePersonalizzate);
 			boolean attivoModuloTransazioniStatistichePersonalizzate = govwayMonitorProperties.isAttivoModuloTransazioniStatistichePersonalizzate();
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE,attivoModuloTransazioniStatistichePersonalizzate);
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_PROCESSI, govwayMonitorProperties.isAttivoModuloProcessi());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE, govwayMonitorProperties.isAttivoModuloSonde());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_EVENTI, govwayMonitorProperties.isAttivoModuloEventi());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE,attivoModuloTransazioniStatistichePersonalizzate);
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_PROCESSI, govwayMonitorProperties.isAttivoModuloProcessi());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE, govwayMonitorProperties.isAttivoModuloSonde());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_EVENTI, govwayMonitorProperties.isAttivoModuloEventi());
 			// lazy initialization per i ruoli, dato che il bean login verra' // inizializzato solo dopo il login dell'utente.
 			// Funzionalita analisi dei dati abilitata se almeno una delle categorie personalizzabili e' abilitata
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ANALISI_DATI, (attivoModuloTransazioniPersonalizzate || attivoModuloRicerchePersonalizzate || attivoModuloTransazioniStatistichePersonalizzate ));
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ESITI_LIVE, govwayMonitorProperties.isAttivoTransazioniEsitiLive());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ESITI_LIVE_OPERATORE, govwayMonitorProperties.isAttivoTransazioniEsitiLive() && govwayMonitorProperties.isAttivoLiveRuoloOperatore());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_STATUS_PDD, govwayMonitorProperties.isStatusPdDEnabled());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ANALISI_DATI, (attivoModuloTransazioniPersonalizzate || attivoModuloRicerchePersonalizzate || attivoModuloTransazioniStatistichePersonalizzate ));
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ESITI_LIVE, govwayMonitorProperties.isAttivoTransazioniEsitiLive());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ESITI_LIVE_OPERATORE, govwayMonitorProperties.isAttivoTransazioniEsitiLive() && govwayMonitorProperties.isAttivoLiveRuoloOperatore());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_STATUS_PDD, govwayMonitorProperties.isStatusPdDEnabled());
 
 			// Funzionalita' che non sono gestite dal file di properties, ma necessarie per il controllo dei contenuti
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_UTENTI,true);
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_GENERICHE,true);
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ARCHIVIAZIONE_DATI, true);
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI, true);
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_EXPORT_PROCESSI, true);
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_UTENTI,true);
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_GENERICHE,true);
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ARCHIVIAZIONE_DATI, true);
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI, true);
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_EXPORT_PROCESSI, true);
 			
 			// Funzionalita' gestione password, controlla la gestione della password quando la console viene utilizzata in modalita' login esterno.
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_GESTIONE_PASSWORD, govwayMonitorProperties.isGestionePasswordUtentiAttiva());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_GESTIONE_PASSWORD, govwayMonitorProperties.isGestionePasswordUtentiAttiva());
 
 			// funzionalita utilizza grafici in modalita' svg
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_GRAFICI_SVG, govwayMonitorProperties.isGraficiSvgEnabled());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_GRAFICI_SVG, govwayMonitorProperties.isGraficiSvgEnabled());
 			
 			// funzionalita visualizzazione dei report in formato PDF 
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_REPORT, govwayMonitorProperties.isAttivoModuloReports());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_REPORT, govwayMonitorProperties.isAttivoModuloReports());
 		}
 	}
 	
@@ -161,8 +161,8 @@ public class ApplicationBean implements Serializable {
 		// devo rimuoverlo in entrambe le mappe
 		this.funzionalita.remove(nomeFunzionalita);
 		this.funzionalita.put(nomeFunzionalita,false);
-		funzionalitaStaticInstance.remove(nomeFunzionalita);
-		funzionalitaStaticInstance.put(nomeFunzionalita,false);
+		ApplicationBean.funzionalitaStaticInstance.remove(nomeFunzionalita);
+		ApplicationBean.funzionalitaStaticInstance.put(nomeFunzionalita,false);
 	}
 	
 	public ApplicationBean() {
@@ -170,7 +170,7 @@ public class ApplicationBean implements Serializable {
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(ApplicationBean.log);
 			initializeFunzionalita(govwayMonitorProperties);
-			this.funzionalita.putAll(funzionalitaStaticInstance);
+			this.funzionalita.putAll(ApplicationBean.funzionalitaStaticInstance);
 		} catch (Exception e) {
 			ApplicationBean.log.error("Errore durante l'inizializzazione del ApplicationBean.",e);
 		}
@@ -1021,7 +1021,7 @@ public class ApplicationBean implements Serializable {
 			try {
 				return versionInfo.getInfo();
 			}catch(Exception e) {
-				log.error(e.getMessage(),e);
+				ApplicationBean.log.error(e.getMessage(),e);
 				return CostantiPdD.OPENSPCOOP2_LICENSE;
 			}
 		}
@@ -1078,7 +1078,7 @@ public class ApplicationBean implements Serializable {
 	
 	private static final String CACHE_SEPARATOR = "\n";
 	private String _getCacheDetails(String stato, String param) {
-		String [] split = stato.split(CACHE_SEPARATOR);
+		String [] split = stato.split(ApplicationBean.CACHE_SEPARATOR);
 		for (int i = 0; i < split.length; i++) {
 			String label = split[i];
 			String value = "";
@@ -1125,7 +1125,7 @@ public class ApplicationBean implements Serializable {
 	}
 	public String getCacheDatiConfigurazioneDetails() {
 		try {
-			return AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.printStatsCache(CACHE_SEPARATOR);
+			return AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.printStatsCache(ApplicationBean.CACHE_SEPARATOR);
 		}catch(Exception e) {
 			LoggerManager.getPddMonitorCoreLogger().error(e.getMessage(),e);
 			return "Informazioni non disponibili";
@@ -1133,7 +1133,7 @@ public class ApplicationBean implements Serializable {
 	}
 	public int getCacheDatiConfigurazioneDetailsRows() {
 		String stato = getCacheDatiConfigurazioneDetails();
-		String [] split = stato.split(CACHE_SEPARATOR);
+		String [] split = stato.split(ApplicationBean.CACHE_SEPARATOR);
 		if(split==null || split.length>11) {
 			return 10;
 		}
@@ -1178,7 +1178,7 @@ public class ApplicationBean implements Serializable {
 	}
 	public String getCacheRicercheConfigurazioneDetails() {
 		try {
-			return AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.printStatsCache(CACHE_SEPARATOR);
+			return AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.printStatsCache(ApplicationBean.CACHE_SEPARATOR);
 		}catch(Exception e) {
 			LoggerManager.getPddMonitorCoreLogger().error(e.getMessage(),e);
 			return "Informazioni non disponibili";
@@ -1186,7 +1186,7 @@ public class ApplicationBean implements Serializable {
 	}
 	public int getCacheRicercheConfigurazioneDetailsRows() {
 		String licenza = getLicenza();
-		String [] split = licenza.split(CACHE_SEPARATOR);
+		String [] split = licenza.split(ApplicationBean.CACHE_SEPARATOR);
 		if(split==null || split.length>11) {
 			return 10;
 		}

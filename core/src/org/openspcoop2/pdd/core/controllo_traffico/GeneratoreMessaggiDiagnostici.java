@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 import java.util.Hashtable;
 
 import org.slf4j.Logger;
-import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 

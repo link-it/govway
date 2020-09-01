@@ -54,7 +54,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.AccordoServizioParteComuneAzioneFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.AccordoServizioParteComuneAzioneFetch;
 import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteComuneServiceSearch;
-import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;

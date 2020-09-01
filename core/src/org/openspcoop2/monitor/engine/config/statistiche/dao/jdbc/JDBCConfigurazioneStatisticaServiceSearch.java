@@ -43,8 +43,6 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBC_SQLObjectFactory;
 
-import org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc.JDBCServiceManager;
-import org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc.JDBCLimitedServiceManager;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.engine.config.statistiche.dao.IDBConfigurazioneStatisticaServiceSearch;
 import org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo;

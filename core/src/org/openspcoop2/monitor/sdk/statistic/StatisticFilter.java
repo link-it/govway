@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.monitor.sdk.statistic;
 
-import org.openspcoop2.monitor.sdk.statistic.StatisticFilterName;
 
 
 /**
