@@ -41,7 +41,7 @@ public class XSDValidatorWithSignature {
 		if(validator==null){
 			validator = new org.openspcoop2.generic_project.utils.XSDValidator(log,FatturaElettronicaType.class, 
 					validatorImpl,
-					"/FatturaPA_v1.2.xsd",
+					"/FatturaPA_v1.2.1.xsd",
 					"/xmldsig-core-schema.xsd","/XMLSchema.dtd","/datatypes.dtd");
 		}
 	}

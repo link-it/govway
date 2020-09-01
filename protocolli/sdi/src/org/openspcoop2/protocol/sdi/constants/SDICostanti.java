@@ -60,17 +60,20 @@ public class SDICostanti {
     public final static String SDI_ATTRIBUTE_VERSION_FATTURA_PA_11 = "1.1";
     public final static String SDI_ATTRIBUTE_VERSION_FATTURA_PA_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPA12.name();
     public final static String SDI_ATTRIBUTE_VERSION_FATTURA_PR_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPR12.name();
+    public final static String SDI_ATTRIBUTE_VERSION_FATTURA_SEMPLIFICATA_10 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.constants.FormatoTrasmissioneType.FSM10.name();
     
     public final static String SDI_VERSIONE_FATTURA_PA_10 = it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name();
     public final static String SDI_VERSIONE_FATTURA_PA_11 = it.gov.fatturapa.sdi.fatturapa.v1_1.constants.FormatoTrasmissioneType.SDI11.name();
     public final static String SDI_VERSIONE_FATTURA_PA_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPA12.name();
     public final static String SDI_VERSIONE_FATTURA_PR_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPR12.name();
+    public final static String SDI_VERSIONE_FATTURA_SEMPLIFICATA_10 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.constants.FormatoTrasmissioneType.FSM10.name();
     public final static List<String> SDI_VERSIONI_FATTURA = new ArrayList<String>();
     static{
     	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PA_12);
     	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PR_12);
     	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PA_11);
     	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PA_10);
+    	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_SEMPLIFICATA_10);
     }
     
     public final static String SDI_MESSAGE_CONTEXT_FATTURA = "FatturaPA";

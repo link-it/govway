@@ -79,7 +79,9 @@ public enum ModalitaPagamentoType implements IEnumeration , Serializable , Clone
 	@javax.xml.bind.annotation.XmlEnumValue("MP21")
 	MP21 ("MP21"),
 	@javax.xml.bind.annotation.XmlEnumValue("MP22")
-	MP22 ("MP22");
+	MP22 ("MP22"),
+	@javax.xml.bind.annotation.XmlEnumValue("MP23")
+	MP23 ("MP23");
 	
 	
 	/** Value */

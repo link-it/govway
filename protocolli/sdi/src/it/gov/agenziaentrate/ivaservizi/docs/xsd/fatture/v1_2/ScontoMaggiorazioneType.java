@@ -107,7 +107,7 @@ public class ScontoMaggiorazioneType extends org.openspcoop2.utils.beans.BaseBea
 
   public void setImporto(java.math.BigDecimal importo) {
     if(importo!=null){
-		this._decimalWrapper_importo = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,importo);
+		this._decimalWrapper_importo = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,8,importo);
 	}
   }
 

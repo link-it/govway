@@ -40,8 +40,8 @@ public class XSDValidator {
 	private static synchronized void initValidator(Class<?> validatorImpl,Logger log) throws ServiceException{
 		if(validator==null){
 			validator = new org.openspcoop2.generic_project.utils.XSDValidator(log,FatturaElettronicaType.class, 
-				"/FatturaPA_v1.2.xsd"
-				// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /FatturaPA_v1.2.xsd
+				"/FatturaPA_v1.2.1.xsd"
+				// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /FatturaPA_v1.2.1.xsd
 			);
 		}
 	}

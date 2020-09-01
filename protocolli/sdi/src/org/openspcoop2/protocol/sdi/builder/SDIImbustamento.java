@@ -240,6 +240,9 @@ public class SDIImbustamento {
 					else if(it.gov.fatturapa.sdi.fatturapa.v1_1.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
 						versioneFattura = SDICostanti.SDI_VERSIONE_FATTURA_PA_11;
 					}
+					else if(it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
+						versioneFattura = SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10;
+					}
 					else{
 						// non e' possibile capire la versione dal namespace, la versione 1.2 contiene due versioni interne, una per private ed una per PA
 						throw new Exception("Versione non fornita (indicare una delle seguenti versioni: "+SDICostanti.SDI_VERSIONI_FATTURA+")");
@@ -257,6 +260,11 @@ public class SDIImbustamento {
 					}
 					else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
 						if(!it.gov.fatturapa.sdi.fatturapa.v1_1.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
+							throw new Exception("Versione fornita ["+versioneFattura+"] non è utilizzabile con la fattura fornita che appartiene ad una differente versione di namespace ["+fatturaSOAPElement.getNamespaceURI()+"]");
+						}
+					}
+					else if(SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10.equals(versioneFattura)){
+						if(!it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
 							throw new Exception("Versione fornita ["+versioneFattura+"] non è utilizzabile con la fattura fornita che appartiene ad una differente versione di namespace ["+fatturaSOAPElement.getNamespaceURI()+"]");
 						}
 					}
@@ -318,6 +326,9 @@ public class SDIImbustamento {
 					}
 					else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
 						validatore = it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
+					}
+					else if(SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10.equals(versioneFattura)){
+						validatore = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
 					}
 					else{
 						validatore = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());

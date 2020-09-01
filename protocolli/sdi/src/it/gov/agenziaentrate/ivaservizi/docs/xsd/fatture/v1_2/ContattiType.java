@@ -36,7 +36,7 @@ import java.io.Serializable;
  * 		&lt;sequence&gt;
  * 			&lt;element name="Telefono" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="Fax" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
- * 			&lt;element name="Email" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Email" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -100,7 +100,8 @@ public class ContattiType extends org.openspcoop2.utils.beans.BaseBean implement
   @XmlElement(name="Fax",required=false,nillable=false)
   protected java.lang.String fax;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="Email",required=false,nillable=false)
   protected java.lang.String email;
 

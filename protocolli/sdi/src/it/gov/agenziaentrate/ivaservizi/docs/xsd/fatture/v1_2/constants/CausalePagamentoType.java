@@ -80,16 +80,20 @@ public enum CausalePagamentoType implements IEnumeration , Serializable , Clonea
 	X ("X"),
 	@javax.xml.bind.annotation.XmlEnumValue("Y")
 	Y ("Y"),
-	@javax.xml.bind.annotation.XmlEnumValue("Z")
-	Z ("Z"),
 	@javax.xml.bind.annotation.XmlEnumValue("L1")
 	L1 ("L1"),
 	@javax.xml.bind.annotation.XmlEnumValue("M1")
 	M1 ("M1"),
+	@javax.xml.bind.annotation.XmlEnumValue("M2")
+	M2 ("M2"),
 	@javax.xml.bind.annotation.XmlEnumValue("O1")
 	O1 ("O1"),
 	@javax.xml.bind.annotation.XmlEnumValue("V1")
-	V1 ("V1");
+	V1 ("V1"),
+	@javax.xml.bind.annotation.XmlEnumValue("ZO")
+	ZO ("ZO"),
+	@javax.xml.bind.annotation.XmlEnumValue("Z")
+	Z ("Z");
 	
 	
 	/** Value */

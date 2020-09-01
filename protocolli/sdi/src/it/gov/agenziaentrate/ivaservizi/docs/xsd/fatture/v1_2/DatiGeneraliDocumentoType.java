@@ -42,7 +42,7 @@ import java.util.List;
  * 			&lt;element name="Divisa" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="Data" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}date" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="Numero" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="1" maxOccurs="1"/&gt;
- * 			&lt;element name="DatiRitenuta" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}DatiRitenutaType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DatiRitenuta" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}DatiRitenutaType" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="DatiBollo" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}DatiBolloType" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="DatiCassaPrevidenziale" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}DatiCassaPrevidenzialeType" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="ScontoMaggiorazione" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}ScontoMaggiorazioneType" minOccurs="0" maxOccurs="unbounded"/&gt;
@@ -128,12 +128,28 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
     this.numero = numero;
   }
 
-  public DatiRitenutaType getDatiRitenuta() {
+  public void addDatiRitenuta(DatiRitenutaType datiRitenuta) {
+    this.datiRitenuta.add(datiRitenuta);
+  }
+
+  public DatiRitenutaType getDatiRitenuta(int index) {
+    return this.datiRitenuta.get( index );
+  }
+
+  public DatiRitenutaType removeDatiRitenuta(int index) {
+    return this.datiRitenuta.remove( index );
+  }
+
+  public List<DatiRitenutaType> getDatiRitenutaList() {
     return this.datiRitenuta;
   }
 
-  public void setDatiRitenuta(DatiRitenutaType datiRitenuta) {
-    this.datiRitenuta = datiRitenuta;
+  public void setDatiRitenutaList(List<DatiRitenutaType> datiRitenuta) {
+    this.datiRitenuta=datiRitenuta;
+  }
+
+  public int sizeDatiRitenutaList() {
+    return this.datiRitenuta.size();
   }
 
   public DatiBolloType getDatiBollo() {
@@ -288,8 +304,35 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="Numero",required=true,nillable=false)
   protected java.lang.String numero;
 
-  @XmlElement(name="DatiRitenuta",required=false,nillable=false)
-  protected DatiRitenutaType datiRitenuta;
+  @XmlElement(name="DatiRitenuta",required=true,nillable=false)
+  protected List<DatiRitenutaType> datiRitenuta = new ArrayList<DatiRitenutaType>();
+
+  /**
+   * @deprecated Use method getDatiRitenutaList
+   * @return List&lt;DatiRitenutaType&gt;
+  */
+  @Deprecated
+  public List<DatiRitenutaType> getDatiRitenuta() {
+  	return this.datiRitenuta;
+  }
+
+  /**
+   * @deprecated Use method setDatiRitenutaList
+   * @param datiRitenuta List&lt;DatiRitenutaType&gt;
+  */
+  @Deprecated
+  public void setDatiRitenuta(List<DatiRitenutaType> datiRitenuta) {
+  	this.datiRitenuta=datiRitenuta;
+  }
+
+  /**
+   * @deprecated Use method sizeDatiRitenutaList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeDatiRitenuta() {
+  	return this.datiRitenuta.size();
+  }
 
   @XmlElement(name="DatiBollo",required=false,nillable=false)
   protected DatiBolloType datiBollo;

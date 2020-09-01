@@ -19,7 +19,6 @@
  */
 package it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2;
 
-import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.NaturaType;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.RitenutaType;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.TipoCassaType;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -43,7 +42,7 @@ import java.io.Serializable;
  * 			&lt;element name="ImponibileCassa" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}decimal" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="AliquotaIVA" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}decimal" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="Ritenuta" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}RitenutaType" minOccurs="0" maxOccurs="1"/&gt;
- * 			&lt;element name="Natura" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}NaturaType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Natura" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="RiferimentoAmministrazione" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
@@ -171,23 +170,11 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
     this.ritenuta = ritenuta;
   }
 
-  public void set_value_natura(String value) {
-    this.natura = (NaturaType) NaturaType.toEnumConstantFromString(value);
-  }
-
-  public String get_value_natura() {
-    if(this.natura == null){
-    	return null;
-    }else{
-    	return this.natura.toString();
-    }
-  }
-
-  public it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.NaturaType getNatura() {
+  public java.lang.String getNatura() {
     return this.natura;
   }
 
-  public void setNatura(it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.NaturaType natura) {
+  public void setNatura(java.lang.String natura) {
     this.natura = natura;
   }
 
@@ -247,11 +234,9 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="Ritenuta",required=false,nillable=false)
   protected RitenutaType ritenuta;
 
-  @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_natura;
-
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="Natura",required=false,nillable=false)
-  protected NaturaType natura;
+  protected java.lang.String natura;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")

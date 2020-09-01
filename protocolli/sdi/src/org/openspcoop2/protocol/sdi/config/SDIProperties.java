@@ -840,14 +840,14 @@ public class SDIProperties {
 	public Boolean isEnableAccessoMetadatiWarningMode() throws ProtocolException{
 		if(SDIProperties.isEnableAccessoMetadatiWarningMode==null){
 			
-			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMetadati.enable";
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMetadati.enable.throwError";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoMetadatiWarningMode = Boolean.parseBoolean(value);
+					SDIProperties.isEnableAccessoMetadatiWarningMode = !Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -872,14 +872,14 @@ public class SDIProperties {
 	public Boolean isEnableAccessoFatturaWarningMode() throws ProtocolException{
 		if(SDIProperties.isEnableAccessoFatturaWarningMode==null){
 			
-			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiFattura.enable";
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiFattura.enable.throwError";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoFatturaWarningMode = Boolean.parseBoolean(value);
+					SDIProperties.isEnableAccessoFatturaWarningMode = !Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -904,14 +904,14 @@ public class SDIProperties {
 	public Boolean isEnableAccessoMessaggiWarningMode() throws ProtocolException{
 		if(SDIProperties.isEnableAccessoMessaggiWarningMode==null){
 			
-			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMessaggi.enable";
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMessaggi.enable.throwError";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableAccessoMessaggiWarningMode = Boolean.parseBoolean(value);
+					SDIProperties.isEnableAccessoMessaggiWarningMode = !Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}

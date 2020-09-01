@@ -652,6 +652,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 			String formatoFattura = metadatiObject.getFormato();
 			if(!SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(formatoFattura) &&
 				!SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(formatoFattura) &&
+				!SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10.equals(formatoFattura) &&
 				!SDICostanti.SDI_VERSIONE_FATTURA_PA_12.equals(formatoFattura) &&
 				!SDICostanti.SDI_VERSIONE_FATTURA_PR_12.equals(formatoFattura) ){
 				eccezioniValidazione.add(
@@ -726,6 +727,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 			String formatoFattura = metadatiObject.getFormato();
 			if(!SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(formatoFattura) &&
 				!SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(formatoFattura) &&
+				!SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10.equals(formatoFattura) &&
 				!SDICostanti.SDI_VERSIONE_FATTURA_PA_12.equals(formatoFattura) &&
 				!SDICostanti.SDI_VERSIONE_FATTURA_PR_12.equals(formatoFattura) ){
 				eccezioniValidazione.add(

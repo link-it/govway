@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants;
+package it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.constants;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,30 +26,22 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
- * Enumeration dell'elemento NaturaType xsd (tipo:string) 
+ * Enumeration dell'elemento TipoDocumentoType xsd (tipo:string) 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "NaturaType")
+@javax.xml.bind.annotation.XmlType(name = "TipoDocumentoType")
 @javax.xml.bind.annotation.XmlEnum(String.class)
-public enum NaturaType implements IEnumeration , Serializable , Cloneable {
+public enum TipoDocumentoType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("N1")
-	N1 ("N1"),
-	@javax.xml.bind.annotation.XmlEnumValue("N2")
-	N2 ("N2"),
-	@javax.xml.bind.annotation.XmlEnumValue("N3")
-	N3 ("N3"),
-	@javax.xml.bind.annotation.XmlEnumValue("N4")
-	N4 ("N4"),
-	@javax.xml.bind.annotation.XmlEnumValue("N5")
-	N5 ("N5"),
-	@javax.xml.bind.annotation.XmlEnumValue("N6")
-	N6 ("N6"),
-	@javax.xml.bind.annotation.XmlEnumValue("N7")
-	N7 ("N7");
+	@javax.xml.bind.annotation.XmlEnumValue("TD07")
+	TD07 ("TD07"),
+	@javax.xml.bind.annotation.XmlEnumValue("TD08")
+	TD08 ("TD08"),
+	@javax.xml.bind.annotation.XmlEnumValue("TD09")
+	TD09 ("TD09");
 	
 	
 	/** Value */
@@ -62,7 +54,7 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 
 
 	/** Official Constructor */
-	NaturaType(String value)
+	TipoDocumentoType(String value)
 	{
 		this.value = value;
 	}
@@ -73,7 +65,7 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(NaturaType object){
+	public boolean equals(TipoDocumentoType object){
 		if(object==null)
 			return false;
 		if(object.getValue()==null)
@@ -90,10 +82,10 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 	
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		if( !(object instanceof NaturaType) ){
+		if( !(object instanceof TipoDocumentoType) ){
 			throw new RuntimeException("Wrong type: "+object.getClass().getName());
 		}
-		return this.equals(((NaturaType)object));
+		return this.equals(((TipoDocumentoType)object));
 	}
 	public String toString(boolean reportHTML){
 		return toString();
@@ -114,7 +106,7 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 	public static String[] toArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (NaturaType tmp : values()) {
+		for (TipoDocumentoType tmp : values()) {
 			res[i]=tmp.getValue();
 			i++;
 		}
@@ -123,7 +115,7 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 	public static String[] toStringArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (NaturaType tmp : values()) {
+		for (TipoDocumentoType tmp : values()) {
 			res[i]=tmp.toString();
 			i++;
 		}
@@ -132,7 +124,7 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 	public static String[] toEnumNameArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (NaturaType tmp : values()) {
+		for (TipoDocumentoType tmp : values()) {
 			res[i]=tmp.name();
 			i++;
 		}
@@ -143,16 +135,16 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 		return toEnumConstant(value)!=null;
 	}
 	
-	public static NaturaType toEnumConstant(String value){
+	public static TipoDocumentoType toEnumConstant(String value){
 		try{
 			return toEnumConstant(value,false);
 		}catch(NotFoundException notFound){
 			return null;
 		}
 	}
-	public static NaturaType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
-		NaturaType res = null;
-		for (NaturaType tmp : values()) {
+	public static TipoDocumentoType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
+		TipoDocumentoType res = null;
+		for (TipoDocumentoType tmp : values()) {
 			if(tmp.getValue().equals(value)){
 				res = tmp;
 				break;
@@ -172,8 +164,8 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 		}
 	}
 	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
-		NaturaType res = null;
-		for (NaturaType tmp : values()) {
+		TipoDocumentoType res = null;
+		for (TipoDocumentoType tmp : values()) {
 			if(tmp.toString().equals(value)){
 				res = tmp;
 				break;

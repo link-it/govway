@@ -97,6 +97,10 @@ tipoOperazione=riceviFatture
 #fattura=sdiFiles/esempiFatture/1.2/IT01234567890_13001.xml
 #metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_13001_001.xml
 
+# Fattura singola versione 1.2.1 con più linee di fattura e firma XADES (per PA) (!!costruite a mano, non verificabili!!):
+#fattura=sdiFiles/esempiFatture/1.2.1/IT01234567890_13001.xml
+#metadati=sdiFiles/esempiMetadati/1.2.1/IT01234567890_13001_MT_001.xml
+
 # Fattura singola versione 1.2 con più linee di fattura e firma XADES (per Privati) (!!costruite a mano, non verificabili!!):
 #fattura=sdiFiles/esempiFatture/1.2/IT01234567890_13011.xml
 #metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_13011_001.xml
@@ -140,6 +144,13 @@ metadati=sdiFiles/esempiMetadatiB2B/ITHVQWPH73P42H501Y_X4024_MT_001.xml
 #fattura=sdiFiles/esempiFattureB2B/1.2/ITHVQWPH73P42H501Y_00023.xml
 #metadati=sdiFiles/esempiMetadatiB2B/ITHVQWPH73P42H501Y_00022_MT_001.xml
 
+
+
+# --- Fattura Semplificata 1.0.1 ---
+
+# Fattura Semplificata con firma XADES (per Privati) (!!costruite a mano, non verificabili!!):
+#fattura=sdiFiles/esempiFattureSemplificate/1.0.1/IT01234567890_13001.xml
+#metadati=sdiFiles/esempiFattureSemplificate/1.0.1/IT01234567890_13001_MT_001.xml
 
 
 # --- NotificaDecorrenzaTermini ---

@@ -43,6 +43,7 @@ public class FatturaElettronicaTypeModel extends AbstractModel<FatturaElettronic
 		this.FATTURA_ELETTRONICA_HEADER = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.FatturaElettronicaHeaderTypeModel(new Field("FatturaElettronicaHeader",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaHeaderType.class,"FatturaElettronicaType",FatturaElettronicaType.class));
 		this.FATTURA_ELETTRONICA_BODY = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.FatturaElettronicaBodyTypeModel(new Field("FatturaElettronicaBody",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaBodyType.class,"FatturaElettronicaType",FatturaElettronicaType.class));
 		this.VERSIONE = new Field("versione",java.lang.String.class,"FatturaElettronicaType",FatturaElettronicaType.class);
+		this.SISTEMA_EMITTENTE = new Field("SistemaEmittente",java.lang.String.class,"FatturaElettronicaType",FatturaElettronicaType.class);
 	
 	}
 	
@@ -53,6 +54,7 @@ public class FatturaElettronicaTypeModel extends AbstractModel<FatturaElettronic
 		this.FATTURA_ELETTRONICA_HEADER = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.FatturaElettronicaHeaderTypeModel(new ComplexField(father,"FatturaElettronicaHeader",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaHeaderType.class,"FatturaElettronicaType",FatturaElettronicaType.class));
 		this.FATTURA_ELETTRONICA_BODY = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.FatturaElettronicaBodyTypeModel(new ComplexField(father,"FatturaElettronicaBody",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaBodyType.class,"FatturaElettronicaType",FatturaElettronicaType.class));
 		this.VERSIONE = new ComplexField(father,"versione",java.lang.String.class,"FatturaElettronicaType",FatturaElettronicaType.class);
+		this.SISTEMA_EMITTENTE = new ComplexField(father,"SistemaEmittente",java.lang.String.class,"FatturaElettronicaType",FatturaElettronicaType.class);
 	
 	}
 	
@@ -63,6 +65,8 @@ public class FatturaElettronicaTypeModel extends AbstractModel<FatturaElettronic
 	public it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.FatturaElettronicaBodyTypeModel FATTURA_ELETTRONICA_BODY = null;
 	 
 	public IField VERSIONE = null;
+	 
+	public IField SISTEMA_EMITTENTE = null;
 	 
 
 	@Override

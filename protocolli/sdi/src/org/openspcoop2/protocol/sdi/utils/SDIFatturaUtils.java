@@ -72,6 +72,9 @@ public class SDIFatturaUtils {
 				else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
 					validatore = it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
 				}
+				else if(SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10.equals(versioneFattura)){
+					validatore = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				}
 				else{
 					validatore = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
 				}
@@ -280,6 +283,87 @@ public class SDIFatturaUtils {
 				
 			}
 			
+			// FatturaSemplificata v1.0
+			else if(SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10.equals(versioneFattura)){
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.utils.serializer.JaxbDeserializer();
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.FatturaElettronicaType fatturaObject = deserializer.readFatturaElettronicaType(fattura);
+				if(addMsgInContextIfEnabled && sdiProperties.isSaveFatturaInContext()){
+					msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA, fatturaObject);
+				}
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.FatturaElettronicaHeaderType fatturaHeaderObject = fatturaObject.getFatturaElettronicaHeader();
+				
+				// Attributo Versione
+				if(fatturaObject.getVersione()!=null) {
+					attributoVersione = fatturaObject.getVersione().name();
+				}
+				
+				// Fattura.DatiTrasmissione.IdTrasmittente
+				trasmittenteIdPaese = fatturaHeaderObject.getDatiTrasmissione().getIdTrasmittente().getIdPaese();
+				trasmittenteIdCodice = fatturaHeaderObject.getDatiTrasmissione().getIdTrasmittente().getIdCodice();
+				
+				// Fattura.DatiTrasmissione.ProgressivoInvio
+				trasmissioneProgressivoInvio = fatturaHeaderObject.getDatiTrasmissione().getProgressivoInvio();
+				
+				// Fattura.DatiTrasmissione.FormatoTrasmissione
+				trasmissioneFormatoTrasmissione = fatturaHeaderObject.getDatiTrasmissione().getFormatoTrasmissione().name();
+				
+				// Fattura.DatiTrasmissione.CodiceDestinatario
+				trasmissioneCodiceDestinatario = fatturaHeaderObject.getDatiTrasmissione().getCodiceDestinatario();
+				
+				if(fatturaHeaderObject.getCedentePrestatore()!=null){
+					if(fatturaHeaderObject.getCedentePrestatore().getIdFiscaleIVA()!=null){
+						// Fattura.CedentePrestatore.IdFiscaleIVA
+						cedentePrestatoreIdPaese = fatturaHeaderObject.getCedentePrestatore().getIdFiscaleIVA().getIdPaese();
+						cedentePrestatoreIdCodice = fatturaHeaderObject.getCedentePrestatore().getIdFiscaleIVA().getIdCodice();
+					}
+					if(fatturaHeaderObject.getCedentePrestatore().getCodiceFiscale()!=null){
+						cedentePrestatoreCodiceFiscale = fatturaHeaderObject.getCedentePrestatore().getCodiceFiscale();
+					}
+					// Fattura.CedentePrestatore.[Denominazione,Nome/Cognome] sono in choice
+					if(fatturaHeaderObject.getCedentePrestatore().getDenominazione()!=null){
+						cedentePrestatoreDenominazione = fatturaHeaderObject.getCedentePrestatore().getDenominazione();
+					}
+					if(fatturaHeaderObject.getCedentePrestatore().getNome()!=null){
+						cedentePrestatoreNome = fatturaHeaderObject.getCedentePrestatore().getNome();
+					}
+					if(fatturaHeaderObject.getCedentePrestatore().getCognome()!=null){
+						cedentePrestatoreCognome = fatturaHeaderObject.getCedentePrestatore().getCognome();
+					}
+				}
+					
+				if(fatturaHeaderObject.getCessionarioCommittente()!=null){
+					if(fatturaHeaderObject.getCessionarioCommittente().getIdentificativiFiscali()!=null) {
+						if(fatturaHeaderObject.getCessionarioCommittente().getIdentificativiFiscali().getIdFiscaleIVA()!=null){
+							// Fattura.CessionarioCommittente.DatiAnagrafici.IdFiscaleIVA
+							cessionarioCommittenteIdPaese = fatturaHeaderObject.getCessionarioCommittente().getIdentificativiFiscali().getIdFiscaleIVA().getIdPaese();
+							cessionarioCommittenteIdCodice = fatturaHeaderObject.getCessionarioCommittente().getIdentificativiFiscali().getIdFiscaleIVA().getIdCodice();
+						}
+						if(fatturaHeaderObject.getCessionarioCommittente().getIdentificativiFiscali().getCodiceFiscale()!=null){
+							cessionarioCommittenteCodiceFiscale = fatturaHeaderObject.getCessionarioCommittente().getIdentificativiFiscali().getCodiceFiscale();
+						}
+					}
+					if(fatturaHeaderObject.getCessionarioCommittente().getAltriDatiIdentificativi()!=null) {
+						// Fattura.CessionarioCommittente.AltriDatiIdentificativi.[Denominazione,Nome/Cognome] sono in choice
+						if(fatturaHeaderObject.getCessionarioCommittente().getAltriDatiIdentificativi().getDenominazione()!=null){
+							cessionarioCommittenteDenominazione = fatturaHeaderObject.getCessionarioCommittente().getAltriDatiIdentificativi().getDenominazione();
+						}
+						if(fatturaHeaderObject.getCessionarioCommittente().getAltriDatiIdentificativi().getNome()!=null){
+							cessionarioCommittenteNome = fatturaHeaderObject.getCessionarioCommittente().getAltriDatiIdentificativi().getNome();
+						}
+						if(fatturaHeaderObject.getCessionarioCommittente().getAltriDatiIdentificativi().getCognome()!=null){
+							cessionarioCommittenteCognome = fatturaHeaderObject.getCessionarioCommittente().getAltriDatiIdentificativi().getCognome();
+						}
+					}
+				}
+				
+				if(fatturaHeaderObject.getSoggettoEmittente()!=null){
+					// Fattura.SoggettoEmittente
+					soggettoEmittente = fatturaHeaderObject.getSoggettoEmittente().name();
+				}
+				
+			}
+			
 			// Fattura v1.2
 			else{
 				
@@ -388,6 +472,12 @@ public class SDIFatturaUtils {
 		else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
 			if(!SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PA_11.equals(attributoVersione)){
 				attributoAtteso = SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PA_11;
+				attributoVersioneNonCorretto = true;
+			}
+		}
+		else if(SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10.equals(versioneFattura)){
+			if(!SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_SEMPLIFICATA_10.equals(attributoVersione)){
+				attributoAtteso = SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_SEMPLIFICATA_10;
 				attributoVersioneNonCorretto = true;
 			}
 		}

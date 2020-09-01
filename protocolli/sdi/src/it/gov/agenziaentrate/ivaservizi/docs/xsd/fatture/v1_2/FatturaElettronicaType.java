@@ -42,6 +42,7 @@ import java.util.List;
  * 			&lt;element name="FatturaElettronicaBody" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}FatturaElettronicaBodyType" minOccurs="1" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="versione" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}FormatoTrasmissioneType" use="required"/&gt;
+ * 		&lt;attribute name="SistemaEmittente" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -117,6 +118,14 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
     this.versione = versione;
   }
 
+  public java.lang.String getSistemaEmittente() {
+    return this.sistemaEmittente;
+  }
+
+  public void setSistemaEmittente(java.lang.String sistemaEmittente) {
+    this.sistemaEmittente = sistemaEmittente;
+  }
+
   private static final long serialVersionUID = 1L;
 
   private static it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.FatturaElettronicaTypeModel modelStaticInstance = null;
@@ -171,5 +180,10 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
 
   @XmlAttribute(name="versione",required=true)
   protected FormatoTrasmissioneType versione;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @XmlAttribute(name="SistemaEmittente",required=false)
+  protected java.lang.String sistemaEmittente;
 
 }

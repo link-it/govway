@@ -36,7 +36,7 @@ import java.io.Serializable;
  * &lt;complexType name="DatiBolloType"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="BolloVirtuale" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}BolloVirtualeType" minOccurs="1" maxOccurs="1"/&gt;
- * 			&lt;element name="ImportoBollo" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}decimal" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ImportoBollo" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}decimal" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -107,7 +107,7 @@ public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
-  @XmlElement(name="ImportoBollo",required=true,nillable=false)
+  @XmlElement(name="ImportoBollo",required=false,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importoBollo = null;
 
   @javax.xml.bind.annotation.XmlTransient

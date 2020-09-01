@@ -132,6 +132,12 @@ public class SDISbustamento {
 					it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbSerializer serializer = new it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbSerializer();
 					xmlFattura = serializer.toByteArray(of.createFatturaElettronica(fattura));
 				}
+				else if(SDICostanti.SDI_VERSIONE_FATTURA_SEMPLIFICATA_10.equals(versioneFattura)){
+					it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.FatturaElettronicaType fattura = (it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.FatturaElettronicaType) ctxFatturaPA;
+					it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.ObjectFactory of = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.ObjectFactory();
+					it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.utils.serializer.JaxbSerializer serializer = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.utils.serializer.JaxbSerializer();
+					xmlFattura = serializer.toByteArray(of.createFatturaElettronicaSemplificata(fattura));
+				}
 				else{
 					it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType fattura = (it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType) ctxFatturaPA;
 					it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.ObjectFactory of = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.ObjectFactory();

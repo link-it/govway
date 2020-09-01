@@ -40,7 +40,7 @@ import java.io.Serializable;
  * 			&lt;element name="FormatoTrasmissione" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}FormatoTrasmissioneType" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="CodiceDestinatario" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="ContattiTrasmittente" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}ContattiTrasmittenteType" minOccurs="0" maxOccurs="1"/&gt;
- * 			&lt;element name="PECDestinatario" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="PECDestinatario" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -154,7 +154,8 @@ public class DatiTrasmissioneType extends org.openspcoop2.utils.beans.BaseBean i
   @XmlElement(name="ContattiTrasmittente",required=false,nillable=false)
   protected ContattiTrasmittenteType contattiTrasmittente;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="PECDestinatario",required=false,nillable=false)
   protected java.lang.String pecDestinatario;
 
