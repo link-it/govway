@@ -21274,7 +21274,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null 
+						|| !search.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
+					) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 					if(filterGruppo!=null) {
@@ -21334,11 +21336,19 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
 				}
 				sqlQueryObject.addWhereCondition(false, 
-						// - ricerca su tipo/nome servizio
+						
+						// - ricerca su tipo/nome/versione servizio
 						//sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
 						sqlQueryObject.getWhereLikeCondition("nome_servizio", search, true, true),
 						//sqlQueryObject.getWhereLikeCondition("versione_servizio", search, true, true),
-						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+						
+						// - ricerca su soggetto
+						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti),
+						
+						// - ricerca su nome dell'API (parte comune)
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", search, true, true)
+						
+					);
 
 				if(permessiUtente != null){
 					// solo S
@@ -21466,7 +21476,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null 
+						|| !search.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
+					) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 					if(filterGruppo!=null) {
@@ -21543,11 +21555,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
 				}
 				sqlQueryObject.addWhereCondition(false, 
-						// - ricerca su tipo/nome servizio
+						
+						// - ricerca su tipo/nome/versione servizio
 						//sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
 						sqlQueryObject.getWhereLikeCondition("nome_servizio", search, true, true),
 						//sqlQueryObject.getWhereLikeCondition("versione_servizio", search, true, true),
-						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+						
+						// - ricerca su soggetto
+						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti),
+						
+						// - ricerca su nome dell'API (parte comune)
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", search, true, true)
+					);
 				
 				if(permessiUtente != null){
 					// solo S

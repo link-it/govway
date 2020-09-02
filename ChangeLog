@@ -1,3 +1,12 @@
+2020-09-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1039
+	Il filtro di ricerca 'API / Soggetto Erogatore', presente tra i criteri di ricerca nella lista delle erogazioni o fruizioni, 
+	permette di individuare tutte le entità che contengono il parametro di ricerca indicato nel nome del soggetto erogatore o nel nome stesso associato alla erogazione o fruizione.
+	Il parametro di ricerca indicato viene adesso utilizzato anche per verificare una corrispondenza sul nome dell'API implementata che, 
+	soprattutto in API di tipo SOAP dove viene utilizzato il nome del port-type, può differire dal nome dell'erogazione o fruizione.
+
 2020-09-01  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
