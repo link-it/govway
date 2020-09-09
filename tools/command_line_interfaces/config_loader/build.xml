@@ -1,0 +1,210 @@
+<project name="pddConfigLoader" basedir="." default="run">
+
+	<import file="local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${openspcoop2.lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- Properties -->
+	<property name="src_loader" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="doc" location="doc" />
+	<property name="distrib" location="distrib" />
+	<property name="properties" location="properties" />
+	<property name="script" location="script" />
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
+			<include name="saaj/*"/>
+			<include name="jax/jaxb*"/>
+			<include name="javax/*"/>
+			<include name="log/*"/>
+			<include name="security/*"/>
+			<include name="shared/*"/>
+			<include name="soapbox/*"/>
+			<include name="spring/*"/>
+			<include name="spring-security/*"/>
+			<include name="stub/*"/>
+			<include name="testsuite/spring-jdbc-5.2.7.RELEASE.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2.tools.web_interface.controlStation.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+
+	<!-- Clean -->
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+		<delete dir="${distrib}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>	
+
+
+	<target name="compile_importer" depends="init_compile">
+
+		<!-- Info git -->
+		<runtarget target="checkgit" />
+		<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+				
+		<!-- org.openspcoop2.pdd.monitor.cli -->
+		<var name="packagesCompiled" value="org.openspcoop2.pdd.config.loader.cli" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_loader}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pdd-config-loader"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pdd.config.loader.cli"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+		</antcall>
+				
+		<!-- Jar Complessivo -->
+		<!--
+		<antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor-cli"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+		</antcall>
+		-->
+				
+		<!-- API -->
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<mkdir dir="${doc}"/>
+			</then>
+		</if>
+		<antcall target="compile_api_openspcoop2">
+			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+			<param name="compile_src_openspcoop2.API_NAME" value="pdd-config-loader"/>
+			<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="src" value="${src_loader}"/>
+		</antcall>
+			
+	</target>
+	<target name="build" depends="compile_importer" />
+	
+	<target name="distrib" depends="build">
+		<mkdir dir="${distrib}"/>
+		<mkdir dir="${distrib}/jdbc"/>
+		<mkdir dir="${distrib}/log"/>
+		<mkdir dir="${distrib}/properties"/>
+		<copy todir="${distrib}/properties">
+			<fileset dir="${properties}" includes="*"/>
+		</copy>
+		<mkdir dir="${distrib}/lib"/>
+		<copy todir="${distrib}/lib">
+			<fileset dir="${dist}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib}/lib">
+			<fileset dir="${openspcoop2.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.tools.web_interface.controlStation.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.protocollo.trasparente.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.protocollo.spcoop.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.protocollo.modipa.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.protocollo.sdi.dist}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib}/lib">
+			<fileset dir="${openspcoop2.lib}/log" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-security-jose-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-json-basic-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-core-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-security-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="jakarta.ws.rs-api-2.1.6.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="javax.ws.rs-api-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/saaj" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/commons" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/spring" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/swagger" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/jackson" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/javax" includes="javax.servlet-api-4.0.1.jar"/>
+			<fileset dir="${openspcoop2.lib}/jax" includes="jaxb-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/security" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.0.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="jakarta.activation-1.2.1.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.10.5.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="wsdl4j-1.6.3.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-1.25.jar"/>
+			<fileset dir="${openspcoop2.lib}/testsuite" includes="spring-jdbc-5.2.7.RELEASE.jar"/>
+			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat9" includes="*.jar"/> <!-- Serve per il datasource env -->
+		</copy>
+		
+		<antcall target="-distrib_script">
+			<param name="NomeScript" value="create"/>
+			<param name="TipoOperazione" value="create"/>
+                </antcall>
+		<antcall target="-distrib_script">
+			<param name="NomeScript" value="createOrUpdate"/>
+			<param name="TipoOperazione" value="createUpdate"/>
+                </antcall>
+		<antcall target="-distrib_script">
+			<param name="NomeScript" value="delete"/>
+			<param name="TipoOperazione" value="delete"/>
+                </antcall>
+	</target>
+
+	<target name="-distrib_script">
+
+		<copy file="${script}/run.sh" tofile="${distrib}/${NomeScript}.sh"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib}/${NomeScript}.sh"/>
+			<param name="token" value="TIPO_OPERAZIONE"/>
+			<param name="value" value="${TipoOperazione}"/>
+                </antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib}/${NomeScript}.sh"/>
+			<param name="token" value="NOME_SCRIPT"/>
+			<param name="value" value="${NomeScript}"/>
+                </antcall>
+		<chmod file="${distrib}/${NomeScript}.sh" perm="a+x"/>
+
+		<copy file="${script}/run.cmd" tofile="${distrib}/${NomeScript}.cmd"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib}/${NomeScript}.cmd"/>
+			<param name="token" value="TIPO_OPERAZIONE"/>
+			<param name="value" value="${TipoOperazione}"/>
+                </antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib}/${NomeScript}.cmd"/>
+			<param name="token" value="NOME_SCRIPT"/>
+			<param name="value" value="${NomeScript}"/>
+                </antcall>
+		<chmod file="${distrib}/${NomeScript}.cmd" perm="a+x"/>
+
+
+	</target>
+
+</project>

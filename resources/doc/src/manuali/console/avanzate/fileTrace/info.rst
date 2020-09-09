@@ -7,13 +7,13 @@ Le informazioni inerenti le comunicazioni gestite dal gateway, che possono esser
 
 - *${log:<id>}* : viene registrata la risorsa con l'identificativo indicato.
 - *${log:<id>(defaultValue)}* : viene registrata la risorsa con l'identificativo indicato; se la risorsa non è valorizzata, viene registrato il valore di default fornito come parametro
-- *${log:<id>(paramters ...)}* : viene registrata la risorsa con l'identificativo indicato, il cui valore può essere personalizzato rispetto ad alcuni parametri.
+- *${log:<id>(parameters ...)}* : viene registrata la risorsa con l'identificativo indicato, il cui valore può essere personalizzato rispetto ad alcuni parametri.
 
 Le informazioni possono essere registrate codificate in base64 utilizzando il prefisso 'logBase64' invece di 'log':
 
 - *${logBase64:<id>}*
 - *${logBase64:<id>(defaultValue)}*
-- *${logBase64:<id>(paramters ...)}*
+- *${logBase64:<id>(parameters ...)}*
         
 L'esempio seguente definisce un topic che utilizza i formati precedentemente indicati. Viene registrato l'identificativo di transazione (informazione acceduta puntualmente), la data di accesso all'API (informazione formattata rispetto ai parametri 'yyyy-MM-dd HH:mm:ss:SSS' e 'UTC'), il contenuto della richiesta codificato in base64 e l'identificativo di correlazione applicativa se presente o la costante 'ExampleDefaultValue' altrimenti.
 

@@ -27,7 +27,6 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
@@ -1062,6 +1061,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					}
 					
 					lstParam = apsHelper.getTitoloAps(TipoOperazione.OTHER, aps, gestioneFruitori, labelProprietario, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, true, tipoSoggettoFruitore, nomeSoggettoFruitore);
+					lstParam.get(lstParam.size() -1).setName(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO); 
 					lstParam.get(lstParam.size() -1).setValue(urlDecode); 
 					// Escape della url del link, risolve il problema di autorizzazione
 //					lstParam.add(new Parameter(labelProprietario,urlDecode));
@@ -1099,14 +1099,6 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						}
 					}
 					
-					boolean accessoDaListaAPS = false;
-					String accessoDaAPSParametro = null;
-					if(gestioneFruitori) {
-						accessoDaAPSParametro = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS);
-						if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
-							accessoDaListaAPS = true;
-						}
-					}
 					// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
 					if(parentPD == null) 
@@ -1114,33 +1106,8 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					
 					PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(this.request, this.pd, this.session);
 					lstParam = porteDelegateHelper.getTitoloPD(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, fruitore.getIdSoggetto() +"",apsFrui.getId() +"", fruitore.getId() +"");
-
-					if(gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD)) {
-							
-						String azioneConnettoreIdPorta = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
-						String labelPerPorta = null;
-						if(accessoDaListaAPS) {
-							labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE;
-						}
-						else {
-							PortaDelegata portaDelegata = this.porteDelegateCore.getPortaDelegata(Long.parseLong(azioneConnettoreIdPorta)); 
-							labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
-									PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI,
-									PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE,
-									portaDelegata);
-						}
-						
-						Parameter pConnettore = new Parameter(labelPerPorta, urlDecode);
-						if(accessoDaListaAPS) {
-							lstParam.set(lstParam.size()-1, pConnettore);
-						}
-						else {
-							lstParam.add(pConnettore);
-						}
-					}
-					else {
-						lstParam.set(lstParam.size()-1, new Parameter(labelProprietario, urlDecode));
-					}
+					labelProprietario = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO; 
+					lstParam.set(lstParam.size()-1, new Parameter(labelProprietario, urlDecode));
 					
 					break;
 				case OPERATION:

@@ -176,6 +176,18 @@ then
 	mvn initialize
 	popd >> ${LOG_FILE} 2>&1
 	infoPrintln "Checkout delle librerie completato"
+	infoPrintln "Eliminazione librerie deprecate (applicationServer) ..."
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly8/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly9/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly10/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly11/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly12/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly13/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly14/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly15/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly16/
+	rm -rf ${WORKING_COPY}/lib/applicationServer/wildfly17/
+	infoPrintln "Eliminazione librerie deprecate (applicationServer) completato"
 fi
 
 #3 controlla i sorgenti (gpl/copyright/javadoc/stringBuffer)

@@ -81,6 +81,7 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
@@ -528,7 +529,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			Parameter pMyNome = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_NOME, myNome);
 			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio);
 			Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio);
-			Parameter urlChange = new Parameter("", AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, pMyId, pId, pIdSoggettoErogatore,pMyTipo,pMyNome,pIdSoggettoFruitore);
+			Parameter pModificaProfilo = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO, modificaProfilo+"");
+			Parameter urlChange = new Parameter("", AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, pMyId, pId, pIdSoggettoErogatore,pMyTipo,pMyNome,pIdSoggettoFruitore,pModificaProfilo);
 			
 			String fruitoreLabel = apsHelper.getLabelNomeSoggetto(protocollo, tipofru , nomefru);
 			Properties propertiesProprietario = new Properties();
@@ -586,6 +588,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				else {
 					lstParm.add(pConnettore);
 				}
+			}
+			else if(modificaProfilo) {
+				lstParm.set(lstParm.size()-1, new Parameter(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO, null));
 			}
 			else {
 				lstParm.set(lstParm.size()-1, new Parameter(fruitoreLabel, null));

@@ -348,6 +348,9 @@ public class ZIPReadUtils  {
 			// Map per identificativi protocol properties
 			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties = new Hashtable<String, IdentificativoProprietaProtocollo>();
 			
+			// Map per nomi-file e nomi servizi applicativi
+			Hashtable<String, IdentificativoServizioApplicativo> mapKeyServiziApplicativi = new Hashtable<String, IdentificativoServizioApplicativo>();
+			
 			String rootDir = null;
 			
 			Iterator<ZipEntry> it = ZipUtilities.entries(zip, true);
@@ -474,7 +477,13 @@ public class ZIPReadUtils  {
 						// ********** soggetti/* ********************
 						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+File.separatorChar)) ){
 							
-							byte[] xml = placeholder.replace(content);
+							byte[] xml = null;
+							if(entryName.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT)) {
+								xml = content; // System.out.println("NO PLACEHOLDER PER '"+entryName+"'");
+							}
+							else {
+								xml = placeholder.replace(content);
+							}
 							bin = new ByteArrayInputStream(xml);
 														
 							String name = entryName.substring((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+File.separatorChar).length());
@@ -569,13 +578,32 @@ public class ZIPReadUtils  {
 									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_SERVIZI_APPLICATIVI_DIR+File.separatorChar)) ){
 										
 										String nomeFileServizioApplicativo = nomeFile.substring((Costanti.OPENSPCOOP2_ARCHIVE_SERVIZI_APPLICATIVI_DIR+File.separatorChar).length());
-										
+										//System.out.println("nomeFileServizioApplicativo: "+nomeFileServizioApplicativo);
+																				
 										if(nomeFileServizioApplicativo.contains((File.separatorChar+""))==false){
-											this.readServizioApplicativo(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+											ServizioApplicativo sa = this.readServizioApplicativo(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+											
+											IdentificativoServizioApplicativo identificativoServizioApplicativo = new IdentificativoServizioApplicativo();
+											identificativoServizioApplicativo.nome = sa.getNome();
+											identificativoServizioApplicativo.tipoSoggetto = tipoSoggetto;
+											identificativoServizioApplicativo.nomeSoggetto = nomeSoggetto;
+											String nomeFileServizioApplicativoSenzaEstensioni = nomeFileServizioApplicativo.substring(0, nomeFileServizioApplicativo.indexOf(".xml"));
+											//System.out.println("ADD KEY["+nomeFileServizioApplicativoSenzaEstensioni+"] nome["+identificativoServizioApplicativo.nome+"]");
+											mapKeyServiziApplicativi.put(nomeFileServizioApplicativoSenzaEstensioni, identificativoServizioApplicativo);
 										}
 										else {
+											String nomeFileServizioApplicativoSenzaEstensioni = nomeFileServizioApplicativo.substring(0, nomeFileServizioApplicativo.indexOf(File.separatorChar+""));
+											//System.out.println("nomeFileServizioApplicativoSenzaEstensioni: "+nomeFileServizioApplicativoSenzaEstensioni);
+																						
+											//String nomeServizioApplicativo = nomeFileServizioApplicativo.substring(0, nomeFileServizioApplicativo.indexOf(File.separatorChar));
+											String nomeServizioApplicativo = null;
+											if(mapKeyServiziApplicativi.containsKey(nomeFileServizioApplicativoSenzaEstensioni)){
+												nomeServizioApplicativo = mapKeyServiziApplicativi.get(nomeFileServizioApplicativoSenzaEstensioni).nome;
+											}
+											else {
+												throw new ProtocolException("Elemento ["+entryName+"] errato. Non risulta la definizione dell'applicativo con nome file '"+nomeFileServizioApplicativoSenzaEstensioni+"' (soggetto "+tipoSoggetto+"/"+nomeSoggetto+")");
+											}
 											
-											String nomeServizioApplicativo = nomeFileServizioApplicativo.substring(0, nomeFileServizioApplicativo.indexOf(File.separatorChar));
 											String nomeFileSenzaServizioApplicativo = nomeFileServizioApplicativo.substring(nomeFileServizioApplicativo.indexOf(File.separatorChar)+1);
 											this.readProprietaServizioApplicativo(archivio, content, entryName, tipoSoggetto, nomeSoggetto, nomeServizioApplicativo, nomeFileSenzaServizioApplicativo, 
 													archiveVersion, mapKeyProtocolProperties);
@@ -1451,7 +1479,8 @@ public class ZIPReadUtils  {
 		
 	}
 	
-	public void readServizioApplicativo(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+	public ServizioApplicativo readServizioApplicativo(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, 
+			ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
@@ -1466,6 +1495,7 @@ public class ZIPReadUtils  {
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un servizio applicativo con key ["+key+"]");
 			}
 			archivio.getServiziApplicativi().add(key,new ArchiveServizioApplicativo(sa,idCorrelazione,true));
+			return sa;
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (servizio-applicativo) non valida rispetto allo schema (ConfigurazionePdD): "
@@ -2763,6 +2793,14 @@ class IdentificativoProprietaProtocollo{
 	protected String nome;
 	protected String idProprietario;
 	protected ProprietariProtocolProperty tipo;
+	
+}
+
+class IdentificativoServizioApplicativo{
+	
+	protected String tipoSoggetto;
+	protected String nomeSoggetto;
+	protected String nome;
 	
 }
 

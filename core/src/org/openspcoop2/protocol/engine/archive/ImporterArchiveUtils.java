@@ -1616,7 +1616,9 @@ public class ImporterArchiveUtils {
 			
 			// --- Aderenza WSDL ---
 			StringBuilder warningAderenzaWSDL = new StringBuilder("");
-			this.informazioniServizioAderentiWSDL(archiveAccordoServizioParteComune.getAccordoServizioParteComune(), warningAderenzaWSDL);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(archiveAccordoServizioParteComune.getAccordoServizioParteComune().getServiceBinding())) {
+				this.informazioniServizioAderentiWSDL(archiveAccordoServizioParteComune.getAccordoServizioParteComune(), warningAderenzaWSDL);
+			}
 			
 			
 			
@@ -1842,7 +1844,9 @@ public class ImporterArchiveUtils {
 			
 			// --- Aderenza WSDL ---
 			StringBuilder warningAderenzaWSDL = new StringBuilder("");
-			this.informazioniServizioAderentiWSDL(archiveAccordoServizioComposto.getAccordoServizioParteComune(), warningAderenzaWSDL);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(archiveAccordoServizioComposto.getAccordoServizioParteComune().getServiceBinding())) {
+				this.informazioniServizioAderentiWSDL(archiveAccordoServizioComposto.getAccordoServizioParteComune(), warningAderenzaWSDL);
+			}
 			
 			
 			

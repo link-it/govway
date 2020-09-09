@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="pddConfigLoader_LocalEnv" basedir=".">
+
+	<!-- openspcoop2 -->
+	<property name="openspcoop2" location="../../../" />
+	<property name="openspcoop2.dist" value="${openspcoop2}/core/dist" />
+	<property name="openspcoop2.lib" value="${openspcoop2}/lib" />
+	<property name="required_lib" value="${openspcoop2.lib}"/>
+	<property name="openspcoop2.tools.web_interface.controlStation.dist" value="${openspcoop2}/tools/web_interfaces/control_station/dist"/>
+	<property name="openspcoop2.protocollo.trasparente.dist" value="${openspcoop2}/protocolli/trasparente/dist"/>
+	<property name="openspcoop2.protocollo.spcoop.dist" value="${openspcoop2}/protocolli/spcoop/dist"/>
+	<property name="openspcoop2.protocollo.modipa.dist" value="${openspcoop2}/protocolli/modipa/dist"/>
+	<property name="openspcoop2.protocollo.sdi.dist" value="${openspcoop2}/protocolli/sdi/dist"/>
+
+	<!-- Build-Options -->
+	<property name="buildAsRelease" value="false"/>
+	<property name="buildAPI" value="true"/>
+
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+	
+</project>
+
+

@@ -1,3 +1,17 @@
+2020-09-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, CommandLineLoader]
+	Aggiunta funzionalità OP-1043
+	Realizzata una versione command-line del loader degli archivi zip esportabili tramite console.
+	Durante il lavoro sono stati risolti anche i seguenti problemi emersi, tutti relativi alla gestione delle proprietà binarie di un profilo di interoperabilità:
+	- l'import di un servizio applicativo andava in errore se una proprietà binaria era valorizzata (es. keystore pkcs12 di un applicativo in ModI PA);
+	- l'accesso al dettaglio di una proprietà binaria di una fruizione andava in errore;
+	- la registrazione o l'aggiornamento di una proprietà binaria comportava un salvataggio corrotto di tale documento sul registro; 
+          il problema era presente anche per gli allegati di una API, di una erogazione e di una fruizione;
+	- corrette breadcump errate presenti nelle sezioni di dettaglio di una proprietà binaria di una erogazione o di una fruizione;
+	- corretta breadcump errata presente nella sezione 'Modifica Profilo Interoperabiltà' di una fruizione.
+	Infine è stato corretto il processo di import affinchè il controllo che verifica l'aderenza delle informazioni fornite con il WSDL sia effettuato solamente su API SOAP.
+
 2020-09-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
