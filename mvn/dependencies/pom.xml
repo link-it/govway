@@ -18,7 +18,7 @@
 
 		<!-- owasp config -->
 		<owasp.falsePositives.dir>mvn/dependencies/owasp/falsePositives</owasp.falsePositives.dir>
-		<owasp.output.dir>${project.parent.parent.basedir}/dependency-check-result</owasp.output.dir>
+		<owasp.output.dir>../../dependency-check-result</owasp.output.dir>
 
 		<!-- Versioni condivise dai moduli -->
 		<module.spring.version>5.2.7.RELEASE</module.spring.version>
@@ -110,6 +110,8 @@
 				Il plugin seguente serve a risolvere il problema del plugin di owasp della versione in uso, 
 				che ignora la configurazione 'outputDirectory' 
 			-->
+			<!--
+			Non funzionava correttamente, lasciare anzi le directory inutili in ./mvn/dependencies/testsuite/dependency-check-result , ./mvn/dependencies/dependency-check-result e ./mvn/dependency-check-result
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>${maven-resources-plugin}</version>
@@ -131,6 +133,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 
 		</plugins>
 	</build>

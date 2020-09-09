@@ -1,9 +1,30 @@
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
    <suppress>
       <notes><![CDATA[
       file name: swagger-codegen-cli-3.0.18-gov4j-3.jar e swagger-codegen-cli-3.0.18.jar vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.
       ]]></notes>
       <filePath regex="true">.*swagger-codegen-cli-3\.0\.18.*\.jar/(Java/gradle-wrapper.jar|META-INF/maven/.*/.*/pom.xml|.*/.*/.*/js/.*\.js)</filePath>
       <cvssBelow>10</cvssBelow>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: swagger-codegen-cli-3.0.18.jar: handlebars-v4.0.4.js (vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.)
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
+      <vulnerabilityName>A prototype pollution vulnerability in handlebars is exploitable if an attacker can control the template</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: swagger-codegen-cli-3.0.18.jar: handlebars-v4.0.4.js (vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.)
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
+      <vulnerabilityName>Disallow calling helperMissing and blockHelperMissing directly</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: swagger-codegen-cli-3.0.18.jar: handlebars-v4.0.4.js (vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.)
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
+      <vulnerabilityName>Prototype pollution</vulnerabilityName>
    </suppress>
 </suppressions>
