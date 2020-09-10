@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.transazioni.utils;
 
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -35,37 +36,13 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 public class TransazioniEsitiUtils {
 	
 	public static boolean isEsitoOk(Integer esito, String protocollo){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),protocollo);
-			boolean res = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo().contains(esito);
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+esito+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+esito+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return InfoEsitoTransazioneFormatUtils.isEsitoOk(LoggerManager.getPddMonitorCoreLogger(), esito, protocollo);
 	}
 	public static boolean isEsitoFaultApplicativo(Integer esito, String protocollo){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),protocollo);
-			boolean res = esitiProperties.getEsitiCodeFaultApplicativo().contains(esito);
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+esito+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+esito+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return InfoEsitoTransazioneFormatUtils.isEsitoFaultApplicativo(LoggerManager.getPddMonitorCoreLogger(), esito, protocollo);
 	}
 	public static boolean isEsitoKo(Integer esito, String protocollo){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),protocollo);
-			boolean res = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo().contains(esito);
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+esito+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+esito+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return InfoEsitoTransazioneFormatUtils.isEsitoKo(LoggerManager.getPddMonitorCoreLogger(), esito, protocollo);
 	}
 	
 	public static java.lang.String getEsitoLabel(Integer esito, String protocollo) {

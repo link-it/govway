@@ -103,7 +103,37 @@
 		<then>
 			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
 		</then>
-	</if>  
+	</if> 
+	<!-- xerces -->
+	<var name="xerces_jar" value=""/>
+	<var name="xml_apis_jar" value=""/>
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="xerces_jar" value="xercesImpl-2.12.0.jar"/>
+			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
+		</then>
+	</if>
+	<!-- xalan -->
+	<var name="xalan_jar" value="" />
+	<var name="xalan_serializer_jar" value="" />
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss4"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="xalan_jar" value="xalan-2.7.2.jar" />
+			<var name="xalan_serializer_jar" value="serializer-2.7.2.jar" />
+		</then>
+	</if> 
 	
 
 	<!-- Creazione del modulo .WAR -->
@@ -152,23 +182,32 @@
 			<lib dir="${libs}/saaj">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${libs}/jackson">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${libs}/jax">
 				<include name="jaxws-*.jar"/>
 			</lib>
-			<lib dir="${required_lib}/jax">
+			<lib dir="${libs}/jax">
 				<include name="${jaxp_ri_jar}" />
-			</lib>
-			<lib dir="${openspcoop2_libs}/">
-				<include name="openspcoop2_utils_*.jar"/>
-				<include name="openspcoop2_core_*.jar"/>
-				<include name="openspcoop2_message_*.jar"/>
 			</lib>
 			<lib dir="${libs}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
-			<lib dir="${required_lib}/security">
+			<lib dir="${libs}/security">
 				<include name="${neethi_jar}" />
+			</lib>
+			<lib dir="${libs}/shared">
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
+				<include name="${xalan_jar}"/>
+				<include name="${xalan_serializer_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2_libs}/">
+				<include name="openspcoop2_utils_*.jar"/>
+				<include name="openspcoop2_core_*.jar"/>
+				<include name="openspcoop2_message_*.jar"/>
 			</lib>
 		</war>
 		

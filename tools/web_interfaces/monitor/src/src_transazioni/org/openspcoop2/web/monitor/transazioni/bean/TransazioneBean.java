@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Resource;
-import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -41,9 +40,11 @@ import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.pdd.logger.LogLevels;
-import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.info.DatiEsitoTransazione;
+import org.openspcoop2.pdd.logger.info.DatiMittente;
+import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
+import org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -55,8 +56,6 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.beans.BlackListElement;
-import org.openspcoop2.utils.certificate.CertificateUtils;
-import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
@@ -689,151 +688,76 @@ public class TransazioneBean extends Transazione{
 		return false;
 	}
 	
+	public DatiMittente convertToDatiMittente() {
+		
+		DatiMittente datiMittente = new DatiMittente();
+		
+		datiMittente.setTokenUsername(getTokenUsernameLabel());
+		datiMittente.setTokenSubject(getTokenSubjectLabel());
+		datiMittente.setTokenIssuer(getTokenIssuerLabel());
+		datiMittente.setTokenClientId(getTokenClientIdLabel());
+		
+		datiMittente.setTipoTrasportoMittente(getTipoTrasportoMittenteLabel());
+		datiMittente.setTrasportoMittente(getTrasportoMittenteLabel());
+		
+		datiMittente.setServizioApplicativoFruitore(getServizioApplicativoFruitore());
+		
+		try {
+			datiMittente.setSoggettoFruitore(getSoggettoFruitore());
+		}catch(Exception e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		datiMittente.setTipoSoggettoFruitore(getTipoSoggettoFruitore());
+		datiMittente.setNomeSoggettoFruitore(getNomeSoggettoFruitore());
+
+		datiMittente.setPddRuolo(this.getPddRuolo());
+		datiMittente.setSoggettoOperativo(this.soggettoPddMonitor);
+	
+		datiMittente.setTransportClientAddress(this.getTransportClientAddress());
+		datiMittente.setSocketClientAddress(getSocketClientAddress());
+		
+		return datiMittente;
+	}
+	
+	public DatiEsitoTransazione convertToDatiEsitoTransazione() {
+		
+		DatiEsitoTransazione datiEsitoTransazione = new DatiEsitoTransazione();
+		
+		datiEsitoTransazione.setEsito(this.getEsito());
+		datiEsitoTransazione.setProtocollo(this.getProtocollo());
+		
+		datiEsitoTransazione.setFaultIntegrazione(this.getFaultIntegrazione());
+		datiEsitoTransazione.setFormatoFaultIntegrazione(this.getFormatoFaultIntegrazione());
+		
+		datiEsitoTransazione.setFaultCooperazione(this.getFaultCooperazione());
+		datiEsitoTransazione.setFormatoFaultCooperazione(this.getFormatoFaultCooperazione());
+				
+		datiEsitoTransazione.setPddRuolo(this.getPddRuolo());
+		
+		return datiEsitoTransazione;
+		
+	}
+	
+	
 	public String getRichiedente() {
 				
-		// 1) Username del Token
-		String sTokenUsername = getTokenUsernameLabel();
-		if(StringUtils.isNotEmpty(sTokenUsername)) {
-			return sTokenUsername;
-		}
-		
-		// 2) Subject/Issuer del Token
-		String sTokenSubject = getTokenSubjectLabel();
-		if(StringUtils.isNotEmpty(sTokenSubject)) {
-			
-			String sTokenIssuer = getTokenIssuerLabel();
-			if(StringUtils.isNotEmpty(sTokenIssuer)) {
-				return sTokenSubject + NamingUtils.LABEL_DOMINIO + sTokenIssuer;
-			}
-			else {
-				return sTokenSubject;
-			}
-		}
-		
-		// 3) Applicativo Fruitore
-		String sApplicativoFruitore = getServizioApplicativoFruitore();
-		if(StringUtils.isNotEmpty(sApplicativoFruitore)) {
-			return sApplicativoFruitore;
-		}
-		
-		// 4) Credenziali dell'autenticazione di trasporto
-		// volutamente uso l'id autenticato.
-		// se l'api è pubblica non deve essere visualizzata questa informazione!
-		String sTrasportoMittente = getTrasportoMittenteLabel();
-		String sTipoTrasportoMittente = getTipoTrasportoMittenteLabel();
-		if(StringUtils.isNotEmpty(sTrasportoMittente) && StringUtils.isNotEmpty(sTipoTrasportoMittente)) {
-			if(sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.SSL.getValue())) {
-				try {
-					Hashtable<String, List<String>> l = CertificateUtils.getPrincipalIntoHashtable(sTrasportoMittente, PrincipalType.subject);
-					if(l!=null && !l.isEmpty()) {
-						List<String> cnList = l.get("CN");
-						if(cnList==null || cnList.isEmpty()) {
-							cnList = l.get("cn");
-						}
-						if(cnList==null || cnList.isEmpty()) {
-							cnList = l.get("Cn");
-						}
-						if(cnList==null || cnList.isEmpty()) {
-							cnList = l.get("cN");
-						}						
-						if(cnList!=null && cnList.size()>0) {
-							StringBuilder bfList = new StringBuilder();
-							for (String s : cnList) {
-								if(bfList.length()>0) {
-									bfList.append(", ");
-								}
-								bfList.append(s);
-							}
-							return bfList.toString();
-						}
-					}
-					return sTrasportoMittente;
-				}catch(Throwable t) {	
-					return sTrasportoMittente;
-				}
-			}
-			else {
-				return sTrasportoMittente;
-			}
-		}
-		
-		// 5) Client ID, per il caso di ClientCredential
-		String sTokenClientId = getTokenClientIdLabel();
-		if(StringUtils.isNotEmpty(sTokenClientId)) {
-			return sTokenClientId;
-		}
-		
-		return null;
-		
+		DatiMittente datiMittente = this.convertToDatiMittente();
+		return InfoMittenteFormatUtils.getRichiedente(datiMittente);
+				
 	}
 	
 	public String getIpRichiedente() {
 		
-		String t = this.getTransportClientAddress();
-		if(StringUtils.isNotEmpty(t)) {
-			return t;
-		}
-		
-		String s = this.getSocketClientAddress();
-		if(StringUtils.isNotEmpty(s)) {
-			return s;
-		}
-		
-		return null;
+		DatiMittente datiMittente = this.convertToDatiMittente();
+		return InfoMittenteFormatUtils.getIpRichiedente(datiMittente);
 		
 	}
 	
 	public String getLabelRichiedenteConFruitore() throws Exception {
-		StringBuilder bf = new StringBuilder();
 		
-		String richiedente = getRichiedente();
-		if(StringUtils.isNotEmpty(richiedente)) {
-			bf.append(richiedente);	
-		}
+		DatiMittente datiMittente = this.convertToDatiMittente();
+		return InfoMittenteFormatUtils.getLabelRichiedenteConFruitore(datiMittente);
 		
-		
-		
-		String sFruitore = getSoggettoFruitore();
-		if(StringUtils.isNotEmpty(sFruitore)) {
-
-			boolean addFruitore = true;
-						
-			if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
-				
-				// L'AppId di un soggetto è già il soggetto. L'informazione sarebbe ridondante.
-				String sTrasportoMittente = getTrasportoMittenteLabel();
-				if(richiedente!=null && sTrasportoMittente!=null && richiedente.equals(sTrasportoMittente)) { // se e' stato selezionato l'appId
-					String sTipoTrasportoMittente = getTipoTrasportoMittenteLabel();
-					if(sTipoTrasportoMittente!=null && StringUtils.isNotEmpty(sTipoTrasportoMittente) && 
-							sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.APIKEY.getValue())) {
-						// autenticazione api-key
-						if(!sTrasportoMittente.contains(ApiKeyUtilities.APPLICATIVO_SOGGETTO_SEPARATOR)) {
-							// appId di un soggetto
-							bf = new StringBuilder(); // aggiunto solo il soggetto
-						}		
-					}
-				}
-				
-			}
-			else if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
-				
-				if(this.soggettoPddMonitor!=null && StringUtils.isNotEmpty(this.getTipoSoggettoFruitore()) && StringUtils.isNotEmpty(this.getNomeSoggettoFruitore())) {
-					IDSoggetto idSoggettoFruitore = new IDSoggetto(this.getTipoSoggettoFruitore(), this.getNomeSoggettoFruitore());
-					addFruitore = !this.soggettoPddMonitor.equals(idSoggettoFruitore.toString());
-				}
-				
-			}
-			
-			if(addFruitore) {
-				if(bf.length()>0) {
-					bf.append(NamingUtils.LABEL_DOMINIO);
-				}
-				
-				bf.append(sFruitore);	
-			}
-		}
-		
-		return bf.toString();
 	}
 	
 	public String getLabelAPIConErogatore() throws Exception {
@@ -1021,57 +945,24 @@ public class TransazioneBean extends Transazione{
 			return this.dettaglioErrore;
 		}
 		
-		if(this.isEsitoFaultApplicativo()) {
-			
-			if(PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
-				if(this.isVisualizzaFaultIntegrazione()) {
-					this.dettaglioErrore = this.getFaultIntegrazionePretty();
-					return this.dettaglioErrore;
-				}
-				else if(this.isVisualizzaFaultCooperazione()) {
-					this.dettaglioErrore = this.getFaultCooperazionePretty();
-					return this.dettaglioErrore;
-				}
-			}
-			else if(PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
-				if(this.isVisualizzaFaultCooperazione()) {
-					this.dettaglioErrore = this.getFaultCooperazionePretty();
-					return this.dettaglioErrore;
-				}
-				else if(this.isVisualizzaFaultIntegrazione()) {
-					this.dettaglioErrore = this.getFaultIntegrazionePretty();
-					return this.dettaglioErrore;
-				}
-			}
-			
-		}
-		
-		// Esito
-		Logger log = null;
-		EsitiProperties esitiProperties = null;
-		EsitoTransazioneName esitoTransactionName = null;
-		try {
-			log = LoggerManager.getPddMonitorCoreLogger();
-			esitiProperties = EsitiProperties.getInstance(log, this.getProtocollo());
-			esitoTransactionName = esitiProperties.getEsitoTransazioneName(this.getEsito());
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il recupero dell'esito della transazione: "+e.getMessage(),e);
-			return ""; // non dovrebbe mai succedere
-		}
-			
+		Logger log = LoggerManager.getPddMonitorCoreLogger();
+				
 		// lista diagnostici
 		List<MsgDiagnostico> msgs = null;
 		if(msgsParams!=null) {
-			msgs = new ArrayList<MsgDiagnostico>();
-			if(!msgsParams.isEmpty()) {
-				for (MsgDiagnostico msgDiagnostico : msgsParams) {
-					if(msgDiagnostico.getSeverita()<=LogLevels.SEVERITA_ERROR_INTEGRATION) {
-						msgs.add(msgDiagnostico);
-					}
-				}
-			}
+			msgs = msgsParams;
 		}
 		else {
+			// Esito
+			EsitiProperties esitiProperties = null;
+			EsitoTransazioneName esitoTransactionName = null;
+			try {
+				esitiProperties = EsitiProperties.getInstance(log, this.getProtocollo());
+				esitoTransactionName = esitiProperties.getEsitoTransazioneName(this.getEsito());
+			}catch(Exception e){
+				log.error("Errore durante il recupero dell'esito della transazione: "+e.getMessage(),e);
+				return ""; // non dovrebbe mai succedere
+			}
 			try{
 				PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(log);
 				IDiagnosticDriver driver = govwayMonitorProperties.getDriverMsgDiagnostici();
@@ -1104,86 +995,16 @@ public class TransazioneBean extends Transazione{
 			}
 		}
 		
-		try {
-			StringBuilder sb = new StringBuilder();
-			StringBuilder erroreConnessone = new StringBuilder();
-			StringBuilder erroreSegnalaGenerazioneRispostaErrore = new StringBuilder();
-			if(msgs!=null && !msgs.isEmpty()) {
-				for (MsgDiagnostico msgDiagnostico : msgs) {
-					String codice = msgDiagnostico.getCodice();
-					
-					if(this.isEsitoKo()) {
-						// salto gli errori 'warning'
-						if(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_WARNING.contains(codice)) {
-							continue;
-						}
-					}
-					
-					if(EsitoTransazioneName.isErroreRisposta(esitoTransactionName) && MsgDiagnosticiProperties.MSG_DIAGNOSTICI_ERRORE_CONNETTORE.contains(codice)) {
-						if(erroreConnessone.length()>0) {
-							erroreConnessone.append("\n");
-						}
-						erroreConnessone.append(msgDiagnostico.getMessaggio());
-					}
-					else if(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.contains(codice)) {
-						if(erroreSegnalaGenerazioneRispostaErrore.length()>0) {
-							erroreSegnalaGenerazioneRispostaErrore.append("\n");
-						}
-						erroreSegnalaGenerazioneRispostaErrore.append(msgDiagnostico.getMessaggio());
-					}
-					else {
-						if(sb.length()>0) {
-							sb.append("\n");
-						}
-						sb.append(msgDiagnostico.getMessaggio());
-						
-						break; // serializzo solo il primo diagnostico
-					}
-				}
-			}
-			if(sb.length()>0) {
-				this.dettaglioErrore = sb.toString();
-				return this.dettaglioErrore;
-			}
-			if(erroreConnessone.length()>0) {
-				this.dettaglioErrore = erroreConnessone.toString();
-				return this.dettaglioErrore;
-			}
-			if(erroreSegnalaGenerazioneRispostaErrore.length()>0) {
-				this.dettaglioErrore = erroreSegnalaGenerazioneRispostaErrore.toString();
-				return this.dettaglioErrore;
-			}
-			
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il recupero dell'errore: "+e.getMessage(),e);
-		}
+		DatiEsitoTransazione datiEsitoTransazione = convertToDatiEsitoTransazione();
+		String dettaglioErroreResult = InfoEsitoTransazioneFormatUtils.getDettaglioErrore(log, datiEsitoTransazione, msgs);	
 		
-		if(!this.isEsitoFaultApplicativo()) {
-			
-			if(PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
-				if(this.isVisualizzaFaultIntegrazione()) {
-					this.dettaglioErrore = this.getFaultIntegrazionePretty();
-					return this.dettaglioErrore;
-				}
-				else if(this.isVisualizzaFaultCooperazione()) {
-					this.dettaglioErrore = this.getFaultCooperazionePretty();
-					return this.dettaglioErrore;
-				}
-			}
-			else if(PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
-				if(this.isVisualizzaFaultCooperazione()) {
-					this.dettaglioErrore = this.getFaultCooperazionePretty();
-					return this.dettaglioErrore;
-				}
-				else if(this.isVisualizzaFaultIntegrazione()) {
-					this.dettaglioErrore = this.getFaultIntegrazionePretty();
-					return this.dettaglioErrore;
-				}
-			}
-			
+		if(dettaglioErroreResult!=null) {
+			this.dettaglioErrore = dettaglioErroreResult;
 		}
-		
-		this.dettaglioErrore = "";
+		else {
+			this.dettaglioErrore = "";
+		}
 		return this.dettaglioErrore;
+		
 	}
 }

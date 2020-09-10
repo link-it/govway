@@ -108,11 +108,13 @@ public class FileTraceManager {
 		
 		this.t = new Info(this.log, transazioneDTO, credenzialiMittente,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
+				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
 				rispostaIngresso, rispostaUscita,
 				this.config, !base64);
 		this.tBase64 = new Info(this.log, transazioneDTO, credenzialiMittente,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
+				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
 				rispostaIngresso, rispostaUscita,
 				this.config, base64);

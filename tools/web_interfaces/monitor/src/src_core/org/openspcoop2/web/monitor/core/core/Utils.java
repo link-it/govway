@@ -35,9 +35,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.pdd.logger.info.FormatUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
-import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
 
 /**
@@ -109,57 +108,15 @@ public class Utils {
 	}
 
 	public static String prettifyXml(String xml) {
-		if (xml == null || "".equals(xml))
-			return "";
-		try {
-			return PrettyPrintXMLUtils.prettyPrintWithTrAX(XMLUtils.getInstance().newDocument(xml.getBytes()));
-		} catch (Exception e) {
-			// non sono riuscito a formattare il messaggio
-			log.error(e.getMessage(),e);
-		}
-		return xml;
+		return FormatUtils.prettifyXml(log, xml);
 	}
 
 	public static String prettifyXml(byte[] xml) {
-		if (xml == null)
-			return "";
-		String res = "";
-		try {
-			return PrettyPrintXMLUtils.prettyPrintWithTrAX(XMLUtils.getInstance().newDocument(xml));
-		} catch (Exception e) {
-			log.error(e.getMessage(),e);
-		}
-		return res;
+		return FormatUtils.prettifyXml(log, xml);
 	} 
 	
 	 public static String getTestoVisualizzabile(byte [] b,StringBuilder stringBuffer, boolean logError) {
-		 try{
-			 // 1024 = 1K
-			 // Visualizzo al massimo 250K
-			 int max = 250 * 1024;
-//			 if(b.length>max){
-//				 return "Visualizzazione non riuscita: la dimensione supera 250K";
-//			 }
-//
-//			 for (int i = 0; i < b.length; i++) {
-//				 if(!Utilities.isPrintableChar((char)b[i])){
-//
-//					 return "Visualizzazione non riuscita: il documento contiene caratteri non visualizzabili";
-//				 }
-//			 }
-			 stringBuffer.append(org.openspcoop2.utils.Utilities.convertToPrintableText(b, max));
-			 return null;
-
-		 }catch(Exception e){
-			 if(logError) {
-				 log.error("getTestoVisualizzabile error", e);
-			 }
-			 else {
-				 log.debug("getTestoVisualizzabile error", e);
-			 }
-			 return e.getMessage();
-		 }
-
+		 return FormatUtils.getTestoVisualizzabile(log, b, stringBuffer, logError);
 	 }
 
 	/**

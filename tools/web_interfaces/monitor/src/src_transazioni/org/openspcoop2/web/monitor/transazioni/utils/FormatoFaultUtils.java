@@ -21,9 +21,12 @@ package org.openspcoop2.web.monitor.transazioni.utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.monitor.core.core.Utils;
+import org.slf4j.Logger;
 
 /**
  * FormatoFaultUtils
@@ -77,17 +80,8 @@ public class FormatoFaultUtils {
 	}
 
 	public static boolean isVisualizzaFault(String fault){
-		boolean visualizzaMessaggio = true;
-
-		if(fault == null)
-			return false;
-
-		StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-		String errore = Utils.getTestoVisualizzabile(fault.getBytes(),contenutoDocumentoStringBuilder, false);
-		if(errore!= null)
-			return false;
-
-		return visualizzaMessaggio;
+		Logger log = LoggerWrapperFactory.getLogger(FormatoFaultUtils.class);
+		return InfoEsitoTransazioneFormatUtils.isVisualizzaFault(log, fault);
 	}
 
 	public static String getBrushFault(String fault, String formatoFault) {

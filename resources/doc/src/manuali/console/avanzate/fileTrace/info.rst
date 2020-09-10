@@ -68,7 +68,39 @@ Di seguito vengono indicati tutti gli identificativi delle informazioni disponib
 
 - result: esito della transazione (codifica GovWay);
 
+- errorDetail: dettaglio dell'errore avvenuto durante la gestione della transazione;
+
 - transactionType: tipo della transazione (Standard, Sistema ...).
+
+ 
+
+
+**Diagnostici**
+
+Di seguito vengono indicati gli identificativi che consentono di accedere ai diagnostici emessi da GovWay durante la gestione della richiesta:
+
+- diagnostics: elenco completo dei messaggi diagnostici emessi;
+
+- errorDiagnostics: elenco dei messaggi diagnostici di sola severità errore.
+
+Ogni diagnostico viene fornito nella forma seguente e separato dagli altri tramite un ritorno a capo (configurazione di default):
+
+  <livelloSeverità> <dataEmissione> <codiceDiagnostico> <messaggio>
+
+ad esempio:
+
+   ::
+
+      infoIntegration 2020-09-10T14:15:51.605Z 004074 Autenticazione [basic] in corso ( BasicUsername 'prova' ) ...
+      infoIntegration 2020-09-10T14:15:51.606Z 004075 Autenticazione [basic] effettuata con successo (in cache)
+
+L'elenco dei diagnostici sono accessibili anche con i seguenti parametri:
+
+- (separator): consente di indicare un separatore dei diagnostici differente da quello di default (ritorno a capo)
+
+- (separator, format): oltre al separatore, consente di indicare il formato della data (es. yyyy-MM-dd HH:mm:ss:SSS.Z);
+
+- (separator, format, timeZone): oltre al separatore e al formato della data (es. yyyy-MM-dd HH:mm:ss:SSS) consente di indicare il time zone (es. UTC).
 
 
 **Date**
@@ -114,7 +146,9 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - domain: identificativo del dominio interno che ha gestito l'erogazione o la fruizione;
 
-- organization: identificativo del soggetto, di dominio interno, che ha gestito l'erogazione o la fruizione;
+- organizationId: identificativo del soggetto, di dominio interno, che ha gestito l'erogazione o la fruizione (identificativo nel formato previsto dal profilo di interoperabilità);
+
+- organization: nome del soggetto, di dominio interno, che ha gestito l'erogazione o la fruizione;
 
 - organizationType: tipo del soggetto, di dominio interno, che ha gestito l'erogazione o la fruizione;
 
@@ -124,13 +158,17 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - apiProtocol: indica se l'API è di tipo 'rest' o 'soap';
 
-- api: identificativo dell'API;
+- apiId: identificativo dell'API, secondo il formato previsto dal profilo di interoperabilità;
+
+- api: nome dell'API;
 
 - apiVersion: versione dell'API;
 
 - apiType: tipo dell'API;
 
 - apiInterface: identificativo dell'interfaccia implementata dall'erogazione o dalla fruizione (contiene nome, versione e soggetto referente);
+
+- apiInterfaceId: identificativo dell'interfaccia implementata dall'erogazione o dalla fruizione secondo il formato previsto dal profilo di interoperabilità;
 
 - action: identificativo della risorsa (API Rest) o dell'azione (API Soap);
 
@@ -148,11 +186,15 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - profile: profilo di interoperabilità in cui è stata registrata l'API;
 
+- profileLabel: nome descrittivo del profilo di interoperabilità in cui è stata registrata l'API;
+
 - interface: identificativo dell'erogazione o della fruizione.
 
 **Soggetti**
 
-- provider: identificativo del soggetto erogatore;
+- providerId: identificativo del soggetto erogatore, secondo il formato previsto dal profilo di interoperabilità;
+
+- provider: nome del soggetto erogatore;
 
 - providerType: tipo del soggetto erogatore;
 
@@ -160,7 +202,9 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - providerURI: uri associata al soggetto erogatore;
 
-- sender: identificativo del soggetto fruitore;
+- senderId: identificativo del soggetto fruitore, secondo il formato previsto dal profilo di interoperabilità;
+
+- sender: nome del soggetto fruitore;
 
 - senderType: tipo del soggetto fruitore;
 
@@ -175,6 +219,8 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 - credentials: credenziali presenti nella richiesta;
 
 - principal: identificato con cui l'applicativo è stato autenticato;
+
+- principalAuthType: tipo di autenticazione (basic/ssl/principal) con cui l'applicativo è stato autenticato;
 
 - token: token OAuth2 presente nella richiesta;
 
@@ -191,6 +237,16 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 - clientIP: indirizzo IP del client;
 
 - forwardedIP: indirizzo IP presente nella richiesta in uno degli header http appartenente alla classe "Forwarded-For" o "Client-IP";
+
+- requester: rappresenta il richiedente della richiesta e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine:
+
+	- tokenUsername: username presente nel token
+	- tokenSubject[@tokenIssuer]: subject presente nel token; viene aggiunto anche un suffisso @tokenIssuer se è presente anche un issuer nel token
+	- application: identificativo dell'applicativo richiedente
+	- principal: identificato (credenziali) con cui l'applicativo è stato autenticato; se il tipo di autenticazione risulta essere 'ssl' viene ritornato il valore dell'attributo CN
+	- tokenClientId: clientId presente nel token
+
+- ipRequester: rappresenta l'indirizzo ip del richiedente e viene valorizzato con il forwardedIP se presente, o altrimenti con il clientIP.
 	
 **Messaggi**
 

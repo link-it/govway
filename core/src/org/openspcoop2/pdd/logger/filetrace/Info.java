@@ -22,14 +22,25 @@ package org.openspcoop2.pdd.logger.filetrace;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.pdd.logger.LogLevels;
+import org.openspcoop2.pdd.logger.info.DatiEsitoTransazione;
+import org.openspcoop2.pdd.logger.info.DatiMittente;
+import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
+import org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -57,6 +68,8 @@ public class Info {
 	private Traccia tracciaRichiesta;
 	private Traccia tracciaRisposta;
 	
+	private List<MsgDiagnostico> msgDiagnostici;
+	
 	private Messaggio richiestaIngresso;
 	private Messaggio richiestaUscita;
 	private Messaggio rispostaIngresso;
@@ -82,6 +95,7 @@ public class Info {
 			org.openspcoop2.core.transazioni.Transazione transazione, 
 			CredenzialiMittente credenzialiMittente,
 			Traccia tracciaRichiesta, Traccia tracciaRisposta,
+			List<MsgDiagnostico> msgDiagnostici,
 			Messaggio richiestaIngresso, Messaggio richiestaUscita,
 			Messaggio rispostaIngresso, Messaggio rispostaUscita,
 			FileTraceConfig config,
@@ -92,6 +106,7 @@ public class Info {
 		this.credenzialiMittente = credenzialiMittente;
 		this.tracciaRichiesta = tracciaRichiesta;
 		this.tracciaRisposta = tracciaRisposta;
+		this.msgDiagnostici = msgDiagnostici;
 		this.richiestaIngresso = richiestaIngresso;
 		this.richiestaUscita = richiestaUscita;
 		this.rispostaIngresso = rispostaIngresso;
@@ -336,6 +351,85 @@ public class Info {
 			return correctValue(null, defaultValue);
 		}
 		return correctValue(reason, defaultValue);
+	}
+	
+	private DatiEsitoTransazione _convertToDatiEsitoTransazione() {
+		
+		DatiEsitoTransazione datiEsitoTransazione = new DatiEsitoTransazione();
+		
+		datiEsitoTransazione.setEsito(this.getResultAsInt());
+		datiEsitoTransazione.setProtocollo(this.getProfile());
+		
+		datiEsitoTransazione.setFaultIntegrazione(this._getFaultIntegrazione(null));
+		datiEsitoTransazione.setFormatoFaultIntegrazione(this._getFormatoFaultIntegrazione(null));
+		
+		datiEsitoTransazione.setFaultCooperazione(this._getFaultCooperazione(null));
+		datiEsitoTransazione.setFormatoFaultCooperazione(this._getFormatoFaultCooperazione(null));
+				
+		datiEsitoTransazione.setPddRuolo(this.transazione.getPddRuolo());
+		
+		return datiEsitoTransazione;
+		
+	}
+	
+	public java.lang.String getErrorDetail() {
+		return getErrorDetail(null);
+	}
+	public java.lang.String getErrorDetail(String defaultValue) {
+		DatiEsitoTransazione datiEsitoTransazione = _convertToDatiEsitoTransazione();
+		String dettaglioErroreResult = InfoEsitoTransazioneFormatUtils.getDettaglioErrore(this.log, datiEsitoTransazione, this.msgDiagnostici);
+		return correctValue(dettaglioErroreResult, defaultValue);
+	}
+	
+	public java.lang.String getDiagnostics() {
+		return _getDiagnostics(false, "\n", DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
+	}
+	public java.lang.String getDiagnostics(String separator) {
+		return _getDiagnostics(false, separator, DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
+	}
+	public java.lang.String getDiagnostics(String separator, String format) {
+		return _getDiagnostics(false, separator, format, null);
+	}
+	public java.lang.String getDiagnostics(String separator, String format, String timeZone) {
+		return _getDiagnostics(false, separator, format, timeZone);
+	}
+	public java.lang.String getErrorDiagnostics() {
+		return _getDiagnostics(true, "\n", DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
+	}
+	public java.lang.String getErrorDiagnostics(String separator) {
+		return _getDiagnostics(true, separator, DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
+	}
+	public java.lang.String getErrorDiagnostics(String separator, String format) {
+		return _getDiagnostics(true, separator, format, null);
+	}
+	public java.lang.String getErrorDiagnostics(String separator, String format, String timeZone) {
+		return _getDiagnostics(true, separator, format, timeZone);
+	}
+	private java.lang.String _getDiagnostics(boolean onlyErrors, String separator, String format, String timeZone) {
+		StringBuilder sb = new StringBuilder();
+		if(this.msgDiagnostici!=null && !this.msgDiagnostici.isEmpty()) {
+			for (MsgDiagnostico msgDiagnostico : this.msgDiagnostici) {
+				if(onlyErrors) {
+					if(!(msgDiagnostico.getSeverita()<=LogLevels.SEVERITA_ERROR_INTEGRATION)) {
+						continue;
+					}
+				}
+				
+				if(sb.length()>0) {
+					sb.append(separator);
+				}
+				
+				String severitaAsString = LogLevels.toOpenSPCoop2(msgDiagnostico.getSeverita());
+				sb.append(severitaAsString);
+				sb.append(" ");
+				sb.append(correctDateWithoutCorrectValue(msgDiagnostico.getGdo(), format, timeZone, null, null));
+				sb.append(" ");
+				sb.append(msgDiagnostico.getCodice());
+				sb.append(" ");
+				sb.append(msgDiagnostico.getMessaggio());
+			}
+		}
+		return correctValue(sb.toString(), null);
 	}
 	
 
@@ -654,6 +748,18 @@ public class Info {
 	public java.lang.String getOrganization(String defaultValue) {
 		return correctValue(this.transazione.getPddNomeSoggetto(), defaultValue);
 	}
+	public java.lang.String getOrganizationId() {
+		return getOrganizationId(null);
+	}
+	public java.lang.String getOrganizationId(String defaultValue) {
+		String nome = null;
+		if(StringUtils.isNotEmpty(this.getOrganization())) {
+			try {
+				nome = NamingUtils.getLabelSoggetto(this.getProfile(), this.getOrganizationType(), this.getOrganization());
+			}catch(Exception e) {}
+		}
+		return correctValue(nome, defaultValue);
+	}
 	public java.lang.String getRole() {
 		return getRole(null);
 	}
@@ -686,6 +792,18 @@ public class Info {
 	public java.lang.String getSender(String defaultValue) {
 		return correctValue(this.transazione.getNomeSoggettoFruitore(), defaultValue);
 	}
+	public java.lang.String getSenderId() {
+		return getSenderId(null);
+	}
+	public java.lang.String getSenderId(String defaultValue) {
+		String nome = null;
+		if(StringUtils.isNotEmpty(this.getSender())) {
+			try {
+				nome = NamingUtils.getLabelSoggetto(this.getProfile(), this.getSenderType(), this.getSender());
+			}catch(Exception e) {}
+		}
+		return correctValue(nome, defaultValue);
+	}
 	public java.lang.String getSenderDomain() {
 		return getSenderDomain(null);
 	}
@@ -713,6 +831,18 @@ public class Info {
 	}
 	public java.lang.String getProvider(String defaultValue) {
 		return correctValue(this.transazione.getNomeSoggettoErogatore(), defaultValue);
+	}
+	public java.lang.String getProviderId() {
+		return getProviderId(null);
+	}
+	public java.lang.String getProviderId(String defaultValue) {
+		String nome = null;
+		if(StringUtils.isNotEmpty(this.getProvider())) {
+			try {
+				nome = NamingUtils.getLabelSoggetto(this.getProfile(), this.getProviderType(), this.getProvider());
+			}catch(Exception e) {}
+		}
+		return correctValue(nome, defaultValue);
 	}
 	public java.lang.String getProviderDomain() {
 		return getProviderDomain(null);
@@ -768,6 +898,23 @@ public class Info {
 		return correctValue(this.transazione.getUriAccordoServizio(), defaultValue);
 	}
 	
+	public java.lang.String getApiInterfaceId() {
+		return getApiInterfaceId(null);
+	}
+	public java.lang.String getApiInterfaceId(String defaultValue) {
+		String p = null;
+		try {
+			String parteComune = this.transazione.getUriAccordoServizio();
+			if(parteComune!=null && !"".equals(parteComune)) {
+				try {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(parteComune);
+					p = NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
+				}catch(Throwable t) {}
+			}
+		}catch(Exception e) {}
+		return correctValue(p, defaultValue);
+	}
+	
 	public java.lang.String getApiType() {
 		return getApiType(null);
 	}
@@ -787,6 +934,19 @@ public class Info {
 	}
 	public int getApiVersion(String defaultValue) {
 		return correctInteger(this.transazione.getVersioneServizio(),defaultValue);
+	}
+	
+	public java.lang.String getApiId() {
+		return getApiId(null);
+	}
+	public java.lang.String getApiId(String defaultValue) {
+		String nome = null;
+		if(StringUtils.isNotEmpty(this.getApi())) {
+			try {
+				nome = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(this.getProfile(), this.getApiType(), this.getApi(), this.getApiVersion());
+			}catch(Exception e) {}
+		}
+		return correctValue(nome, defaultValue);
 	}
 	
 	public java.lang.String getInterface() {
@@ -867,6 +1027,22 @@ public class Info {
 		return correctValue(this.transazione.getCredenziali(), defaultValue);
 	}
 	
+	public java.lang.String getPrincipalAuthType() {
+		return getPrincipalAuthType(null);
+	}
+	public java.lang.String getPrincipalAuthType(String defaultValue) {
+		String tipo = this.credenzialiMittente!=null && this.credenzialiMittente.getTrasporto()!=null ? this.credenzialiMittente.getTrasporto().getTipo() : null;
+		if(tipo!=null && tipo.contains("_")) {
+			try {
+				String solo_tipo_auth = tipo.substring(tipo.indexOf("_")+1, tipo.length());
+				if(solo_tipo_auth!=null) {
+					tipo = solo_tipo_auth;
+				}
+			}catch(Exception e) {}
+		}
+		return correctValue(tipo, defaultValue);
+	}
+	
 	public java.lang.String getPrincipal() {
 		return getPrincipal(null);
 	}
@@ -930,6 +1106,49 @@ public class Info {
 		return correctValue(this.transazione.getTransportClientAddress(), defaultValue);
 	}
 
+	private DatiMittente _convertToDatiMittente() {
+		
+		DatiMittente datiMittente = new DatiMittente();
+		
+		datiMittente.setTokenUsername(getTokenUsername());
+		datiMittente.setTokenSubject(getTokenSubject());
+		datiMittente.setTokenIssuer(getTokenIssuer());
+		datiMittente.setTokenClientId(getTokenClientId());
+		
+		datiMittente.setTipoTrasportoMittente(getPrincipalAuthType());
+		datiMittente.setTrasportoMittente(getPrincipal());
+		
+		datiMittente.setServizioApplicativoFruitore(getApplication());
+		
+		datiMittente.setSoggettoFruitore(getSenderId());
+		datiMittente.setTipoSoggettoFruitore(getSenderType());
+		datiMittente.setNomeSoggettoFruitore(getSender());
+
+		datiMittente.setPddRuolo(this.transazione.getPddRuolo());
+		datiMittente.setSoggettoOperativo(null);
+	
+		datiMittente.setTransportClientAddress(this.getForwardedIP());
+		datiMittente.setSocketClientAddress(getClientIP());
+		
+		return datiMittente;
+	}
+	
+	public java.lang.String getRequester() {
+		return getRequester(null);
+	}
+	public java.lang.String getRequester(String defaultValue) {
+		DatiMittente datiMittente = this._convertToDatiMittente();
+		return correctValue(InfoMittenteFormatUtils.getRichiedente(datiMittente), defaultValue);
+	}
+	
+	public java.lang.String getIpRequester() {
+		return getIpRequester(null);
+	}
+	public java.lang.String getIpRequester(String defaultValue) {
+		DatiMittente datiMittente = this._convertToDatiMittente();
+		return correctValue(InfoMittenteFormatUtils.getIpRichiedente(datiMittente), defaultValue);
+	}
+	
 	
 	// altre informazioni
 	
@@ -945,6 +1164,17 @@ public class Info {
 	}
 	public java.lang.String getProfile(String defaultValue) {
 		return correctValue(this.transazione.getProtocollo(), defaultValue);
+	}
+	
+	public java.lang.String getProfileLabel() {
+		return getProfileLabel(null);
+	}
+	public java.lang.String getProfileLabel(String defaultValue) {
+		String p = null;
+		try {
+			p = NamingUtils.getLabelProtocollo(this.getProfile());
+		}catch(Exception e) {}
+		return correctValue(p, defaultValue);
 	}
 	
 	public java.lang.String getCorrelationType() {
@@ -1014,8 +1244,14 @@ public class Info {
 	private java.lang.String _getFaultIntegrazione(String defaultValue) {
 		return correctValue(this.transazione.getFaultIntegrazione(), defaultValue);
 	}
+	private java.lang.String _getFormatoFaultIntegrazione(String defaultValue) {
+		return correctValue(this.transazione.getFormatoFaultIntegrazione(), defaultValue);
+	}
 	private java.lang.String _getFaultCooperazione(String defaultValue) {
 		return correctValue(this.transazione.getFaultCooperazione(), defaultValue);
+	}
+	private java.lang.String _getFormatoFaultCooperazione(String defaultValue) {
+		return correctValue(this.transazione.getFormatoFaultCooperazione(), defaultValue);
 	}
 	
 	
@@ -1489,6 +1725,10 @@ public class Info {
 		if(d==null) {
 			return correctValue(null, defaultValueParam);
 		}
+		String v = correctDateWithoutCorrectValue(d, format, timeZone, replace, with);
+		return correctValue(v, defaultValueParam);
+	}
+	private String correctDateWithoutCorrectValue(java.util.Date d, String format, String timeZone, String replace, String with) {
 		SimpleDateFormat formatter = null;
 		// Uso JAVA_UTIL perche' mi funziona meglio per avere l'UTC
 		if(timeZone==null) {
@@ -1502,7 +1742,7 @@ public class Info {
 		if(replace!=null && with!=null) {
 			v = v.replaceAll(replace, with);
 		}
-		return correctValue(v, defaultValueParam);
+		return v;
 	}
 	
 	@SuppressWarnings("unused")
