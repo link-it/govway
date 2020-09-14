@@ -977,7 +977,10 @@ public class DocumentoExporter extends HttpServlet {
 					}catch(Exception e){
 						String msgErrore = "Errore durante il recupero dei certificati server del "+labelConnettore+" con id '"+idConnettore+"' (jmxResource '"+risorsa+"') (node:"+aliasForVerificaConnettore+"): "+e.getMessage();
 						ControlStationCore.logError(msgErrore, e);
-						throw new ServletException(msgErrore);
+						//throw new ServletException(msgErrore);
+						// se lancio una eccezione ho il crash dell'interfaccia. Ritorno anzi un file errato.
+						fileName+=".error";
+						docBytes = msgErrore.getBytes();
 					}
 				}
 				else{

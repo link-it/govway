@@ -142,6 +142,8 @@ import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -1199,6 +1201,12 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_tipoAccesso = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_username = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_password = new Hashtable<String, String>();
+	private Map<String, Boolean> jmxPdD_remoteAccess_https = new Hashtable<String, Boolean>();
+	private Map<String, Boolean> jmxPdD_remoteAccess_https_verificaHostName = new Hashtable<String, Boolean>();
+	private Map<String, Boolean> jmxPdD_remoteAccess_https_autenticazioneServer = new Hashtable<String, Boolean>();
+	private Map<String, String> jmxPdD_remoteAccess_https_truststorePath = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_https_truststoreType = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_https_truststorePassword = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_as = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_factory = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_url = new Hashtable<String, String>();
@@ -1352,6 +1360,24 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_remoteAccess_password(String alias) {
 		return this.jmxPdD_remoteAccess_password.get(alias);
+	}
+	public boolean isJmxPdD_remoteAccess_https(String alias) {
+		return this.jmxPdD_remoteAccess_https.get(alias);
+	}
+	public boolean isJmxPdD_remoteAccess_https_verificaHostName(String alias) {
+		return this.jmxPdD_remoteAccess_https_verificaHostName.get(alias);
+	}
+	public boolean isJmxPdD_remoteAccess_https_autenticazioneServer(String alias) {
+		return this.jmxPdD_remoteAccess_https_autenticazioneServer.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_https_truststorePath(String alias) {
+		return this.jmxPdD_remoteAccess_https_truststorePath.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_https_truststoreType(String alias) {
+		return this.jmxPdD_remoteAccess_https_truststoreType.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_https_truststorePassword(String alias) {
+		return this.jmxPdD_remoteAccess_https_truststorePassword.get(alias);
 	}
 	public String getJmxPdD_remoteAccess_as(String alias) {
 		return this.jmxPdD_remoteAccess_as.get(alias);
@@ -1769,6 +1795,60 @@ public class ControlStationCore {
 		}
 	}
 	
+	private HttpResponse invokeHttp(String urlWithParameters, String alias) throws Exception {
+		String username = this.getJmxPdD_remoteAccess_username(alias);
+		String password = this.getJmxPdD_remoteAccess_password(alias);
+		boolean https = this.isJmxPdD_remoteAccess_https(alias);
+		boolean https_verificaHostName = true;
+		boolean https_autenticazioneServer = true;
+		String https_truststorePath = null;
+		String https_truststoreType = null;
+		String https_truststorePassword = null;
+		if(https) {
+			https_verificaHostName = this.isJmxPdD_remoteAccess_https_verificaHostName(alias);
+			https_autenticazioneServer = this.isJmxPdD_remoteAccess_https_autenticazioneServer(alias);
+			if(https_autenticazioneServer) {
+				https_truststorePath = this.getJmxPdD_remoteAccess_https_truststorePath(alias);
+				if(StringUtils.isEmpty(https_truststorePath)) {
+					throw new Exception("[alias:"+alias+"] TLS Truststore path non fornito");
+				}
+				https_truststoreType = this.getJmxPdD_remoteAccess_https_truststoreType(alias);
+				if(StringUtils.isEmpty(https_truststoreType)) {
+					throw new Exception("[alias:"+alias+"] TLS Truststore type non fornito");
+				}
+				https_truststorePassword = this.getJmxPdD_remoteAccess_https_truststorePassword(alias);
+				if(StringUtils.isEmpty(https_truststorePassword)) {
+					throw new Exception("[alias:"+alias+"] TLS Truststore password non fornito");
+				}
+			}
+		}
+		
+		HttpResponse response = null;
+		if(https) {
+			HttpRequest httpRequest = new HttpRequest();
+			httpRequest.setUrl(urlWithParameters);
+			httpRequest.setReadTimeout(HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT);
+			httpRequest.setConnectTimeout(HttpUtilities.HTTP_CONNECTION_TIMEOUT);
+			httpRequest.setUsername(username);
+			httpRequest.setPassword(password);
+			httpRequest.setMethod(HttpRequestMethod.GET);
+			httpRequest.setHostnameVerifier(https_verificaHostName);
+			if(https_autenticazioneServer) {
+				httpRequest.setTrustStorePath(https_truststorePath);
+				httpRequest.setTrustStoreType(https_truststoreType);
+				httpRequest.setTrustStorePassword(https_truststorePassword);
+			}
+			else {
+				httpRequest.setTrustAllCerts(true);
+			}
+			response = HttpUtilities.httpInvoke(httpRequest);
+		}
+		else {
+			response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+		}
+		return response;
+	}
+	
 	public String invokeJMXMethod(Object gestore, String alias, String type, String nomeRisorsa, String nomeMetodo) throws Exception{
 		return invokeJMXMethod(gestore, alias, type, nomeRisorsa, nomeMetodo, null);
 	}
@@ -1792,8 +1872,6 @@ public class ControlStationCore {
 			}
 			else if(gestore instanceof String){
 				String url = (String) gestore;
-				String username = this.getJmxPdD_remoteAccess_username(alias);
-				String password = this.getJmxPdD_remoteAccess_password(alias);
 				
 				Map<String, String> p = new HashMap<String, String>();
 				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
@@ -1803,7 +1881,7 @@ public class ControlStationCore {
 				}
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 
-				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
@@ -1843,15 +1921,13 @@ public class ControlStationCore {
 			}
 			else if(gestore instanceof String){
 				String url = (String) gestore;
-				String username = this.getJmxPdD_remoteAccess_username(alias);
-				String password = this.getJmxPdD_remoteAccess_password(alias);
 				
 				Map<String, String> p = new HashMap<String, String>();
 				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
 				p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				
-				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
@@ -1878,8 +1954,6 @@ public class ControlStationCore {
 			}
 			else if(gestore instanceof String){
 				String url = (String) gestore;
-				String username = this.getJmxPdD_remoteAccess_username(alias);
-				String password = this.getJmxPdD_remoteAccess_password(alias);
 				
 				Map<String, String> p = new HashMap<String, String>();
 				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
@@ -1892,7 +1966,7 @@ public class ControlStationCore {
 				}
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				
-				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
@@ -2315,6 +2389,12 @@ public class ControlStationCore {
 		this.jmxPdD_tipoAccesso = core.jmxPdD_tipoAccesso;
 		this.jmxPdD_remoteAccess_username = core.jmxPdD_remoteAccess_username;
 		this.jmxPdD_remoteAccess_password = core.jmxPdD_remoteAccess_password;
+		this.jmxPdD_remoteAccess_https = core.jmxPdD_remoteAccess_https;
+		this.jmxPdD_remoteAccess_https_verificaHostName = core.jmxPdD_remoteAccess_https_verificaHostName;
+		this.jmxPdD_remoteAccess_https_autenticazioneServer = core.jmxPdD_remoteAccess_https_autenticazioneServer;
+		this.jmxPdD_remoteAccess_https_truststorePath = core.jmxPdD_remoteAccess_https_truststorePath;
+		this.jmxPdD_remoteAccess_https_truststoreType = core.jmxPdD_remoteAccess_https_truststoreType;
+		this.jmxPdD_remoteAccess_https_truststorePassword = core.jmxPdD_remoteAccess_https_truststorePassword;
 		this.jmxPdD_remoteAccess_as = core.jmxPdD_remoteAccess_as;
 		this.jmxPdD_remoteAccess_factory = core.jmxPdD_remoteAccess_factory;
 		this.jmxPdD_remoteAccess_url = core.jmxPdD_remoteAccess_url;
@@ -2757,6 +2837,18 @@ public class ControlStationCore {
 					String password = consoleProperties.getJmxPdD_remoteAccess_password(alias);
 					if(password!=null)
 						this.jmxPdD_remoteAccess_password.put(alias,password);
+					this.jmxPdD_remoteAccess_https.put(alias, consoleProperties.isJmxPdD_remoteAccess_https(alias));
+					this.jmxPdD_remoteAccess_https_verificaHostName.put(alias, consoleProperties.isJmxPdD_remoteAccess_https_verificaHostName(alias));
+					this.jmxPdD_remoteAccess_https_autenticazioneServer.put(alias, consoleProperties.isJmxPdD_remoteAccess_https_autenticazioneServer(alias));
+					String sslAuthServer_truststorePath = consoleProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(alias);
+					if(sslAuthServer_truststorePath!=null)
+						this.jmxPdD_remoteAccess_https_truststorePath.put(alias,sslAuthServer_truststorePath);
+					String sslAuthServer_truststoreType = consoleProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(alias);
+					if(sslAuthServer_truststoreType!=null)
+						this.jmxPdD_remoteAccess_https_truststoreType.put(alias,sslAuthServer_truststoreType);
+					String sslAuthServer_truststorePassword = consoleProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(alias);
+					if(sslAuthServer_truststorePassword!=null)
+						this.jmxPdD_remoteAccess_https_truststorePassword.put(alias,sslAuthServer_truststorePassword);
 					String as = consoleProperties.getJmxPdD_remoteAccess_applicationServer(alias);
 					if(as!=null)
 						this.jmxPdD_remoteAccess_as.put(alias,as);

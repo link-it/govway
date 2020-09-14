@@ -28,19 +28,19 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
-import org.openspcoop2.utils.TipiDatabase;
-import org.openspcoop2.utils.UtilsException;
-import org.slf4j.Logger;
-
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.status.SondaPddStatus;
+import org.slf4j.Logger;
 
 /**
  * PddMonitorProperties
@@ -562,6 +562,28 @@ public class PddMonitorProperties {
 		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.password");
 	}
 	
+	public boolean isJmxPdD_remoteAccess_https(String alias) throws Exception {
+		String v = _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https");
+		return v!=null ? Boolean.valueOf(v.trim()) : false; // default false
+	}
+	public boolean isJmxPdD_remoteAccess_https_verificaHostName(String alias) throws Exception {
+		String v = _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.verificaHostName");
+		return v!=null ? Boolean.valueOf(v.trim()) : true; // default true
+	}
+	public boolean isJmxPdD_remoteAccess_https_autenticazioneServer(String alias) throws Exception {
+		String v = _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer");
+		return v!=null ? Boolean.valueOf(v.trim()) : true; // default true
+	}
+	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(String alias) throws Exception {
+		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePath");
+	}
+	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(String alias) throws Exception {
+		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststoreType");
+	}
+	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(String alias) throws Exception {
+		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword");
+	}
+	
 	public String getJmxPdD_remoteAccess_applicationServer(String alias) throws Exception {
 		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.as");
 	}
@@ -653,13 +675,26 @@ public class PddMonitorProperties {
 				lista.add(split[i].trim());
 			}
 		}
+		
+		if(SondaPddStatus.GATEWAY_DEFAULT.equals(tmp)) {
+			// se sono definiti dei nodi tramite aliases uso quelli
+			List<String> listaAliases = this.getJmxPdD_aliases();
+			if(listaAliases!=null && !listaAliases.isEmpty()) {
+				if(listaAliases.size()>1) {
+					lista = listaAliases;
+				}
+				else {
+					String alias = listaAliases.get(0);
+					if(!SondaPddStatus.GATEWAY_DEFAULT.equals(alias) && !SondaPddStatus.ALIAS_DEFAULT.equals(alias)) {
+						lista = listaAliases;
+					}
+				}
+			}
+		}
+		
 		return lista;
 	}
 
-	public String getUrlCheckStatusPdD(String namePdD) throws Exception{
-		return this.appProperties.getProperty("statoPdD.sonde.standard."+namePdD+".url", this.isStatusPdDEnabled(), true);
-	}
-	
 	public List<String> getListaSondePdd() throws Exception{
 		List<String> lista = new ArrayList<String>();
 		String tmp = this.appProperties.getProperty("statoPdD.sonde", this.isStatusPdDEnabled(), true);

@@ -584,6 +584,27 @@ public class ConsoleProperties {
 	public String getJmxPdD_remoteAccess_password(String alias) throws UtilsException {
 		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.password");
 	}
+	public boolean isJmxPdD_remoteAccess_https(String alias) throws UtilsException {
+		String v = _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https");
+		return v!=null ? Boolean.valueOf(v.trim()) : false; // default false
+	}
+	public boolean isJmxPdD_remoteAccess_https_verificaHostName(String alias) throws UtilsException {
+		String v = _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.verificaHostName");
+		return v!=null ? Boolean.valueOf(v.trim()) : true; // default true
+	}
+	public boolean isJmxPdD_remoteAccess_https_autenticazioneServer(String alias) throws UtilsException {
+		String v = _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer");
+		return v!=null ? Boolean.valueOf(v.trim()) : true; // default true
+	}
+	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(String alias) throws UtilsException {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePath");
+	}
+	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(String alias) throws UtilsException {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststoreType");
+	}
+	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(String alias) throws UtilsException {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword");
+	}
 	public String getJmxPdD_remoteAccess_applicationServer(String alias) throws UtilsException {
 		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.as");
 	}

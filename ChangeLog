@@ -1,3 +1,13 @@
+2020-09-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1050
+	La configurazione per il Load Balancing consente adesso di impostare una connettività verso i nodi utilizzando le funzionalità avanzate del connettore https,
+	tra cui la possibilità di disattivare l'autenticazione server e/o la verifica dell'hostname.
+	Inoltre tra le informazioni sul Java Networking, visualizzate nella sezione 'Runtime', sono state eliminate le password dei keystore e truststore.
+	Infine è stato risolto un problema sulla console di gestione nella sezione del connettore che consente il download dei certificati server; 
+	il bug causava un errore inatteso sulla console quando il server non era raggiungibile (es. errore di connection refused o timed out).
+
 2020-09-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

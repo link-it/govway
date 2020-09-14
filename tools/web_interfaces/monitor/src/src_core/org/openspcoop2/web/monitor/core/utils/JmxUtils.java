@@ -22,9 +22,12 @@ package org.openspcoop2.web.monitor.core.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -94,6 +97,60 @@ public class JmxUtils {
 		}
 	}
 	
+	private HttpResponse invokeHttp(String urlWithParameters, String alias) throws Exception {
+		String username = this.monitorProperties.getJmxPdD_remoteAccess_username(alias);
+		String password = this.monitorProperties.getJmxPdD_remoteAccess_password(alias);
+		boolean https = this.monitorProperties.isJmxPdD_remoteAccess_https(alias);
+		boolean https_verificaHostName = true;
+		boolean https_autenticazioneServer = true;
+		String https_truststorePath = null;
+		String https_truststoreType = null;
+		String https_truststorePassword = null;
+		if(https) {
+			https_verificaHostName = this.monitorProperties.isJmxPdD_remoteAccess_https_verificaHostName(alias);
+			https_autenticazioneServer = this.monitorProperties.isJmxPdD_remoteAccess_https_autenticazioneServer(alias);
+			if(https_autenticazioneServer) {
+				https_truststorePath = this.monitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(alias);
+				if(StringUtils.isEmpty(https_truststorePath)) {
+					throw new Exception("[alias:"+alias+"] TLS Truststore path non fornito");
+				}
+				https_truststoreType = this.monitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(alias);
+				if(StringUtils.isEmpty(https_truststoreType)) {
+					throw new Exception("[alias:"+alias+"] TLS Truststore type non fornito");
+				}
+				https_truststorePassword = this.monitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(alias);
+				if(StringUtils.isEmpty(https_truststorePassword)) {
+					throw new Exception("[alias:"+alias+"] TLS Truststore password non fornito");
+				}
+			}
+		}
+		
+		HttpResponse response = null;
+		if(https) {
+			HttpRequest httpRequest = new HttpRequest();
+			httpRequest.setUrl(urlWithParameters);
+			httpRequest.setReadTimeout(HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT);
+			httpRequest.setConnectTimeout(HttpUtilities.HTTP_CONNECTION_TIMEOUT);
+			httpRequest.setUsername(username);
+			httpRequest.setPassword(password);
+			httpRequest.setMethod(HttpRequestMethod.GET);
+			httpRequest.setHostnameVerifier(https_verificaHostName);
+			if(https_autenticazioneServer) {
+				httpRequest.setTrustStorePath(https_truststorePath);
+				httpRequest.setTrustStoreType(https_truststoreType);
+				httpRequest.setTrustStorePassword(https_truststorePassword);
+			}
+			else {
+				httpRequest.setTrustAllCerts(true);
+			}
+			response = HttpUtilities.httpInvoke(httpRequest);
+		}
+		else {
+			response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+		}
+		return response;
+	}
+	
 	public String invokeJMXMethod(Object gestore, String alias, String type, String nomeRisorsa, String nomeMetodo) throws Exception{
 		return invokeJMXMethod(gestore, alias, type, nomeRisorsa, nomeMetodo, null);
 	}
@@ -117,9 +174,7 @@ public class JmxUtils {
 			}
 			else if(gestore instanceof String){
 				String url = (String) gestore;
-				String username = this.monitorProperties.getJmxPdD_remoteAccess_username(alias);
-				String password = this.monitorProperties.getJmxPdD_remoteAccess_password(alias);
-				
+			
 				Map<String, String> p = new HashMap<String,String>();
 				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
 				p.put(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, nomeMetodo);
@@ -128,7 +183,7 @@ public class JmxUtils {
 				}
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				
-				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
@@ -168,15 +223,13 @@ public class JmxUtils {
 			}
 			else if(gestore instanceof String){
 				String url = (String) gestore;
-				String username = this.monitorProperties.getJmxPdD_remoteAccess_username(alias);
-				String password = this.monitorProperties.getJmxPdD_remoteAccess_password(alias);
 				
 				Map<String, String> p = new HashMap<String, String>();
 				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
 				p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				
-				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
@@ -203,8 +256,6 @@ public class JmxUtils {
 			}
 			else if(gestore instanceof String){
 				String url = (String) gestore;
-				String username = this.monitorProperties.getJmxPdD_remoteAccess_username(alias);
-				String password = this.monitorProperties.getJmxPdD_remoteAccess_password(alias);
 				
 				Map<String, String> p = new HashMap<String, String>();
 				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
@@ -217,7 +268,7 @@ public class JmxUtils {
 				}
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				
-				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){

@@ -1650,6 +1650,9 @@ public class OpenSPCoop2Properties {
 				} 
 			}
 			
+			// govway_configurazioneSistema.log
+			this.isConfigurazioneSistema_javaProperties_showPassword();
+			
 			// ExtendedInfo (Configurazione)
 			String extendedInfoConfigurazione = null;
 			try{
@@ -16215,6 +16218,34 @@ public class OpenSPCoop2Properties {
 		}
 		OpenSPCoop2Properties.realContainerCustomRead = true;
 		return OpenSPCoop2Properties.realContainerCustom;
+	}
+	
+	
+	/* ------------- govway_configurazioneSistema ---------------------*/
+	
+	private static Boolean isConfigurazioneSistema_javaProperties_showPassword = null;
+	public boolean isConfigurazioneSistema_javaProperties_showPassword(){
+
+		String pName = "org.openspcoop2.pdd.configurazioneSistema.javaProperties.showPassword";
+		if(OpenSPCoop2Properties.isConfigurazioneSistema_javaProperties_showPassword==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isConfigurazioneSistema_javaProperties_showPassword = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isConfigurazioneSistema_javaProperties_showPassword = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isConfigurazioneSistema_javaProperties_showPassword = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isConfigurazioneSistema_javaProperties_showPassword;
 	}
 	
 	

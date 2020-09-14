@@ -23,8 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.slf4j.Logger;
 
 /**
@@ -37,6 +41,9 @@ import org.slf4j.Logger;
  */
 public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 
+	public final static String GATEWAY_DEFAULT = "Gateway";
+	public final static String ALIAS_DEFAULT = "pdd";
+	
 	/**
 	 * 
 	 */
@@ -51,12 +58,89 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 			this.log.debug("Init Sonda Pdd Status in corso...");
 			this.listaStatus = new ArrayList<IStatus>();
 
-			for (String namePdD : this.getListaPdDMonitorate_StatusPdD()) {
-				String url =   this.propertiesSonda.getProperty(namePdD+".url"); //"pdd."+
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
 
+			for (String namePdD : this.getListaPdDMonitorate_StatusPdD()) {
+				
+				String url = this.propertiesSonda.getProperty(namePdD+".url"); //"pdd."+
+				if(url==null) {
+					url = pddMonitorProperties.getJmxPdD_remoteAccess_url(namePdD);
+				}
+				if(url==null) {
+					String p1 = "statoPdD.sonde.standard."+namePdD+".url";
+					throw new Exception("Alternative Properties ["+p1+"] or [configurazioni.risorseJmxPdd.remoteAccess.url] not found");
+				}
+				
+				boolean https = false;
+				boolean https_verificaHostName = true;
+				boolean https_autenticazioneServer = true;
+				String https_truststorePath = null;
+				String https_truststoreType = null;
+				String https_truststorePassword = null;
+				
+				String httpsP = this.propertiesSonda.getProperty(namePdD+".https");
+				if(httpsP!=null) {
+					https = "true".equals(httpsP.trim()); // default false
+				}
+				else {
+					https = pddMonitorProperties.isJmxPdD_remoteAccess_https(namePdD);
+				}
+								
+				if(https) {
+					
+					String httpsP_verificaHostName = this.propertiesSonda.getProperty(namePdD+".https.verificaHostName");
+					if(httpsP_verificaHostName!=null) {
+						https_verificaHostName = "false".equals(httpsP_verificaHostName.trim()); // default true
+					}
+					else {
+						https_verificaHostName = pddMonitorProperties.isJmxPdD_remoteAccess_https_verificaHostName(namePdD);
+					}
+					
+					String httpsP_autenticazioneServer = this.propertiesSonda.getProperty(namePdD+".https.autenticazioneServer");
+					if(httpsP_autenticazioneServer!=null) {
+						https_autenticazioneServer = "false".equals(httpsP_autenticazioneServer.trim()); // default true
+					}
+					else {
+						https_autenticazioneServer = pddMonitorProperties.isJmxPdD_remoteAccess_https_autenticazioneServer(namePdD);
+					}
+				
+					if(https_autenticazioneServer) {
+						
+						https_truststorePath = this.propertiesSonda.getProperty(namePdD+".https.autenticazioneServer.truststorePath");
+						if(https_truststorePath==null) {
+							https_truststorePath = pddMonitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(namePdD);
+						}
+						if(StringUtils.isEmpty(https_truststorePath)) {
+							throw new Exception("[gateway:"+namePdD+"] TLS Truststore path non fornito");
+						}
+						
+						https_truststoreType = this.propertiesSonda.getProperty(namePdD+".https.autenticazioneServer.truststoreType");
+						if(https_truststoreType==null) {
+							https_truststoreType = pddMonitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(namePdD);
+						}
+						if(StringUtils.isEmpty(https_truststoreType)) {
+							throw new Exception("[gateway:"+namePdD+"] TLS Truststore type non fornito");
+						}
+						
+						https_truststorePassword = this.propertiesSonda.getProperty(namePdD+".https.autenticazioneServer.truststorePassword");
+						if(https_truststorePassword==null) {
+							https_truststorePassword = pddMonitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(namePdD);
+						}
+						if(StringUtils.isEmpty(https_truststorePassword)) {
+							throw new Exception("[gateway:"+namePdD+"] TLS Truststore password non fornito");
+						}
+					}
+				}
+				
 				PddStatus pddStat = new PddStatus();
 				pddStat.setNome(namePdD);
 				pddStat.setUrl(url);
+				pddStat.setHttps(https);
+				pddStat.setHttps_verificaHostName(https_verificaHostName);
+				pddStat.setHttps_autenticazioneServer(https_autenticazioneServer);
+				pddStat.setHttps_autenticazioneServer_truststorePath(https_truststorePath);
+				pddStat.setHttps_autenticazioneServer_truststoreType(https_truststoreType);
+				pddStat.setHttps_autenticazioneServer_truststorePassword(https_truststorePassword);
 
 				this.listaStatus.add(pddStat);
 			}
@@ -77,7 +161,7 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 		for (IStatus pddBean : this.listaStatus) {
 
 			try{
-				HttpUtilities.check(((PddStatus) pddBean).getUrl());
+				_check(((PddStatus) pddBean));
 				pddBean.setStato(SondaStatus.OK);
 				pddBean.setDescrizione(null);
 			}catch(Exception e){
@@ -94,6 +178,7 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 					pddBean.setStato(SondaStatus.ERROR);
 				}
 				pddBean.setDescrizione(e.getMessage());
+				this.log.error("Sonda '"+pddBean.getNome()+"' ha rilevato un errore: "+e.getMessage(),e);
 			}
 
 		}
@@ -101,16 +186,56 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 		return this.listaStatus;
 	}
 
-	public List<String> getListaPdDMonitorate_StatusPdD() throws Exception{
-		List<String> lista = new ArrayList<String>();
-		String tmp = this.propertiesSonda.getProperty("nodi");
-		if(tmp!=null && !"".equals(tmp)){
-			String[]split = tmp.split(",");
-			for (int i = 0; i < split.length; i++) {
-				lista.add(split[i].trim());
+	private void _check(PddStatus pdd) throws Exception {
+		boolean https = pdd.isHttps();
+		boolean https_verificaHostName = true;
+		boolean https_autenticazioneServer = true;
+		String https_truststorePath = null;
+		String https_truststoreType = null;
+		String https_truststorePassword = null;
+		if(https) {
+			https_verificaHostName = pdd.isHttps_verificaHostName();
+			https_autenticazioneServer = pdd.isHttps_autenticazioneServer();
+			if(https_autenticazioneServer) {
+				https_truststorePath = pdd.getHttps_autenticazioneServer_truststorePath();
+				if(StringUtils.isEmpty(https_truststorePath)) {
+					throw new Exception("[alias:"+pdd.getNome()+"] TLS Truststore path non fornito");
+				}
+				https_truststoreType = pdd.getHttps_autenticazioneServer_truststoreType();
+				if(StringUtils.isEmpty(https_truststoreType)) {
+					throw new Exception("[alias:"+pdd.getNome()+"] TLS Truststore type non fornito");
+				}
+				https_truststorePassword = pdd.getHttps_autenticazioneServer_truststorePassword();
+				if(StringUtils.isEmpty(https_truststorePassword)) {
+					throw new Exception("[alias:"+pdd.getNome()+"] TLS Truststore password non fornito");
+				}
 			}
 		}
-		return lista;
+		
+		if(https) {
+			HttpRequest httpRequest = new HttpRequest();
+			httpRequest.setUrl(pdd.getUrl());
+			httpRequest.setReadTimeout(HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT);
+			httpRequest.setConnectTimeout(HttpUtilities.HTTP_CONNECTION_TIMEOUT);
+			httpRequest.setMethod(HttpRequestMethod.GET);
+			httpRequest.setHostnameVerifier(https_verificaHostName);
+			if(https_autenticazioneServer) {
+				httpRequest.setTrustStorePath(https_truststorePath);
+				httpRequest.setTrustStoreType(https_truststoreType);
+				httpRequest.setTrustStorePassword(https_truststorePassword);
+			}
+			else {
+				httpRequest.setTrustAllCerts(true);
+			}
+			HttpUtilities.check(httpRequest);
+		}
+		else {
+			HttpUtilities.check(pdd.getUrl());
+		}
+	}
+	
+	public List<String> getListaPdDMonitorate_StatusPdD() throws Exception{
+		return PddMonitorProperties.getInstance(this.log).getListaPdDMonitorate_StatusPdD();
 	}
 
 	@Override

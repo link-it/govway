@@ -56,6 +56,8 @@ public class HttpRequest extends AbstractHttp {
 	private boolean secureRandom = false;
 	private String secureRandomAlgorithm = null;
 	
+	private boolean hostnameVerifier = false; // nelle versioni precedenti era configurato disabilitato direttamente in HttpUtilities
+	
 	public Boolean getFollowRedirects() {
 		return this.followRedirects;
 	}
@@ -182,5 +184,13 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setSecureRandomAlgorithm(String secureRandomAlgorithm) {
 		this.secureRandomAlgorithm = secureRandomAlgorithm;
+	}
+	
+	public boolean isHostnameVerifier() {
+		return this.hostnameVerifier;
+	}
+
+	public void setHostnameVerifier(boolean hostnameVerifier) {
+		this.hostnameVerifier = hostnameVerifier;
 	}
 }

@@ -2242,6 +2242,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_repositoryMessaggi);
 			
 			ConfigurazioneSistema infoConfigSistema = new ConfigurazioneSistema();
+			ConfigurazioneSistema.setIncludePassword(propertiesReader.isConfigurazioneSistema_javaProperties_showPassword());
 			StatoServiziJMXResource statoServiziPdD = new StatoServiziJMXResource();
 			OpenSPCoop2Logger.getLoggerOpenSPCoopConfigurazioneSistema().
 				info(informazioniStatoPorta.formatStatoPorta(infoConfigSistema.getVersionePdD(), 
@@ -2268,8 +2269,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						infoConfigSistema.getInformazioniCharset(),
 						infoConfigSistema.getInformazioniInternazionalizzazione(true),
 						infoConfigSistema.getInformazioniTimeZone(true),
-						infoConfigSistema.getInformazioniProprietaJava(true, true, false),
-						infoConfigSistema.getInformazioniProprietaJava(true, false, true),
+						infoConfigSistema.getInformazioniProprietaJava(true, true, false, ConfigurazioneSistema.isIncludePassword()),
+						infoConfigSistema.getInformazioniProprietaJava(true, false, true, ConfigurazioneSistema.isIncludePassword()),
 						infoConfigSistema.getInformazioniProprietaSistema(),
 						infoConfigSistema.getPluginProtocols(), 
 						infoConfigSistema.getInformazioniInstallazione(),

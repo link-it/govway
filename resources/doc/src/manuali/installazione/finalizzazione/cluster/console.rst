@@ -13,7 +13,7 @@ il timeout della cache o richiedere riavvii dell'AS.
 A tale scopo sarà necessario:
 
 #. Editare il file <directory-lavoro>/govway_local.properties
-   aggiungendo le seguenti righe su ogni PdD in Load Balancing:
+   aggiungendo le seguenti righe su ogni GovWay in Load Balancing:
 
    ::
 
@@ -84,7 +84,7 @@ A tale scopo sarà necessario:
 
    ::
 
-      # Configurazione PdD in Singola Istanza
+      # Configurazione in Singola Istanza
       #statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/check
                               
 
@@ -93,14 +93,13 @@ A tale scopo sarà necessario:
 
    ::
 
-      # Configurazione PdD in Load Balancing
+      # Configurazione in Load Balancing
       configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
       configurazioni.risorseJmxPdd.aliases=IDGW1,..,IDGWN
-      statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN
       transazioni.idCluster.useSondaPdDList=true
                               
 
-   Devono essere elencati tutti gli identificativi, di ogni PdD in Load
+   Devono essere elencati tutti gli identificativi, di ogni GovWay in Load
    Balancing, registrati nel file govway_local.properties nella
    proprietà 'org.openspcoop2.pdd.cluster_id' come descritto in precedenza.
    Per ogni identificativo devono inoltre essere fornite le seguenti
@@ -109,14 +108,11 @@ A tale scopo sarà necessario:
    ::
 
       # Configurazione IDGW1
-      statoPdD.sonde.standard.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/govway/check
       #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1/govway/check
       #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
       #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
       ...
       # Configurazione IDGWN
-      statoPdD.sonde.standard.#IDGWN#.url=http://#HOSTGWN#:#PORTGWN#/govway/check
-      #IDGWN#.configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
       #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN/govway/check
       #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
       #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
@@ -132,4 +128,23 @@ A tale scopo sarà necessario:
 
    Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
    porta con cui è raggiungibile GovWay.
+
+.. note::
+   È possibile utilizzare un servizio 'sonda' differente da quello di default abilitando la seguente configurazione aggiuntiva:
+   
+      ::
+
+         # Configurazione IDGW1
+         statoPdD.sonde.standard.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/govway/check
+         ...
+         # Configurazione IDGWN
+         statoPdD.sonde.standard.#IDGWN#.url=http://#HOSTGWN#:#PORTGWN#/govway/check
+
+   È inoltre possibile elencare un numero di nodi differenti tramite la seguente proprietà:
+
+      ::
+
+         # Configurazione in Load Balancing
+         statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN
+
 

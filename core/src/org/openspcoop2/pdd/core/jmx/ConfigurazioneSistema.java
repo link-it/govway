@@ -119,7 +119,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String FILE_TRACE_CONFIG = "getFileTrace";
 	public final static String FILE_TRACE_UPDATE = "updateFileTrace";
 
-
+	private static boolean includePassword = false;
+	public static boolean isIncludePassword() {
+		return includePassword;
+	}
+	public static void setIncludePassword(boolean includePassword) {
+		ConfigurazioneSistema.includePassword = includePassword;
+	}
 
 	/** getAttribute */
 	@Override
@@ -252,15 +258,15 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_PROPRIETA_JAVA_NETWORKING)){
-			return this.getInformazioniProprietaJava(false, true,false);
+			return this.getInformazioniProprietaJava(false, true,false,ConfigurazioneSistema.includePassword);
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING)){
-			return this.getInformazioniProprietaJava(true, true,false);
+			return this.getInformazioniProprietaJava(true, true,false,ConfigurazioneSistema.includePassword);
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_PROPRIETA_JAVA_ALTRO)){
-			return this.getInformazioniProprietaJava(true, false, true);
+			return this.getInformazioniProprietaJava(true, false, true,ConfigurazioneSistema.includePassword);
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_PROPRIETA_SISTEMA)){
@@ -842,6 +848,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 	}
 	
+	private boolean isPasswordProperty(String key) {
+		return key.toLowerCase().contains("password");
+	}
 	private boolean isNetworkProperties(boolean allNetwork, String key) {
 		boolean net = key.startsWith("java.net.") || 
 				key.startsWith("javax.net.") || 
@@ -864,7 +873,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				
 	}
 	
-	public String getInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork){
+	public String getInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork, boolean includePassword){
 		try{
 			StringBuilder bf = new StringBuilder();
 			
@@ -889,16 +898,22 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				}
 				else if(includeNetwork && !includeNotNetwork) {
 					if(this.isNetworkProperties(allNetwork, key)) {
-						ll.add(key);
+						if(includePassword || !isPasswordProperty(key)) {
+							ll.add(key);
+						}
 					}
 				}
 				else if(includeNotNetwork && !includeNetwork) {
 					if(!this.isNetworkProperties(true, key)) {
-						ll.add(key);
+						if(includePassword || !isPasswordProperty(key)) {
+							ll.add(key);
+						}
 					}
 				}
 				else {
-					ll.add(key);
+					if(includePassword || !isPasswordProperty(key)) {
+						ll.add(key);
+					}
 				}
 			}
 			Collections.sort(ll);
