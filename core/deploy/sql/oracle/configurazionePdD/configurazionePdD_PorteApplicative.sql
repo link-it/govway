@@ -892,6 +892,7 @@ CREATE TABLE pa_transform_hdr
 	tipo VARCHAR2(255) NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore CLOB,
+	identificazione_fallita VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -923,6 +924,7 @@ CREATE TABLE pa_transform_url
 	tipo VARCHAR2(255) NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore CLOB,
+	identificazione_fallita VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -1003,6 +1005,7 @@ CREATE TABLE pa_transform_risp_hdr
 	tipo VARCHAR2(255) NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore CLOB,
+	identificazione_fallita VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

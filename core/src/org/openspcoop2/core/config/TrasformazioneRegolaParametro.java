@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.config.constants.TrasformazioneIdentificazioneRisorsaFallita;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import java.io.Serializable;
 
@@ -38,6 +39,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="conversione-tipo" type="{http://www.openspcoop2.org/core/config}TrasformazioneRegolaParametroTipoAzione" use="required"/&gt;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
  * 		&lt;attribute name="valore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="identificazione-fallita" type="{http://www.openspcoop2.org/core/config}TrasformazioneIdentificazioneRisorsaFallita" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -106,6 +108,26 @@ public class TrasformazioneRegolaParametro extends org.openspcoop2.utils.beans.B
     this.valore = valore;
   }
 
+  public void set_value_identificazioneFallita(String value) {
+    this.identificazioneFallita = (TrasformazioneIdentificazioneRisorsaFallita) TrasformazioneIdentificazioneRisorsaFallita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_identificazioneFallita() {
+    if(this.identificazioneFallita == null){
+    	return null;
+    }else{
+    	return this.identificazioneFallita.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.TrasformazioneIdentificazioneRisorsaFallita getIdentificazioneFallita() {
+    return this.identificazioneFallita;
+  }
+
+  public void setIdentificazioneFallita(org.openspcoop2.core.config.constants.TrasformazioneIdentificazioneRisorsaFallita identificazioneFallita) {
+    this.identificazioneFallita = identificazioneFallita;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -126,5 +148,11 @@ public class TrasformazioneRegolaParametro extends org.openspcoop2.utils.beans.B
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="valore",required=false)
   protected java.lang.String valore;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_identificazioneFallita;
+
+  @XmlAttribute(name="identificazione-fallita",required=false)
+  protected TrasformazioneIdentificazioneRisorsaFallita identificazioneFallita;
 
 }

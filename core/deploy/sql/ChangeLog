@@ -1,3 +1,15 @@
+2020-09-14  Andrea Poli <apoli@link.it>
+
+	Aggiunto tipo di gestione durante la trasformazione degli header http o dei parametri della url
+
+	ALTER TABLE pa_transform_hdr ADD COLUMN identificazione_fallita VARCHAR(255);
+	ALTER TABLE pa_transform_url ADD COLUMN identificazione_fallita VARCHAR(255);
+	ALTER TABLE pa_transform_risp_hdr ADD COLUMN identificazione_fallita VARCHAR(255);
+
+	ALTER TABLE pd_transform_hdr ADD COLUMN identificazione_fallita VARCHAR(255);
+	ALTER TABLE pd_transform_url ADD COLUMN identificazione_fallita VARCHAR(255);
+	ALTER TABLE pd_transform_risp_hdr ADD COLUMN identificazione_fallita VARCHAR(255);
+
 2020-08-07  Andrea Poli <apoli@link.it>
 
 	Modificato tipo della colonna 'value' della tabella 'tracce_ext_protocol_info' al fine di poter creare un indice su tale colonna;

@@ -1,3 +1,13 @@
+2020-09-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1052
+	Le trasformazioni consentono di aggiungere o modificare un header o un parametro della url assegnando un valore contenente parti dinamiche risolte a runtime dal Gateway. 
+	È stato aggiunto nella maschera di gestione di un header o di un parametro della url un campo 'Identificazione Fallita' che consente di definire il comportamento del Gateway 
+	quando non riesce a risolvere le parti dinamiche contenute nel valore indicato:
+	- Termina con errore: la transazione termina con un errore che riporta la fallita risoluzione della parte dinamica indicata per il valore;
+	- Continua senza header: la transazione continua senza che l'header o il parametro venga aggiunto o modificato.
+
 2020-09-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

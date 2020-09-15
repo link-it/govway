@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.constants.TrasformazioneIdentificazioneRisorsaFallita;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -109,6 +110,10 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 			String valore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE);
 			if(valore == null)
 				valore = "";
+			
+			String identificazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE);
+			if(identificazione == null)
+				identificazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA;
 			
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
@@ -191,7 +196,7 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.ADD, dati, idTrasformazioneS, null, nome, tipo, valore, apc.getServiceBinding());
+				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.ADD, dati, idTrasformazioneS, null, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -221,7 +226,7 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.ADD, dati, idTrasformazioneS, null, nome, tipo, valore, apc.getServiceBinding());
+				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.ADD, dati, idTrasformazioneS, null, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -249,6 +254,12 @@ public class PorteDelegateTrasformazioniRichiestaHeaderAdd extends Action {
 			parametro.setNome(nome);
 			parametro.setValore(valore);
 			parametro.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.toEnumConstant(tipo));
+			if(!TrasformazioneRegolaParametroTipoAzione.DELETE.equals(parametro.getConversioneTipo())) {
+				parametro.setIdentificazioneFallita(TrasformazioneIdentificazioneRisorsaFallita.toEnumConstant(identificazione));
+			}
+			else {
+				parametro.setIdentificazioneFallita(null);
+			}
 					
 			regola.getRichiesta().addHeader(parametro);
 			

@@ -589,6 +589,7 @@ CREATE TABLE pa_transform_hdr
 	tipo VARCHAR(255) NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore TEXT,
+	identificazione_fallita VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
@@ -607,6 +608,7 @@ CREATE TABLE pa_transform_url
 	tipo VARCHAR(255) NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore TEXT,
+	identificazione_fallita VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
@@ -659,6 +661,7 @@ CREATE TABLE pa_transform_risp_hdr
 	tipo VARCHAR(255) NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore TEXT,
+	identificazione_fallita VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints

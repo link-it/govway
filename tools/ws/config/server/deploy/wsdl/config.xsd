@@ -633,6 +633,7 @@
 		<xsd:attribute name="conversione-tipo" type="TrasformazioneRegolaParametroTipoAzione" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string"/>
+		<xsd:attribute name="identificazione-fallita" type="TrasformazioneIdentificazioneRisorsaFallita"/>
 	</xsd:complexType>
 	<xsd:complexType name="trasformazione-regola-risposta">
 		<xsd:sequence>
@@ -1514,6 +1515,12 @@
 			<xsd:enumeration value="update"/>
 			<xsd:enumeration value="updateOrAdd"/>
 			<xsd:enumeration value="delete"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TrasformazioneIdentificazioneRisorsaFallita">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="blocca"/>
+			<xsd:enumeration value="ignora"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="VersioneSOAP">

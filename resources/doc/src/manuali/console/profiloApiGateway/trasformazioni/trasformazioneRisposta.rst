@@ -16,7 +16,7 @@ Quando si aggiunge una nuova regola di trasformazione della risposta si procede 
 - Pattern: espressione XPath o JsonPath da confrontare con il contenuto della risposta per un eventuale match
 
    .. figure:: ../../_figure_console/TrasformazioniRegolaRisposta.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: trasf_Risposta
 

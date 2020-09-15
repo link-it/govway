@@ -8,7 +8,7 @@ Nel contesto della configurazione specifica di una erogazione o di una fruizione
 Tramite il pulsante *Aggiungi* è possibile inserire una nuova trasformazione (:numref:`trasf_CreaRegola`).
 
    .. figure:: ../../_figure_console/TrasformazioniCreaRegola.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: trasf_CreaRegola
 
@@ -26,7 +26,7 @@ La creazione di una trasformazione richiede che vengano inseriti i seguenti dati
 Le trasformazioni create sono visualizzate nella forma di elenco ordinato (:numref:`trasf_ListaRegole`). L'icona iniziale di ciascun elemento consente di modificarne la posizione.
 
    .. figure:: ../../_figure_console/TrasformazioniListaRegole.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: trasf_ListaRegole
 

@@ -160,6 +160,7 @@ import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.constants.TrasformazioneIdentificazioneRisorsaFallita;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
@@ -421,6 +422,14 @@ public class DriverConfigurazioneDB_LIB {
 			return valore.getValue();
 		}
 	}
+	public static String getValue(TrasformazioneIdentificazioneRisorsaFallita identificazione){
+		if(identificazione==null){
+			return null;
+		}
+		else{
+			return identificazione.getValue();
+		}
+	}
 	
 	
 	public static StatoFunzionalita getEnumStatoFunzionalita(String value){
@@ -613,6 +622,14 @@ public class DriverConfigurazioneDB_LIB {
 		}
 		else{
 			return ServiceBinding.toEnumConstant(value);
+		}
+	}
+	public static TrasformazioneIdentificazioneRisorsaFallita getEnumTrasformazioneIdentificazioneRisorsaFallita(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return TrasformazioneIdentificazioneRisorsaFallita.toEnumConstant(value);
 		}
 	}
 	
@@ -10810,6 +10827,7 @@ public class DriverConfigurazioneDB_LIB {
 								sqlQueryObject.addInsertField("tipo", "?");
 								sqlQueryObject.addInsertField("nome", "?");
 								sqlQueryObject.addInsertField("valore", "?");
+								sqlQueryObject.addInsertField("identificazione_fallita", "?");
 								
 								String updateQuery = sqlQueryObject.createSQLInsert();
 								updateStmt = con.prepareStatement(updateQuery);
@@ -10818,6 +10836,7 @@ public class DriverConfigurazioneDB_LIB {
 								updateStmt.setString(index++, getValue(parametro.getConversioneTipo()));
 								updateStmt.setString(index++, parametro.getNome());
 								updateStmt.setString(index++, parametro.getValore());
+								updateStmt.setString(index++, getValue(parametro.getIdentificazioneFallita()));
 								updateStmt.executeUpdate();
 								updateStmt.close();
 							}
@@ -10837,6 +10856,7 @@ public class DriverConfigurazioneDB_LIB {
 								sqlQueryObject.addInsertField("tipo", "?");
 								sqlQueryObject.addInsertField("nome", "?");
 								sqlQueryObject.addInsertField("valore", "?");
+								sqlQueryObject.addInsertField("identificazione_fallita", "?");
 								
 								String updateQuery = sqlQueryObject.createSQLInsert();
 								updateStmt = con.prepareStatement(updateQuery);
@@ -10845,6 +10865,7 @@ public class DriverConfigurazioneDB_LIB {
 								updateStmt.setString(index++, getValue(parametro.getConversioneTipo()));
 								updateStmt.setString(index++, parametro.getNome());
 								updateStmt.setString(index++, parametro.getValore());
+								updateStmt.setString(index++, getValue(parametro.getIdentificazioneFallita()));
 								updateStmt.executeUpdate();
 								updateStmt.close();
 							}
@@ -10957,6 +10978,7 @@ public class DriverConfigurazioneDB_LIB {
 									sqlQueryObject.addInsertField("tipo", "?");
 									sqlQueryObject.addInsertField("nome", "?");
 									sqlQueryObject.addInsertField("valore", "?");
+									sqlQueryObject.addInsertField("identificazione_fallita", "?");
 									
 									String updateQuery = sqlQueryObject.createSQLInsert();
 									updateStmt = con.prepareStatement(updateQuery);
@@ -10965,6 +10987,7 @@ public class DriverConfigurazioneDB_LIB {
 									updateStmt.setString(index++, getValue(parametro.getConversioneTipo()));
 									updateStmt.setString(index++, parametro.getNome());
 									updateStmt.setString(index++, parametro.getValore());
+									updateStmt.setString(index++, getValue(parametro.getIdentificazioneFallita()));
 									updateStmt.executeUpdate();
 									updateStmt.close();
 								}
@@ -11410,6 +11433,7 @@ public class DriverConfigurazioneDB_LIB {
 					parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 					parametro.setNome(rs.getString("nome"));
 					parametro.setValore(rs.getString("valore"));
+					parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 					parametro.setId(rs.getLong("id"));
 					regola.getRichiesta().addHeader(parametro);
 				}
@@ -11437,6 +11461,7 @@ public class DriverConfigurazioneDB_LIB {
 					parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 					parametro.setNome(rs.getString("nome"));
 					parametro.setValore(rs.getString("valore"));
+					parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 					parametro.setId(rs.getLong("id"));
 					regola.getRichiesta().addParametroUrl(parametro);
 				}
@@ -11583,6 +11608,7 @@ public class DriverConfigurazioneDB_LIB {
 						parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
+						parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 						parametro.setId(rs.getLong("id"));
 						risposta.addHeader(parametro);
 					}

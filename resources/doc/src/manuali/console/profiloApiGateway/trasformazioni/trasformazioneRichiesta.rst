@@ -29,6 +29,10 @@ Ciascuna operazione può essere selezionata tra le seguenti:
 
 .. note::
     i valori specificati per gli header http possono contenere le proprietà dinamiche descritte nella sezione :ref:`valoriDinamici`.
+    Il campo 'Identificazione Fallita' permette di definire il comportamento del Gateway quando non riesce a risolvere parti dinamiche contenute nel valore indicato. Le configurazioni utilizzabili sono:
+
+    - Termina con errore: la transazione termina con un errore che riporta la fallita risoluzione della parte dinamica indicata per il valore;
+    - Continua senza header: la transazione continua senza completare la gestione dell'header.
 
 Sempre a livello del trasporto è possibile applicare trasformazioni anche sui parametri presenti nella Query String, selezionando il collegamento "URL Parameters". La modalità di configurazione è del tuto analoga a quanto appena descritto per gli Header HTTP.
 

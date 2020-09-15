@@ -2354,6 +2354,17 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="identificazione-fallita" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="identificazione_fallita"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se, nel caso di estrazione fallita della risorsa indicata come valore, la transazione deve essere terminata con errore o meno (blocca/ignora)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -2421,6 +2432,17 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="valore" text="true"/>
                                 <linkit:sql-ddl-column-comment>Valore del parametro</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="identificazione-fallita" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="identificazione_fallita"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se, nel caso di estrazione fallita della risorsa indicata come valore, la transazione deve essere terminata con errore o meno (blocca/ignora)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -2698,6 +2720,17 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="valore" text="true"/>
                                 <linkit:sql-ddl-column-comment>Valore dell'header</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="identificazione-fallita" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="identificazione_fallita"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se, nel caso di estrazione fallita della risorsa indicata come valore, la transazione deve essere terminata con errore o meno (blocca/ignora)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

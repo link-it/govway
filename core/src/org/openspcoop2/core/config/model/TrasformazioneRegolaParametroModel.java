@@ -43,6 +43,7 @@ public class TrasformazioneRegolaParametroModel extends AbstractModel<Trasformaz
 		this.CONVERSIONE_TIPO = new Field("conversione-tipo",java.lang.String.class,"trasformazione-regola-parametro",TrasformazioneRegolaParametro.class);
 		this.NOME = new Field("nome",java.lang.String.class,"trasformazione-regola-parametro",TrasformazioneRegolaParametro.class);
 		this.VALORE = new Field("valore",java.lang.String.class,"trasformazione-regola-parametro",TrasformazioneRegolaParametro.class);
+		this.IDENTIFICAZIONE_FALLITA = new Field("identificazione-fallita",java.lang.String.class,"trasformazione-regola-parametro",TrasformazioneRegolaParametro.class);
 	
 	}
 	
@@ -53,6 +54,7 @@ public class TrasformazioneRegolaParametroModel extends AbstractModel<Trasformaz
 		this.CONVERSIONE_TIPO = new ComplexField(father,"conversione-tipo",java.lang.String.class,"trasformazione-regola-parametro",TrasformazioneRegolaParametro.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"trasformazione-regola-parametro",TrasformazioneRegolaParametro.class);
 		this.VALORE = new ComplexField(father,"valore",java.lang.String.class,"trasformazione-regola-parametro",TrasformazioneRegolaParametro.class);
+		this.IDENTIFICAZIONE_FALLITA = new ComplexField(father,"identificazione-fallita",java.lang.String.class,"trasformazione-regola-parametro",TrasformazioneRegolaParametro.class);
 	
 	}
 	
@@ -63,6 +65,8 @@ public class TrasformazioneRegolaParametroModel extends AbstractModel<Trasformaz
 	public IField NOME = null;
 	 
 	public IField VALORE = null;
+	 
+	public IField IDENTIFICAZIONE_FALLITA = null;
 	 
 
 	@Override

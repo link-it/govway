@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
+import org.openspcoop2.core.config.constants.TrasformazioneIdentificazioneRisorsaFallita;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -138,7 +139,14 @@ public class GestoreTrasformazioniUtilities {
 					try {
 						valore = DynamicUtils.convertDynamicPropertyValue(oggetto+"-"+nome, valore, dynamicMap, pddContext, true);
 					}catch(Exception e) {
-						throw new Exception("["+oggetto+"] Conversione valore per '"+nome+"' non riuscita (valore: "+valore+"): "+e.getMessage(),e);
+						String msgErrore = "["+oggetto+"] Conversione valore per '"+nome+"' non riuscita (valore: "+valore+"): "+e.getMessage();
+						if(parametro.getIdentificazioneFallita()!=null && TrasformazioneIdentificazioneRisorsaFallita.IGNORA.equals(parametro.getIdentificazioneFallita())) {
+							log.debug(msgErrore,e);
+							continue;
+						}
+						else {
+							throw new Exception(msgErrore,e);
+						}
 					}
 				}
 				switch (tipo) {

@@ -13592,7 +13592,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public Vector<DataElement> addTrasformazioneRichiestaHeaderToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
-			String idTrasformazione, String idTrasformazioneRichiestaHeader, String nome, String tipo, String valore,
+			String idTrasformazione, String idTrasformazioneRichiestaHeader, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
@@ -13672,11 +13672,31 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValue(valore);
 		dati.addElement(de);
 		
+		// Identificazione Risorsa Fallita
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE);
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE);
+		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
+			de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA_HEADER);
+			de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA);
+			de.setType(DataElementType.SELECT);
+			de.setSelected(identificazione);
+			
+			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOTE);
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOTE_VALORI_HEADER);
+			de.setInfo(dInfoPattern);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(identificazione);
+		dati.addElement(de);
+		
 		return dati;
 	}
 	
 	public Vector<DataElement> addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
-			String idTrasformazione, String idTrasformazioneRichiestaUrlParameter, String nome, String tipo, String valore,
+			String idTrasformazione, String idTrasformazioneRichiestaUrlParameter, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
@@ -13756,11 +13776,31 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValue(valore);
 		dati.addElement(de);
 		
+		// Identificazione Risorsa Fallita
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE);
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE);
+		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
+			de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA_PARAMETRO);
+			de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA);
+			de.setType(DataElementType.SELECT);
+			de.setSelected(identificazione);
+			
+			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOTE);
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOTE_VALORI_PARAMETRO);
+			de.setInfo(dInfoPattern);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(identificazione);
+		dati.addElement(de);
+		
 		return dati;
 	}
 	
 	public Vector<DataElement> addTrasformazioneRispostaHeaderToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
-			String idTrasformazione, String idTrasformazioneRisposta, String idTrasformazioneRispostaHeader, String nome, String tipo, String valore,
+			String idTrasformazione, String idTrasformazioneRisposta, String idTrasformazioneRispostaHeader, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
@@ -13801,7 +13841,6 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
 		de.setType(DataElementType.SELECT);
 		de.setSelected(tipo);
-		de.setRequired(true); 
 		de.setPostBack(true);
 		//} else {
 		//	de.setType(DataElementType.TEXT);
@@ -13846,6 +13885,26 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setValue(valore);
+		dati.addElement(de);
+		
+		// Identificazione Risorsa Fallita
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE);
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE);
+		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
+			de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA_HEADER);
+			de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA);
+			de.setType(DataElementType.SELECT);
+			de.setSelected(identificazione);
+			
+			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOTE);
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOTE_VALORI_HEADER);
+			de.setInfo(dInfoPattern);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(identificazione);
 		dati.addElement(de);
 		
 		return dati;

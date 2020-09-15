@@ -5490,6 +5490,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".tipo");
 					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".nome");
 					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".valore");
+					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".identificazione_fallita");
 					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".id");
 					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".id_transform_risp");
 					sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".id=?");
@@ -5508,6 +5509,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
+						parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 						parametro.setId(rs.getLong("id"));
 						lista.add(parametro);
 						
@@ -5706,6 +5708,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".nome");
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".valore");
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".tipo");
+			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".identificazione_fallita");
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".id_transform_risp");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
@@ -5736,6 +5739,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 				parametro.setNome(rs.getString("nome"));
 				parametro.setValore(rs.getString("valore"));
+				parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 				parametro.setId(rs.getLong("id"));
 			}
 			
@@ -6181,6 +6185,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".tipo");
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".nome");
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".valore");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".identificazione_fallita");
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id");
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id_trasformazione");
 					sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id=?");
@@ -6198,6 +6203,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
+						parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 						parametro.setId(rs.getLong("id"));
 						lista.add(parametro);
 						
@@ -6390,6 +6396,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".nome");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".valore");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".tipo");
+			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".identificazione_fallita");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
@@ -6417,6 +6424,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 				parametro.setNome(rs.getString("nome"));
 				parametro.setValore(rs.getString("valore"));
+				parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 				parametro.setId(rs.getLong("id"));
 			}
 			
@@ -6569,6 +6577,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".tipo");
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".nome");
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".valore");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".identificazione_fallita");
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id");
 					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id_trasformazione");
 					sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id=?");
@@ -6585,6 +6594,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
+						parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 						parametro.setId(rs.getLong("id"));
 						lista.add(parametro);
 					}
@@ -6774,6 +6784,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".nome");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".valore");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".tipo");
+			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".identificazione_fallita");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
@@ -6801,6 +6812,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 				parametro.setNome(rs.getString("nome"));
 				parametro.setValore(rs.getString("valore"));
+				parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 				parametro.setId(rs.getLong("id"));
 			}
 			
