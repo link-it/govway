@@ -64,7 +64,7 @@ description:
       - >-
         Console di Monitoraggio rivolto alla diagnostica ed al monitoraggio del
         traffico gestito da GovWay
-    genericName: GovWay
+    genericName: API Gateway della PA
     localisedName: GovWay
     longDescription: >
       Derivato dall’esperienza della Porta di Dominio italiana, GovWay è un API Gateway conforme
@@ -91,7 +91,7 @@ description:
       immateriali della pubblica amministrazione, come PagoPA, ANPR e
       Fatturazione Elettronica.
 
-    shortDescription: GovWay - API Gateway per la Pubblica Amministrazione
+    shortDescription: Conforme alle linee guida AGID per l'interoperabilità (profilo ModI) e predisposto per l'accesso ai principali servizi pubblici italiani
 developmentStatus: stable
 intendedAudience:
   countries:
