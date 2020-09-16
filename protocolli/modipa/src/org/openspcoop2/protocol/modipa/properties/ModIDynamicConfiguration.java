@@ -73,6 +73,8 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -363,6 +365,73 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throws ProtocolException {
 		
 		updateProfiloSicurezzaMessaggio(consoleConfiguration, properties, registryReader, false);
+		
+	}
+	
+	@Override
+	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
+		
+		if(ConsoleOperationType.CHANGE.equals(consoleOperationType) && id!=null) {
+			try {
+				String apiGestioneParziale = consoleHelper.getParameter("apiGestioneParziale"); // ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE
+				if("apiInfoGenerali".equals(apiGestioneParziale)) { // ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI
+					String nome = consoleHelper.getParameter("nome"); // AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME
+					String versioneS = consoleHelper.getParameter("versione"); // AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE
+					int versione = -1;
+					try {
+						versione = Integer.valueOf(versioneS);
+					}catch(Exception e) {}
+					if(nome!=null && versione>0) {
+						if(!id.getNome().equals(nome) || id.getVersione().intValue()!=versione) {
+							
+							AccordoServizioParteComune as = registryReader.getAccordoServizioParteComune(id);
+							if(ServiceBinding.REST.equals(as.getServiceBinding())){
+								
+								FiltroRicercaRisorse filtro = new FiltroRicercaRisorse();
+								ProtocolProperties protocolPropertiesResources = new ProtocolProperties();
+								protocolPropertiesResources.addProperty(ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA_ID, IDAccordoFactory.getInstance().getUriFromIDAccordo(id));
+								filtro.setProtocolPropertiesRisorsa(protocolPropertiesResources);
+								List<IDResource> list = null;
+								try {
+									list = registryReader.findIdResourceAccordo(filtro);
+								}catch(RegistryNotFound notFound) {}
+								if(list!=null && !list.isEmpty()) {
+									// ne dovrebbe esistere solo una.
+									IDResource idR = list.get(0);
+									String uriAPI = NamingUtils.getLabelAccordoServizioParteComune(idR.getIdAccordo());
+									Resource resource = registryReader.getResourceAccordo(idR);
+									String labelR = NamingUtils.getLabelResource(resource);
+									throw new Exception("Non è possibile modificare le informazioni generali dell'API poichè riferita dalla risorsa '"+labelR+"' dell'API '"+uriAPI+"' (Profilo non bloccante PUSH)");
+								}
+								
+							}
+							else {
+							
+								FiltroRicercaPortTypeAzioni filtro = new FiltroRicercaPortTypeAzioni();
+								ProtocolProperties protocolPropertiesAzioni = new ProtocolProperties();
+								protocolPropertiesAzioni.addProperty(ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA_ID, IDAccordoFactory.getInstance().getUriFromIDAccordo(id));
+								filtro.setProtocolPropertiesAzione(protocolPropertiesAzioni);
+								List<IDPortTypeAzione> list = null;
+								try {
+									list = registryReader.findIdAzionePortType(filtro);
+								}catch(RegistryNotFound notFound) {}
+								if(list!=null && !list.isEmpty()) {
+									// ne dovrebbe esistere solo una.
+									IDPortTypeAzione idA = list.get(0);
+									String uriAPI = NamingUtils.getLabelAccordoServizioParteComune(idA.getIdPortType().getIdAccordo());
+									throw new Exception("Non è possibile modificare le informazioni generali dell'API poichè riferita dall'azione '"+idA.getNome()+"' del Servizio '"+idA.getIdPortType().getNome()+"' nell'API '"+uriAPI+"' (Profilo non bloccante PUSH)");
+								}
+								
+							}
+						}
+					}
+				}
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			
+		}
 		
 	}
 	

@@ -1,3 +1,12 @@
+2020-09-16  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA, GovWayConsole]
+	Risolto Bug OP-1056
+	Entrambi i seguenti problemi sono stati risolti:
+	- Un cambio di nome dell'API di richiesta correlata tramite profilo PUSH, provocava un errore inatteso della console quando si accedeva all'API con ruolo 'Risposta'.
+	- Durante la creazione di una API, se si caricava un wsdl e solo successivamente si impostava il tipo di API a SOAP, 
+	  la console non consentiva di completare la creazione segnalando erroneamente un problema di sintassi relativo all'interfaccia caricata.
+
 2020-09-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

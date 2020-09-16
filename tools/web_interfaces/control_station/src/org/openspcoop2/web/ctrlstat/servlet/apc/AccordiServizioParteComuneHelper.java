@@ -102,6 +102,7 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.Dialog;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -5997,25 +5998,28 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 	
 	public void setMessageWarningStatoConsistenzaAccordo(boolean create, AccordoServizioParteComune as) {
+		
+		String msgError = null;
+		
 		if(create) {
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
 				if(as.sizeResourceList()<=0) {
-					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_REST_CREATE, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+					msgError = AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_REST_CREATE;
 				}
 			}
 			else {
 				if(as.sizePortTypeList()<=0) {
-					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_CREATE, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+					msgError = AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_CREATE;
 				}
 				else if(as.sizePortTypeList()==1) {
 					if(as.getPortType(0).sizeAzioneList()<=0) {
-						this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZIO_CREATE, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+						msgError = AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZIO_CREATE;
 					}
 				}
 				else {
 					for (PortType portType : as.getPortTypeList()) {
 						if(portType.sizeAzioneList()<=0) {
-							this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZI_CREATE, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+							msgError = AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZI_CREATE;
 						}
 					}
 				}
@@ -6024,26 +6028,41 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		else {
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
 				if(as.sizeResourceList()<=0) {
-					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_REST_UPDATE, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+					msgError = AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_REST_UPDATE;
 				}
 			}
 			else {
 				if(as.sizePortTypeList()<=0) {
-					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_UPDATE, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+					msgError = AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_UPDATE;
 				}
 				else if(as.sizePortTypeList()==1) {
 					if(as.getPortType(0).sizeAzioneList()<=0) {
-						this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZIO_UPDATE, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+						msgError = AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZIO_UPDATE;
 					}
 				}
 				else {
 					for (PortType portType : as.getPortTypeList()) {
 						if(portType.sizeAzioneList()<=0) {
-							this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZI_UPDATE, org.openspcoop2.web.lib.mvc.MessageType.INFO);
+							msgError = AccordiServizioParteComuneCostanti.LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZI_UPDATE;
 						}
 					}
 				}
 			}
+		}
+		
+		if(msgError!=null) {
+			Dialog dialog = new Dialog();
+			
+			dialog.setTitolo(Costanti.MESSAGE_TYPE_WARN_TITLE);
+			dialog.setHeaderRiga1(msgError);
+					
+			String[][] bottoni = { 
+					{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, "" }
+					};
+			
+			this.pd.setBottoni(bottoni);
+			
+			this.pd.setDialog(dialog);
 		}
 	}
 	

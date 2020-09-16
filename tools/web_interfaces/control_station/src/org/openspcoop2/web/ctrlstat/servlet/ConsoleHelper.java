@@ -833,12 +833,16 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
+	public BinaryParameter newBinaryParameter(String parameterName) throws Exception {
+		BinaryParameter bp = new BinaryParameter();
+		bp.setName(parameterName); 
+		return bp;
+	}
 	public BinaryParameter getBinaryParameter(String parameterName) throws Exception {
 		
 		this.checkErrorInit();
 				
-		BinaryParameter bp = new BinaryParameter();
-		bp.setName(parameterName); 
+		BinaryParameter bp = newBinaryParameter(parameterName);
 		String filename = null;
 		String fileId = null;
 		File file = null;

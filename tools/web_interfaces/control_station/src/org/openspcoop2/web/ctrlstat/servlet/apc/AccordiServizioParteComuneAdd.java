@@ -469,6 +469,15 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.interfaceType = null;
 					this.messageType = null;
 					
+					this.wsdldef = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
+					this.wsdlconc = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
+					this.wsdlserv = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
+					this.wsdlservcorr = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
+
+					this.wsblconc = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
+					this.wsblserv = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
+					this.wsblservcorr = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
+					
 					filtroRicerca = new FiltroRicercaGruppi();
 					filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
 					elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
@@ -476,6 +485,15 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				else if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING)){
 					this.interfaceType = null;
 					this.messageType = null;
+					
+					this.wsdldef = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
+					this.wsdlconc = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
+					this.wsdlserv = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
+					this.wsdlservcorr = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
+
+					this.wsblconc = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
+					this.wsblserv = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
+					this.wsblservcorr = apcHelper.newBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
 					
 					filtroRicerca = new FiltroRicercaGruppi();
 					filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
