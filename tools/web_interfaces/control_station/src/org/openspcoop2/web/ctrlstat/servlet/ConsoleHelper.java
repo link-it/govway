@@ -3999,7 +3999,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			autenticazione = TipoAutenticazione.SSL.getValue(); 
 		}
 		if(forceDisableOptional) {
-			autenticazioneOpzionale = Costanti.CHECK_BOX_DISABLED;
+			// Fix: se l'autenticazioneOpzionale risulta abilitata e sono nella servlet di cambio controllo degli accessi, significa che siamo arrivati da una condizione in cui l'erogazione era stata creata con API C01 e poi successivamente l'API è stata modificata in C02
+			if(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI.equals(servletChiamante) && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)) {
+				forceDisableOptional=false;
+			}
+			else {
+				autenticazioneOpzionale = Costanti.CHECK_BOX_DISABLED;
+			}
 		}
 				
 		if(mostraSezione){

@@ -1,6 +1,14 @@
 2020-09-16  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA, GovWayConsole]
+	Risolto Bug che si presentava quando veniva creata una erogazione a partire da una API con sicurezza canale IDAC01, 
+	e successivamente veniva modificata la sicurezza del canale dell'API implementata a IDAC02, o veniva associata all'erogazione una API differente con sicurezza canale IDAC02.
+	La configurazione riportava correttamente un warning nella sezione 'Controllo degli Accessi' poichè l'autenticazione era opzionale (configurazione derivante dall'API indicata al momento della creazione dell'erogazione).
+	Accedendo in modifica al controllo degli accessi non veniva però visualizzato e non era consentito modificare il criterio di opzionalità dell'autenticazione.
+
+2020-09-16  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA, GovWayConsole]
 	Risolto Bug OP-1056
 	Entrambi i seguenti problemi sono stati risolti:
 	- Un cambio di nome dell'API di richiesta correlata tramite profilo PUSH, provocava un errore inatteso della console quando si accedeva all'API con ruolo 'Risposta'.
