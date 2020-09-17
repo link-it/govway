@@ -99,8 +99,6 @@ intendedAudience:
   scope:
     - government
     - security
-isBasedOn:
-  - OpenSPCoop
 it:
   conforme:
     gdpr: true
