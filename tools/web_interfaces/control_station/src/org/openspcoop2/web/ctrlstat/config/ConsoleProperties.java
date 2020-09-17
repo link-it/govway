@@ -1071,6 +1071,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "menu.proprietaFruizioni.showModalitaStandard");
 	}
 	
+	public boolean isPortTypeObbligatorioImplementazioniSOAP() throws UtilsException{
+		return this.readBooleanProperty(true, "menu.servizi.portTypeObbligatorio");
+	}
+	
 	public Boolean isVisualizzazioneConfigurazioneDiagnosticaLog4J() throws UtilsException{
 		String p = "menu.configurazione.visualizzazioneDiagnostica.standard";
 		String tmp = this.readProperty(false, p);

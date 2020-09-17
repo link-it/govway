@@ -1,3 +1,11 @@
+2020-09-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1058
+	La selezione di un 'Servizio' in una erogazione o fruizione di API SOAP è adesso obbligatoria anche utilizzando la console in modalità avanzata.
+	È stato inoltre risolto una errata visualizzazione delle informazioni presenti nella maschera di creazione di una fruizione, sempre utilizzando la console in modalità avanzata:
+	la scelta dell'erogatore risiedeva tra i dati dell'API e venivano quindi visualizzati due campi consecutivi con la medesima denominazione 'Nome'.
+
 2020-09-16  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA, GovWayConsole]

@@ -901,6 +901,7 @@ public class ControlStationCore {
 	private boolean showPortaDelegataLocalForward = false;
 	private boolean isProprietaErogazioni_showModalitaStandard;
 	private boolean isProprietaFruizioni_showModalitaStandard;
+	private boolean isPortTypeObbligatorioImplementazioniSOAP = true;
 	private boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = false;
 	private boolean isVisualizzazioneConfigurazioneDiagnosticaLog4J = true;
 	private String tokenPolicyForceId = null;
@@ -984,6 +985,9 @@ public class ControlStationCore {
 	}
 	public boolean isProprietaFruizioni_showModalitaStandard() throws UtilsException{
 		return this.isProprietaFruizioni_showModalitaStandard;
+	}
+	public boolean isPortTypeObbligatorioImplementazioniSOAP() throws UtilsException{
+		return this.isPortTypeObbligatorioImplementazioniSOAP;
 	}
 	public boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() {
 		return this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
@@ -2329,6 +2333,7 @@ public class ControlStationCore {
 		this.showPortaDelegataLocalForward = core.showPortaDelegataLocalForward;
 		this.isProprietaErogazioni_showModalitaStandard = core.isProprietaErogazioni_showModalitaStandard;
 		this.isProprietaFruizioni_showModalitaStandard = core.isProprietaFruizioni_showModalitaStandard;
+		this.isPortTypeObbligatorioImplementazioniSOAP = core.isPortTypeObbligatorioImplementazioniSOAP;
 		this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
 		this.isVisualizzazioneConfigurazioneDiagnosticaLog4J = core.isVisualizzazioneConfigurazioneDiagnosticaLog4J;
 		this.tokenPolicyForceId = core.tokenPolicyForceId;
@@ -2698,6 +2703,7 @@ public class ControlStationCore {
 			this.showPortaDelegataLocalForward = consoleProperties.isMenuPortaDelegataLocalForward();
 			this.isProprietaErogazioni_showModalitaStandard = consoleProperties.isProprietaErogazioni_showModalitaStandard();
 			this.isProprietaFruizioni_showModalitaStandard = consoleProperties.isProprietaFruizioni_showModalitaStandard();
+			this.isPortTypeObbligatorioImplementazioniSOAP = consoleProperties.isPortTypeObbligatorioImplementazioniSOAP();
 			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 			this.isVisualizzazioneConfigurazioneDiagnosticaLog4J = consoleProperties.isVisualizzazioneConfigurazioneDiagnosticaLog4J();
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();

@@ -329,7 +329,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 			// Campi obbligatori
-			if (!isModalitaAvanzata) {
+			if (!isModalitaAvanzata || this.apsCore.isPortTypeObbligatorioImplementazioniSOAP()) {
 				switch (serviceBinding) {
 				case REST:
 					
@@ -5719,7 +5719,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setLabels(ptList);
 						de.setSelected(portType);
 						de.setPostBack(true);
-						if (!isModalitaAvanzata) {
+						if (!isModalitaAvanzata || this.apsCore.isPortTypeObbligatorioImplementazioniSOAP()) {
 							de.setRequired(true);
 						}
 					}
@@ -5765,50 +5765,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 		
 
-		//Sezione Soggetto Erogatore (provider)
-
-		if(gestioneFruitori) {
-			
-			boolean showSoggettoInChange = false; // viene fatto vedere nella maschera riassuntiva
-			
-			if (tipoOp.equals(TipoOperazione.ADD) || showSoggettoInChange) {
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
-				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
-			}
-
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_EROGATORE);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_EROGATORE);
-			if (tipoOp.equals(TipoOperazione.ADD)) {
-				de.setType(DataElementType.SELECT);
-				de.setValues(soggettiList);
-				de.setLabels(soggettiListLabel);
-				de.setPostBack(true);
-				de.setSelected(provider);
-				dati.addElement(de);
-			} else {
-				de.setValue(provider);
-				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
-	
-				if(showSoggettoInChange) {
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_EROGATORE);
-					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_TEXT);
-					//if(this.core.isTerminologiaSICA_RegistroServizi()==false){
-					de.setType(DataElementType.TEXT);
-					/*}else{
-						Soggetto soggEr = this.core.getSoggettoRegistro(new IDSoggetto(provString.split("/")[0],provString.split("/")[1]));
-						de.setType("link");
-						de.setUrl("soggettiChange.do?id=" + soggEr.getId() + "&nomeprov=" + soggEr.getNome() + "&tipoprov=" + soggEr.getTipo());
-					}*/
-					de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, tipoSoggetto, nomeSoggetto));
-					dati.addElement(de);
-				}
-			}
-		}
 		
 
 		//Sezione Servizio
@@ -5977,7 +5933,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		} else {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
+			if(tipoOp.equals(TipoOperazione.ADD) && isModalitaAvanzata() && (gestioneFruitori || gestioneErogatori)){
+				if(gestioneErogatori) {
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_EROGAZIONE);
+				}
+				else {
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FRUIZIONE);
+				}
+			}
+			else {
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
+			}
 			if (nomeServizio == null) {
 				de.setValue("");
 			} else {
@@ -6228,6 +6194,57 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
+		
+		
+		//Sezione Soggetto Erogatore (provider)
+
+		if(gestioneFruitori) {
+			
+			boolean showSoggettoInChange = false; // viene fatto vedere nella maschera riassuntiva
+			
+			if (tipoOp.equals(TipoOperazione.ADD) || showSoggettoInChange) {
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_EROGATORE);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_EROGATORE);
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(soggettiList);
+				de.setLabels(soggettiListLabel);
+				de.setPostBack(true);
+				de.setSelected(provider);
+				dati.addElement(de);
+			} else {
+				de.setValue(provider);
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+	
+				if(showSoggettoInChange) {
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_EROGATORE);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_TEXT);
+					//if(this.core.isTerminologiaSICA_RegistroServizi()==false){
+					de.setType(DataElementType.TEXT);
+					/*}else{
+						Soggetto soggEr = this.core.getSoggettoRegistro(new IDSoggetto(provString.split("/")[0],provString.split("/")[1]));
+						de.setType("link");
+						de.setUrl("soggettiChange.do?id=" + soggEr.getId() + "&nomeprov=" + soggEr.getNome() + "&tipoprov=" + soggEr.getTipo());
+					}*/
+					de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, tipoSoggetto, nomeSoggetto));
+					dati.addElement(de);
+				}
+			}
+		}
+		
+		
+		
+		// allegati
+		
 		if(tipoOp.equals(TipoOperazione.ADD) == false && !this.isModalitaCompleta() &&
 				(showInformazioniGeneraliErogazioniFruizioniView==null || showInformazioniGeneraliErogazioniFruizioniView)) {
 			de = new DataElement();
@@ -6261,6 +6278,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			dati.addElement(de);
 		}
+		
+		
+		
+		// specifica porti di accesso
 		
 		if(serviceBinding.equals(ServiceBinding.SOAP) && interfaceType.equals(org.openspcoop2.protocol.manifest.constants.InterfaceType.WSDL_11) && showPortiAccesso &&
 				(showInformazioniGeneraliErogazioniFruizioniView==null || showInformazioniGeneraliErogazioniFruizioniView)){

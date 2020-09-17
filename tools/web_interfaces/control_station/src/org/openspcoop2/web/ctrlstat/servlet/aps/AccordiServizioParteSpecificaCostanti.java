@@ -284,6 +284,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_ID_SOGGETTO_EROGATORE = "idErogatore";
 	public final static String LABEL_PARAMETRO_APS_TIPO_FILE = "Tipo";
 	public final static String LABEL_PARAMETRO_APS_NOME_FILE = "Nome";
+	public final static String LABEL_PARAMETRO_APS_NOME_EROGAZIONE = "Nome Erogazione";
+	public final static String LABEL_PARAMETRO_APS_NOME_FRUIZIONE = "Nome Fruizione";
 	public final static String LABEL_PARAMETRO_APS_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_APS_SCOPE = "Scope";
 	public final static String LABEL_PARAMETRO_APS_THE_FILE = "Documento";
