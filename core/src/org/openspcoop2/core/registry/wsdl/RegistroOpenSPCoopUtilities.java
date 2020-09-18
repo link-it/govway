@@ -134,130 +134,139 @@ public class RegistroOpenSPCoopUtilities {
 						
 			
 			
-			// NOTA: Avendo normalizzato il wsdl, tutti gli import/include sono dentro i types
+			// NOTA: itero due volte per dare la possibilità al metodo  wsdlUtilities.normalizzazioneSchemaPerInserimentoInWsdl chiamato da risoluzioneImportIncludeInXSD di poter riferire correttamente tutti gli schemi
+			//		 via via regitrati in prefixForWSDL
+			//	     Altrimenti l'ordine ne determina il funzionamento
 			
-			List<Node> importIntoWSDL = this.wsdlUtilities.readImportsSchemaIntoTypes(documentLogico);
-			//System.out.println("IMPORTS ["+importIntoWSDL.size()+"]");
-			for(int i=0; i<importIntoWSDL.size(); i++){
-				Node n = importIntoWSDL.get(i);
-				//System.out.println("************************************* IMPORT *******************************************************************");
-				/*String targetNamespaceXSD =  null;
-				Object o = n.getUserData("TargetNamespaceSchema"); 
-				if(o!=null){
-					targetNamespaceXSD = (String)o;
-				}*/
-				//NON DEVO PRENDERE QUELLO DELLO SCHEMA MA QUELLO DEL XSD
-				String namespaceImport = null;
-				try{
-					namespaceImport = this.xsdUtils.getImportNamespace(n);
-				}catch(Exception e){}
-				//System.out.println("TargetNamespace schema xsd che contiene l'import: "+targetNamespaceXSD);
-				String location = null;
-				try{
-					location = this.xsdUtils.getImportSchemaLocation(n);
-				}catch(Exception e){}
-				//System.out.println("Import WSDL ["+namespaceImport+"] ["+location+"]");
-				if(location!=null){
-					//System.out.println("IMPORT XSD INTO WSDL!");
-					if(CostantiRegistroServizi.ALLEGATO_DEFINITORIO_XSD.equals(location)){
-						if(parteComuneNormalizzata.getByteWsdlDefinitorio()!=null){
-							//System.out.println("DA WSDL AGGIUNGO WSDL DEFINITORIO");
-							xsd.write("\n".getBytes());
-							risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getByteWsdlDefinitorio(), 
-									xsd, wsdlElement,prefixForWSDL, true, namespaceImport, 1);
-						}
-					}
-					else if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
-						for(int j=0; j<parteComuneNormalizzata.sizeAllegatoList(); j++){
-							Documento allegato = parteComuneNormalizzata.getAllegato(j);
-							String file = CostantiRegistroServizi.ALLEGATI_DIR+File.separatorChar+allegato.getFile();
-							//System.out.println("Check allegato.. ["+location+"]==["+file+"]");
-							if(location.equals(file)){
-								//System.out.println("DA WSDL AGGIUNGO ALLEGATO");
+			for (int k = 0; k < 2; k++) {
+						
+				boolean firstIteration = (k==0);
+				
+				// NOTA: Avendo normalizzato il wsdl, tutti gli import/include sono dentro i types
+				
+				List<Node> importIntoWSDL = this.wsdlUtilities.readImportsSchemaIntoTypes(documentLogico);
+				//System.out.println("IMPORTS ["+importIntoWSDL.size()+"]");
+				for(int i=0; i<importIntoWSDL.size(); i++){
+					Node n = importIntoWSDL.get(i);
+					//System.out.println("************************************* IMPORT *******************************************************************");
+					/*String targetNamespaceXSD =  null;
+					Object o = n.getUserData("TargetNamespaceSchema"); 
+					if(o!=null){
+						targetNamespaceXSD = (String)o;
+					}*/
+					//NON DEVO PRENDERE QUELLO DELLO SCHEMA MA QUELLO DEL XSD
+					String namespaceImport = null;
+					try{
+						namespaceImport = this.xsdUtils.getImportNamespace(n);
+					}catch(Exception e){}
+					//System.out.println("TargetNamespace schema xsd che contiene l'import: "+targetNamespaceXSD);
+					String location = null;
+					try{
+						location = this.xsdUtils.getImportSchemaLocation(n);
+					}catch(Exception e){}
+					//System.out.println("Import WSDL ["+namespaceImport+"] ["+location+"]");
+					if(location!=null){
+						//System.out.println("IMPORT XSD INTO WSDL!");
+						if(CostantiRegistroServizi.ALLEGATO_DEFINITORIO_XSD.equals(location)){
+							if(parteComuneNormalizzata.getByteWsdlDefinitorio()!=null){
+								//System.out.println("DA WSDL AGGIUNGO WSDL DEFINITORIO");
 								xsd.write("\n".getBytes());
-								risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
+								risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getByteWsdlDefinitorio(), 
 										xsd, wsdlElement,prefixForWSDL, true, namespaceImport, 1);
-								break;
+							}
+						}
+						else if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
+							for(int j=0; j<parteComuneNormalizzata.sizeAllegatoList(); j++){
+								Documento allegato = parteComuneNormalizzata.getAllegato(j);
+								String file = CostantiRegistroServizi.ALLEGATI_DIR+File.separatorChar+allegato.getFile();
+								//System.out.println("Check allegato.. ["+location+"]==["+file+"]");
+								if(location.equals(file)){
+									//System.out.println("DA WSDL AGGIUNGO ALLEGATO");
+									xsd.write("\n".getBytes());
+									risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
+											xsd, wsdlElement,prefixForWSDL, true, namespaceImport, 1);
+									break;
+								}
+							}
+						}
+						else if(location.startsWith(CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR)){
+							for(int j=0; j<parteComuneNormalizzata.sizeSpecificaSemiformaleList(); j++){
+								Documento specificaSemiformale = parteComuneNormalizzata.getSpecificaSemiformale(j);
+								String file = CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR+File.separatorChar+specificaSemiformale.getFile();
+								//System.out.println("Check specifica.. ["+location+"]==["+file+"]");
+								if(location.equals(file)){
+									//System.out.println("DA WSDL AGGIUNGO SPECIFICA SEMIFORMALE");
+									xsd.write("\n".getBytes());
+									risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
+											xsd, wsdlElement,prefixForWSDL, true, namespaceImport, 1);
+									break;
+								}
 							}
 						}
 					}
-					else if(location.startsWith(CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR)){
-						for(int j=0; j<parteComuneNormalizzata.sizeSpecificaSemiformaleList(); j++){
-							Documento specificaSemiformale = parteComuneNormalizzata.getSpecificaSemiformale(j);
-							String file = CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR+File.separatorChar+specificaSemiformale.getFile();
-							//System.out.println("Check specifica.. ["+location+"]==["+file+"]");
-							if(location.equals(file)){
-								//System.out.println("DA WSDL AGGIUNGO SPECIFICA SEMIFORMALE");
-								xsd.write("\n".getBytes());
-								risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
-										xsd, wsdlElement,prefixForWSDL, true, namespaceImport, 1);
-								break;
-							}
-						}
-					}
+					//System.out.println("*******************************************  IMPORT  *************************************************************");
 				}
-				//System.out.println("*******************************************  IMPORT  *************************************************************");
-			}
-			
-			
-			// NOTA: Avendo normalizzato il wsdl, tutti gli import/include sono dentro i types
-			
-			List<Node> includeIntoWSDL = this.wsdlUtilities.readIncludesSchemaIntoTypes(documentLogico);
-			//System.out.println("INCLUDE ["+includeIntoWSDL.size()+"]");
-			for(int i=0; i<includeIntoWSDL.size(); i++){
-				Node n = includeIntoWSDL.get(i);
-				//System.out.println("************************************* INCLUDE *******************************************************************");
-				Object o = n.getUserData("TargetNamespaceSchema"); 
-				String targetNamespaceXSD =  null;
-				if(o!=null){
-					targetNamespaceXSD = (String)o;
-				}
-				//System.out.println("TargetNamespace schema xsd che contiene l'include: "+targetNamespaceXSD);
-				String location = null;
-				try{
-					location = this.xsdUtils.getIncludeSchemaLocation(n);
-				}catch(Exception e){}
-				//System.out.println("Include WSDL ["+location+"]");
-				if(location!=null){
-					//System.out.println("IMPORT XSD INTO WSDL!");
-					if(CostantiRegistroServizi.ALLEGATO_DEFINITORIO_XSD.equals(location)){
-						if(parteComuneNormalizzata.getByteWsdlDefinitorio()!=null){
-							//System.out.println("DA WSDL AGGIUNGO WSDL DEFINITORIO");
-							xsd.write("\n".getBytes());
-							risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getByteWsdlDefinitorio(), 
-									xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
-						}
+				
+				
+				// NOTA: Avendo normalizzato il wsdl, tutti gli import/include sono dentro i types
+				
+				List<Node> includeIntoWSDL = this.wsdlUtilities.readIncludesSchemaIntoTypes(documentLogico);
+				//System.out.println("INCLUDE ["+includeIntoWSDL.size()+"]");
+				for(int i=0; i<includeIntoWSDL.size(); i++){
+					Node n = includeIntoWSDL.get(i);
+					//System.out.println("************************************* INCLUDE *******************************************************************");
+					Object o = n.getUserData("TargetNamespaceSchema"); 
+					String targetNamespaceXSD =  null;
+					if(o!=null){
+						targetNamespaceXSD = (String)o;
 					}
-					else if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
-						for(int j=0; j<parteComuneNormalizzata.sizeAllegatoList(); j++){
-							Documento allegato = parteComuneNormalizzata.getAllegato(j);
-							String file = CostantiRegistroServizi.ALLEGATI_DIR+File.separatorChar+allegato.getFile();
-							//System.out.println("Check allegato.. ["+location+"]==["+file+"]");
-							if(location.equals(file)){
-								//System.out.println("DA WSDL AGGIUNGO ALLEGATO");
+					//System.out.println("TargetNamespace schema xsd che contiene l'include: "+targetNamespaceXSD);
+					String location = null;
+					try{
+						location = this.xsdUtils.getIncludeSchemaLocation(n);
+					}catch(Exception e){}
+					//System.out.println("Include WSDL ["+location+"]");
+					if(location!=null){
+						//System.out.println("IMPORT XSD INTO WSDL!");
+						if(CostantiRegistroServizi.ALLEGATO_DEFINITORIO_XSD.equals(location)){
+							if(parteComuneNormalizzata.getByteWsdlDefinitorio()!=null){
+								//System.out.println("DA WSDL AGGIUNGO WSDL DEFINITORIO");
 								xsd.write("\n".getBytes());
-								risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
+								risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getByteWsdlDefinitorio(), 
 										xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
-								break;
+							}
+						}
+						else if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
+							for(int j=0; j<parteComuneNormalizzata.sizeAllegatoList(); j++){
+								Documento allegato = parteComuneNormalizzata.getAllegato(j);
+								String file = CostantiRegistroServizi.ALLEGATI_DIR+File.separatorChar+allegato.getFile();
+								//System.out.println("Check allegato.. ["+location+"]==["+file+"]");
+								if(location.equals(file)){
+									//System.out.println("DA WSDL AGGIUNGO ALLEGATO");
+									xsd.write("\n".getBytes());
+									risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
+											xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
+									break;
+								}
+							}
+						}
+						else if(location.startsWith(CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR)){
+							for(int j=0; j<parteComuneNormalizzata.sizeSpecificaSemiformaleList(); j++){
+								Documento specificaSemiformale = parteComuneNormalizzata.getSpecificaSemiformale(j);
+								String file = CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR+File.separatorChar+specificaSemiformale.getFile();
+								//System.out.println("Check specifica.. ["+location+"]==["+file+"]");
+								if(location.equals(file)){
+									//System.out.println("DA WSDL AGGIUNGO SPECIFICA SEMIFORMALE");
+									xsd.write("\n".getBytes());
+									risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
+											xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
+									break;
+								}
 							}
 						}
 					}
-					else if(location.startsWith(CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR)){
-						for(int j=0; j<parteComuneNormalizzata.sizeSpecificaSemiformaleList(); j++){
-							Documento specificaSemiformale = parteComuneNormalizzata.getSpecificaSemiformale(j);
-							String file = CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR+File.separatorChar+specificaSemiformale.getFile();
-							//System.out.println("Check specifica.. ["+location+"]==["+file+"]");
-							if(location.equals(file)){
-								//System.out.println("DA WSDL AGGIUNGO SPECIFICA SEMIFORMALE");
-								xsd.write("\n".getBytes());
-								risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
-										xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
-								break;
-							}
-						}
-					}
+					//System.out.println("*******************************************  INCLUDE  *************************************************************");
 				}
-				//System.out.println("*******************************************  INCLUDE  *************************************************************");
 			}
 						
 			if(this.wsdlUtilities.existsTypes(documentLogico)){
@@ -774,9 +783,11 @@ public class RegistroOpenSPCoopUtilities {
 	/* ---------------- METODI PRIVATI ------------------------- */
 	
 	/** Risoluzione import include */
-	private void risoluzioneImportIncludeInXSD(AccordoServizioParteComune parteComuneNormalizzata,byte[] documentXSD,ByteArrayOutputStream xsd,
+	private void risoluzioneImportIncludeInXSD(boolean firstIteration, AccordoServizioParteComune parteComuneNormalizzata,byte[] documentXSD,ByteArrayOutputStream xsd,
 			Element wsdlElement,HashMap<String,String> prefixForWSDL,boolean docImportato,String targetNamespaceParent,int profondita)throws DriverRegistroServiziException{
 		try{
+			
+			//System.out.println("\n\n===============================================");
 			
 			Document doc = this.xmlUtils.newDocument(documentXSD);
 			Element docElement = doc.getDocumentElement();
@@ -784,13 +795,10 @@ public class RegistroOpenSPCoopUtilities {
 			
 			
 			
-			
-			
+			//System.out.println("Risoluzione dei prefissi .....");
 			// Risoluzione prefix da inserire nel wsdl ed eliminazione attributi negli schemi
 			String uniquePrefix = "_p"+profondita+"_n"+IDUtilities.getUniqueSerialNumber()+"_";
 			targetNamespace = this.wsdlUtilities.normalizzazioneSchemaPerInserimentoInWsdl(docElement, wsdlElement, prefixForWSDL, uniquePrefix, docImportato, targetNamespaceParent);
-			
-			
 			
 
 			
@@ -814,7 +822,7 @@ public class RegistroOpenSPCoopUtilities {
 						if(location.equals(file)){
 							//System.out.println("AGGIUNGO ALLEGATO INTERNO");
 							xsd.write("\n".getBytes());
-							risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
+							risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
 									xsd, wsdlElement,prefixForWSDL, true, targetNamespace, (profondita+1));
 							break;
 						}
@@ -828,7 +836,7 @@ public class RegistroOpenSPCoopUtilities {
 						if(location.equals(file)){
 							//System.out.println("AGGIUNGO SPECIFICA SEMIFORMALE");
 							xsd.write("\n".getBytes());
-							risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
+							risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
 									xsd, wsdlElement,prefixForWSDL, true, targetNamespace, (profondita+1));
 							break;
 						}
@@ -859,7 +867,7 @@ public class RegistroOpenSPCoopUtilities {
 						if(location.equals(file)){
 							//System.out.println("AGGIUNGO ALLEGATO INTERNO");
 							xsd.write("\n".getBytes());
-							risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
+							risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
 									xsd, wsdlElement,prefixForWSDL, false, targetNamespace, (profondita+1));
 							break;
 						}
@@ -873,7 +881,7 @@ public class RegistroOpenSPCoopUtilities {
 						if(location.equals(file)){
 							//System.out.println("AGGIUNGO SPECIFICA SEMIFORMALE");
 							xsd.write("\n".getBytes());
-							risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
+							risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
 									xsd, wsdlElement,prefixForWSDL, false, targetNamespace, (profondita+1));
 							break;
 						}
@@ -884,23 +892,26 @@ public class RegistroOpenSPCoopUtilities {
 			}
 			
 			
+			if(firstIteration==false) {
 			
-			// Rimuovo tutti gli import/include precedentemente aggiunti direttamente nel types del wsdl
-			this.xsdUtils.removeImportsAndIncludes(doc);
-			
-			
-			
-			// Rigenerazione byte[] del xsd trasformato
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			this.xmlUtils.writeTo(doc, bout, true);
-			bout.flush();
-			bout.close();
-			//if(docImportato){
-			//	System.out.println("AGGIUNGO XSD IMPORTATO ["+bout.toString()+"]");
-			//}else{
-			//System.out.println("AGGIUNGO XSD INCLUSO ["+bout.toString()+"]");
-			//}
-			xsd.write(bout.toByteArray());
+				// Rimuovo tutti gli import/include precedentemente aggiunti direttamente nel types del wsdl
+				this.xsdUtils.removeImportsAndIncludes(doc);
+				
+				
+				
+				// Rigenerazione byte[] del xsd trasformato
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				this.xmlUtils.writeTo(doc, bout, true);
+				bout.flush();
+				bout.close();
+				//if(docImportato){
+				//	System.out.println("AGGIUNGO XSD IMPORTATO ["+bout.toString()+"]");
+				//}else{
+				//System.out.println("AGGIUNGO XSD INCLUSO ["+bout.toString()+"]");
+				//}
+				xsd.write(bout.toByteArray());
+				
+			}
 			
 			
 			

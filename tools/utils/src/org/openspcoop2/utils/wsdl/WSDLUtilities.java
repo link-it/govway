@@ -45,8 +45,12 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
+import org.openspcoop2.utils.xml.XPathExpressionEngine;
+import org.openspcoop2.utils.xml.XPathNotFoundException;
+import org.openspcoop2.utils.xml.XPathReturnType;
 import org.openspcoop2.utils.xml.XSDUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
@@ -1010,7 +1014,7 @@ public class WSDLUtilities {
 			HashMap<String,String> prefixForWSDL,String uniquePrefixWSDL,boolean docImportato,String targetNamespaceParent) throws org.openspcoop2.utils.wsdl.WSDLException{
 		
 		String targetNamespace = null;
-		
+				
 		if(docImportato){
 			
 			// GESTIONE DOCUMENTO IMPORTATO
@@ -1026,10 +1030,23 @@ public class WSDLUtilities {
 				for (int i = (attributi.getLength()-1); i >= 0; i--) {
 					Attr attr = (Attr) attributi.item(i);
 					//System.out.println("REMOVE NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
-					if(targetNamespace.equals(attr.getNodeValue())){
+					/*
+					 *  REMOVE NAME[xmlns:tns] LOCAL_NAME[tns] VALUE[http://example.ResponseError] URI[http://www.w3.org/2000/xmlns/]...
+						REMOVE NAME[xmlns:_p3_n4_tns] LOCAL_NAME[null] VALUE[http://example.ResponseError] URI[null]...
+						REMOVE NAME[xmlns:Q1] LOCAL_NAME[Q1] VALUE[http://example.libCodifiche] URI[http://www.w3.org/2000/xmlns/]...
+						REMOVE NAME[xmlns] LOCAL_NAME[xmlns] VALUE[http://www.w3.org/2001/XMLSchema] URI[http://www.w3.org/2000/xmlns/]...
+						REMOVE NAME[targetNamespace] LOCAL_NAME[targetNamespace] VALUE[http://example.ResponseError] URI[null]...
+						REMOVE NAME[elementFormDefault] LOCAL_NAME[elementFormDefault] VALUE[qualified] URI[null]...
+						REMOVE NAME[attributeFormDefault] LOCAL_NAME[attributeFormDefault] VALUE[unqualified] URI[null]...
+					 **/
+					if(targetNamespace.equals(attr.getNodeValue()) || 
+							(!attr.getNodeName().equals("xmlns") && !attr.getNodeName().startsWith("xmlns:"))
+						){
 						//System.out.println("REMOVE NON EFFETTUATO");
 						attributiDaMantenere.add(attr);
 					}
+					_correctPrefix(attr, targetNamespace, prefixForWSDL, schemaXSD, attributiDaMantenere);
+					
 					//schemaXSD.removeAttributeNode(attr);
 					this.xmlUtils.removeAttribute(attr, schemaXSD);
 				}
@@ -1082,10 +1099,14 @@ public class WSDLUtilities {
 				for (int i = (attributi.getLength()-1); i >= 0; i--) {
 					Attr attr = (Attr) attributi.item(i);
 					//System.out.println("REMOVE NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
-					if(targetNamespace.equals(attr.getNodeValue())){
+					if(targetNamespace.equals(attr.getNodeValue()) || 
+							(!attr.getNodeName().equals("xmlns") && !attr.getNodeName().startsWith("xmlns:"))
+						){
 						//System.out.println("REMOVE NON EFFETTUATO");
 						attributiDaMantenere.add(attr);
 					}
+					_correctPrefix(attr, targetNamespace, prefixForWSDL, schemaXSD, attributiDaMantenere);
+					
 					//schemaXSD.removeAttributeNode(attr);
 					this.xmlUtils.removeAttribute(attr, schemaXSD);
 				}
@@ -1132,6 +1153,79 @@ public class WSDLUtilities {
 		}
 		
 		return targetNamespace;
+	}
+	
+	private void _correctPrefix(Attr attr, String targetNamespace, HashMap<String,String> prefixForWSDL, Element schemaXSD, List<Attr> attributiDaMantenere) throws org.openspcoop2.utils.wsdl.WSDLException {
+		
+		XPathExpressionEngine xpathEngine = null;
+		DynamicNamespaceContext dnc = null;
+		String exprType = "//*/@type";
+		String exprRef = "//*/@ref";
+		List<String> exprs = new ArrayList<String>();
+		exprs.add(exprType);
+		exprs.add(exprRef);
+		
+		if(attr.getNodeName().startsWith("xmlns:") && attr.getLocalName()!=null) {
+			if(!targetNamespace.equals(attr.getNodeValue())){ 
+				boolean found = false;
+				String prefixDest = null;
+				String prefixSrc = null;
+				for (String prefix: prefixForWSDL.keySet()) {
+					String value = prefixForWSDL.get(prefix);
+					if(value.equals(attr.getNodeValue())) {
+						found = true;
+						prefixSrc = attr.getLocalName();
+						if(prefix.startsWith("xmlns:")) {
+							prefixDest = prefix.substring("xmlns:".length());
+						}
+						else {
+							prefixDest = prefix;
+						}
+						break;
+					}
+				}
+				if(found) {
+					//System.out.println("DEVO FARE REPLACE DI PREFIX '"+prefixSrc+"' con '"+prefixDest+"'");
+					
+					for (String expr : exprs) {
+						if(xpathEngine==null) {
+							xpathEngine = new XPathExpressionEngine();
+							dnc = new DynamicNamespaceContext();
+							dnc.findPrefixNamespace(schemaXSD);
+						}
+						Object res = null;
+						try {
+							res = xpathEngine.getMatchPattern(schemaXSD, dnc, expr, XPathReturnType.NODESET);
+						}catch(XPathNotFoundException notFound) {
+						}
+						catch(Exception e) {
+							throw new org.openspcoop2.utils.wsdl.WSDLException(e.getMessage(),e);
+						}
+						if(res!=null) {
+							//System.out.println("XPATH RESULT ("+expr+"): "+res.getClass().getName());
+							if(res instanceof NodeList) {
+								NodeList nodeList = (NodeList) res;
+								for (int j = 0; j < nodeList.getLength(); j++) {
+									Node n = nodeList.item(j);
+									//System.out.println("i["+j+"] type["+n.getClass().getName()+"] value["+n.getNodeValue()+"]");
+									if(n.getNodeValue()!=null && n.getNodeValue().startsWith(prefixSrc+":")) {
+										n.setNodeValue(n.getNodeValue().replace(prefixSrc+":", prefixDest+":"));
+									}
+								}
+							}
+						}
+//						else {
+//							System.out.println("XPATH RESULT ("+expr+") NULL");
+//						}	
+					}
+					
+				}
+				else {
+					//System.out.println("REMOVE NON EFFETTUATO, DECL IN WSDL NON PRESENTE");
+					attributiDaMantenere.add(attr);
+				}
+			}
+		}
 	}
 	
 	public String readPrefixForWsdl(Element schemaXSD,Element wsdl,
