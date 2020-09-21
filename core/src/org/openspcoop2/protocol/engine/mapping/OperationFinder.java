@@ -352,7 +352,15 @@ public class OperationFinder {
 						}
 					}
 					else {
-						if(!r.getPath().equals(op.getPath())){
+						String rPath = r.getPath();
+						String opPath = op.getPath();
+						if(rPath!=null && rPath.length()>1 && rPath.endsWith("/")) {
+							rPath = rPath.substring(0,rPath.length()-1);
+						}
+						if(opPath!=null && opPath.length()>1 && opPath.endsWith("/")) {
+							opPath = opPath.substring(0,opPath.length()-1);
+						}
+						if(!rPath.equals(opPath)){
 							continue;
 						}
 					}
