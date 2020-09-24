@@ -313,7 +313,7 @@
 	    				<errorCode http="503" govway="503"/>
 	    			</internalRequestError>
 	    			<internalResponseError messageType="sameAsRequest" retry="true" errorMessage="generic">
-	    				<errorCode http="502" govway="503"/>
+	    				<errorCode http="502" govway="502"/>
 	    			</internalResponseError>
 	    			<default messageType="json" retry="false" errorMessage="generic">
 	    				<errorCode http="503" govway="503"/>
