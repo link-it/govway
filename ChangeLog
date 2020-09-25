@@ -1,3 +1,8 @@
+2020-09-25  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug che provocava uno stallo sulla console quando si selezionava ripetutamente da una select list il valore già scelto in precedenza.
+
 2020-09-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

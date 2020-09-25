@@ -546,10 +546,12 @@
         	// estrazione del idx corrispondente per la select
         	var val = $(selectorHelper.selected()).children("input[id*='divOpt_origIdx_']").val();
         	//console.log('populate idx select originale: ' + val);
-    		self.get(0).selectedIndex = val;
+        	if(self.get(0).selectedIndex != val) {
+        		self.get(0).selectedIndex = val;
 
-        	// trigger change event
-        	self.change();
+        		// 	trigger change event
+        		self.change();
+        	}
         };
 
         /**
