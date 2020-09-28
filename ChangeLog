@@ -1,3 +1,10 @@
+2020-09-28  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug #66
+	(https://github.com/link-it/govway/issues/66)
+	Lo script SQL generato per MySQL, possedeva un vincolo 'unique' non instanziabile su mysql (ERROR 1071 (42000): Specified key was too long; max key length is 3072).
+
 2020-09-25  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

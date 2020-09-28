@@ -78,7 +78,7 @@ Le richieste che richiedono uno stato del processamento vengono validate da GovW
 
 - Risposta
 
-Le risposte vengono gestite da GovWay vengono validate da GovWay verificando che il codice HTTP di stato sia 200.
+GovWay valida le risposte verificando che il codice HTTP di stato sia 200.
 
 
 .. note::

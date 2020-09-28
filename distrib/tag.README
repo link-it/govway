@@ -42,9 +42,11 @@ Per creare una tag version:
     Non editare il file a mano, ma usare lo strumento: https://publiccode-editor.developers.italia.it/
     NOTA!!!!! Dentro il file publiccode.yml è presente anche una release date da aggiornare!!!!!!
 
-14. Sistemare migratore delle configurazioni da OpenSPCoop
+14. Validare i sql generati dall'installer su tutti i database (anche mysql e sqlserver) per prevenire eventuali errori di vincoli come unique e index che non vengono creati per la lunghezza delle chiavi
 
-15. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
+15. Sistemare migratore delle configurazioni da OpenSPCoop
+
+16. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
    Per farlo, ad esempio se stiamo rilasciando la versione 3.3.1:
    - fare il clone di govway-docker
    - generare una versione dell'installer semi-definitiva (con master build version) e copiarla dentro la directory compose_bin/ di govway-docker
@@ -94,6 +96,6 @@ Per creare una tag version:
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 
-16. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
+17. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
-17. Creazione versione tag
+18. Creazione versione tag
