@@ -60,6 +60,8 @@ public final class Filtri
 	
 	public final static String FILTRO_TIPO_SERVIZIO_APPLICATIVO = "filtroTipoSA";
 	
+	public final static String FILTRO_TIPO_SOGGETTO = "filtroTipoSoggetto";
+	
 	public final static String FILTRO_TIPO_CREDENZIALI = "filtroTipoCredenziali";
 	
 	public final static String FILTRO_RUOLO_TIPOLOGIA = "filtroRuoloTipologia";
@@ -67,6 +69,9 @@ public final class Filtri
 	
 	public final static String FILTRO_SCOPE_TIPOLOGIA = "filtroScopeTipologia";
 	public final static String FILTRO_SCOPE_CONTESTO = "filtroScopeContesto";
+	
+	public final static String FILTRO_API_CONTESTO = "filtroApiContesto";
+	public final static String FILTRO_API_IMPLEMENTAZIONE = "filtroApiImpl";
 	
 	public final static String FILTRO_UTENTE = "filtroUtente";
 	

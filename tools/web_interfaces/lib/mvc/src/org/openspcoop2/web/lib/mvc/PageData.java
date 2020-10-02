@@ -78,6 +78,8 @@ public class PageData {
 	
 	Dialog dialog = null;
 
+	boolean postBackResult=false;
+		
 	public PageData() {
 		this.pageDescription = "";
 		this.search = "auto";
@@ -109,6 +111,7 @@ public class PageData {
 		this.labelBottoneInvia = Costanti.LABEL_MONITOR_BUTTON_INVIA;
 		this.labelBottoneFiltra = Costanti.LABEL_MONITOR_BUTTON_FILTRA;
 		this.labelBottoneRipulsci = Costanti.LABEL_MONITOR_BUTTON_RIPULISCI;
+		this.postBackResult=false;
 	}
 
 	public void setPageDescription(String s) {
@@ -339,13 +342,11 @@ public class PageData {
 		return this.removeButton;
 	}
 
-	private final static String PARAMETRO_FILTER_NAME = "filterName_";
 	public static String GET_PARAMETRO_FILTER_NAME (int position) {
-		return PARAMETRO_FILTER_NAME+position;
+		return Costanti.PARAMETRO_FILTER_NAME+position;
 	}
-	private final static String PARAMETRO_FILTER_VALUE = "filterValue_";
 	public static String GET_PARAMETRO_FILTER_VALUE (int position) {
-		return PARAMETRO_FILTER_VALUE+position;
+		return Costanti.PARAMETRO_FILTER_VALUE+position;
 	}
 	
 	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size) throws Exception{
@@ -561,5 +562,12 @@ public class PageData {
 			this.messageTitle = this.dialog.getTitolo();
 		}
 	}
+
 	
+	public boolean isPostBackResult() {
+		return this.postBackResult;
+	}
+	public void setPostBackResult(boolean postBackResult) {
+		this.postBackResult = postBackResult;
+	}
 }

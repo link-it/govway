@@ -162,6 +162,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONTENT_TYPE = "Content Type";
 	public final static String LABEL_PARAMETRO_PARAMETRI = "Parametri";
 	public final static String LABEL_PARAMETRO_APPLICA_MTOM = "Applica MTOM";
+	public final static String LABEL_PARAMETRO_API_CONTESTO = "Riferito in";
+	public final static String LABEL_PARAMETRO_API_IMPLEMENTAZIONE = "Implementazione API";
 	public final static String LABEL_PARAMETRO_RUOLO = "Nome";
 	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = "Fonte";
 	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY = "Fonte Ruoli";
@@ -240,6 +242,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING = "Tipo";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_SOAP = "Soap";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_REST = "Rest";
+	public final static String LABEL_PARAMETRO_PROTOCOLLO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_PARAMETRO_HTTP_METHOD_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_PARAMETRO_HTTP_METHOD_COMPACT = "Method";
@@ -1025,6 +1028,11 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_INTERFACE = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.toString();
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI = "";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI = "";
+	public final static String LABEL_PARAMETRO_SOGGETTO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP = "SOAP";
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST = "REST";
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI = "";
@@ -1051,16 +1059,25 @@ public class CostantiControlStation {
 	public final static String SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "Fruizione";
 	public final static String LABEL_PARAMETRO_SCOPE_CONTESTO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI = "";
+	public final static String API_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = "Erogazione";
+	public final static String API_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "Fruizione";
+	public final static String LABEL_PARAMETRO_API_CONTESTO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_API_IMPLEMENTAZIONE_QUALSIASI = "";
+	public final static String LABEL_PARAMETRO_API_IMPLEMENTAZIONE_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
 	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_RUOLO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_GRUPPO_QUALSIASI = "";
+	public final static String LABEL_PARAMETRO_GRUPPO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_TIPO_CREDENZIALI_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_TIPO_CREDENZIALI_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
-	
-	public final static String DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI = "";
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_DEFAULT = "D";
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "SOAP_11";

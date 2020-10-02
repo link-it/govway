@@ -82,7 +82,9 @@ import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDConnettore;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -92,6 +94,7 @@ import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
 import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
@@ -18140,21 +18143,76 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			filterSoggettoNome = filterSoggettoTipoNome.split("/")[1];
 		}
 		
+		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
+		PddTipologia pddTipologia = null;
+		if(filterDominio!=null && !"".equals(filterDominio)) {
+			pddTipologia = PddTipologia.toPddTipologia(filterDominio);
+		}
+		
 		String filterRuolo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_RUOLO);
 		
 		String filterTipoServizioApplicativo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO);
 		
 		String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_CREDENZIALI);
 		
+		boolean isFilterGruppoErogazione = false;
+		boolean isFilterGruppoFruizione = false;
+		String filterGruppo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_GRUPPO);
+		if(filterGruppo!=null && !"".equals(filterGruppo)) {
+			isFilterGruppoErogazione = true;
+			isFilterGruppoFruizione = true;
+		}
+
+		TipoPdD apiContesto = null;
+		String filterApiContesto = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_API_CONTESTO);
+		if(filterApiContesto!=null && !"".equals(filterApiContesto)) {
+			apiContesto = TipoPdD.toTipoPdD(filterApiContesto);
+			if(TipoPdD.APPLICATIVA.equals(apiContesto)) {
+				isFilterGruppoFruizione = false;
+			}
+			else if(TipoPdD.DELEGATA.equals(apiContesto)) {
+				isFilterGruppoErogazione = false;
+			}
+			else {
+				apiContesto = null;
+			}
+		}
+		
+		String filterApiImplementazione = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_API_IMPLEMENTAZIONE);
+		IDServizio apiImplementazioneErogazione = null;
+		IDFruizione apiImplementazioneFruizione = null;
+		if(filterApiImplementazione!=null && !"".equals(filterApiImplementazione)) {
+			if(TipoPdD.APPLICATIVA.equals(apiContesto)) {
+				try {
+					apiImplementazioneErogazione = IDServizio.toIDServizio(filterApiImplementazione);
+					isFilterGruppoErogazione=false; // non ha piu' senso ho selezionato una erogazione puntuale
+				}catch(Exception e) {
+					throw new DriverConfigurazioneException("Filtro API Implementazione '"+filterApiImplementazione+"' non valido: "+e.getMessage(),e);
+				}
+			}
+			else if(TipoPdD.DELEGATA.equals(apiContesto)) {
+				try {
+					apiImplementazioneFruizione = IDFruizione.toIDFruizione(filterApiImplementazione);
+					isFilterGruppoFruizione=false; // non ha piu' senso ho selezionato una fruizione puntuale
+				}catch(Exception e) {
+					throw new DriverConfigurazioneException("Filtro API Implementazione '"+filterApiImplementazione+"' non valido: "+e.getMessage(),e);
+				}
+			}
+		}
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
+		this.log.debug("filterDominio : " + filterDominio);
 		this.log.debug("filterSoggettoNome : " + filterSoggettoNome);
 		this.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
 		this.log.debug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
 		this.log.debug("filterRuolo : " + filterRuolo);
 		this.log.debug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
 		this.log.debug("filterTipoCredenziali : " + filterTipoCredenziali);
+		this.log.debug("filterGruppo : " + filterTipoCredenziali);
+		this.log.debug("filterApiContesto : " + filterApiContesto);
+		this.log.debug("filterApiImplementazione : " + filterApiImplementazione);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -18178,6 +18236,409 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 
+			/* === Filtro Dominio === */
+
+			ISQLQueryObject sqlQueryObjectPdd = null;
+			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
+				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExistsPdd.addSelectField(CostantiDB.PDD+".nome");
+				sqlQueryObjectExistsPdd.addFromTable(CostantiDB.PDD);
+				sqlQueryObjectExistsPdd.setANDLogicOperator(true);
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".tipo=?");
+				
+				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectPdd.setANDLogicOperator(false);
+				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
+			}	
+			
+			
+			
+			/* === Filtro Gruppo, Tipo Erogazione/Fruizione, Implementazione API === */
+			
+			List<String> existsConditions = new ArrayList<String>();
+			List<Object> existsParameters = new ArrayList<Object>();
+			String alias_CT = "ct";
+			String alias_PD_SA = "pdsa";
+			String alias_PD = "pd";
+			String alias_PD_TRASFORMAZIONI_SA = "pdtsa";
+			String alias_PD_TRASFORMAZIONI = "pdt";
+			String alias_PA_SA = "pasa";
+			String alias_PA = "pa";
+			String alias_PA_TRASFORMAZIONI_SA = "patsa";
+			String alias_PA_TRASFORMAZIONI = "pat";
+			String alias_SERVIZI = "s";
+			String alias_ACCORDI = "a";
+			String alias_ACCORDI_GRUPPI = "ag";
+			String alias_GRUPPI = "g";
+			String alias_SOGGETTI = "sProprietario";
+			
+	
+			
+			// autorizzazioni porte delegate
+			// select * from servizi_applicativi sa WHERE EXISTS (select pdsa.id from porte_delegate_sa pdsa, porte_delegate pd, servizi s, accordi a, accordi_gruppi ag, gruppi g 
+			//     WHERE pdsa.id_servizio_applicativo=sa.id AND pdsa.id_porta=pd.id AND pd.id_servizio=s.id AND s.id_accordo=a.id AND ag.id_accordo=a.id AND ag.id_gruppo=g.id AND g.nome='TAG');
+			if(isFilterGruppoFruizione  || TipoPdD.DELEGATA.equals(apiContesto) || apiImplementazioneFruizione!=null) {
+				ISQLQueryObject sqlQueryObjectAutorizzazioniPorteDelegate = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectAutorizzazioniPorteDelegate.addFromTable(CostantiDB.PORTE_DELEGATE_SA,alias_PD_SA);
+				sqlQueryObjectAutorizzazioniPorteDelegate.addFromTable(CostantiDB.PORTE_DELEGATE,alias_PD);
+				if(isFilterGruppoFruizione) {
+					sqlQueryObjectAutorizzazioniPorteDelegate.addFromTable(CostantiDB.SERVIZI,alias_SERVIZI);
+					sqlQueryObjectAutorizzazioniPorteDelegate.addFromTable(CostantiDB.ACCORDI,alias_ACCORDI);
+					sqlQueryObjectAutorizzazioniPorteDelegate.addFromTable(CostantiDB.ACCORDI_GRUPPI,alias_ACCORDI_GRUPPI);
+					sqlQueryObjectAutorizzazioniPorteDelegate.addFromTable(CostantiDB.GRUPPI,alias_GRUPPI);
+				}
+				if(apiImplementazioneFruizione!=null) {
+					sqlQueryObjectAutorizzazioniPorteDelegate.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
+				}
+				sqlQueryObjectAutorizzazioniPorteDelegate.addSelectAliasField(alias_PD_SA, "id", alias_PD_SA+"id");
+				sqlQueryObjectAutorizzazioniPorteDelegate.setANDLogicOperator(true);
+				sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD_SA+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD_SA+".id_porta = "+alias_PD+".id");
+				if(isFilterGruppoFruizione) {
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD+".id_servizio = "+alias_SERVIZI+".id");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_SERVIZI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_ACCORDI_GRUPPI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_ACCORDI_GRUPPI+".id_gruppo = "+alias_GRUPPI+".id");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_GRUPPI+".nome = ?");
+					existsParameters.add(filterGruppo);
+				}
+				if(apiImplementazioneFruizione!=null) {
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD+".id_soggetto = "+alias_SOGGETTI+".id");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD+".tipo_soggetto_erogatore = ?");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD+".nome_soggetto_erogatore = ?");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD+".tipo_servizio = ?");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD+".nome_servizio = ?");
+					sqlQueryObjectAutorizzazioniPorteDelegate.addWhereCondition(alias_PD+".versione_servizio = ?");
+					existsParameters.add(apiImplementazioneFruizione.getIdFruitore().getTipo());
+					existsParameters.add(apiImplementazioneFruizione.getIdFruitore().getNome());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getSoggettoErogatore().getTipo());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getSoggettoErogatore().getNome());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getTipo());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getNome());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getVersione());
+				}
+				
+				existsConditions.add(sqlQueryObjectAutorizzazioniPorteDelegate.getWhereExistsCondition(false, sqlQueryObjectAutorizzazioniPorteDelegate));
+			} 
+			
+			// autorizzazioni porte applicative
+			// select * from servizi_applicativi sa WHERE EXISTS (select pasa.id from porte_applicative_sa_auth pasa, porte_applicative pa, servizi s, accordi a, accordi_gruppi ag, gruppi g 
+			//    WHERE pasa.id_servizio_applicativo=sa.id AND pasa.id_porta=pa.id AND pa.id_servizio=s.id AND s.id_accordo=a.id AND ag.id_accordo=a.id AND ag.id_gruppo=g.id AND g.nome='TAG');
+			if(isFilterGruppoErogazione  || TipoPdD.APPLICATIVA.equals(apiContesto) || apiImplementazioneErogazione!=null) {
+				ISQLQueryObject sqlQueryObjectAutorizzazioniPorteApplicative = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectAutorizzazioniPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA_AUTORIZZATI,alias_PA_SA);
+				sqlQueryObjectAutorizzazioniPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE,alias_PA);
+				if(isFilterGruppoErogazione) {
+					sqlQueryObjectAutorizzazioniPorteApplicative.addFromTable(CostantiDB.SERVIZI,alias_SERVIZI);
+					sqlQueryObjectAutorizzazioniPorteApplicative.addFromTable(CostantiDB.ACCORDI,alias_ACCORDI);
+					sqlQueryObjectAutorizzazioniPorteApplicative.addFromTable(CostantiDB.ACCORDI_GRUPPI,alias_ACCORDI_GRUPPI);
+					sqlQueryObjectAutorizzazioniPorteApplicative.addFromTable(CostantiDB.GRUPPI,alias_GRUPPI);
+				}
+				if(apiImplementazioneErogazione!=null) {
+					sqlQueryObjectAutorizzazioniPorteApplicative.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
+				}
+				sqlQueryObjectAutorizzazioniPorteApplicative.addSelectAliasField(alias_PA_SA, "id", alias_PA_SA+"id");
+				sqlQueryObjectAutorizzazioniPorteApplicative.setANDLogicOperator(true);
+				sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_PA_SA+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_PA_SA+".id_porta = "+alias_PA+".id");
+				if(isFilterGruppoErogazione) {
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_PA+".id_servizio = "+alias_SERVIZI+".id");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_SERVIZI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_ACCORDI_GRUPPI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_ACCORDI_GRUPPI+".id_gruppo = "+alias_GRUPPI+".id");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_GRUPPI+".nome = ?");
+					existsParameters.add(filterGruppo);
+				}
+				if(apiImplementazioneErogazione!=null) {
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_PA+".id_soggetto = "+alias_SOGGETTI+".id");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_PA+".tipo_servizio = ?");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_PA+".servizio = ?");
+					sqlQueryObjectAutorizzazioniPorteApplicative.addWhereCondition(alias_PA+".versione_servizio = ?");
+					existsParameters.add(apiImplementazioneErogazione.getSoggettoErogatore().getTipo());
+					existsParameters.add(apiImplementazioneErogazione.getSoggettoErogatore().getNome());
+					existsParameters.add(apiImplementazioneErogazione.getTipo());
+					existsParameters.add(apiImplementazioneErogazione.getNome());
+					existsParameters.add(apiImplementazioneErogazione.getVersione());
+				}
+				
+				existsConditions.add(sqlQueryObjectAutorizzazioniPorteApplicative.getWhereExistsCondition(false, sqlQueryObjectAutorizzazioniPorteApplicative));
+			} 
+			
+			
+			// server sulle porte applicative
+			// select * from servizi_applicativi sa WHERE EXISTS (select pasa.id from porte_applicative_sa pasa, porte_applicative pa, servizi s, accordi a, accordi_gruppi ag, gruppi g 
+			// WHERE pasa.id_servizio_applicativo=sa.id AND pasa.id_porta=pa.id AND pa.id_servizio=s.id AND s.id_accordo=a.id AND ag.id_accordo=a.id AND ag.id_gruppo=g.id AND g.nome='TAG');
+			if(isFilterGruppoErogazione  || TipoPdD.APPLICATIVA.equals(apiContesto) || apiImplementazioneErogazione!=null) {
+				ISQLQueryObject sqlQueryObjectServerPorteApplicative = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectServerPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA,alias_PA_SA);
+				sqlQueryObjectServerPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE,alias_PA);
+				if(isFilterGruppoErogazione) {
+					sqlQueryObjectServerPorteApplicative.addFromTable(CostantiDB.SERVIZI,alias_SERVIZI);
+					sqlQueryObjectServerPorteApplicative.addFromTable(CostantiDB.ACCORDI,alias_ACCORDI);
+					sqlQueryObjectServerPorteApplicative.addFromTable(CostantiDB.ACCORDI_GRUPPI,alias_ACCORDI_GRUPPI);
+					sqlQueryObjectServerPorteApplicative.addFromTable(CostantiDB.GRUPPI,alias_GRUPPI);
+				}
+				if(apiImplementazioneErogazione!=null) {
+					sqlQueryObjectServerPorteApplicative.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
+				}
+				sqlQueryObjectServerPorteApplicative.addSelectAliasField(alias_PA_SA, "id", alias_PA_SA+"id");
+				sqlQueryObjectServerPorteApplicative.setANDLogicOperator(true);
+				sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_PA_SA+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_PA_SA+".id_porta = "+alias_PA+".id");
+				if(isFilterGruppoErogazione) {
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_PA+".id_servizio = "+alias_SERVIZI+".id");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_SERVIZI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_ACCORDI_GRUPPI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_ACCORDI_GRUPPI+".id_gruppo = "+alias_GRUPPI+".id");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_GRUPPI+".nome = ?");
+					existsParameters.add(filterGruppo);
+				}
+				if(apiImplementazioneErogazione!=null) {
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_PA+".id_soggetto = "+alias_SOGGETTI+".id");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_PA+".tipo_servizio = ?");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_PA+".servizio = ?");
+					sqlQueryObjectServerPorteApplicative.addWhereCondition(alias_PA+".versione_servizio = ?");
+					existsParameters.add(apiImplementazioneErogazione.getSoggettoErogatore().getTipo());
+					existsParameters.add(apiImplementazioneErogazione.getSoggettoErogatore().getNome());
+					existsParameters.add(apiImplementazioneErogazione.getTipo());
+					existsParameters.add(apiImplementazioneErogazione.getNome());
+					existsParameters.add(apiImplementazioneErogazione.getVersione());
+				}
+				
+				existsConditions.add(sqlQueryObjectServerPorteApplicative.getWhereExistsCondition(false, sqlQueryObjectServerPorteApplicative));
+			} 
+			
+		
+			// controllo del traffico
+			/*
+			 * select * from servizi_applicativi sa, soggetti soggetti WHERE sa.id_soggetto=soggetti.id  
+			 * AND EXISTS (select ct.id from ct_active_policy ct WHERE ct.filtro_tipo_fruitore=soggetti.tipo_soggetto AND ct.filtro_nome_fruitore=soggetti.nome_soggetto AND ct.filtro_sa_fruitore=sa.nome AND 
+(
+  (filtro_ruolo='applicativa' AND EXISTS (select pa.id from porte_applicative pa, servizi s, accordi a, accordi_gruppi ag, gruppi g WHERE pa.nome_porta=filtro_porta AND pa.id_servizio=s.id AND s.id_accordo=a.id AND ag.id_accordo=a.id AND ag.id_gruppo=g.id AND g.nome='TAG'))
+  OR
+  (filtro_ruolo='delegata' AND EXISTS (select pd.id from porte_delegate pd, servizi s, accordi a, accordi_gruppi ag, gruppi g WHERE pd.nome_porta=filtro_porta AND pd.id_servizio=s.id AND s.id_accordo=a.id AND ag.id_accordo=a.id AND ag.id_gruppo=g.id AND g.nome='TAG'))
+));
+			 * 
+			 * */
+			
+			// Controllo del traffico sulle porte delegate
+			if(isFilterGruppoFruizione  || TipoPdD.DELEGATA.equals(apiContesto) || apiImplementazioneFruizione!=null) {
+				ISQLQueryObject sqlQueryObjectControlloTrafficoPorteDelegate = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectControlloTrafficoPorteDelegate.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY,alias_CT);
+				if(isFilterGruppoFruizione || apiImplementazioneFruizione!=null) {
+					sqlQueryObjectControlloTrafficoPorteDelegate.addFromTable(CostantiDB.PORTE_DELEGATE,alias_PD);
+					if(isFilterGruppoFruizione) {
+						sqlQueryObjectControlloTrafficoPorteDelegate.addFromTable(CostantiDB.SERVIZI,alias_SERVIZI);
+						sqlQueryObjectControlloTrafficoPorteDelegate.addFromTable(CostantiDB.ACCORDI,alias_ACCORDI);
+						sqlQueryObjectControlloTrafficoPorteDelegate.addFromTable(CostantiDB.ACCORDI_GRUPPI,alias_ACCORDI_GRUPPI);
+						sqlQueryObjectControlloTrafficoPorteDelegate.addFromTable(CostantiDB.GRUPPI,alias_GRUPPI);
+					}
+					if(apiImplementazioneFruizione!=null) {
+						sqlQueryObjectControlloTrafficoPorteDelegate.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
+					}
+				}
+				sqlQueryObjectControlloTrafficoPorteDelegate.addSelectAliasField(alias_CT, "id", alias_CT+"id");
+				sqlQueryObjectControlloTrafficoPorteDelegate.setANDLogicOperator(true);
+				sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_CT+".filtro_tipo_fruitore = "+CostantiDB.SOGGETTI+".tipo_soggetto");
+				sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_CT+".filtro_nome_fruitore = "+CostantiDB.SOGGETTI+".nome_soggetto");
+				sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_CT+".filtro_sa_fruitore = "+CostantiDB.SERVIZI_APPLICATIVI+".nome");
+				sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_CT+".filtro_ruolo = 'delegata'");
+				if(isFilterGruppoFruizione || apiImplementazioneFruizione!=null) {
+					sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_CT+".filtro_porta = "+alias_PD+".nome_porta");
+					if(isFilterGruppoFruizione) {
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_PD+".id_servizio = "+alias_SERVIZI+".id");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_SERVIZI+".id_accordo = "+alias_ACCORDI+".id");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_ACCORDI_GRUPPI+".id_accordo = "+alias_ACCORDI+".id");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_ACCORDI_GRUPPI+".id_gruppo = "+alias_GRUPPI+".id");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_GRUPPI+".nome = ?");
+						existsParameters.add(filterGruppo);
+					}
+					if(apiImplementazioneFruizione!=null) {
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_PD+".id_soggetto = "+alias_SOGGETTI+".id");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_PD+".tipo_soggetto_erogatore = ?");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_PD+".nome_soggetto_erogatore = ?");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_PD+".tipo_servizio = ?");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_PD+".nome_servizio = ?");
+						sqlQueryObjectControlloTrafficoPorteDelegate.addWhereCondition(alias_PD+".versione_servizio = ?");
+						existsParameters.add(apiImplementazioneFruizione.getIdFruitore().getTipo());
+						existsParameters.add(apiImplementazioneFruizione.getIdFruitore().getNome());
+						existsParameters.add(apiImplementazioneFruizione.getIdServizio().getSoggettoErogatore().getTipo());
+						existsParameters.add(apiImplementazioneFruizione.getIdServizio().getSoggettoErogatore().getNome());
+						existsParameters.add(apiImplementazioneFruizione.getIdServizio().getTipo());
+						existsParameters.add(apiImplementazioneFruizione.getIdServizio().getNome());
+						existsParameters.add(apiImplementazioneFruizione.getIdServizio().getVersione());
+					}
+				}
+				
+				existsConditions.add(sqlQueryObjectControlloTrafficoPorteDelegate.getWhereExistsCondition(false, sqlQueryObjectControlloTrafficoPorteDelegate));
+			} 
+			
+			// Controllo del traffico sulle porte applicative
+			if(isFilterGruppoErogazione  || TipoPdD.APPLICATIVA.equals(apiContesto) || apiImplementazioneErogazione!=null) {
+				ISQLQueryObject sqlQueryObjectControlloTrafficoPorteApplicative = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectControlloTrafficoPorteApplicative.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY,alias_CT);
+				if(isFilterGruppoErogazione || apiImplementazioneErogazione!=null) {
+					sqlQueryObjectControlloTrafficoPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE,alias_PA);
+					if(isFilterGruppoErogazione) {
+						sqlQueryObjectControlloTrafficoPorteApplicative.addFromTable(CostantiDB.SERVIZI,alias_SERVIZI);
+						sqlQueryObjectControlloTrafficoPorteApplicative.addFromTable(CostantiDB.ACCORDI,alias_ACCORDI);
+						sqlQueryObjectControlloTrafficoPorteApplicative.addFromTable(CostantiDB.ACCORDI_GRUPPI,alias_ACCORDI_GRUPPI);
+						sqlQueryObjectControlloTrafficoPorteApplicative.addFromTable(CostantiDB.GRUPPI,alias_GRUPPI);
+					}
+					if(apiImplementazioneErogazione!=null) {
+						sqlQueryObjectControlloTrafficoPorteApplicative.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
+					}
+				}
+				sqlQueryObjectControlloTrafficoPorteApplicative.addSelectAliasField(alias_CT, "id", alias_CT+"id");
+				sqlQueryObjectControlloTrafficoPorteApplicative.setANDLogicOperator(true);
+				sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_CT+".filtro_tipo_fruitore = "+CostantiDB.SOGGETTI+".tipo_soggetto");
+				sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_CT+".filtro_nome_fruitore = "+CostantiDB.SOGGETTI+".nome_soggetto");
+				sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_CT+".filtro_sa_fruitore = "+CostantiDB.SERVIZI_APPLICATIVI+".nome");
+				sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_CT+".filtro_ruolo = 'applicativa'");
+				if(isFilterGruppoErogazione || apiImplementazioneErogazione!=null) {
+					sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_CT+".filtro_porta = "+alias_PA+".nome_porta");
+					if(isFilterGruppoErogazione) {
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_PA+".id_servizio = "+alias_SERVIZI+".id");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_SERVIZI+".id_accordo = "+alias_ACCORDI+".id");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_ACCORDI_GRUPPI+".id_accordo = "+alias_ACCORDI+".id");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_ACCORDI_GRUPPI+".id_gruppo = "+alias_GRUPPI+".id");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_GRUPPI+".nome = ?");
+						existsParameters.add(filterGruppo);
+					}
+					if(apiImplementazioneErogazione!=null) {
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_PA+".id_soggetto = "+alias_SOGGETTI+".id");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_PA+".tipo_servizio = ?");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_PA+".servizio = ?");
+						sqlQueryObjectControlloTrafficoPorteApplicative.addWhereCondition(alias_PA+".versione_servizio = ?");
+						existsParameters.add(apiImplementazioneErogazione.getSoggettoErogatore().getTipo());
+						existsParameters.add(apiImplementazioneErogazione.getSoggettoErogatore().getNome());
+						existsParameters.add(apiImplementazioneErogazione.getTipo());
+						existsParameters.add(apiImplementazioneErogazione.getNome());
+						existsParameters.add(apiImplementazioneErogazione.getVersione());
+					}
+				}
+				
+				existsConditions.add(sqlQueryObjectControlloTrafficoPorteApplicative.getWhereExistsCondition(false, sqlQueryObjectControlloTrafficoPorteApplicative));
+			} 
+			
+			
+			// porte_delegate trasformazioni
+			/*
+			 * select * from servizi_applicativi sa WHERE EXISTS (select pdtsa.id from pd_transform_sa pdtsa, pd_transform pdt, porte_delegate pd, servizi s, accordi a, accordi_gruppi ag, gruppi g 
+			 *    WHERE pdtsa.id_servizio_applicativo=sa.id AND pdtsa.id_trasformazione=pdt.id AND pdt.id_porta=pd.id AND pd.id_servizio=s.id AND s.id_accordo=a.id AND ag.id_accordo=a.id AND ag.id_gruppo=g.id AND g.nome='TAG');
+			 **/
+			if(isFilterGruppoFruizione  || TipoPdD.DELEGATA.equals(apiContesto) || apiImplementazioneFruizione!=null) {
+				ISQLQueryObject sqlQueryObjectTrasformazioniPorteDelegate = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectTrasformazioniPorteDelegate.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA,alias_PD_TRASFORMAZIONI_SA);
+				sqlQueryObjectTrasformazioniPorteDelegate.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI,alias_PD_TRASFORMAZIONI);
+				sqlQueryObjectTrasformazioniPorteDelegate.addFromTable(CostantiDB.PORTE_DELEGATE,alias_PD);
+				if(isFilterGruppoFruizione) {
+					sqlQueryObjectTrasformazioniPorteDelegate.addFromTable(CostantiDB.SERVIZI,alias_SERVIZI);
+					sqlQueryObjectTrasformazioniPorteDelegate.addFromTable(CostantiDB.ACCORDI,alias_ACCORDI);
+					sqlQueryObjectTrasformazioniPorteDelegate.addFromTable(CostantiDB.ACCORDI_GRUPPI,alias_ACCORDI_GRUPPI);
+					sqlQueryObjectTrasformazioniPorteDelegate.addFromTable(CostantiDB.GRUPPI,alias_GRUPPI);
+				}
+				if(apiImplementazioneFruizione!=null) {
+					sqlQueryObjectTrasformazioniPorteDelegate.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
+				}
+				sqlQueryObjectTrasformazioniPorteDelegate.addSelectAliasField(alias_PD_TRASFORMAZIONI_SA, "id", alias_PD_TRASFORMAZIONI_SA+"id");
+				sqlQueryObjectTrasformazioniPorteDelegate.setANDLogicOperator(true);
+				sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD_TRASFORMAZIONI_SA+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD_TRASFORMAZIONI_SA+".id_trasformazione = "+alias_PD_TRASFORMAZIONI+".id");
+				sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD_TRASFORMAZIONI+".id_porta = "+alias_PD+".id");
+				if(isFilterGruppoFruizione) {
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD+".id_servizio = "+alias_SERVIZI+".id");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_SERVIZI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_ACCORDI_GRUPPI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_ACCORDI_GRUPPI+".id_gruppo = "+alias_GRUPPI+".id");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_GRUPPI+".nome = ?");
+					existsParameters.add(filterGruppo);
+				}
+				if(apiImplementazioneFruizione!=null) {
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD+".id_soggetto = "+alias_SOGGETTI+".id");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD+".tipo_soggetto_erogatore = ?");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD+".nome_soggetto_erogatore = ?");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD+".tipo_servizio = ?");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD+".nome_servizio = ?");
+					sqlQueryObjectTrasformazioniPorteDelegate.addWhereCondition(alias_PD+".versione_servizio = ?");
+					existsParameters.add(apiImplementazioneFruizione.getIdFruitore().getTipo());
+					existsParameters.add(apiImplementazioneFruizione.getIdFruitore().getNome());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getSoggettoErogatore().getTipo());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getSoggettoErogatore().getNome());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getTipo());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getNome());
+					existsParameters.add(apiImplementazioneFruizione.getIdServizio().getVersione());
+				}
+				
+				existsConditions.add(sqlQueryObjectTrasformazioniPorteDelegate.getWhereExistsCondition(false, sqlQueryObjectTrasformazioniPorteDelegate));
+			} 
+	
+			// porte_applicative trasformazioni
+			/*
+			 * select * from servizi_applicativi sa WHERE EXISTS (select patsa.id from pa_transform_sa patsa, pa_transform pat, porte_applicative pa, servizi s, accordi a, accordi_gruppi ag, gruppi g 
+			 * WHERE patsa.id_servizio_applicativo=sa.id AND patsa.id_trasformazione=pat.id AND pat.id_porta=pa.id AND pa.id_servizio=s.id AND s.id_accordo=a.id AND ag.id_accordo=a.id AND ag.id_gruppo=g.id AND g.nome='TAG');
+			 **/
+			
+			if(isFilterGruppoErogazione  || TipoPdD.APPLICATIVA.equals(apiContesto) || apiImplementazioneErogazione!=null) {
+				ISQLQueryObject sqlQueryObjectTrasformazioniPorteApplicative = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectTrasformazioniPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA,alias_PA_TRASFORMAZIONI_SA);
+				sqlQueryObjectTrasformazioniPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI,alias_PA_TRASFORMAZIONI);
+				sqlQueryObjectTrasformazioniPorteApplicative.addFromTable(CostantiDB.PORTE_APPLICATIVE,alias_PA);
+				if(isFilterGruppoErogazione) {
+					sqlQueryObjectTrasformazioniPorteApplicative.addFromTable(CostantiDB.SERVIZI,alias_SERVIZI);
+					sqlQueryObjectTrasformazioniPorteApplicative.addFromTable(CostantiDB.ACCORDI,alias_ACCORDI);
+					sqlQueryObjectTrasformazioniPorteApplicative.addFromTable(CostantiDB.ACCORDI_GRUPPI,alias_ACCORDI_GRUPPI);
+					sqlQueryObjectTrasformazioniPorteApplicative.addFromTable(CostantiDB.GRUPPI,alias_GRUPPI);
+				}
+				if(apiImplementazioneErogazione!=null) {
+					sqlQueryObjectTrasformazioniPorteApplicative.addFromTable(CostantiDB.SOGGETTI,alias_SOGGETTI);
+				}
+				sqlQueryObjectTrasformazioniPorteApplicative.addSelectAliasField(alias_PA_TRASFORMAZIONI_SA, "id", alias_PA_TRASFORMAZIONI_SA+"id");
+				sqlQueryObjectTrasformazioniPorteApplicative.setANDLogicOperator(true);
+				sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_PA_TRASFORMAZIONI_SA+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_PA_TRASFORMAZIONI_SA+".id_trasformazione = "+alias_PA_TRASFORMAZIONI+".id");
+				sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_PA_TRASFORMAZIONI+".id_porta = "+alias_PA+".id");
+				if(isFilterGruppoErogazione) {
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_PA+".id_servizio = "+alias_SERVIZI+".id");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_SERVIZI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_ACCORDI_GRUPPI+".id_accordo = "+alias_ACCORDI+".id");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_ACCORDI_GRUPPI+".id_gruppo = "+alias_GRUPPI+".id");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_GRUPPI+".nome = ?");
+					existsParameters.add(filterGruppo);
+				}
+				if(apiImplementazioneErogazione!=null) {
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_PA+".id_soggetto = "+alias_SOGGETTI+".id");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_SOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_SOGGETTI+".nome_soggetto = ?");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_PA+".tipo_servizio = ?");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_PA+".servizio = ?");
+					sqlQueryObjectTrasformazioniPorteApplicative.addWhereCondition(alias_PA+".versione_servizio = ?");
+					existsParameters.add(apiImplementazioneErogazione.getSoggettoErogatore().getTipo());
+					existsParameters.add(apiImplementazioneErogazione.getSoggettoErogatore().getNome());
+					existsParameters.add(apiImplementazioneErogazione.getTipo());
+					existsParameters.add(apiImplementazioneErogazione.getNome());
+					existsParameters.add(apiImplementazioneErogazione.getVersione());
+				}
+				
+				existsConditions.add(sqlQueryObjectTrasformazioniPorteApplicative.getWhereExistsCondition(false, sqlQueryObjectTrasformazioniPorteApplicative));
+			} 
+						
+			// QUERY FINALE
+			
 			if (!search.equals("")) {
 				//query con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -18220,6 +18681,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
 				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {						
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addFromTable(CostantiDB.PDD);
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
+				}
+				if(!existsConditions.isEmpty()) {
+					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
+				}			
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -18262,10 +18735,23 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
 				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {						
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addFromTable(CostantiDB.PDD);
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
+				}
+				if(!existsConditions.isEmpty()) {
+					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
+			this.log.debug("Execute query: "+queryString);
 			int index = 1;
 			if(this.useSuperUser && superuser!=null && !superuser.equals("")) {
 				stmt.setString(index++, superuser);
@@ -18297,6 +18783,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 				stmt.setString(index++, filterTipoCredenziali);
 			}
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
+			if(existsParameters!=null && !existsParameters.isEmpty()) {
+				for (Object object : existsParameters) {
+					if(object instanceof String) {
+						stmt.setString(index++, (String) object);
+					}
+					else {
+						stmt.setInt(index++, (Integer) object);
+					}
+				}
+			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -18304,18 +18803,21 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.close();
 
 			// ricavo le entries
+			String aliasNomeServizioApplicativo="appnome";
+			String aliasTipoSoggetto="orgtipo";
+			String aliasNomeSoggetto="orgnome";
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 			if (!search.equals("")) { // con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".id");
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addSelectField("id_soggetto");
-				sqlQueryObject.addSelectField("nome_soggetto");
-				sqlQueryObject.addSelectField("tipo_soggetto");
-				sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI,"id");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI,"nome",aliasNomeServizioApplicativo);
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI,"id_soggetto");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"tipo_soggetto", aliasTipoSoggetto);
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"nome_soggetto", aliasNomeSoggetto);
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 				if(this.useSuperUser && superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome", search, true, true);
@@ -18351,10 +18853,22 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
 				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {						
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addFromTable(CostantiDB.PDD);
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
+				}
+				if(!existsConditions.isEmpty()) {
+					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
+				}
 				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("nome");
-				sqlQueryObject.addOrderBy("nome_soggetto");
-				sqlQueryObject.addOrderBy("tipo_soggetto");
+				sqlQueryObject.addOrderBy(aliasNomeServizioApplicativo);
+				sqlQueryObject.addOrderBy(aliasNomeSoggetto);
+				sqlQueryObject.addOrderBy(aliasTipoSoggetto);
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -18364,12 +18878,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".id");
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addSelectField("id_soggetto");
-				sqlQueryObject.addSelectField("nome_soggetto");
-				sqlQueryObject.addSelectField("tipo_soggetto");
-				sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI,"id");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI,"nome",aliasNomeServizioApplicativo);
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI,"id_soggetto");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"tipo_soggetto", aliasTipoSoggetto);
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"nome_soggetto", aliasNomeSoggetto);
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 				if(this.useSuperUser && superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
@@ -18404,16 +18918,29 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
 				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {						
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addFromTable(CostantiDB.PDD);
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
+				}
+				if(!existsConditions.isEmpty()) {
+					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
+				}
 				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("nome");
-				sqlQueryObject.addOrderBy("nome_soggetto");
-				sqlQueryObject.addOrderBy("tipo_soggetto");
+				sqlQueryObject.addOrderBy(aliasNomeServizioApplicativo);
+				sqlQueryObject.addOrderBy(aliasNomeSoggetto);
+				sqlQueryObject.addOrderBy(aliasTipoSoggetto);
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
+			this.log.debug("Execute query: "+queryString);
 			index = 1;
 			if(this.useSuperUser && superuser!=null && (!"".equals(superuser))) {
 				stmt.setString(index++, superuser);
@@ -18445,6 +18972,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 				stmt.setString(index++, filterTipoCredenziali);
+			}
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
+			if(existsParameters!=null && !existsParameters.isEmpty()) {
+				for (Object object : existsParameters) {
+					if(object instanceof String) {
+						stmt.setString(index++, (String) object);
+					}
+					else {
+						stmt.setInt(index++, (Integer) object);
+					}
+				}
 			}
 			risultato = stmt.executeQuery();
 

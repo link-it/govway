@@ -116,6 +116,27 @@ public class IDFruizione implements Serializable {
 		}
 		return idFruizione;
 	}
+	
+	public String toFormatString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.idFruitore.toFormatString());
+		sb.append(" ");
+		sb.append(this.idServizio.toFormatString());
+		return sb.toString();
+	}
+	
+	public static IDFruizione toIDFruizione(String formatString) throws Exception {
+		String [] tmp = formatString.split(" ");
+		if(tmp.length!=2) {
+			throw new Exception("Formato non supportato, attesi 2 valori, trovati "+tmp.length);
+		}
+		String fruitore = tmp[0];
+		String servizio = tmp[1];
+		IDFruizione idFruizione = new IDFruizione();
+		idFruizione.setIdFruitore(IDSoggetto.toIDSoggetto(fruitore));
+		idFruizione.setIdServizio(IDServizio.toIDServizio(servizio));
+		return idFruizione;
+	}
 }
 
 

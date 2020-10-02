@@ -21,6 +21,7 @@ package org.openspcoop2.generic_project.expression.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,8 @@ public class ExpressionImpl implements IExpression {
 	protected List<IField> groupByFields = new ArrayList<IField>();
 	
 	protected List<Index> forceIndexes = new ArrayList<Index>();
+	
+	protected Map<String, Object> properties = new HashMap<String, Object>();
 
 	
 	
@@ -979,7 +982,16 @@ public class ExpressionImpl implements IExpression {
 	
 	
 	
+	/* ************ PROPERTY *********** */
 	
+	@Override
+	public void addProperty(String name, Object value) {
+		this.properties.put(name, value);
+	}
+	@Override
+	public Object getProperty(String name) {
+		return this.properties.get(name);
+	}
 	
 	
 	

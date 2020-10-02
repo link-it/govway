@@ -52,6 +52,9 @@ public enum TipoPdD implements Serializable {
 	}
 	
 	public boolean equals(TipoPdD tipoPdD){
+		if(tipoPdD==null) {
+			return false;
+		}
 		return this.tipo.equals(tipoPdD.getTipo());
 	}
 	

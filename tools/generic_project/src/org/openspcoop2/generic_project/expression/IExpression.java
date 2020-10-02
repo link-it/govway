@@ -538,5 +538,11 @@ public interface IExpression {
 	 */
 	public IExpression addForceIndex(Index index) throws ExpressionNotImplementedException,ExpressionException;
 	
+	
+	
+	/* ************ PROPERTY *********** */
+	
+	public void addProperty(String name, Object value);
+	public Object getProperty(String name);
 
 }

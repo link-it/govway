@@ -60,6 +60,7 @@ import org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteComu
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCSoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.utils.ExpressionProperties;
 import org.openspcoop2.core.commons.search.utils.ProjectInfo;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
@@ -2087,6 +2088,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
 			
 			pagPaExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
+			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
 			
 			List<String> lstTmp = new ArrayList<String>();
@@ -2159,6 +2161,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
 			
 			pagPaExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
+			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
 			
 			List<String> lstTmp = new ArrayList<String>();
@@ -2282,6 +2285,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
 			
 			pagPdExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
+			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
 			
 			List<String> lstTmp = new ArrayList<String>();
@@ -2354,6 +2358,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
 			
 			pagPdExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
+			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
 			
 			List<String> lstTmp = new ArrayList<String>();

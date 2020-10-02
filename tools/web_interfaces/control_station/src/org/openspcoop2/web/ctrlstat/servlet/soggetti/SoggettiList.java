@@ -89,6 +89,15 @@ public final class SoggettiList extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.SOGGETTI;
+			
+			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+			List<Soggetto> lista = null;
+			if(soggettiCore.isRegistroServiziLocale()){
+				if(!ServletUtils.isSearchDone(soggettiHelper)) {
+					lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Soggetto.class);
+				}
+			}
+			
 			ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 		
@@ -100,24 +109,30 @@ public final class SoggettiList extends Action {
 			}
 			
 			if(soggettiCore.isRegistroServiziLocale()){
-				List<Soggetto> lista = null;
-				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-					lista = soggettiCore.soggettiRegistroList(null, ricerca);
-				}else{
-					lista = soggettiCore.soggettiRegistroList(userLogin, ricerca);
+				if(lista==null) {
+					if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+						lista = soggettiCore.soggettiRegistroList(null, ricerca);
+					}else{
+						lista = soggettiCore.soggettiRegistroList(userLogin, ricerca);
+					}
 				}
+				
+				if(!soggettiHelper.isPostBackFilterElement()) {
+					ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				}
+				
 				soggettiHelper.prepareSoggettiList(lista, ricerca);
 			}
 			else{
-				List<org.openspcoop2.core.config.Soggetto> lista = null;
+				List<org.openspcoop2.core.config.Soggetto> listaConfig = null;
 				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-					lista = soggettiCore.soggettiList(null, ricerca);
+					listaConfig = soggettiCore.soggettiList(null, ricerca);
 				}else{
-					lista = soggettiCore.soggettiList(userLogin, ricerca);
+					listaConfig = soggettiCore.soggettiList(userLogin, ricerca);
 				}
-				soggettiHelper.prepareSoggettiConfigList(lista, ricerca);
+				soggettiHelper.prepareSoggettiConfigList(listaConfig, ricerca);
 			}
-			
+						
 			String msg = soggettiHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
 			if(msg!=null && !"".equals(msg)){
 				pd.setMessage("Errore durante esportazione: "+msg);

@@ -57,6 +57,9 @@ public class Costanti {
 	public final static String PARAMETER_NAME_OBJECTS_FOR_REMOVE_TYPE = "obj_t";
 	public final static String PARAMETER_NAME_MSG_ERROR_EXPORT = "errorExport";
 	
+	public final static String PARAMETER_NAME_SEARCH_LIST_DONE= "_searchDone";
+	
+	
 	/** PARAMETER ATTRIBUTE */
 	
 	public final static String REQUEST_ATTIBUTE_PARAMS = "params";
@@ -79,6 +82,12 @@ public class Costanti {
 	public final static String POSTBACK_FUNCTION_WITH_PARAMETER_START = "postBack('";
 	public final static String POSTBACK_FUNCTION_WITH_PARAMETER_END = "')";
 	public final static String POSTBACK_VIA_POST_FUNCTION_PREFIX = "postVersion_";
+	
+	
+	/** FILTER */
+	
+	public final static String PARAMETRO_FILTER_NAME = "filterName_";
+	public final static String PARAMETRO_FILTER_VALUE = "filterValue_";
 	
 	
 	/** CHECK BOX */
@@ -122,6 +131,7 @@ public class Costanti {
 	protected final static String SESSION_ATTRIBUTE_GENERAL_DATA = "GeneralData";
 	protected final static String SESSION_ATTRIBUTE_PAGE_DATA = "PageData";
 	public final static String SESSION_ATTRIBUTE_RICERCA = "Ricerca";
+	protected final static String SESSION_ATTRIBUTE_RISULTATI_LISTA = "RisultatiLista";
 	protected final static String SESSION_ATTRIBUTE_CONTA_LISTE = "contaListe";
 	protected final static String SESSION_ATTRIBUTE_LIST_ELEMENT ="ListElement";
 	protected final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;

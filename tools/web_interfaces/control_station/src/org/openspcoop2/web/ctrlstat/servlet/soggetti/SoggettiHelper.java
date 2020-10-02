@@ -33,6 +33,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Ruolo;
@@ -1020,18 +1021,57 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
-			addFilterProtocol(ricerca, idLista);
+			String filterProtocollo = addFilterProtocol(ricerca, idLista, true);
+			boolean profiloSelezionato = false;
+			String protocolloSel = filterProtocollo;
+			if(protocolloSel==null) {
+				// significa che e' stato selezionato un protocollo nel menu in alto a destra
+				List<String> protocolli = this.core.getProtocolli(this.session);
+				if(protocolli!=null && protocolli.size()==1) {
+					protocolloSel = protocolli.get(0);
+				}
+			}
+			if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
+					||
+				(filterProtocollo==null && protocolloSel!=null)
+					) {
+				profiloSelezionato = true;
+			}
 			
 			if(this.core.isGestionePddAbilitata(this)==false && multiTenant) {
 				String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
 				addFilterDominio(filterDominio, false);
 			}
 			
+			String filterTipoSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_SOGGETTO);
+			this.addFilterTipoSoggetto(filterTipoSoggetto,false);
+			
 			String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_CREDENZIALI);
 			this.addFilterTipoCredenziali(filterTipoCredenziali,false);
 						
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
 			addFilterRuolo(filterRuolo, false);
+			
+			String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+			addFilterGruppo(filterGruppo, true);
+			
+			String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
+			this.addFilterApiContesto(filterApiContesto, true);
+			
+			if(profiloSelezionato &&
+					(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto))
+					&&
+					!SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE.equals(filterTipoSoggetto)
+					&&
+					!(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(filterTipoSoggetto) && TipoPdD.DELEGATA.getTipo().equals(filterApiContesto))) {
+				String filterApiImplementazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
+				this.addFilterApiImplementazione(filterProtocollo, null, filterGruppo, filterApiContesto, filterApiImplementazione, false);
+			}
+			else {
+				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
+			}
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -1660,5 +1700,32 @@ public class SoggettiHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
+
 	
+	private void addFilterTipoSoggetto(String tipoSoggetto, boolean postBack) throws Exception{
+		try {
+			String [] tmp_labels = SoggettiCostanti.LABELS_SOGGETTO_RUOLO_TIPO;
+			String [] tmp_values = SoggettiCostanti.VALUES_SOGGETTO_RUOLO_TIPO;
+			
+			String [] values = new String[tmp_values.length + 1];
+			String [] labels = new String[tmp_labels.length + 1];
+			labels[0] = SoggettiCostanti.LABEL_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI;
+			values[0] = SoggettiCostanti.DEFAULT_VALUE_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI;
+			for (int i =0; i < tmp_labels.length ; i ++) {
+				labels[i+1] = tmp_labels[i];
+				values[i+1] = tmp_values[i];
+			}
+			
+			String selectedValue = tipoSoggetto != null ? tipoSoggetto : SoggettiCostanti.DEFAULT_VALUE_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI;
+			
+			String label = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPO;
+
+			this.pd.addFilter(Filtri.FILTRO_TIPO_SOGGETTO, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
 }

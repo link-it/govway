@@ -1,3 +1,10 @@
+2020-10-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1061
+	Introdotti nuovi criteri di filtro per la ricerca degli applicativi e dei soggetti.
+	È adesso possibile ricercarli per il loro utilizzo in erogazioni o fruizioni, anche specializzando la ricerca per tag o singola implementazione di API.
+
 2020-09-28  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

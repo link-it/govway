@@ -273,4 +273,15 @@ public class NotImplementedExpression implements IExpression {
 		throw new ExpressionNotImplementedException("Not Implemented");
 	}
 
+	@Override
+	public void addProperty(String name, Object value) {
+		// nop
+	}
+
+	@Override
+	public Object getProperty(String name) {
+		// nop
+		return null;
+	}
+
 }

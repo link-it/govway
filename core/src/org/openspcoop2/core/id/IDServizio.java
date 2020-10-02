@@ -231,6 +231,39 @@ public class IDServizio implements java.io.Serializable {
 	}
 
 	
+	
+	public String toFormatString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.soggettoErogatore.getTipo());
+		sb.append("/");
+		sb.append(this.soggettoErogatore.getNome());
+		sb.append("/");
+		sb.append(this.tipo);
+		sb.append("/");
+		sb.append(this.nome);
+		sb.append("/");
+		sb.append(this.versione);
+		return sb.toString();
+	}
+	
+	public static IDServizio toIDServizio(String formatString) throws Exception {
+		String [] tmp = formatString.split("/");
+		if(tmp.length!=5) {
+			throw new Exception("Formato non supportato, attesi 5 valori, trovati "+tmp.length);
+		}
+		String tipoSoggettoErogatore = tmp[0];
+		String nomeSoggettoErogatore = tmp[1];
+		String tipo = tmp[2];
+		String nome = tmp[3];
+		String versioneS = tmp[4];
+		int versione = Integer.valueOf(versioneS);
+		IDServizio idServizio = new IDServizio();
+		idServizio.soggettoErogatore = new IDSoggetto(tipoSoggettoErogatore, nomeSoggettoErogatore);
+		idServizio.tipo=tipo;
+		idServizio.nome=nome;
+		idServizio.versione=versione;
+		return idServizio;
+	}
 }
 
 

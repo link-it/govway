@@ -19,46 +19,44 @@
  */
 package org.openspcoop2.core.commons.search.dao.jdbc;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-
-import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
 import org.openspcoop2.core.commons.search.IdPortaDelegata;
 import org.openspcoop2.core.commons.search.IdServizioApplicativo;
 import org.openspcoop2.core.commons.search.IdSoggetto;
-import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.commons.search.PortaDelegataAzione;
+import org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.dao.jdbc.converter.PortaDelegataFieldConverter;
+import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortaDelegataFetch;
+import org.openspcoop2.core.commons.search.utils.ExpressionProperties;
+import org.openspcoop2.generic_project.beans.AliasField;
 import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.beans.Union;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
+import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
+import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
-import org.openspcoop2.core.commons.search.dao.jdbc.converter.PortaDelegataFieldConverter;
-import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortaDelegataFetch;
-import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
-import org.openspcoop2.core.commons.search.PortaDelegata;
-import org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo;
-import org.openspcoop2.core.commons.search.PortaDelegataAzione;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.slf4j.Logger;
 
 /**     
  * JDBCPortaDelegataServiceSearchImpl
@@ -153,24 +151,94 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 	}
 	
 	@Override
-	public List<PortaDelegata> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
+	public List<PortaDelegata> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, 
+			org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
         List<PortaDelegata> list = new ArrayList<PortaDelegata>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
-		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
-		// 2. Usare metodo getPortaDelegataFetch() sul risultato della select per ottenere un oggetto PortaDelegata
-		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
-
-        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+        boolean soloDatiIdentificativiServizio = ExpressionProperties.isEnabledSoloDatiIdentificativiServizio(expression); 
         
-        for(Long id: ids) {
-        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+        if(soloDatiIdentificativiServizio){
+        	
+        	List<IField> fields = new ArrayList<IField>();
+    		fields.add(PortaDelegata.model().NOME);
+    		fields.add(PortaDelegata.model().STATO);
+    		fields.add(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE);
+    		fields.add(PortaDelegata.model().NOME_SOGGETTO_EROGATORE);
+    		fields.add(PortaDelegata.model().TIPO_SERVIZIO);
+    		fields.add(PortaDelegata.model().NOME_SERVIZIO);
+    		fields.add(PortaDelegata.model().VERSIONE_SERVIZIO);
+    		fields.add(PortaDelegata.model().MODE_AZIONE);
+    		fields.add(PortaDelegata.model().NOME_AZIONE);
+    		fields.add(PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE);
+    		
+    		String aliasSoggettoTipo = "proprietarioSoggettoTipo";
+    		fields.add(new AliasField(PortaDelegata.model().ID_SOGGETTO.TIPO, aliasSoggettoTipo));
+    		String aliasSoggettoNome = "proprietarioSoggettoNome";
+    		fields.add(new AliasField(PortaDelegata.model().ID_SOGGETTO.NOME, aliasSoggettoNome));
+        	
+    		List<Map<String, Object>> returnMap = null;
+    		try{
+    			// non usare true altrimenti non funzionano alcuni meccanismi di ricerca, ad es. la valorizzazione dei select field nel servizio della govwayMonitor.
+    			// Tanto le join non comportano righe multiple uguali
+    			boolean distinct = false; 
+    			returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
+    			
+	    		for(Map<String, Object> map: returnMap) {
+	    			
+	    			PortaDelegata pd = (PortaDelegata) this.getPortaDelegataFetch().fetch(jdbcProperties.getDatabase(), PortaDelegata.model(), map);
+	    			
+	    			Object proprietarioSoggettoTipo = this.getObjectFromMap(map, aliasSoggettoTipo);
+	    			Object proprietarioSoggettoNome = this.getObjectFromMap(map, aliasSoggettoNome);
+	    			if(proprietarioSoggettoTipo!=null && proprietarioSoggettoNome!=null) {
+    					IdSoggetto idSoggetto = new IdSoggetto();
+    					if(proprietarioSoggettoTipo!=null && proprietarioSoggettoTipo instanceof String) {
+    						idSoggetto.setTipo((String) proprietarioSoggettoTipo);
+	    				}
+    					if(proprietarioSoggettoNome!=null && proprietarioSoggettoNome instanceof String) {
+    						idSoggetto.setNome((String) proprietarioSoggettoNome);
+	    				}
+    					pd.setIdSoggetto(idSoggetto);
+    				} 			
+	    			
+	    			list.add(pd);
+	    		}
+    		}catch(NotFoundException notFound){}
+        }
+        else {
+	        // TODO: implementazione non efficente. 
+			// Per ottenere una implementazione efficente:
+			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
+			// 2. Usare metodo getPortaDelegataFetch() sul risultato della select per ottenere un oggetto PortaDelegata
+			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
+	
+	        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+	        
+	        for(Long id: ids) {
+	        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+	        }
         }
 
         return list;      
 		
+	}
+	
+	private Object getObjectFromMap(Map<String,Object> map,String name){
+		if(map==null){
+			return null;
+		}
+		else if(map.containsKey(name)){
+			Object o = map.get(name);
+			if(o instanceof org.apache.commons.lang.ObjectUtils.Null){
+				return null;
+			}
+			else{
+				return o;
+			}
+		}
+		else{
+			return null;
+		}
 	}
 	
 	@Override

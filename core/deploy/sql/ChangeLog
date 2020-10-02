@@ -1,3 +1,8 @@
+2020-10-01  Andrea Poli <apoli@link.it>
+
+	Gestite colonne 'id' che referenziano soggetti o servizi rimaste non valorizzate sulle porte delegate e applicative.
+	Adesso il software, durante le nuove creazioni o aggiornamenti valorizza tali colonne.
+
 2020-09-14  Andrea Poli <apoli@link.it>
 
 	Aggiunto tipo di gestione durante la trasformazione degli header http o dei parametri della url

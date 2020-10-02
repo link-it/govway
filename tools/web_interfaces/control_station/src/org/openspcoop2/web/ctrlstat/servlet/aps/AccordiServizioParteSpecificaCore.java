@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -1430,4 +1431,96 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		return filterFruitoriRispettoAutenticazione(asps);
 	}
 	
+	
+	public List<IDServizio> getErogazioni(List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto) throws DriverControlStationException {
+		String nomeMetodo = "getErogazioni";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getErogazioni(protocolli, gruppo, tipoSoggetto, nomeSoggetto);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<IDServizio> getErogazioni(List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto, 
+			String tipoServizio ,String nomeServizio, Integer versioneServizio, 
+			String nomeAzione) throws DriverControlStationException {
+		String nomeMetodo = "getErogazioni";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getErogazioni(protocolli, gruppo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, nomeAzione);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	
+	public List<IDFruizione> getFruizioni(List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto) throws DriverControlStationException {
+		String nomeMetodo = "getFruizioni";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getFruizioni(protocolli, gruppo, tipoSoggetto, nomeSoggetto);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<IDFruizione> getFruizioni(List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto, 
+			String tipoErogatore, String nomeErogatore,
+			String tipoServizio ,String nomeServizio, Integer versioneServizio, 
+			String nomeAzione) throws DriverControlStationException {
+		String nomeMetodo = "getFruizioni";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getFruizioni(protocolli, gruppo, tipoSoggetto, nomeSoggetto, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, nomeAzione);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 }

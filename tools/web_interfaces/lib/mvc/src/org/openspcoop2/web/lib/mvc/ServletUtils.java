@@ -32,6 +32,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -168,7 +169,13 @@ public class ServletUtils {
 		return !Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END.equals(editMode);
 	}
 
-
+	public static boolean isSearchDone(IConsoleHelper consoleHelper){
+		try {
+			String v = consoleHelper.getParameter(Costanti.PARAMETER_NAME_SEARCH_LIST_DONE);
+			return "true".equals(v); // listElement.jsp:   addHidden(form, '_searchDone' , true);
+		}catch(Exception e) {}
+		return false;
+	}
 
 
 	/* ------ PAGE DATA (TITLE) ---- */
@@ -372,6 +379,29 @@ public class ServletUtils {
 		return search;
 	}
 
+	private static String getKeyRisultatiRicerca(int idLista) {
+		return Costanti.SESSION_ATTRIBUTE_RISULTATI_LISTA+"_"+idLista;
+	}
+	public static void setRisultatiRicercaIntoSession(HttpSession session, int idLista, List<?> risultatiRicerca){
+		session.setAttribute(getKeyRisultatiRicerca(idLista), risultatiRicerca);
+	}
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> getRisultatiRicercaFromSession(HttpSession session, int idLista, Class<T> classType){
+		Object o = session.getAttribute(getKeyRisultatiRicerca(idLista));
+		if(o!=null) {
+			return (List<T>) o;
+		}
+		return null;
+	}
+	public static List<?> removeRisultatiRicercaFromSession(HttpSession session, int idLista){
+		Object o = session.getAttribute(getKeyRisultatiRicerca(idLista));
+		if(o!=null) {
+			session.removeAttribute(getKeyRisultatiRicerca(idLista));
+			return (List<?>) o;
+		}
+		return null;
+	}
+	
 	public static String getUserLoginFromSession(HttpSession session){
 		String userLogin = (String) session.getAttribute(Costanti.SESSION_ATTRIBUTE_LOGIN);
 		return userLogin;

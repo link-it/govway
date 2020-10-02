@@ -33,6 +33,10 @@ package org.openspcoop2.core.commons;
  */
 public class SearchUtils
 {
+	public static void clearFilter(ISearch ricerca, int idLista, String filterName) {
+		ricerca.clearFilter(idLista, filterName);
+	}
+	
 	public static String getFilter(ISearch ricerca, int idLista, String filterName) {
 		return SearchUtils.getFilter(ricerca, idLista, filterName, "");
 	}

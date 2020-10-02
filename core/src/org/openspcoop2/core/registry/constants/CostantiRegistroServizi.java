@@ -115,4 +115,7 @@ public class CostantiRegistroServizi {
 	public final static FormatoSpecifica DEFAULT_VALUE_INTERFACE_TYPE_SOAP = FormatoSpecifica.WSDL_11;
 	public final static FormatoSpecifica DEFAULT_VALUE_INTERFACE_TYPE_REST = FormatoSpecifica.OPEN_API_3;
 
+	public final static String SOGGETTO_TIPOLOGIA_ENTRAMBI = "Fruitore/Erogatore";
+	public final static String SOGGETTO_TIPOLOGIA_FRUITORE = "Fruitore";
+	public final static String SOGGETTO_TIPOLOGIA_EROGATORE = "Erogatore";
 }

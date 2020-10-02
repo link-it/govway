@@ -161,7 +161,13 @@ public final class AuthorisationFilter implements Filter {
 							
 							// Check Reset delle ricerche
 							String resetSearch = request.getParameter(CostantiControlStation.PARAMETRO_RESET_SEARCH);
-							if(ServletUtils.isCheckBoxEnabled(resetSearch)) {
+							String postBackElement = request.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
+							if(ServletUtils.isCheckBoxEnabled(resetSearch) && (postBackElement==null || "".equals(postBackElement))) {
+								
+								for (int i = 0; i < Liste.getTotaleListe(); i++) {
+									ServletUtils.removeRisultatiRicercaFromSession(session, i);
+								}
+								
 								boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(session);
 								Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 								if(ricerca!=null) {

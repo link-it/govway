@@ -150,6 +150,14 @@ public class Search implements Serializable, ISearch {
 	}
 	
 	@Override
+	public void clearFilter(int indexLista, String filterName) {
+		HashMap<String,String> map = this.filter.get(indexLista);
+		if(map!=null) {
+			map.remove(filterName);
+		}
+	}
+	
+	@Override
 	public boolean existsFilter(int indexLista, String filterName) {
 		HashMap<String,String> map = this.filter.get(indexLista);
 		if(map==null || map.size()<=0) {

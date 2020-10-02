@@ -32,10 +32,13 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Fruitore;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.IdPortType;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Operation;
@@ -45,6 +48,8 @@ import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneAzioneServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneGruppoServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IFruitoreServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IOperationServiceSearch;
@@ -53,12 +58,16 @@ import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IResourceServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IServizioApplicativoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
@@ -814,4 +823,308 @@ public class RegistroCore {
 		
 		return list;
 	}
+	
+	
+	
+	// API
+	
+	public static AccordoServizioParteComune getAPIImplemented(JDBCServiceManager manager,
+			IDSoggetto idSoggetto, String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception {
+		
+		IAccordoServizioParteComuneServiceSearch aspcDAO = manager.getAccordoServizioParteComuneServiceSearch();
+		IAccordoServizioParteSpecificaServiceSearch aspsDAO = manager.getAccordoServizioParteSpecificaServiceSearch();
+		IExpression expr = aspsDAO.newExpression();
+
+		expr.equals(
+			AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO,
+				idSoggetto.getTipo());
+		expr.and()
+			.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME,
+				idSoggetto.getNome());
+
+		expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio);
+		expr.and();
+		expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio);
+		expr.and();
+		expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio);
+					
+		IPaginatedExpression pagExpr = aspsDAO
+				.toPaginatedExpression(expr);
+
+		CustomField cf = new CustomField("idAccordo", Long.class, "id_accordo", "servizi");
+
+		List<Object> list = aspsDAO.select(pagExpr,true,cf);
+
+		if(list==null || list.size()<0) {
+			throw new NotFoundException("NonPresente");
+		}
+		if(list.size()>1) {
+			throw new MultipleResultException("Trovati '"+list.size()+"' api ?");
+		}
+		
+		Long idAccordoLong = (Long) list.get(0);
+		return ((JDBCAccordoServizioParteComuneServiceSearch)aspcDAO).get(idAccordoLong);
+
+	}
+	
+	
+	
+	
+	// Erogazioni
+	
+	public static List<IDServizio> getErogazioni(JDBCServiceManager manager, List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto) throws Exception {
+		return  getErogazioni(manager, protocolli, 
+				gruppo,
+				tipoSoggetto, nomeSoggetto,
+				null, null, null,
+				null);
+	}
+	public static List<IDServizio> getErogazioni(JDBCServiceManager manager, List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto,
+			String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String nomeAzione) throws Exception {
+		List<IDServizio> lista = new ArrayList<IDServizio>();
+
+		IPortaApplicativaServiceSearch portaApplicativaDAO = manager.getPortaApplicativaServiceSearch();
+		IAccordoServizioParteComuneGruppoServiceSearch aspcGruppiDAO = null;
+		if(gruppo!=null && !"".equals(gruppo)) {
+			aspcGruppiDAO = manager.getAccordoServizioParteComuneGruppoServiceSearch();
+		}
+		
+		IExpression pAExpr = getExpressionPA(portaApplicativaDAO, protocolli, 
+				tipoSoggetto, nomeSoggetto, 
+				tipoServizio, nomeServizio, versioneServizio, 
+				nomeAzione);
+			 
+		List<PortaApplicativa> listaPorte = new ArrayList<PortaApplicativa>();
+		IPaginatedExpression pagPaExpr = portaApplicativaDAO.toPaginatedExpression(pAExpr );
+		
+		pagPaExpr.addOrder(PortaApplicativa.model().ID_SOGGETTO.TIPO, SortOrder.ASC);
+		pagPaExpr.addOrder(PortaApplicativa.model().ID_SOGGETTO.NOME, SortOrder.ASC);
+		pagPaExpr.addOrder(PortaApplicativa.model().TIPO_SERVIZIO, SortOrder.ASC);
+		pagPaExpr.addOrder(PortaApplicativa.model().NOME_SERVIZIO, SortOrder.ASC);
+		pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
+		
+		ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
+		listaPorte = portaApplicativaDAO.findAll(pagPaExpr);
+		
+		List<String> lstTmp = new ArrayList<String>();
+		for (PortaApplicativa portaApplicativa : listaPorte) {
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
+						portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
+			String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
+			
+			if(gruppo!=null && !"".equals(gruppo)) {
+				
+				AccordoServizioParteComune aspc =  getAPIImplemented(manager, idServizio.getSoggettoErogatore(), idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
+
+				IPaginatedExpression gruppiExpr = aspcGruppiDAO.newPaginatedExpression();
+				gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aspc.getNome());
+				gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, aspc.getVersione());
+				gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
+				gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
+				List<IdAccordoServizioParteComuneGruppo> lGruppi = aspcGruppiDAO.findAllIds(gruppiExpr);
+				boolean found = false;
+				if(lGruppi!=null && !lGruppi.isEmpty()) {
+					for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+						if(gruppoCheck.getIdGruppo().getNome().equals(gruppo)) {
+							found = true;
+							break;
+						}
+					}
+				}
+				if(!found) {
+					continue;
+				}
+			}
+			
+			// elimino duplicati
+			if(!lstTmp.contains(uriFromIDServizio)) {
+				lstTmp.add(uriFromIDServizio);
+				lista.add(idServizio);
+			}
+		}
+
+		return lista;
+	}
+	
+	private static IExpression getExpressionPA(IPortaApplicativaServiceSearch portaApplicativaDAO, List<String> protocolli, 
+			String tipoSoggetto, String nomeSoggetto, 
+			String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String nomeAzione) throws Exception {
+		
+		IExpression paExpr = portaApplicativaDAO.newExpression();
+		
+
+		if(StringUtils.isNotEmpty(tipoSoggetto ))
+			paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoSoggetto);
+		if(StringUtils.isNotEmpty(nomeSoggetto ))
+			paExpr.and().equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeSoggetto);
+		
+		// Se ho selezionato un servizio, oppure se non ho selezionato niente 
+		if(StringUtils.isNotEmpty(nomeServizio ))
+			paExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nomeServizio).and();
+		if(StringUtils.isNotEmpty(tipoServizio ))
+			paExpr.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipoServizio).and();
+		if(versioneServizio != null)
+			paExpr.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versioneServizio).and();
+
+		if(StringUtils.isNotEmpty(nomeAzione )){
+			IExpression azioneExpr =  portaApplicativaDAO.newExpression();
+			azioneExpr.equals(PortaApplicativa.model().NOME_AZIONE, nomeAzione).or().isNull(PortaApplicativa.model().NOME_AZIONE); 
+			paExpr.and(azioneExpr);
+		}
+
+		if(protocolli!=null && protocolli.size()>0){
+			List<String> types = new ArrayList<>();
+			for (String protocollo : protocolli) {
+				types.addAll(ProtocolFactoryReflectionUtils.getOrganizationTypes(protocollo));
+			}
+			paExpr.in(PortaApplicativa.model().ID_SOGGETTO.TIPO, types);
+		}
+	
+		paExpr.notEquals(PortaApplicativa.model().MODE_AZIONE, org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione.DELEGATED_BY);
+		return paExpr;
+	}
+	
+	
+	
+	
+	// Fruizioni
+	
+	public static List<IDFruizione> getFruizioni(JDBCServiceManager manager, List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto) throws Exception {
+		return getFruizioni(manager, protocolli, 
+				gruppo,
+				tipoSoggetto, nomeSoggetto, 
+				null, null,
+				null ,null, null, 
+				null);
+	}
+	public static List<IDFruizione> getFruizioni(JDBCServiceManager manager, List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto, 
+			String tipoErogatore, String nomeErogatore,
+			String tipoServizio ,String nomeServizio, Integer versioneServizio, 
+			String nomeAzione) throws Exception {
+		List<IDFruizione> lista = new ArrayList<IDFruizione>();
+
+		IPortaDelegataServiceSearch portaDelegataDAO = manager.getPortaDelegataServiceSearch();
+		IAccordoServizioParteComuneGruppoServiceSearch aspcGruppiDAO = null;
+		if(gruppo!=null && !"".equals(gruppo)) {
+			aspcGruppiDAO = manager.getAccordoServizioParteComuneGruppoServiceSearch();
+		}
+		
+		IExpression pdExpr = getExpressionPD(portaDelegataDAO, protocolli, 
+				tipoSoggetto, nomeSoggetto, 
+				tipoErogatore, nomeErogatore,	
+				tipoServizio, nomeServizio, versioneServizio, nomeAzione);
+		
+		List<PortaDelegata> listaPorte = new ArrayList<PortaDelegata>();
+		IPaginatedExpression pagPdExpr = portaDelegataDAO.toPaginatedExpression(pdExpr );
+		
+		pagPdExpr.addOrder(PortaDelegata.model().ID_SOGGETTO.TIPO, SortOrder.ASC);
+		pagPdExpr.addOrder(PortaDelegata.model().ID_SOGGETTO.NOME, SortOrder.ASC);
+		pagPdExpr.addOrder(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, SortOrder.ASC);
+		pagPdExpr.addOrder(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, SortOrder.ASC);
+		pagPdExpr.addOrder(PortaDelegata.model().TIPO_SERVIZIO, SortOrder.ASC);
+		pagPdExpr.addOrder(PortaDelegata.model().NOME_SERVIZIO, SortOrder.ASC);
+		pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
+		
+		ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
+		
+		listaPorte = portaDelegataDAO.findAll(pagPdExpr);
+		
+		List<String> lstTmp = new ArrayList<String>();
+		for (PortaDelegata portaDelegata : listaPorte) {
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(), portaDelegata.getVersioneServizio());
+			IDSoggetto idFruitore = new IDSoggetto(portaDelegata.getIdSoggetto().getTipo(), portaDelegata.getIdSoggetto().getNome());
+			IDFruizione idFruizione = new IDFruizione();
+			idFruizione.setIdServizio(idServizio);
+			idFruizione.setIdFruitore(idFruitore);
+			String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
+			String uriFruizione = idFruitore.toString()+"_"+uriFromIDServizio;
+			
+			if(gruppo!=null && !"".equals(gruppo)) {
+				
+				AccordoServizioParteComune aspc =  getAPIImplemented(manager, idServizio.getSoggettoErogatore(), idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
+
+				IPaginatedExpression gruppiExpr = aspcGruppiDAO.newPaginatedExpression();
+				gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aspc.getNome());
+				gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, aspc.getVersione());
+				gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
+				gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
+				List<IdAccordoServizioParteComuneGruppo> lGruppi = aspcGruppiDAO.findAllIds(gruppiExpr);
+				boolean found = false;
+				if(lGruppi!=null && !lGruppi.isEmpty()) {
+					for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+						if(gruppoCheck.getIdGruppo().getNome().equals(gruppo)) {
+							found = true;
+							break;
+						}
+					}
+				}
+				if(!found) {
+					continue;
+				}
+			}
+			
+			// elimino duplicati
+			if(!lstTmp.contains(uriFruizione)) {
+				lstTmp.add(uriFruizione);
+				lista.add(idFruizione);
+			}
+		}
+
+		return lista;
+	}
+	
+	private static IExpression getExpressionPD(IPortaDelegataServiceSearch portaDelegataDAO, List<String> protocolli, 
+			String tipoSoggetto, String nomeSoggetto, 
+			String tipoErogatore, String nomeErogatore, 
+			String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String nomeAzione) throws Exception {
+		
+		IExpression pdExpr = portaDelegataDAO.newExpression();
+
+		// Se ho selezionato un servizio, oppure se non ho selezionato niente 
+		if(StringUtils.isNotEmpty(tipoSoggetto ))
+			pdExpr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO, tipoSoggetto);
+		if(StringUtils.isNotEmpty(nomeSoggetto ))
+			pdExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
+		
+		if(StringUtils.isNotEmpty(nomeErogatore ))
+			pdExpr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, nomeErogatore).and();
+		if(StringUtils.isNotEmpty(tipoErogatore ))
+			pdExpr.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, tipoErogatore).and();
+
+		if(StringUtils.isNotEmpty(tipoServizio ))
+			pdExpr.equals(PortaDelegata.model().TIPO_SERVIZIO,		tipoServizio);
+		if(StringUtils.isNotEmpty(nomeServizio ))
+			pdExpr.and().equals(PortaDelegata.model().NOME_SERVIZIO, nomeServizio);
+		if(versioneServizio != null)
+			pdExpr.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versioneServizio).and();
+		
+		if(StringUtils.isNotEmpty(nomeAzione )){
+			IExpression azioneExpr =  portaDelegataDAO.newExpression();
+			azioneExpr.equals(PortaDelegata.model().NOME_AZIONE, nomeAzione).or().isNull(PortaDelegata.model().NOME_AZIONE); 
+			pdExpr.and(azioneExpr);
+		}
+		
+		if(protocolli!=null && protocolli.size()>0){
+			List<String> types = new ArrayList<>();
+			for (String protocollo : protocolli) {
+				types.addAll(ProtocolFactoryReflectionUtils.getOrganizationTypes(protocollo));
+			}
+			pdExpr.in(PortaDelegata.model().ID_SOGGETTO.TIPO, types);
+		}
+		
+		pdExpr.notEquals(PortaDelegata.model().MODE_AZIONE, org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione.DELEGATED_BY);
+		return pdExpr;
+	}
+	
 }

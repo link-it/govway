@@ -39,7 +39,9 @@ public interface IConsoleHelper {
 	public boolean isEditModeInProgress() throws Exception;
 	public boolean isEditModeFinished() throws Exception;
 	
+	public boolean isPostBack() throws Exception;
 	public String getPostBackElementName() throws Exception;
+	public boolean isPostBackFilterElement() throws Exception;
 	
 	public Enumeration<?> getParameterNames() throws Exception;
 	public String [] getParameterValues(String parameterName) throws Exception;

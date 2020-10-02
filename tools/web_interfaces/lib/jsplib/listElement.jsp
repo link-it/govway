@@ -262,6 +262,7 @@ function Search(form) {
   addHidden(form, 'index' , 0);
   addHidden(form, 'iddati' , iddati);
   addHidden(form, 'pageSize' , pageSize);
+  addHidden(form, '_searchDone' , true);
 
   // formatParams
   
@@ -309,6 +310,7 @@ function Reset(form) {
 	  addHidden(form, 'index' , 0);
 	  addHidden(form, 'iddati' , iddati);
 	  addHidden(form, 'pageSize' , pageSize);
+	  addHidden(form, '_searchDone' , true);
 
 	  // formatParams
 	  
@@ -437,7 +439,7 @@ if (
 ) {
 
 	String searchDescription = pd.getSearchDescription();
-	if (!searchDescription.equals("") || (pd.getFilterNames() != null && pd.hasAlmostOneFilterDefined())){
+	if (!searchDescription.equals("") || (pd.getFilterNames() != null && pd.hasAlmostOneFilterDefined()) || (pd.isPostBackResult())){
 	%>	panelListaRicercaOpen = true; <% 
 	} 
 }%>

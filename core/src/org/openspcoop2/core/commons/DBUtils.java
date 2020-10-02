@@ -235,6 +235,12 @@ public class DBUtils {
 	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
 		return DBUtils.getIdServizio(nomeServizio,tipoServizio,versioneServizio,nomeSoggettoErogatore,tipoSoggettoErogatore,con,false,tipoDB,tabellaSoggetti);
 	}
+	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, long idSoggetto,Connection con, String tipoDB) throws CoreException{
+		return DBUtils.getIdServizio(nomeServizio,tipoServizio,versioneServizio,idSoggetto,con,false,tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, long idSoggetto,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
+		return DBUtils.getIdServizio(nomeServizio,tipoServizio,versioneServizio,idSoggetto,con,false,tipoDB,tabellaSoggetti);
+	}
 
 	/**
 	 * Recupero l'id del servizio
@@ -247,14 +253,24 @@ public class DBUtils {
 	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,
 			Connection con,boolean testServizioNonCorrelato,String tipoDB,String tabellaSoggetti) throws CoreException
 	{
+		long idSoggetto = DBUtils.getIdSoggetto(nomeSoggettoErogatore, tipoSoggettoErogatore, con, tipoDB,tabellaSoggetti);
+		return getIdServizio(nomeServizio, tipoServizio, versioneServizio, idSoggetto,
+				con, testServizioNonCorrelato, tipoDB, tabellaSoggetti);
+	}
+	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, long idSoggetto,
+			Connection con,boolean testServizioNonCorrelato,String tipoDB) throws CoreException
+	{
+		return  getIdServizio(nomeServizio, tipoServizio, versioneServizio, idSoggetto,
+				con,testServizioNonCorrelato,tipoDB,CostantiDB.SOGGETTI);
+	}
+	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, long idSoggetto,
+			Connection con,boolean testServizioNonCorrelato,String tipoDB,String tabellaSoggetti) throws CoreException
+	{
 		PreparedStatement stm = null;
 		ResultSet rs = null;
-		long idSoggetto;
 		long idServizio=0;
 		try
 		{
-			idSoggetto = DBUtils.getIdSoggetto(nomeSoggettoErogatore, tipoSoggettoErogatore, con, tipoDB,tabellaSoggetti);
-
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 			sqlQueryObject.addSelectField("*");

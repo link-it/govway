@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -135,11 +136,17 @@ public class SoggettiCostanti {
 
 	public final static String DEFAULT_VALUE_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI = "";
 
-	public final static String SOGGETTO_RUOLO_ENTRAMBI = "Fruitore/Erogatore";
-	public final static String SOGGETTO_RUOLO_FRUITORE = "Fruitore";
-	public final static String SOGGETTO_RUOLO_EROGATORE = "Erogatore";
+	public final static String SOGGETTO_RUOLO_ENTRAMBI = CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_ENTRAMBI;
+	public final static String SOGGETTO_RUOLO_FRUITORE = CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_FRUITORE;
+	public final static String SOGGETTO_RUOLO_EROGATORE = CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_EROGATORE;
 	public final static String[] SOGGETTI_RUOLI = { SOGGETTO_RUOLO_EROGATORE, 
 		SOGGETTO_RUOLO_FRUITORE, SOGGETTO_RUOLO_ENTRAMBI };
+	
+	public final static String LABEL_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	public final static String DEFAULT_VALUE_PARAMETRO_FILTRO_SOGGETTO_TIPO_QUALSIASI = "";
+	public final static String[] LABELS_SOGGETTO_RUOLO_TIPO = { CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_FRUITORE, CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_EROGATORE };
+	public final static String[] VALUES_SOGGETTO_RUOLO_TIPO = { CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_FRUITORE, CostantiRegistroServizi.SOGGETTO_TIPOLOGIA_EROGATORE };
+	
 	
 	public final static String SOGGETTO_DOMINIO_OPERATIVO_VALUE = PddTipologia.OPERATIVO.toString();
 	public final static String SOGGETTO_DOMINIO_ESTERNO_VALUE = PddTipologia.ESTERNO.toString();

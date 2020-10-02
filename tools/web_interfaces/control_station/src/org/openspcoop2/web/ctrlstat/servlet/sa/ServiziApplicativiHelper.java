@@ -1861,7 +1861,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	}
 
 
-
 	public void prepareServizioApplicativoList(ISearch ricerca, List<ServizioApplicativo> lista, boolean useIdSoggetto)
 			throws Exception {
 		try {
@@ -1919,8 +1918,49 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			String filterProtocollo = null;
+			String filterSoggetto = null;
+			boolean profiloSelezionato = false;
+			boolean modipa = false;
 			if(!useIdSogg) {
-				addFilterProtocol(ricerca, idLista);
+				filterProtocollo = addFilterProtocol(ricerca, idLista, true);
+
+				String protocollo = filterProtocollo;
+				if(protocollo==null) {
+					// significa che e' stato selezionato un protocollo nel menu in alto a destra
+					List<String> protocolli = this.core.getProtocolli(this.session);
+					if(protocolli!=null && protocolli.size()==1) {
+						protocollo = protocolli.get(0);
+					}
+				}
+				modipa = isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere tutti i soggetti, anche quelli esterni.
+				
+				if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
+						||
+					(filterProtocollo==null && protocollo!=null)
+						) {
+					profiloSelezionato = true;
+				}
+				
+				if( profiloSelezionato && 
+						(!this.isSoggettoMultitenantSelezionato() || modipa)) {
+					
+					boolean soloSoggettiOperativi = true;
+					if(modipa) {
+						soloSoggettiOperativi = false;
+					}
+					filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
+					this.addFilterSoggetto(filterSoggetto,protocollo,soloSoggettiOperativi,true);
+				}
+			}
+			if(this.isSoggettoMultitenantSelezionato()){
+				filterSoggetto = getSoggettoMultitenantSelezionato();
+			}
+			
+			if(this.core.isGestionePddAbilitata(this)==false && multitenant && modipa) {
+				String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
+				addFilterDominio(filterDominio, false);
 			}
 			
 			if(this.isModalitaCompleta()) {
@@ -1938,6 +1978,22 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
 			addFilterRuolo(filterRuolo, false);
+			
+			String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+			addFilterGruppo(filterGruppo, true);
+			
+			String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
+			this.addFilterApiContesto(filterApiContesto, true);
+			
+			if(profiloSelezionato &&
+					filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
+				String filterApiImplementazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
+				this.addFilterApiImplementazione(filterProtocollo, filterSoggetto, filterGruppo, filterApiContesto, filterApiImplementazione, false);
+			}
+			else {
+				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
+			}
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);

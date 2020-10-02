@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -102,11 +103,34 @@ public final class ServiziApplicativiList extends Action {
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
 			List<ServizioApplicativo> lista = null;
+			int idLista = -1;
+			if(!useIdSogg){
+				idLista = Liste.SERVIZIO_APPLICATIVO;
+			}
+			else {
+				idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
+			}
+			
+			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+			if(!ServletUtils.isSearchDone(saHelper)) {
+				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  ServizioApplicativo.class);
+			}
+			
+			ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+			
+			String postBackElement = saHelper.getPostBackElementName();
+			if((Costanti.PARAMETRO_FILTER_VALUE+"0").equals(postBackElement)) {
+				// verifico se si tratta del profilo di interoperabilita.
+				if(Filtri.FILTRO_PROTOCOLLO.equals(saHelper.getParameter((Costanti.PARAMETRO_FILTER_NAME+"0")))) {
+					String value = saHelper.getParameter((Costanti.PARAMETRO_FILTER_VALUE+"0"));
+					if( (value==null || "".equals(value) ||
+							CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(value))){
+						ricerca.clearFilter(idLista, Filtri.FILTRO_SOGGETTO);
+					}
+				}
+			}
 			
 			if(!useIdSogg){
-				int idLista = Liste.SERVIZIO_APPLICATIVO;
-				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
-				
 				boolean filtroSoggetto = false;
 				if(saHelper.isSoggettoMultitenantSelezionato()) {
 					List<String> protocolli = saCore.getProtocolli(session,false);
@@ -119,17 +143,23 @@ public final class ServiziApplicativiList extends Action {
 					ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, saHelper.getSoggettoMultitenantSelezionato());
 				}
 				
-				if(saCore.isVisioneOggettiGlobale(userLogin)){
-					lista = saCore.soggettiServizioApplicativoList(null, ricerca);
-				}else{
-					lista = saCore.soggettiServizioApplicativoList(userLogin, ricerca);
+				if(lista==null) {
+					if(saCore.isVisioneOggettiGlobale(userLogin)){
+						lista = saCore.soggettiServizioApplicativoList(null, ricerca);
+					}else{
+						lista = saCore.soggettiServizioApplicativoList(userLogin, ricerca);
+					}
 				}
 			}else {
-				int idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
-				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
-				lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
+				if(lista==null) {
+					lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
+				}
 			}
-
+			
+			if(!saHelper.isPostBackFilterElement()) {
+				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+			}
+			
 			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
 
 			String msg = saHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);

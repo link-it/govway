@@ -110,12 +110,14 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -327,6 +329,18 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 	}
 	
+	@Override
+	public boolean isPostBack() throws Exception{
+		String postbackElementName = this.getPostBackElementName();
+		return postbackElementName!=null && !"".equals(postbackElementName);
+	}
+	
+	@Override
+	public boolean isPostBackFilterElement() throws Exception{
+		String postbackElementName = this.getPostBackElementName();
+		return postbackElementName!=null && postbackElementName.startsWith(Costanti.PARAMETRO_FILTER_VALUE);
+	}
+	
 	protected ControlStationCore core = null;
 	public ControlStationCore getCore() {
 		return this.core;
@@ -458,6 +472,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.eErrorInit = e;
 		}
 		this.init(core, request, pd, session);
+		try {
+			if(this.isPostBack()) {
+				pd.setPostBackResult(true);
+			}
+		} catch (Exception e) {
+			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
+		}
 	}
 	public ConsoleHelper(ControlStationCore core, HttpServletRequest request, PageData pd, HttpSession session) {
 		this.init(core, request, pd, session);
@@ -9075,8 +9096,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			String [] values = new String[length];
 			String [] labels = new String[length];
-			labels[0] = CostantiControlStation.LABEL_PARAMETRO_RUOLO_QUALSIASI;
-			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_RUOLO_QUALSIASI;
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_GRUPPO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_GRUPPO_QUALSIASI;
 			if(listGruppi!=null && listGruppi.size()>0) {
 				for (int i =0; i < listGruppi.size() ; i ++) {
 					labels[i+1] = listGruppi.get(i).getNome();
@@ -9085,6 +9106,123 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			this.pd.addFilter(Filtri.FILTRO_GRUPPO, GruppiCostanti.LABEL_GRUPPO, gruppo, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterApiContesto(String apiContesto, boolean postBack) throws Exception{
+		try {
+			String [] metodi = new String[2];
+			metodi[0] = TipoPdD.APPLICATIVA.getTipo();
+			metodi[1] = TipoPdD.DELEGATA.getTipo();
+			String [] metodiLabel = new String[2];
+			metodiLabel[0] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
+			metodiLabel[1] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
+			String [] values = new String[metodi.length + 1];
+			String [] labels = new String[metodi.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_API_CONTESTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI;
+			for (int i =0; i < metodi.length ; i ++) {
+				labels[i+1] = metodiLabel[i];
+				values[i+1] = metodi[i];
+			}
+			
+			String selectedValue = apiContesto != null ? apiContesto : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_API_CONTESTO;
+			
+			this.pd.addFilter(Filtri.FILTRO_API_CONTESTO, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterApiImplementazione(String filterProtocollo, String filterSoggetto, String filterGruppo, String filterApiContesto, String apiImplementazione, boolean postBack) throws Exception{
+		try {
+			boolean isFruizione = TipoPdD.DELEGATA.getTipo().equals(filterApiContesto);
+			boolean isErogazione = TipoPdD.APPLICATIVA.getTipo().equals(filterApiContesto);
+			
+			if(!isErogazione && !isFruizione) {
+				return;
+			}
+			
+			boolean isFilterProtocollo = filterProtocollo!=null && !"".equals(filterProtocollo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo);
+			boolean isFilterSoggetto = filterSoggetto!=null && !"".equals(filterSoggetto) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(filterSoggetto);
+			boolean isFilterGruppo = filterGruppo!=null && !"".equals(filterGruppo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_GRUPPO_QUALSIASI.equals(filterGruppo);
+			
+			List<String> protocolli = this.core.getProtocolli(this.session);
+			if(isFilterProtocollo) {
+				protocolli.clear();
+				protocolli.add(filterProtocollo);
+			}
+			
+			String tipoSoggetto = null;
+			String nomeSoggetto = null;
+			String protocolloSelezionato = null; 
+			if(isFilterSoggetto) {
+				tipoSoggetto = filterSoggetto.split("/")[0];
+				nomeSoggetto = filterSoggetto.split("/")[1];
+				protocolloSelezionato = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
+			}
+			else {
+				protocolloSelezionato = protocolli.get(0);
+			}
+			
+			String gruppo = null;
+			if(isFilterGruppo) {
+				gruppo = filterGruppo;
+			}
+			
+			List<String> valuesL = new ArrayList<String>();
+			List<String> labelsL = new ArrayList<String>();
+			if(isFruizione) {
+				List<IDFruizione> listFruizioni = this.apsCore.getFruizioni(protocolli, gruppo, tipoSoggetto, nomeSoggetto);
+				if(listFruizioni!=null && !listFruizioni.isEmpty()) {
+					for (IDFruizione idFruizione : listFruizioni) {
+						valuesL.add(idFruizione.toFormatString());
+						if(isFilterSoggetto) {
+							labelsL.add(this.getLabelIdServizio(idFruizione.getIdServizio()));
+						}
+						else {
+							labelsL.add(this.getLabelServizioFruizione(protocolloSelezionato, idFruizione.getIdFruitore(), idFruizione.getIdServizio()));
+						}
+					}
+				}
+			}
+			else {
+				List<IDServizio> listErogazioni = this.apsCore.getErogazioni(protocolli, gruppo, tipoSoggetto, nomeSoggetto);
+				if(listErogazioni!=null && !listErogazioni.isEmpty()) {
+					for (IDServizio idServizio : listErogazioni) {
+						valuesL.add(idServizio.toFormatString());
+						if(isFilterSoggetto) {
+							labelsL.add(this.getLabelIdServizioSenzaErogatore(idServizio));
+						}
+						else {
+							labelsL.add(this.getLabelIdServizio(idServizio));
+						}
+					}
+				}
+			}
+			
+			String [] values = new String[valuesL.size() + 1];
+			String [] labels = new String[labelsL.size() + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_API_IMPLEMENTAZIONE_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_IMPLEMENTAZIONE_QUALSIASI;
+			for (int i =0; i < valuesL.size() ; i ++) {
+				labels[i+1] = labelsL.get(i);
+				values[i+1] = valuesL.get(i);
+			}
+			
+			String selectedValue = apiImplementazione != null ? apiImplementazione : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_IMPLEMENTAZIONE_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_API_IMPLEMENTAZIONE;
+			
+			this.pd.addFilter(Filtri.FILTRO_API_IMPLEMENTAZIONE, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -9228,20 +9366,28 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}		
 	}
-	public void addFilterProtocol(ISearch ricerca, int idLista) throws Exception{
+	public String addFilterProtocol(ISearch ricerca, int idLista) throws Exception{
+		return this.addFilterProtocol(ricerca, idLista, false);
+	}
+	public String addFilterProtocol(ISearch ricerca, int idLista, boolean postBack) throws Exception{
 		List<String> protocolli = this.core.getProtocolli(this.session);
-		_addFilterProtocol(ricerca, idLista, protocolli);
+		return _addFilterProtocol(ricerca, idLista, protocolli, postBack);
 	}
 	
-	public void addFilterProtocol(ISearch ricerca, int idLista,List<String> protocolli) throws Exception{
-		_addFilterProtocol(ricerca, idLista, protocolli);
+	public String addFilterProtocol(ISearch ricerca, int idLista,List<String> protocolli) throws Exception{
+		return addFilterProtocol(ricerca, idLista, protocolli, false);
+	}
+	public String addFilterProtocol(ISearch ricerca, int idLista,List<String> protocolli, boolean postBack) throws Exception{
+		return _addFilterProtocol(ricerca, idLista, protocolli, postBack);
 	}
 
-	private void _addFilterProtocol(ISearch ricerca, int idLista, List<String> protocolli) throws Exception {
+	private String _addFilterProtocol(ISearch ricerca, int idLista, List<String> protocolli, boolean postBack) throws Exception {
 		if(protocolli!=null && protocolli.size()>1) {
 			String filterProtocol = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
-			this.addFilterProtocollo(protocolli, filterProtocol, false);
+			this.addFilterProtocollo(protocolli, filterProtocol, postBack);
+			return filterProtocol;
 		}
+		return null;
 	}
 	private void addFilterProtocollo(List<String> protocolli, String protocolloSelected,boolean postBack) throws Exception{
 		try {
@@ -9250,8 +9396,8 @@ public class ConsoleHelper implements IConsoleHelper {
 
 				String [] values = new String[protocolli.size() + 1];
 				String [] labels = new String[protocolli.size() + 1];
-				labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
-				values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+				labels[0] = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_QUALSIASI;
+				values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI;
 				for (int i =0; i < protocolli.size() ; i ++) {
 					String protocollo = protocolli.get(i);
 					labels[i+1] = getLabelProtocollo(protocollo);
@@ -9264,6 +9410,46 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 			}
 				
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterSoggetto(String soggetto, String protocollo, boolean soloSoggettiOperativi, boolean postBack) throws Exception{
+		try {
+			String userLogin = ServletUtils.getUserLoginFromSession(this.session);
+			
+			Search searchSoggetti = new Search(true);
+			searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo);
+			if(soloSoggettiOperativi) {
+				searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
+			}
+			List<org.openspcoop2.core.registry.Soggetto> listSoggetti = null;
+			if(this.apsCore.isVisioneOggettiGlobale(userLogin)){
+				listSoggetti = this.soggettiCore.soggettiRegistroList(null, searchSoggetti);
+			}else{
+				listSoggetti = this.soggettiCore.soggettiRegistroList(userLogin, searchSoggetti);
+			}
+			
+			int length = 1;
+			if(listSoggetti!=null && listSoggetti.size()>0) {
+				length+=listSoggetti.size();
+			}
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			if(listSoggetti!=null && listSoggetti.size()>0) {
+				for (int i =0; i < listSoggetti.size() ; i ++) {
+					IDSoggetto idSoggetto = new IDSoggetto(listSoggetti.get(i).getTipo(), listSoggetti.get(i).getNome());
+					labels[i+1] = this.getLabelNomeSoggetto(idSoggetto);
+					values[i+1] = idSoggetto.toString();
+				}
+			}
+			
+			this.pd.addFilter(Filtri.FILTRO_SOGGETTO, SoggettiCostanti.LABEL_SOGGETTO, soggetto, values, labels, postBack, this.getSize());
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

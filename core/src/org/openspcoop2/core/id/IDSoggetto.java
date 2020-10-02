@@ -196,6 +196,28 @@ public class IDSoggetto implements java.io.Serializable {
 		
 		return clone;
 	}
+	
+	
+	public String toFormatString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.tipo);
+		sb.append("/");
+		sb.append(this.nome);
+		return sb.toString();
+	}
+	
+	public static IDSoggetto toIDSoggetto(String formatString) throws Exception {
+		String [] tmp = formatString.split("/");
+		if(tmp.length!=2) {
+			throw new Exception("Formato non supportato, attesi 2 valori, trovati "+tmp.length);
+		}
+		String tipo = tmp[0];
+		String nome = tmp[1];
+		IDSoggetto idSoggetto = new IDSoggetto();
+		idSoggetto.tipo=tipo;
+		idSoggetto.nome=nome;
+		return idSoggetto;
+	}
 }
 
 

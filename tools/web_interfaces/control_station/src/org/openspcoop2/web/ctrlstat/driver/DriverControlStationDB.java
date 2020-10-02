@@ -62,6 +62,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva
 import org.openspcoop2.core.controllo_traffico.dao.IDBAttivazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -4477,6 +4478,102 @@ public class DriverControlStationDB  {
 				return RegistroCore.getServiziApplicativiFruitore(serviceManager, protocolliSupportati, 
 						tipoFruitore, nomeFruitore);
 			}
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<IDServizio> getErogazioni(List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto) throws Exception {
+		return  getErogazioni(protocolli, 
+				gruppo,
+				tipoSoggetto, nomeSoggetto,
+				null, null, null,
+				null);
+	}
+	public List<IDServizio> getErogazioni(List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto,
+			String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String nomeAzione) throws DriverControlStationException{
+		String nomeMetodo = "getErogazioni"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			return RegistroCore.getErogazioni(serviceManager, protocolli, gruppo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, nomeAzione);
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<IDFruizione> getFruizioni(List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto) throws Exception {
+		return getFruizioni(protocolli, 
+				gruppo,
+				tipoSoggetto, nomeSoggetto, 
+				null, null,
+				null ,null, null, 
+				null);
+	}
+	public List<IDFruizione> getFruizioni(List<String> protocolli, 
+			String gruppo,
+			String tipoSoggetto, String nomeSoggetto, 
+			String tipoErogatore, String nomeErogatore,
+			String tipoServizio ,String nomeServizio, Integer versioneServizio, 
+			String nomeAzione) throws DriverControlStationException{
+		String nomeMetodo = "getFruizioni"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			return RegistroCore.getFruizioni(serviceManager, protocolli, gruppo, tipoSoggetto, nomeSoggetto, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, nomeAzione);
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
