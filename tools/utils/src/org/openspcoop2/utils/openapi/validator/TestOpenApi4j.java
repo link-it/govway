@@ -22,7 +22,9 @@
 package org.openspcoop2.utils.openapi.validator;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -124,7 +126,7 @@ public class TestOpenApi4j {
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #2 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.documento: Field 'uri' is required.";
+			String msgErroreAtteso = "body.allegati.0.documento: Field 'uri' is required.";		
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
@@ -152,7 +154,7 @@ public class TestOpenApi4j {
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #3 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.documento: Schema selection can't be made for discriminator 'tipoDocumento'.";
+			String msgErroreAtteso = "body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'.";
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
@@ -181,11 +183,11 @@ public class TestOpenApi4j {
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #4 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.documento: Property name in content 'tipoDocumento' is not set.";
+			String msgErroreAtteso = "body.allegati.1.documento: Property name in content 'tipoDocumento' is not set.";
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
-			msgErroreAtteso = "From: body.<allOf>.allegati.<items>.<allOf>.documento.<discriminator>";
+			msgErroreAtteso = "From: body.<allOf>.allegati.1.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.documento.<discriminator>";
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
@@ -264,6 +266,162 @@ public class TestOpenApi4j {
 		httpEntity7.setContent(json7);
 		apiValidator.validate(httpEntity7);	
 		System.out.println("Test #7 completato\n\n");
+		
+		
+		System.out.println("Test #8 (Richiesta POST con parametro /documenti/mixed/send e elemento valido/nonValido secondo il pattern)");
+		String testUrl8 = baseUri+"/documenti/mixed/send";
+		List<String> valori_test8 = new ArrayList<String>();
+		List<Boolean> esiti_test8 = new ArrayList<Boolean>();
+		valori_test8.add("234567");esiti_test8.add(true);
+		valori_test8.add("2345676");esiti_test8.add(false);
+		valori_test8.add("23456");esiti_test8.add(false);
+		valori_test8.add("");esiti_test8.add(false);
+		valori_test8.add("234A67");esiti_test8.add(false);
+		valori_test8.add("234567A");esiti_test8.add(false);
+		valori_test8.add("234-67");esiti_test8.add(false);
+		valori_test8.add("234.67");esiti_test8.add(false);
+		valori_test8.add("234867\\n");esiti_test8.add(false);
+		valori_test8.add("234867\\r\\n");esiti_test8.add(false);
+		valori_test8.add("234867\\t");esiti_test8.add(false);
+		for (int i = 0; i < valori_test8.size(); i++) {
+			String valore = valori_test8.get(i);
+			boolean esito = esiti_test8.get(i);
+			
+			TextHttpRequestEntity httpEntity8 = new TextHttpRequestEntity();
+			httpEntity8.setMethod(HttpRequestMethod.POST);
+			httpEntity8.setUrl(testUrl8);	
+			Map<String, String> parametersTrasporto8 = new HashMap<>();
+			parametersTrasporto8.put("api_key", "aaa");
+			parametersTrasporto8.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpEntity8.setParametersTrasporto(parametersTrasporto8);
+			httpEntity8.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			String json8 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\","+
+					"\"allegati\":"+
+					"["+
+						"{\"nome\":\"HelloWorld.pdf\",\"descrizione\":\"File di esempio 'HelloWorld.pdf'\",\"tipoMIME\":\"application/pdf\","+
+						  "\"dataDocumento\":\"2020-04-24T13:06:18.823+02:00\","+
+						  "\"codiceOpzionaleNumerico\":\""+valore+"\","+
+						  "\"documento\":{\"tipoDocumento\":\"riferimento-uri\","+
+						  				  "\"uri\":\"https://api.agenziaentrate.it/retrieve-document/0.1//documenti/f6892e27-5cbd-4789-b875-bdcb18f4557f\","+
+						  				  "\"impronta\":\"KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA=\"}"+
+						"},"+
+						"{\"nome\":\"PROVA.txt\",\"descrizione\":\"File di esempio 'PROVA.txt'\",\"tipoMIME\":\"text/plain\","+
+						  "\"dataDocumento\":\"2020-04-24T13:06:18.851+02:00\","+
+						  "\"documento\":{\"tipoDocumento\":\"inline\",\"contenuto\":\"SGVsbG8gV29ybGQhCg==\"}"+
+						"}"+
+					"]}";
+			httpEntity8.setContent(json8);
+			try {
+				System.out.println("\t (Valore:"+valore+") validate ...");
+				apiValidator.validate(httpEntity8);
+				if(esito) {
+					System.out.println("\t (Valore:"+valore+") validate ok");
+				}
+				else {
+					System.out.println("\t (Valore:"+valore+") ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+				}
+			} catch(ValidatorException e) {
+				if(!esito) {
+					System.out.println("\t (Valore:"+valore+") atteso errore di validazione, rilevato: "+e.getMessage());
+				}
+				else {
+					System.out.println("\t (Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage());
+					throw new Exception("(Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				String msgErroreAtteso = "body.allegati.0.codiceOpzionaleNumerico: '"+valore+"' does not respect pattern '^\\d{6}$'.";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t (Valore:"+valore+") ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleNumerico.<pattern>";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+			}
+		}
+		System.out.println("Test #8 completato\n\n");
+		
+		
+		
+		System.out.println("Test #9 (Richiesta POST con parametro /documenti/mixed/send e elemento valido/nonValido secondo il pattern definito in OR)");
+		String testUrl9 = baseUri+"/documenti/mixed/send";
+		List<String> valori_test9 = new ArrayList<String>();
+		List<Boolean> esiti_test9 = new ArrayList<Boolean>();
+		valori_test9.add("NGRLLI04L54D969B");esiti_test9.add(true); // CF1
+		valori_test9.add("brtBGI06c16d612D");esiti_test9.add(true); // CF2
+		valori_test9.add("ABC323");esiti_test9.add(true); // Codice1
+		valori_test9.add("345323");esiti_test9.add(true); // Codice2
+		valori_test9.add("A2C323");esiti_test9.add(true); // Codice3
+		valori_test9.add("3GRLLI04L54D969B");esiti_test9.add(false); // CF errato
+		valori_test9.add("GRLLI04L54D969B");esiti_test9.add(false); // CF errato
+		valori_test9.add("NGRLLI04L54D969BA");esiti_test9.add(false); // CF errato
+		valori_test9.add("NGRLLI04L54D969B\\r\\n");esiti_test9.add(false); // CF errato
+		valori_test9.add("NGRLLI04L54D969B\\n");esiti_test9.add(false); // CF errato
+		valori_test9.add("NGRLLI04L54D969B\\t");esiti_test9.add(false); // CF errato
+		valori_test9.add("NGRLLIA4L54D969B");esiti_test9.add(false); // CF errato
+		valori_test9.add("AABC323");esiti_test9.add(false); // Codice errato
+		valori_test9.add("ABC32");esiti_test9.add(false); // Codice errato
+		valori_test9.add("ABC32A");esiti_test9.add(false); // Codice errato
+		valori_test9.add("abC323");esiti_test9.add(false); // Codice errato
+		for (int i = 0; i < valori_test9.size(); i++) {
+			String valore = valori_test9.get(i);
+			boolean esito = esiti_test9.get(i);
+			
+			TextHttpRequestEntity httpEntity9 = new TextHttpRequestEntity();
+			httpEntity9.setMethod(HttpRequestMethod.POST);
+			httpEntity9.setUrl(testUrl9);	
+			Map<String, String> parametersTrasporto9 = new HashMap<>();
+			parametersTrasporto9.put("api_key", "aaa");
+			parametersTrasporto9.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpEntity9.setParametersTrasporto(parametersTrasporto9);
+			httpEntity9.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			String json9 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\","+
+					"\"allegati\":"+
+					"["+
+						"{\"nome\":\"HelloWorld.pdf\",\"descrizione\":\"File di esempio 'HelloWorld.pdf'\",\"tipoMIME\":\"application/pdf\","+
+						  "\"dataDocumento\":\"2020-04-24T13:06:18.823+02:00\","+
+						  "\"codiceOpzionaleCodiceFiscaleOrCodiceEsterno\":\""+valore+"\","+
+						  "\"documento\":{\"tipoDocumento\":\"riferimento-uri\","+
+						  				  "\"uri\":\"https://api.agenziaentrate.it/retrieve-document/0.1//documenti/f6892e27-5cbd-4789-b875-bdcb18f4557f\","+
+						  				  "\"impronta\":\"KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA=\"}"+
+						"},"+
+						"{\"nome\":\"PROVA.txt\",\"descrizione\":\"File di esempio 'PROVA.txt'\",\"tipoMIME\":\"text/plain\","+
+						  "\"dataDocumento\":\"2020-04-24T13:06:18.851+02:00\","+
+						  "\"documento\":{\"tipoDocumento\":\"inline\",\"contenuto\":\"SGVsbG8gV29ybGQhCg==\"}"+
+						"}"+
+					"]}";
+			httpEntity9.setContent(json9);
+			try {
+				System.out.println("\t (Valore:"+valore+") validate ...");
+				apiValidator.validate(httpEntity9);
+				if(esito) {
+					System.out.println("\t (Valore:"+valore+") validate ok");
+				}
+				else {
+					System.out.println("\t (Valore:"+valore+") ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+				}
+			} catch(ValidatorException e) {
+				if(!esito) {
+					System.out.println("\t (Valore:"+valore+") atteso errore di validazione, rilevato: "+e.getMessage());
+				}
+				else {
+					System.out.println("\t (Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage());
+					throw new Exception("(Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				String msgErroreAtteso = "body.allegati.0.codiceOpzionaleCodiceFiscaleOrCodiceEsterno: '"+valore+"' does not respect pattern '^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$'.";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t (Valore:"+valore+") ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleCodiceFiscaleOrCodiceEsterno.<pattern>";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+			}
+		}
+		System.out.println("Test #9 completato\n\n");
 	}
 
 }

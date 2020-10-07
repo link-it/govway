@@ -300,8 +300,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 								throw new ProcessingException("OpenAPI3 not valid: "+results.toString());
 							}
 						}catch(org.openapi4j.core.validation.ValidationException valExc) {
-							if(valExc.getResults()!=null) {
-								throw new ProcessingException("OpenAPI3 not valid: "+valExc.getResults().toString());
+							if(valExc.results()!=null) {
+								throw new ProcessingException("OpenAPI3 not valid: "+valExc.results().toString());
 							}
 							else {
 								throw new ProcessingException("OpenAPI3 not valid: "+valExc.getMessage());

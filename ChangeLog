@@ -1,3 +1,12 @@
+2020-10-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1064
+	Un oggetto di tipo 'string', definito in un'interfaccia OpenAPI3 con la restrizione basata su pattern (es. '^\d{6}$'),
+	non veniva correttamente validato se il valore presente nel messaggio json possedeva dei caratteri speciali come '\r\n' o '\n' o '\t'.
+	La validazione OpenAPI terminava con successo non rilevando i caratteri non ammessi dal pattern indicato.
+	Il problema è stato risolto.
+
 2020-10-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
