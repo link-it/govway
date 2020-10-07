@@ -89,7 +89,20 @@ public class ValidatorTest {
 		List<byte[]> file2M = new ArrayList<byte[]>();
 		file2M.add(json2M);
 
-		for(ApiName name : ApiName.values()) {
+		List<ApiName> listTest = new ArrayList<ApiName>();
+		String tipo = null;
+		if(args!=null && args.length>0) {
+			tipo = args[0];
+			listTest.add(ApiName.valueOf(tipo));
+		}
+		else {
+			for(ApiName name : ApiName.values()) {
+				listTest.add(name);
+			}
+		}
+		
+		
+		for(ApiName name : listTest) {
 						
 			System.out.println("=========================== "+name+" ======================================");
 			

@@ -171,6 +171,7 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -507,6 +508,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 */
 			try{
 				System.setProperty(freemarker.log.Logger.SYSTEM_PROPERTY_NAME_LOGGER_LIBRARY,freemarker.log.Logger.LIBRARY_NAME_NONE);
+			}catch(Exception e){
+				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
+				return;
+			}
+			
+			/* ------------ 
+			 * Disabilita la cache del motore JsonPath, altrimenti pattern che contengono il 'concat' vengono cachati e se applicati su messaggi differenti ritornano lo stesso risultato.
+			 */
+			try{
+				if(!propertiesReader.isJsonPathCacheEnabled()){ 
+					JsonPathExpressionEngine.disableCacheJsonPathEngine();
+					OpenSPCoop2Startup.log.info("Disabilitata cache (NOOPCache) in engine com.jayway.jsonpath.spi.cache.CacheProvider (JsonPath)");
+				}
 			}catch(Exception e){
 				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
 				return;

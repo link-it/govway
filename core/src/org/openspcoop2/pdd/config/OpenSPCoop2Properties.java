@@ -1720,6 +1720,9 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativi_openApi_openApi4j_validateResponseHeaders();
 			this.isValidazioneContenutiApplicativi_openApi_openApi4j_validateResponseBody();
 			
+			// XPath Json Path
+			this.isJsonPathCacheEnabled();
+			
 			// CachingResponse
 			this.getCachingResponseDigestAlgorithm();
 			this.getCachingResponseHeaderCacheKey();
@@ -16694,6 +16697,35 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateResponseBody;
+	}
+	
+	
+	/* ------------- XPath e JSON Path ---------------------*/
+	
+	private static Boolean isJsonPathCacheEnabled = null;
+	public boolean isJsonPathCacheEnabled(){
+
+		String pName = "org.openspcoop2.pdd.jsonPath.cache.enabled";
+		
+		if(OpenSPCoop2Properties.isJsonPathCacheEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isJsonPathCacheEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isJsonPathCacheEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isJsonPathCacheEnabled = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isJsonPathCacheEnabled;
 	}
 	
 	

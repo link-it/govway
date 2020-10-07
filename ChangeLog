@@ -1,6 +1,14 @@
 2020-10-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug OP-1066
+	La libreria di valutazione delle espressioni JsonPath, se queste contenevano la funzione concat (es. concat($.richiedente.codice_fiscale,"###",$.richiedente.nome)), 
+	salvava in una cache interna il risultato; il salvataggio comportava che a fronte di messaggi differenti l'applicazione dell'espressione JsonPath forniva lo stesso risultato.
+	Il comportamento errato della libreria comportava malfunzionamenti nelle funzionalità di GovWay dove era possibile utilizzare espressioni JsonPath (es. nella correlazione applicativa, nelle trasformazioni).
+
+2020-10-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug OP-1064
 	Un oggetto di tipo 'string', definito in un'interfaccia OpenAPI3 con la restrizione basata su pattern (es. '^\d{6}$'),
 	non veniva correttamente validato se il valore presente nel messaggio json possedeva dei caratteri speciali come '\r\n' o '\n' o '\t'.

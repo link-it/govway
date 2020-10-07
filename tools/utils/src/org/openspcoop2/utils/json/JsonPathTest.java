@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,16 +40,20 @@ public class JsonPathTest {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 
+		// Inizializzazione dell'engine con cache disabilitata
+		JsonPathExpressionEngine.disableCacheJsonPathEngine();
+
+
 		String pattern = "$.store.book[*]";
 		JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		String name = "file.json";
-		
+
 
 		{
 			InputStream is = JsonPathTest.class.getResourceAsStream(name);
 			JSONObject object = JsonPathExpressionEngine.getJSONObject(is);
-			
+
 			{
 				JsonNode obj = engine.getJsonNodeMatchPattern(object, pattern);
 				System.out.println("JsonObject->Nodo:" + obj);
@@ -73,9 +78,9 @@ public class JsonPathTest {
 				List<String> obj = engine.getStringMatchPattern(object, pattern);
 				System.out.println("JsonObject->String:" + obj);
 			}
-			
+
 		}
-		
+
 		pattern = "$.store.book[*]";
 
 		{
@@ -98,7 +103,7 @@ public class JsonPathTest {
 			JsonNode matchPattern = engine.getJsonNodeMatchPattern(new String(baos.toByteArray()), pattern);
 			System.out.println("String->Nodo:" + jsonUtils.toString(matchPattern));
 		}
-		
+
 		pattern = "$.store.book[*].available";
 
 		{
@@ -121,7 +126,7 @@ public class JsonPathTest {
 			List<Boolean> matchPattern = engine.getBooleanMatchPattern(new String(baos.toByteArray()), pattern);
 			System.out.println("String->Boolean:" + matchPattern);
 		}
-		
+
 		pattern = "$.store.book[*].author";
 
 		{
@@ -168,7 +173,7 @@ public class JsonPathTest {
 		}
 
 		// match pattern
-		
+
 		pattern = "$.store.book[*]";
 		{
 			InputStream is = JsonPathTest.class.getResourceAsStream(name);
@@ -190,7 +195,7 @@ public class JsonPathTest {
 			JsonNode matchPattern = (JsonNode) engine.getMatchPattern(new String(baos.toByteArray()), pattern, JsonPathReturnType.NODE);
 			System.out.println("(Match pattern) String->Nodo:" + jsonUtils.toString(matchPattern));
 		}
-		
+
 		pattern = "$.store.book[*].available";
 
 		{
@@ -213,7 +218,7 @@ public class JsonPathTest {
 			List<Boolean> matchPattern = (List<Boolean>) engine.getMatchPattern(new String(baos.toByteArray()), pattern, JsonPathReturnType.BOOLEAN);
 			System.out.println("(Match pattern) String->Boolean:" + matchPattern);
 		}
-		
+
 		pattern = "$.store.book[*].author";
 
 		{
@@ -260,6 +265,91 @@ public class JsonPathTest {
 		}
 
 
-}
+		// Verifiche cache disabilitate
+
+		String p1 = "$.store.book[0].price";
+		String p2 = "$.store.book[0].category";
+		pattern = "concat("+p1+",\"#\","+p2+")";
+		{
+			System.out.println("Test cache disabilita per operazione 'concat': ...");
+
+			InputStream is = JsonPathTest.class.getResourceAsStream(name);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			FileSystemUtilities.copy(is, baos);
+			String json = baos.toString();
+
+			String valoreP1 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p1, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			if(!"8.95".equals(valoreP1)) {
+				throw new Exception("Atteso '8.95' trovato '"+valoreP1+"' nel messaggio json:\n\n"+json);
+			}
+
+			String valoreP2 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p2, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			if(!"reference".equals(valoreP2)) {
+				throw new Exception("Atteso 'reference' trovato '"+valoreP2+"' nel messaggio json:\n\n"+json);
+			}
+
+			String s1= JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			//System.out.println("Concat1 :" + s1);
+			if(!"8.95#reference".equals(s1)) {
+				throw new Exception("Atteso '8.95#reference' trovato '"+s1+"' nel messaggio json:\n\n"+json);
+			}
+
+			// modifico contenuto per verificare che non vi sia una cache disabilitata
+			json = json.replace("8.95", "1234.77");
+			json = json.replace("reference", "altrovalorecasuale");
+
+			valoreP1 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p1, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			if(!"1234.77".equals(valoreP1)) {
+				throw new Exception("Atteso '1234.77' trovato '"+valoreP1+"' nel messaggio json:\n\n"+json);
+			}
+
+			valoreP2 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p2, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			if(!"altrovalorecasuale".equals(valoreP2)) {
+				throw new Exception("Atteso 'altrovalorecasuale' trovato '"+valoreP2+"' nel messaggio json:\n\n"+json);
+			}
+
+			String s2= JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			//System.out.println("Concat2 :" + s2);
+			if(!"1234.77#altrovalorecasuale".equals(s2)) {
+				throw new Exception("Atteso '1234.77#altrovalorecasuale' trovato '"+s2+"' nel messaggio json:\n\n"+json);
+			}
+
+			System.out.println("Test cache disabilita per operazione 'concat': ok");
+		}
+
+
+		pattern = "$.store.book[*].price";
+		{
+
+			System.out.println("Test cache disabilita ...");
+
+			InputStream is = JsonPathTest.class.getResourceAsStream(name);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			FileSystemUtilities.copy(is, baos);
+			String json = baos.toString();
+
+			String valoreP1 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p1, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			if(!"8.95".equals(valoreP1)) {
+				throw new Exception("Atteso '8.95' trovato '"+valoreP1+"' nel messaggio json:\n\n"+json);
+			}
+
+			String s1 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			//System.out.println("S1 :" + s1);
+			if(!"8.95,12.99,8.99,22.99".equals(s1)) {
+				throw new Exception("Atteso '8.95,12.99,8.99,22.99' trovato '"+s1+"' nel messaggio json:\n\n"+json);
+			}
+
+			// modifico contenuto per verificare che non vi sia una cache disabilitata
+			json = json.replace("8.95", "1234.77");
+
+			String s2 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, LoggerWrapperFactory.getLogger(JsonPathTest.class));
+			//System.out.println("S2 :" + s2);
+			if(!"1234.77,12.99,8.99,22.99".equals(s2)) {
+				throw new Exception("Atteso '1234.77,12.99,8.99,22.99' trovato '"+s2+"' nel messaggio json:\n\n"+json);
+			}
+
+			System.out.println("Test cache disabilita ok");
+		}
+	}
 
 }

@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.spi.cache.CacheProvider;
+import com.jayway.jsonpath.spi.cache.NOOPCache;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -47,6 +49,10 @@ import net.minidev.json.parser.ParseException;
  */
 public class JsonPathExpressionEngine {
 
+	public static void disableCacheJsonPathEngine() {
+		CacheProvider.setCache(new NOOPCache());
+	}
+	
 	public static String getAsString(JsonNode element) {
 		try{
 			return getJsonUtils().toString(element);
