@@ -71,6 +71,12 @@
     <servlet-name>downloadResoconto</servlet-name>
 	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.ResocontoExporter</servlet-class>
   </servlet>
+  
+  <!-- Servlet per il Supporto del servizio di utilizzo degli elementi del registro -->
+  <servlet>
+    <servlet-name>informazioniUtilizzoOggettoRegistro</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.InformazioniUtilizzoOggettoRegistro</servlet-class>
+  </servlet>
 
 
   <!-- Servlet per il download dei documenti -->
@@ -95,6 +101,12 @@
   <servlet-mapping>
     <servlet-name>downloadResoconto</servlet-name>
 	<url-pattern>/downloadResoconto</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet per il Supporto del servizio di utilizzo degli elementi del registro -->
+  <servlet-mapping>
+    <servlet-name>informazioniUtilizzoOggettoRegistro</servlet-name>
+	<url-pattern>/informazioniUtilizzoOggettoRegistro</url-pattern>
   </servlet-mapping>
 
   <!-- Action Servlet Mapping -->

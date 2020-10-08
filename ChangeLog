@@ -1,3 +1,11 @@
+2020-10-08  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1061
+	Restyling grafico delle liste accessibili dal menù principale relativamente per i Soggetti, gli Applicativi, i Ruoli e gli Scope.
+	Nelle liste suddette sono stati aggiunti ulteriori criteri di filtro per individuare gli elementi in base al loro utilizzo in erogazioni, in fruizioni o ricercandoli tramite Tag.
+	È infine stata aggiunta la possibilità di visualizzare per un singolo elemento della lista dove sia utilizzato nel registro di GovWay.
+
 2020-10-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

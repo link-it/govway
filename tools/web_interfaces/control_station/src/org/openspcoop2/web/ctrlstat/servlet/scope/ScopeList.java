@@ -31,6 +31,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -79,13 +80,36 @@ public final class ScopeList extends Action {
 
 			int idLista = Liste.SCOPE;
 
-			ricerca = scopeHelper.checkSearchParameters(idLista, ricerca);
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<Scope> lista = null;
-			if(scopeCore.isVisioneOggettiGlobale(userLogin)){
-				lista = scopeCore.scopeList(null, ricerca);
-			}else{
-				lista = scopeCore.scopeList(userLogin, ricerca);
+			if(!ServletUtils.isSearchDone(scopeHelper)) {
+				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista, Scope.class);
+			}
+			
+			ricerca = scopeHelper.checkSearchParameters(idLista, ricerca);
+			
+			scopeHelper.clearFiltroSoggettoByPostBackProtocollo(ScopeHelper.POSIZIONE_FILTRO_PROTOCOLLO, ricerca, idLista);
+			
+			if(lista==null) {
+				boolean filtroSoggetto = false;
+				List<String> protocolli = scopeCore.getProtocolli(session,false);
+				if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
+					filtroSoggetto = true;
+				}
+				if(filtroSoggetto) {
+					ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, scopeHelper.getSoggettoMultitenantSelezionato());
+				}
+				
+				String userLogin = ServletUtils.getUserLoginFromSession(session);
+				if(scopeCore.isVisioneOggettiGlobale(userLogin)){
+					lista = scopeCore.scopeList(null, ricerca);
+				}else{
+					lista = scopeCore.scopeList(userLogin, ricerca);
+				}
+			}
+			
+			if(!scopeHelper.isPostBackFilterElement()) {
+				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			scopeHelper.prepareScopeList(ricerca, lista);

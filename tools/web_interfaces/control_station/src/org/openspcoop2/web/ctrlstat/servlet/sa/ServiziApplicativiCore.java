@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -651,5 +652,25 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
+	}
+	
+	public String getDettagliServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean saInUso  = this.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, this.isRegistroServiziLocale(), normalizeObjectIds );
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(saInUso) {
+			String s = DBOggettiInUsoUtils.toString(idServizioApplicativo, whereIsInUso, false, "\n", normalizeObjectIds);
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(ServiziApplicativiCostanti.LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
 	}
 }

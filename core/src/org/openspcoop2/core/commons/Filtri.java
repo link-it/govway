@@ -71,7 +71,12 @@ public final class Filtri
 	public final static String FILTRO_SCOPE_CONTESTO = "filtroScopeContesto";
 	
 	public final static String FILTRO_API_CONTESTO = "filtroApiContesto";
+	public final static String FILTRO_API_CONTESTO_VALUE_EROGAZIONE_FRUIZIONE = "ErogazioneFruizione";
+	public final static String FILTRO_API_CONTESTO_VALUE_APPLICATIVI = "Applicativi";
+	public final static String FILTRO_API_CONTESTO_VALUE_SOGGETTI = "Soggetti";
 	public final static String FILTRO_API_IMPLEMENTAZIONE = "filtroApiImpl";
+	
+	public final static String FILTRO_SERVIZIO_APPLICATIVO = "filtroSA";
 	
 	public final static String FILTRO_UTENTE = "filtroUtente";
 	

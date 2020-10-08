@@ -36,7 +36,6 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -118,17 +117,7 @@ public final class ServiziApplicativiList extends Action {
 			
 			ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 			
-			String postBackElement = saHelper.getPostBackElementName();
-			if((Costanti.PARAMETRO_FILTER_VALUE+"0").equals(postBackElement)) {
-				// verifico se si tratta del profilo di interoperabilita.
-				if(Filtri.FILTRO_PROTOCOLLO.equals(saHelper.getParameter((Costanti.PARAMETRO_FILTER_NAME+"0")))) {
-					String value = saHelper.getParameter((Costanti.PARAMETRO_FILTER_VALUE+"0"));
-					if( (value==null || "".equals(value) ||
-							CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(value))){
-						ricerca.clearFilter(idLista, Filtri.FILTRO_SOGGETTO);
-					}
-				}
-			}
+			saHelper.clearFiltroSoggettoByPostBackProtocollo(0, ricerca, idLista);
 			
 			if(!useIdSogg){
 				boolean filtroSoggetto = false;

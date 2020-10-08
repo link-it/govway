@@ -31,7 +31,9 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -77,14 +79,40 @@ public final class RuoliList extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.RUOLI;
+			
+			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+			List<Ruolo> lista = null;
+			if(!ServletUtils.isSearchDone(ruoliHelper)) {
+				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Ruolo.class);
+			}
 
 			ricerca = ruoliHelper.checkSearchParameters(idLista, ricerca);
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			List<Ruolo> lista = null;
-			if(ruoliCore.isVisioneOggettiGlobale(userLogin)){
-				lista = ruoliCore.ruoliList(null, ricerca);
-			}else{
-				lista = ruoliCore.ruoliList(userLogin, ricerca);
+			
+			ruoliHelper.clearFiltroSoggettoByPostBackProtocollo(RuoliHelper.POSIZIONE_FILTRO_PROTOCOLLO, ricerca, idLista);
+			
+			if(lista==null) {
+				boolean filtroSoggetto = false;
+				String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
+				if(!Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI.equals(filterApiContesto) && ruoliHelper.isSoggettoMultitenantSelezionato()) {
+					List<String> protocolli = ruoliCore.getProtocolli(session,false);
+					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
+						filtroSoggetto = true;
+					}
+				}
+				if(filtroSoggetto) {
+					ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, ruoliHelper.getSoggettoMultitenantSelezionato());
+				}
+				
+				String userLogin = ServletUtils.getUserLoginFromSession(session);
+				if(ruoliCore.isVisioneOggettiGlobale(userLogin)){
+					lista = ruoliCore.ruoliList(null, ricerca);
+				}else{
+					lista = ruoliCore.ruoliList(userLogin, ricerca);
+				}
+			}
+			
+			if(!ruoliHelper.isPostBackFilterElement()) {
+				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			ruoliHelper.prepareRuoliList(ricerca, lista);

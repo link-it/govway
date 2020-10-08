@@ -1534,14 +1534,22 @@ div.txtA_div_propDialog {
 
 .entryErogazione,
 .entryFruizione,
-.entryApi {
+.entryApi,
+.entryApplicativi,
+.entrySoggetti,
+.entryRuoli,
+.entryScope {
 	cursor: pointer;
 	padding: 16px;
 }
 
 .entryErogazione .titoloEntry,
 .entryFruizione .titoloEntry,
-.entryApi .titoloEntry {
+.entryApi .titoloEntry,
+.entryApplicativi .titoloEntry,
+.entrySoggetti .titoloEntry,
+.entryRuoli .titoloEntry,
+.entryScope .titoloEntry {
 	padding: 4px 4px 4px 0px;
     font-weight: bold;
     font-size: 16px;
@@ -1549,7 +1557,11 @@ div.txtA_div_propDialog {
 
 .entryErogazione .metadatiEntry,
 .entryFruizione .metadatiEntry,
-.entryApi .metadatiEntry {
+.entryApi .metadatiEntry,
+.entryApplicativi .metadatiEntry,
+.entrySoggetti .metadatiEntry,
+.entryRuoli .metadatiEntry,
+.entryScope .metadatiEntry {
 	padding: 4px 4px 4px 0px;
 	color: ${body.secondary.color};
 }
@@ -1560,13 +1572,31 @@ div.txtA_div_propDialog {
 	display: inline-flex;
 }
 
+.entryApplicativi .titoloRuoli,
+.entrySoggetti .titoloRuoli,
+.entryRuoli .titoloRuoli,
+.entryScope .titoloRuoli {
+	display: inline-flex;
+	vertical-align: middle;
+}
+
+.entryApplicativi .titoloInfo,
+.entrySoggetti .titoloInfo,
+.entryRuoli .titoloInfo,
+.entryScope .titoloInfo {
+	display: inline-flex;
+	vertical-align: middle;
+	float: right;
+}
+
 .divNoEdit.titoloTags {
     display: inline-flex;
     padding-top: 0px;
 }
 
 .funzionalitaErogazione,
-.funzionalitaFruizione {
+.funzionalitaFruizione,
+.funzionalitaApplicativi  {
 	padding: 16px;
 	display: flex;
 } 
@@ -2043,5 +2073,85 @@ span.controlset-cb-info {
 
 .combobox-overlay-focus {
 	border: 1px solid  ${input.focus.border.color};
+}
+
+/* Icona Info nella lista */
+
+.iconInfoBoxList,
+.iconUsoBoxList{
+    display: inline;
+    cursor: pointer;
+    padding-left: 4px;
+}
+
+.titoloRuoli-image-sx {
+	vertical-align: sub;
+	margin-right: 4px;
+}
+
+/* finestra modal di dialog uso elemento messaggi con copia campi */
+
+#finestraDialogInfoUsoModalHeader {
+	padding: 10px 0px 10px 0px;
+	display: flex;
+}
+
+#finestraDialogInfoUsoModalBody {
+	padding: 0px 0px 20px 0px;
+}
+
+#finestraDialogInfoUsoModalBodyNota {
+	padding: 10px 10px 10px 10px;
+}
+
+#finestraDialogInfoUsoModalHeaderSx {
+	padding: 10px 10px 10px	10px;
+}
+
+#finestraDialogInfoUsoModalHeaderDx {
+	padding: 10px 10px 10px 10px;
+}
+
+#finestraDialogInfoUsoModalHeaderDxRiga1 {
+	padding: 10px 0px 10px 0px;
+}
+
+span.finestraDialogInfoUsoModalHeaderDxRiga1 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#finestraDialogInfoUsoModalHeaderDxRiga2 {
+	padding: 10px  0px 10px 0px;
+}
+
+div.propDialogInfoUso{
+    padding: 5px 8px 5px 8px;  /* padding top 0px IE7 fix */
+}
+
+div.propDialogInfoUso-link{
+	padding-top: 8px;
+}
+
+div.propDialogInfoUso label{
+/* 	margin-right: 16px;	 */
+	padding-right: 16px;
+/* 	width: 130px; */
+	display: block;
+	float: left;
+	text-align: right;
+	position: relative;
+	color: ${label.color};
+	padding-top: 4px;
+	font-size: 16px;
+}
+
+div.txtA_div_propDialogInfoUso {
+/* 	margin-left: 146px; */
+}
+
+.txtA_propDialogInfoUsoNoResize{
+	resize: none;
+	width: 99% !important;
 }
 

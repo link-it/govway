@@ -302,7 +302,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getPortaDelegataServizioApplicativoList
-   * @return List<PortaDelegataServizioApplicativo>
+   * @return List&lt;PortaDelegataServizioApplicativo&gt;
   */
   @Deprecated
   public List<PortaDelegataServizioApplicativo> getPortaDelegataServizioApplicativo() {
@@ -311,7 +311,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setPortaDelegataServizioApplicativoList
-   * @param portaDelegataServizioApplicativo List<PortaDelegataServizioApplicativo>
+   * @param portaDelegataServizioApplicativo List&lt;PortaDelegataServizioApplicativo&gt;
   */
   @Deprecated
   public void setPortaDelegataServizioApplicativo(List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativo) {
@@ -332,7 +332,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getPortaDelegataAzioneList
-   * @return List<PortaDelegataAzione>
+   * @return List&lt;PortaDelegataAzione&gt;
   */
   @Deprecated
   public List<PortaDelegataAzione> getPortaDelegataAzione() {
@@ -341,7 +341,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setPortaDelegataAzioneList
-   * @param portaDelegataAzione List<PortaDelegataAzione>
+   * @param portaDelegataAzione List&lt;PortaDelegataAzione&gt;
   */
   @Deprecated
   public void setPortaDelegataAzione(List<PortaDelegataAzione> portaDelegataAzione) {

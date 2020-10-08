@@ -1071,6 +1071,27 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	public List<IDServizioApplicativo> getServiziApplicativi(String protocolloSelezionato,List<String> protocolliSupportati,
+			String tipoProprietario, String nomeProprietario) throws DriverControlStationException{
+		String nomeMetodo = "getServiziApplicativiFruitore";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getServiziApplicativi(protocolloSelezionato,protocolliSupportati, 
+					tipoProprietario, nomeProprietario);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 	
 	public Map<String, Properties> readGestorePolicyTokenPropertiesConfiguration(long idGenericProperties) throws DriverConfigurazioneException {
 		Connection con = null;

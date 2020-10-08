@@ -8381,10 +8381,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					IDSoggetto idSoggetto = new IDSoggetto(filtro.getTipoFruitore(), filtro.getNomeFruitore());
 					bf.append(this.getLabelNomeSoggetto(idSoggetto));
 				}
+				if(configurazione) {
+					if( !(filtro.getServizioApplicativoFruitore()==null || "".equals(filtro.getServizioApplicativoFruitore())) ){
+						if(bf.length()>0){
+							bf.append(", ");
+						}
+						bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE_COMPACT).append(": ");
+						bf.append(filtro.getServizioApplicativoFruitore());
+					}
+				}
 			}
-
-			if(configurazione || delegata) {
-				if( !(filtro.getServizioApplicativoFruitore()==null || "".equals(filtro.getServizioApplicativoFruitore())) ){
+			else if(delegata) {
+				if(filtro.getRuoloFruitore()!=null) {
+					if(bf.length()>0){
+						bf.append(", ");
+					}
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE).append(": ");
+					bf.append(filtro.getRuoloFruitore());
+				}
+				else if( !(filtro.getServizioApplicativoFruitore()==null || "".equals(filtro.getServizioApplicativoFruitore())) ){
 					if(bf.length()>0){
 						bf.append(", ");
 					}
@@ -13884,7 +13899,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			else {
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_RICHIEDENTE);
 			//}
-			if(datiIdentificativiFruitoreSelezionatoValue!=null || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
+			if((datiIdentificativiFruitoreSelezionatoValue!=null && !delegata) || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
@@ -14929,11 +14944,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				else{
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE+": "+filtro.getTipoFruitore()+"/"+filtro.getNomeFruitore());
 				}
+				
+				if(configurazione) {
+					bf.append("<br/>");
+					if( (filtro.getServizioApplicativoFruitore()==null || "".equals(filtro.getServizioApplicativoFruitore())) ){
+						bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE+": Qualsiasi");
+					}
+					else{
+						bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE+": "+filtro.getServizioApplicativoFruitore());
+					}
+				}
 			}
-			
-			if(configurazione || delegata) {
+			else if(delegata) {
 				bf.append("<br/>");
-				if( (filtro.getServizioApplicativoFruitore()==null || "".equals(filtro.getServizioApplicativoFruitore())) ){
+				if(filtro.getRuoloFruitore()!=null) {
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE+": "+filtro.getRuoloFruitore());
+				}
+				else if( (filtro.getServizioApplicativoFruitore()==null || "".equals(filtro.getServizioApplicativoFruitore())) ){
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE+": Qualsiasi");
 				}
 				else{

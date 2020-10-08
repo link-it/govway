@@ -57,6 +57,8 @@ public class RuoliCostanti {
 	public final static String LABEL_RUOLO = "Ruolo";
 	public final static String LABEL_RUOLI = "Ruoli";
 	
+	/* NOME VISTA CUSTOM */
+	public final static String RUOLI_NOME_VISTA_CUSTOM_LISTA = "ruoli";
 	
 	
 	/* PARAMETRI */
@@ -117,4 +119,8 @@ public class RuoliCostanti {
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
 	}
+	
+	public final static String MESSAGE_METADATI_RUOLO_TIPO_E_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA + ": {0}, "+ CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO +": {1}";
+	
+	public final static String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il ruolo non risulta utilizzato in alcuna configurazione";
 }

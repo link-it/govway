@@ -53,11 +53,11 @@ public class ScopeCostanti {
 	}
 	
 	
-	
-	
 	public final static String LABEL_SCOPE = "Scope";
 	public final static String LABEL_SCOPES = "Scope";
 	
+	/* NOME VISTA CUSTOM */
+	public final static String SCOPE_NOME_VISTA_CUSTOM_LISTA = "scope";
 	
 	
 	/* PARAMETRI */
@@ -121,4 +121,9 @@ public class ScopeCostanti {
 		SCOPE_CONTESTO_UTILIZZO_LABEL.add(SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);
 		SCOPE_CONTESTO_UTILIZZO_LABEL.add(SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
 	}
+	
+	public final static String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Lo scope non risulta utilizzato in alcuna configurazione";
+	
+	public final static String MESSAGE_METADATI_SCOPE_SOLO_CONTESTO = ScopeCostanti.LABEL_PARAMETRO_SCOPE_CONTESTO +": {0}";
+	public final static String MESSAGE_METADATI_SCOPE_CON_TIPO = ScopeCostanti.LABEL_PARAMETRO_SCOPE_CONTESTO + ": {0}, "+ScopeCostanti.LABEL_PARAMETRO_SCOPE_TIPOLOGIA+": {1}";
 }

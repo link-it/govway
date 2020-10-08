@@ -117,4 +117,30 @@ public class IDServizioApplicativo implements Serializable {
 		}
 		return idSA;
 	}
+	
+	
+	
+	public String toFormatString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.idSoggettoProprietario.getTipo());
+		sb.append("/");
+		sb.append(this.idSoggettoProprietario.getNome());
+		sb.append("/");
+		sb.append(this.nome);
+		return sb.toString();
+	}
+	
+	public static IDServizioApplicativo toIDServizioApplicativo(String formatString) throws Exception {
+		String [] tmp = formatString.split("/");
+		if(tmp.length!=3) {
+			throw new Exception("Formato non supportato, attesi 3 valori, trovati "+tmp.length);
+		}
+		String tipoSoggettoErogatore = tmp[0];
+		String nomeSoggettoErogatore = tmp[1];
+		String nome = tmp[2];
+		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+		idServizioApplicativo.idSoggettoProprietario = new IDSoggetto(tipoSoggettoErogatore, nomeSoggettoErogatore);
+		idServizioApplicativo.nome=nome;
+		return idServizioApplicativo;
+	}
 }

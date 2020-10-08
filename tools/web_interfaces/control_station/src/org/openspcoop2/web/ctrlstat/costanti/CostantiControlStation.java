@@ -696,6 +696,11 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "Utilizza Applicativo Server";
 	public final static String LABEL_PARAMETRO_ID_APPLICATIVO_SERVER = "Applicativo";
 	
+	
+	public final static String LABEL_IN_USO_TOOLTIP = "Riferimenti";
+	public final static String LABEL_IN_USO_BODY_HEADER_RISULTATI = "Risultati della ricerca";
+	
+	
 	// POLICY RISORSA TIPO
 	
 	public final static boolean USE_SELECT_LIST_SEPARATE_METRICHE = false;
@@ -1062,10 +1067,16 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI = "";
 	public final static String API_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = "Erogazione";
 	public final static String API_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "Fruizione";
+	public final static String API_CONTESTO_UTILIZZO_LABEL_EROGAZIONE_FRUIZIONE = "Erogazione/Fruizione";
+	public final static String API_CONTESTO_UTILIZZO_LABEL_SOGGETTI = "Soggetti";
+	public final static String API_CONTESTO_UTILIZZO_LABEL_APPLICATIVI = "Applicativi";
 	public final static String LABEL_PARAMETRO_API_CONTESTO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_API_IMPLEMENTAZIONE_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_API_IMPLEMENTAZIONE_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+
+	public final static String DEFAULT_VALUE_PARAMETRO_APPLICATIVO_QUALSIASI = "";
+	public final static String LABEL_PARAMETRO_APPLICATIVO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_RUOLO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;

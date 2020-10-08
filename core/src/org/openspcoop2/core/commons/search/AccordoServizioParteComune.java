@@ -230,7 +230,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getAccordoServizioParteComuneAzioneList
-   * @return List<AccordoServizioParteComuneAzione>
+   * @return List&lt;AccordoServizioParteComuneAzione&gt;
   */
   @Deprecated
   public List<AccordoServizioParteComuneAzione> getAccordoServizioParteComuneAzione() {
@@ -239,7 +239,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setAccordoServizioParteComuneAzioneList
-   * @param accordoServizioParteComuneAzione List<AccordoServizioParteComuneAzione>
+   * @param accordoServizioParteComuneAzione List&lt;AccordoServizioParteComuneAzione&gt;
   */
   @Deprecated
   public void setAccordoServizioParteComuneAzione(List<AccordoServizioParteComuneAzione> accordoServizioParteComuneAzione) {
@@ -260,7 +260,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getPortTypeList
-   * @return List<PortType>
+   * @return List&lt;PortType&gt;
   */
   @Deprecated
   public List<PortType> getPortType() {
@@ -269,7 +269,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setPortTypeList
-   * @param portType List<PortType>
+   * @param portType List&lt;PortType&gt;
   */
   @Deprecated
   public void setPortType(List<PortType> portType) {
@@ -290,7 +290,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getResourceList
-   * @return List<Resource>
+   * @return List&lt;Resource&gt;
   */
   @Deprecated
   public List<Resource> getResource() {
@@ -299,7 +299,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setResourceList
-   * @param resource List<Resource>
+   * @param resource List&lt;Resource&gt;
   */
   @Deprecated
   public void setResource(List<Resource> resource) {

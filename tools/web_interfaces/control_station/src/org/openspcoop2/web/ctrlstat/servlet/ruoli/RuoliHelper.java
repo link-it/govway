@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -34,16 +35,20 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.Dialog;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 
 /**
  * RuoliHelper
@@ -236,21 +241,115 @@ public class RuoliHelper extends ConsoleHelper{
 	
 	
 	// Prepara la lista di ruoli
-	public void prepareRuoliList(ISearch ricerca, List<Ruolo> lista)
-			throws Exception {
+	
+	public static final int POSIZIONE_FILTRO_PROTOCOLLO = 3; // parte da 0, e' alla quarta posizione se visualizzato
+	
+	public void prepareRuoliList(ISearch ricerca, List<Ruolo> lista) throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, RuoliCostanti.OBJECT_NAME_RUOLI);
+			
+			boolean modalitaCompleta = this.isModalitaCompleta();
+			
+			if(!modalitaCompleta) {
+				this.pd.setCustomListViewName(RuoliCostanti.RUOLI_NOME_VISTA_CUSTOM_LISTA);
+			}
 
 			int idLista = Liste.RUOLI;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+						
 			String filterRuoloTipologia = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_TIPOLOGIA);
 			this.addFilterRuoloTipologia(filterRuoloTipologia, false);
 			
 			String filterRuoloContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_CONTESTO);
 			this.addFilterRuoloContesto(filterRuoloContesto, false);
+						
+			String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
+			this.addFilterApiContestoRuoli(filterApiContesto, true);
+						
+			// NOTA: ATTENZIONE!!! se sei agggiunge o elimina un filtro prima del protocollo indicato sotto, correggere la variabile POSIZIONE_FILTRO_PROTOCOLLO in questa classe
+			
+			String filterProtocollo = null;
+			String filterSoggetto = null;
+			boolean profiloSelezionato = false;
+			if(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
+				
+				filterProtocollo = addFilterProtocol(ricerca, idLista, true);
+
+				String protocollo = filterProtocollo;
+				if(protocollo==null) {
+					// significa che e' stato selezionato un protocollo nel menu in alto a destra
+					List<String> protocolli = this.core.getProtocolli(this.session);
+					if(protocolli!=null && protocolli.size()==1) {
+						protocollo = protocolli.get(0);
+					}
+				}
+				
+				if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
+						||
+					(filterProtocollo==null && protocollo!=null)
+						) {
+					profiloSelezionato = true;
+				}
+				
+				if(Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI.equals(filterApiContesto)) {
+					filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
+					boolean soloSoggettiOperativi = false;
+					this.addFilterSoggetto(filterSoggetto,protocollo,soloSoggettiOperativi,true);
+				}
+				else {
+					if( profiloSelezionato && 
+							(!this.isSoggettoMultitenantSelezionato())) {
+						
+						filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
+						boolean soloSoggettiOperativi = true;
+						this.addFilterSoggetto(filterSoggetto,protocollo,soloSoggettiOperativi,true);
+					}
+					else {
+						filterSoggetto=this.getSoggettoMultitenantSelezionato();
+					}
+				}
+			}
+			
+			String filterGruppo = null;
+			if(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto) &&
+					!Filtri.FILTRO_API_CONTESTO_VALUE_APPLICATIVI.equals(filterApiContesto) &&
+					!Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI.equals(filterApiContesto)) {
+				
+				filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+				addFilterGruppo(filterGruppo, true);
+				
+			}
+			else {
+				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+			}
+			
+			if(profiloSelezionato &&
+					filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)  &&
+					!Filtri.FILTRO_API_CONTESTO_VALUE_APPLICATIVI.equals(filterApiContesto)) {
+				String filterApiImplementazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
+				this.addFilterApiImplementazione(filterProtocollo, filterSoggetto, filterGruppo, filterApiContesto, filterApiImplementazione, false);
+			}
+			else {
+				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
+			}
+			
+			if(profiloSelezionato &&
+					filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)  &&
+					Filtri.FILTRO_API_CONTESTO_VALUE_APPLICATIVI.equals(filterApiContesto)) {
+				String filterApplicativo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVIZIO_APPLICATIVO);
+				this.addFilterApplicativo(filterProtocollo, filterSoggetto, filterApplicativo, false);
+			}
+			else {
+				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_SERVIZIO_APPLICATIVO);
+			}
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -275,12 +374,7 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 
 			// setto le label delle colonne
-			String[] labels = {
-					RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME,
-					RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA,
-					RuoliCostanti.LABEL_PARAMETRO_RUOLO_CONTESTO,
-			};
-			this.pd.setLabels(labels);
+			this.setLabelColonne(modalitaCompleta);
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
@@ -288,46 +382,7 @@ public class RuoliHelper extends ConsoleHelper{
 			if (lista != null) {
 				Iterator<Ruolo> it = lista.iterator();
 				while (it.hasNext()) {
-					Ruolo ruolo = it.next();
-
-					Vector<DataElement> e = new Vector<DataElement>();
-
-					DataElement de = new DataElement();
-					Parameter pId = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruolo.getId()+"");
-					de.setUrl(
-							RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE , pId);
-					de.setToolTip(ruolo.getDescrizione());
-					de.setValue(ruolo.getNome());
-					de.setIdToRemove(ruolo.getNome());
-					de.setToolTip(ruolo.getDescrizione());
-					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
-					e.addElement(de);
-
-					de = new DataElement();
-					if(RuoloTipologia.INTERNO.getValue().equals(ruolo.getTipologia().getValue())){
-						de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO);
-					}
-					else if(RuoloTipologia.ESTERNO.getValue().equals(ruolo.getTipologia().getValue())){
-						de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_ESTERNO);
-					}
-					else{
-						de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_QUALSIASI);
-					}
-					
-					e.addElement(de);
-					
-					de = new DataElement();
-					if(RuoloContesto.PORTA_APPLICATIVA.getValue().equals(ruolo.getContestoUtilizzo().getValue())){
-						de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);
-					}
-					else if(RuoloContesto.PORTA_DELEGATA.getValue().equals(ruolo.getContestoUtilizzo().getValue())){
-						de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
-					}
-					else{
-						de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
-					}
-					e.addElement(de);
-
+					Vector<DataElement> e = modalitaCompleta ? this.creaEntry(it) : this.creaEntryCustom(it);
 					dati.addElement(e);
 				}
 			}
@@ -364,6 +419,152 @@ public class RuoliHelper extends ConsoleHelper{
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
+		}
+	}
+	
+	private Vector<DataElement> creaEntry(Iterator<Ruolo> it) {
+		Ruolo ruolo = it.next();
+		Vector<DataElement> e = new Vector<DataElement>();
+
+		DataElement de = new DataElement();
+		Parameter pId = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruolo.getId()+"");
+		de.setUrl(
+				RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE , pId);
+		de.setToolTip(ruolo.getDescrizione());
+		de.setValue(ruolo.getNome());
+		de.setIdToRemove(ruolo.getNome());
+		de.setToolTip(ruolo.getDescrizione());
+		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
+		e.addElement(de);
+
+		de = new DataElement();
+		if(RuoloTipologia.INTERNO.getValue().equals(ruolo.getTipologia().getValue())){
+			de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO);
+		}
+		else if(RuoloTipologia.ESTERNO.getValue().equals(ruolo.getTipologia().getValue())){
+			de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_ESTERNO);
+		}
+		else{
+			de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_QUALSIASI);
+		}
+		
+		e.addElement(de);
+		
+		de = new DataElement();
+		if(RuoloContesto.PORTA_APPLICATIVA.getValue().equals(ruolo.getContestoUtilizzo().getValue())){
+			de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);
+		}
+		else if(RuoloContesto.PORTA_DELEGATA.getValue().equals(ruolo.getContestoUtilizzo().getValue())){
+			de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
+		}
+		else{
+			de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
+		}
+		e.addElement(de);
+		return e;
+	}
+	
+	private Vector<DataElement> creaEntryCustom(Iterator<Ruolo> it) {
+		Ruolo ruolo = it.next();
+		Vector<DataElement> e = new Vector<DataElement>();
+
+		// TITOLO (nome)
+
+		DataElement de = new DataElement();
+		Parameter pId = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruolo.getId()+"");
+		de.setUrl(
+				RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE , pId);
+		de.setToolTip(ruolo.getDescrizione());
+		de.setValue(ruolo.getNome());
+		de.setIdToRemove(ruolo.getNome());
+		de.setToolTip(ruolo.getDescrizione());
+		de.setType(DataElementType.TITLE);
+		e.addElement(de);
+		
+		// Metadati (tipologia e contesto)
+
+		String tipologiaRuoloLabel = "";
+		de = new DataElement();
+		if(RuoloTipologia.INTERNO.getValue().equals(ruolo.getTipologia().getValue())){
+			tipologiaRuoloLabel = RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO;
+		}
+		else if(RuoloTipologia.ESTERNO.getValue().equals(ruolo.getTipologia().getValue())){
+			tipologiaRuoloLabel = RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
+		}
+		else{
+			tipologiaRuoloLabel = RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_QUALSIASI;
+		}
+		
+		String contestoRuoloLabel = "";
+		
+		if(RuoloContesto.PORTA_APPLICATIVA.getValue().equals(ruolo.getContestoUtilizzo().getValue())){
+			contestoRuoloLabel = RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
+		}
+		else if(RuoloContesto.PORTA_DELEGATA.getValue().equals(ruolo.getContestoUtilizzo().getValue())){
+			contestoRuoloLabel = RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
+		}
+		else{
+			contestoRuoloLabel = RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI;
+		}
+		
+		de.setValue(MessageFormat.format(RuoliCostanti.MESSAGE_METADATI_RUOLO_TIPO_E_CONTESTO, tipologiaRuoloLabel, contestoRuoloLabel));
+		de.setType(DataElementType.SUBTITLE);
+		e.addElement(de);
+		
+		// TODO 
+//			de = new DataElement();
+//			de.setType(DataElementType.IMAGE);
+//			DataElementInfo dInfoUtilizzo = new DataElementInfo(SoggettiCostanti.LABEL_SOGGETTO);
+//			dInfoUtilizzo.setBody("Il soggetto " + this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()) + " gestisce...");
+//			de.setInfo(dInfoUtilizzo);
+//			de.setToolTip("Visualizza Info");
+//			e.addElement(de);
+		
+		// In Uso
+		de = new DataElement();
+		de.setType(DataElementType.IMAGE);
+		de.setToolTip(CostantiControlStation.LABEL_IN_USO_TOOLTIP);
+		Dialog deDialog = new Dialog();
+		deDialog.setIcona(Costanti.ICON_USO);
+		deDialog.setTitolo(ruolo.getNome());
+		deDialog.setHeaderRiga1(CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI);
+		
+		// Inserire sempre la url come primo elemento del body
+		BodyElement bodyElementURL = new Dialog().new BodyElement();
+		bodyElementURL.setType(DataElementType.HIDDEN);
+		bodyElementURL.setName(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL);
+		Parameter pIdOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO, ruolo.getNome());
+		Parameter pTipoOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, org.openspcoop2.protocol.sdk.constants.ArchiveType.RUOLO.toString());
+		Parameter pTipoRisposta = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, UtilsCostanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT);
+		bodyElementURL.setUrl(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, pIdOggetto,pTipoOggetto,pTipoRisposta);
+		deDialog.addBodyElement(bodyElementURL);
+		
+		BodyElement bodyElement = new Dialog().new BodyElement();
+		bodyElement.setType(DataElementType.TEXT_AREA);
+		bodyElement.setLabel("");
+		bodyElement.setValue("");
+		bodyElement.setRows(15);
+		deDialog.addBodyElement(bodyElement );
+		
+		de.setDialog(deDialog );
+		e.addElement(de);
+		return e;
+	}
+	
+	private void setLabelColonne(boolean modalitaCompleta) {
+
+		if(!modalitaCompleta) {
+			String[] labels = {
+					RuoliCostanti.LABEL_RUOLI
+			};
+			this.pd.setLabels(labels);
+		} else {
+			String[] labels = {
+					RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME,
+					RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA,
+					RuoliCostanti.LABEL_PARAMETRO_RUOLO_CONTESTO,
+			};
+			this.pd.setLabels(labels);
 		}
 	}
 }

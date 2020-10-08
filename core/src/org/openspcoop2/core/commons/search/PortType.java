@@ -147,7 +147,7 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getOperationList
-   * @return List<Operation>
+   * @return List&lt;Operation&gt;
   */
   @Deprecated
   public List<Operation> getOperation() {
@@ -156,7 +156,7 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setOperationList
-   * @param operation List<Operation>
+   * @param operation List&lt;Operation&gt;
   */
   @Deprecated
   public void setOperation(List<Operation> operation) {

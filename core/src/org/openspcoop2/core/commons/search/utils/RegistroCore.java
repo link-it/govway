@@ -60,7 +60,8 @@ import org.openspcoop2.core.commons.search.dao.IServizioApplicativoServiceSearch
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -768,6 +769,28 @@ public class RegistroCore {
 	}
 	public static List<IDServizioApplicativo> getServiziApplicativiFruitore(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoFruitore, String nomeSoggettoFruitore) throws Exception{
+		return _getServiziApplicativi(manager, protocolli, 
+				tipoSoggettoFruitore, nomeSoggettoFruitore, true);
+	}
+	
+	public static List<IDServizioApplicativo> getServiziApplicativi(JDBCServiceManager manager, String protocollo, 
+			String tipoSoggettoProprietario, String nomeSoggettoProprietario) throws Exception{
+		List<String> protocolli = null;
+		if(protocollo!=null) {
+			protocolli = new ArrayList<>();
+			protocolli.add(protocollo);
+		}
+		return getServiziApplicativi(manager, protocolli, 
+				tipoSoggettoProprietario, nomeSoggettoProprietario);
+	}
+	public static List<IDServizioApplicativo> getServiziApplicativi(JDBCServiceManager manager, List<String> protocolli, 
+			String tipoSoggettoProprietario, String nomeSoggettoProprietario) throws Exception{
+		return _getServiziApplicativi(manager, protocolli, 
+				tipoSoggettoProprietario, nomeSoggettoProprietario, false);
+	}
+	
+	private static List<IDServizioApplicativo> _getServiziApplicativi(JDBCServiceManager manager, List<String> protocolli, 
+			String tipoSoggettoProprietario, String nomeSoggettoProprietario, boolean onlyClient) throws Exception{
 		List<IDServizioApplicativo> list = new ArrayList<IDServizioApplicativo>();
 			
 		IServizioApplicativoServiceSearch saServiceSearch = manager.getServizioApplicativoServiceSearch();
@@ -782,13 +805,27 @@ public class RegistroCore {
 			pag.in(ServizioApplicativo.model().ID_SOGGETTO.TIPO, types);
 		}
 		
-		if(tipoSoggettoFruitore!=null && nomeSoggettoFruitore!=null){
-			pag.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoSoggettoFruitore);
-			pag.equals(ServizioApplicativo.model().ID_SOGGETTO.NOME, nomeSoggettoFruitore);
+		if(tipoSoggettoProprietario!=null && nomeSoggettoProprietario!=null){
+			pag.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoSoggettoProprietario);
+			pag.equals(ServizioApplicativo.model().ID_SOGGETTO.NOME, nomeSoggettoProprietario);
 		}
 		
-		pag.notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO.getValue());
-		pag.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE);
+		if(onlyClient) {
+			// pag.notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO.getValue());
+			// pag.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE);
+			IExpression exprOr = saServiceSearch.newExpression();
+			exprOr.equals(ServizioApplicativo.model().TIPO, CostantiConfigurazione.CLIENT);
+			exprOr.or();
+			exprOr.equals(ServizioApplicativo.model().AS_CLIENT, CostantiDB.TRUE);
+			pag.and(exprOr);
+		}
+		else {
+			IExpression exprOr = saServiceSearch.newExpression();
+			exprOr.equals(ServizioApplicativo.model().TIPO, CostantiConfigurazione.CLIENT);
+			exprOr.or();
+			exprOr.equals(ServizioApplicativo.model().TIPO, CostantiConfigurazione.SERVER);
+			pag.and(exprOr);
+		}
 		
 		pag.addOrder(ServizioApplicativo.model().NOME,SortOrder.ASC);
 		pag.addOrder(ServizioApplicativo.model().ID_SOGGETTO.NOME,SortOrder.ASC);

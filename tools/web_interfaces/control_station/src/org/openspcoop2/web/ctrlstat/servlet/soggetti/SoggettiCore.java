@@ -22,6 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.resources.MapReader;
@@ -1073,4 +1075,30 @@ public class SoggettiCore extends ControlStationCore {
 		}
 	}
 	
+	
+	public String getDettagliSoggettoInUso(org.openspcoop2.core.registry.Soggetto soggetto) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverControlStationException {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean saInUso  = this.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds );
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(saInUso) {
+			
+			IDSoggetto idSoggetto = new IDSoggetto();
+			idSoggetto.setTipo(soggetto.getTipo());
+			idSoggetto.setNome(soggetto.getNome());
+			idSoggetto.setCodicePorta(soggetto.getIdentificativoPorta());
+			
+			String s = DBOggettiInUsoUtils.toString(idSoggetto , whereIsInUso, false, "\n", normalizeObjectIds);
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(SoggettiCostanti.LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
+	}
 }

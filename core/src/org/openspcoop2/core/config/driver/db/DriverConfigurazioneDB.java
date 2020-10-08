@@ -18210,7 +18210,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("filterRuolo : " + filterRuolo);
 		this.log.debug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
 		this.log.debug("filterTipoCredenziali : " + filterTipoCredenziali);
-		this.log.debug("filterGruppo : " + filterTipoCredenziali);
+		this.log.debug("filterGruppo : " + filterGruppo);
 		this.log.debug("filterApiContesto : " + filterApiContesto);
 		this.log.debug("filterApiImplementazione : " + filterApiImplementazione);
 		

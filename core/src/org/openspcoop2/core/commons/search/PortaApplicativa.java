@@ -274,7 +274,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getPortaApplicativaServizioApplicativoList
-   * @return List<PortaApplicativaServizioApplicativo>
+   * @return List&lt;PortaApplicativaServizioApplicativo&gt;
   */
   @Deprecated
   public List<PortaApplicativaServizioApplicativo> getPortaApplicativaServizioApplicativo() {
@@ -283,7 +283,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setPortaApplicativaServizioApplicativoList
-   * @param portaApplicativaServizioApplicativo List<PortaApplicativaServizioApplicativo>
+   * @param portaApplicativaServizioApplicativo List&lt;PortaApplicativaServizioApplicativo&gt;
   */
   @Deprecated
   public void setPortaApplicativaServizioApplicativo(List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativo) {
@@ -304,7 +304,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getPortaApplicativaAzioneList
-   * @return List<PortaApplicativaAzione>
+   * @return List&lt;PortaApplicativaAzione&gt;
   */
   @Deprecated
   public List<PortaApplicativaAzione> getPortaApplicativaAzione() {
@@ -313,7 +313,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setPortaApplicativaAzioneList
-   * @param portaApplicativaAzione List<PortaApplicativaAzione>
+   * @param portaApplicativaAzione List&lt;PortaApplicativaAzione&gt;
   */
   @Deprecated
   public void setPortaApplicativaAzione(List<PortaApplicativaAzione> portaApplicativaAzione) {

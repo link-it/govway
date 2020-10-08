@@ -81,8 +81,16 @@ public final class ErogazioniList extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.SERVIZI;
-						
+			
+			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+			List<AccordoServizioParteSpecifica> lista = null;
+			if(!ServletUtils.isSearchDone(erogazioniHelper)) {
+				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  AccordoServizioParteSpecifica.class);
+			}
+			
 			ricerca = erogazioniHelper.checkSearchParameters(idLista, ricerca);
+			
+			erogazioniHelper.clearFiltroSoggettoByPostBackProtocollo(0, ricerca, idLista);
 			
 			String tipologiaParameterName = AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE;
 			String tipologia = erogazioniHelper.getParameter(tipologiaParameterName);
@@ -112,15 +120,20 @@ public final class ErogazioniList extends Action {
 			permessi[1] = pu.isAccordiCooperazione();
 			
 //			long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-			List<AccordoServizioParteSpecifica> lista = null;
-			if(apsCore.isVisioneOggettiGlobale(superUser)){
-				lista = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
-			}else{
-				lista = apsCore.soggettiServizioList(superUser, ricerca,permessi, gestioneFruitori, gestioneErogatori);
+			if(lista==null) {
+				if(apsCore.isVisioneOggettiGlobale(superUser)){
+					lista = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
+				}else{
+					lista = apsCore.soggettiServizioList(superUser, ricerca,permessi, gestioneFruitori, gestioneErogatori);
+				}
 			}
 //			long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
 //			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
-//
+
+			if(!erogazioniHelper.isPostBackFilterElement()) {
+				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+			}
+			
 //			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
 			erogazioniHelper.prepareErogazioniList(ricerca, lista);
 //			after = org.openspcoop2.utils.date.DateManager.getTimeMillis();

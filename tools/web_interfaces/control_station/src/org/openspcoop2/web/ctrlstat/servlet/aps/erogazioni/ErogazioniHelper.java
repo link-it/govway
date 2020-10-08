@@ -428,8 +428,30 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
-			addFilterProtocol(ricerca, idLista);
-
+			String filterProtocollo = addFilterProtocol(ricerca, idLista, true);
+			boolean profiloSelezionato = false;
+			String protocolloS = filterProtocollo;
+			if(protocolloS==null) {
+				// significa che e' stato selezionato un protocollo nel menu in alto a destra
+				List<String> protocolli = this.core.getProtocolli(this.session);
+				if(protocolli!=null && protocolli.size()==1) {
+					protocolloS = protocolli.get(0);
+				}
+			}
+			if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
+					||
+				(filterProtocollo==null && protocolloS!=null)
+					) {
+				profiloSelezionato = true;
+			}
+			
+			if( profiloSelezionato && 
+					(!this.isSoggettoMultitenantSelezionato())) {
+				String filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
+				this.addFilterSoggetto(filterSoggetto,protocolloS,true,false);
+			}
+			
 			if(showServiceBinding) {
 				String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
 				this.addFilterServiceBinding(filterTipoAccordo,false,true);

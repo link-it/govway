@@ -4491,6 +4491,47 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
+	public List<IDServizioApplicativo> getServiziApplicativi(String protocolloSelezionato,List<String> protocolliSupportati, 
+			String tipoProprietario, String nomeProprietario) throws DriverControlStationException{
+		String nomeMetodo = "getServiziApplicativi"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getServiziApplicativi(serviceManager, protocolloSelezionato, 
+						tipoProprietario, nomeProprietario);
+			}
+			else {
+				return RegistroCore.getServiziApplicativi(serviceManager, protocolliSupportati, 
+						tipoProprietario, nomeProprietario);
+			}
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 	
 	public List<IDServizio> getErogazioni(List<String> protocolli, 
 			String gruppo,

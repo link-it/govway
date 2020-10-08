@@ -68,6 +68,29 @@
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
+.titoloRuoli .ruolo {
+  margin: 0px;
+}
+
+.ruolo-label-info {
+	background-color: ${input.tags.card.background.color};
+	text-align: center;
+	border-radius: 3px;
+/* 	font-size: 12px; */
+    padding: 4px 4px 0px 0px;;
+    margin: 3px 3px;
+}
+
+.ruolo-label-info.ruolo-label-info-default,
+.ruolo-label-info.ruolo-label-info-0 { 
+	background-color: transparent; 
+	color: ${body.color}; 
+/* 	border: 1px solid ${body.color};  */
+	font-size: 12px; 
+/* 	border-radius: 8px;  */
+	font-weight: normal;
+}
+
 .label-info {
 	background-color: ${input.tags.card.background.color};
 	text-align: center;

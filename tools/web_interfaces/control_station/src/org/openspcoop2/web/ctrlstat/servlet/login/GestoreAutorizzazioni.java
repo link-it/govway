@@ -45,6 +45,7 @@ import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
@@ -106,6 +107,7 @@ public class GestoreAutorizzazioni {
 	Vector<String> servletOperazioni = null;
 	Vector<String> servletProtocolProperties = null;
 	Vector<String> servletGruppi = null;
+	Vector<String> servletRegistro = null;
 	
 	// Associazione diritti alle funzionalita'
 	PermessiUtente permessiPdD = null;
@@ -133,6 +135,7 @@ public class GestoreAutorizzazioni {
 	PermessiUtente permessiOperazioni = null;
 	PermessiUtente permessiProtocolProperties = null;
 	PermessiUtente permessiGruppi = null;
+	PermessiUtente permessiRegistro = null;
 
 	
 	private boolean singlePdD = false;
@@ -447,6 +450,13 @@ public class GestoreAutorizzazioni {
 		/** Permessi associati alla gestione dei gruppi */
 		this.permessiGruppi = new PermessiUtente();
 		this.permessiGruppi.setSistema(true);
+		
+		/** Gruppo di servlet che gestiscono il supporto delle funzionalita' di registro */
+		this.servletRegistro = new Vector<String>();
+		this.servletRegistro.add(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO);
+		/** Permessi Associati al supporto delle funzionalita' di registro */
+		this.permessiRegistro = new PermessiUtente();
+		this.permessiRegistro.setServizi(true);
 	}
 	
 	
@@ -536,6 +546,8 @@ public class GestoreAutorizzazioni {
 			return this.permessiProtocolProperties.or(user.getPermessi());
 		}else if(this.servletGruppi.contains(nomeServlet)){
 			return this.permessiGruppi.or(user.getPermessi());
+		}else if(this.servletRegistro.contains(nomeServlet)){
+			return this.permessiRegistro.or(user.getPermessi());
 		}else{
 			log.error("Servlet richiesta non gestita: "+nomeServlet);
 			return false;

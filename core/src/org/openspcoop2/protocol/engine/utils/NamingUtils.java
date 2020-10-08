@@ -26,6 +26,7 @@ import java.util.List;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -123,6 +124,24 @@ public class NamingUtils {
 		}
 		return new IDSoggetto(tipo, nome);
 	}
+	
+	
+	// APPLICATIVI
+	
+	public static String getLabelServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws Exception{
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idServizioApplicativo.getIdSoggettoProprietario().getTipo());
+		return getLabelServizioApplicativo(protocollo, idServizioApplicativo);
+	}
+	public static String getLabelServizioApplicativo(String protocollo, IDServizioApplicativo idServizioApplicativo) throws Exception{
+		StringBuilder bf = new StringBuilder();
+		bf.append(idServizioApplicativo.getNome());
+		bf.append(" (");
+		bf.append(getLabelSoggetto(protocollo, idServizioApplicativo.getIdSoggettoProprietario()));
+		bf.append(")");
+		return bf.toString();
+	}
+	
 	
 	
 	// API

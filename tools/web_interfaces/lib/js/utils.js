@@ -138,4 +138,3 @@ function setPercentuale(td,value){
                 td.text(newText);
         }
 }
-

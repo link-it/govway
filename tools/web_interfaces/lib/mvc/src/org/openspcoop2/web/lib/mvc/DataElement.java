@@ -117,6 +117,8 @@ public class DataElement {
 	
 	private boolean visualizzaLinkApriNuovaFinestra = false;
 	
+	private Dialog dialog = null;
+	
 	public String getIdToRemove() {
 		return this.idToRemove;
 	}
@@ -884,4 +886,11 @@ public class DataElement {
 		this.visualizzaLinkApriNuovaFinestra = visualizzaLinkApriNuovaFinestra;
 	}
 	
+	public Dialog getDialog() {
+		return this.dialog;
+	}
+
+	public void setDialog(Dialog dialog) {
+		this.dialog = dialog;
+	}
 }

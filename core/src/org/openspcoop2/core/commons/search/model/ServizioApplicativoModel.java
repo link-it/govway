@@ -43,6 +43,8 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.NOME = new Field("nome",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPOLOGIA_FRUIZIONE = new Field("tipologia_fruizione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPOLOGIA_EROGAZIONE = new Field("tipologia_erogazione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPO = new Field("tipo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.AS_CLIENT = new Field("as_client",java.lang.Integer.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new Field("id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"servizio-applicativo",ServizioApplicativo.class));
 	
 	}
@@ -54,6 +56,8 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPOLOGIA_FRUIZIONE = new ComplexField(father,"tipologia_fruizione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPOLOGIA_EROGAZIONE = new ComplexField(father,"tipologia_erogazione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.AS_CLIENT = new ComplexField(father,"as_client",java.lang.Integer.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new ComplexField(father,"id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"servizio-applicativo",ServizioApplicativo.class));
 	
 	}
@@ -65,6 +69,10 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	public IField TIPOLOGIA_FRUIZIONE = null;
 	 
 	public IField TIPOLOGIA_EROGAZIONE = null;
+	 
+	public IField TIPO = null;
+	 
+	public IField AS_CLIENT = null;
 	 
 	public org.openspcoop2.core.commons.search.model.IdSoggettoModel ID_SOGGETTO = null;
 	 

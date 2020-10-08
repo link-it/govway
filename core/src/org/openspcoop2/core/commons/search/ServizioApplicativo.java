@@ -38,6 +38,8 @@ import java.io.Serializable;
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="tipologia_fruizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="tipologia_erogazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="as_client" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
@@ -55,6 +57,8 @@ import java.io.Serializable;
   	"nome",
   	"tipologiaFruizione",
   	"tipologiaErogazione",
+  	"tipo",
+  	"asClient",
   	"idSoggetto"
   }
 )
@@ -103,6 +107,22 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
     this.tipologiaErogazione = tipologiaErogazione;
   }
 
+  public java.lang.String getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(java.lang.String tipo) {
+    this.tipo = tipo;
+  }
+
+  public java.lang.Integer getAsClient() {
+    return this.asClient;
+  }
+
+  public void setAsClient(java.lang.Integer asClient) {
+    this.asClient = asClient;
+  }
+
   public IdSoggetto getIdSoggetto() {
     return this.idSoggetto;
   }
@@ -141,6 +161,14 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipologia_erogazione",required=true,nillable=false)
   protected java.lang.String tipologiaErogazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo",required=false,nillable=false)
+  protected java.lang.String tipo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlElement(name="as_client",required=false,nillable=false)
+  protected java.lang.Integer asClient;
 
   @XmlElement(name="id-soggetto",required=true,nillable=false)
   protected IdSoggetto idSoggetto;

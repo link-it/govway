@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -31,6 +33,8 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -38,6 +42,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -48,6 +53,8 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -57,15 +64,18 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.Dialog;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 
 /**
  * SoggettiHelper
@@ -1011,6 +1021,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 	public void prepareSoggettiList(List<org.openspcoop2.core.registry.Soggetto> lista, ISearch ricerca) throws Exception {
 		try {
+			boolean modalitaCompleta = this.isModalitaCompleta(); 
+			
+			if(!modalitaCompleta) {
+				this.pd.setCustomListViewName(SoggettiCostanti.SOGGETTI_NOME_VISTA_CUSTOM_LISTA);
+			}
+			
 			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
 			boolean multiTenant = this.core.isMultitenant();
@@ -1092,48 +1108,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 
-			// setto le label delle colonne
-			int totEl = this.isModalitaCompleta() ? 4 : 2;
-			if( showProtocolli ) {
-				totEl++;
-			}
-			if(multiTenant || this.pddCore.isGestionePddAbilitata(this)) {
-				// pdd o dominio
-				totEl++;
-			}
-			if(this.isModalitaCompleta()) {
-				totEl++; // connettore column
-			}
-			if(this.isModalitaCompleta()) {
-				totEl++; // connettore servizi applicativi
-			}
-			String[] labels = new String[totEl];
-			int i = 0;
-			labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME;
-			if( showProtocolli ) {
-				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO_COMPACT;
-			}
-			if(this.pddCore.isGestionePddAbilitata(this)) {
-				labels[i++] = PddCostanti.LABEL_PORTA_DI_DOMINIO;
-			}
-			else if(multiTenant) {
-				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO;
-			}
-			if(this.isModalitaCompleta()) {
-				labels[i++] = ConnettoriCostanti.LABEL_CONNETTORE;
-			}
-			labels[i++] = RuoliCostanti.LABEL_RUOLI;
-			if(this.isModalitaCompleta()) {
-				labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
-			}
-//			else {
-//				labels[i++] = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
-//			}
-			if(this.isModalitaCompleta()) {
-				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
-				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
-			}
-			this.pd.setLabels(labels);
+			setLabelColonne(modalitaCompleta, multiTenant, showProtocolli);
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
@@ -1154,180 +1129,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			Iterator<org.openspcoop2.core.registry.Soggetto> it = lista.listIterator();
 			while (it.hasNext()) {
-				org.openspcoop2.core.registry.Soggetto elem = it.next();
-
-				PdDControlStation pdd = null;
-				String nomePdD = elem.getPortaDominio();
-				if (nomePdD!=null && (!nomePdD.equals("-")) )
-					pdd = this.pddCore.getPdDControlStation(nomePdD);
-				boolean pddEsterna = this.pddCore.isPddEsterna(nomePdD);
-
-				Vector<DataElement> e = new Vector<DataElement>();
-
-				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
-									
-				DataElement de = new DataElement();
-				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
-				de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
-				de.setIdToRemove(elem.getId().toString());
-				de.setToolTip(de.getValue());
-				de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
-				e.addElement(de);
-
-				if(showProtocolli) {
-					de = new DataElement();
-					de.setValue(this.getLabelProtocollo(protocollo));
-					e.addElement(de);
-				}
-				
-				if(this.core.isGestionePddAbilitata(this)) {
-					de = new DataElement();
-					if (pdd != null && (!nomePdD.equals("-"))){
-						if (!nomePdD.equals("-")){
-							//if (nomiPdd.contains(nomePdD)) {
-							if(this.core.isSinglePdD()){
-								de.setUrl(PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_CHANGE,
-										new Parameter(PddCostanti.PARAMETRO_PDD_ID,pdd.getId()+""),
-										new Parameter(PddCostanti.PARAMETRO_PDD_NOME,pdd.getNome()));
-							}else{
-								de.setUrl(PddCostanti.SERVLET_NAME_PDD_CHANGE,
-										new Parameter(PddCostanti.PARAMETRO_PDD_ID,pdd.getId()+""));
-							}
-							//}
-						}
-						de.setValue(nomePdD);
-					}
-					else{
-						de.setValue("-");
-					}
-					e.addElement(de);
-				}
-				else if(multiTenant) {
-					de = new DataElement();
-					if(pddEsterna) {
-						de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_LABEL);
-					}else {
-						de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_LABEL);
-					}
-					e.addElement(de);
-				}
-
-				if(this.isModalitaCompleta()) {
-					
-					boolean showConnettore = this.core.isRegistroServiziLocale() &&
-							(this.isModalitaCompleta() || this.pddCore.isPddEsterna(nomePdD) || multiTenant );
-					
-					de = new DataElement();
-					if(showConnettore){
-						de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
-						ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					else{
-						de.setType(DataElementType.TEXT);
-						de.setValue("-");
-					}
-					e.addElement(de);
-				}
-
-				
-				// Ruoli
-				de = new DataElement();
-				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
-				if (contaListe) {
-					// BugFix OP-674
-					//List<String> lista1 = this.soggettiCore.soggettiRuoliList(elem.getId(),new Search(true));
-					Search searchForCount = new Search(true,1);
-					this.soggettiCore.soggettiRuoliList(elem.getId(),searchForCount);
-					//int numRuoli = lista1.size();
-					int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
-					ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);
-				
-				
-				//Servizi Appicativi
-				if(this.isModalitaCompleta()) {
-					de = new DataElement();
-					if (pddEsterna) {
-						de.setType(DataElementType.TEXT);
-						de.setValue("-");
-					}
-					else {
-						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
-						if (contaListe) {
-							// BugFix OP-674
-							//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
-							Search searchForCount = new Search(true,1);
-							this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
-							this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
-							//int numSA = lista1.size();
-							int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					e.addElement(de);
-				}
-				
-				if(this.isModalitaCompleta()) {
-					de = new DataElement();
-					if (pddEsterna) {
-						// se la pdd e' esterna non e' possibile
-						// inseririre porte applicative
-						de.setType(DataElementType.TEXT);
-						de.setValue("-");
-					} else {
-						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
-						if (contaListe) {
-							// BugFix OP-674
-							//List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
-							Search searchForCount = new Search(true,1);
-							this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
-							//int numPA = lista1.size();
-							int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-	
-					}
-					e.addElement(de);
-	
-					de = new DataElement();
-					if (pddEsterna) {
-						// se la pdd e' esterna non e' possibile
-						// inseririre porte delegate
-						de.setType(DataElementType.TEXT);
-						de.setValue("-");
-					} else {
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
-						if (contaListe) {
-							// BugFix OP-674
-							//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
-							Search searchForCount = new Search(true,1);
-							this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
-							//int numPD = lista1.size();
-							int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					e.addElement(de);
-				}
+				Vector<DataElement> e = modalitaCompleta 
+						? this.creaEntry(modalitaCompleta, multiTenant, contaListe, showProtocolli, it) 
+								: this.creaEntryCustom(multiTenant, showProtocolli, it);
 
 				dati.addElement(e);
 			}
@@ -1365,6 +1169,366 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	private Vector<DataElement> creaEntry(boolean modalitaCompleta, boolean multiTenant, Boolean contaListe,
+			boolean showProtocolli, Iterator<org.openspcoop2.core.registry.Soggetto> it)
+			throws DriverControlStationException, DriverControlStationNotFound, DriverRegistroServiziNotFound,
+			DriverRegistroServiziException, Exception, DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		org.openspcoop2.core.registry.Soggetto elem = it.next();
+
+		PdDControlStation pdd = null;
+		String nomePdD = elem.getPortaDominio();
+		if (nomePdD!=null && (!nomePdD.equals("-")) )
+			pdd = this.pddCore.getPdDControlStation(nomePdD);
+		boolean pddEsterna = this.pddCore.isPddEsterna(nomePdD);
+
+		Vector<DataElement> e = new Vector<DataElement>();
+
+		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
+							
+		DataElement de = new DataElement();
+		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
+				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
+				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+		de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
+		de.setIdToRemove(elem.getId().toString());
+		de.setToolTip(de.getValue());
+		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
+		e.addElement(de);
+
+		if(showProtocolli) {
+			de = new DataElement();
+			de.setValue(this.getLabelProtocollo(protocollo));
+			e.addElement(de);
+		}
+		
+		if(this.core.isGestionePddAbilitata(this)) {
+			de = new DataElement();
+			if (pdd != null && (!nomePdD.equals("-"))){
+				if (!nomePdD.equals("-")){
+					//if (nomiPdd.contains(nomePdD)) {
+					if(this.core.isSinglePdD()){
+						de.setUrl(PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_CHANGE,
+								new Parameter(PddCostanti.PARAMETRO_PDD_ID,pdd.getId()+""),
+								new Parameter(PddCostanti.PARAMETRO_PDD_NOME,pdd.getNome()));
+					}else{
+						de.setUrl(PddCostanti.SERVLET_NAME_PDD_CHANGE,
+								new Parameter(PddCostanti.PARAMETRO_PDD_ID,pdd.getId()+""));
+					}
+					//}
+				}
+				de.setValue(nomePdD);
+			}
+			else{
+				de.setValue("-");
+			}
+			e.addElement(de);
+		}
+		else if(multiTenant) {
+			de = new DataElement();
+			if(pddEsterna) {
+				de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_LABEL);
+			}else {
+				de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_LABEL);
+			}
+			e.addElement(de);
+		}
+
+		if(modalitaCompleta) {
+			
+			boolean showConnettore = this.core.isRegistroServiziLocale() &&
+					(modalitaCompleta || this.pddCore.isPddEsterna(nomePdD) || multiTenant );
+			
+			de = new DataElement();
+			if(showConnettore){
+				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+				ServletUtils.setDataElementVisualizzaLabel(de);
+			}
+			else{
+				de.setType(DataElementType.TEXT);
+				de.setValue("-");
+			}
+			e.addElement(de);
+		}
+
+		
+		// Ruoli
+		de = new DataElement();
+		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
+		if (contaListe) {
+			// BugFix OP-674
+			//List<String> lista1 = this.soggettiCore.soggettiRuoliList(elem.getId(),new Search(true));
+			Search searchForCount = new Search(true,1);
+			this.soggettiCore.soggettiRuoliList(elem.getId(),searchForCount);
+			//int numRuoli = lista1.size();
+			int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
+			ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
+		} else
+			ServletUtils.setDataElementVisualizzaLabel(de);
+		e.addElement(de);
+		
+		
+		//Servizi Appicativi
+		if(modalitaCompleta) {
+			de = new DataElement();
+			if (pddEsterna) {
+				de.setType(DataElementType.TEXT);
+				de.setValue("-");
+			}
+			else {
+				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
+				if (contaListe) {
+					// BugFix OP-674
+					//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
+					Search searchForCount = new Search(true,1);
+					this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
+					this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
+					//int numSA = lista1.size();
+					int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
+					ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
+				} else
+					ServletUtils.setDataElementVisualizzaLabel(de);
+			}
+			e.addElement(de);
+		}
+		
+		if(modalitaCompleta) {
+			de = new DataElement();
+			if (pddEsterna) {
+				// se la pdd e' esterna non e' possibile
+				// inseririre porte applicative
+				de.setType(DataElementType.TEXT);
+				de.setValue("-");
+			} else {
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
+				if (contaListe) {
+					// BugFix OP-674
+					//List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
+					//int numPA = lista1.size();
+					int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
+					ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
+				} else
+					ServletUtils.setDataElementVisualizzaLabel(de);
+
+			}
+			e.addElement(de);
+
+			de = new DataElement();
+			if (pddEsterna) {
+				// se la pdd e' esterna non e' possibile
+				// inseririre porte delegate
+				de.setType(DataElementType.TEXT);
+				de.setValue("-");
+			} else {
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
+				if (contaListe) {
+					// BugFix OP-674
+					//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
+					//int numPD = lista1.size();
+					int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
+					ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
+				} else
+					ServletUtils.setDataElementVisualizzaLabel(de);
+			}
+			e.addElement(de);
+		}
+		return e;
+	}
+	private void setLabelColonne(boolean modalitaCompleta, boolean multiTenant, boolean showProtocolli) {
+		
+		if(!modalitaCompleta) {
+			List<String> labels = new ArrayList<String>();
+			labels.add(SoggettiCostanti.LABEL_SOGGETTI);
+			
+			this.pd.setLabels(labels.toArray(new String[1]));
+		} else {
+			// setto le label delle colonne
+			int totEl = modalitaCompleta ? 4 : 2;
+			if( showProtocolli ) {
+				totEl++;
+			}
+			if(multiTenant || this.pddCore.isGestionePddAbilitata(this)) {
+				// pdd o dominio
+				totEl++;
+			}
+			if(modalitaCompleta) {
+				totEl++; // connettore column
+			}
+			if(modalitaCompleta) {
+				totEl++; // connettore servizi applicativi
+			}
+			String[] labels = new String[totEl];
+			int i = 0;
+			labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME;
+			if( showProtocolli ) {
+				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO_COMPACT;
+			}
+			if(this.pddCore.isGestionePddAbilitata(this)) {
+				labels[i++] = PddCostanti.LABEL_PORTA_DI_DOMINIO;
+			}
+			else if(multiTenant) {
+				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO;
+			}
+			if(modalitaCompleta) {
+				labels[i++] = ConnettoriCostanti.LABEL_CONNETTORE;
+			}
+			labels[i++] = RuoliCostanti.LABEL_RUOLI;
+			if(modalitaCompleta) {
+				labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			}
+	//			else {
+	//				labels[i++] = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+	//			}
+			if(modalitaCompleta) {
+				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
+				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
+			}
+			this.pd.setLabels(labels);
+		}
+	}
+	
+	private Vector<DataElement> creaEntryCustom(boolean multiTenant, boolean showProtocolli,
+			Iterator<org.openspcoop2.core.registry.Soggetto> it)
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, Exception,
+			DriverControlStationException, DriverControlStationNotFound, DriverConfigurazioneException {
+		org.openspcoop2.core.registry.Soggetto elem = it.next();
+
+		Vector<DataElement> e = new Vector<DataElement>();
+		
+		// Titolo (nome soggetto)
+		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
+		
+		DataElement de = new DataElement();
+		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
+				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
+				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+		de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
+		de.setIdToRemove(elem.getId().toString());
+		de.setToolTip(de.getValue());
+		de.setType(DataElementType.TITLE);
+		e.addElement(de);
+		
+		
+		String nomePdD = elem.getPortaDominio();
+		boolean pddEsterna = this.pddCore.isPddEsterna(nomePdD);
+
+		// Metadati (profilo + dominio)
+		if(showProtocolli || multiTenant) {
+			boolean addMetadati = true;
+			de = new DataElement();
+			
+			if(multiTenant) {
+				String dominioLabel = "";
+				if(pddEsterna) {
+					dominioLabel = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_LABEL;
+				}else {
+					dominioLabel = SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_LABEL;
+				}
+				
+				
+				if(showProtocolli) {
+					String labelProtocollo =this.getLabelProtocollo(protocollo); 
+					de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_CON_PROFILO, labelProtocollo, dominioLabel));
+				} else {
+					de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SENZA_PROFILO, dominioLabel));
+				}
+			} else {
+				if(showProtocolli) {
+					String labelProtocollo =this.getLabelProtocollo(protocollo); 
+					de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SOLO_PROFILO, labelProtocollo));
+				} else {
+					de.setValue(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_VUOTI);
+					addMetadati = false;
+				}
+			}
+			
+			de.setType(DataElementType.SUBTITLE);
+			
+			if(addMetadati)
+				e.addElement(de);
+		}
+
+		// Ruoli
+		List<String> listaRuoli = this.soggettiCore.soggettiRuoliList(elem.getId(),new Search(true));
+		for (int j = 0; j < listaRuoli.size(); j++) {
+			String ruolo = listaRuoli.get(j);
+			
+			de = new DataElement();
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO + "_" + j);
+			de.setType(DataElementType.BUTTON);
+			de.setLabel(ruolo);
+			
+//					int indexOf = ruoliDisponibili.indexOf(ruolo);
+//					if(indexOf == -1)
+//						indexOf = 0;
+//					
+//					indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
+			
+			de.setStyleClass("ruolo-label-info-0"); //+indexOf);
+			
+			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
+			
+			de.setToolTip(RuoliCostanti.LABEL_RUOLI); 
+			
+			e.addElement(de);
+		}
+		
+		// TODO 
+//				de = new DataElement();
+//				de.setType(DataElementType.IMAGE);
+//				DataElementInfo dInfoUtilizzo = new DataElementInfo(SoggettiCostanti.LABEL_SOGGETTO);
+//				dInfoUtilizzo.setBody("Il soggetto " + this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()) + " gestisce...");
+//				de.setInfo(dInfoUtilizzo);
+//				de.setToolTip("Visualizza Info");
+//				e.addElement(de);
+		
+		// In Uso
+		de = new DataElement();
+		de.setType(DataElementType.IMAGE);
+		de.setToolTip(CostantiControlStation.LABEL_IN_USO_TOOLTIP);
+		Dialog deDialog = new Dialog();
+		deDialog.setIcona(Costanti.ICON_USO);
+		deDialog.setTitolo(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
+		deDialog.setHeaderRiga1(CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI);
+		
+		// Inserire sempre la url come primo elemento del body
+		BodyElement bodyElementURL = new Dialog().new BodyElement();
+		bodyElementURL.setType(DataElementType.HIDDEN);
+		bodyElementURL.setName(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL);
+		Parameter pIdOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO, elem.getId()+"");
+		Parameter pTipoOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, org.openspcoop2.protocol.sdk.constants.ArchiveType.SOGGETTO.toString());
+		Parameter pTipoRisposta = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, UtilsCostanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT);
+		bodyElementURL.setUrl(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, pIdOggetto,pTipoOggetto,pTipoRisposta);
+		deDialog.addBodyElement(bodyElementURL);
+		
+		BodyElement bodyElement = new Dialog().new BodyElement();
+		bodyElement.setType(DataElementType.TEXT_AREA);
+		bodyElement.setLabel("");
+		bodyElement.setValue("");
+		bodyElement.setRows(15);
+		deDialog.addBodyElement(bodyElement );
+		
+		de.setDialog(deDialog );
+		e.addElement(de);
+		return e;
 	}
 
 	public void prepareSoggettiConfigList(List<org.openspcoop2.core.config.Soggetto> lista, ISearch ricerca) throws Exception {

@@ -123,6 +123,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -339,6 +340,20 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean isPostBackFilterElement() throws Exception{
 		String postbackElementName = this.getPostBackElementName();
 		return postbackElementName!=null && postbackElementName.startsWith(Costanti.PARAMETRO_FILTER_VALUE);
+	}
+	
+	public void clearFiltroSoggettoByPostBackProtocollo(int posizioneFiltroProtocollo, ISearch ricerca, int idLista) throws Exception {
+		String postBackElement = this.getPostBackElementName();
+		if((Costanti.PARAMETRO_FILTER_VALUE+posizioneFiltroProtocollo).equals(postBackElement)) {
+			// verifico se si tratta del profilo di interoperabilita.
+			if(Filtri.FILTRO_PROTOCOLLO.equals(this.getParameter((Costanti.PARAMETRO_FILTER_NAME+posizioneFiltroProtocollo)))) {
+				String value = this.getParameter((Costanti.PARAMETRO_FILTER_VALUE+posizioneFiltroProtocollo));
+				if( (value==null || "".equals(value) ||
+						CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(value))){
+					ricerca.clearFilter(idLista, Filtri.FILTRO_SOGGETTO);
+				}
+			}
+		}
 	}
 	
 	protected ControlStationCore core = null;
@@ -9114,13 +9129,50 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void addFilterApiContesto(String apiContesto, boolean postBack) throws Exception{
+		this._addFilterApiContesto(false, false, false, apiContesto, postBack);
+	}
+	public void addFilterApiContestoRuoli(String apiContesto, boolean postBack) throws Exception{
+		this._addFilterApiContesto(true, true, false, apiContesto, postBack);
+	}
+	private void _addFilterApiContesto(boolean soggetti, boolean applicativi, boolean erogazioneFruizione, String apiContesto, boolean postBack) throws Exception{
 		try {
-			String [] metodi = new String[2];
-			metodi[0] = TipoPdD.APPLICATIVA.getTipo();
-			metodi[1] = TipoPdD.DELEGATA.getTipo();
-			String [] metodiLabel = new String[2];
-			metodiLabel[0] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
-			metodiLabel[1] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
+			int size = 2;
+			if(soggetti) {
+				size++;
+			}
+			if(applicativi) {
+				size++;
+			}
+			if(erogazioneFruizione) {
+				size++;
+			}
+			
+			String [] metodi = new String[size];
+			int index = 0;
+			if(soggetti) {
+				metodi[index++] = Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI;
+			}
+			if(applicativi) {
+				metodi[index++] = Filtri.FILTRO_API_CONTESTO_VALUE_APPLICATIVI;
+			}
+			metodi[index++] = TipoPdD.APPLICATIVA.getTipo();
+			metodi[index++] = TipoPdD.DELEGATA.getTipo();
+			if(erogazioneFruizione) {
+				metodi[index++] = Filtri.FILTRO_API_CONTESTO_VALUE_EROGAZIONE_FRUIZIONE;
+			}
+			String [] metodiLabel = new String[size];
+			index = 0;
+			if(soggetti) {
+				metodiLabel[index++] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_SOGGETTI;
+			}
+			if(applicativi) {
+				metodiLabel[index++] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_APPLICATIVI;
+			}
+			metodiLabel[index++] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
+			metodiLabel[index++] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
+			if(erogazioneFruizione) {
+				metodi[index++] = CostantiControlStation.API_CONTESTO_UTILIZZO_LABEL_EROGAZIONE_FRUIZIONE;
+			}
 			String [] values = new String[metodi.length + 1];
 			String [] labels = new String[metodi.length + 1];
 			labels[0] = CostantiControlStation.LABEL_PARAMETRO_API_CONTESTO_QUALSIASI;
@@ -9223,6 +9275,66 @@ public class ConsoleHelper implements IConsoleHelper {
 			String label = CostantiControlStation.LABEL_PARAMETRO_API_IMPLEMENTAZIONE;
 			
 			this.pd.addFilter(Filtri.FILTRO_API_IMPLEMENTAZIONE, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterApplicativo(String filterProtocollo, String filterSoggetto, String applicativo, boolean postBack) throws Exception{
+		try {
+			
+			boolean isFilterProtocollo = filterProtocollo!=null && !"".equals(filterProtocollo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo);
+			boolean isFilterSoggetto = filterSoggetto!=null && !"".equals(filterSoggetto) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(filterSoggetto);
+						
+			List<String> protocolli = this.core.getProtocolli(this.session);
+			if(isFilterProtocollo) {
+				protocolli.clear();
+				protocolli.add(filterProtocollo);
+			}
+			
+			String filterSoggettoTipo = null;
+			String filterSoggettoNome = null;
+			String protocolloSelezionato = null; 
+			if(isFilterSoggetto) {
+				filterSoggettoTipo = filterSoggetto.split("/")[0];
+				filterSoggettoNome = filterSoggetto.split("/")[1];
+				protocolloSelezionato = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(filterSoggettoTipo);
+			}
+			else {
+				protocolloSelezionato = protocolli.get(0);
+			}
+			
+			List<String> valuesL = new ArrayList<String>();
+			List<String> labelsL = new ArrayList<String>();
+			List<IDServizioApplicativo> listApplicativi = this.confCore.getServiziApplicativi(null, protocolli, filterSoggettoTipo, filterSoggettoNome);
+			if(listApplicativi!=null && !listApplicativi.isEmpty()) {
+				for (IDServizioApplicativo idApplicativo : listApplicativi) {
+					valuesL.add(idApplicativo.toFormatString());
+					if(isFilterSoggetto) {
+						labelsL.add(idApplicativo.getNome());
+					}
+					else {
+						labelsL.add(this.getLabelServizioApplicativo(protocolloSelezionato, idApplicativo));
+					}
+				}
+			}
+			
+			String [] values = new String[valuesL.size() + 1];
+			String [] labels = new String[labelsL.size() + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_APPLICATIVO_QUALSIASI;
+			for (int i =0; i < valuesL.size() ; i ++) {
+				labels[i+1] = labelsL.get(i);
+				values[i+1] = valuesL.get(i);
+			}
+			
+			String selectedValue = applicativo != null ? applicativo : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_APPLICATIVO_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO;
+			
+			this.pd.addFilter(Filtri.FILTRO_SERVIZIO_APPLICATIVO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -9494,6 +9606,22 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	public String getLabelNomeSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
 		return NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto);
+	}
+	
+	
+	// APPLICATIVI
+	
+	public String getLabelServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws Exception{
+		return NamingUtils.getLabelServizioApplicativo(idServizioApplicativo);
+	}
+	public String getLabelServizioApplicativo(String protocollo, IDServizioApplicativo idServizioApplicativo) throws Exception{
+		return NamingUtils.getLabelServizioApplicativo(protocollo, idServizioApplicativo);
+	}
+	public String getLabelServizioApplicativoConDominioSoggetto(IDServizioApplicativo idServizioApplicativo) throws Exception{
+		return NamingUtils.getLabelServizioConDominioErogatore(idServizioApplicativo.getNome(),NamingUtils.getLabelSoggetto(idServizioApplicativo.getIdSoggettoProprietario()));
+	}
+	public String getLabelServizioApplicativoConDominioSoggetto(String protocollo, IDServizioApplicativo idServizioApplicativo) throws Exception{
+		return NamingUtils.getLabelServizioConDominioErogatore(idServizioApplicativo.getNome(),NamingUtils.getLabelSoggetto(protocollo, idServizioApplicativo.getIdSoggettoProprietario()));
 	}
 	
 	

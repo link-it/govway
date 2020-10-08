@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.scope;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,13 +35,17 @@ import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 //import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.Dialog;
+import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -56,7 +61,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public class ScopeHelper extends ConsoleHelper{
 	
-	private boolean mostraFiltroScopeTipologia = false;
+	private static boolean mostraFiltroScopeTipologia = false;
 
 	public ScopeHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
@@ -114,7 +119,7 @@ public class ScopeHelper extends ConsoleHelper{
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_TIPOLOGIA);
 		
 		de.setValue(tipologia);
-		if(this.mostraFiltroScopeTipologia)
+		if(mostraFiltroScopeTipologia)
 			de.setType(DataElementType.TEXT_EDIT);
 		else 
 			de.setType(DataElementType.HIDDEN);
@@ -232,23 +237,102 @@ public class ScopeHelper extends ConsoleHelper{
 	
 	
 	// Prepara la lista di scope
+	
+	public static int POSIZIONE_FILTRO_PROTOCOLLO = 2; // parte da 0, e' alla quarta posizione se visualizzato
+	static {
+		if(mostraFiltroScopeTipologia) {
+			POSIZIONE_FILTRO_PROTOCOLLO = 3;
+		}
+	}
+	
 	public void prepareScopeList(ISearch ricerca, List<Scope> lista)
 			throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, ScopeCostanti.OBJECT_NAME_SCOPE);
+			
+			boolean modalitaCompleta = this.isModalitaCompleta();
+			
+			if(!modalitaCompleta) {
+				this.pd.setCustomListViewName(ScopeCostanti.SCOPE_NOME_VISTA_CUSTOM_LISTA);
+			}
 
 			int idLista = Liste.SCOPE;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
-			if(this.mostraFiltroScopeTipologia) {
+			if(mostraFiltroScopeTipologia) {
 				String filterScopeTipologia = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SCOPE_TIPOLOGIA);
 				this.addFilterScopeTipologia(filterScopeTipologia, false);
 			}
 			
 			String filterScopeContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SCOPE_CONTESTO);
 			this.addFilterScopeContesto(filterScopeContesto, false);
+			
+			String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
+			this.addFilterApiContesto(filterApiContesto, true);
+						
+			// NOTA: ATTENZIONE!!! se sei agggiunge o elimina un filtro prima del protocollo indicato sotto, correggere la variabile POSIZIONE_FILTRO_PROTOCOLLO in questa classe
+			
+			String filterProtocollo = null;
+			String filterSoggetto = null;
+			boolean profiloSelezionato = false;
+			if(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
+				
+				filterProtocollo = addFilterProtocol(ricerca, idLista, true);
+
+				String protocollo = filterProtocollo;
+				if(protocollo==null) {
+					// significa che e' stato selezionato un protocollo nel menu in alto a destra
+					List<String> protocolli = this.core.getProtocolli(this.session);
+					if(protocolli!=null && protocolli.size()==1) {
+						protocollo = protocolli.get(0);
+					}
+				}
+				
+				if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
+						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
+						||
+					(filterProtocollo==null && protocollo!=null)
+						) {
+					profiloSelezionato = true;
+				}
+				
+				if( profiloSelezionato && 
+						(!this.isSoggettoMultitenantSelezionato())) {
+					
+					filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
+					boolean soloSoggettiOperativi = true;
+					this.addFilterSoggetto(filterSoggetto,protocollo,soloSoggettiOperativi,true);
+				}
+				else {
+					filterSoggetto=this.getSoggettoMultitenantSelezionato();
+				}
+				
+			}
+			
+			String filterGruppo = null;
+			if(filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
+				
+				filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+				addFilterGruppo(filterGruppo, true);
+				
+			}
+			else {
+				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+			}
+			
+			if(profiloSelezionato &&
+					filterApiContesto!=null && !"".equals(filterApiContesto) &&
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
+				String filterApiImplementazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
+				this.addFilterApiImplementazione(filterProtocollo, filterSoggetto, filterGruppo, filterApiContesto, filterApiImplementazione, false);
+			}
+			else {
+				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
+			}
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -273,15 +357,7 @@ public class ScopeHelper extends ConsoleHelper{
 			}
 
 			// setto le label delle colonne
-			List<String> listLabels= new ArrayList<String>();
-			listLabels.add(ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME);
-			if(this.mostraFiltroScopeTipologia){
-				listLabels.add(ScopeCostanti.LABEL_PARAMETRO_SCOPE_TIPOLOGIA);
-			}
-			listLabels.add(ScopeCostanti.LABEL_PARAMETRO_SCOPE_CONTESTO);
-			
-			String[] labels = listLabels.toArray(new String[listLabels.size()]);
-			this.pd.setLabels(labels);
+			this.setLabelColonne(modalitaCompleta);
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
@@ -289,38 +365,7 @@ public class ScopeHelper extends ConsoleHelper{
 			if (lista != null) {
 				Iterator<Scope> it = lista.iterator();
 				while (it.hasNext()) {
-					Scope scope = it.next();
-
-					Vector<DataElement> e = new Vector<DataElement>();
-
-					DataElement de = new DataElement();
-					Parameter pId = new Parameter(ScopeCostanti.PARAMETRO_SCOPE_ID, scope.getId()+"");
-					de.setUrl(
-							ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE , pId);
-					de.setToolTip(scope.getDescrizione());
-					de.setValue(scope.getNome());
-					de.setIdToRemove(scope.getNome());
-					de.setToolTip(scope.getDescrizione());
-					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
-					e.addElement(de);
-					
-					if(this.mostraFiltroScopeTipologia){
-						de = new DataElement();
-						de.setValue(scope.getTipologia());
-						e.addElement(de);
-					}
-					
-					de = new DataElement();
-					if(ScopeContesto.PORTA_APPLICATIVA.getValue().equals(scope.getContestoUtilizzo().getValue())){
-						de.setValue(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);
-					}
-					else if(ScopeContesto.PORTA_DELEGATA.getValue().equals(scope.getContestoUtilizzo().getValue())){
-						de.setValue(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
-					}
-					else{
-						de.setValue(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
-					}
-					e.addElement(de);
+					Vector<DataElement> e = modalitaCompleta ? this.creaEntry(it) : this.creaEntryCustom(it);
 
 					dati.addElement(e);
 				}
@@ -359,5 +404,136 @@ public class ScopeHelper extends ConsoleHelper{
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	private Vector<DataElement> creaEntry(Iterator<Scope> it) {
+		Scope scope = it.next();
+
+		Vector<DataElement> e = new Vector<DataElement>();
+
+		DataElement de = new DataElement();
+		Parameter pId = new Parameter(ScopeCostanti.PARAMETRO_SCOPE_ID, scope.getId()+"");
+		de.setUrl(
+				ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE , pId);
+		de.setToolTip(scope.getDescrizione());
+		de.setValue(scope.getNome());
+		de.setIdToRemove(scope.getNome());
+		de.setToolTip(scope.getDescrizione());
+		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
+		e.addElement(de);
+		
+		if(mostraFiltroScopeTipologia){
+			de = new DataElement();
+			de.setValue(scope.getTipologia());
+			e.addElement(de);
+		}
+		
+		de = new DataElement();
+		if(ScopeContesto.PORTA_APPLICATIVA.getValue().equals(scope.getContestoUtilizzo().getValue())){
+			de.setValue(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);
+		}
+		else if(ScopeContesto.PORTA_DELEGATA.getValue().equals(scope.getContestoUtilizzo().getValue())){
+			de.setValue(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
+		}
+		else{
+			de.setValue(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
+		}
+		e.addElement(de);
+		return e;
+	}
+	private void setLabelColonne(boolean modalitaCompleta) {
+		if(!modalitaCompleta) {
+			String[] labels = {
+					ScopeCostanti.LABEL_SCOPE
+			};
+			this.pd.setLabels(labels);
+		} else {
+			List<String> listLabels= new ArrayList<String>();
+			listLabels.add(ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME);
+			if(mostraFiltroScopeTipologia){
+				listLabels.add(ScopeCostanti.LABEL_PARAMETRO_SCOPE_TIPOLOGIA);
+			}
+			listLabels.add(ScopeCostanti.LABEL_PARAMETRO_SCOPE_CONTESTO);
+			
+			String[] labels = listLabels.toArray(new String[listLabels.size()]);
+			this.pd.setLabels(labels);
+		}
+	}
+	
+	private Vector<DataElement> creaEntryCustom(Iterator<Scope> it) {
+		Scope scope = it.next();
+
+		Vector<DataElement> e = new Vector<DataElement>();
+
+		// Titolo (nome)
+		DataElement de = new DataElement();
+		Parameter pId = new Parameter(ScopeCostanti.PARAMETRO_SCOPE_ID, scope.getId()+"");
+		de.setUrl(
+				ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE , pId);
+		de.setToolTip(scope.getDescrizione());
+		de.setValue(scope.getNome());
+		de.setIdToRemove(scope.getNome());
+		de.setToolTip(scope.getDescrizione());
+		de.setType(DataElementType.TITLE);
+		e.addElement(de);
+		
+		
+		de = new DataElement();
+		String contestoLabel = "";
+		if(ScopeContesto.PORTA_APPLICATIVA.getValue().equals(scope.getContestoUtilizzo().getValue())){
+			contestoLabel = ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
+		}
+		else if(ScopeContesto.PORTA_DELEGATA.getValue().equals(scope.getContestoUtilizzo().getValue())){
+			contestoLabel = ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
+		}
+		else{
+			contestoLabel = ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_QUALSIASI;
+		}
+		
+		if(mostraFiltroScopeTipologia){
+			de.setValue(MessageFormat.format(ScopeCostanti.MESSAGE_METADATI_SCOPE_CON_TIPO, contestoLabel, scope.getTipologia()));
+		} else {
+			de.setValue(MessageFormat.format(ScopeCostanti.MESSAGE_METADATI_SCOPE_SOLO_CONTESTO, contestoLabel));
+		}
+		de.setType(DataElementType.SUBTITLE);
+		e.addElement(de);
+		
+		// TODO 
+//					de = new DataElement();
+//					de.setType(DataElementType.IMAGE);
+//					DataElementInfo dInfoUtilizzo = new DataElementInfo(SoggettiCostanti.LABEL_SOGGETTO);
+//					dInfoUtilizzo.setBody("Il soggetto " + this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()) + " gestisce...");
+//					de.setInfo(dInfoUtilizzo);
+//					de.setToolTip("Visualizza Info");
+//					e.addElement(de);
+
+		// In Uso
+		de = new DataElement();
+		de.setType(DataElementType.IMAGE);
+		de.setToolTip(CostantiControlStation.LABEL_IN_USO_TOOLTIP);
+		Dialog deDialog = new Dialog();
+		deDialog.setIcona(Costanti.ICON_USO);
+		deDialog.setTitolo(scope.getNome());
+		deDialog.setHeaderRiga1(CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI);
+		
+		// Inserire sempre la url come primo elemento del body
+		BodyElement bodyElementURL = new Dialog().new BodyElement();
+		bodyElementURL.setType(DataElementType.HIDDEN);
+		bodyElementURL.setName(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL);
+		Parameter pIdOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO, scope.getNome());
+		Parameter pTipoOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, org.openspcoop2.protocol.sdk.constants.ArchiveType.SCOPE.toString());
+		Parameter pTipoRisposta = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, UtilsCostanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT);
+		bodyElementURL.setUrl(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, pIdOggetto,pTipoOggetto,pTipoRisposta);
+		deDialog.addBodyElement(bodyElementURL);
+		
+		BodyElement bodyElement = new Dialog().new BodyElement();
+		bodyElement.setType(DataElementType.TEXT_AREA);
+		bodyElement.setLabel("");
+		bodyElement.setValue("");
+		bodyElement.setRows(15);
+		deDialog.addBodyElement(bodyElement );
+		
+		de.setDialog(deDialog );
+		e.addElement(de);
+		return e;
 	}
 }
