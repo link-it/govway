@@ -2227,21 +2227,21 @@ public class DBOggettiInUsoUtils  {
 			switch (key) {
 			case IN_USO_IN_SERVIZI:
 				if ( messages!=null && messages.size() > 0) {
-					msg += "implementato dai Servizi: " + formatList(messages,separator) + separator;
+					msg += "implementata dai Servizi: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case IN_USO_IN_MAPPING_EROGAZIONE_PA:
 				if ( messages!=null && messages.size() > 0) {
-					msg += "implementato nelle Erogazioni: " + formatList(messages,separator) + separator;
+					msg += "implementata nelle Erogazioni: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case IN_USO_IN_MAPPING_FRUIZIONE_PD:
 				if ( messages!=null && messages.size() > 0) {
-					msg += "implementato nelle Fruizioni: " + formatList(messages,separator) + separator;
+					msg += "implementata nelle Fruizioni: " + formatList(messages,separator) + separator;
 				}
 				break;
 			default:
-				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
+				msg += "utilizzata in oggetto non codificato ("+key+")"+separator;
 				break;
 			}
 

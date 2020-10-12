@@ -44,8 +44,8 @@ import org.openspcoop2.core.commons.search.PortaDominio;
 import org.openspcoop2.core.commons.search.IdServizioApplicativo;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
-import org.openspcoop2.core.commons.search.IdGruppo;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
+import org.openspcoop2.core.commons.search.IdGruppo;
 import org.openspcoop2.core.commons.search.PortaApplicativaAzione;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
@@ -2625,124 +2625,6 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: id-gruppo
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>idGruppo</var>
-	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,IdGruppo idGruppo) throws SerializerException {
-		this.objToXml(fileName, IdGruppo.class, idGruppo, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>idGruppo</var>
-	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, IdGruppo.class, idGruppo, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param file Xml file to serialize the object <var>idGruppo</var>
-	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,IdGruppo idGruppo) throws SerializerException {
-		this.objToXml(file, IdGruppo.class, idGruppo, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param file Xml file to serialize the object <var>idGruppo</var>
-	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, IdGruppo.class, idGruppo, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param out OutputStream to serialize the object <var>idGruppo</var>
-	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,IdGruppo idGruppo) throws SerializerException {
-		this.objToXml(out, IdGruppo.class, idGruppo, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param out OutputStream to serialize the object <var>idGruppo</var>
-	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, IdGruppo.class, idGruppo, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param idGruppo Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(IdGruppo idGruppo) throws SerializerException {
-		return this.objToXml(IdGruppo.class, idGruppo, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param idGruppo Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(IdGruppo.class, idGruppo, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param idGruppo Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(IdGruppo idGruppo) throws SerializerException {
-		return this.objToXml(IdGruppo.class, idGruppo, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param idGruppo Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(IdGruppo.class, idGruppo, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: accordo-servizio-parte-comune-gruppo
 	 =================================================================================
 	*/
@@ -2855,6 +2737,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(AccordoServizioParteComuneGruppo accordoServizioParteComuneGruppo,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(AccordoServizioParteComuneGruppo.class, accordoServizioParteComuneGruppo, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: id-gruppo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>idGruppo</var>
+	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,IdGruppo idGruppo) throws SerializerException {
+		this.objToXml(fileName, IdGruppo.class, idGruppo, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>idGruppo</var>
+	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, IdGruppo.class, idGruppo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param file Xml file to serialize the object <var>idGruppo</var>
+	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,IdGruppo idGruppo) throws SerializerException {
+		this.objToXml(file, IdGruppo.class, idGruppo, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param file Xml file to serialize the object <var>idGruppo</var>
+	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, IdGruppo.class, idGruppo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>idGruppo</var>
+	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,IdGruppo idGruppo) throws SerializerException {
+		this.objToXml(out, IdGruppo.class, idGruppo, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>idGruppo</var>
+	 * @param idGruppo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, IdGruppo.class, idGruppo, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param idGruppo Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(IdGruppo idGruppo) throws SerializerException {
+		return this.objToXml(IdGruppo.class, idGruppo, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param idGruppo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(IdGruppo.class, idGruppo, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param idGruppo Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(IdGruppo idGruppo) throws SerializerException {
+		return this.objToXml(IdGruppo.class, idGruppo, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>idGruppo</var> of type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param idGruppo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(IdGruppo idGruppo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(IdGruppo.class, idGruppo, prettyPrint).toString();
 	}
 	
 	

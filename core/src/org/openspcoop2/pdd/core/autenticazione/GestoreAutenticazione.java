@@ -41,9 +41,11 @@ import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenziale;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractSearchCredenziale;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeApi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeEventi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeGruppi;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchApi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchEvento;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
@@ -848,6 +850,18 @@ public class GestoreAutenticazione {
 	    	CredenzialeGruppi gruppi = new CredenzialeGruppi(gruppiList);
 	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    			gruppiSearch, gruppi, openspcoopState);
+    	}
+    	return null;
+    }
+    
+    public static CredenzialeMittente convertAPIToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
+    		String uriAccordoServizio, IOpenSPCoopState openspcoopState) throws Exception{
+    	if(uriAccordoServizio!=null && !"".equals(uriAccordoServizio)) {
+	    	CredenzialeSearchApi apiSearch = new CredenzialeSearchApi();
+	    	apiSearch.disableConvertToDBValue();
+	    	CredenzialeApi api = new CredenzialeApi(uriAccordoServizio);
+	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
+	    			apiSearch, api, openspcoopState);
     	}
     	return null;
     }

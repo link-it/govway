@@ -50,6 +50,7 @@ import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchApi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchToken;
@@ -105,6 +106,7 @@ import org.openspcoop2.web.monitor.core.report.CostantiReport;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
+import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerServizioBean;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 import org.slf4j.Logger;
 
@@ -1723,6 +1725,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroGruppo(expr, this.andamentoTemporaleSearch, model, isCount);
 			
+			this.impostaFiltroApi(expr, this.andamentoTemporaleSearch, model, isCount);
+			
 
 			if(date==null){
 				// ORDER BY
@@ -2359,6 +2363,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 				this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+				
+				this.impostaFiltroApi(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+				this.impostaFiltroApi(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 
 				// UNION
 
@@ -2539,6 +2546,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 				
+				this.impostaFiltroApi(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -2698,6 +2707,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				this.impostaFiltroDatiMittente(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 				
 				this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+				
+				this.impostaFiltroApi(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3012,6 +3023,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 			this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+			
+			this.impostaFiltroApi(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+			this.impostaFiltroApi(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 
 			// UNION
 
@@ -3318,6 +3332,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 			
+			this.impostaFiltroApi(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3599,6 +3615,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroDatiMittente(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 			
 			this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+			
+			this.impostaFiltroApi(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3894,11 +3912,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = this.createDistribuzioneServizioExpression(dao, model, false);
 
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.VERSIONE_SERVIZIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
+			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
+				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
+				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
+				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.VERSIONE_SERVIZIO);
+				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
+				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
+			}
+			else {
+				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.URI_API);
+			}
 
 			List<Index> forceIndexes = null;
 			try{
@@ -3913,46 +3936,67 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					gByExpr.addForceIndex(index);	
 				}
 			}
-				
-			UnionExpression unionExpr = new UnionExpression(gByExpr);
+
 			String aliasFieldTipoServizio = "tipo_servizio";
 			String aliasFieldServizio = "servizio";
 			String aliasFieldVersioneServizio = "versione_servizio";
 			String aliasFieldTipoDestinatario = "tipo_destinatario";
 			String aliasFieldDestinatario = "destinatario";
 			
-			unionExpr.addSelectField(model.TIPO_SERVIZIO, aliasFieldTipoServizio);
-			unionExpr.addSelectField(model.SERVIZIO, aliasFieldServizio);
-			unionExpr.addSelectField(model.VERSIONE_SERVIZIO, aliasFieldVersioneServizio);
-			unionExpr.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoDestinatario);
-			unionExpr.addSelectField(model.DESTINATARIO, aliasFieldDestinatario);
-
-			// Espressione finta per usare l'ordinamento
+			String aliasUriApi = "uri_api";
+			
+			UnionExpression unionExpr = new UnionExpression(gByExpr);
 			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
-			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					model.TIPO_SERVIZIO.getFieldType()), aliasFieldTipoServizio);
-			unionExprFake.addSelectField(new ConstantField(aliasFieldServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					model.SERVIZIO.getFieldType()), aliasFieldServizio);
-			unionExprFake.addSelectField(new ConstantField(aliasFieldVersioneServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_VERSIONE,
-					model.VERSIONE_SERVIZIO.getFieldType()), aliasFieldVersioneServizio);
-			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					model.TIPO_DESTINATARIO.getFieldType()), aliasFieldTipoDestinatario);
-			unionExprFake.addSelectField(new ConstantField(aliasFieldDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, 
-					model.DESTINATARIO.getFieldType()), aliasFieldDestinatario);
+			
+			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
+				
+				unionExpr.addSelectField(model.TIPO_SERVIZIO, aliasFieldTipoServizio);
+				unionExpr.addSelectField(model.SERVIZIO, aliasFieldServizio);
+				unionExpr.addSelectField(model.VERSIONE_SERVIZIO, aliasFieldVersioneServizio);
+				unionExpr.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoDestinatario);
+				unionExpr.addSelectField(model.DESTINATARIO, aliasFieldDestinatario);
+	
+				// Espressione finta per usare l'ordinamento
+				unionExprFake.addSelectField(new ConstantField(aliasFieldTipoServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.TIPO_SERVIZIO.getFieldType()), aliasFieldTipoServizio);
+				unionExprFake.addSelectField(new ConstantField(aliasFieldServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.SERVIZIO.getFieldType()), aliasFieldServizio);
+				unionExprFake.addSelectField(new ConstantField(aliasFieldVersioneServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_VERSIONE,
+						model.VERSIONE_SERVIZIO.getFieldType()), aliasFieldVersioneServizio);
+				unionExprFake.addSelectField(new ConstantField(aliasFieldTipoDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.TIPO_DESTINATARIO.getFieldType()), aliasFieldTipoDestinatario);
+				unionExprFake.addSelectField(new ConstantField(aliasFieldDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, 
+						model.DESTINATARIO.getFieldType()), aliasFieldDestinatario);
+			}
+			else {
+				
+				unionExpr.addSelectField(model.URI_API, aliasUriApi);
+				
+				// Espressione finta per usare l'ordinamento
+				unionExprFake.addSelectField(new ConstantField(aliasUriApi, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.URI_API.getFieldType()), aliasUriApi);
+				
+			}
 			
 			Union union = new Union();
 			union.setUnionAll(true);
-			union.addField(aliasFieldTipoServizio);
-			union.addField(aliasFieldServizio);
-			union.addField(aliasFieldVersioneServizio);
-			union.addField(aliasFieldTipoDestinatario);
-			union.addField(aliasFieldDestinatario);
-			union.addGroupBy(aliasFieldTipoServizio);
-			union.addGroupBy(aliasFieldServizio);
-			union.addGroupBy(aliasFieldVersioneServizio);
-			union.addGroupBy(aliasFieldTipoDestinatario);
-			union.addGroupBy(aliasFieldDestinatario);
+			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
+				union.addField(aliasFieldTipoServizio);
+				union.addField(aliasFieldServizio);
+				union.addField(aliasFieldVersioneServizio);
+				union.addField(aliasFieldTipoDestinatario);
+				union.addField(aliasFieldDestinatario);
+				union.addGroupBy(aliasFieldTipoServizio);
+				union.addGroupBy(aliasFieldServizio);
+				union.addGroupBy(aliasFieldVersioneServizio);
+				union.addGroupBy(aliasFieldTipoDestinatario);
+				union.addGroupBy(aliasFieldDestinatario);
+			}
+			else {
+				union.addField(aliasUriApi);
+				union.addGroupBy(aliasUriApi);
+			}
 
 			TipoVisualizzazione tipoVisualizzazione = this.distribServizioSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
@@ -4059,13 +4103,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				for (Map<String, Object> row : list) {
 
 					ResDistribuzione r = new ResDistribuzione();
-					r.setRisultato(((String) row.get(aliasFieldTipoServizio)) + "/"
-							+ ((String) row.get(aliasFieldServizio)) + ":"
-							+ (row.get(aliasFieldVersioneServizio)));
 					
-					r.getParentMap().put("0",((String) row.get(aliasFieldTipoDestinatario)) + "/"
-							+ ((String) row.get(aliasFieldDestinatario)));
-
+					if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
+						
+						r.setRisultato(((String) row.get(aliasFieldTipoServizio)) + "/"
+								+ ((String) row.get(aliasFieldServizio)) + ":"
+								+ (row.get(aliasFieldVersioneServizio)));
+						
+						r.getParentMap().put("0",((String) row.get(aliasFieldTipoDestinatario)) + "/"
+								+ ((String) row.get(aliasFieldDestinatario)));
+					}
+					else {
+						
+						String risultato = (String) row.get(aliasUriApi);
+						
+						if(!risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
+							risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribServizioSearch);	
+						
+						r.setRisultato(DistribuzionePerServizioBean.PREFIX_API+risultato);
+						
+					}
+					
 					Number somma = StatsUtils.converToNumber(row.get("somma"));
 					if(somma!=null){
 						r.setSomma(somma);
@@ -4358,18 +4416,30 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroDatiMittente(expr, this.distribServizioSearch, model, isCount);
 			
 			this.impostaFiltroGruppo(expr, this.distribServizioSearch, model, isCount);
-
-			expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.notEquals(model.VERSIONE_SERVIZIO, Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.TIPO_SERVIZIO);
-			expr.addGroupBy(model.SERVIZIO);
-			expr.addGroupBy(model.VERSIONE_SERVIZIO);
 			
-			expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.TIPO_DESTINATARIO);
-			expr.addGroupBy(model.DESTINATARIO);
+			this.impostaFiltroApi(expr, this.distribServizioSearch, model, isCount); // non viene presentato all'utente la possibilita di impostarlo nel searchform
+
+			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
+			
+				expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.notEquals(model.VERSIONE_SERVIZIO, Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
+				expr.addGroupBy(model.TIPO_SERVIZIO);
+				expr.addGroupBy(model.SERVIZIO);
+				expr.addGroupBy(model.VERSIONE_SERVIZIO);
+				
+				expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.addGroupBy(model.TIPO_DESTINATARIO);
+				expr.addGroupBy(model.DESTINATARIO);
+				
+			}
+			else {
+				
+				expr.notEquals(model.URI_API, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.addGroupBy(model.URI_API);
+				
+			}
 
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -4740,6 +4810,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroDatiMittente(expr, this.distribAzioneSearch, model, isCount); 
 			
 			this.impostaFiltroGruppo(expr, this.distribAzioneSearch, model, isCount);
+			
+			this.impostaFiltroApi(expr, this.distribAzioneSearch, model, isCount);
 			
 			expr.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.AZIONE);
@@ -5569,7 +5641,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				for (Map<String, Object> row : list) {
 
 					ResDistribuzione r = new ResDistribuzione();
-					String risultato = (String) row.get(aliasFieldCredenzialeMittente); 
+					String risultato = (String) row.get(aliasFieldCredenzialeMittente);
 					
 					if(!risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
 						risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribSaSearch);
@@ -5899,6 +5971,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaGroupByFiltroDatiMittente(expr, this.distribSaSearch, model, isCount); 
 			
 			this.impostaFiltroGruppo(expr, this.distribSaSearch, model, isCount);
+			
+			this.impostaFiltroApi(expr, this.distribSaSearch, model, isCount);
 
 			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 			// Poichè gli applicativi sono identificati univocamente insieme anche al soggetto proprietario, si aggiunge il soggetto nella group by
@@ -6285,6 +6359,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroDatiMittente(expr, this.statistichePersonalizzateSearch, model, isCount);
 			
 			this.impostaFiltroGruppo(expr, this.statistichePersonalizzateSearch, model, isCount);
+			
+			this.impostaFiltroApi(expr, this.statistichePersonalizzateSearch, model, isCount);
 
 			// String idRisorsaAggregare = "RISORSA_DA_AGGREGARE";
 			//
@@ -6694,6 +6770,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroGruppo(expr, this.statistichePersonalizzateSearch, model, isCount);
 
+			this.impostaFiltroApi(expr, this.statistichePersonalizzateSearch, model, isCount);
+			
 			// Risorsa da aggregare indica la statistica per cui aggregare, deve coincidere nel campo risorsa_nome
 			String nomeStatisticaPersonalizzata = this.statistichePersonalizzateSearch.getStatisticaSelezionata().getIdConfigurazioneStatistica();
 			if(report!=null && report.getIdStatistic()!=null){
@@ -7045,6 +7123,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroDatiMittente(expr, this.statistichePersonalizzateSearch, model, false);
 			
 			this.impostaFiltroGruppo(expr, this.statistichePersonalizzateSearch, model, false);
+			
+			this.impostaFiltroApi(expr, this.statistichePersonalizzateSearch, model, false);
 
 			boolean resourceStats = false;
 			if(StatisticByResource.ID.equals(this.statistichePersonalizzateSearch.getStatisticaSelezionata().getIdConfigurazioneStatistica())){
@@ -7193,6 +7273,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			case gruppi:
 				return model.GRUPPI;
 				
+			case api:
+				return model.URI_API;
+				
 			case eventi:
 			case trasporto:
 				// caso impossibile
@@ -7292,6 +7375,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		}
 	}
 	
+	private void impostaFiltroApi(IExpression filter, BaseSearchForm searchForm, StatisticaModel model, boolean isCount) throws UtilsException, ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+		if (StringUtils.isNotEmpty(searchForm.getApi())) {
+			
+			CredenzialeSearchApi searchApi = new CredenzialeSearchApi();
+			IPaginatedExpression pagExpr = searchApi.createExpression(this.credenzialiMittenteDAO, searchForm.getApi(), true, true);
+			List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+			addListaCredenzialiMittente(filter, listaCredenzialiMittente, model);
+
+		}
+	}
+	
 	private void impostaGroupByFiltroDatiMittente(IExpression filter, BaseSearchForm searchForm, StatisticaModel model, boolean isCount)
 			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
 		// credenziali mittente
@@ -7342,6 +7436,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					filter.notEquals(model.GRUPPI, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.GRUPPI);
 					break;
+					
+				case api:
+					filter.notEquals(model.URI_API, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.URI_API);
+					break;
 										
 				case eventi:
 				case trasporto:
@@ -7389,6 +7488,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					
 				case gruppi:
 					return model.GRUPPI;
+					
+				case api:
+					return model.URI_API;
 					
 				case eventi:
 				case trasporto:
@@ -7467,6 +7569,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						break; 
 					}
 				}
+				}
+			}
+			else if(!this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
+				if(StringUtils.isNotEmpty(risultato)) {
+					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+					return credenzialeMittente.getCredenziale();
 				}
 			}
 		} catch (NumberFormatException | ServiceException | NotFoundException | MultipleResultException	| NotImplementedException e) {

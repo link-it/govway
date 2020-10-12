@@ -21,6 +21,7 @@
 -- DROP INDEX INDEX_TR_FULL;
 -- DROP INDEX INDEX_TR_MEDIUM;
 -- DROP INDEX INDEX_TR_ENTRY;
+-- DROP INDEX index_credenziale_mittente_1;
 DROP TRIGGER trg_dump_contenuti;
 DROP TRIGGER trg_dump_header_allegato;
 DROP TRIGGER trg_dump_allegati;

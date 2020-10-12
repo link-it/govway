@@ -1,5 +1,8 @@
 
 	<session-config>
+	        <cookie-config>
+        		<name>JSESSIONID_GW_MONITOR</name>
+	        </cookie-config>
 		<session-timeout>120</session-timeout>
 	</session-config>
 	<error-page>

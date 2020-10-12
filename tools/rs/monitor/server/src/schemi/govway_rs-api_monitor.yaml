@@ -60,6 +60,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -150,6 +151,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -399,6 +401,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -480,6 +483,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -557,6 +561,7 @@ paths:
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -637,6 +642,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -714,7 +720,8 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: 'govway_core.yaml#/components/parameters/tag'                     
+        - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/distingui_api_implementata'                   
         - $ref: '#/components/parameters/esito_transazione'
         - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
@@ -790,6 +797,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'                     
@@ -870,6 +878,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: '#/components/parameters/soggetto_mittente'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -950,6 +959,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -1029,6 +1039,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -1108,6 +1119,7 @@ paths:
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -1452,6 +1464,23 @@ components:
 
 
     # Criteri di ricerca opzionali nella query  
+
+    uri_api_implementata:
+      in: query
+      name: uri_api_implementata 
+      description: Identificativo dell'API implementata
+      required: false
+      schema:
+        $ref: 'govway_core.yaml#/components/schemas/UriApi'
+        
+    distingui_api_implementata:
+      in: query
+      name: distingui_api_implementata 
+      description: Identificativo dell'API implementata
+      required: false
+      schema:
+        type: boolean
+        default: true    
 
     soggetto_remoto:
       in: query
@@ -2165,6 +2194,9 @@ components:
               $ref: '#/components/schemas/OpzioniGenerazioneReport'
             soggetto_erogatore:
               $ref: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+            distingui_api_implementata:
+              type: boolean
+              default: true
             mittente:
               discriminator:
                 propertyName: identificazione
@@ -2305,6 +2337,19 @@ components:
         versione:
           $ref: 'govway_core.yaml#/components/schemas/Versione'
 
+    FiltroApiImplementata:
+      type: object
+      required:
+        - nome
+        - versione
+      properties:
+        referente:
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+
     FiltroApiSoggetti:
       type: object
       allOf:
@@ -2315,6 +2360,8 @@ components:
               $ref: 'govway_core.yaml#/components/schemas/SimpleName'
           soggetto_remoto: # utilizzabile solamente in filtri con tipologia transazioni 'qualsiasi'
             $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+          api_implementata:
+            $ref: '#/components/schemas/FiltroApiImplementata'
            
     FiltroEsito:
       type: object

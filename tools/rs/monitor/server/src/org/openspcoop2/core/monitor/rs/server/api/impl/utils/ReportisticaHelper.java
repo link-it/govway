@@ -27,12 +27,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.BaseOggettoWithSimpleName;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiImplementata;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiSoggetti;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneApplicativo;
@@ -72,11 +74,14 @@ import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportNumero
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportOccupazioneBanda;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportTempoMedioRisposta;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -682,7 +687,7 @@ public class ReportisticaHelper {
 
 
 	public static final void overrideRicercaBaseStatisticaSoggetti(RicercaBaseStatisticaSoggetti body,
-			HttpRequestWrapper wrap, MonitoraggioEnv env) {
+			HttpRequestWrapper wrap, MonitoraggioEnv env) throws Exception {
 		if (body == null)
 			return;
 
@@ -702,21 +707,21 @@ public class ReportisticaHelper {
 	}
 
 	public static final void overrideFiltroFruizione(String tag, FiltroApiSoggetti body, HttpRequestWrapper wrap,
-			MonitoraggioEnv env) {
+			MonitoraggioEnv env) throws Exception {
 		if (body == null) return;
 		
 		IDSoggetto erogatore = new IDSoggetto(env.tipoSoggetto, body.getErogatore());
 		ReportisticaHelper.overrideFiltroApiBase(tag, body, erogatore, wrap, env);
 	}
 
-	public static final void overrideFiltroErogazione(String tag, FiltroApiSoggetti body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
+	public static final void overrideFiltroErogazione(String tag, FiltroApiSoggetti body, HttpRequestWrapper wrap, MonitoraggioEnv env) throws Exception {
 		if (body == null)
 			return;
 		IDSoggetto idSoggettoLocale = new IDSoggetto(env.tipoSoggetto, env.nomeSoggettoLocale);
 		ReportisticaHelper.overrideFiltroApiBase(tag, body, idSoggettoLocale, wrap, env);
 	}
 	
-	public static final void overrideFiltroQualsiasi(String tag, FiltroApiSoggetti body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
+	public static final void overrideFiltroQualsiasi(String tag, FiltroApiSoggetti body, HttpRequestWrapper wrap, MonitoraggioEnv env) throws Exception {
 		if (body == null)
 			return;
 		
@@ -729,7 +734,7 @@ public class ReportisticaHelper {
 		
 	}
 
-	public static final void overrideFiltroApiBase(String tag, FiltroApiBase filtro_api, IDSoggetto erogatore, HttpRequestWrapper wrap, MonitoraggioEnv env) {
+	public static final void overrideFiltroApiBase(String tag, FiltroApiBase filtro_api, IDSoggetto erogatore, HttpRequestWrapper wrap, MonitoraggioEnv env) throws Exception {
 		if(tag!=null) {
 			wrap.overrideParameter(CostantiExporter.GRUPPO, tag);
 		}
@@ -767,10 +772,18 @@ public class ReportisticaHelper {
 			wrap.overrideParameter(CostantiExporter.SERVIZIO,
 					ReportisticaHelper.buildNomeServizioForOverride(filtro_api.getNome(), filtro_api.getTipo(), filtro_api.getVersione(), Optional.of(erogatore)));
 		}
+		
+		if(filtro_api instanceof FiltroApiSoggetti) {
+			FiltroApiSoggetti filtroApiSoggetti = (FiltroApiSoggetti) filtro_api;
+			if(filtroApiSoggetti.getApiImplementata()!=null) {
+				wrap.overrideParameter(CostantiExporter.API,
+						ReportisticaHelper.toUriApiImplementata(filtroApiSoggetti.getApiImplementata(), env));
+			}
+		}
 	}
 
 	public static final void overrideRicercaStatisticaDistribuzioneApplicativo(
-			RicercaStatisticaDistribuzioneApplicativo body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
+			RicercaStatisticaDistribuzioneApplicativo body, HttpRequestWrapper wrap, MonitoraggioEnv env) throws Exception {
 		if (body == null)
 			return;
 		
@@ -857,6 +870,11 @@ public class ReportisticaHelper {
 				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.api);
 
 		ReportisticaHelper.overrideRicercaBaseStatistica(body, request, env);
+		// Api Implementata
+		if(body.isDistinguiApiImplementata()!=null) {
+			request.overrideParameter(CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE,
+					body.isDistinguiApiImplementata() ? CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE_TRUE : CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE_FALSE);
+		}
 		// Mittente
 		if(body.getMittente()!=null && body.getMittente().getIdentificazione()!=null) {
 			switch (body.getTipo()) {
@@ -1165,7 +1183,7 @@ public class ReportisticaHelper {
 		}
 	}
 
-	public static final byte[] exportConfigurazioneApi(RicercaConfigurazioneApi body, MonitoraggioEnv env) {
+	public static final byte[] exportConfigurazioneApi(RicercaConfigurazioneApi body, MonitoraggioEnv env) throws Exception {
 		DBManager dbManager = DBManager.getInstance();
 		Connection connection = null;
 		ConfigurazioniGeneraliService configurazioniService = null;
@@ -1208,9 +1226,43 @@ public class ReportisticaHelper {
 		}
 	}
 	
+	public static final FiltroApiImplementata parseUriApiImplementata(String uriApiImplementata, MonitoraggioEnv env) throws Exception {
+		//  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione
+		String pattern1 = "^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$";
+		String pattern2 = "^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$";
+		IDAccordo idAccordo = null;
+		try {
+			if(RegularExpressionEngine.isMatch(uriApiImplementata, pattern1)) {
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriApiImplementata);
+			}
+			else if(RegularExpressionEngine.isMatch(uriApiImplementata, pattern2)) {
+				String uriCompleto = env.tipoSoggetto+"/"+env.nomeSoggettoLocale+":"+uriApiImplementata;
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriCompleto);
+			}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La uri fornita '"+uriApiImplementata+"' non rispetta il formato atteso '"+pattern1+"|"+pattern2+"'");
+			}
+		}catch(RegExpNotFoundException e) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("La uri fornita '"+uriApiImplementata+"' non rispetta il formato atteso '"+pattern1+"|"+pattern2+"': "+e.getMessage());
+		}
+		FiltroApiImplementata filtro = new FiltroApiImplementata();
+		filtro.setNome(idAccordo.getNome());
+		filtro.setReferente(idAccordo.getSoggettoReferente().getNome());
+		filtro.setVersione(idAccordo.getVersione());
+		return filtro;
+	}
+	
+	public static final String toUriApiImplementata(FiltroApiImplementata filtroApiImplementata, MonitoraggioEnv env) throws Exception {
+		//  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione
+		String tipoSoggetto = env.tipoSoggetto;
+		String nomeSoggetto = filtroApiImplementata.getReferente()!=null ? filtroApiImplementata.getReferente() : env.nomeSoggettoLocale;
+		return IDAccordoFactory.getInstance().getUriFromValues(filtroApiImplementata.getNome(), tipoSoggetto, nomeSoggetto, filtroApiImplementata.getVersione());
+	}
+	
 	public static final FiltroApiSoggetti parseFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo,
 			String nomeServizio, String tipoServizio, Integer versioneServizio, String soggettoRemoto,
-			String soggettoErogatore) {
+			String soggettoErogatore,
+			MonitoraggioEnv env, String uriApiImplementata) throws Exception {
 		
 		// In caso di Fruizione, fin'ora si è sempre specificato l'erogatore per mezzo del parametro soggettoRemoto.
 		// Per mantenere i controlli corretti sul filtroApi, nel caso FRUIZIONE se viene specificato il soggettoRemoto
@@ -1259,23 +1311,37 @@ public class ReportisticaHelper {
 			// TODO: Gli altri due hanno i defaults. (Che dovrei metttere ora?)
 		}
 
-		return ReportisticaHelper.buildFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore);
+		return ReportisticaHelper.buildFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore, 
+				env, uriApiImplementata);
 	}
 	
 	public static final FiltroApiSoggetti parseFiltroApiMap(TransazioneRuoloEnum tipo, String nomeServizio,
-			String tipoServizio, Integer versioneServizio, String soggettoRemoto) {
+			String tipoServizio, Integer versioneServizio, String soggettoRemoto,
+			MonitoraggioEnv env, String uriApiImplementata) throws Exception {
 		// In Questo caso non abbiamo il tipo QUALSIASI, quindi parsiamo il filtro senza il soggettoErogatore (ultimo parametro a null)
 		FiltroRicercaRuoloTransazioneEnum newTipo = tipo == TransazioneRuoloEnum.EROGAZIONE ? FiltroRicercaRuoloTransazioneEnum.EROGAZIONE : FiltroRicercaRuoloTransazioneEnum.FRUIZIONE;
-		return ReportisticaHelper.parseFiltroApiMap(newTipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,null);
+		return ReportisticaHelper.parseFiltroApiMap(newTipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,null, 
+				env, uriApiImplementata);
 	}
 	
 	private static final FiltroApiSoggetti buildFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo, String nomeServizio,
-			String tipoServizio, Integer versioneServizio, String soggettoRemoto, String soggettoErogatore) {
+			String tipoServizio, Integer versioneServizio, String soggettoRemoto, String soggettoErogatore,
+			MonitoraggioEnv env, String uriApiImplementata) throws Exception {
+
+		FiltroApiImplementata apiImplementata = null;
+		if(uriApiImplementata!=null && !"".equals(uriApiImplementata)) {
+			apiImplementata = ReportisticaHelper.parseUriApiImplementata(uriApiImplementata, env);
+		}
 		
 		// Se non ho specificato nessun pezzo del filtro api, allora per le versioni full è come aver passato un FiltroApi a null.
 		if (StringUtils.isEmpty(nomeServizio) && StringUtils.isEmpty(tipoServizio) && StringUtils.isEmpty(soggettoRemoto) && StringUtils.isEmpty(soggettoErogatore) 
 				//&& versioneServizio == null default value is 1
 				) {
+			if(apiImplementata!=null) {
+				FiltroApiSoggetti filtroApiBase = new FiltroApiSoggetti();
+				filtroApiBase.setApiImplementata(apiImplementata);
+				return filtroApiBase;
+			}
 			return null;
 		}
 		
@@ -1301,7 +1367,9 @@ public class ReportisticaHelper {
 			filtroApiBase.setSoggettoRemoto(soggettoRemoto);
 			break;
 		}
-
+		
+		filtroApiBase.setApiImplementata(apiImplementata);
+		
 		return filtroApiBase;
 	}
 	

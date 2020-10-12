@@ -85,6 +85,7 @@
 				<include name="NCName.java"/>
 				<include name="SimpleName.java"/>
 				<include name="Tipo.java"/>
+				<include name="UriApi.java"/>
 				<include name="Versione.java"/>
 				<include name="Lista.java"/>
 				<include name="ListaSenzaTotale.java"/>

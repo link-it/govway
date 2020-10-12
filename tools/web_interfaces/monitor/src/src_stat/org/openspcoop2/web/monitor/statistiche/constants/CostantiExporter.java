@@ -100,6 +100,12 @@ public class CostantiExporter {
 	public final static String TRAFFICO_PER_SOGGETTO  = "trafficoPerSoggetto";
 	
 	public final static String GRUPPO  = "tag";
+	
+	public final static String API  = "api";
+	public final static String API_DISTINGUI_IMPLEMENTAZIONE  = "api_distingui_implementazione";
+	public final static String API_DISTINGUI_IMPLEMENTAZIONE_TRUE = "true";
+	public final static String API_DISTINGUI_IMPLEMENTAZIONE_FALSE = "false";
+	
 	public final static String SERVIZIO  = "servizio";
 	public final static String AZIONE  = "azione";
 	

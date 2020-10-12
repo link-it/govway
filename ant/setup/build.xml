@@ -1390,6 +1390,50 @@
 		</if>
 
 
+		<!-- Imposto Indici Full delle transazioni (se abilitati) -->
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<var name="tmpSqlUpgradeScriptNameForUpdateIndex" value="GovWayTracciamento_upgrade_${antinstaller_versione_attuale}.sql"/>
+				<antcall target="sql_settings_index_transazioni_update">
+				    <param name="file" value="${tmp_sql}/${tmpSqlUpgradeScriptNameForUpdateIndex}"/>
+				</antcall>
+			</then>
+			<else>
+				<var name="tmpSqlUpgradeScriptNameForUpdateIndex" value="GovWay_upgrade_${antinstaller_versione_attuale}.sql"/>
+				<antcall target="sql_settings_index_transazioni_update">
+				    <param name="file" value="${tmp_sql}/${tmpSqlUpgradeScriptNameForUpdateIndex}"/>
+				</antcall>
+			</else>
+		</if>
+
+		<!-- Imposto Indici Full delle statistiche (se abilitati) -->
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<var name="tmpSqlUpgradeScriptNameForUpdateIndex" value="GovWayStatistiche_upgrade_${antinstaller_versione_attuale}.sql"/>
+				<antcall target="sql_settings_index_statistiche_update">
+				    <param name="file" value="${tmp_sql}/${tmpSqlUpgradeScriptNameForUpdateIndex}"/>
+				</antcall>
+			</then>
+			<elseif>
+				<equals arg1="${antinstaller_stats_db}" arg2="log"/>
+				<then>
+					<var name="tmpSqlUpgradeScriptNameForUpdateIndex" value="GovWayTracciamento_upgrade_${antinstaller_versione_attuale}.sql"/>
+					<antcall target="sql_settings_index_statistiche_update">
+					    <param name="file" value="${tmp_sql}/${tmpSqlUpgradeScriptNameForUpdateIndex}"/>
+					</antcall>
+				</then>
+			</elseif>
+			<else>
+				<var name="tmpSqlUpgradeScriptNameForUpdateIndex" value="GovWay_upgrade_${antinstaller_versione_attuale}.sql"/>
+				<antcall target="sql_settings_index_statistiche_update">
+				    <param name="file" value="${tmp_sql}/${tmpSqlUpgradeScriptNameForUpdateIndex}"/>
+				</antcall>
+			</else>
+		</if>
+
+
 		<!-- SQL Extra per aggiunta di un profilo -->
 
 		<mkdir dir="${tmp_sql}/profili" />

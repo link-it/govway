@@ -57,6 +57,7 @@ import org.openspcoop2.core.commons.search.dao.jdbc.fetch.AccordoServizioParteCo
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.Resource;
@@ -576,6 +577,43 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 				}
 			}
 		}
+		if(obj.getAccordoServizioParteComuneGruppoList()!=null){
+			List<org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo> listObj_ = obj.getAccordoServizioParteComuneGruppoList();
+			for(org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo itemObj_ : listObj_){
+				org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo itemAlreadySaved_ = null;
+				if(imgSaved.getAccordoServizioParteComuneGruppoList()!=null){
+					List<org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo> listImgSaved_ = imgSaved.getAccordoServizioParteComuneGruppoList();
+					for(org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdGruppo().getNome(),itemImgSaved_.getIdGruppo().getNome()) &&
+						 						 org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdAccordoServizioParteComune().getNome(),itemImgSaved_.getIdAccordoServizioParteComune().getNome())  &&
+						 						 org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdAccordoServizioParteComune().getIdSoggetto().getTipo(),itemImgSaved_.getIdAccordoServizioParteComune().getIdSoggetto().getTipo())  &&
+						 						 org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdAccordoServizioParteComune().getIdSoggetto().getNome(),itemImgSaved_.getIdAccordoServizioParteComune().getIdSoggetto().getNome())  &&
+						 						 org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdAccordoServizioParteComune().getVersione(),itemImgSaved_.getIdAccordoServizioParteComune().getVersione());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
+					if(itemObj_.getIdGruppo()!=null && 
+							itemAlreadySaved_.getIdGruppo()!=null){
+						itemObj_.getIdGruppo().setId(itemAlreadySaved_.getIdGruppo().getId());
+					}
+					if(itemObj_.getIdAccordoServizioParteComune()!=null && 
+							itemAlreadySaved_.getIdAccordoServizioParteComune()!=null){
+						itemObj_.getIdAccordoServizioParteComune().setId(itemAlreadySaved_.getIdAccordoServizioParteComune().getId());
+						if(itemObj_.getIdAccordoServizioParteComune().getIdSoggetto()!=null && 
+								itemAlreadySaved_.getIdAccordoServizioParteComune().getIdSoggetto()!=null){
+							itemObj_.getIdAccordoServizioParteComune().getIdSoggetto().setId(itemAlreadySaved_.getIdAccordoServizioParteComune().getIdSoggetto().getId());
+						}
+					}
+				}
+			}
+		}
+              
 	}
 	
 	@Override
@@ -717,7 +755,80 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 				accordoServizioParteComune.addResource(accordoServizioParteComune_resource);
 			}
 		}
-            
+
+		// Object accordoServizioParteComune_accordoServizioParteComuneGruppo
+		ISQLQueryObject sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo.setANDLogicOperator(true);
+		sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo.addFromTable(this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO));
+		sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo.addSelectField("id");
+		sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo.addWhereCondition("id_accordo=?");
+
+		// Get accordoServizioParteComune_accordoServizioParteComuneGruppo
+		java.util.List<Object> accordoServizioParteComune_accordoServizioParteComuneGruppo_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo.createSQLQuery(), jdbcProperties.isShowSql(), AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO, this.getAccordoServizioParteComuneFetch(),
+			new JDBCObject(accordoServizioParteComune.getId(),Long.class));
+
+		if(accordoServizioParteComune_accordoServizioParteComuneGruppo_list != null) {
+			for (Object accordoServizioParteComune_accordoServizioParteComuneGruppo_object: accordoServizioParteComune_accordoServizioParteComuneGruppo_list) {
+				AccordoServizioParteComuneGruppo accordoServizioParteComune_accordoServizioParteComuneGruppo = (AccordoServizioParteComuneGruppo) accordoServizioParteComune_accordoServizioParteComuneGruppo_object;
+
+
+				if(idMappingResolutionBehaviour==null ||
+					(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
+				){
+					// Object _accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo (recupero id)
+					ISQLQueryObject sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+					sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo_readFkId.addFromTable(this.getAccordoServizioParteComuneFieldConverter().toTable(org.openspcoop2.core.commons.search.AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO));
+					sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo_readFkId.addSelectField("id_gruppo");
+					sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo_readFkId.addWhereCondition("id=?");
+					sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo_readFkId.setANDLogicOperator(true);
+					Long idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+							new JDBCObject(accordoServizioParteComune_accordoServizioParteComuneGruppo.getId(),Long.class));
+					
+					org.openspcoop2.core.commons.search.IdGruppo id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo = null;
+					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
+						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo = ((JDBCGruppoServiceSearch)(this.getServiceManager().getGruppoServiceSearch())).findId(idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo, false);
+					}else{
+						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo = new org.openspcoop2.core.commons.search.IdGruppo();
+					}
+					id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo.setId(idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo);
+					accordoServizioParteComune_accordoServizioParteComuneGruppo.setIdGruppo(id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo);
+				}
+
+				/*
+				if(idMappingResolutionBehaviour==null ||
+					(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
+				){
+					// Object _accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune (recupero id)
+					ISQLQueryObject sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+					sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune_readFkId.addFromTable(this.getAccordoServizioParteComuneFieldConverter().toTable(org.openspcoop2.core.commons.search.AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO));
+					sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune_readFkId.addSelectField("id_accordo");
+					sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune_readFkId.addWhereCondition("id=?");
+					sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune_readFkId.setANDLogicOperator(true);
+					Long idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+							new JDBCObject(accordoServizioParteComune_accordoServizioParteComuneGruppo.getId(),Long.class));
+					
+					org.openspcoop2.core.commons.search.IdAccordoServizioParteComune id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = null;
+					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
+						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = ((JDBCAccordoServizioParteComuneServiceSearch)(this.getServiceManager().getAccordoServizioParteComuneServiceSearch())).findId(idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune, false);
+					}else{
+						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = new org.openspcoop2.core.commons.search.IdAccordoServizioParteComune();
+					}
+					id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune.setId(idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune);
+					accordoServizioParteComune_accordoServizioParteComuneGruppo.setIdAccordoServizioParteComune(id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune);
+				}*/
+				//  me stesso
+				org.openspcoop2.core.commons.search.IdAccordoServizioParteComune id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = new org.openspcoop2.core.commons.search.IdAccordoServizioParteComune();
+				id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune.setId(accordoServizioParteComune.getId());
+				id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune.setNome(accordoServizioParteComune.getNome());
+				id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune.setIdSoggetto(accordoServizioParteComune.getIdReferente());
+				id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune.setVersione(accordoServizioParteComune.getVersione());
+				accordoServizioParteComune_accordoServizioParteComuneGruppo.setIdAccordoServizioParteComune(id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune);
+					
+
+				accordoServizioParteComune.addAccordoServizioParteComuneGruppo(accordoServizioParteComune_accordoServizioParteComuneGruppo);
+			}
+		}              
+		
         return accordoServizioParteComune;  
 	
 	} 
@@ -788,6 +899,13 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 			sqlQueryObject.addWhereCondition(tableName1+".id_referente="+tableName2+".id");
 			addReferente = true;
 		}
+		if(expression.inUseModel(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false) &&
+				!addReferente){
+			String tableName1 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model());
+			String tableName2 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_referente="+tableName2+".id");
+			addReferente = true;
+		}
 		
 		
 		if(expression.inUseModel(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE,false)){
@@ -819,12 +937,36 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 			String tableName2 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model());
 			sqlQueryObject.addWhereCondition(tableName1+".id_accordo="+tableName2+".id");
 		}
+		
+		boolean addJoinAccordiToAccordiGruppi = false;
+		if(expression.inUseModel(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO,false)){
+			String tableName1 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO);
+			String tableName2 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model());
+			sqlQueryObject.addWhereCondition(tableName1+".id_accordo="+tableName2+".id");
+			addJoinAccordiToAccordiGruppi = true;
+		}
+		if(expression.inUseModel(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO,false)){
+			String tableName1 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO);
+			String tableName2 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_gruppo");
+			if(!addJoinAccordiToAccordiGruppi) {
+				tableName1 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO);
+				tableName2 = this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model());
+				sqlQueryObject.addWhereCondition(tableName1+".id_accordo="+tableName2+".id");
+			}
+		}
 
 		
 		// Check FROM Table necessarie per le join di oggetti annidati dal secondo livello in poi dove pero' non viene poi utilizzato l'oggetto del livello precedente nella espressione
 		if(expression.inUseModel(AccordoServizioParteComune.model().PORT_TYPE.OPERATION,false)){
 			if(expression.inUseModel(AccordoServizioParteComune.model().PORT_TYPE,false)==false){
 				sqlQueryObject.addFromTable(this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model().PORT_TYPE));
+			}
+		}
+		
+		if(expression.inUseModel(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO,false)){
+			if(expression.inUseModel(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO,false)==false){
+				sqlQueryObject.addFromTable(this.getAccordoServizioParteComuneFieldConverter().toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO));
 			}
 		}
         
@@ -933,6 +1075,19 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO))
 			));
+
+		// AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO
+		mapTableToPKColumn.put(converter.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO))
+			));
+
+		// AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO
+		mapTableToPKColumn.put(converter.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO))
+			));
+
         
         return mapTableToPKColumn;		
 	}

@@ -157,6 +157,11 @@ public class CustomStatisticsSdkGenerator implements IStatistic {
 	}
 	
 	@Override
+	public String getApi(){
+		return this.statistic.getApi();
+	}
+	
+	@Override
 	public TipiDatabase getDatabaseType(){
 		return this.abstractStatisticheCore.getDatabaseType();
 	}

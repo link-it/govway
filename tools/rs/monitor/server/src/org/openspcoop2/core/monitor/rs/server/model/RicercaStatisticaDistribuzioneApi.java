@@ -34,6 +34,9 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   private BaseOggettoWithSimpleName soggettoErogatore = null;
   
   @Schema(description = "")
+  private Boolean distinguiApiImplementata = true;
+  
+  @Schema(description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "identificazione", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazioneSoggetto.class, name = "erogazione_soggetto"),
@@ -87,6 +90,25 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   }
 
  /**
+   * Get distinguiApiImplementata
+   * @return distinguiApiImplementata
+  **/
+  @JsonProperty("distingui_api_implementata")
+  @Valid
+  public Boolean isDistinguiApiImplementata() {
+    return this.distinguiApiImplementata;
+  }
+
+  public void setDistinguiApiImplementata(Boolean distinguiApiImplementata) {
+    this.distinguiApiImplementata = distinguiApiImplementata;
+  }
+
+  public RicercaStatisticaDistribuzioneApi distinguiApiImplementata(Boolean distinguiApiImplementata) {
+    this.distinguiApiImplementata = distinguiApiImplementata;
+    return this;
+  }
+
+ /**
    * Get mittente
    * @return mittente
   **/
@@ -132,6 +154,7 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
     sb.append("    ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(super.toString())).append("\n");
     sb.append("    report: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.report)).append("\n");
     sb.append("    soggettoErogatore: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.soggettoErogatore)).append("\n");
+    sb.append("    distinguiApiImplementata: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.distinguiApiImplementata)).append("\n");
     sb.append("    mittente: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.mittente)).append("\n");
     sb.append("    esito: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.esito)).append("\n");
     sb.append("}");

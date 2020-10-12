@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -57,6 +59,7 @@ import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
@@ -84,6 +87,7 @@ import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceEngine;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
@@ -119,6 +123,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	private transient DriverRegistroServiziDB driverRegistroDB = null;
 
 	private ConfigurazioneUrlInvocazione configurazioneUrlInvocazione;
+	
+	protected DynamicPdDBeanUtils dynamicUtils = null;
 	
 	public ConfigurazioniGeneraliService(){
 		try{
@@ -183,7 +189,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			Configurazione config = this.driverConfigDB.getConfigurazioneGenerale();
 			if(config!=null && config.getUrlInvocazione()!=null) {
 				this.configurazioneUrlInvocazione = config.getUrlInvocazione();
-			}	
+			}
+			
+			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager,log);
 
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante la creazione del Service: " + e.getMessage(),e);
@@ -362,10 +370,20 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		String nomeSoggetto =  null;
 
 		String tipoProtocollo = this.search.getProtocollo();
+		String gruppo = this.search.getGruppo();
 
-
+		
 		try {
-			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
+			
+			IDAccordo idAccordo = null;
+			String api = this.search.getApi();
+			if((api!=null && !"".equals(api)) ) {
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+			}
+			if(idAccordo!=null) {
+				value = ""+1;
+			}
+			else if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
 				String servizioString = this.getSearch().getNomeServizio();
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
 				AccordoServizioParteComune aspc = this.dynamicService.getAccordoServizio(tipoProtocollo, idServizio.getSoggettoErogatore(), idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
@@ -378,7 +396,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 					String tipoReferenteAspc= (aspc.getIdReferente() != null) ? aspc.getIdReferente().getTipo() : null;
 
-					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc); 
+					idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc); 
 					value = tipoProtocollo != null ? NamingUtils.getLabelAccordoServizioParteComune(tipoProtocollo, idAccordo) : NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
 				} else {
 					value = "--";
@@ -389,13 +407,13 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 						&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())){
 					tipoSoggetto = this.getSearch().getTipoSoggettoLocale();
 					nomeSoggetto = this.getSearch().getSoggettoLocale();
-					count =   this.dynamicService.countAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore);
+					count =   this.dynamicService.countAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore, gruppo);
 				}else {
 					// non ho selezionato ne servizio ne soggetto
 					UserDetailsBean user = Utility.getLoggedUser();
 
 					if(!user.isAdmin()) {
-						List<AccordoServizioParteComune> accordiServizio = this.dynamicService.getAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore);
+						List<AccordoServizioParteComune> accordiServizio = this.dynamicService.getAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore, gruppo);
 
 						for (AccordoServizioParteComune accordoServizioParteComune : accordiServizio) {
 							// controllo sul soggetto
@@ -438,7 +456,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 					}  else {
 						// utente amministratore
-						count =   this.dynamicService.countAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore);
+						count =   this.dynamicService.countAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore, gruppo);
 					}
 				}
 				ConfigurazioniGeneraliService.log.debug("Trovati " + (count) + " " + CostantiConfigurazioni.CONF_ASPC_LABEL);
@@ -519,8 +537,29 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 			}
 
-			count = this.dynamicService.
-					countConfigurazioneServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false, this.search.getPermessiUtenteOperatore());
+			String gruppo = this.search.getGruppo();
+			
+			IDAccordo idAccordo = null;
+			String api = this.search.getApi();
+			if((api!=null && !"".equals(api)) ) {
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+			}
+			
+			if( ((gruppo!=null && !"".equals(gruppo))) || idAccordo!=null ) {
+			
+				boolean distinct = false; // uso per contare
+				List<SelectItem> l = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, null, 
+						null, false, this.search.getPermessiUtenteOperatore(), distinct);
+				count = (l!=null) ? l.size() : 0;
+				
+			}
+			else {
+			
+				count = this.dynamicService.
+						countConfigurazioneServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false, this.search.getPermessiUtenteOperatore());
+				
+			}
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero degli accordi servizio parte specifica: " + e.getMessage(),e);
 		}
@@ -564,7 +603,26 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 			}
 
-			count =   this.dynamicService.countConfigurazioneServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false,  this.search.getPermessiUtenteOperatore());
+			String gruppo = this.search.getGruppo();
+			
+			IDAccordo idAccordo = null;
+			String api = this.search.getApi();
+			if((api!=null && !"".equals(api)) ) {
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+			}
+			
+			if( ((gruppo!=null && !"".equals(gruppo))) || idAccordo!=null ) {
+			
+				boolean distinct = false; // uso per contare
+				List<SelectItem> l = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, null, 
+						null, false, this.search.getPermessiUtenteOperatore(), distinct);
+				count = (l!=null) ? l.size() : 0;
+				
+			}
+			else {
+				count =   this.dynamicService.countConfigurazioneServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false,  this.search.getPermessiUtenteOperatore());
+			}
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero delle fruizioni servizio: " + e.getMessage(),e);
 		}
@@ -579,17 +637,79 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		ConfigurazioniGeneraliService.log.debug("Metodo FindAll: start[" + start + "], limit: [" + limit + "]");
 
 		try {
+			
+			String tipoProtocollo =this.search.getProtocollo();
+			
+			String tipoSoggetto = this.search.getTipoSoggettoLocale();
+			String nomeSoggetto = this.search.getSoggettoLocale();
+			
+			String input = null;
+			
+			String gruppo = this.search.getGruppo();
+			
+			boolean apiImplSelected = StringUtils.isNotBlank(this.search.getNomeServizio());
+			
+			IDAccordo idAccordo = null;
+			IDAccordoFactory idAccordoFactory = null;
+			String api = this.search.getApi();
+			if( !apiImplSelected && (api!=null && !"".equals(api)) ) {
+				idAccordoFactory = IDAccordoFactory.getInstance();
+				idAccordo = idAccordoFactory.getIDAccordoFromUri(api);
+			}
+			
+			List<IDServizio> listIDServizio = null;
+			if(!apiImplSelected && ( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) ) {
+				listIDServizio = new ArrayList<IDServizio>();
+				List<SelectItem> list = null;
+				boolean distinct = true;
+				if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
+					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore(), distinct);
+				}else {
+					// bisogna filtrare per soggetti operativi
+					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct);
+				}
+				if(list!=null && list.size()>0) {
+					for (SelectItem selectItem : list) {
+						String servizioString = (String) selectItem.getValue();
+						IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+						listIDServizio.add(idServizio);
+					}
+				}
+				else {
+					// creo un servizio non esistente per fornire 0 dati
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues("-", "-", "-", "-", -1);
+					listIDServizio.add(idServizio);
+				}
+			}
+			
 			if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
 				IExpression expr = this.createPDExpression(this.portaDelegataDAO, this.search, false);
 				IPaginatedExpression pagExpr = this.portaDelegataDAO.toPaginatedExpression(expr);
 				pagExpr.offset(start).limit(limit);
 
+				if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
 
+					List<IExpression> exprOrList = new ArrayList<IExpression>();
+					for (IDServizio idServizio : listIDServizio) {
+						
+						IExpression exprIdServizio = this.portaDelegataDAO.newExpression();
+						exprIdServizio.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getTipo());
+						exprIdServizio.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
+						exprIdServizio.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipo());
+						exprIdServizio.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
+						exprIdServizio.equals(PortaDelegata.model().VERSIONE_SERVIZIO,idServizio.getVersione());
+						exprOrList.add(exprIdServizio);
+						
+					}
+					pagExpr.or(exprOrList.toArray(new IExpression[1]));
+
+				}
+				
 				List<PortaDelegata> findAll = this.portaDelegataDAO.findAll(pagExpr);
 				if(findAll != null && findAll.size() > 0){
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
 
-					for (PortaDelegata portaDelegata : findAll) {
+					for (PortaDelegata portaDelegata : findAll) {						
 						lst.add(this.fromPD(portaDelegata));
 					}
 					return lst;
@@ -599,6 +719,30 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				IPaginatedExpression pagExpr = this.portaApplicativaDAO.toPaginatedExpression(expr);
 				pagExpr.offset(start).limit(limit);
 
+				if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
+
+					List<IExpression> exprOrList = new ArrayList<IExpression>();
+					for (IDServizio idServizio : listIDServizio) {
+						IExpression exprIdServizio = this.portaApplicativaDAO.newExpression();
+						exprIdServizio.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipo());
+						exprIdServizio.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
+						exprIdServizio.equals(PortaApplicativa.model().VERSIONE_SERVIZIO,idServizio.getVersione());
+						boolean setSoggettoProprietario = false;
+						if(this.search.getTipoNomeSoggettoLocale()!=null && 
+								!StringUtils.isEmpty(this.search.getTipoNomeSoggettoLocale()) && !"--".equals(this.search.getTipoNomeSoggettoLocale())){
+							setSoggettoProprietario = true; // impostato dentro createPAExpression
+						}
+						if(setSoggettoProprietario==false){
+							exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
+							exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
+						}
+						exprOrList.add(exprIdServizio);
+						
+					}
+					pagExpr.or(exprOrList.toArray(new IExpression[1]));
+
+				}
+				
 				List<PortaApplicativa> findAll = this.portaApplicativaDAO.findAll(pagExpr);
 				if(findAll != null && findAll.size() > 0){
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
@@ -621,6 +765,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		} catch (CoreException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (UserInvalidException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (Exception e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 
@@ -792,11 +938,99 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 		NonNegativeNumber nnn = null;
 		try {
+			String tipoProtocollo =this.search.getProtocollo();
+			
+			String tipoSoggetto = this.search.getTipoSoggettoLocale();
+			String nomeSoggetto = this.search.getSoggettoLocale();
+			
+			String input = null;
+			
+			String gruppo = this.search.getGruppo();
+			
+			boolean apiImplSelected = StringUtils.isNotBlank(this.search.getNomeServizio());
+			
+			IDAccordo idAccordo = null;
+			IDAccordoFactory idAccordoFactory = null;
+			String api = this.search.getApi();
+			if( !apiImplSelected && (api!=null && !"".equals(api)) ) {
+				idAccordoFactory = IDAccordoFactory.getInstance();
+				idAccordo = idAccordoFactory.getIDAccordoFromUri(api);
+			}
+			
+			List<IDServizio> listIDServizio = null;
+			if(!apiImplSelected && ( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) ) {
+				listIDServizio = new ArrayList<IDServizio>();
+				List<SelectItem> list = null;
+				boolean distinct = true;
+				if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
+					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore(), distinct);
+				}else {
+					// bisogna filtrare per soggetti operativi
+					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct);
+				}
+				if(list!=null && list.size()>0) {
+					for (SelectItem selectItem : list) {
+						String servizioString = (String) selectItem.getValue();
+						IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+						listIDServizio.add(idServizio);
+					}
+				}
+				else {
+					// creo un servizio non esistente per fornire 0 dati
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues("-", "-", "-", "-", -1);
+					listIDServizio.add(idServizio);
+				}
+			}
+			
 			if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
 				IExpression expr = this.createPDExpression(this.portaDelegataDAO, this.search, true);
+				
+				if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
+
+					List<IExpression> exprOrList = new ArrayList<IExpression>();
+					for (IDServizio idServizio : listIDServizio) {
+						
+						IExpression exprIdServizio = this.portaDelegataDAO.newExpression();
+						exprIdServizio.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getTipo());
+						exprIdServizio.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
+						exprIdServizio.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipo());
+						exprIdServizio.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
+						exprIdServizio.equals(PortaDelegata.model().VERSIONE_SERVIZIO,idServizio.getVersione());
+						exprOrList.add(exprIdServizio);
+						
+					}
+					expr.or(exprOrList.toArray(new IExpression[1]));
+
+				}
+				
 				nnn = this.portaDelegataDAO.count(expr);
 			} else {
 				IExpression expr = this.createPAExpression(this.portaApplicativaDAO, this.search, true);
+				
+				if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
+
+					List<IExpression> exprOrList = new ArrayList<IExpression>();
+					for (IDServizio idServizio : listIDServizio) {
+						IExpression exprIdServizio = this.portaApplicativaDAO.newExpression();
+						exprIdServizio.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipo());
+						exprIdServizio.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
+						exprIdServizio.equals(PortaApplicativa.model().VERSIONE_SERVIZIO,idServizio.getVersione());
+						boolean setSoggettoProprietario = false;
+						if(this.search.getTipoNomeSoggettoLocale()!=null && 
+								!StringUtils.isEmpty(this.search.getTipoNomeSoggettoLocale()) && !"--".equals(this.search.getTipoNomeSoggettoLocale())){
+							setSoggettoProprietario = true; // impostato dentro createPAExpression
+						}
+						if(setSoggettoProprietario==false){
+							exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
+							exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
+						}
+						exprOrList.add(exprIdServizio);
+						
+					}
+					expr.or(exprOrList.toArray(new IExpression[1]));
+
+				}
+				
 				nnn = this.portaApplicativaDAO.count(expr);				
 			}
 
@@ -813,6 +1047,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		} catch (CoreException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (UserInvalidException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (Exception e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 

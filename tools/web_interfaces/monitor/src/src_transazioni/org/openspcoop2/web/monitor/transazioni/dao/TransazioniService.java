@@ -49,6 +49,7 @@ import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.core.transazioni.model.TransazioneModel;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchApi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchEvento;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
@@ -3008,6 +3009,25 @@ public class TransazioniService implements ITransazioniService {
 			
 		}
 		
+		if (StringUtils.isNotEmpty(this.searchForm.getApi())) {
+			
+			CredenzialeSearchApi searchApi = new CredenzialeSearchApi();
+			IPaginatedExpression pagExpr = searchApi.createExpression(this.credenzialiMittenteDAO, this.searchForm.getApi(), true, true);
+			List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+			addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
+
+		}
+		else {
+			
+			if(ricercaLibera && StringUtils.isNotBlank(this.searchForm.getRicercaLiberaApi())) {
+				CredenzialeSearchApi searchApi = new CredenzialeSearchApi();
+				IPaginatedExpression pagExpr = searchApi.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaApi(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
+				List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+				addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
+			}
+			
+		}
+		
 		if (StringUtils.isNotEmpty(this.searchForm.getClusterId())) {
 			
 			filter.and().equals(Transazione.model().CLUSTER_ID,	this.searchForm.getClusterId().trim());
@@ -3229,6 +3249,9 @@ public class TransazioniService implements ITransazioniService {
 				break;
 			case gruppi:
 				fieldCredenziale = model.GRUPPI;
+				break;
+			case api:
+				fieldCredenziale = model.URI_API;
 				break;
 				
 			case trasporto:

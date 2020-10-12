@@ -116,6 +116,11 @@ public class BaseForm implements Serializable {
 		this.nomeAzione = null;
 	}
 
+	public void apiSelected(ActionEvent ae) {
+		this.nomeServizio = null;
+		this.nomeAzione = null;
+	}
+	
 	public void servizioSelected(ActionEvent ae) {
 		this.nomeAzione = null;
 	}

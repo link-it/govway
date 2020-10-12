@@ -74,6 +74,9 @@
 							<linkit:sql-table-unique-field name="tipo"/>
 							<linkit:sql-table-unique-field name="credenziale"/>
 						</linkit:sql-table-unique>
+						<linkit:sql-table-index >
+							<linkit:sql-table-index-field name="ora-registrazione" ignoreTypeCompatibility="true"/>
+						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>
@@ -229,6 +232,7 @@
 				    		<linkit:sql-table-index-field name="stato"/>
 				    		<linkit:sql-table-index-field name="client-address"/>
 				    		<linkit:sql-table-index-field name="gruppi"/>
+				    		<linkit:sql-table-index-field name="uri-api"/>
 				    	</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_TR_FULL">
 							<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
@@ -256,6 +260,7 @@
 							<linkit:sql-table-index-field name="protocollo"/>
 							<linkit:sql-table-index-field name="client-address"/>
 							<linkit:sql-table-index-field name="gruppi"/>
+							<linkit:sql-table-index-field name="uri-api"/>
 							<linkit:sql-table-index-field name="eventi-gestione"/>
 							<linkit:sql-table-index-field name="cluster-id"/>
 						</linkit:sql-table-index>
@@ -285,6 +290,7 @@
 				    		<linkit:sql-table-index-field name="protocollo"/>
 				    		<linkit:sql-table-index-field name="client-address"/>
 				    		<linkit:sql-table-index-field name="gruppi"/>
+				    		<linkit:sql-table-index-field name="uri-api"/>
 				    		<linkit:sql-table-index-field name="eventi-gestione"/>
 				    		<linkit:sql-table-index-field name="cluster-id"/>
 				    		<linkit:sql-table-index-field name="id-transazione"/>
@@ -315,6 +321,7 @@
 				    		<linkit:sql-table-index-field name="stato"/>
 				    		<linkit:sql-table-index-field name="client-address"/>
 				    		<linkit:sql-table-index-field name="gruppi"/>
+				    		<linkit:sql-table-index-field name="uri-api"/>
 				    		<linkit:sql-table-index-field name="data-uscita-richiesta" ignoreTypeCompatibility="true"/>
 				    		<linkit:sql-table-index-field name="data-ingresso-risposta" ignoreTypeCompatibility="true"/>
 				    		<linkit:sql-table-index-field name="data-uscita-risposta" ignoreTypeCompatibility="true"/>
@@ -909,6 +916,7 @@ integrationManager (7)]]></linkit:sql-ddl-column-comment>
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="1000"/> <!-- 20 o 255 tipo_soggetto + '/' + 80 o 255 nome soggetto + ':' + 255 nome accordo + ':' + versione. --> 
 								<linkit:sql-ddl-column-comment><![CDATA[Accordo di Servizio Parte Comune]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -1479,6 +1487,19 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 								<linkit:sql-column-mapping name="tipo_api" />
 								<linkit:sql-column-comment><![CDATA[Tipologia di API]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Tipo di API (1:SOAP, 2:REST)]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="uri-api" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="uri_api" varchar="20" />
+								<linkit:sql-column-comment><![CDATA[API implementata]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[API implementata ((FK verso credenziale_mittente(id)))]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" />
 							</linkit:generator>
 						</xsd:appinfo>

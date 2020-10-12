@@ -373,6 +373,9 @@
 				<xsd:element minOccurs="0" name="tipo-api" type="xsd:int">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="uri-api" type="xsd:string">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="gruppi" type="xsd:string">
 					
 				</xsd:element>

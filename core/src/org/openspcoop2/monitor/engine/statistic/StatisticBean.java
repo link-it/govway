@@ -56,6 +56,7 @@ public class StatisticBean {
 	private Integer esito;
 	private String esitoContesto;
 	private String gruppo;
+	private String api;
 	private String clientAddress;
 	private long richieste;
 	private long bytesBandaTotale;
@@ -212,6 +213,12 @@ public class StatisticBean {
 	public void setGruppo(String gruppo) {
 		this.gruppo = gruppo;
 	}
+	public String getApi() {
+		return this.api;
+	}
+	public void setApi(String api) {
+		this.api = api;
+	}
 	public String getClientAddress() {
 		return this.clientAddress;
 	}
@@ -305,6 +312,8 @@ public class StatisticBean {
 		bf.append(this.clientAddress);
 		bf.append("] gruppo[");
 		bf.append(this.gruppo);
+		bf.append("] api[");
+		bf.append(this.api);
 		bf.append("] esito[");
 		bf.append(this.esito);
 		bf.append("] esito-contesto[");

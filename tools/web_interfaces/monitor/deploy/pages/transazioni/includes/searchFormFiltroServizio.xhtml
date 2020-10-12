@@ -9,6 +9,42 @@
     <f:loadBundle var="msg" basename="messages" /> 
     
     <c:if test="#{not sf_bean.visualizzaFiltroServiziSelectList}">
+     	 <link:prop label="#{msg['transazioni.search.api']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
+     	 	<h:inputText id="apiCombo" value="#{sf_labelApi}" styleClass="inputLinkLong"/>
+			<rich:suggestionbox
+						id="apiComboSuggestion" 
+						width="416" 
+						for="apiCombo" 
+						suggestionAction="#{sf_mbean.apiAutoComplete}"
+						ajaxSingle="true" listWidth="#{sf_mbean.apiSelectItemsWidth}"
+						nothingLabel="--" var="selectItem" fetchValue="#{selectItem.label}"
+						param="apiCombo">
+				<h:column>
+					<h:outputText value="#{selectItem.label}" rendered="true" />
+				</h:column>
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.apiSelected}" reRender="searchPnl,ctr-ricerca-personal,azComboCtr" limitToList="true">
+					<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_api}" />  
+				</a4j:support>
+			</rich:suggestionbox>
+			<h:inputHidden id="apiComboHidden" value="#{sf_api}" />
+     		<rich:toolTip rendered="#{not empty sf_api}" direction="top-right" for="apiCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.apiTooltip}"/>
+		</link:prop>
+    </c:if>
+    
+   	<c:if test="#{sf_bean.visualizzaFiltroServiziSelectList}">
+    	 <link:prop label="#{msg['transazioni.search.api']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
+			<rich:comboBox id="apiCombo" value="#{sf_api}" converter="selectItemConverter"
+				defaultLabel="#{msg['transazioni.search.api.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.apiSelectItemsWidth}"
+				width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="true">
+				<f:selectItem itemValue="--" itemLabel="--"/>
+				<f:selectItems value="#{sf_apiList}"  />
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.apiSelected}" reRender="searchPnl,ctr-ricerca-personal,azComboCtr" limitToList="true"/>
+			</rich:comboBox>
+			<rich:toolTip rendered="#{not empty sf_api}" direction="top-right" for="apiCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.apiTooltip}"/>
+		</link:prop>
+    </c:if>
+    
+    <c:if test="#{not sf_bean.visualizzaFiltroServiziSelectList}">
      	 <link:prop label="#{msg['transazioni.search.servizio']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
      	 	<h:inputText id="servizioCombo" value="#{sf_labelServizio}" styleClass="inputLinkLong"/>
 			<rich:suggestionbox

@@ -181,6 +181,7 @@
 				
 				<!-- informazioni dell'api -->
 				<xsd:element name="tipo-api" type="xsd:int" minOccurs="0"/>
+				<xsd:element name="uri-api" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="gruppi" type="xsd:string" minOccurs="0"/>
 				
 				<!-- Dump Messaggi -->

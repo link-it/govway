@@ -42,8 +42,8 @@ import org.openspcoop2.core.commons.search.PortaDominio;
 import org.openspcoop2.core.commons.search.IdServizioApplicativo;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
-import org.openspcoop2.core.commons.search.IdGruppo;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
+import org.openspcoop2.core.commons.search.IdGruppo;
 import org.openspcoop2.core.commons.search.PortaApplicativaAzione;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
@@ -1394,69 +1394,6 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
-	 Object: id-gruppo
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdGruppo readIdGruppo(String fileName) throws DeserializerException {
-		return (IdGruppo) this.xmlToObj(fileName, IdGruppo.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdGruppo readIdGruppo(File file) throws DeserializerException {
-		return (IdGruppo) this.xmlToObj(file, IdGruppo.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdGruppo readIdGruppo(InputStream in) throws DeserializerException {
-		return (IdGruppo) this.xmlToObj(in, IdGruppo.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdGruppo readIdGruppo(byte[] in) throws DeserializerException {
-		return (IdGruppo) this.xmlToObj(in, IdGruppo.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdGruppo readIdGruppoFromString(String in) throws DeserializerException {
-		return (IdGruppo) this.xmlToObj(in.getBytes(), IdGruppo.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: accordo-servizio-parte-comune-gruppo
 	 =================================================================================
 	*/
@@ -1514,6 +1451,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public AccordoServizioParteComuneGruppo readAccordoServizioParteComuneGruppoFromString(String in) throws DeserializerException {
 		return (AccordoServizioParteComuneGruppo) this.xmlToObj(in.getBytes(), AccordoServizioParteComuneGruppo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: id-gruppo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdGruppo readIdGruppo(String fileName) throws DeserializerException {
+		return (IdGruppo) this.xmlToObj(fileName, IdGruppo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdGruppo readIdGruppo(File file) throws DeserializerException {
+		return (IdGruppo) this.xmlToObj(file, IdGruppo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdGruppo readIdGruppo(InputStream in) throws DeserializerException {
+		return (IdGruppo) this.xmlToObj(in, IdGruppo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdGruppo readIdGruppo(byte[] in) throws DeserializerException {
+		return (IdGruppo) this.xmlToObj(in, IdGruppo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdGruppo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdGruppo readIdGruppoFromString(String in) throws DeserializerException {
+		return (IdGruppo) this.xmlToObj(in.getBytes(), IdGruppo.class);
 	}	
 	
 	

@@ -100,6 +100,8 @@ public class StatisticaMensileFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "client_address", StatisticaMensile.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setGruppi", StatisticaMensile.model().STATISTICA_BASE.GRUPPI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "gruppi", StatisticaMensile.model().STATISTICA_BASE.GRUPPI.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "uri_api", StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -247,6 +249,8 @@ public class StatisticaMensileFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.client-address"));
 				setParameter(object.getStatisticaBase(), "setGruppi", StatisticaMensile.model().STATISTICA_BASE.GRUPPI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.gruppi"));
+				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.uri-api"));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.numero-transazioni"));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),

@@ -33,6 +33,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.Operation;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.Resource;
 
@@ -101,6 +102,12 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "path", AccordoServizioParteComune.model().RESOURCE.PATH.getFieldType()));
 				return object;
 			}
+			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO)){
+				AccordoServizioParteComuneGruppo object = new AccordoServizioParteComuneGruppo();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -165,6 +172,12 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"resource.path"));
 				return object;
 			}
+			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO)){
+				AccordoServizioParteComuneGruppo object = new AccordoServizioParteComuneGruppo();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"accordo-servizio-parte-comune-gruppo.id"));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -196,6 +209,9 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 			}
 			if(model.equals(AccordoServizioParteComune.model().RESOURCE)){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("api_resources","id","seq_api_resources","api_resources_init_seq");
+			}
+			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("accordi_gruppi","id","seq_accordi_gruppi","accordi_gruppi_init_seq");
 			}
 			
 			else{

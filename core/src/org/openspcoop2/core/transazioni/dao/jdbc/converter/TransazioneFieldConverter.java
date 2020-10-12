@@ -710,6 +710,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "tipo_api";
 			}
 		}
+		if(field.equals(Transazione.model().URI_API)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".uri_api";
+			}else{
+				return "uri_api";
+			}
+		}
 		if(field.equals(Transazione.model().GRUPPI)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".gruppi";
@@ -1557,6 +1564,9 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().TIPO_API)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().URI_API)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().GRUPPI)){

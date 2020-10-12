@@ -55,20 +55,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatisticaSettimanale }
-     */
-    public StatisticaSettimanale createStatisticaSettimanale() {
-        return new StatisticaSettimanale();
-    }
-
-    /**
-     * Create an instance of {@link StatisticaGiornaliera }
-     */
-    public StatisticaGiornaliera createStatisticaGiornaliera() {
-        return new StatisticaGiornaliera();
-    }
-
-    /**
      * Create an instance of {@link StatisticaOraria }
      */
     public StatisticaOraria createStatisticaOraria() {
@@ -76,10 +62,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatisticaInfo }
+     * Create an instance of {@link StatisticaContenuti }
      */
-    public StatisticaInfo createStatisticaInfo() {
-        return new StatisticaInfo();
+    public StatisticaContenuti createStatisticaContenuti() {
+        return new StatisticaContenuti();
     }
 
     /**
@@ -90,10 +76,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatisticaContenuti }
+     * Create an instance of {@link StatisticaGiornaliera }
      */
-    public StatisticaContenuti createStatisticaContenuti() {
-        return new StatisticaContenuti();
+    public StatisticaGiornaliera createStatisticaGiornaliera() {
+        return new StatisticaGiornaliera();
+    }
+
+    /**
+     * Create an instance of {@link StatisticaSettimanale }
+     */
+    public StatisticaSettimanale createStatisticaSettimanale() {
+        return new StatisticaSettimanale();
+    }
+
+    /**
+     * Create an instance of {@link StatisticaInfo }
+     */
+    public StatisticaInfo createStatisticaInfo() {
+        return new StatisticaInfo();
     }
 
     /**

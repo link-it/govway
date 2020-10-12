@@ -176,6 +176,7 @@
 							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="client_address"/>
 							<linkit:sql-table-index-column name="gruppi"/>
+							<linkit:sql-table-index-column name="uri_api"/>							
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_HOUR">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -200,6 +201,7 @@
 							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="client_address"/>
 							<linkit:sql-table-index-column name="gruppi"/>
+							<linkit:sql-table-index-column name="uri_api"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -307,6 +309,7 @@
 							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="client_address"/>
 							<linkit:sql-table-index-column name="gruppi"/>
+							<linkit:sql-table-index-column name="uri_api"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_DAY">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -331,6 +334,7 @@
 							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="client_address"/>
 							<linkit:sql-table-index-column name="gruppi"/>
+							<linkit:sql-table-index-column name="uri_api"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -433,6 +437,7 @@
 							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="client_address"/>
 							<linkit:sql-table-index-column name="gruppi"/>
+							<linkit:sql-table-index-column name="uri_api"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_WEEK">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -457,6 +462,7 @@
 							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="client_address"/>
 							<linkit:sql-table-index-column name="gruppi"/>
+							<linkit:sql-table-index-column name="uri_api"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -560,6 +566,7 @@
 							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="client_address"/>
 							<linkit:sql-table-index-column name="gruppi"/>
+							<linkit:sql-table-index-column name="uri_api"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_MONTH">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -584,6 +591,7 @@
 							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="client_address"/>
 							<linkit:sql-table-index-column name="gruppi"/>
+							<linkit:sql-table-index-column name="uri_api"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -897,8 +905,21 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="uri-api" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="uri_api" varchar="20" />
+							<linkit:sql-column-comment><![CDATA[API implementata]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[API implementata ((FK verso credenziale_mittente(id)))]]></linkit:sql-ddl-column-comment>
+							<linkit:ws-field-mapping filter="false" />
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			
-			<!-- Informazioni -->
+			<!-- Informazioni Statistiche -->
 			<xsd:element name="numero-transazioni" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:appinfo>

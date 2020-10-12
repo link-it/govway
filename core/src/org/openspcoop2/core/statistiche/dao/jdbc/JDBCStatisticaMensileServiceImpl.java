@@ -89,6 +89,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.ESITO_CONTESTO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.CLIENT_ADDRESS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.GRUPPI,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.URI_API,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
@@ -122,6 +123,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getEsitoContesto(),StatisticaMensile.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getClientAddress(),StatisticaMensile.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getGruppi(),StatisticaMensile.model().STATISTICA_BASE.GRUPPI.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getUriApi(),StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getNumeroTransazioni(),StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getDimensioniBytesBandaComplessiva(),StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getDimensioniBytesBandaInterna(),StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
@@ -285,6 +287,8 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getClientAddress(), StatisticaMensile.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.GRUPPI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getGruppi(), StatisticaMensile.model().STATISTICA_BASE.GRUPPI.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.URI_API,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getUriApi(), StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getNumeroTransazioni(), StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");

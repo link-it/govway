@@ -677,7 +677,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					else {
 						transactionDTO.setTipoApi(TipoAPI.SOAP.getValoreAsInt());
 					}
-					
+										
 					if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 						List<String> gruppi = new ArrayList<String>();
 						int count = 0;
@@ -708,6 +708,10 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				try {
 					if(transactionDTO.getUriAccordoServizio()==null){
 						transactionDTO.setUriAccordoServizio(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
+					}
+					CredenzialeMittente credAPI = GestoreAutenticazione.convertAPIToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, transactionDTO.getUriAccordoServizio(), null);
+					if(credAPI!=null) {
+						transactionDTO.setUriApi(credAPI.getId()+"");
 					}
 				}catch(Throwable e) {
 					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione

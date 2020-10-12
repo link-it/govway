@@ -130,6 +130,7 @@ import java.util.List;
  * 			&lt;element name="client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="eventi-gestione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo-api" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="uri-api" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="dump-messaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="transazione-applicativo-server" type="{http://www.openspcoop2.org/core/transazioni}transazione-applicativo-server" minOccurs="0" maxOccurs="unbounded"/&gt;
@@ -239,6 +240,7 @@ import java.util.List;
   	"clientAddress",
   	"eventiGestione",
   	"tipoApi",
+  	"uriApi",
   	"gruppi",
   	"dumpMessaggio",
   	"transazioneApplicativoServer",
@@ -1014,6 +1016,14 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
     this.tipoApi = tipoApi;
   }
 
+  public java.lang.String getUriApi() {
+    return this.uriApi;
+  }
+
+  public void setUriApi(java.lang.String uriApi) {
+    this.uriApi = uriApi;
+  }
+
   public java.lang.String getGruppi() {
     return this.gruppi;
   }
@@ -1490,6 +1500,10 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="tipo-api",required=false,nillable=false)
   protected int tipoApi;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="uri-api",required=false,nillable=false)
+  protected java.lang.String uriApi;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="gruppi",required=false,nillable=false)

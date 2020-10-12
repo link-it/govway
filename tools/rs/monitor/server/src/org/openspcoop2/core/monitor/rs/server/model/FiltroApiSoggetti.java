@@ -32,6 +32,9 @@ public class FiltroApiSoggetti extends FiltroApiBase {
   
   @Schema(description = "")
   private String soggettoRemoto = null;
+  
+  @Schema(description = "")
+  private FiltroApiImplementata apiImplementata = null;
  /**
    * Get erogatore
    * @return erogatore
@@ -70,6 +73,25 @@ public class FiltroApiSoggetti extends FiltroApiBase {
     return this;
   }
 
+ /**
+   * Get apiImplementata
+   * @return apiImplementata
+  **/
+  @JsonProperty("api_implementata")
+  @Valid
+  public FiltroApiImplementata getApiImplementata() {
+    return this.apiImplementata;
+  }
+
+  public void setApiImplementata(FiltroApiImplementata apiImplementata) {
+    this.apiImplementata = apiImplementata;
+  }
+
+  public FiltroApiSoggetti apiImplementata(FiltroApiImplementata apiImplementata) {
+    this.apiImplementata = apiImplementata;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -78,6 +100,7 @@ public class FiltroApiSoggetti extends FiltroApiBase {
     sb.append("    ").append(FiltroApiSoggetti.toIndentedString(super.toString())).append("\n");
     sb.append("    erogatore: ").append(FiltroApiSoggetti.toIndentedString(this.erogatore)).append("\n");
     sb.append("    soggettoRemoto: ").append(FiltroApiSoggetti.toIndentedString(this.soggettoRemoto)).append("\n");
+    sb.append("    apiImplementata: ").append(FiltroApiSoggetti.toIndentedString(this.apiImplementata)).append("\n");
     sb.append("}");
     return sb.toString();
   }

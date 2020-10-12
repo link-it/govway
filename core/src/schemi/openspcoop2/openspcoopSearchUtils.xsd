@@ -252,6 +252,16 @@
              			</xsd:appinfo>
              		</xsd:annotation>
              	</xsd:element>
+             	<xsd:element ref="accordo-servizio-parte-comune-gruppo" minOccurs="0" maxOccurs="unbounded">
+             		<xsd:annotation>
+             			<xsd:appinfo>
+             				<linkit:generator
+             					xmlns:linkit="http://www.link.it/project_generator">
+             					<linkit:sql-column-mapping name="id_accordo"/>
+             				</linkit:generator>
+             			</xsd:appinfo>
+             		</xsd:annotation>
+             	</xsd:element>
              </xsd:sequence>
         </xsd:complexType>
     </xsd:element>

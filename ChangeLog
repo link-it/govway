@@ -1,3 +1,26 @@
+2020-10-12  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio, GovWayMonitor]	
+	Aggiunta funzionalità OP-1068
+	Sia tramite la console di monitoraggio che attraverso l'api è adesso possibile ricercare transazioni o ottenere report statistici filtrando per API implementata.
+	La funzionalità è utile in presenza di molteplici erogazioni o fruizioni che implementano la medesima API, 
+	per ottenere un report che non distingua per la singola erogazione o fruizione ma li raggruppi per la medesima API implementata.
+	La sezione 'Reportistica - Configurazione API' è inoltre stata estesa al fine di poter filtrare per tag.
+	Il cookie generato dalla console di monitoraggio è stato ridenominato in 'JSESSIONID_GW_MONITOR'.
+
+2020-10-12  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, GovWayConsole]	
+	Per quanto concerne l'api di gestione:
+	- le risorse '/fruizioni/{erogatore}/{nome}/{versione}/url-invocazione' e '/erogazioni/{nome}/{versione}/url-invocazione' gestiscono adesso tutte le modalità supportate dal prodotto 
+	  ('content-based', 'header-based', 'input-based', 'interface-based', 'soap-action-based', 'url-based', 'protocol-based'). 
+	  È stata inoltre aggiunta la modalità 'static' utilizzabile su API soap contenente un'unica azione.
+	- È adesso possibile registrare le proprietà di configurazione nelle erogazioni e fruizioni anche tramite api.
+	Nella console di gestione sono stati effettuati i seguenti miglioramenti:
+	- dopo aver creato un oggetto nelle liste principali, il filtro viene impostato con il nome di tale oggetto al fine di poterlo visualizzare immediatamente nella lista.
+	- È stata aggiunta la possibilità di visualizzare per un singolo elemento della lista di API dove sia utilizzato (in quale erogazioni e/o fruizione) nel registro di GovWay.
+	Il cookie generato dalla console di gestione è stato ridenominato in 'JSESSIONID_GW_CONSOLE'.
+
 2020-10-08  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

@@ -429,6 +429,7 @@ public class JDBCStatisticaSettimanaleServiceSearchImpl implements IJDBCServiceS
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.ESITO_CONTESTO,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.CLIENT_ADDRESS,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.URI_API,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,true));

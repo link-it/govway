@@ -236,6 +236,8 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "eventi_gestione", Transazione.model().EVENTI_GESTIONE.getFieldType()));
 				setParameter(object, "setTipoApi", Transazione.model().TIPO_API.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "tipo_api", Transazione.model().TIPO_API.getFieldType()));
+				setParameter(object, "setUriApi", Transazione.model().URI_API.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "uri_api", Transazione.model().URI_API.getFieldType()));
 				setParameter(object, "setGruppi", Transazione.model().GRUPPI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "gruppi", Transazione.model().GRUPPI.getFieldType()));
 				return object;
@@ -452,6 +454,8 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"eventi-gestione"));
 				setParameter(object, "setTipoApi", Transazione.model().TIPO_API.getFieldType(),
 					this.getObjectFromMap(map,"tipo-api"));
+				setParameter(object, "setUriApi", Transazione.model().URI_API.getFieldType(),
+					this.getObjectFromMap(map,"uri-api"));
 				setParameter(object, "setGruppi", Transazione.model().GRUPPI.getFieldType(),
 					this.getObjectFromMap(map,"gruppi"));
 				return object;

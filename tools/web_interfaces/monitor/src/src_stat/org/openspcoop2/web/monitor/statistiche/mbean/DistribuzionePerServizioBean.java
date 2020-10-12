@@ -36,7 +36,8 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
@@ -96,30 +97,43 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		this.service =  (IService<T, Integer>) statisticheGiornaliereService;
 	}
 	
+	public static final String PREFIX_API = "___API___";
 	public static List<ResDistribuzione>  calcolaLabels (List<ResDistribuzione> list, String protocollo){
 		if(list!=null  && list.size()>0){
 			for (ResDistribuzione res : list) {
 				String tipoNomeSoggetto = res.getParentMap().get("0");
 				
-				String tipoSoggetto = Utility.parseTipoSoggetto(tipoNomeSoggetto);
-				String nomeSoggetto = Utility.parseNomeSoggetto(tipoNomeSoggetto);
-				
-				try {
-					res.getParentMap().put("0", NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
-				} catch (Exception e) {				
+				if(tipoNomeSoggetto!=null) {
+					String tipoSoggetto = Utility.parseTipoSoggetto(tipoNomeSoggetto);
+					String nomeSoggetto = Utility.parseNomeSoggetto(tipoNomeSoggetto);
+					
+					try {
+						res.getParentMap().put("0", NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
+					} catch (Exception e) {				
+					}
 				}
 				
 				
 				String tipoNomeVersioneServizio = res.getRisultato();
-				String tipoServizio = ParseUtility.parseTipoSoggetto(tipoNomeVersioneServizio);
-				String nomeServizio = ParseUtility.parseNomeSoggetto(tipoNomeVersioneServizio);
-
-				Integer versioneServizio = ParseUtility.parseVersione(nomeServizio);
-				nomeServizio = ParseUtility.parseNomeServizio(nomeServizio);
-				
-				try {
-					res.setRisultato(NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, tipoServizio, nomeServizio, versioneServizio));
-				} catch (Exception e) {				
+				if(tipoNomeVersioneServizio.startsWith(PREFIX_API)) {
+					try {
+						tipoNomeVersioneServizio = tipoNomeVersioneServizio.substring(PREFIX_API.length());
+						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(tipoNomeVersioneServizio);
+						res.setRisultato(NamingUtils.getLabelAccordoServizioParteComune(idAccordo));
+					}catch (Exception e) {				
+					}
+				}
+				else {
+					String tipoServizio = ParseUtility.parseTipoSoggetto(tipoNomeVersioneServizio);
+					String nomeServizio = ParseUtility.parseNomeSoggetto(tipoNomeVersioneServizio);
+	
+					Integer versioneServizio = ParseUtility.parseVersione(nomeServizio);
+					nomeServizio = ParseUtility.parseNomeServizio(nomeServizio);
+					
+					try {
+						res.setRisultato(NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, tipoServizio, nomeServizio, versioneServizio));
+					} catch (Exception e) {				
+					}
 				}
 			}
 		}

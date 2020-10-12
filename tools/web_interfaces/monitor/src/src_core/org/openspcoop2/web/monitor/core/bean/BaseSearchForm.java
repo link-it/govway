@@ -33,9 +33,11 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
@@ -114,10 +116,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private String labelTipoNomeDestinatario;
 	private String labelTipoNomeTrafficoPerSoggetto;
 	private String labelTipoNomeSoggettoLocale;
+	private String labelApi;
 	private String labelNomeServizio;
 	private String labelNomeAzione;	
 	
 	private String gruppo;
+	
+	private String api;
 	
 
 	// ricerche
@@ -339,10 +344,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.labelTipoNomeDestinatario = null;
 			this.labelTipoNomeTrafficoPerSoggetto = null;
 			this.labelTipoNomeSoggettoLocale = null;
+			this.labelApi = null;
 			this.labelNomeServizio = null;
 			this.labelNomeAzione = null;
 
 			this.gruppo = null;
+			
+			this.api = null;
 			
 			this.idCorrelazioneApplicativa = null;
 			this.idEgov = null;
@@ -425,11 +433,25 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.nomeAzione = null;
 		this.ricerchePersonalizzate = null;
 		this.statistichePersonalizzate = null;
+		this.labelApi = null;
 		this.labelNomeServizio = null;
 		this.labelNomeAzione = null;
 	}
 
 	public void gruppoSelected(ActionEvent ae) {
+		this.nomeServizio = null;
+		this.nomeAzione = null;
+		this.ricercaSelezionata = null;
+		this.nomeRicercaPersonalizzata = null;
+		this.nomeStatisticaPersonalizzata = null;
+		this.labelApi = null;
+		this.labelNomeServizio = null;
+		this.labelAzione = null;
+		this.labelNomeAzione = null;
+		this.api = null;
+	}
+	
+	public void apiSelected(ActionEvent ae) {
 		this.nomeServizio = null;
 		this.nomeAzione = null;
 		this.ricercaSelezionata = null;
@@ -493,6 +515,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.labelTipoNomeDestinatario = null;
 		this.labelTipoNomeTrafficoPerSoggetto = null;
 		this.labelTipoNomeSoggettoLocale = null;
+		this.labelApi = null;
 		this.labelNomeServizio = null;
 		this.labelNomeAzione = null;
 		
@@ -712,6 +735,30 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		if (StringUtils.isEmpty(gruppo) || "--".equals(gruppo))
 			this.gruppo = null;
 	} 
+	
+	
+	public String getApiTooltip() {
+		if(StringUtils.isNotEmpty(this.getApi())) {
+			try {
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(this.api);
+				return NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
+			}catch(Throwable t) {}
+			return this.api;
+		}
+		return null;
+	}
+	
+	public String getApi() {
+		return this.api;
+	}
+
+	public void setApi(String api) {
+		this.api = api;
+
+		if (StringUtils.isEmpty(api) || "--".equals(api))
+			this.api = null;
+	} 
+	
 	
 	public String getNomeServizioTooltip() {
 		if(StringUtils.isNotEmpty(this.getNomeServizio())) {
@@ -1905,6 +1952,19 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 						this.destinatarioSelected(ae);
 					}
 
+				// controllo api
+				String tipoReferente = null;
+				if(StringUtils.isNotEmpty(this.getApi())){
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(this.getApi());
+					tipoReferente = idAccordo.getSoggettoReferente().getTipo();
+				}
+				if(tipoReferente != null)
+					if(!DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).isTipoSoggettoCompatibileConProtocollo(tipoReferente, tipoProt)){
+						this.setApi(null); 
+						this.setLabelApi(null);
+						this.apiSelected(ae);
+					}
+				
 				// controllo Servizio
 				String nomeServizio = null, tipoServizio = null;
 				if(StringUtils.isNotEmpty(this.getNomeServizio())){
@@ -2215,6 +2275,18 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		}
 	}
 
+	public String getLabelApi() {
+		return this.labelApi;
+	}
+
+	public void setLabelApi(String labelApi) {
+		this.labelApi = labelApi;
+		
+		if (StringUtils.isEmpty(this.labelApi) || "--".equals(this.labelApi)) {
+			this.labelApi = null;
+		}
+	}
+	
 	public String getLabelNomeServizio() {
 		return this.labelNomeServizio;
 	}

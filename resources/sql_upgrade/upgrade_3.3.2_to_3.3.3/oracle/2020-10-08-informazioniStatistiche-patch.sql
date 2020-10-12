@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/oracle/informazioniStatistiche/2020-10-08-patch.sql

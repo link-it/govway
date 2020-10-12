@@ -209,6 +209,7 @@ public class PrincipalUtilities {
 				break;
 			case client_address:
 			case gruppi:
+			case api:
 			case eventi:
 				// non usati in questo contesto
 				break;

@@ -1005,6 +1005,8 @@ public abstract class AbstractStatistiche {
 		
 		statisticaBase.setGruppi(stat.getGruppo());
 		
+		statisticaBase.setUriApi(stat.getApi());
+		
 		if(stat.getDestinatario()!=null && stat.getDestinatario().getTipo()!=null) {
 			EsitiProperties esitiProperties = null;
 			int esitoConsegnaMultipla = -1;

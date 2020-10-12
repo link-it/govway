@@ -615,3 +615,112 @@ Scenario: Ricerca Lista Eventi ed evento singolo
     Then status 200
     And match response == evento
 
+@RicercaSempliceTransazioniApiImplementata
+Scenario: RicercaSempliceTransazioni tramite richiesta GET con api implementata
+    
+    * def filtro = read('classpath:bodies/ricerca-filtro-api-implementata.json')
+    * eval filtro.api.api_implementata.nome = setup.erogazione_petstore.api_nome
+    * eval filtro.api.api_implementata.versione = setup.erogazione_petstore.api_versione    
+    * eval filtro.intervallo_temporale = intervallo_temporale
+    
+    * def query =
+    """ ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: 'qualsiasi',
+        uri_api_implementata: filtro.api.api_implementata.nome+':'+filtro.api.api_implementata.versione
+    })
+    """
+    Given params query
+    When method get
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].api.nome contains setup.erogazione_petstore.api_nome
+
+
+    * def query_errata =
+    """ ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: 'qualsiasi',
+        uri_api_implementata: filtro.api.api_implementata.nome+'errato:'+filtro.api.api_implementata.versione
+    })
+    """
+    Given params query_errata
+    When method get
+    Then status 200
+    And assert response.items.length == 0
+
+
+    * def query =
+    """ ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: 'qualsiasi',
+        uri_api_implementata: 'gw/'+soggettoDefault+':'+filtro.api.api_implementata.nome+':'+filtro.api.api_implementata.versione
+    })
+    """
+    Given params query
+    When method get
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].api.nome contains setup.erogazione_petstore.api_nome
+
+
+    * def query_errata =
+    """ ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: 'qualsiasi',
+        uri_api_implementata: 'gw/'+'AltroSoggetto'+':'+filtro.api.api_implementata.nome+':'+filtro.api.api_implementata.versione
+    })
+    """
+    Given params query_errata
+    When method get
+    Then status 200
+    And assert response.items.length == 0
+
+
+@RicercaTransazioniApiImplementata
+Scenario: RicercaTransazioniApiImplementata tramite richiesta POST con api implementata
+
+    * def filtro = read('classpath:bodies/ricerca-filtro-api-implementata.json')
+    * set filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.tipo = 'qualsiasi'
+    * set filtro.api.api_implementata.nome = setup.erogazione_petstore.api_nome
+    * set filtro.api.api_implementata.versione = setup.erogazione_petstore.api_versione  
+    * remove filtro.azione
+    * set filtro.esito = { 'tipo' : 'ok' }
+    * set filtro.limit = 1000
+
+    Given request filtro
+    When method post
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].api.nome contains setup.erogazione_petstore.api_nome
+
+
+    * set filtro.api.api_implementata.nome = setup.erogazione_petstore.api_nome+'errato'
+
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length == 0
+
+
+    * set filtro.api.api_implementata.nome = setup.erogazione_petstore.api_nome
+    * set filtro.api.api_implementata.referente = soggettoDefault
+
+    Given request filtro
+    When method post
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].api.nome contains setup.erogazione_petstore.api_nome
+
+
+    * set filtro.api.api_implementata.referente = 'AltroSoggetto'
+
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length == 0

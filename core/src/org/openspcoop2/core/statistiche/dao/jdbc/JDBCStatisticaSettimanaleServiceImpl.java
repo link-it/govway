@@ -89,6 +89,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.ESITO_CONTESTO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.CLIENT_ADDRESS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.URI_API,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
@@ -122,6 +123,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getEsitoContesto(),StatisticaSettimanale.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getClientAddress(),StatisticaSettimanale.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getGruppi(),StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getUriApi(),StatisticaSettimanale.model().STATISTICA_BASE.URI_API.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getNumeroTransazioni(),StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getDimensioniBytesBandaComplessiva(),StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getDimensioniBytesBandaInterna(),StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
@@ -285,6 +287,8 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getClientAddress(), StatisticaSettimanale.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getGruppi(), StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.URI_API,false), "?");
+		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getUriApi(), StatisticaSettimanale.model().STATISTICA_BASE.URI_API.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getNumeroTransazioni(), StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");

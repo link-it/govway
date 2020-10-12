@@ -8,7 +8,7 @@
     xmlns:c="http://java.sun.com/jstl/core">
      <f:loadBundle var="msg" basename="messages" />
     
-    <c:if test="#{sf_bean.existsGruppi and sf_mbean.abilitaGestioneGrupppiInConfigurazione}">
+    <c:if test="#{sf_bean.existsGruppi and sf_mbean.abilitaGestioneGruppiInConfigurazione}">
 	    <c:if test="#{not sf_bean.visualizzaFiltroGruppiSelectList}">
 			 <link:prop label="#{msg['stats.search.gruppo']}">
 	     	 	<h:inputText id="gruppoCombo" value="#{sf_bean.labelGruppo}" styleClass="inputLinkLong"/>

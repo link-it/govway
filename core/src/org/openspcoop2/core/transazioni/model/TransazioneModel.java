@@ -132,6 +132,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.CLIENT_ADDRESS = new Field("client-address",java.lang.String.class,"transazione",Transazione.class);
 		this.EVENTI_GESTIONE = new Field("eventi-gestione",java.lang.String.class,"transazione",Transazione.class);
 		this.TIPO_API = new Field("tipo-api",int.class,"transazione",Transazione.class);
+		this.URI_API = new Field("uri-api",java.lang.String.class,"transazione",Transazione.class);
 		this.GRUPPI = new Field("gruppi",java.lang.String.class,"transazione",Transazione.class);
 		this.DUMP_MESSAGGIO = new org.openspcoop2.core.transazioni.model.DumpMessaggioModel(new Field("dump-messaggio",org.openspcoop2.core.transazioni.DumpMessaggio.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_APPLICATIVO_SERVER = new org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel(new Field("transazione-applicativo-server",org.openspcoop2.core.transazioni.TransazioneApplicativoServer.class,"transazione",Transazione.class));
@@ -235,6 +236,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.CLIENT_ADDRESS = new ComplexField(father,"client-address",java.lang.String.class,"transazione",Transazione.class);
 		this.EVENTI_GESTIONE = new ComplexField(father,"eventi-gestione",java.lang.String.class,"transazione",Transazione.class);
 		this.TIPO_API = new ComplexField(father,"tipo-api",int.class,"transazione",Transazione.class);
+		this.URI_API = new ComplexField(father,"uri-api",java.lang.String.class,"transazione",Transazione.class);
 		this.GRUPPI = new ComplexField(father,"gruppi",java.lang.String.class,"transazione",Transazione.class);
 		this.DUMP_MESSAGGIO = new org.openspcoop2.core.transazioni.model.DumpMessaggioModel(new ComplexField(father,"dump-messaggio",org.openspcoop2.core.transazioni.DumpMessaggio.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_APPLICATIVO_SERVER = new org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel(new ComplexField(father,"transazione-applicativo-server",org.openspcoop2.core.transazioni.TransazioneApplicativoServer.class,"transazione",Transazione.class));
@@ -427,6 +429,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public IField EVENTI_GESTIONE = null;
 	 
 	public IField TIPO_API = null;
+	 
+	public IField URI_API = null;
 	 
 	public IField GRUPPI = null;
 	 

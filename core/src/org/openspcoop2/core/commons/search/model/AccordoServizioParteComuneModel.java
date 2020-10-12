@@ -47,6 +47,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE = new org.openspcoop2.core.commons.search.model.AccordoServizioParteComuneAzioneModel(new Field("accordo-servizio-parte-comune-azione",org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.PORT_TYPE = new org.openspcoop2.core.commons.search.model.PortTypeModel(new Field("port-type",org.openspcoop2.core.commons.search.PortType.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.RESOURCE = new org.openspcoop2.core.commons.search.model.ResourceModel(new Field("resource",org.openspcoop2.core.commons.search.Resource.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
+		this.ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO = new org.openspcoop2.core.commons.search.model.AccordoServizioParteComuneGruppoModel(new Field("accordo-servizio-parte-comune-gruppo",org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 	
 	}
 	
@@ -61,6 +62,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE = new org.openspcoop2.core.commons.search.model.AccordoServizioParteComuneAzioneModel(new ComplexField(father,"accordo-servizio-parte-comune-azione",org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.PORT_TYPE = new org.openspcoop2.core.commons.search.model.PortTypeModel(new ComplexField(father,"port-type",org.openspcoop2.core.commons.search.PortType.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.RESOURCE = new org.openspcoop2.core.commons.search.model.ResourceModel(new ComplexField(father,"resource",org.openspcoop2.core.commons.search.Resource.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
+		this.ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO = new org.openspcoop2.core.commons.search.model.AccordoServizioParteComuneGruppoModel(new ComplexField(father,"accordo-servizio-parte-comune-gruppo",org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 	
 	}
 	
@@ -79,6 +81,8 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	public org.openspcoop2.core.commons.search.model.PortTypeModel PORT_TYPE = null;
 	 
 	public org.openspcoop2.core.commons.search.model.ResourceModel RESOURCE = null;
+	 
+	public org.openspcoop2.core.commons.search.model.AccordoServizioParteComuneGruppoModel ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO = null;
 	 
 
 	@Override

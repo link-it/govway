@@ -290,6 +290,48 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 				return "service_binding";
 			}
 		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tipo_soggetto";
+			}else{
+				return "tipo_soggetto";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome_soggetto";
+			}else{
+				return "nome_soggetto";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".versione";
+			}else{
+				return "versione";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -399,6 +441,24 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
 			return this.toTable(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO.NOME)){
+			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
+			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)){
+			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)){
+			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
 
 
 		return super.toTable(field,returnAlias);
@@ -455,6 +515,18 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 			return "accordi";
 		}
 		if(model.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
+			return "soggetti";
+		}
+		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO)){
+			return "accordi_gruppi";
+		}
+		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO)){
+			return "gruppi";
+		}
+		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
+			return "accordi";
+		}
+		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
 			return "soggetti";
 		}
 

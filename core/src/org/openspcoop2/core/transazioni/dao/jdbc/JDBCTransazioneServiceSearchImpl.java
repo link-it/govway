@@ -234,6 +234,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     		fields.add(Transazione.model().CLIENT_ADDRESS);
     		fields.add(Transazione.model().EVENTI_GESTIONE);
     		fields.add(Transazione.model().TIPO_API);
+    		fields.add(Transazione.model().URI_API);
     		fields.add(Transazione.model().GRUPPI);
     		
     		List<Map<String, Object>> returnMap = null;
@@ -880,6 +881,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CLIENT_ADDRESS,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().EVENTI_GESTIONE,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TIPO_API,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().URI_API,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().GRUPPI,true));
 		
 		sqlQueryObjectGet_transazione.addWhereCondition(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_TRANSAZIONE,true)+"=?");

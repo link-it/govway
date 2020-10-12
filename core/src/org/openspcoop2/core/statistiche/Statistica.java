@@ -58,6 +58,7 @@ import java.io.Serializable;
  * 			&lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="uri-api" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="numero-transazioni" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="dimensioni-bytes-banda-complessiva" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="dimensioni-bytes-banda-interna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
@@ -100,6 +101,7 @@ import java.io.Serializable;
   	"esitoContesto",
   	"clientAddress",
   	"gruppi",
+  	"uriApi",
   	"numeroTransazioni",
   	"dimensioniBytesBandaComplessiva",
   	"dimensioniBytesBandaInterna",
@@ -318,6 +320,14 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
     this.gruppi = gruppi;
   }
 
+  public java.lang.String getUriApi() {
+    return this.uriApi;
+  }
+
+  public void setUriApi(java.lang.String uriApi) {
+    this.uriApi = uriApi;
+  }
+
   public java.lang.Integer getNumeroTransazioni() {
     return this.numeroTransazioni;
   }
@@ -471,6 +481,10 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="gruppi",required=true,nillable=false)
   protected java.lang.String gruppi;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="uri-api",required=true,nillable=false)
+  protected java.lang.String uriApi;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="numero-transazioni",required=true,nillable=false)

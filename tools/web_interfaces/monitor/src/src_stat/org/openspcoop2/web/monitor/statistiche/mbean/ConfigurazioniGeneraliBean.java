@@ -34,8 +34,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -104,8 +106,8 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		}
 	}
 
-	public boolean isAbilitaGestioneGrupppiInConfigurazione() {
-		return false; // NOTA: prima di impostarlo a TRUE si stemare i metodi del service, in modo che filtrano anche per tag
+	public boolean isAbilitaGestioneGruppiInConfigurazione() {
+		return true;
 	}
 	
 	@Override
@@ -182,11 +184,18 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 
 			String gruppo = this.search.getGruppo();
 			
+			IDAccordo idAccordo = null;
+			String api = this.search.getApi();
+			if((api!=null && !"".equals(api)) ) {
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+			}
+			
+			boolean distinct = true;
 			if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore());
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore(), distinct);
 			}else {
 				// bisogna filtrare per soggetti operativi
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore());
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct);
 			}
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.servizi);
 			this.serviziSelectItemsWidth = Math.max(this.serviziSelectItemsWidth,  lunghezzaSelectList);

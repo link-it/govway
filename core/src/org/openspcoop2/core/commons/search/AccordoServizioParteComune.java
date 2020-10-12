@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="accordo-servizio-parte-comune-azione" type="{http://www.openspcoop2.org/core/commons/search}accordo-servizio-parte-comune-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="port-type" type="{http://www.openspcoop2.org/core/commons/search}port-type" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="resource" type="{http://www.openspcoop2.org/core/commons/search}resource" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="accordo-servizio-parte-comune-gruppo" type="{http://www.openspcoop2.org/core/commons/search}accordo-servizio-parte-comune-gruppo" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -63,7 +64,8 @@ import java.util.List;
   	"serviceBinding",
   	"accordoServizioParteComuneAzione",
   	"portType",
-  	"resource"
+  	"resource",
+  	"accordoServizioParteComuneGruppo"
   }
 )
 
@@ -191,6 +193,30 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     return this.resource.size();
   }
 
+  public void addAccordoServizioParteComuneGruppo(AccordoServizioParteComuneGruppo accordoServizioParteComuneGruppo) {
+    this.accordoServizioParteComuneGruppo.add(accordoServizioParteComuneGruppo);
+  }
+
+  public AccordoServizioParteComuneGruppo getAccordoServizioParteComuneGruppo(int index) {
+    return this.accordoServizioParteComuneGruppo.get( index );
+  }
+
+  public AccordoServizioParteComuneGruppo removeAccordoServizioParteComuneGruppo(int index) {
+    return this.accordoServizioParteComuneGruppo.remove( index );
+  }
+
+  public List<AccordoServizioParteComuneGruppo> getAccordoServizioParteComuneGruppoList() {
+    return this.accordoServizioParteComuneGruppo;
+  }
+
+  public void setAccordoServizioParteComuneGruppoList(List<AccordoServizioParteComuneGruppo> accordoServizioParteComuneGruppo) {
+    this.accordoServizioParteComuneGruppo=accordoServizioParteComuneGruppo;
+  }
+
+  public int sizeAccordoServizioParteComuneGruppoList() {
+    return this.accordoServizioParteComuneGruppo.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -313,6 +339,36 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @Deprecated
   public int sizeResource() {
   	return this.resource.size();
+  }
+
+  @XmlElement(name="accordo-servizio-parte-comune-gruppo",required=true,nillable=false)
+  protected List<AccordoServizioParteComuneGruppo> accordoServizioParteComuneGruppo = new ArrayList<AccordoServizioParteComuneGruppo>();
+
+  /**
+   * @deprecated Use method getAccordoServizioParteComuneGruppoList
+   * @return List&lt;AccordoServizioParteComuneGruppo&gt;
+  */
+  @Deprecated
+  public List<AccordoServizioParteComuneGruppo> getAccordoServizioParteComuneGruppo() {
+  	return this.accordoServizioParteComuneGruppo;
+  }
+
+  /**
+   * @deprecated Use method setAccordoServizioParteComuneGruppoList
+   * @param accordoServizioParteComuneGruppo List&lt;AccordoServizioParteComuneGruppo&gt;
+  */
+  @Deprecated
+  public void setAccordoServizioParteComuneGruppo(List<AccordoServizioParteComuneGruppo> accordoServizioParteComuneGruppo) {
+  	this.accordoServizioParteComuneGruppo=accordoServizioParteComuneGruppo;
+  }
+
+  /**
+   * @deprecated Use method sizeAccordoServizioParteComuneGruppoList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeAccordoServizioParteComuneGruppo() {
+  	return this.accordoServizioParteComuneGruppo.size();
   }
 
 }

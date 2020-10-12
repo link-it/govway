@@ -178,15 +178,18 @@
 						<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
 						<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
 						<ui:param name="sf_nomeDestinatario" value="#{sf_nomeDestinatario}" />
+						<ui:param name="sf_api" value="#{sf_api}" />
 						<ui:param name="sf_servizio" value="#{sf_servizio}" />
 						<ui:param name="sf_nomeAzione" value="#{sf_nomeAzione}" />
 						<ui:param name="sf_trafficoPerSoggetto" value="#{sf_trafficoPerSoggetto}" />
 						<ui:param name="sf_soggettoLocale" value="#{sf_soggettoLocale}" />
 						<ui:param name="sf_servizioApplicativo" value="#{sf_servizioApplicativo}" />
+						<ui:param name="sf_apiList" value="#{sf_apiList}" />
 						<ui:param name="sf_servizi" value="#{sf_servizi}" />
 						<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
 						<ui:param name="sf_bean" value="#{sf_bean}" />
 						<ui:param name="sf_mbean" value="#{sf_mbean}" />
+						<ui:param name="sf_labelApi" value="#{sf_labelApi}" />
 						<ui:param name="sf_labelServizio" value="#{sf_labelServizio}" />
 				 	</ui:include>
 		
@@ -207,6 +210,16 @@
 							<ui:param name="sf_labelNomeAzione" value="#{sf_labelNomeAzione}" />
 					 	</ui:include>
 					</c:if>
+				</c:if>
+				<c:if test="#{not sf_showServizi}">
+					<a4j:outputPanel layout="block" id="distribuzionePerApiPnl" rendered="#{true}">
+						<link:prop label="#{msg['commons.search.differenziaApiImpl.label']}">
+							<h:selectOneRadio id="distribuzionePerApi" value="#{sf_bean.distribuzionePerImplementazioneApi}" styleClass="controlset" style="margin-left: 170px">
+								<f:selectItem itemValue="true" itemLabel="Si"/>
+								<f:selectItem itemValue="false" itemLabel="No"/>
+							</h:selectOneRadio>
+						</link:prop>
+					</a4j:outputPanel>
 				</c:if>
 				
 			</a4j:outputPanel>

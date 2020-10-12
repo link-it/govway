@@ -115,6 +115,7 @@
 			<xsd:element name="esito-contesto" type="xsd:string" />
 			<xsd:element name="client-address" type="xsd:string" />
 			<xsd:element name="gruppi" type="xsd:string" />
+			<xsd:element name="uri-api" type="xsd:string"/>
 			
 			<!-- Informazioni -->
 			<xsd:element name="numero-transazioni" type="xsd:integer" />

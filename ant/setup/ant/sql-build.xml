@@ -234,6 +234,38 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	
 	</target>
 
+	<target name="sql_settings_index_transazioni_update">
+			
+		<if>
+			<equals arg1="${antinstaller_index_transazioni}" arg2="full"/>
+			<then>
+		
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- DROP INDEX INDEX_TR_SEARCH"/>
+					<param name="value" value="DROP INDEX INDEX_TR_SEARCH"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- DROP INDEX INDEX_TR_STATS"/>
+					<param name="value" value="DROP INDEX INDEX_TR_STATS"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_TR_SEARCH"/>
+					<param name="value" value="CREATE INDEX INDEX_TR_SEARCH"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_TR_STATS"/>
+					<param name="value" value="CREATE INDEX INDEX_TR_STATS"/>
+				</antcall>
+
+			</then>
+		</if>
+	
+	</target>
+
 	<target name="sql_settings_index_statistiche">
 			
 		<if>
@@ -274,6 +306,59 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				    <param name="file" value="${file}"/>
 					<param name="token" value="CREATE INDEX INDEX_STAT_MONTH_ENTRY "/>
 					<param name="value" value="-- CREATE INDEX INDEX_STAT_MONTH_ENTRY "/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_STAT_MONTH "/>
+					<param name="value" value="CREATE INDEX INDEX_STAT_MONTH "/>
+				</antcall>
+
+			</then>
+		</if>
+	
+	</target>
+
+	<target name="sql_settings_index_statistiche_update">
+			
+		<if>
+			<equals arg1="${antinstaller_index_statistiche}" arg2="full"/>
+			<then>
+		
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- DROP INDEX INDEX_STAT_HOUR"/>
+					<param name="value" value="DROP INDEX INDEX_STAT_HOUR"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- DROP INDEX INDEX_STAT_DAY"/>
+					<param name="value" value="DROP INDEX INDEX_STAT_DAY"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- DROP INDEX INDEX_STAT_WEEK"/>
+					<param name="value" value="DROP INDEX INDEX_STAT_WEEK"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- DROP INDEX INDEX_STAT_MONTH"/>
+					<param name="value" value="DROP INDEX INDEX_STAT_MONTH"/>
+				</antcall>
+
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_STAT_HOUR "/>
+					<param name="value" value="CREATE INDEX INDEX_STAT_HOUR "/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_STAT_DAY "/>
+					<param name="value" value="CREATE INDEX INDEX_STAT_DAY "/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="-- CREATE INDEX INDEX_STAT_WEEK "/>
+					<param name="value" value="CREATE INDEX INDEX_STAT_WEEK "/>
 				</antcall>
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>

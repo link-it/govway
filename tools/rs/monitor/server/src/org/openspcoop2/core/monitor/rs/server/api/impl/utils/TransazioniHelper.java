@@ -251,7 +251,7 @@ public class TransazioniHelper {
 	}
 
 	public static final void overrideRicercaBaseTransazione(RicercaBaseTransazione body, TransazioniSearchForm search,
-			MonitoraggioEnv env) {
+			MonitoraggioEnv env) throws Exception {
 		if (body == null)
 			return;
 		
@@ -261,6 +261,10 @@ public class TransazioniHelper {
 		
 		search.setGruppo(body.getTag());
 
+		if(body.getApi()!=null && body.getApi().getApiImplementata()!=null) {
+			search.setApi(ReportisticaHelper.toUriApiImplementata(body.getApi().getApiImplementata(), env));
+		}
+		
 		switch (body.getTipo()) {
 		case EROGAZIONE:
 			IDSoggetto idSoggettoLocale = new IDSoggetto(env.tipoSoggetto, env.nomeSoggettoLocale);

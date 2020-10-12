@@ -230,7 +230,8 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 	public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine,
 			FiltroRicercaRuoloTransazioneEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto,
 			Integer offset, Integer limit, String sort, String idCluster, String soggettoRemoto,
-			String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio,
+			String soggettoErogatore, String tag, String uriApiImplementata, 
+			String nomeServizio, String tipoServizio, Integer versioneServizio,
 			String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, 
 			Boolean ricercaEsatta, Boolean caseSensitive) {
 		IContext context = this.getContext();
@@ -243,7 +244,8 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			
 			RicercaIdApplicativo bodyRicerca = new RicercaIdApplicativo();
 			bodyRicerca.setTipo(tipo);
-			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));			
+			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore,
+					env, uriApiImplementata));			
 			FiltroTemporale iTemporale = new FiltroTemporale();
 			iTemporale.setDataInizio(dataInizio);
 			iTemporale.setDataFine(dataFine);
@@ -335,7 +337,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 	@Override
 	public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine,
 			FiltroRicercaRuoloTransazioneEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit,
-			String sort, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag,
+			String sort, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata,
 			String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
 			EsitoTransazioneSimpleSearchEnum esito,Boolean escludiScartate) {
 		IContext context = this.getContext();
@@ -374,8 +376,10 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				}
 				bodyRicerca.setEsito(filtroEsito);
 			}
+			
 			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio,
-					soggettoRemoto,soggettoErogatore));
+					soggettoRemoto,soggettoErogatore,
+					env, uriApiImplementata));
 
 			ListaTransazioni ret = TransazioniHelper.findAllTransazioni(bodyRicerca, env);
 			context.getLogger().info("Invocazione completata con successo");

@@ -81,7 +81,7 @@ public class InfoImplementazioneApi  {
   **/
   @JsonProperty("tipo")
   @Valid
- @Size(max=20)  public String getTipo() {
+ @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20)  public String getTipo() {
     return this.tipo;
   }
 

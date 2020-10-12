@@ -180,6 +180,9 @@ public class StatisticsUtils {
 			String gruppo = stat.getGruppo();
 			StatisticsUtils.setCondition(expr, gruppo, Transazione.model().GRUPPI);
 			
+			String uriApi = stat.getApi();
+			StatisticsUtils.setCondition(expr, uriApi, Transazione.model().URI_API);
+			
 			expr.equals(Transazione.model().ESITO, stat.getEsito()!=null ? stat.getEsito() : -1);
 			
 			String esitoContesto = stat.getEsitoContesto();
@@ -244,6 +247,7 @@ public class StatisticsUtils {
 		expr.addGroupBy(Transazione.model().TOKEN_MAIL);
 		expr.addGroupBy(Transazione.model().CLIENT_ADDRESS);
 		expr.addGroupBy(Transazione.model().GRUPPI);
+		expr.addGroupBy(Transazione.model().URI_API);
 		expr.addGroupBy(Transazione.model().ESITO);
 		expr.addGroupBy(Transazione.model().ESITO_CONTESTO);
 		if(groupByStato){
@@ -387,6 +391,8 @@ public class StatisticsUtils {
 		stat.setClientAddress(StatisticsUtils.getValueFromMap(Transazione.model().CLIENT_ADDRESS,row));
 		
 		stat.setGruppo(StatisticsUtils.getValueFromMap(Transazione.model().GRUPPI,row));
+		
+		stat.setApi(StatisticsUtils.getValueFromMap(Transazione.model().URI_API,row));
 		
 //		stat.setMittente(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldName()), (String)row.get(Transazione.model().NOME_SOGGETTO_FRUITORE .getFieldName())));
 //		stat.setDestinatario(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_EROGATORE.getFieldName()),(String)row.get(Transazione.model().NOME_SOGGETTO_EROGATORE.getFieldName())));

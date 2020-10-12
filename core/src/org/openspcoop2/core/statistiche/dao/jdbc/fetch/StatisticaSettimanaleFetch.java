@@ -100,6 +100,8 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "client_address", StatisticaSettimanale.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setGruppi", StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "gruppi", StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaSettimanale.model().STATISTICA_BASE.URI_API.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "uri_api", StatisticaSettimanale.model().STATISTICA_BASE.URI_API.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -247,6 +249,8 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.client-address"));
 				setParameter(object.getStatisticaBase(), "setGruppi", StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.gruppi"));
+				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaSettimanale.model().STATISTICA_BASE.URI_API.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.uri-api"));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.numero-transazioni"));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),

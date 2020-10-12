@@ -102,6 +102,16 @@ public class StatsSearchForm extends BaseSearchForm{
 
 	private boolean isMostraUnitaTempoDistribuzioneNonTemporale = false;
 	
+	private boolean distribuzionePerImplementazioneApi = true;
+	
+	public boolean isDistribuzionePerImplementazioneApi() {
+		return this.distribuzionePerImplementazioneApi;
+	}
+
+	public void setDistribuzionePerImplementazioneApi(boolean distribuzionePerImplementazioneApi) {
+		this.distribuzionePerImplementazioneApi = distribuzionePerImplementazioneApi;
+	}
+
 	public boolean isAndamentoTemporalePerEsiti() {
 		return this.andamentoTemporalePerEsiti;
 	}

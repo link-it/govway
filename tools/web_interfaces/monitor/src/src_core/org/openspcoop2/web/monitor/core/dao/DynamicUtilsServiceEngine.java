@@ -1314,9 +1314,9 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	 */
 	@Override
 	public List<AccordoServizioParteComune> getAccordiServizio(String tipoProtocollo,String tipoSoggetto , String nomeSoggetto,
-			Boolean isReferente, Boolean isErogatore) {
+			Boolean isReferente, Boolean isErogatore, String tag) {
 		List<AccordoServizioParteComune> toRet = new ArrayList<AccordoServizioParteComune>();
-		log.debug("Get AccordiServizio from Tipo/Nome Soggetto [Tipo: "+ tipoSoggetto + "], [nome: " + nomeSoggetto + "] Referente["+isReferente+"] Erogatore ["+isErogatore+"]");
+		log.debug("Get AccordiServizio from Tipo/Nome Soggetto [Tipo: "+ tipoSoggetto + "], [nome: " + nomeSoggetto + "] Referente["+isReferente+"] Erogatore ["+isErogatore+"] Tag["+tag+"]");
 		try {
 			// se il soggetto e' stato selezionato
 			if(StringUtils.isNotEmpty(nomeSoggetto) && StringUtils.isNotEmpty(tipoSoggetto)){
@@ -1324,10 +1324,15 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				if(isReferente){
 					// restituisco tutti gli accordi parte comune presenti con referente uguale al parametro
 					IPaginatedExpression pagExpr = this.aspcDAO.newPaginatedExpression();
+					pagExpr.and();
 
 					pagExpr.equals(AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoSoggetto).and().equals(AccordoServizioParteComune.model().ID_REFERENTE.NOME, nomeSoggetto);
 					if(tipoProtocollo != null)
 						pagExpr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspcDAO, AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoProtocollo));
+					if(tag!=null && !"".equals(tag)) {
+						pagExpr.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO.NOME, tag);
+					}
+					
 					pagExpr.sortOrder(SortOrder.ASC);
 					pagExpr.addOrder(AccordoServizioParteComune.model().ID_REFERENTE.TIPO);
 					pagExpr.addOrder(AccordoServizioParteComune.model().ID_REFERENTE.NOME);
@@ -1347,12 +1352,17 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 					if(tipoProtocollo != null)
 						expr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspsDAO, AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO, tipoProtocollo));
 
+					if(tag!=null && !"".equals(tag)) {
+						throw new Exception("Funzionalità non supportata (Ricerca per Tag con isErogatore)");
+					}
+					
 					expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)
 					.addOrder(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)
 					.addOrder(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)
 					.addOrder(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE);
 
 					IPaginatedExpression pagExpr = this.aspsDAO.toPaginatedExpression(expr);
+					pagExpr.and();
 
 					CustomField cf = new CustomField("idAccordo", Long.class, "id_accordo", "servizi");
 					List<Map<String, Object>> list = null;
@@ -1382,8 +1392,15 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			} else {
 				// restituisco tutti gli accordi parte comune presenti
 				IPaginatedExpression pagExpr = this.aspcDAO.newPaginatedExpression();
+				pagExpr.and();
+				
 				if(tipoProtocollo != null)
 					pagExpr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspcDAO, AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoProtocollo));
+			
+				if(tag!=null && !"".equals(tag)) {
+					pagExpr.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO.NOME, tag);
+				}
+				
 				pagExpr.sortOrder(SortOrder.ASC);
 				pagExpr.addOrder(AccordoServizioParteComune.model().ID_REFERENTE.TIPO);
 				pagExpr.addOrder(AccordoServizioParteComune.model().ID_REFERENTE.NOME);
@@ -1412,20 +1429,26 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 
 	@Override
 	public int countAccordiServizio(String tipoProtocollo,String tipoSoggetto, String nomeSoggetto,
-			Boolean isReferente, Boolean isErogatore) {
+			Boolean isReferente, Boolean isErogatore, String tag) {
 		NonNegativeNumber nnn = null;
-		log.debug("countAccordiServizio from Tipo/Nome Soggetto [Tipo: "+ tipoSoggetto + "], [nome: " + nomeSoggetto + "] Referente["+isReferente+"] Erogatore ["+isErogatore+"]");
+		log.debug("countAccordiServizio from Tipo/Nome Soggetto [Tipo: "+ tipoSoggetto + "], [nome: " + nomeSoggetto + "] Referente["+isReferente+"] Erogatore ["+isErogatore+"] Tag["+tag+"]");
 		try {
 			if(StringUtils.isNotEmpty(nomeSoggetto) && StringUtils.isNotEmpty(tipoSoggetto)){
 				// utilizzo il soggetto passato come parametro come referente
 				if(isReferente){
 					// restituisco tutti gli accordi parte comune presenti con referente uguale al parametro
 					IExpression expr = this.aspcDAO.newExpression();
+					expr.and();
+					
 					if(tipoProtocollo != null)
 						expr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspcDAO, AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoProtocollo));
 
 					expr.equals(AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoSoggetto) .and() .equals(AccordoServizioParteComune.model().ID_REFERENTE.NOME, nomeSoggetto);
 
+					if(tag!=null && !"".equals(tag)) {
+						expr.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO.NOME, tag);
+					}
+					
 					nnn = this.aspcDAO.count(expr);
 				}
 
@@ -1433,11 +1456,17 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				if(isErogatore){
 					CustomField cf = new CustomField("idAccordo", Long.class, "id_accordo", "servizi");
 					IExpression expr = this.aspsDAO.newExpression();
+					expr.and();
+					
 					if(tipoProtocollo != null)
 						expr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspsDAO, AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO, tipoProtocollo));
 
 					expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO, tipoSoggetto).and().equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeSoggetto);
 
+					if(tag!=null && !"".equals(tag)) {
+						throw new Exception("Funzionalità non supportata (Ricerca per Tag con isErogatore)");
+					}
+					
 					FunctionField countF = new FunctionField(cf, Function.COUNT_DISTINCT, "numeroAccordi");
 
 					Object aggregate = this.aspsDAO.aggregate(expr,countF);
@@ -1453,9 +1482,15 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 
 			}else {
 				IExpression expr = this.aspcDAO.newExpression();
+				expr.and();
+				
 				if(tipoProtocollo != null)
 					expr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspcDAO, AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoProtocollo));
 
+				if(tag!=null && !"".equals(tag)) {
+					expr.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO.NOME, tag);
+				}
+				
 				nnn = this.aspcDAO.count(expr);
 			}
 			if(nnn != null){
@@ -2069,9 +2104,11 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		return listaPorte;
 	}
 
+	
+	
 	@Override
 	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto,
-			String val, Boolean searchTipo) {
+			String val, Boolean searchTipo, Boolean distinct) {
 		log.debug("getServiziErogazione [Soggetto Proprietario : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
 		List<IDServizio> lista = new ArrayList<IDServizio>();
 
@@ -2098,7 +2135,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
 				
 				// elimino duplicati
-				if(!lstTmp.contains(uriFromIDServizio)) {
+				if(!distinct || !lstTmp.contains(uriFromIDServizio)) {
 					lstTmp.add(uriFromIDServizio);
 					lista.add(idServizio);
 				}
@@ -2116,6 +2153,56 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		} 
 
 		return lista;
+	}
+	
+	@Override
+	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, 
+			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
+			String val,Boolean searchTipo, Boolean distinct){
+		log.debug("getServiziErogazione [Soggetto Proprietario : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
+		List<IDServizio> lista = new ArrayList<IDServizio>();
+
+		try {
+			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, val, null);
+			
+			List<PortaApplicativa> listaPorte = new ArrayList<PortaApplicativa>();
+			IPaginatedExpression pagPaExpr = this.portaApplicativaDAO.toPaginatedExpression(paExpr );
+			
+			pagPaExpr.addOrder(PortaApplicativa.model().ID_SOGGETTO.TIPO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().ID_SOGGETTO.NOME, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().TIPO_SERVIZIO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().NOME_SERVIZIO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
+			
+			pagPaExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
+			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
+			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
+			
+			List<String> lstTmp = new ArrayList<String>();
+			for (PortaApplicativa portaApplicativa : listaPorte) {
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
+							portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
+				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
+				
+				// elimino duplicati
+				if(!distinct || !lstTmp.contains(uriFromIDServizio)) {
+					lstTmp.add(uriFromIDServizio);
+					lista.add(idServizio);
+				}
+			}
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+
+		return lista;		
 	}
 	
 	@Override
@@ -2144,7 +2231,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	
 	@Override
 	public List<IDServizio> getConfigurazioneServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto,
-			String val, Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String val, Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct) {
 		log.debug("getServiziErogazione [Soggetto Proprietario : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
 		List<IDServizio> lista = new ArrayList<IDServizio>();
 
@@ -2171,7 +2258,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
 				
 				// elimino duplicati
-				if(!lstTmp.contains(uriFromIDServizio)) {
+				if(!distinct || !lstTmp.contains(uriFromIDServizio)) {
 					lstTmp.add(uriFromIDServizio);
 					lista.add(idServizio);
 				}
@@ -2189,6 +2276,59 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		} 
 
 		return lista;
+	}
+	
+	@Override
+	public List<IDServizio> getConfigurazioneServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, 
+			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
+			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
+		
+		log.debug("getServiziErogazione [Soggetto Proprietario : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
+		List<IDServizio> lista = new ArrayList<IDServizio>();
+
+		try {
+			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, val, permessiUtenteOperatore);
+
+			
+			List<PortaApplicativa> listaPorte = new ArrayList<PortaApplicativa>();
+			IPaginatedExpression pagPaExpr = this.portaApplicativaDAO.toPaginatedExpression(paExpr );
+			
+			pagPaExpr.addOrder(PortaApplicativa.model().ID_SOGGETTO.TIPO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().ID_SOGGETTO.NOME, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().TIPO_SERVIZIO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().NOME_SERVIZIO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
+			
+			pagPaExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
+			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
+			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
+			
+			List<String> lstTmp = new ArrayList<String>();
+			for (PortaApplicativa portaApplicativa : listaPorte) {
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
+							portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
+				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
+				
+				// elimino duplicati
+				if(!distinct || !lstTmp.contains(uriFromIDServizio)) {
+					lstTmp.add(uriFromIDServizio);
+					lista.add(idServizio);
+				}
+			}
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+
+		return lista;
+		
 	}
 	
 	@Override
@@ -2268,7 +2408,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	}
 	
 	@Override
-	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String val, Boolean searchTipo) {
+	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String val, Boolean searchTipo, Boolean distinct) {
 		log.debug("getServiziFruizione [Soggetto Erogatore : " + tipoSoggettoErogatore + "/"+ nomeSoggettoErogatore	 + "]");
 		List<IDServizio> lista = new ArrayList<IDServizio>();
 
@@ -2294,7 +2434,58 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
 				
 				// elimino duplicati
-				if(!lstTmp.contains(uriFromIDServizio)) {
+				if(!distinct || !lstTmp.contains(uriFromIDServizio)) {
+					lstTmp.add(uriFromIDServizio);
+					lista.add(idServizio);
+				}
+			}
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+
+		return lista;
+	}
+	
+	@Override
+	public List<IDServizio> getServiziFruizione(String tipoProtocollo, 
+			String tipoSoggetto, String nomeSoggetto, 
+			String tipoSoggettoErogatore, String nomeSoggettoErogatore, 
+			String tipoServizio ,String nomeServizio, Integer versioneServizio, String nomeAzione, 
+			String val, Boolean searchTipo, Boolean distinct) {
+		log.debug("getServiziFruizione [Soggetto Erogatore : " + tipoSoggettoErogatore + "/"+ nomeSoggettoErogatore	 + "]");
+		List<IDServizio> lista = new ArrayList<IDServizio>();
+
+		try {
+			IExpression pdExpr = getExpressionPD(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoSoggettoErogatore, nomeSoggettoErogatore,	tipoServizio, nomeServizio, versioneServizio, nomeAzione, val, null);
+						
+			List<PortaDelegata> listaPorte = new ArrayList<PortaDelegata>();
+			IPaginatedExpression pagPdExpr = this.portaDelegataDAO.toPaginatedExpression(pdExpr );
+			
+			pagPdExpr.addOrder(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, SortOrder.ASC);
+			pagPdExpr.addOrder(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, SortOrder.ASC);
+			pagPdExpr.addOrder(PortaDelegata.model().TIPO_SERVIZIO, SortOrder.ASC);
+			pagPdExpr.addOrder(PortaDelegata.model().NOME_SERVIZIO, SortOrder.ASC);
+			pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
+			
+			pagPdExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
+			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
+			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
+			
+			List<String> lstTmp = new ArrayList<String>();
+			for (PortaDelegata portaDelegata : listaPorte) {
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(), portaDelegata.getVersioneServizio());
+				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
+				
+				// elimino duplicati
+				if(!distinct || !lstTmp.contains(uriFromIDServizio)) {
 					lstTmp.add(uriFromIDServizio);
 					lista.add(idServizio);
 				}
@@ -2339,7 +2530,8 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	}
 	
 	@Override
-	public List<IDServizio> getConfigurazioneServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore){
+	public List<IDServizio> getConfigurazioneServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, 
+			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		log.debug("getServiziFruizione [Soggetto Fruitore : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
 		List<IDServizio> lista = new ArrayList<IDServizio>();
 
@@ -2367,7 +2559,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
 				
 				// elimino duplicati
-				if(!lstTmp.contains(uriFromIDServizio)) {
+				if(!distinct || !lstTmp.contains(uriFromIDServizio)) {
 					lstTmp.add(uriFromIDServizio);
 					lista.add(idServizio);
 				}

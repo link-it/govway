@@ -89,6 +89,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.ESITO_CONTESTO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.GRUPPI,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.URI_API,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
@@ -122,6 +123,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getEsitoContesto(),StatisticaOraria.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getClientAddress(),StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getGruppi(),StatisticaOraria.model().STATISTICA_BASE.GRUPPI.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getUriApi(),StatisticaOraria.model().STATISTICA_BASE.URI_API.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getNumeroTransazioni(),StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getDimensioniBytesBandaComplessiva(),StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getDimensioniBytesBandaInterna(),StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
@@ -285,6 +287,8 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getClientAddress(), StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.GRUPPI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getGruppi(), StatisticaOraria.model().STATISTICA_BASE.GRUPPI.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.URI_API,false), "?");
+		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getUriApi(), StatisticaOraria.model().STATISTICA_BASE.URI_API.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getNumeroTransazioni(), StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");

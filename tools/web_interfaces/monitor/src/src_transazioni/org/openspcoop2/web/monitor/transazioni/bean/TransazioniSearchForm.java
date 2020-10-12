@@ -104,6 +104,7 @@ Context, Cloneable {
 	private String ricercaLiberaSoggettoLocale;
 	private String ricercaLiberaSoggettoRemoto;
 	private String ricercaLiberaGruppo;
+	private String ricercaLiberaApi;
 	private String ricercaLiberaServizio;
 	private String ricercaLiberaAzione;
 	
@@ -352,6 +353,7 @@ Context, Cloneable {
 		this.ricercaLiberaSoggettoLocale = null;
 		this.ricercaLiberaSoggettoRemoto = null;
 		this.ricercaLiberaGruppo = null;
+		this.ricercaLiberaApi = null;
 		this.ricercaLiberaServizio = null;
 		this.ricercaLiberaAzione = null;
 		
@@ -1334,6 +1336,14 @@ Context, Cloneable {
 
 	public void setRicercaLiberaGruppo(String ricercaLiberaGruppo) {
 		this.ricercaLiberaGruppo = ricercaLiberaGruppo;
+	}
+	
+	public String getRicercaLiberaApi() {
+		return this.ricercaLiberaApi;
+	}
+
+	public void setRicercaLiberaApi(String ricercaLiberaApi) {
+		this.ricercaLiberaApi = ricercaLiberaApi;
 	}
 
 	public String getRicercaLiberaServizio() {

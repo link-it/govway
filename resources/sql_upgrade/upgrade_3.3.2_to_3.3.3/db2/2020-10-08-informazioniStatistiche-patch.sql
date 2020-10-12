@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/informazioniStatistiche/2020-10-08-patch.sql

@@ -161,6 +161,7 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CLIENT_ADDRESS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().EVENTI_GESTIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TIPO_API,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().URI_API,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().GRUPPI,false),"?");
 		if(transazione.sizeTransazioneExtendedInfoList()>0){
 			for (TransazioneExtendedInfo transazioneExtedendInfo : transazione.getTransazioneExtendedInfoList()) {
@@ -263,7 +264,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getClientAddress(),Transazione.model().CLIENT_ADDRESS.getFieldType()));
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getEventiGestione(),Transazione.model().EVENTI_GESTIONE.getFieldType()));
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getTipoApi(),Transazione.model().TIPO_API.getFieldType()));
-				listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getGruppi(),Transazione.model().GRUPPI.getFieldType()));
+		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getUriApi(),Transazione.model().URI_API.getFieldType()));
+		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getGruppi(),Transazione.model().GRUPPI.getFieldType()));
 		// transazione-extended-info: serve ad estendere la tabella transazioni su progetti specifici (es. pdc, fwuuid)
 		if(transazione.sizeTransazioneExtendedInfoList()>0){
 			for (TransazioneExtendedInfo transazioneExtedendInfo : transazione.getTransazioneExtendedInfoList()) {
@@ -477,6 +479,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		lstObjects_transazione.add(new JDBCObject(transazione.getEventiGestione(), Transazione.model().EVENTI_GESTIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TIPO_API,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getTipoApi(), Transazione.model().TIPO_API.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().URI_API,false), "?");
+		lstObjects_transazione.add(new JDBCObject(transazione.getUriApi(), Transazione.model().URI_API.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().GRUPPI,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getGruppi(), Transazione.model().GRUPPI.getFieldType()));
 		if(transazione.sizeTransazioneExtendedInfoList()>0){

@@ -66,6 +66,8 @@ public interface IStatistic {
 	
 	public String getGruppo();
 	
+	public String getApi();
+	
 	public TipiDatabase getDatabaseType();
 	
 	public StatisticType getStatisticType();

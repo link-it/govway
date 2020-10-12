@@ -47,6 +47,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
@@ -643,6 +644,31 @@ public class ReportExporter extends HttpServlet{
 		if(gruppo!=null){
 			gruppo = gruppo.trim();
 			statSearchForm.setGruppo(gruppo);
+		}
+		
+		String api = req.getParameter(CostantiExporter.API);
+		if(api!=null){
+			api = api.trim();
+			String pattern = "^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$";
+			if(!RegularExpressionEngine.isMatch(api, pattern)) {
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.API+"' fornito possiede un valore '"+api+"' che non rispetta il formato atteso '"+pattern+"'");
+			}
+			statSearchForm.setApi(api);
+		}
+		
+		String apiDistinguiImplementazione = req.getParameter(CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE);
+		if(apiDistinguiImplementazione!=null){
+			apiDistinguiImplementazione = apiDistinguiImplementazione.trim();
+			if(CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE_TRUE.equalsIgnoreCase(apiDistinguiImplementazione)) {
+				statSearchForm.setDistribuzionePerImplementazioneApi(true);
+			}
+			else if(CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE_FALSE.equalsIgnoreCase(apiDistinguiImplementazione)) {
+				statSearchForm.setDistribuzionePerImplementazioneApi(false);
+			}
+			else {
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE+"' contiene un valore non atteso '"+apiDistinguiImplementazione+"' (atteso: "+
+						CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE_TRUE+"/"+CostantiExporter.API_DISTINGUI_IMPLEMENTAZIONE_FALSE+")");
+			}
 		}
 		
 		String servizio = req.getParameter(CostantiExporter.SERVIZIO);

@@ -57,7 +57,10 @@
 											<h:outputText value="Erogatore: "/>
 											<h:outputText value="#{item.soggettoErogatore}" />
 											<a4j:outputPanel layout="block" styleClass="spacerTooltip" />
-											<h:outputText value="#{msg['commons.servizio.label']} #{item.tipoApiLabel}: "/>
+											<h:outputText value="#{msg['commons.api.label']} #{item.tipoApiLabel}: "/>
+											<h:outputText value="#{item.api}" />
+											<a4j:outputPanel layout="block" styleClass="spacerTooltip" />
+											<h:outputText value="#{msg['commons.servizio.label']}: "/>
 											<h:outputText value="#{item.servizio}" />
 										</rich:toolTip>
 										<h:outputText id="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}" styleClass="#{item.pddRuolo!='DELEGATA' ? 'interno' : ''}"/>

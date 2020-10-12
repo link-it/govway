@@ -220,6 +220,13 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 				return "gruppi";
 			}
 		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.URI_API)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".uri_api";
+			}else{
+				return "uri_api";
+			}
+		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".richieste";
@@ -556,6 +563,9 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.URI_API)){
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){

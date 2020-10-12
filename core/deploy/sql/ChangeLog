@@ -1,3 +1,66 @@
+2020-10-08  Andrea Poli <apoli@link.it>
+
+	Aggiunta informazione sull'API implementata tra i criteri di ricerca delle transazione e di generazione delle statistiche.
+	Adeguati indici per supportare la nuova funzionalità.
+
+	CREATE INDEX index_credenziale_mittente_1 ON credenziale_mittente (ora_registrazione);
+	ALTER TABLE transazioni ALTER COLUMN uri_accordo_servizio TYPE VARCHAR(1000);
+	ALTER TABLE transazioni ADD COLUMN uri_api VARCHAR(20);
+
+	DROP INDEX INDEX_TR_SEARCH;
+	DROP INDEX INDEX_TR_STATS;
+	CREATE INDEX INDEX_TR_SEARCH ON transazioni 
+		(data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,
+		tipo_servizio,nome_servizio,azione,tipo_soggetto_fruitore,nome_soggetto_fruitore,servizio_applicativo_fruitore,trasporto_mittente,
+		token_issuer,token_client_id,token_subject,token_username,token_mail,id_correlazione_applicativa,id_correlazione_risposta,stato,protocollo,
+		client_address,gruppi,uri_api,eventi_gestione,cluster_id,id,data_uscita_richiesta,data_ingresso_risposta,data_uscita_risposta);
+	CREATE INDEX INDEX_TR_STATS ON transazioni (data_ingresso_richiesta,pdd_ruolo,pdd_codice,tipo_soggetto_fruitore,nome_soggetto_fruitore,tipo_soggetto_erogatore,nome_soggetto_erogatore,
+		tipo_servizio,nome_servizio,azione,servizio_applicativo_fruitore,trasporto_mittente,
+		token_issuer,token_client_id,token_subject,token_username,token_mail,esito,esito_contesto,stato,
+		client_address,gruppi,uri_api,data_uscita_richiesta,data_ingresso_risposta,data_uscita_risposta,
+		richiesta_ingresso_bytes,richiesta_uscita_bytes,risposta_ingresso_bytes,risposta_uscita_bytes);
+
+	ALTER TABLE statistiche_orarie ADD uri_api VARCHAR2(20) ;
+	UPDATE statistiche_orarie set uri_api='-';
+	ALTER TABLE statistiche_orarie ALTER COLUMN uri_api SET NOT NULL;
+	
+	DROP INDEX INDEX_STAT_HOUR;
+	CREATE INDEX INDEX_STAT_HOUR ON statistiche_orarie 
+		(data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,
+		tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,
+		client_address,gruppi,uri_api,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+
+	ALTER TABLE statistiche_giornaliere ADD uri_api VARCHAR2(20) ;
+	UPDATE statistiche_giornaliere set uri_api='-';
+	ALTER TABLE statistiche_giornaliere ALTER COLUMN uri_api SET NOT NULL;
+	
+	DROP INDEX INDEX_STAT_DAY;
+	CREATE INDEX INDEX_STAT_DAY ON statistiche_giornaliere 
+		(data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,
+		tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,
+		client_address,gruppi,uri_api,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+
+	ALTER TABLE statistiche_settimanali ADD uri_api VARCHAR2(20) ;
+	UPDATE statistiche_settimanali set uri_api='-';
+	ALTER TABLE statistiche_settimanali ALTER COLUMN uri_api SET NOT NULL;
+	
+	DROP INDEX INDEX_STAT_WEEK;
+	CREATE INDEX INDEX_STAT_WEEK ON statistiche_settimanali 
+		(data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,
+		tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,
+		client_address,gruppi,uri_api,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+
+	ALTER TABLE statistiche_mensili ADD uri_api VARCHAR2(20) ;
+	UPDATE statistiche_mensili set uri_api='-';
+	ALTER TABLE statistiche_mensili ALTER COLUMN uri_api SET NOT NULL;
+	
+	DROP INDEX INDEX_STAT_MONTH;
+	CREATE INDEX INDEX_STAT_MONTH ON statistiche_mensili 
+		(data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,
+		tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,
+		client_address,gruppi,uri_api,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+
+
 2020-10-01  Andrea Poli <apoli@link.it>
 
 	Gestite colonne 'id' che referenziano soggetti o servizi rimaste non valorizzate sulle porte delegate e applicative.
