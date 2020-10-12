@@ -1262,6 +1262,10 @@ public final class ServiziApplicativiAdd extends Action {
 				int idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 				
+				if(saCore.isSetSearchAfterAdd()) {
+					ricerca.setSearchString(idLista, sa.getNome());
+				}
+				
 				boolean filtroSoggetto = false;
 				if(saHelper.isSoggettoMultitenantSelezionato()) {
 					List<String> protocolli = saCore.getProtocolli(session,false);

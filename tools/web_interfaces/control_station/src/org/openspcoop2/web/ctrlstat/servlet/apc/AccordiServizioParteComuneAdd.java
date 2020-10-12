@@ -38,6 +38,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -969,11 +970,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			// Verifico stato
-			apcHelper.setMessageWarningStatoConsistenzaAccordo(true, as);
+			boolean incomplete = apcHelper.setMessageWarningStatoConsistenzaAccordo(true, as);
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
+			if(incomplete || apcCore.isSetSearchAfterAdd()) {
+				ricerca.setSearchString(Liste.ACCORDI, as.getNome());
+			}
+			
 			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);
 
 			if(isModalitaVistaApiCustom) {

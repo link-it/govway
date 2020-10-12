@@ -3407,6 +3407,161 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /erogazioni/{nome}/{versione}/configurazioni/proprieta:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce le proprietà di configurazione attivate
+      operationId: getErogazioneElencoProprieta
+      description: Questa operazione consente di ottenere le proprietà di configurazione
+      responses:
+        "200":
+          description: Dettaglio della configurazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ElencoProprieta"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - erogazioni-configurazione
+      summary: Aggiunta di una proprietà di configurazione
+      operationId: addErogazioneProprieta
+      description: Questa operazione consente di registrare una proprietà di configurazione
+      requestBody:
+        description: Proprieta che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /erogazioni/{nome}/{versione}/configurazioni/proprieta/{proprieta}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/proprieta_configurazione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce il dettaglio di una proprietà di configurazione
+      operationId: getErogazioneProprieta
+      description: Questa operazione consente di ottenere il dettaglio di una proprietà di configurazione
+      responses:
+        "200":
+          description: Dati della proprietà di configurazione restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/Proprieta"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-configurazione
+      summary: Modifica i dati di una proprietà di configurazione
+      operationId: updateErogazioneProprieta
+      description: Questa operazione consente di aggiornare i dati relativi ad una proprietà di configurazione
+      requestBody:
+        description: Dati della proprietà di configurazione da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta'
+      responses: 
+        "204":
+          description: La proprietà di configurazione è stata aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - erogazioni-configurazione
+      summary: Elimina la proprietà di configurazione dall'elenco di quelle attivate
+      operationId: deleteErogazioneProprietaConfigurazione
+      description: Questa operazione consente di eliminare la proprietà di configurazione dall'elenco di quelle attivate
+      responses: 
+        "204":
+          description: Proprietà di configurazione eliminata con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   # ** Fruizione ** 
   /fruizioni:
     parameters:
@@ -5574,6 +5729,163 @@ paths:
       responses: 
         "204":
           description: Configurazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/proprieta:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce le proprietà di configurazione attivate
+      operationId: getFruizioneElencoProprieta
+      description: Questa operazione consente di ottenere le proprietà di configurazione
+      responses:
+        "200":
+          description: Dettaglio della configurazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ElencoProprieta"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - fruizioni-configurazione
+      summary: Aggiunta di una proprietà di configurazione
+      operationId: addFruizioneProprieta
+      description: Questa operazione consente di registrare una proprietà di configurazione
+      requestBody:
+        description: Proprieta che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/proprieta/{proprieta}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/proprieta_configurazione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce il dettaglio di una proprietà di configurazione
+      operationId: getFruizioneProprieta
+      description: Questa operazione consente di ottenere il dettaglio di una proprietà di configurazione
+      responses:
+        "200":
+          description: Dati della proprietà di configurazione restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/Proprieta"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-configurazione
+      summary: Modifica i dati di una proprietà di configurazione
+      operationId: updateFruizioneProprieta
+      description: Questa operazione consente di aggiornare i dati relativi ad una proprietà di configurazione
+      requestBody:
+        description: Dati della proprietà di configurazione da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta'
+      responses: 
+        "204":
+          description: La proprietà di configurazione è stata aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - fruizioni-configurazione
+      summary: Elimina la proprietà di configurazione dall'elenco di quelle attivate
+      operationId: deleteFruizioneProprietaConfigurazione
+      description: Questa operazione consente di eliminare la proprietà di configurazione dall'elenco di quelle attivate
+      responses: 
+        "204":
+          description: Proprietà di configurazione eliminata con successo
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":

@@ -8,6 +8,11 @@ Background:
 * eval api_petstore.referente = soggettoDefault
 * def api_petstore_path = 'api/' + api_petstore.nome + '/' + api_petstore.versione
 
+* def api_soap_piu_azioni = read('api_soap_piu_azioni.json')
+* eval randomize(api_soap_piu_azioni, ["nome"])
+* eval api_soap_piu_azioni.referente = soggettoDefault
+* def api_soap_piu_azioni_path = 'api/' + api_soap_piu_azioni.nome + '/' + api_soap_piu_azioni.versione
+
 * def erogatore = read('soggetto_erogatore.json')
 * eval randomize (erogatore, ["nome", "credenziali.username"])
 
@@ -18,6 +23,14 @@ Background:
 * eval fruizione_petstore.api_referente = api_petstore.referente
 
 * def fruizione_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.api_nome + '/' + fruizione_petstore.api_versione
+
+* def fruizione_soap_piu_azioni = read('fruizione_soap_piu_azioni.json')
+* eval fruizione_soap_piu_azioni.api_nome = api_soap_piu_azioni.nome
+* eval fruizione_soap_piu_azioni.api_versione = api_soap_piu_azioni.versione
+* eval fruizione_soap_piu_azioni.fruizione_nome = api_soap_piu_azioni.nome
+* eval fruizione_soap_piu_azioni.erogatore = erogatore.nome
+* def soap_piu_azioni_key = fruizione_soap_piu_azioni.erogatore + '/' + fruizione_soap_piu_azioni.api_nome + '/' + fruizione_soap_piu_azioni.api_versione
+* def fruizione_soap_piu_azioni_path = 'erogazioni/' + soap_piu_azioni_key
 
 * def api_info_generali = read('api_info_generali.json')
 
@@ -56,8 +69,8 @@ Scenario: Fruizioni Get 404
     * call get_404 ({ resourcePath: 'fruizioni/' + fruizione_key })
     * call delete ({ resourcePath: api_petstore_path })
 
-@GetUrlInvocazione
-Scenario: Fruizioni Get Url Invocazione PetStore
+@GetUrlInvocazioneRest
+Scenario: Fruizioni Get Url Invocazione PetStore di una API REST appena creata
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
@@ -68,10 +81,34 @@ Scenario: Fruizioni Get Url Invocazione PetStore
     And header Authorization = govwayConfAuth
     When method get
     Then status 200
+    And assert response.modalita == 'interface-based'
+    And match response.force_interface == false
+    And assert response.nome == null
+    And assert response.pattern == null
 
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
+
+@GetUrlInvocazioneSoap
+Scenario: Fruizioni Get Url Invocazione PetStore di una API SOAP appena creata
+
+    * call create ({ resourcePath: 'api', body: api_soap_piu_azioni })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_soap_piu_azioni })
+
+    Given url configUrl
+    And path 'fruizioni', soap_piu_azioni_key, 'url-invocazione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    And assert response.modalita == 'url-based'
+    And match response.force_interface == true
+    And assert response.nome == null
+    And assert response.pattern == '.*/(?:gw_)?'+soggettoDefault+'/(?:gw_)?'+fruizione_soap_piu_azioni.erogatore+'/(?:gw_)?'+fruizione_soap_piu_azioni.fruizione_nome+'/v1/([^/|^?]*).*'
+
+    * call delete ({ resourcePath: 'fruizioni/' + soap_piu_azioni_key })
+    * call delete ({ resourcePath: api_soap_piu_azioni_path })
 
 @GetInterfacciaApi
 Scenario: Fruizioni Get Interfaccia Api PetStore

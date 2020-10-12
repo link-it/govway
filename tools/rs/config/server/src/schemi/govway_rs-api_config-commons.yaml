@@ -60,6 +60,14 @@ components:
       schema:
         type: string
         maxLength: 255
+    proprieta_configurazione:
+      name: proprieta
+      in: path
+      description: Nome della proprietà di configurazione
+      required: true
+      schema:
+        type: string
+        maxLength: 255
     
     # Dati Identificativi nella query
     id_soggetto_applicativo:
@@ -950,7 +958,7 @@ components:
             type: string
             maxLength: 255 
         nome:
-            description: Nome dell'header http nel caso di modalità 'header-based'
+            description: Nome dell'header http nel caso di modalità 'header-based' o nome dell'unica azione in caso di modalità 'static'
             type: string
             maxLength: 255 
         force_interface:
@@ -1919,6 +1927,26 @@ components:
         attachments:
           type: boolean
           
+    Proprieta:
+      type: object
+      required:
+        - nome
+        - valore
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        valore:
+          type: string
+          maxLength: 255
+    ElencoProprieta:
+      type: object  
+      properties:
+        proprieta:        
+          type: array
+          items:
+            $ref: '#/components/schemas/Proprieta'
+          
     # Base: Enumeration
     FormatoSoapEnum:
       type: string
@@ -2019,7 +2047,7 @@ components:
       default: 'all'    
     ModalitaIdentificazioneAzioneEnum:
       type: string
-      enum: ['content-based', 'header-based', 'input-based', 'interface-based', 'soap-action-based', 'url-based', 'protocol-based']
+      enum: ['content-based', 'header-based', 'input-based', 'interface-based', 'soap-action-based', 'url-based', 'protocol-based', 'static']
       example: 'interface-based'   
     TipoGestioneCorsEnum:
       type: string

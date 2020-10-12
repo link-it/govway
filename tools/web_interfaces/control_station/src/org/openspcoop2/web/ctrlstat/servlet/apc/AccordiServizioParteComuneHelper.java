@@ -5997,7 +5997,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 	
-	public void setMessageWarningStatoConsistenzaAccordo(boolean create, AccordoServizioParteComune as) {
+	public boolean setMessageWarningStatoConsistenzaAccordo(boolean create, AccordoServizioParteComune as) {
 		
 		String msgError = null;
 		
@@ -6063,6 +6063,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.pd.setBottoni(bottoni);
 			
 			this.pd.setDialog(dialog);
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	

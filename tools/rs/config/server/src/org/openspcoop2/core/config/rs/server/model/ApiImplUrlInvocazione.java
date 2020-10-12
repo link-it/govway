@@ -36,9 +36,9 @@ public class ApiImplUrlInvocazione  {
   **/
   private String pattern = null;
   
-  @Schema(description = "Nome dell'header http nel caso di modalità 'header-based'")
+  @Schema(description = "Nome dell'header http nel caso di modalità 'header-based' o nome dell'unica azione in caso di modalità 'static'")
  /**
-   * Nome dell'header http nel caso di modalità 'header-based'  
+   * Nome dell'header http nel caso di modalità 'header-based' o nome dell'unica azione in caso di modalità 'static'  
   **/
   private String nome = null;
   
@@ -87,7 +87,7 @@ public class ApiImplUrlInvocazione  {
   }
 
  /**
-   * Nome dell'header http nel caso di modalità 'header-based'
+   * Nome dell'header http nel caso di modalità 'header-based' o nome dell'unica azione in caso di modalità 'static'
    * @return nome
   **/
   @JsonProperty("nome")

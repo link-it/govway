@@ -168,6 +168,9 @@ public class ConsoleProperties {
 	}
 	private Boolean readBooleanProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.readProperty(required, property);
+		if(tmp==null && !required) {
+			return null; // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
 		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
 			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
 		}
@@ -175,6 +178,9 @@ public class ConsoleProperties {
 	}
 	private Integer readIntegerProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.readProperty(required, property);
+		if(tmp==null && !required) {
+			return null; // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
 		try{
 			return Integer.parseInt(tmp);
 		}catch(Exception e){
@@ -183,6 +189,9 @@ public class ConsoleProperties {
 	}
 	private Long readLongProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.readProperty(required, property);
+		if(tmp==null && !required) {
+			return null; // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
 		try{
 			return Long.parseLong(tmp);
 		}catch(Exception e){
@@ -308,6 +317,10 @@ public class ConsoleProperties {
 	
 	public boolean isIntegrationManagerEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "integrationManager.enabled");
+	}
+	
+	public Integer getSoggettiNomeMaxLength() throws UtilsException{
+		return this.readIntegerProperty(false, "soggetti.nome.maxLength");
 	}
 	
 	public boolean isApiResourcePathValidatorEnabled() throws UtilsException{
@@ -1129,6 +1142,10 @@ public class ConsoleProperties {
 	
 	public Integer getLunghezzaMassimaLabelSoggettiOperativiMenuUtente() throws Exception{
 		return this.readIntegerProperty(true, "console.selectListSoggettiOperativi.lunghezzaMassimaLabel");
+	}
+	
+	public boolean isSetSearchAfterAdd() throws UtilsException{
+		return this.readBooleanProperty(true, "console.setSearchAfterAdd");
 	}
 	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */

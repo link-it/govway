@@ -18,7 +18,7 @@
 --%>
 
 
-
+<%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
@@ -49,14 +49,17 @@ int numeroEntry = Integer.parseInt(numeroEntryS);
 Vector<?> riga = (Vector<?>) v.elementAt(numeroEntry);
 
 Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
+Vector<DataElement> vectorImmagini = new Vector<DataElement>();
 Vector<DataElement> vectorCheckBox = new Vector<DataElement>();
 Vector<DataElement> vectorTags = new Vector<DataElement>();
 
 for (int j = 0; j < riga.size(); j++) {
     DataElement de = (DataElement) riga.elementAt(j);
     
-	if (de.getType().equals("checkbox")) {
-   		vectorCheckBox.add(de);
+    if (de.getType().equals("image")) {
+    	vectorImmagini.add(de);
+    } else if (de.getType().equals("checkbox")) {
+   	vectorCheckBox.add(de);
     } else if (de.getType().equals("button")) {
     	vectorTags.add(de);
     } else{
@@ -134,6 +137,110 @@ for (int j = 0; j < riga.size(); j++) {
 					<% } %>
 				</div>
 			<% } %>
+			<% if(vectorImmagini.size() > 0){
+				%>
+				<div id="titolo_<%=numeroEntryS %>_info" class="titoloInfo">
+			<%
+				for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
+					DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
+					String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+					String classLink = "";
+					
+					if(de.getInfo() != null) {
+						DataElementInfo deInfo = de.getInfo();
+						String idDivIconInfo = "divIconInfo_"+numeroEntry;
+						String idIconInfo = "iconInfo_"+numeroEntry; 
+						String idSpanInfo = "spanIconInfoBoxList_"+numeroEntry;
+						
+						%>
+						<div class="iconInfoBoxList" id="<%=idDivIconInfo %>" <%=deTip %> >
+							<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+		   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+       						<span class="spanIconInfoBoxList" id="<%=idSpanInfo %>">
+								<i class="material-icons md-18" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+							</span>
+       					</div>
+						<script type="text/javascript">
+						// info
+				    	if($("#<%=idSpanInfo %>").length>0){
+				    		$("#<%=idSpanInfo %>").click(function(e){
+				    			var iconInfoBoxId = $(this).parent().attr('id');
+				    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+				    			console.log(idx);
+				    			if(idx) {
+				    				var label = $("#hidden_title_iconInfo_"+ idx).val();
+									var body = $("#hidden_body_iconInfo_"+ idx).val();
+									mostraDataElementInfoModal(label,body);
+				    			}
+				    			e.stopPropagation();
+							});
+				    	}
+						</script>
+						
+						<%						
+					}
+					
+					if(de.getDialog() != null) {
+						Dialog dialog = de.getDialog();
+						String idDivIconUso = "divIconUso_"+numeroEntry;
+						String idIconUso = "iconUso_"+numeroEntry; 
+						String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
+						
+						BodyElement urlElement = dialog.getBody().remove(0);
+						
+						request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+						%>
+						<div class="iconUsoBoxList" id="<%=idDivIconUso %>" <%=deTip %> >
+							<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
+							<span class="spanIconUsoBoxList" id="<%=idSpanUso %>">
+								<i class="material-icons md-18" id="<%=idIconUso %>"><%= dialog.getIcona() %></i>
+							</span>
+       					</div>
+						<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
+							<jsp:param name="idFinestraModale" value="idFinestraModale_<%=numeroEntry %>"/>
+						</jsp:include>
+						<script type="text/javascript">
+						// info
+				    	if($("#<%=idSpanUso %>").length>0){
+				    		$("#<%=idSpanUso %>").click(function(e){
+				    			var iconInfoBoxId = $(this).parent().attr('id');
+				    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+				    			console.log(idx);
+				    			if(idx) {
+				    				var url = $("#hidden_title_iconUso_"+ idx).val();
+				    				// chiamata al servizio
+				    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+				    				
+				    				$.ajax({
+				    							url : url,
+				    							method: 'GET',
+				    							async : false,
+				    							success: function(data, textStatus, jqXHR){
+				    								// inserimento del valore nella text area
+								    				$("textarea[id^='idFinestraModale_<%=numeroEntryS %>_txtA']").val(data);
+								    				
+								    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+								    				// apertura modale
+								    				var idToOpen = '#' + 'idFinestraModale_<%= numeroEntry %>';
+								    				$(idToOpen).dialog("open");
+				    							},
+				    							error: function(data, textStatus, jqXHR){
+				    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+				    							}
+				    						}
+				    					);
+				    			}
+				    			e.stopPropagation();
+							});
+				    	}
+						</script>
+						<%	
+					}
+					%>
+				<% 		
+				}
+			%></div> <% 
+			}%>
 		</div>
 		<% 
 			DataElement deMetadati = (DataElement) vectorRiepilogo.elementAt(1);

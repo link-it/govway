@@ -80,6 +80,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -1269,6 +1270,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 	public List<PortaDelegataAzioneIdentificazione> getModalitaIdentificazionePorta(String protocollo, ServiceBinding serviceBinding)
 			throws ProtocolException, DriverConfigurazioneException { 
+		return getModalitaIdentificazionePorta(protocollo, serviceBinding, ProtocolPropertiesUtilities.getTipoInterfaccia(this));
+	}
+	
+	public List<PortaDelegataAzioneIdentificazione> getModalitaIdentificazionePorta(String protocollo, ServiceBinding serviceBinding, ConsoleInterfaceType consoleInterfaceType)
+			throws ProtocolException, DriverConfigurazioneException { 
+		
+		if(consoleInterfaceType==null) {
+			consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(this);
+		}
 		
 		if(serviceBinding == null) {
 			List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
@@ -1278,7 +1288,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
 					List<PortaDelegataAzioneIdentificazione> listaModalitaTmp = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
 							createProtocolIntegrationConfiguration().getAllSubscriptionIdentificationResourceModes(serviceBinding2,
-									ProtocolPropertiesUtilities.getTipoInterfaccia(this));
+									consoleInterfaceType);
 					
 					for (PortaDelegataAzioneIdentificazione tipoTmp : listaModalitaTmp) {
 						if(!listaModalita.contains(tipoTmp))
@@ -1290,7 +1300,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		} else {
 			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
 					createProtocolIntegrationConfiguration().getAllSubscriptionIdentificationResourceModes(serviceBinding,
-							ProtocolPropertiesUtilities.getTipoInterfaccia(this));
+							consoleInterfaceType);
 		}
 	}
 	

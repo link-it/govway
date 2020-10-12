@@ -107,6 +107,7 @@ import org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConf
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -2093,7 +2094,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 
 	public List<PortaApplicativaAzioneIdentificazione> getModalitaIdentificazionePorta(String protocollo, ServiceBinding serviceBinding)
+			throws ProtocolException, DriverConfigurazioneException {
+		return getModalitaIdentificazionePorta(protocollo, serviceBinding, ProtocolPropertiesUtilities.getTipoInterfaccia(this));
+	}
+	public List<PortaApplicativaAzioneIdentificazione> getModalitaIdentificazionePorta(String protocollo, ServiceBinding serviceBinding, ConsoleInterfaceType consoleInterfaceType)
 			throws ProtocolException, DriverConfigurazioneException { 
+		
+		if(consoleInterfaceType==null) {
+			consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(this);
+		}
 		
 		if(serviceBinding == null) {
 			List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
@@ -2103,7 +2112,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
 					List<PortaApplicativaAzioneIdentificazione> listaModalitaTmp = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
 							createProtocolIntegrationConfiguration().getAllImplementationIdentificationResourceModes(serviceBinding2,
-									ProtocolPropertiesUtilities.getTipoInterfaccia(this) );
+									consoleInterfaceType );
 					
 					for (PortaApplicativaAzioneIdentificazione tipoTmp : listaModalitaTmp) {
 						if(!listaModalita.contains(tipoTmp))
@@ -2115,7 +2124,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		} else {
 			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
 					createProtocolIntegrationConfiguration().getAllImplementationIdentificationResourceModes(serviceBinding,
-							ProtocolPropertiesUtilities.getTipoInterfaccia(this));
+							consoleInterfaceType);
 		}
 	}
 	

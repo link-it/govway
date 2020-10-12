@@ -2179,17 +2179,20 @@ public class ErogazioniApiHelper {
 	}
 	
 	public static final void overrideFruizioneUrlInvocazione(final HttpRequestWrapper wrap, final IDSoggetto idErogatore,
-			final IDServizio idServizio, final PortaDelegata pd, final PortaDelegataAzione pdAzione) {
+			final IDServizio idServizio, final PortaDelegata pd, final PortaDelegataAzione pdAzione, boolean setPattern, long idAzione) {
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, pd.getId().toString());
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, pd.getNome());			
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, pd.getIdSoggetto().toString());	
-		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE, pdAzione.getPattern());			// Azione è il contenuto del campo pattern o del campo nome, che vengono settati nel campo pattern.
+		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE, setPattern ? pdAzione.getPattern() : pdAzione.getNome());			// Azione è il contenuto del campo pattern o del campo nome, che vengono settati nel campo pattern.
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID, null);						// Come da debug
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE, pdAzione.getIdentificazione().toString() );
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD, null);
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE, "");
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID, idErogatore.toString());	// Questo è il nome (uri) del soggetto erogatore
 		wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID, idServizio.toString());
+		if(idAzione>0) {
+			wrap.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID, idAzione+"");
+		}
 	}
 	
 	public static final void fillApiImplViewItemWithErogazione(final ErogazioniEnv env, final AccordoServizioParteSpecifica asps, final ApiImplViewItem toFill) {

@@ -62,6 +62,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva
 import org.openspcoop2.core.controllo_traffico.dao.IDBAttivazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -1793,7 +1794,41 @@ public class DriverControlStationDB  {
 	
 	/* *********** METODI IS IN USO ****************** */
 
-	
+	public boolean isAccordoInUso(IDAccordo idAccordo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+		String nomeMetodo = "isAccordoInUso";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		try {
+			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso(con, this.tipoDB, idAccordo, whereIsInUso, normalizeObjectIds);
+
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
 	
 	public boolean isAccordoInUso(AccordoServizioParteComune as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		String nomeMetodo = "isAccordoInUso";

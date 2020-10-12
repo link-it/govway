@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -26,6 +27,7 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
@@ -66,6 +68,7 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 			PageData pd = new PageData();
 			UtilsHelper registroHelper = new UtilsHelper(request, pd, session);
 			ArchiviCore archiviCore = new ArchiviCore();
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(archiviCore);
 			SoggettiCore soggettiCore = new SoggettiCore(archiviCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(archiviCore);
 			RuoliCore ruoliCore = new RuoliCore(archiviCore);
@@ -81,6 +84,13 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 			List<?> identificativi = null; 
 			List<String> risultatiRicerca = new ArrayList<String>();
 			switch (archiveType) {
+			case ACCORDO_SERVIZIO_PARTE_COMUNE:
+				identificativi = exporterUtils.getIdsAccordiServizioParteComune(identificativoOggetto);
+				for (Object object : identificativi) {
+					IDAccordo idAccordo = (IDAccordo)object;
+					risultatiRicerca.add(apcCore.getDettagliAccordoInUso(idAccordo));
+				}
+				break;
 			case SERVIZIO_APPLICATIVO:
 				identificativi = exporterUtils.getIdsServiziApplicativi(identificativoOggetto);
 				for (Object object : identificativi) {
@@ -115,7 +125,6 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				break;
 			case ACCORDO_COOPERAZIONE:
 			case ACCORDO_SERVIZIO_COMPOSTO:
-			case ACCORDO_SERVIZIO_PARTE_COMUNE:
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 			case ALL:
 			case ALL_WITHOUT_CONFIGURAZIONE:

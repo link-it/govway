@@ -1,0 +1,14 @@
+{
+    "connettore": {
+        "endpoint": "https://ginovadifretta.it/petstore"
+    },
+    "autenticazione": {
+        "tipo": "https",
+        "opzionale": false
+    },
+ 
+
+    "api_nome": "ServizioSOAPConUnaAzione",
+    "api_versione": 1,
+    "api_soap_servizio": "SOAPBlockingImpl"
+}

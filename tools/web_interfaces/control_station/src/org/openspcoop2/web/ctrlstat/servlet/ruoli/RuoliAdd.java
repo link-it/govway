@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -158,6 +159,10 @@ public final class RuoliAdd extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
+			if(ruoliCore.isSetSearchAfterAdd()) {
+				ricerca.setSearchString(Liste.RUOLI, ruolo.getNome());
+			}
+			
 			List<Ruolo> lista = null;
 			if(ruoliCore.isVisioneOggettiGlobale(userLogin)){
 				lista = ruoliCore.ruoliList(null, ricerca);

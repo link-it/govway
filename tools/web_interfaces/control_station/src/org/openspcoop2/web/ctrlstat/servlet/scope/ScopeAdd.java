@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 //import org.openspcoop2.core.registry.constants.ScopeTipologia;
@@ -158,6 +159,10 @@ public final class ScopeAdd extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
+			if(scopeCore.isSetSearchAfterAdd()) {
+				ricerca.setSearchString(Liste.SCOPE, scope.getNome());
+			}
+			
 			List<Scope> lista = null;
 			if(scopeCore.isVisioneOggettiGlobale(userLogin)){
 				lista = scopeCore.scopeList(null, ricerca);

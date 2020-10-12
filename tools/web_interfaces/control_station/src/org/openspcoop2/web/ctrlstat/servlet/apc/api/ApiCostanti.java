@@ -109,4 +109,7 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String APC_API_ICONA_GESTIONE_ALLEGATI = "&#xE2BC;";
 	public final static String APC_API_ICONA_NUOVA_VERSIONE_API = "&#xE02E;";
 	public final static String APC_API_ICONA_GESTIONE_OPZIONI_AVANZATE = "&#xE8B8;";
+	
+	public final static String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "L'API non risulta utilizzata in alcuna configurazione";
+
 }

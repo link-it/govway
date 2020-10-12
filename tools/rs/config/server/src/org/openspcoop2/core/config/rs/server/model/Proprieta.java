@@ -25,35 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ApiImplInformazioniGenerali  {
-  
-  @Schema(description = "")
-  private String tipo = null;
+public class Proprieta  {
   
   @Schema(required = true, description = "")
   private String nome = null;
   
-  @Schema(description = "")
-  private String apiSoapServizio = null;
- /**
-   * Get tipo
-   * @return tipo
-  **/
-  @JsonProperty("tipo")
-  @Valid
- @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20)  public String getTipo() {
-    return this.tipo;
-  }
-
-  public void setTipo(String tipo) {
-    this.tipo = tipo;
-  }
-
-  public ApiImplInformazioniGenerali tipo(String tipo) {
-    this.tipo = tipo;
-    return this;
-  }
-
+  @Schema(required = true, description = "")
+  private String valore = null;
  /**
    * Get nome
    * @return nome
@@ -61,7 +39,7 @@ public class ApiImplInformazioniGenerali  {
   @JsonProperty("nome")
   @NotNull
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
+ @Size(max=255)  public String getNome() {
     return this.nome;
   }
 
@@ -69,27 +47,28 @@ public class ApiImplInformazioniGenerali  {
     this.nome = nome;
   }
 
-  public ApiImplInformazioniGenerali nome(String nome) {
+  public Proprieta nome(String nome) {
     this.nome = nome;
     return this;
   }
 
  /**
-   * Get apiSoapServizio
-   * @return apiSoapServizio
+   * Get valore
+   * @return valore
   **/
-  @JsonProperty("api_soap_servizio")
+  @JsonProperty("valore")
+  @NotNull
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApiSoapServizio() {
-    return this.apiSoapServizio;
+ @Size(max=255)  public String getValore() {
+    return this.valore;
   }
 
-  public void setApiSoapServizio(String apiSoapServizio) {
-    this.apiSoapServizio = apiSoapServizio;
+  public void setValore(String valore) {
+    this.valore = valore;
   }
 
-  public ApiImplInformazioniGenerali apiSoapServizio(String apiSoapServizio) {
-    this.apiSoapServizio = apiSoapServizio;
+  public Proprieta valore(String valore) {
+    this.valore = valore;
     return this;
   }
 
@@ -97,11 +76,10 @@ public class ApiImplInformazioniGenerali  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ApiImplInformazioniGenerali {\n");
+    sb.append("class Proprieta {\n");
     
-    sb.append("    tipo: ").append(ApiImplInformazioniGenerali.toIndentedString(this.tipo)).append("\n");
-    sb.append("    nome: ").append(ApiImplInformazioniGenerali.toIndentedString(this.nome)).append("\n");
-    sb.append("    apiSoapServizio: ").append(ApiImplInformazioniGenerali.toIndentedString(this.apiSoapServizio)).append("\n");
+    sb.append("    nome: ").append(Proprieta.toIndentedString(this.nome)).append("\n");
+    sb.append("    valore: ").append(Proprieta.toIndentedString(this.valore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

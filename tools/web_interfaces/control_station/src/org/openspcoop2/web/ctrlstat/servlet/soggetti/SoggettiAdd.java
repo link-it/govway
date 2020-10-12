@@ -36,6 +36,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Connettore;
@@ -931,6 +932,10 @@ public final class SoggettiAdd extends Action {
 			// recupero la lista dei soggetti
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
+			if(soggettiCore.isSetSearchAfterAdd()) {
+				ricerca.setSearchString(Liste.SOGGETTI, soggettoConfig.getNome());
+			}
+			
 			// la lista dei soggetti del registro e' un sovrainsieme
 			// di quella di config
 			// cioe' ha piu informazioni, ma lo stesso numero di

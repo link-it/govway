@@ -91,14 +91,11 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
-import org.openspcoop2.web.lib.mvc.Dialog;
-import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -2436,40 +2433,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //			de.setToolTip("Visualizza Info");
 //			e.addElement(de);
 		
-		// In Uso
-		de = new DataElement();
-		de.setType(DataElementType.IMAGE);
-		de.setToolTip(CostantiControlStation.LABEL_IN_USO_TOOLTIP);
-		Dialog deDialog = new Dialog();
-		deDialog.setIcona(Costanti.ICON_USO);
-		if(this.isSoggettoMultitenantSelezionato()) {
-			deDialog.setTitolo(sa.getNome());
-		}
-		else {
-			deDialog.setTitolo(this.getLabelServizioApplicativoConDominioSoggetto(idServizioApplicativo));
-		}
-		deDialog.setHeaderRiga1(CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI);
-		
-		// Inserire sempre la url come primo elemento del body
-		BodyElement bodyElementURL = new Dialog().new BodyElement();
-		bodyElementURL.setType(DataElementType.HIDDEN);
-		bodyElementURL.setName(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL);
-		Parameter pIdOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO, sa.getId()+"");
-		Parameter pTipoOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, org.openspcoop2.protocol.sdk.constants.ArchiveType.SERVIZIO_APPLICATIVO.toString());
-		Parameter pTipoRisposta = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, UtilsCostanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT);
-		bodyElementURL.setUrl(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, pIdOggetto,pTipoOggetto,pTipoRisposta);
-		deDialog.addBodyElement(bodyElementURL);
-		
-		// TextArea
-		BodyElement bodyElement = new Dialog().new BodyElement();
-		bodyElement.setType(DataElementType.TEXT_AREA);
-		bodyElement.setLabel("");
-		bodyElement.setValue("");
-		bodyElement.setRows(15);
-		deDialog.addBodyElement(bodyElement );
-		
-		de.setDialog(deDialog );
-		e.addElement(de);
+		// In Uso Button
+		this.addInUsoButton(e, 
+				(this.isSoggettoMultitenantSelezionato() ? sa.getNome() : this.getLabelServizioApplicativoConDominioSoggetto(idServizioApplicativo)), 
+				sa.getId()+"", org.openspcoop2.protocol.sdk.constants.ArchiveType.SERVIZIO_APPLICATIVO);
 		
 		return e;
 	}

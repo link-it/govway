@@ -2134,6 +2134,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 			
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			
+			if(apsCore.isSetSearchAfterAdd()) {
+				ricerca.setSearchString(Liste.SERVIZI, asps.getNome());
+			}
+			
 			boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(apsHelper);
 			List<AccordoServizioParteSpecifica> listaAccordi = null;
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){

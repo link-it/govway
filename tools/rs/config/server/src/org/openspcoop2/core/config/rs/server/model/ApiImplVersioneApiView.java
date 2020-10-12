@@ -158,7 +158,7 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
   **/
   @JsonProperty("tipo_servizio")
   @Valid
- @Size(max=20)  public String getTipoServizio() {
+ @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20)  public String getTipoServizio() {
     return this.tipoServizio;
   }
 

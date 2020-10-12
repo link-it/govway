@@ -194,7 +194,8 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				de.setType(DataElementType.TITLE);
 				de.setUrl(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, pIdAccordo, pNomeAccordo , pTipoAccordo);
 				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(accordoServizio);
-				de.setValue(getLabelIdAccordo(protocollo, idAccordo));
+				String labelAccordo = getLabelIdAccordo(protocollo, idAccordo);
+				de.setValue(labelAccordo);
 				de.setIdToRemove("" + accordoServizio.getId());
 //				de.setToolTip(accordoServizio.getDescrizione());
 				e.addElement(de);
@@ -299,6 +300,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 						e.addElement(de);
 					}
 				}
+				
+				
+				// In Uso Button
+				this.addInUsoButton(e, labelAccordo, accordoServizio.getId()+"", org.openspcoop2.protocol.sdk.constants.ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE);
 				
 
 				// aggiungo entry

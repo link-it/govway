@@ -32,7 +32,8 @@ CONTENT_BASED("content-based"),
   INTERFACE_BASED("interface-based"),
   SOAP_ACTION_BASED("soap-action-based"),
   URL_BASED("url-based"),
-  PROTOCOL_BASED("protocol-based");
+  PROTOCOL_BASED("protocol-based"),
+  STATIC("static");
 
   private String value;
 

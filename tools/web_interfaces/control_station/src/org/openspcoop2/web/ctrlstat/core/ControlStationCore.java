@@ -782,6 +782,12 @@ public class ControlStationCore {
 		return this.isIntegrationManagerEnabled;
 	}
 	
+	/** Soggetti */
+	private Integer soggettiNomeMaxLength;
+	public Integer getSoggettiNomeMaxLength() {
+		return this.soggettiNomeMaxLength;
+	}
+	
 	/** API */
 	private boolean isApiResourcePathValidatorEnabled;
 	private boolean isApiResourceHttpMethodAndPathQualsiasiEnabled;
@@ -910,6 +916,7 @@ public class ControlStationCore {
 	private boolean showServiziVisualizzaModalitaElenco = false;
 	private Integer selectListSoggettiOperativi_numeroMassimoSoggetti = null;
 	private Integer selectListSoggettiOperativi_dimensioneMassimaLabel = null;
+	private boolean isSetSearchAfterAdd = false;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -1012,6 +1019,9 @@ public class ControlStationCore {
 	}
 	public Integer getLunghezzaMassimaLabelSoggettiOperativiMenuUtente() {
 		return this.selectListSoggettiOperativi_dimensioneMassimaLabel;
+	}
+	public boolean isSetSearchAfterAdd() {
+		return this.isSetSearchAfterAdd;
 	}
 	public boolean showCodaMessage() {
 		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
@@ -2273,6 +2283,9 @@ public class ControlStationCore {
 		/** IntegrationManager */
 		this.isIntegrationManagerEnabled = core.isIntegrationManagerEnabled;
 		
+		/** Soggetti */
+		this.soggettiNomeMaxLength = core.soggettiNomeMaxLength;
+		
 		/** API */
 		this.isApiResourcePathValidatorEnabled = core.isApiResourcePathValidatorEnabled;
 		this.isApiResourceHttpMethodAndPathQualsiasiEnabled = core.isApiResourceHttpMethodAndPathQualsiasiEnabled;
@@ -2342,6 +2355,7 @@ public class ControlStationCore {
 		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
 		this.selectListSoggettiOperativi_numeroMassimoSoggetti = core.selectListSoggettiOperativi_numeroMassimoSoggetti;
 		this.selectListSoggettiOperativi_dimensioneMassimaLabel = core.selectListSoggettiOperativi_dimensioneMassimaLabel;
+		this.isSetSearchAfterAdd = core.isSetSearchAfterAdd;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -2640,6 +2654,7 @@ public class ControlStationCore {
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
+			this.soggettiNomeMaxLength = consoleProperties.getSoggettiNomeMaxLength();
 			this.isApiResourcePathValidatorEnabled = consoleProperties.isApiResourcePathValidatorEnabled();
 			this.isApiResourceHttpMethodAndPathQualsiasiEnabled = consoleProperties.isApiResourceHttpMethodAndPathQualsiasiEnabled();
 			this.getApiResourcePathQualsiasiSpecialChar = consoleProperties.getApiResourcePathQualsiasiSpecialChar();
@@ -2712,6 +2727,7 @@ public class ControlStationCore {
 			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
 			this.selectListSoggettiOperativi_numeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
 			this.selectListSoggettiOperativi_dimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();
+			this.isSetSearchAfterAdd = consoleProperties.isSetSearchAfterAdd();
 			
 			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){

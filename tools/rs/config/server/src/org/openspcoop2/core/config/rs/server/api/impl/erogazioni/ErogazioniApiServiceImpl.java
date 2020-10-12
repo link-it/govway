@@ -64,8 +64,10 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -661,8 +663,23 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			ret.setAzioni(Arrays.asList(azioni.keySet().toArray(new String[azioni.size()])));
 			ret.setForceInterface(Helper.statoFunzionalitaConfToBool(paAzione.getForceInterfaceBased()));
 			ret.setModalita(Enum.valueOf(ModalitaIdentificazioneAzioneEnum.class, paAzione.getIdentificazione().name()));
-			ret.setNome(nome);
-			ret.setPattern(paAzione.getPattern());
+			switch (ret.getModalita()) {
+			case CONTENT_BASED:
+			case URL_BASED:
+				ret.setPattern(paAzione.getPattern());
+				break;
+			case HEADER_BASED:
+				ret.setNome(paAzione.getPattern());
+				break;
+			case INPUT_BASED:
+			case PROTOCOL_BASED:
+			case SOAP_ACTION_BASED:
+				break;
+			case STATIC:
+			case INTERFACE_BASED:
+				ret.setForceInterface(false);
+				break;
+			}
 			ret.setUrlInvocazione(urlInvocazione);
 
 			context.getLogger().info("Invocazione completata con successo");
@@ -938,26 +955,49 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			List<PortaApplicativaAzioneIdentificazione> identModes = env.paHelper.getModalitaIdentificazionePorta(
-					env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
+					env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()), 
+					ConsoleInterfaceType.AVANZATA); // uso avanzata per usare tutte le modalita
 
 			if (identModes.contains(PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED) && identModes.size() == 1) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(
 						"Non puoi modificare la url-invocazione il cui metodo di identificazione azioni può essere solo "
 								+ PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString());
 			}
+			if(!identModes.contains(PortaApplicativaAzioneIdentificazione.STATIC))
+				identModes.add(PortaApplicativaAzioneIdentificazione.STATIC); // gestisco sotto
 
 			if (!identModes.contains(PortaApplicativaAzioneIdentificazione.valueOf(body.getModalita().name()))) {
 				throw FaultCode.RICHIESTA_NON_VALIDA
 						.toException("La modalità di identificazione azione deve essere una fra: " + identModes.toString());
 			}
 
+			boolean setPattern = true;
+			long idAzione = -1;
 			switch (body.getModalita()) {
 			case CONTENT_BASED:
+				if(body.getPattern()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") richiede che sia definito il parametro 'pattern'");
+				}
 				paa.setPattern(body.getPattern());
 				paa.setForceInterfaceBased(Helper.boolToStatoFunzionalitaConf(body.isForceInterface()));
 				break;
 			case HEADER_BASED:
-				paa.setPattern(body.getNome());
+				if(body.getNome()==null && body.getPattern()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") richiede che sia definito il parametro 'nome'");
+				}
+				if(body.getNome()!=null && body.getPattern()!=null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") richiede che sia definito solo il parametro 'nome'");
+				}
+				if(body.getNome()!=null) {
+					paa.setPattern(body.getNome());
+				}
+				else {
+					paa.setPattern(body.getPattern());
+				}
+				setPattern = true;
 				paa.setForceInterfaceBased(Helper.boolToStatoFunzionalitaConf(body.isForceInterface()));
 				break;
 			case INPUT_BASED:
@@ -966,13 +1006,71 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			case INTERFACE_BASED:
 				break;
 			case SOAP_ACTION_BASED:
+				// permesso solo su API SOAP con 1 operazione
+				if(!ServiceBinding.SOAP.equals(apc.getServiceBinding())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") non è permessa per API di tipo "+apc.getServiceBinding());
+				}
 				paa.setForceInterfaceBased(Helper.boolToStatoFunzionalitaConf(body.isForceInterface()));
 				break;
 			case URL_BASED:
+				// permesso solo su API SOAP con 1 operazione
+				if(!ServiceBinding.SOAP.equals(apc.getServiceBinding())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") non è permessa per API di tipo "+apc.getServiceBinding());
+				}
+				if(body.getPattern()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") richiede che sia definito il parametro 'pattern'");
+				}
 				paa.setPattern(body.getPattern());
 				paa.setForceInterfaceBased(Helper.boolToStatoFunzionalitaConf(body.isForceInterface()));
 				break;
 			case PROTOCOL_BASED:
+				break;
+			case STATIC:
+				// permesso solo su API SOAP con 1 operazione
+				if(!ServiceBinding.SOAP.equals(apc.getServiceBinding())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") non è permessa per API di tipo "+apc.getServiceBinding());
+				}
+				PortTypeSintetico pt = null;
+				for (PortTypeSintetico ptCheck : apc.getPortType()) {
+					if(ptCheck.getNome().equals(asps.getPortType())) {
+						pt = ptCheck;
+						break;
+					}
+				}
+				if(pt==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+						.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") è permessa solamente per API di tipo SOAP che definiscono 1 sola operazione: port-type non trovato");
+				}
+				if(pt.getAzione()==null || pt.getAzione().size()<=0) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") è permessa solamente per API di tipo SOAP che definiscono 1 sola operazione: non sono state trovate azioni");
+				}
+				if(pt.getAzione().size()>1) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") è permessa solamente per API di tipo SOAP che definiscono 1 sola operazione: sono state trovate "+pt.getAzione().size()+" azioni");
+				}
+				if(body.getNome()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") richiede che sia definito il parametro 'nome'");
+				}
+				boolean findAzione = false;
+				for (OperationSintetica op : pt.getAzione()) {
+					if(op.getNome().equals(body.getNome())){
+						findAzione = true;
+						idAzione = op.getId();
+						break;
+					}
+				}
+				if(!findAzione) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") riferisce una azione '"+body.getNome()+"' non esistente");
+				}
+				paa.setNome(body.getNome());
+				setPattern = false;
 				break;
 			}
 			paa.setIdentificazione(Enum.valueOf(PortaApplicativaAzioneIdentificazione.class, body.getModalita().name()));
@@ -992,7 +1090,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 																																																													// debug.
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO, servizio);
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE,
-					paa.getPattern()); // Azione è il contenuto del campo pattern o del campo nome, che vengono settati
+					setPattern ? paa.getPattern() : paa.getNome()); // Azione è il contenuto del campo pattern o del campo nome, che vengono settati
 															// nel campo pattern.
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID, null); // Come
 																																																									// da
@@ -1003,6 +1101,10 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR, "");
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE, "");
 
+			if(idAzione>0) {
+				env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID, idAzione+"");
+			}
+			
 			final String oldNomePA = pa.getNome();
 			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));

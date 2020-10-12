@@ -3487,6 +3487,163 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/proprieta:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce le proprietà di configurazione attivate"
+      description: "Questa operazione consente di ottenere le proprietà di configurazione"
+      operationId: "getErogazioneElencoProprieta"
+      responses:
+        "200":
+          description: "Dettaglio della configurazione restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ElencoProprieta"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Aggiunta di una proprietà di configurazione"
+      description: "Questa operazione consente di registrare una proprietà di configurazione"
+      operationId: "addErogazioneProprieta"
+      requestBody:
+        description: "Proprieta che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Proprieta"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/proprieta/{proprieta}:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce il dettaglio di una proprietà di configurazione"
+      description: "Questa operazione consente di ottenere il dettaglio di una proprietà\
+        \ di configurazione"
+      operationId: "getErogazioneProprieta"
+      responses:
+        "200":
+          description: "Dati della proprietà di configurazione restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proprieta"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Modifica i dati di una proprietà di configurazione"
+      description: "Questa operazione consente di aggiornare i dati relativi ad una\
+        \ proprietà di configurazione"
+      operationId: "updateErogazioneProprieta"
+      requestBody:
+        description: "Dati della proprietà di configurazione da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Proprieta"
+        required: true
+      responses:
+        "204":
+          description: "La proprietà di configurazione è stata aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Elimina la proprietà di configurazione dall'elenco di quelle attivate"
+      description: "Questa operazione consente di eliminare la proprietà di configurazione\
+        \ dall'elenco di quelle attivate"
+      operationId: "deleteErogazioneProprietaConfigurazione"
+      responses:
+        "204":
+          description: "Proprietà di configurazione eliminata con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/proprieta_configurazione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni:
     get:
       tags:
@@ -5728,6 +5885,165 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/proprieta:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce le proprietà di configurazione attivate"
+      description: "Questa operazione consente di ottenere le proprietà di configurazione"
+      operationId: "getFruizioneElencoProprieta"
+      responses:
+        "200":
+          description: "Dettaglio della configurazione restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ElencoProprieta"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Aggiunta di una proprietà di configurazione"
+      description: "Questa operazione consente di registrare una proprietà di configurazione"
+      operationId: "addFruizioneProprieta"
+      requestBody:
+        description: "Proprieta che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Proprieta"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/proprieta/{proprieta}:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce il dettaglio di una proprietà di configurazione"
+      description: "Questa operazione consente di ottenere il dettaglio di una proprietà\
+        \ di configurazione"
+      operationId: "getFruizioneProprieta"
+      responses:
+        "200":
+          description: "Dati della proprietà di configurazione restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proprieta"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Modifica i dati di una proprietà di configurazione"
+      description: "Questa operazione consente di aggiornare i dati relativi ad una\
+        \ proprietà di configurazione"
+      operationId: "updateFruizioneProprieta"
+      requestBody:
+        description: "Dati della proprietà di configurazione da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Proprieta"
+        required: true
+      responses:
+        "204":
+          description: "La proprietà di configurazione è stata aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Elimina la proprietà di configurazione dall'elenco di quelle attivate"
+      description: "Questa operazione consente di eliminare la proprietà di configurazione\
+        \ dall'elenco di quelle attivate"
+      operationId: "deleteFruizioneProprietaConfigurazione"
+      responses:
+        "204":
+          description: "Proprietà di configurazione eliminata con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/proprieta_configurazione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /soggetti:
     get:
       tags:
@@ -6985,6 +7301,12 @@ components:
         \ dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'"
     Tipo:
       maxLength: 20
+      pattern: "^[a-z]{2,20}$"
+      type: "string"
+      description: "Indica un tipo assegnato ad un soggetto o ad un servizio"
+    UriApi:
+      pattern: "^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\\
+        -\\._A-Za-z0-9]*:\\d$"
       type: "string"
       description: "Indica un tipo assegnato ad un soggetto o ad un servizio"
     BaseItem:
@@ -7852,7 +8174,8 @@ components:
         nome:
           maxLength: 255
           type: "string"
-          description: "Nome dell'header http nel caso di modalità 'header-based'"
+          description: "Nome dell'header http nel caso di modalità 'header-based'\
+            \ o nome dell'unica azione in caso di modalità 'static'"
         force_interface:
           type: "boolean"
           description: "Indicazione se oltre alla modalità indicata per individuare\
@@ -8813,6 +9136,25 @@ components:
           type: "boolean"
         attachments:
           type: "boolean"
+    Proprieta:
+      required:
+      - "nome"
+      - "valore"
+      type: "object"
+      properties:
+        nome:
+          maxLength: 255
+          type: "string"
+        valore:
+          maxLength: 255
+          type: "string"
+    ElencoProprieta:
+      type: "object"
+      properties:
+        proprieta:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Proprieta"
     FormatoSoapEnum:
       type: "string"
       default: "Wsdl1.1"
@@ -8997,6 +9339,7 @@ components:
       - "soap-action-based"
       - "url-based"
       - "protocol-based"
+      - "static"
     TipoGestioneCorsEnum:
       type: "string"
       example: "gateway"
@@ -9434,6 +9777,14 @@ components:
       name: "elemento"
       in: "path"
       description: "Elemento della regola di correlazione applicativa"
+      required: true
+      schema:
+        maxLength: 255
+        type: "string"
+    proprieta_configurazione:
+      name: "proprieta"
+      in: "path"
+      description: "Nome della proprietà di configurazione"
       required: true
       schema:
         maxLength: 255

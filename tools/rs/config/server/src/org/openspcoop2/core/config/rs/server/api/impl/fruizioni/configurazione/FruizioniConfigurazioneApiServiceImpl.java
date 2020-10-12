@@ -87,6 +87,7 @@ import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichie
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRispostaEnum;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRispostaItem;
+import org.openspcoop2.core.config.rs.server.model.ElencoProprieta;
 import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
@@ -322,6 +323,60 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+   /**
+     * Aggiunta di una proprietà di configurazione
+     *
+     * Questa operazione consente di registrare una proprietà di configurazione
+     *
+     */
+	@Override
+    public void addFruizioneProprieta(org.openspcoop2.core.config.rs.server.model.Proprieta body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+            
+			BaseHelper.throwIfNull(body);	
+			
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			if ((body.getNome().indexOf(" ") != -1) || (body.getNome().indexOf(" ") != -1)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+			}
+			
+			if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
+				for (Proprieta p : pd.getProprietaList()) {
+					if(p.getNome().equals(body.getNome())) {
+						throw FaultCode.CONFLITTO.toException("Proprietà " + body.getNome() + " già assegnata alla configurazione");
+					}
+				}
+			}
+			
+			Proprieta p = new Proprieta();
+			p.setNome(body.getNome());
+			p.setValore(body.getValore());
+			pd.addProprieta(p);
+			
+			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+		
+			context.getLogger().info("Invocazione completata con successo");
+     
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Aggiunta di scope all'elenco degli scope autorizzati
      *
@@ -687,6 +742,48 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+   /**
+     * Elimina la proprietà di configurazione dall&#x27;elenco di quelle attivate
+     *
+     * Questa operazione consente di eliminare la proprietà di configurazione dall&#x27;elenco di quelle attivate
+     *
+     */
+	@Override
+    public void deleteFruizioneProprietaConfigurazione(String erogatore, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			Proprieta to_remove = null;
+			if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
+				to_remove = BaseHelper.findAndRemoveFirst(pd.getProprietaList(), p -> p.getNome().equals(proprieta));
+			}
+			
+			if (env.delete_404 && to_remove == null) {
+				throw FaultCode.NOT_FOUND.toException("Nessuna proprietà è presente nella configurazione con nome '"+proprieta+"'"); 
+			} else if ( to_remove != null ) {
+			
+				env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+			}
+        
+			context.getLogger().info("Invocazione completata con successo");        
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Elimina scope dall'elenco degli scope autorizzati
      *
@@ -716,8 +813,6 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				env.pdCore.performUpdateOperation(env.userLogin, false, pd);
 			}
 			
-			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
-        
 			context.getLogger().info("Invocazione completata con successo");        
      
 		}
@@ -1525,6 +1620,99 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+   /**
+     * Restituisce le proprietà di configurazione attivate
+     *
+     * Questa operazione consente di ottenere le proprietà di configurazione
+     *
+     */
+	@Override
+    public ElencoProprieta getFruizioneElencoProprieta(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+        
+			ElencoProprieta ret = new ElencoProprieta();
+			ret.setProprieta(new ArrayList<org.openspcoop2.core.config.rs.server.model.Proprieta>());
+			if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
+				for (Proprieta p: pd.getProprietaList()) {
+					org.openspcoop2.core.config.rs.server.model.Proprieta retP = new org.openspcoop2.core.config.rs.server.model.Proprieta();
+					retP.setNome(p.getNome());
+					retP.setValore(p.getValore());
+					ret.addProprietaItem(retP);
+				}
+			}
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+   /**
+     * Restituisce il dettaglio di una proprietà di configurazione
+     *
+     * Questa operazione consente di ottenere il dettaglio di una proprietà di configurazione
+     *
+     */
+	@Override
+    public org.openspcoop2.core.config.rs.server.model.Proprieta getFruizioneProprieta(String erogatore, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+        
+			Proprieta to_get = null;
+			if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
+				Optional<Proprieta> op = BaseHelper.findFirst(pd.getProprietaList(), p -> p.getNome().equals(proprieta));
+				if(op!=null && op.isPresent()) {
+					to_get = op.get();
+				}
+			}
+			
+			org.openspcoop2.core.config.rs.server.model.Proprieta ret = null;
+			if(to_get!=null) {
+				ret = new org.openspcoop2.core.config.rs.server.model.Proprieta();
+				ret.setNome(to_get.getNome());
+				ret.setValore(to_get.getValore());
+			}
+			else {
+				throw FaultCode.NOT_FOUND.toException("Nessuna proprietà è presente nella configurazione con nome '"+proprieta+"'"); 
+			}
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Restituisce la configurazione relativa alla gestione dei token per quanto concerne il controllo degli accessi
      *
@@ -2022,6 +2210,71 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+   /**
+     * Modifica i dati di una proprietà di configurazione
+     *
+     * Questa operazione consente di aggiornare i dati relativi ad una proprietà di configurazione
+     *
+     */
+	@Override
+    public void updateFruizioneProprieta(org.openspcoop2.core.config.rs.server.model.Proprieta body, String erogatore, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);
+
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			if ((body.getNome().indexOf(" ") != -1) || (body.getNome().indexOf(" ") != -1)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+			}
+			
+			if(!proprieta.equals(body.getNome())) {
+				// cambio nome proprieta
+				if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
+					for (Proprieta p : pd.getProprietaList()) {
+						if(p.getNome().equals(body.getNome())) {
+							throw FaultCode.CONFLITTO.toException("Proprietà " + body.getNome() + " già assegnata alla configurazione");
+						}
+					}
+				}
+			}
+			
+			boolean found = false;
+			if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
+				for (Proprieta p : pd.getProprietaList()) {
+					if(p.getNome().equals(proprieta)) {
+						p.setNome(body.getNome());
+						p.setValore(body.getValore());
+						found = true;
+						break;
+					}
+				}
+			}
+			
+			if(!found) {
+				throw FaultCode.NOT_FOUND.toException("Proprietà " + body.getNome() + " non presente nella configurazione");
+			}
+			
+			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+			context.getLogger().info("Invocazione completata con successo");
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Consente di modificare la configurazione CORS associata alla fruizione
      *
