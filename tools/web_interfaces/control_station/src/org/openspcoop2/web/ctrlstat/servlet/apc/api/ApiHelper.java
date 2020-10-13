@@ -118,7 +118,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 			
-			addFilterProtocol(ricerca, idLista);
+			String filterProtocol = addFilterProtocol(ricerca, idLista, true);
 			
 			String filterTipoAccordo = null;
 			if(showServiceBinding) {
@@ -127,7 +127,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 			
 			String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
-			addFilterGruppo(filterGruppo, false);
+			addFilterGruppo(filterProtocol, filterGruppo, false);
 			
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {

@@ -81,15 +81,29 @@ public class ApiList  extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.ACCORDI;
+			
+			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+			List<AccordoServizioParteComuneSintetico> lista = null;
+			if(apcCore.isRegistroServiziLocale()){
+				if(!ServletUtils.isSearchDone(apiHelper)) {
+					lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  AccordoServizioParteComuneSintetico.class);
+				}
+			}
 
 			ricerca = apiHelper.checkSearchParameters(idLista, ricerca);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 //			long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
+			if(lista==null) {
+				lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
+			}
 //			long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
 //			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
-//			
+
+			if(!apiHelper.isPostBackFilterElement()) {
+				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+			}
+			
 //			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
 			apiHelper.prepareApiList(lista, ricerca, tipoAccordo);
 //			after = org.openspcoop2.utils.date.DateManager.getTimeMillis();

@@ -2060,7 +2060,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	public boolean isExistsGruppi() throws Exception{
-		return DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).existsGruppi();
+		String tipoProtocollo = this.getProtocollo();
+		return DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).existsGruppi(tipoProtocollo);
 	}
 	
 	public boolean isVisualizzaFiltroGruppiSelectList() throws Exception{

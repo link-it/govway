@@ -176,7 +176,8 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		if(!this.gruppiSelectItemsWidthCheck){
 			this.gruppi = new ArrayList<SelectItem>();
 			
-			this.gruppi = this.dynamicUtils.getListaGruppi();
+			String tipoProtocollo = this.search.getProtocollo();
+			this.gruppi = this.dynamicUtils.getListaGruppi(tipoProtocollo);
 			
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.gruppi);
 			this.gruppiSelectItemsWidth = Math.max(this.gruppiSelectItemsWidth,  lunghezzaSelectList);

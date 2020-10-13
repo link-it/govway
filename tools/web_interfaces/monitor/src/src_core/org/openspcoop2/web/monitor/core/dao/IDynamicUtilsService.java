@@ -230,8 +230,8 @@ public interface IDynamicUtilsService {
 	public int countPortTypeFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo ,String nomeServizio) ;
 	
 	
-	public List<IDGruppo> getGruppi();
-	public int countGruppi();
+	public List<IDGruppo> getGruppi(String tipoProtocollo);
+	public int countGruppi(String tipoProtocollo);
 	
 	
 	/****

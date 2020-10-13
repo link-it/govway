@@ -25,11 +25,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
@@ -69,8 +71,11 @@ import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
@@ -135,6 +140,8 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
 
+	private transient DriverRegistroServiziDB driverRegistroDB = null;
+	
 	public DynamicUtilsServiceEngine(){
 		this(null);
 	}
@@ -166,6 +173,12 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+						
+			this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
 			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
 			
@@ -205,6 +218,10 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
+			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			
+			this.driverRegistroDB = new DriverRegistroServiziDB(con, log, tipoDatabase);
+			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
 			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
 			
@@ -1512,44 +1529,72 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	}
 
 	@Override
-	public List<IDGruppo> getGruppi(){
-		try {
-			IPaginatedExpression expr = this.gruppiDAO.newPaginatedExpression();
-			
-			expr.sortOrder(SortOrder.ASC).addOrder(Gruppo.model().NOME);
-			
-			List<Object> list = this.gruppiDAO.select(expr, Gruppo.model().NOME);
-			if(list!=null && !list.isEmpty()) {
-				List<IDGruppo> r = new ArrayList<>();
-				for (Object o : list) {
-					r.add(new IDGruppo((String)o));
+	public List<IDGruppo> getGruppi(String protocollo){
+		if(protocollo==null || "".equals(protocollo) || "-".equals(protocollo) || "--".equals(protocollo)) {
+			try {
+				IPaginatedExpression expr = this.gruppiDAO.newPaginatedExpression();
+				
+				expr.sortOrder(SortOrder.ASC).addOrder(Gruppo.model().NOME);
+				
+				List<Object> list = this.gruppiDAO.select(expr, Gruppo.model().NOME);
+				if(list!=null && !list.isEmpty()) {
+					List<IDGruppo> r = new ArrayList<>();
+					for (Object o : list) {
+						r.add(new IDGruppo((String)o));
+					}
+					return r;
 				}
-				return r;
+				
+			} catch (ServiceException e) {
+				log.error(e.getMessage(), e);
+			} catch (NotImplementedException e) {
+				log.error(e.getMessage(), e);
+			} catch(NotFoundException notFound) {
+				log.debug(notFound.getMessage(), notFound);
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
 			}
-			
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch(NotFoundException notFound) {
-			log.debug(notFound.getMessage(), notFound);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
 		}
-
+		else {
+			FiltroRicercaGruppi filtroGruppi = new FiltroRicercaGruppi();
+			filtroGruppi.setProtocollo(protocollo);
+			try {
+				List<IDGruppo> listGruppi = this.driverRegistroDB.getAllIdGruppi(filtroGruppi);
+				return listGruppi;
+			}catch(DriverRegistroServiziNotFound notFound) {
+				log.debug(notFound.getMessage(), notFound);
+			}catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+			
 		return new ArrayList<IDGruppo>();
 	}
 	@Override
-	public int countGruppi() {
-		try {
-			IExpression expr = this.gruppiDAO.newExpression();
-			return (int) this.gruppiDAO.count(expr).longValue();
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+	public int countGruppi(String protocollo) {
+		if(protocollo==null || "".equals(protocollo) || "-".equals(protocollo) || "--".equals(protocollo)) {
+			try {
+				IExpression expr = this.gruppiDAO.newExpression();
+				return (int) this.gruppiDAO.count(expr).longValue();
+			} catch (ServiceException e) {
+				log.error(e.getMessage(), e);
+			} catch (NotImplementedException e) {
+				log.error(e.getMessage(), e);
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+		else {
+			FiltroRicercaGruppi filtroGruppi = new FiltroRicercaGruppi();
+			filtroGruppi.setProtocollo(protocollo);
+			try {
+				List<IDGruppo> listGruppi = this.driverRegistroDB.getAllIdGruppi(filtroGruppi);
+				return listGruppi!=null ? listGruppi.size() : 0;
+			}catch(DriverRegistroServiziNotFound notFound) {
+				log.debug(notFound.getMessage(), notFound);
+			}catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
 		}
 		return 0;
 	}

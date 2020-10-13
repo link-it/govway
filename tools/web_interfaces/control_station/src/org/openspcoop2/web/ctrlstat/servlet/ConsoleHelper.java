@@ -9101,10 +9101,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addFilterGruppo(String gruppo, boolean postBack) throws Exception{
+	public void addFilterGruppo(String filterProtocollo, String gruppo, boolean postBack) throws Exception{
 		try {
 			
+			boolean isFilterProtocollo = filterProtocollo!=null && !"".equals(filterProtocollo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo);
+			
+			List<String> protocolli = this.core.getProtocolli(this.session);
+			if(isFilterProtocollo) {
+				protocolli.clear();
+				protocolli.add(filterProtocollo);
+			}
+			
 			FiltroRicercaGruppi filtroGruppi = new FiltroRicercaGruppi();
+			filtroGruppi.setProtocolli(protocolli);
 			List<IDGruppo> listGruppi = this.ruoliCore.getAllIdGruppi(filtroGruppi);
 			int length = 1;
 			if(listGruppi!=null && listGruppi.size()>0) {

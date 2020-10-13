@@ -36,7 +36,6 @@ Background:
 
 * def connettore = read('connettore_erogazione_petstore.json')
 * def info_generali = read('informazioni_generali_petstore.json')
-* def url_invocazione = read('erogazione_petstore_url_invocazione.json')
 * def erogazione_versione = read('api_versione3.json')
 
 @FindAll200

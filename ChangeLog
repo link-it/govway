@@ -1,3 +1,9 @@
+2020-10-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1070
+	Il filtro per Tag presente nei criteri di ricerca delle console presenta adesso solamente i tag assegnati alle API relative al Profilo di Interoperabilità selezionato.
+
 2020-10-12  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio, GovWayMonitor]	

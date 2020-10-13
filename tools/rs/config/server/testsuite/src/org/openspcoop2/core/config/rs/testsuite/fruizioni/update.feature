@@ -52,7 +52,6 @@ Background:
 
 * def connettore = read('connettore_erogazione_petstore.json')
 * def info_generali = read('informazioni_generali_petstore.json')
-* def url_invocazione = read('erogazione_petstore_url_invocazione.json')
 * def erogazione_versione = read('api_versione3.json')
 
 @UpdateConnettore204
@@ -103,9 +102,14 @@ Scenario Outline: Fruizioni Update Url Invocazione 204 per API REST
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
 
+    * def url_invocazione = read('fruizione_petstore_url_invocazione.json')
+
     * eval url_invocazione.modalita = <mode>
-    * eval url_invocazione.nome = <nome>
-    * eval url_invocazione.pattern = <pattern>
+
+    * eval if (<nome> != null) url_invocazione.nome = <nome>
+
+    * eval if (<pattern> != null) url_invocazione.pattern = <pattern>
+
     * eval url_invocazione.force_interface = <force>
 
 Given url configUrl
@@ -159,9 +163,14 @@ Scenario Outline: Fruizioni Update Url Invocazione 204 per API SOAP
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_soap_una_azione })
 
+    * def url_invocazione = read('fruizione_petstore_url_invocazione.json')
+
     * eval url_invocazione.modalita = <mode>
-    * eval url_invocazione.nome = <nome>
-    * eval url_invocazione.pattern = <pattern>
+
+    * eval if (<nome> != null) url_invocazione.nome = <nome>
+
+    * eval if (<pattern> != null) url_invocazione.pattern = <pattern>
+
     * eval url_invocazione.force_interface = <force>
 
 Given url configUrl
@@ -223,9 +232,14 @@ Scenario Outline: Fruizioni Update Url Invocazione 204 per API SOAP con piu azio
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_soap_piu_azioni })
 
+    * def url_invocazione = read('fruizione_petstore_url_invocazione.json')
+
     * eval url_invocazione.modalita = <mode>
-    * eval url_invocazione.nome = <nome>
-    * eval url_invocazione.pattern = <pattern>
+
+    * eval if (<nome> != null) url_invocazione.nome = <nome>
+
+    * eval if (<pattern> != null) url_invocazione.pattern = <pattern>
+
     * eval url_invocazione.force_interface = <force>
 
 Given url configUrl

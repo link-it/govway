@@ -319,7 +319,7 @@ public class RuoliHelper extends ConsoleHelper{
 					!Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI.equals(filterApiContesto)) {
 				
 				filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
-				addFilterGruppo(filterGruppo, true);
+				addFilterGruppo(filterProtocollo, filterGruppo, true);
 				
 			}
 			else {

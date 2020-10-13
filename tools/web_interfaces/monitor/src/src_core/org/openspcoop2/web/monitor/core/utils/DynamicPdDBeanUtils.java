@@ -320,11 +320,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return this.dynamicUtilsService.checkTipoPdd(nome, tipoPdD);
 	}
 
-	public List<SelectItem> getListaGruppi(){
+	public List<SelectItem> getListaGruppi(String tipoProtocollo){
 		List<SelectItem> gruppi = new ArrayList<SelectItem>();
 
 		try{
-			List<IDGruppo>  lista = this.dynamicUtilsService.getGruppi();
+			List<IDGruppo>  lista = this.dynamicUtilsService.getGruppi(tipoProtocollo);
 			if(lista!=null && !lista.isEmpty()) {
 				for (IDGruppo id : lista) {
 					SelectItem item = new SelectItem(id.getNome(),id.getNome());
@@ -337,10 +337,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 	
 	public List<String> getListaNomiGruppi(){
+		return getListaNomiGruppi(null);
+	}
+	public List<String> getListaNomiGruppi(String tipoProtocollo){
 		List<String> gruppi = new ArrayList<String>();
 
 		try{
-			List<IDGruppo>  lista = this.dynamicUtilsService.getGruppi();
+			List<IDGruppo>  lista = this.dynamicUtilsService.getGruppi(tipoProtocollo);
 			if(lista!=null && !lista.isEmpty()) {
 				for (IDGruppo id : lista) {
 					gruppi.add(id.getNome());
@@ -351,8 +354,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return gruppi;
 	}
 	
-	public boolean existsGruppi() {
-		return this.dynamicUtilsService.countGruppi()>0;
+	public boolean existsGruppi(String tipoProtocollo) {
+		return this.dynamicUtilsService.countGruppi(tipoProtocollo)>0;
 	}
 		
 	

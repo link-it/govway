@@ -54,7 +54,7 @@
 										converter="selectItemConverter" defaultLabel="Seleziona #{applicationBean.labelProfilo}" enableManualInput="false" directInputSuggestions="true" width="416">
 										<f:selectItems value="#{configurazioniGeneraliSearchForm.protocolli}" />
 										<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.protocolloSelected}"
-											reRender="soggettoErogatoreComboCtr,servizioComboCtr" />
+											reRender="soggettoErogatoreComboCtr,gruppiComboCtr,servizioComboCtr" />
 									</rich:comboBox>
 								</link:prop>
 							</a4j:outputPanel>

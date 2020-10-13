@@ -314,7 +314,7 @@ public class ScopeHelper extends ConsoleHelper{
 					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_CONTESTO_QUALSIASI.equals(filterApiContesto)) {
 				
 				filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
-				addFilterGruppo(filterGruppo, true);
+				addFilterGruppo(filterProtocollo, filterGruppo, true);
 				
 			}
 			else {

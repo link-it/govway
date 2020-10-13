@@ -23,6 +23,7 @@
 package org.openspcoop2.core.registry.driver;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 
@@ -46,7 +47,17 @@ public class FiltroRicercaGruppi extends FiltroRicerca implements Serializable{
 	/** ServiceBinding */
 	private ServiceBinding serviceBinding;
 	private boolean ordinaDataRegistrazione = false;
-	
+
+	private String protocollo;
+	private List<String> protocolli;
+
+	public List<String> getProtocolli() {
+		return this.protocolli;
+	}
+
+	public void setProtocolli(List<String> protocolli) {
+		this.protocolli = protocolli;
+	}
 
 	public ServiceBinding getServiceBinding() {
 		return this.serviceBinding;
@@ -69,12 +80,25 @@ public class FiltroRicercaGruppi extends FiltroRicerca implements Serializable{
 		this.serviceBinding = ServiceBinding.toEnumConstant(tipo);
 	}
 
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
+	}
+	
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
 		super.toString(false);
 		if(this.serviceBinding!=null)
 			bf.append(" [serviceBinding:"+this.serviceBinding.getValue()+"]");
+		if(this.protocollo!=null)
+			bf.append(" [protocollo:"+this.protocollo+"]");
+		if(this.protocolli!=null && this.protocolli.size()>0) {
+			bf.append(" [protocolli:"+this.protocolli+"]");
+		}
 //		Tipo gia' visualizzato con il super.toString		
 //		if(this.tipologia!=null)
 //			bf.append(" [tipologia:"+this.tipologia.getValue()+"]");

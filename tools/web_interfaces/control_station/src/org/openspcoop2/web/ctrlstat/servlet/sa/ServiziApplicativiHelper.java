@@ -1988,7 +1988,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			addFilterRuolo(filterRuolo, false);
 			
 			String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
-			addFilterGruppo(filterGruppo, true);
+			addFilterGruppo(filterProtocollo, filterGruppo, true);
 			
 			String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
 			this.addFilterApiContesto(filterApiContesto, true);

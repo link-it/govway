@@ -783,35 +783,39 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IDGruppo> getGruppi(){
+	public List<IDGruppo> getGruppi(String protocollo){
 		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
-			String key = "";
+			String key = buildKey(("protocollo:"+protocollo));
 			String methodName = "getGruppi";
 			try {
-				return (List<IDGruppo>) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName);
+				return (List<IDGruppo>) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {String.class},
+						protocollo);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
 			}
 		}
 		else {
-			return this.driver.getGruppi();
+			return this.driver.getGruppi(protocollo);
 		}
 	}
 	@Override
-	public int countGruppi(){
+	public int countGruppi(String protocollo){
 		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
-			String key = "";
+			String key = buildKey(("protocollo:"+protocollo));
 			String methodName = "countGruppi";
 			try {
-				return (Integer) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName);
+				return (Integer) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {String.class},
+						protocollo);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return 0;
 			}
 		}
 		else {
-			return this.driver.countGruppi();
+			return this.driver.countGruppi(protocollo);
 		}
 	}
 	

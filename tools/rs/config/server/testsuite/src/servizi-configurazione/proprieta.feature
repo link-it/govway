@@ -41,10 +41,9 @@ Scenario: CRUD TRACCIAMENTO
     And params query_params
     When method get
     Then status 200
-    And match response.proprieta[0] contains { 'nome': 'NomeProprieta1' }
-    And match response.proprieta[1] contains { 'nome': 'NomeProprieta2' }
-    And match response.proprieta[0] contains { 'valore': 'ValoreProprieta1' }
-    And match response.proprieta[1] contains { 'valore': 'ValoreProprieta2' }
+    And assert response.proprieta.length == 2
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1' }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'ValoreProprieta2' }
 
     #GET P1 CREATA
     Given url configUrl
@@ -111,10 +110,9 @@ Scenario: CRUD TRACCIAMENTO
     And params query_params
     When method get
     Then status 200
-    And match response.proprieta[0] contains { 'nome': 'NomeProprieta1' }
-    And match response.proprieta[1] contains { 'nome': 'NomeProprieta2modificato' }
-    And match response.proprieta[0] contains { 'valore': 'ValoreProprieta1' }
-    And match response.proprieta[1] contains { 'valore': 'ValoreProprieta2modificato' }
+    And assert response.proprieta.length == 2
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1' }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2modificato', 'valore': 'ValoreProprieta2modificato' }
 
     # DELETE P1
     Given url configUrl

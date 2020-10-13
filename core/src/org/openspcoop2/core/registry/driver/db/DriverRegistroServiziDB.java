@@ -6635,6 +6635,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 			filtroRicercaTipo = filtroRicerca.getServiceBinding()!=null;
 		}
 		
+		List<String> tipoSoggettiProtocollo = null;
+		try {
+			if(filtroRicerca!=null && (filtroRicerca.getProtocollo()!=null || (filtroRicerca.getProtocolli()!=null && !filtroRicerca.getProtocolli().isEmpty()))){
+				tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(filtroRicerca.getProtocollo(), Filtri.convertToString(filtroRicerca.getProtocolli()));
+			}
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		boolean searchByTipoSoggetto = (tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0);
+		
 		this.log.debug("getAllIdGruppi...");
 
 		try {
@@ -6647,29 +6657,43 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
-			sqlQueryObject.addSelectField("nome");
+			if(searchByTipoSoggetto) {
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			}
+			sqlQueryObject.addSelectField(CostantiDB.GRUPPI, "nome");
+			if(searchByTipoSoggetto) {
+				sqlQueryObject.setSelectDistinct(true);
+			}
 			if(filtroRicerca!=null){
 				// Filtro By Data
 				if(filtroRicerca.getMinDate()!=null)
-					sqlQueryObject.addWhereCondition("ora_registrazione > ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".ora_registrazione > ?");
 				if(filtroRicerca.getMaxDate()!=null)
-					sqlQueryObject.addWhereCondition("ora_registrazione < ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".ora_registrazione < ?");
 				if(filtroRicerca.getNome()!=null)
-					sqlQueryObject.addWhereCondition("nome = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
 				if(filtroRicercaTipo){
 					
 					ISQLQueryObject sqlQueryObjectServiceBinding = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-					sqlQueryObjectServiceBinding.addWhereIsNullCondition("service_binding");
-					sqlQueryObjectServiceBinding.addWhereCondition("service_binding= ?");
+					sqlQueryObjectServiceBinding.addWhereIsNullCondition(CostantiDB.GRUPPI+".service_binding");
+					sqlQueryObjectServiceBinding.addWhereCondition(CostantiDB.GRUPPI+".service_binding= ?");
 					sqlQueryObjectServiceBinding.setANDLogicOperator(false);
 					sqlQueryObject.addWhereCondition(sqlQueryObjectServiceBinding.createSQLConditions());
 					
 				}
+				if(searchByTipoSoggetto) {
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
+					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				
 				if(filtroRicerca.isOrdinaDataRegistrazione())
-					sqlQueryObject.addOrderBy("ora_registrazione");
+					sqlQueryObject.addOrderBy(CostantiDB.GRUPPI+".ora_registrazione");
 				
-				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.addOrderBy(CostantiDB.GRUPPI+".nome");
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
