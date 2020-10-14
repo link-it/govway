@@ -331,7 +331,7 @@
 			</conditions>
 			<property name="policy.introspection.httpMethod" />
 		</item>
-		<item type="select" name="introspectionHttpMethod" label="Http Method">
+		<item type="select" name="introspectionHttpMethod" label="Http Method" reloadOnChange="true">
 			<conditions>
 				<condition and="true">
 					<equals name="introspectionType" value="CUSTOM"/>
@@ -587,7 +587,7 @@
 			</conditions>
 			<property name="policy.userInfo.httpMethod" />
 		</item>
-		<item type="select" name="userInfoHttpMethod" label="Http Method">
+		<item type="select" name="userInfoHttpMethod" label="Http Method" reloadOnChange="true">
 			<conditions>
 				<condition and="true">
 					<equals name="userInfoType" value="CUSTOM"/>

@@ -54,7 +54,7 @@ public class TokenProvider implements IProvider {
 		
 		String position = pDefault.getProperty(Costanti.POLICY_TOKEN_SOURCE);
 		if(position==null) {
-			throw new ProviderValidationException("Non e' stata indicata la posizione del token");
+			throw new ProviderValidationException("Non è stata indicata la posizione del token");
 		}
 		if(!Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(position) &&
 				!Costanti.POLICY_TOKEN_SOURCE_RFC6750_HEADER.equals(position) &&
@@ -67,20 +67,26 @@ public class TokenProvider implements IProvider {
 		
 		if(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_HEADER.equals(position)) {
 			String headerName = pDefault.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_HEADER_NAME);
-			if(headerName==null) {
-				throw new ProviderValidationException("Non e' stata indicata il nome dell'header http che deve contenere il token");
+			if(headerName==null || "".equals(headerName)) {
+				throw new ProviderValidationException("Non è stato indicato il nome dell'header http che deve contenere il token");
+			}
+			if(headerName.contains(" ")) {
+				throw new ProviderValidationException("Il nome fornito per l'header http che deve contenere il token non deve possedere spazi");
 			}
 		}
 		else if(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL.equals(position)) {
 			String pName = pDefault.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL_PROPERTY_NAME);
 			if(pName==null) {
-				throw new ProviderValidationException("Non e' stata indicata il nome della proprietà della URL che deve contenere il token");
+				throw new ProviderValidationException("Non è stato indicato il nome della proprietà della URL che deve contenere il token");
+			}
+			if(pName.contains(" ")) {
+				throw new ProviderValidationException("Il nome fornito per la proprietà della URL che deve contenere il token non deve possedere spazi");
 			}
 		}
 		
 		String tokenType = pDefault.getProperty(Costanti.POLICY_TOKEN_TYPE);
 		if(tokenType==null) {
-			throw new ProviderValidationException("Non e' stata indicato il tipo del token");
+			throw new ProviderValidationException("Non è stata indicato il tipo del token");
 		}
 		if(!Costanti.POLICY_TOKEN_TYPE_OPAQUE.equals(tokenType) &&
 				!Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType) &&
@@ -127,12 +133,15 @@ public class TokenProvider implements IProvider {
 					throw new Exception("Sconosciuto");
 				}
 			}catch(Exception e) {
-				throw new ProviderValidationException("E' stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione JWT, sconosciuto");
+				throw new ProviderValidationException("È stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione JWT, sconosciuto");
 			}
-			if(TipologiaClaims.CUSTOM.equals(parserType)) {
+			if(TipologiaClaims.CUSTOM.name().equals(parserType)) {
 				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME);
-				if(parserTypeCustomClass==null) {
-					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims personalizzato da utilizzare dopo la validazione JWT");
+				if(parserTypeCustomClass==null || "".equals(parserTypeCustomClass)) {
+					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione JWT");
+				}
+				if(parserTypeCustomClass.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione JWT");
 				}
 			}
 		}
@@ -148,8 +157,11 @@ public class TokenProvider implements IProvider {
 		if(introspection) {
 			
 			String url = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_URL);
-			if(url==null) {
-				throw new ProviderValidationException("Non e' stata fornita la url del servizio 'Introspection'");
+			if(url==null || "".equals(url)) {
+				throw new ProviderValidationException("Non è stata fornita la url del servizio 'Introspection'");
+			}
+			if(url.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nella url del servizio 'Introspection'");
 			}
 			try{
 				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
@@ -168,27 +180,36 @@ public class TokenProvider implements IProvider {
 					throw new Exception("Sconosciuto");
 				}
 			}catch(Exception e) {
-				throw new ProviderValidationException("E' stato indicato un tipo '"+tipoTokenRequest+"' di spedizione del token da inoltrare al servizio di Introspection sconosciuto");
+				throw new ProviderValidationException("È stato indicato un tipo '"+tipoTokenRequest+"' di spedizione del token da inoltrare al servizio di Introspection sconosciuto");
 			}
 			switch (tipoTokenRequestEnum) {
 			case authorization:
 				break;
 			case header:
 				String tmp = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_HEADER_NAME);
-				if(tmp==null) {
+				if(tmp==null || "".equals(url)) {
 					throw new ProviderValidationException("Non è stato indicato il nome dell'header http su cui inoltrare il token al servizio di Introspection");
+				}
+				if(tmp.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel nome dell'header http su cui inoltrare il token al servizio di Introspection");
 				}
 				break;
 			case url:
 				tmp = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_URL_PROPERTY_NAME);
-				if(tmp==null) {
+				if(tmp==null || "".equals(url)) {
 					throw new ProviderValidationException("Non è stato indicato il nome della proprietà della URL su cui inoltrare il token al servizio di Introspection");
+				}
+				if(tmp.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel nome della proprietà della URL su cui inoltrare il token al servizio di Introspection");
 				}
 				break;
 			case form:
 				tmp = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_FORM_PROPERTY_NAME);
-				if(tmp==null) {
+				if(tmp==null || "".equals(url)) {
 					throw new ProviderValidationException("Non è stato indicato il nome della proprietà della FORM su cui inoltrare il token al servizio di Introspection");
+				}
+				if(tmp.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel nome della proprietà della FORM su cui inoltrare il token al servizio di Introspection");
 				}
 				break;
 			}
@@ -204,7 +225,7 @@ public class TokenProvider implements IProvider {
 					throw new Exception("Sconosciuto");
 				}
 			}catch(Exception e) {
-				throw new ProviderValidationException("E' stato indicato un tipo '"+httpRequestMethod+"' di richiesta HTTP da utilizzare per inoltrare il token al servizio di Introspection sconosciuto");
+				throw new ProviderValidationException("È stato indicato un tipo '"+httpRequestMethod+"' di richiesta HTTP da utilizzare per inoltrare il token al servizio di Introspection sconosciuto");
 			}
 			
 			String contentType = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_CONTENT_TYPE);
@@ -214,8 +235,11 @@ public class TokenProvider implements IProvider {
 						HttpRequestMethod.PATCH.equals(httpRequestMethodEnum) || 
 						HttpRequestMethod.LINK.equals(httpRequestMethodEnum) || 
 						HttpRequestMethod.UNLINK.equals(httpRequestMethodEnum) ) {
-					if(contentType==null) {
+					if(contentType==null || "".equals(contentType)) {
 						throw new ProviderValidationException("Non è stato indicato il ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di Introspection");
+					}
+					if(contentType.contains(" ")) {
+						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di Introspection");
 					}
 				}
 			}
@@ -231,32 +255,44 @@ public class TokenProvider implements IProvider {
 					throw new Exception("Sconosciuto");
 				}
 			}catch(Exception e) {
-				throw new ProviderValidationException("E' stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione del servizio di Introspection, sconosciuto");
+				throw new ProviderValidationException("È stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione del servizio di Introspection, sconosciuto");
 			}
-			if(TipologiaClaims.CUSTOM.equals(parserType)) {
+			if(TipologiaClaims.CUSTOM.name().equals(parserType)) {
 				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME);
-				if(parserTypeCustomClass==null) {
-					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims personalizzato da utilizzare dopo la validazione del servizio di Introspection");
+				if(parserTypeCustomClass==null || "".equals(parserTypeCustomClass)) {
+					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione del servizio di Introspection");
+				}
+				if(parserTypeCustomClass.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione del servizio di Introspection");
 				}
 			}
 			
 			boolean basic = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_INTROSPECTION_AUTH_BASIC_STATO);
 			if(basic) {
 				String username = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BASIC_USERNAME);
-				if(username==null) {
+				if(username==null || "".equals(username)) {
 					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornito un username da utilizzare durante la connessione verso il servizio di Introspection");
 				}
+				if(username.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nell'username da utilizzare durante la connessione verso il servizio di Introspection");
+				}
 				String password = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD);
-				if(password==null) {
+				if(password==null || "".equals(password)) {
 					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornita una password da utilizzare durante la connessione verso il servizio di Introspection");
+				}
+				if(password.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nella password da utilizzare durante la connessione verso il servizio di Introspection");
 				}
 			}
 			
 			boolean bearer = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_INTROSPECTION_AUTH_BEARER_STATO);
 			if(bearer) {
 				String token = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BEARER_TOKEN);
-				if(token==null) {
+				if(token==null || "".equals(token)) {
 					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Authorization Bearer', non è stato fornito un token di autenticazione da inoltrare al servizio di Introspection");
+				}
+				if(token.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel token di autenticazione da inoltrare al servizio di Introspection");
 				}
 			}
 			
@@ -271,8 +307,11 @@ public class TokenProvider implements IProvider {
 		
 		if(userInfo) {
 			String url = pDefault.getProperty(Costanti.POLICY_USER_INFO_URL);
-			if(url==null) {
-				throw new ProviderValidationException("Non e' stata fornita la url del servizio 'OIDC UserInfo'");
+			if(url==null || "".equals(url)) {
+				throw new ProviderValidationException("Non è stata fornita la url del servizio 'OIDC UserInfo'");
+			}
+			if(url.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nella url del servizio 'OIDC UserInfo'");
 			}
 			try{
 				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(pDefault.getProperty(Costanti.POLICY_USER_INFO_URL));
@@ -291,27 +330,36 @@ public class TokenProvider implements IProvider {
 					throw new Exception("Sconosciuto");
 				}
 			}catch(Exception e) {
-				throw new ProviderValidationException("E' stato indicato un tipo '"+tipoTokenRequest+"' di spedizione del token da inoltrare al servizio di UserInfo sconosciuto");
+				throw new ProviderValidationException("È stato indicato un tipo '"+tipoTokenRequest+"' di spedizione del token da inoltrare al servizio di UserInfo sconosciuto");
 			}
 			switch (tipoTokenRequestEnum) {
 			case authorization:
 				break;
 			case header:
 				String tmp = pDefault.getProperty(Costanti.POLICY_USER_INFO_REQUEST_TOKEN_POSITION_HEADER_NAME);
-				if(tmp==null) {
+				if(tmp==null || "".equals(tmp)) {
 					throw new ProviderValidationException("Non è stato indicato il nome dell'header http su cui inoltrare il token al servizio di UserInfo");
+				}
+				if(tmp.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel nome dell'header http su cui inoltrare il token al servizio di UserInfo");
 				}
 				break;
 			case url:
 				tmp = pDefault.getProperty(Costanti.POLICY_USER_INFO_REQUEST_TOKEN_POSITION_URL_PROPERTY_NAME);
-				if(tmp==null) {
+				if(tmp==null || "".equals(tmp)) {
 					throw new ProviderValidationException("Non è stato indicato il nome della proprietà della URL su cui inoltrare il token al servizio di UserInfo");
+				}
+				if(tmp.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel nome della proprietà della URL su cui inoltrare il token al servizio di UserInfo");
 				}
 				break;
 			case form:
 				tmp = pDefault.getProperty(Costanti.POLICY_USER_INFO_REQUEST_TOKEN_POSITION_FORM_PROPERTY_NAME);
-				if(tmp==null) {
+				if(tmp==null || "".equals(tmp)) {
 					throw new ProviderValidationException("Non è stato indicato il nome della proprietà della FORM su cui inoltrare il token al servizio di UserInfo");
+				}
+				if(tmp.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel nome della proprietà della FORM su cui inoltrare il token al servizio di UserInfo");
 				}
 				break;
 			}
@@ -327,7 +375,7 @@ public class TokenProvider implements IProvider {
 					throw new Exception("Sconosciuto");
 				}
 			}catch(Exception e) {
-				throw new ProviderValidationException("E' stato indicato un tipo '"+httpRequestMethod+"' di richiesta HTTP da utilizzare per inoltrare il token al servizio di UserInfo sconosciuto");
+				throw new ProviderValidationException("È stato indicato un tipo '"+httpRequestMethod+"' di richiesta HTTP da utilizzare per inoltrare il token al servizio di UserInfo sconosciuto");
 			}
 			
 			String contentType = pDefault.getProperty(Costanti.POLICY_USER_INFO_CONTENT_TYPE);
@@ -337,8 +385,11 @@ public class TokenProvider implements IProvider {
 						HttpRequestMethod.PATCH.equals(httpRequestMethodEnum) || 
 						HttpRequestMethod.LINK.equals(httpRequestMethodEnum) || 
 						HttpRequestMethod.UNLINK.equals(httpRequestMethodEnum) ) {
-					if(contentType==null) {
+					if(contentType==null || "".equals(contentType)) {
 						throw new ProviderValidationException("Non è stato indicato il ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di UserInfo");
+					}
+					if(contentType.contains(" ")) {
+						throw new ProviderValidationException("Non indicare spazi nel ContentType da utilizzare nella richiesta HTTP prodotta per inoltrare il token al servizio di UserInfo");
 					}
 				}
 			}
@@ -354,32 +405,44 @@ public class TokenProvider implements IProvider {
 					throw new Exception("Sconosciuto");
 				}
 			}catch(Exception e) {
-				throw new ProviderValidationException("E' stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione del servizio di UserInfo, sconosciuto");
+				throw new ProviderValidationException("È stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione del servizio di UserInfo, sconosciuto");
 			}
-			if(TipologiaClaims.CUSTOM.equals(parserType)) {
+			if(TipologiaClaims.CUSTOM.name().equals(parserType)) {
 				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME);
-				if(parserTypeCustomClass==null) {
-					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims personalizzato da utilizzare dopo la validazione del servizio di UserInfo");
+				if(parserTypeCustomClass==null || "".equals(parserTypeCustomClass)) {
+					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims da utilizzare dopo la validazione del servizio di UserInfo");
+				}
+				if(parserTypeCustomClass.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims da utilizzare dopo la validazione del servizio di UserInfo");
 				}
 			}
 			
 			boolean basic = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_USER_INFO_AUTH_BASIC_STATO);
 			if(basic) {
 				String username = pDefault.getProperty(Costanti.POLICY_USER_INFO_AUTH_BASIC_USERNAME);
-				if(username==null) {
+				if(username==null || "".equals(username)) {
 					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornito un username da utilizzare durante la connessione verso il servizio di UserInfo");
 				}
+				if(username.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nell'username da utilizzare durante la connessione verso il servizio di UserInfo");
+				}
 				String password = pDefault.getProperty(Costanti.POLICY_USER_INFO_AUTH_BASIC_PASSWORD);
-				if(password==null) {
+				if(password==null || "".equals(password)) {
 					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornita una password da utilizzare durante la connessione verso il servizio di UserInfo");
+				}
+				if(password.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nella password da utilizzare durante la connessione verso il servizio di UserInfo");
 				}
 			}
 			
 			boolean bearer = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_USER_INFO_AUTH_BEARER_STATO);
 			if(bearer) {
 				String token = pDefault.getProperty(Costanti.POLICY_USER_INFO_AUTH_BEARER_TOKEN);
-				if(token==null) {
+				if(token==null || "".equals(token)) {
 					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Authorization Bearer', non è stato fornito un token di autenticazione da inoltrare al servizio di UserInfo");
+				}
+				if(token.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel token di autenticazione da inoltrare al servizio di UserInfo");
 				}
 			}
 			
@@ -412,18 +475,24 @@ public class TokenProvider implements IProvider {
 						!Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(mode) &&
 						!Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(mode)
 						) {
-					throw new ProviderValidationException("La modalità di forward trasparente indicata '"+mode+"' non e' supportata");	
+					throw new ProviderValidationException("La modalità di forward trasparente indicata '"+mode+"' non è supportata");	
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(mode)) {
 					String hdr = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER_NAME);
-					if(hdr==null) {
+					if(hdr==null || "".equals(hdr)) {
 						throw new ProviderValidationException("La modalità di forward trasparente indicata prevede l'indicazione del nome di un header http");
+					}
+					if(hdr.contains(" ")) {
+						throw new ProviderValidationException("Non indicare spazi nel nome dell'header HTTP indicato per la modalità di forward trasparente");
 					}
 				}
 				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(mode)) {
 					String url = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL_PARAMETER_NAME);
-					if(url==null) {
+					if(url==null || "".equals(url)) {
 						throw new ProviderValidationException("La modalità di forward trasparente indicata prevede l'indicazione del nome di una proprietà della url");
+					}
+					if(url.contains(" ")) {
+						throw new ProviderValidationException("Non indicare spazi nel nome della proprietà della url indicata per la modalità di forward trasparente");
 					}
 				}
 			}
@@ -440,7 +509,7 @@ public class TokenProvider implements IProvider {
 						!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(mode) &&
 						!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON.equals(mode) 
 						) {
-					throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, indicata '"+mode+"' non e' supportata");	
+					throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, indicata '"+mode+"' non è supportata");	
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(mode) ||
 					Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON.equals(mode) 
@@ -473,14 +542,20 @@ public class TokenProvider implements IProvider {
 						}
 						if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward)) {
 							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_HEADER_NAME);
-							if(name==null) {
+							if(name==null || "".equals(name)) {
 								throw new ProviderValidationException("(Validazione JWT) Il tipo di consegna (header), delle informazioni raccolte, richiede la definizione di un nome di un header http");
+							}
+							if(name.contains(" ")) {
+								throw new ProviderValidationException("Non indicare spazi nel nome dell'header http (Forward ValidazioneJWT-Header)");
 							}
 						}
 						else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward)) {
 							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_URL_PARAMETER_NAME);
-							if(name==null) {
+							if(name==null || "".equals(name)) {
 								throw new ProviderValidationException("(Validazione JWT) Il tipo di consegna (url), delle informazioni raccolte, richiede la definizione di un nome di un parametro della URL");
+							}
+							if(name.contains(" ")) {
+								throw new ProviderValidationException("Non indicare spazi nel nome del parametro della url (Forward ValidazioneJWT-ParametroURL)");
 							}
 						}
 					}
@@ -497,14 +572,20 @@ public class TokenProvider implements IProvider {
 						}
 						if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward)) {
 							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_HEADER_NAME);
-							if(name==null) {
+							if(name==null || "".equals(name)) {
 								throw new ProviderValidationException("(Introspection) Il tipo di consegna (header), delle informazioni raccolte, richiede la definizione di un nome di un header http");
+							}
+							if(name.contains(" ")) {
+								throw new ProviderValidationException("Non indicare spazi nel nome dell'header http (Forward Introspection-Header)");
 							}
 						}
 						else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward)) {
 							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_URL_PARAMETER_NAME);
-							if(name==null) {
+							if(name==null || "".equals(name)) {
 								throw new ProviderValidationException("(Introspection) Il tipo di consegna (url), delle informazioni raccolte, richiede la definizione di un nome di un parametro della URL");
+							}
+							if(name.contains(" ")) {
+								throw new ProviderValidationException("Non indicare spazi nel nome del parametro della url (Forward Introspection-ParametroURL)");
 							}
 						}
 					}
@@ -517,18 +598,24 @@ public class TokenProvider implements IProvider {
 						if(!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward) &&
 								!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward) 
 									) {
-							throw new ProviderValidationException("(Introspection) Tipo di consegna '"+modeForward+"', delle informazioni raccolte, indicata sconosciuta");
+							throw new ProviderValidationException("(UserInfo) Tipo di consegna '"+modeForward+"', delle informazioni raccolte, indicata sconosciuta");
 						}
 						if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward)) {
 							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_HEADER_NAME);
-							if(name==null) {
-								throw new ProviderValidationException("(Introspection) Il tipo di consegna (header), delle informazioni raccolte, richiede la definizione di un nome di un header http");
+							if(name==null || "".equals(name)) {
+								throw new ProviderValidationException("(UserInfo) Il tipo di consegna (header), delle informazioni raccolte, richiede la definizione di un nome di un header http");
+							}
+							if(name.contains(" ")) {
+								throw new ProviderValidationException("Non indicare spazi nel nome dell'header http (Forward UserInfo-Header)");
 							}
 						}
 						else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward)) {
 							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_URL_PARAMETER_NAME);
-							if(name==null) {
-								throw new ProviderValidationException("(Introspection) Il tipo di consegna (url), delle informazioni raccolte, richiede la definizione di un nome di un parametro della URL");
+							if(name==null || "".equals(name)) {
+								throw new ProviderValidationException("(UserInfo) Il tipo di consegna (url), delle informazioni raccolte, richiede la definizione di un nome di un parametro della URL");
+							}
+							if(name.contains(" ")) {
+								throw new ProviderValidationException("Non indicare spazi nel nome del parametro della url (Forward UserInfo-ParametroURL)");
 							}
 						}
 					}

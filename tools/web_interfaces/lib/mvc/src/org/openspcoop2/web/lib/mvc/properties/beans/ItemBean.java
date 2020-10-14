@@ -370,6 +370,10 @@ public class ItemBean extends BaseItemBean<Item>{
 				break;
 			case TEXT:
 			case TEXTAREA:
+				if(itemValue!=null && itemValue.length()>4000) {
+					throw new UserInputValidationException("Il Campo "+this.getLabel()+" non deve contenere più di 4000 caratteri");
+				}
+				break;
 			case CHECKBOX:
 			case HIDDEN:
 				break;

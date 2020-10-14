@@ -15247,6 +15247,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage(messaggio);
 				return false;
 			}
+			if(nome.contains(" ")){
+				String messaggio = "Deve essere indicato un valore in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME+"' senza spazi";
+				this.pd.setMessage(messaggio);
+				return false;
+			}
 			
 			// Tipo
 			if(StringUtils.isEmpty(tipo)  || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tipo)){
