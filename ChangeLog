@@ -1,5 +1,14 @@
 2020-10-13  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug OP-1075
+	(https://github.com/link-it/govway/issues/69)
+	Sia nella funzionalità di negoziazione dei token che durante la verifica tramite servizio di introspection e userInfo, 
+	viene adesso utilizzata la modalità http 'content-length' al posto della precedente modalità 'transfer-encoding-chunked'.
+	Nella negoziazione del token è stato inoltre corretto il body della richiesta 'application/x-www-form-urlencoded' eliminando il primo carattere '&' aggiunto erroneamente (es. &grant_type=client_credentials).
+
+2020-10-13  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole, GovWayMonitor]
 	Aggiunta funzionalità OP-1070
 	Il filtro per Tag presente nei criteri di ricerca delle console presenta adesso solamente i tag assegnati alle API relative al Profilo di Interoperabilità selezionato.

@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -2154,6 +2155,18 @@ public class GestoreToken {
 		
 		connettoreMsg.setConnectorProperties(new java.util.Hashtable<String,String>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
+		boolean debug = false;
+		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+		if(introspection) {
+			debug = properties.isGestioneToken_introspection_debug();	
+		}
+		else {
+			debug = properties.isGestioneToken_userInfo_debug();
+		}
+		if(debug) {
+			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
+		}
+		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE, TransferLengthModes.CONTENT_LENGTH.getNome());
 		addProperties(connettoreMsg, endpointConfig);
 		if(https) {
 			addProperties(connettoreMsg, sslConfig);
@@ -2577,6 +2590,7 @@ public class GestoreToken {
 		if(debug) {
 			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
 		}
+		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE, TransferLengthModes.CONTENT_LENGTH.getNome());
 		addProperties(connettoreMsg, endpointConfig);
 		if(https) {
 			addProperties(connettoreMsg, sslConfig);
@@ -2635,6 +2649,9 @@ public class GestoreToken {
 		String prefixUrl = "PREFIX?";
 		String contentString = TransportUtils.buildLocationWithURLBasedParameter(pContent, prefixUrl , log);
 		contentString = contentString.substring(prefixUrl.length());
+		if(contentString.startsWith("&") && contentString.length()>1) {
+			contentString = contentString.substring(1);
+		}
 		content = contentString.getBytes();
 			
 		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);

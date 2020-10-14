@@ -1728,6 +1728,8 @@ public class OpenSPCoop2Properties {
 			this.getCachingResponseHeaderCacheKey();
 			
 			// Gestione Token
+			this.isGestioneToken_introspection_debug();
+			this.isGestioneToken_userInfo_debug();
 			this.getGestioneToken_iatTimeCheck_milliseconds();
 			this.isGestioneToken_saveSourceTokenInfo();
 			this.getGestioneTokenFormatDate();
@@ -16783,6 +16785,56 @@ public class OpenSPCoop2Properties {
 	
 	
 	/* ------------- Gestione Token ---------------------*/
+	
+	private static Boolean isGestioneToken_introspection_debug = null;
+	public boolean isGestioneToken_introspection_debug(){
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.introspection.debug";
+		if(OpenSPCoop2Properties.isGestioneToken_introspection_debug==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneToken_introspection_debug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isGestioneToken_introspection_debug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneToken_introspection_debug = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneToken_introspection_debug;
+	}
+	
+	private static Boolean isGestioneToken_userInfo_debug = null;
+	public boolean isGestioneToken_userInfo_debug(){
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.userInfo.debug";
+		if(OpenSPCoop2Properties.isGestioneToken_userInfo_debug==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneToken_userInfo_debug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isGestioneToken_userInfo_debug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneToken_userInfo_debug = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneToken_userInfo_debug;
+	}
 	
 	private static Boolean getGestioneToken_iatTimeCheck_milliseconds_read = null;
 	private static Integer getGestioneToken_iatTimeCheck_milliseconds = null;
