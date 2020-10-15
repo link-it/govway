@@ -297,7 +297,7 @@ public class TestBasicNegoziazioneTokenParser {
 			if(!now.before(d)){
 				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
 			}
-			System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con max long value e un solo scope ok");
+			System.out.println("Test BasicNegoziazioneTokenParser, access token con expires_in con un valore maggiore del max long ok");
 		}
 	}
 

@@ -1,8 +1,8 @@
 /*
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2020 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -18,27 +18,31 @@
  *
  */
 
-package org.openspcoop2.core.commons.search.utils;
 
-import org.openspcoop2.core.commons.ExpressionUtils;
+
+
+
+package org.openspcoop2.core.commons;
+
 import org.openspcoop2.generic_project.expression.IExpression;
 
 /**
- * ExpressionProperties
+ * ExpressionUtils
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ExpressionProperties {
-
-	private static final String PROP_NAME_SOLO_DATI_IDENTIFICATIVI_SERVIZIO = "SoloIDServizio";
-		
-	public static void enableSoloDatiIdentificativiServizio(IExpression expr) {
-		ExpressionUtils.enable(expr, PROP_NAME_SOLO_DATI_IDENTIFICATIVI_SERVIZIO);
+public class ExpressionUtils
+{
+	public static void enable(IExpression expr, String p) {
+		expr.addProperty(p, true);
 	}
-	public static boolean isEnabledSoloDatiIdentificativiServizio(IExpression expr) {
-		return ExpressionUtils.isEnabled(expr, PROP_NAME_SOLO_DATI_IDENTIFICATIVI_SERVIZIO);
+	public static boolean isEnabled(IExpression expr, String p) {
+		Object o = expr.getProperty(p);
+		if(o!=null && o instanceof Boolean) {
+			return (boolean) o;
+		}
+		return false;
 	}
-	
 }

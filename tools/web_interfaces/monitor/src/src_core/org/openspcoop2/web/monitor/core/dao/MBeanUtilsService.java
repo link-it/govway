@@ -22,10 +22,14 @@ package org.openspcoop2.web.monitor.core.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.Resource;
+import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IResourceServiceSearch;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
+import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -77,7 +81,44 @@ public class MBeanUtilsService {
 
 	// **** METODI USATI IN XXXBean ****
 
-	
+	public int getTipoApiFromCache(IDAccordo idAccordo) throws Exception{
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey(idAccordo);
+			String methodName = "getTipoApi";
+			try {
+				return (Integer) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName, 
+						new Class<?>[] {IDAccordo.class},
+						idAccordo);
+			}catch(Throwable e) {
+				this.log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return -1;
+			}
+		}
+		else {
+			return this.getTipoApi(idAccordo);
+		}
+	}
+	public int getTipoApi(IDAccordo idAccordo) throws Exception{
+		IAccordoServizioParteComuneServiceSearch apcServiceSearch = this.service.getAccordoServizioParteComuneServiceSearch();
+		IPaginatedExpression pagExpr = apcServiceSearch.newPaginatedExpression();
+		pagExpr.and().
+		equals(AccordoServizioParteComune.model().NOME, idAccordo.getNome()).
+		equals(AccordoServizioParteComune.model().VERSIONE, idAccordo.getVersione()).
+		equals(AccordoServizioParteComune.model().ID_REFERENTE.TIPO, idAccordo.getSoggettoReferente().getTipo()).
+		equals(AccordoServizioParteComune.model().ID_REFERENTE.NOME, idAccordo.getSoggettoReferente().getNome());
+		List<Object> l = this.service.getAccordoServizioParteComuneServiceSearch().select(pagExpr, AccordoServizioParteComune.model().SERVICE_BINDING);
+		if(l!=null && !l.isEmpty()) {
+			String sb = (String) l.get(0);
+			ServiceBinding serviceBinding = ServiceBinding.toEnumConstant(sb);
+			switch (serviceBinding) {
+			case REST:
+				return TipoAPI.REST.getValoreAsInt();
+			case SOAP:
+				return TipoAPI.SOAP.getValoreAsInt();
+			}
+		}
+		return -1;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Map<String,Object>> getInfoOperazioneFromCache(String op, IDAccordo idAccordo) throws Exception{

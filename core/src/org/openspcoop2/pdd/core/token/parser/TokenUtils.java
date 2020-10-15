@@ -46,7 +46,7 @@ public class TokenUtils {
 				lMs = expIn.longValueExact();
 			}catch(ArithmeticException ae) {
 				lMs = Long.MAX_VALUE;
-				expIn = new BigInteger(lMs+"");
+				expIn = BigInteger.valueOf(lMs);
 			}
 			
 			if(lMs>0) {
@@ -56,7 +56,7 @@ public class TokenUtils {
 					lMs = expIn.longValueExact();
 				}catch(ArithmeticException ae) {
 					lMs = Long.MAX_VALUE;
-					expIn = new BigInteger(lMs+"");
+					expIn = BigInteger.valueOf(lMs);
 				}
 								
 				return new Date(lMs);
@@ -76,7 +76,7 @@ public class TokenUtils {
 				lMs = date.longValueExact();
 			}catch(ArithmeticException ae) {
 				lMs = Long.MAX_VALUE;
-				date = new BigInteger(lMs+"");
+				date = BigInteger.valueOf(lMs);
 			}
 			if(lMs>0) {
 				return new Date(lMs);

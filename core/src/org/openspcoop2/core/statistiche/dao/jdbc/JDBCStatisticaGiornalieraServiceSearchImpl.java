@@ -29,6 +29,7 @@ import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
 import org.openspcoop2.core.statistiche.dao.jdbc.converter.StatisticaGiornalieraFieldConverter;
 import org.openspcoop2.core.statistiche.dao.jdbc.fetch.StatisticaGiornalieraFetch;
 import org.openspcoop2.core.statistiche.utils.AliasTableRicerchePersonalizzate;
+import org.openspcoop2.core.statistiche.utils.StatisticheIndexUtils;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IField;
@@ -106,16 +107,59 @@ public class JDBCStatisticaGiornalieraServiceSearchImpl implements IJDBCServiceS
 
         List<StatisticaGiornaliera> list = new ArrayList<StatisticaGiornaliera>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
-		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
-		// 2. Usare metodo getStatisticaGiornalieraFetch() sul risultato della select per ottenere un oggetto StatisticaGiornaliera
-		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
-
-        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+        boolean soloColonneIndicizzateFullIndex = StatisticheIndexUtils.isEnabledSoloColonneIndicizzateFullIndex(expression); 
         
-        for(Long id: ids) {
-        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+        if(soloColonneIndicizzateFullIndex) {
+        	List<IField> fields = StatisticheIndexUtils.LISTA_COLONNE_INDEX_STAT_GIORNALIERA;
+        	List<Map<String, Object>> returnMap = null;
+    		try{
+    			 // Il distinct serve solo se ci sono le ricerche con contenuto.
+    	        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
+    	        boolean distinct = false;
+    	        ISQLQueryObject sqlQueryObjectCheckJoin = sqlQueryObject.newSQLQueryObject();
+    	        _join(expression, sqlQueryObjectCheckJoin);
+    	        distinct = ((SQLQueryObjectCore)sqlQueryObjectCheckJoin).sizeConditions()>0;
+    	        
+    	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
+    	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
+    	        if(distinct) {
+    	        	//System.out.println("NON EFFICENTE");
+    	        	
+    	        	List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+    		        
+    		        for(Long id: ids) {
+    		        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+    		        }
+    	        	
+    	        }
+    	        else {
+    	        
+    	        	//System.out.println("EFFICENTE");
+    	        	
+		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
+		
+		    		for(Map<String, Object> map: returnMap) {
+		    			list.add((StatisticaGiornaliera)this.getStatisticaGiornalieraFetch().fetch(jdbcProperties.getDatabase(), StatisticaGiornaliera.model(), map));
+		    		}
+		    		
+    	        }
+		    		
+    		}catch(NotFoundException notFound){}
+        }
+        else {
+        
+	        // TODO: implementazione non efficente. 
+			// Per ottenere una implementazione efficente:
+			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
+			// 2. Usare metodo getStatisticaGiornalieraFetch() sul risultato della select per ottenere un oggetto StatisticaGiornaliera
+			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
+	
+	        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+	        
+	        for(Long id: ids) {
+	        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+	        }
+	        
         }
 
         return list;      

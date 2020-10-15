@@ -20,41 +20,38 @@
 
 package org.openspcoop2.core.transazioni.dao.jdbc;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-
-import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.core.transazioni.CredenzialeMittente;
+import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
+import org.openspcoop2.core.transazioni.dao.jdbc.converter.CredenzialeMittenteFieldConverter;
+import org.openspcoop2.core.transazioni.dao.jdbc.fetch.CredenzialeMittenteFetch;
+import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
-import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
-import org.openspcoop2.generic_project.utils.UtilsTemplate;
-import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.beans.Union;
-import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
-import org.openspcoop2.core.transazioni.dao.jdbc.converter.CredenzialeMittenteFieldConverter;
-import org.openspcoop2.core.transazioni.dao.jdbc.fetch.CredenzialeMittenteFetch;
-import org.openspcoop2.core.transazioni.CredenzialeMittente;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLQueryObjectCore;
+import org.slf4j.Logger;
 
 /**     
  * JDBCCredenzialeMittenteServiceSearchImpl
@@ -130,19 +127,73 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 
 		List<IdCredenzialeMittente> list = new ArrayList<IdCredenzialeMittente>();
 
-		// TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
-		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
-		// 2. Usare metodo getCredenzialeMittenteFetch() sul risultato della select per ottenere un oggetto CredenzialeMittente
-		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
-		// 3. Usare metodo convertToId per ottenere l'id
-
-        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+		boolean efficente = true;
+	        
+        if(efficente) {
         
-        for(Long id: ids) {
-        	CredenzialeMittente credenzialeMittente = this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour);
-			IdCredenzialeMittente idCredenzialeMittente = this.convertToId(jdbcProperties,log,connection,sqlQueryObject,credenzialeMittente);
-        	list.add(idCredenzialeMittente);
+        	List<IField> fields = new ArrayList<IField>();
+        	fields.add(CredenzialeMittente.model().TIPO);
+        	fields.add(CredenzialeMittente.model().CREDENZIALE);
+        	fields.add(CredenzialeMittente.model().ORA_REGISTRAZIONE);
+        	fields.add(new CustomField("id", Long.class, "id", this.getCredenzialeMittenteFieldConverter().toTable(CredenzialeMittente.model())));
+        	
+        	List<Map<String, Object>> returnMap = null;
+    		try{
+    			 // Il distinct serve solo se ci sono le ricerche con contenuto.
+    	        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
+    	        boolean distinct = false;
+    	        ISQLQueryObject sqlQueryObjectCheckJoin = sqlQueryObject.newSQLQueryObject();
+    	        _join(expression, sqlQueryObjectCheckJoin);
+    	        distinct = ((SQLQueryObjectCore)sqlQueryObjectCheckJoin).sizeConditions()>0;
+    	        
+    	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
+    	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
+    	        if(distinct) {
+    	        	//System.out.println("NON EFFICENTE");
+    	        	
+    		        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+    		        
+    		        for(Long id: ids) {
+    		        	CredenzialeMittente credenzialeMittente = this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour);
+    					IdCredenzialeMittente idCredenzialeMittente = this.convertToId(jdbcProperties,log,connection,sqlQueryObject,credenzialeMittente);
+    		        	list.add(idCredenzialeMittente);
+    		        }
+    	        	
+    	        }
+    	        else {
+    	        
+    	        	//System.out.println("EFFICENTE");
+    	        	
+		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
+		
+		    		for(Map<String, Object> map: returnMap) {
+		    			CredenzialeMittente credenzialeMittente = (CredenzialeMittente)this.getCredenzialeMittenteFetch().fetch(jdbcProperties.getDatabase(), CredenzialeMittente.model(), map);
+		    			IdCredenzialeMittente idCredenzialeMittente = this.convertToId(jdbcProperties,log,connection,sqlQueryObject,credenzialeMittente);
+    		        	list.add(idCredenzialeMittente);
+		    		}
+		    		
+    	        }
+		    		
+    		}catch(NotFoundException notFound){}
+        	
+        }
+        else {
+		
+			// TODO: implementazione non efficente. 
+			// Per ottenere una implementazione efficente:
+			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari a create l'ID logico
+			// 2. Usare metodo getCredenzialeMittenteFetch() sul risultato della select per ottenere un oggetto CredenzialeMittente
+			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
+			// 3. Usare metodo convertToId per ottenere l'id
+	
+	        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+	        
+	        for(Long id: ids) {
+	        	CredenzialeMittente credenzialeMittente = this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour);
+				IdCredenzialeMittente idCredenzialeMittente = this.convertToId(jdbcProperties,log,connection,sqlQueryObject,credenzialeMittente);
+	        	list.add(idCredenzialeMittente);
+	        }
+	        
         }
 
         return list;
@@ -154,16 +205,64 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 
         List<CredenzialeMittente> list = new ArrayList<CredenzialeMittente>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
-		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
-		// 2. Usare metodo getCredenzialeMittenteFetch() sul risultato della select per ottenere un oggetto CredenzialeMittente
-		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
-
-        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+        boolean efficente = true;
         
-        for(Long id: ids) {
-        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+        if(efficente) {
+        
+        	List<IField> fields = new ArrayList<IField>();
+        	fields.add(CredenzialeMittente.model().TIPO);
+        	fields.add(CredenzialeMittente.model().CREDENZIALE);
+        	fields.add(CredenzialeMittente.model().ORA_REGISTRAZIONE);
+        	fields.add(new CustomField("id", Long.class, "id", this.getCredenzialeMittenteFieldConverter().toTable(CredenzialeMittente.model())));
+        	
+        	List<Map<String, Object>> returnMap = null;
+    		try{
+    			 // Il distinct serve solo se ci sono le ricerche con contenuto.
+    	        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
+    	        boolean distinct = false;
+    	        ISQLQueryObject sqlQueryObjectCheckJoin = sqlQueryObject.newSQLQueryObject();
+    	        _join(expression, sqlQueryObjectCheckJoin);
+    	        distinct = ((SQLQueryObjectCore)sqlQueryObjectCheckJoin).sizeConditions()>0;
+    	        
+    	        // BUG FIX: Siccome tra le colonne lette ci sono dei CLOB, in oracle non e' consentito utilizzare il DISTINCT.
+    	        // Per questo motivo se c'e' da usare il distinct viene utilizzato il vecchio metodo
+    	        if(distinct) {
+    	        	//System.out.println("NON EFFICENTE");
+    	        	
+    	        	List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+    		        
+    		        for(Long id: ids) {
+    		        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+    		        }
+    	        	
+    	        }
+    	        else {
+    	        
+    	        	//System.out.println("EFFICENTE");
+    	        	
+		    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
+		
+		    		for(Map<String, Object> map: returnMap) {
+		    			list.add((CredenzialeMittente)this.getCredenzialeMittenteFetch().fetch(jdbcProperties.getDatabase(), CredenzialeMittente.model(), map));
+		    		}
+		    		
+    	        }
+		    		
+    		}catch(NotFoundException notFound){}
+        	
+        }
+        else {
+	        // TODO: implementazione non efficente. 
+			// Per ottenere una implementazione efficente:
+			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
+			// 2. Usare metodo getCredenzialeMittenteFetch() sul risultato della select per ottenere un oggetto CredenzialeMittente
+			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
+	
+	        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+	        
+	        for(Long id: ids) {
+	        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+	        }
         }
 
         return list;      
@@ -174,12 +273,31 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 	public CredenzialeMittente find(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) 
 		throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
 
-        long id = this.findTableId(jdbcProperties, log, connection, sqlQueryObject, expression);
-        if(id>0){
-        	return this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour);
-        }else{
-        	throw new NotFoundException("Entry with id["+id+"] not found");
-        }
+		boolean efficente = true;
+		
+		if(efficente) {
+			JDBCPaginatedExpression pagExpr = this.toPaginatedExpression(expression, log);
+			pagExpr.limit(2);// dovrebbe esisterne uno solo
+			List<CredenzialeMittente>  list = this.findAll(jdbcProperties, log, connection, sqlQueryObject, pagExpr, idMappingResolutionBehaviour);
+			if(list==null || list.isEmpty()) {
+				throw new NotFoundException("Ricerca non ha trovato entries");
+			}
+			else if(list.size()>1) {
+				throw new NotFoundException("Ricerca ha trovato più entries");
+			}
+			else {
+				return list.get(0);
+			}
+		}
+		else {
+		
+			long id = this.findTableId(jdbcProperties, log, connection, sqlQueryObject, expression);
+			if(id>0){
+				return this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour);
+			}else{
+				throw new NotFoundException("Entry with id["+id+"] not found");
+			}
+		}
 		
 	}
 	

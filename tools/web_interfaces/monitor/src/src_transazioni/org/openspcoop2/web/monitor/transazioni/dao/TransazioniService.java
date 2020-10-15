@@ -48,6 +48,7 @@ import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.core.transazioni.model.TransazioneModel;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.core.transazioni.utils.TransazioniIndexUtils;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchApi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
@@ -162,6 +163,8 @@ public class TransazioniService implements ITransazioniService {
 	private SearchServiceLibraryReader searchServiceLibraryReader = null;
 	
 	private Integer liveUltimiGiorni = null;
+	
+	private boolean isAttivoSqlFilterTransazioniIntegrationManager = true;
 	
 	private List<Index> forceIndexAndamentoTemporaleFindAll;
 	private List<Index> forceIndexAndamentoTemporaleCount;
@@ -326,6 +329,8 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
+			this.isAttivoSqlFilterTransazioniIntegrationManager = monitorProperties.isAttivoSqlFilterTransazioniIntegrationManager();
+			
 			this.initForceIndex(monitorProperties);
 			
 		} catch (Exception e) {
@@ -393,6 +398,8 @@ public class TransazioniService implements ITransazioniService {
 				}
 				
 			}
+			
+			this.isAttivoSqlFilterTransazioniIntegrationManager = monitorProperties.isAttivoSqlFilterTransazioniIntegrationManager();
 			
 			this.initForceIndex(monitorProperties);
 			
@@ -490,6 +497,8 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
+			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
+			
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
@@ -497,7 +506,11 @@ public class TransazioniService implements ITransazioniService {
 					
 					// Integrazione dei dati delle credenziali
 					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteUriApi(bean, transazione);
+					bean.normalizeTipoApiInfo(this.utilsServiceManager, this.log);
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
 					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
 					
 					listaBean.add(bean);
@@ -536,6 +549,8 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
+			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
+			
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
@@ -543,6 +558,9 @@ public class TransazioniService implements ITransazioniService {
 					
 					// Integrazione dei dati delle credenziali
 					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteUriApi(bean, transazione);
+					bean.normalizeTipoApiInfo(this.utilsServiceManager, this.log);
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
 					
 					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
@@ -643,6 +661,8 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
+			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
+			
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
@@ -650,6 +670,9 @@ public class TransazioniService implements ITransazioniService {
 					
 					// Integrazione dei dati delle credenziali
 					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteUriApi(bean, transazione);
+					bean.normalizeTipoApiInfo(this.utilsServiceManager, this.log);
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
 					
 					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
@@ -707,6 +730,8 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
+			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
+			
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 
 			if(list!= null && list.size() > 0)
@@ -715,7 +740,12 @@ public class TransazioniService implements ITransazioniService {
 					
 					// Integrazione dei dati delle credenziali
 					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteUriApi(bean, transazione);
+					bean.normalizeTipoApiInfo(this.utilsServiceManager, this.log);
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
 					
 					listaBean.add(bean);
 				}
@@ -840,6 +870,9 @@ public class TransazioniService implements ITransazioniService {
 			
 			// Integrazione dei dati delle credenziali
 			this.normalizeInfoTransazioniFromCredenzialiMittente(transazioneBean, t);
+			
+			this.normalizeInfoTransazioniFromCredenzialiMittenteUriApi(transazioneBean, t);
+			transazioneBean.normalizeTipoApiInfo(this.utilsServiceManager, this.log);
 			transazioneBean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
 						
 			return transazioneBean; 
@@ -1036,6 +1069,32 @@ public class TransazioniService implements ITransazioniService {
 			} catch(NotFoundException e) {
 				// informazione non piu disponibile
 				transazioneBean.setGruppiLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+			}
+		}
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteUriApi(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+		
+		if(transazioneBean.getUriAccordoServizio()==null || "".equals(transazioneBean.getUriAccordoServizio())) {
+			// UriApi
+			String uriApi = t instanceof TransazioneBean ? ((TransazioneBean)t).getUriApi() : t.getUriApi();
+			if(StringUtils.isNotEmpty(uriApi)) {
+				try {
+					MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+					CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(uriApi));
+					String valore = credenzialeMittente.getCredenziale();
+					transazioneBean.setUriAccordoServizio(valore);				
+				} catch(NumberFormatException e) {
+					// informazione non valida
+					transazioneBean.setUriAccordoServizio(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				} catch(NotFoundException e) {
+					// informazione non piu disponibile
+					transazioneBean.setUriAccordoServizio(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				} catch(Exception e) {
+					this.log.error("Parsing uri api failed: "+e.getMessage(),e);
+					// informazione non valida ?
+					transazioneBean.setUriAccordoServizio(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				}
 			}
 		}
 	}
@@ -2640,8 +2699,9 @@ public class TransazioniService implements ITransazioniService {
 				// devo prendere tutte le transazioni che sono diverse da
 				// integration manager
 				// sb.append(" AND t.tipoPorta <> 'integration_manager' ");
-
-				filter.notEquals(Transazione.model().PDD_RUOLO,	PddRuolo.INTEGRATION_MANAGER);
+				if(this.isAttivoSqlFilterTransazioniIntegrationManager) {
+					filter.notEquals(Transazione.model().PDD_RUOLO,	PddRuolo.INTEGRATION_MANAGER);
+				}
 			} else if (TipologiaRicerca.ingresso.equals(this.searchForm.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				// sb.append(" AND t.tipoPorta = 'applicativa' ");
@@ -3141,9 +3201,9 @@ public class TransazioniService implements ITransazioniService {
 							allList.addAll(listaCredenzialiMittentePrincipal);
 						}
 						
-						if(allList!=null && allList.size()>0) {
-							addListaCredenzialiMittente(filter, allList, Transazione.model());
-						}
+						//if(allList!=null && allList.size()>0) { fix: va chiamato per generare l'id_transazione=-1
+						addListaCredenzialiMittente(filter, allList, Transazione.model());
+						//}
 						
 					}catch(Exception e) {
 						throw new ServiceException(e.getMessage(),e);

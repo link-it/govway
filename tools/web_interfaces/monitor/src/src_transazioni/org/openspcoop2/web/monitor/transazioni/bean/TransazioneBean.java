@@ -551,6 +551,37 @@ public class TransazioneBean extends Transazione{
 		}
 	}
 	
+	public void normalizeTipoApiInfo(org.openspcoop2.core.commons.search.dao.IServiceManager service, Logger log) {
+		
+		if(TipoAPI.REST.getValoreAsInt() != this.getTipoApi() && TipoAPI.SOAP.getValoreAsInt() != this.getTipoApi()) {
+			
+			String uriAPI = this.getUriAccordoServizio();
+			try {
+			
+				if(StringUtils.isNotEmpty(uriAPI)) {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAPI);
+					IdAccordoServizioParteComune idAPI = new IdAccordoServizioParteComune();
+					idAPI.setIdSoggetto(new IdSoggetto());
+					idAPI.getIdSoggetto().setTipo(idAccordo.getSoggettoReferente().getTipo());
+					idAPI.getIdSoggetto().setNome(idAccordo.getSoggettoReferente().getNome());
+					idAPI.setVersione(idAccordo.getVersione());
+					idAPI.setNome(idAccordo.getNome());
+					
+					MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(service, log);
+					int tipo = mBeanUtilsService.getTipoApiFromCache(idAccordo);
+					this.setTipoApi(tipo);
+				}
+				
+			}catch(Exception e) {
+				// L'API puo non esistere piu se e' stata eliminata; non loggare come error
+				log.info("Normalizzazione tipo di api '"+uriAPI+"' non riuscita: "+e.getMessage(),e);
+			}
+			
+		}
+		
+		this.operazioneLabel = getAzione();
+	}
+	
 	public String getTipoApiLabel() {
 		if(TipoAPI.REST.getValoreAsInt() == this.getTipoApi()) {
 			return "Rest";
@@ -794,7 +825,7 @@ public class TransazioneBean extends Transazione{
 		
 		return bf.toString();
 	}
-	
+		
 	public java.lang.String getTipoOperazioneLabel() {
 		if(TipoAPI.REST.getValoreAsInt() == this.getTipoApi()) {
 			return "Risorsa";

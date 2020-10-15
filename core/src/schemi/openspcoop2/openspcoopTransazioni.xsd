@@ -244,6 +244,7 @@
 							<linkit:sql-table-index-field name="nome-soggetto-erogatore"/>
 							<linkit:sql-table-index-field name="tipo-servizio"/>
 							<linkit:sql-table-index-field name="nome-servizio"/>
+							<linkit:sql-table-index-field name="versione-servizio"/>
 							<linkit:sql-table-index-field name="azione"/>
 							<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
 							<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
@@ -256,7 +257,10 @@
 							<linkit:sql-table-index-field name="token-mail"/>
 							<linkit:sql-table-index-field name="id-correlazione-applicativa"/>
 							<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
-							<linkit:sql-table-index-field name="stato"/>
+							<!-- Elimino lo stato altrimenti raggiungiamo i 32 caratteri massimi
+				    			Tanto non viene usato
+				    			<linkit:sql-table-index-field name="stato"/> 
+				    		-->
 							<linkit:sql-table-index-field name="protocollo"/>
 							<linkit:sql-table-index-field name="client-address"/>
 							<linkit:sql-table-index-field name="gruppi"/>
@@ -274,6 +278,7 @@
 				    		<linkit:sql-table-index-field name="nome-soggetto-erogatore"/>
 				    		<linkit:sql-table-index-field name="tipo-servizio"/>
 				    		<linkit:sql-table-index-field name="nome-servizio"/>
+				    		<linkit:sql-table-index-field name="versione-servizio"/>
 				    		<linkit:sql-table-index-field name="azione"/>
 				    		<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
 				    		<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
@@ -286,7 +291,10 @@
 				    		<linkit:sql-table-index-field name="token-mail"/>
 				    		<linkit:sql-table-index-field name="id-correlazione-applicativa"/>
 				    		<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
-				    		<linkit:sql-table-index-field name="stato"/>
+				    		<!-- Elimino lo stato altrimenti raggiungiamo i 32 caratteri massimi
+				    			Tanto non viene usato
+				    			<linkit:sql-table-index-field name="stato"/> 
+				    		-->
 				    		<linkit:sql-table-index-field name="protocollo"/>
 				    		<linkit:sql-table-index-field name="client-address"/>
 				    		<linkit:sql-table-index-field name="gruppi"/>
@@ -308,6 +316,7 @@
 				    		<linkit:sql-table-index-field name="nome-soggetto-erogatore"/>
 				    		<linkit:sql-table-index-field name="tipo-servizio"/>
 				    		<linkit:sql-table-index-field name="nome-servizio"/>
+				    		<linkit:sql-table-index-field name="versione-servizio"/>
 				    		<linkit:sql-table-index-field name="azione"/>
 				    		<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
 				    		<linkit:sql-table-index-field name="trasporto-mittente"/>
@@ -318,7 +327,10 @@
 				    		<linkit:sql-table-index-field name="token-mail"/>
 				    		<linkit:sql-table-index-field name="esito"/>
 				    		<linkit:sql-table-index-field name="esito-contesto"/>
-				    		<linkit:sql-table-index-field name="stato"/>
+				    		<!-- Elimino lo stato altrimenti raggiungiamo i 32 caratteri massimi
+				    			Tanto non viene usato
+				    			<linkit:sql-table-index-field name="stato"/> 
+				    		-->
 				    		<linkit:sql-table-index-field name="client-address"/>
 				    		<linkit:sql-table-index-field name="gruppi"/>
 				    		<linkit:sql-table-index-field name="uri-api"/>

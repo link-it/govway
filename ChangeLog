@@ -1,5 +1,15 @@
 2020-10-15  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayMonitor]
+	Risolto Bug OP-1079
+	L'indici 'full INDEX_TR_SEARCH', generato dall'installer in modalità avanzata per i database di tipo postgresql e oracle, 
+	non venivano utilizzati dal db per soddisfare le query prodotte tramite la console di monitoraggio durante la ricerca nello storico a causa dei seguenti problemi:
+	- la colonna 'versione_servizio' non era presente nell'indice ma veniva utilizzata sia per la ricerca di una API Implementata che per la visualizzazione delle informazioni relative ad una singola transazione
+	- nella comando SELECT venivano aggiunte ulteriori colonne non presenti nell'indice che non avevano però alcuna utilità durante la presentazione dei risultati in lista.
+	La problematica è stata risolta aggiungendo la colonna 'versione_servizio' all'indice e eliminando dal comando di SELECT le altre colonne inutilizzate.
+
+2020-10-15  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug OP-1077
 	(https://github.com/link-it/govway/issues/70)
