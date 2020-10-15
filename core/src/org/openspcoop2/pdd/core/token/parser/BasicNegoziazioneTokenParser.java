@@ -158,12 +158,8 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 			
 			// The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
 			// expire in one hour from the time the response was generated.
-			
-			long l = Long.valueOf(tmp);
-			if(l>0) {
-				l = l * 1000;
-				return new Date(this.now.getTime()+l);
-			}
+			return TokenUtils.convertLifeTimeInSeconds(this.now, tmp);
+
 		}
 		return null;
 	}

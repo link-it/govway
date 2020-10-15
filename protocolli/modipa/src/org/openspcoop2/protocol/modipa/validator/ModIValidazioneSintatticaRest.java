@@ -34,6 +34,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.token.parser.Claims;
+import org.openspcoop2.pdd.core.token.parser.TokenUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
@@ -808,13 +809,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			tmpV = toString(tmp);
 		}
 		
-		long l = Long.valueOf(tmpV);
-		if(l>0) {
-			l = l * 1000;
-			return new Date(l);
+		Date d = TokenUtils.parseTimeInSecond(tmpV);
+		if(d!=null) {
+			return d;
 		}
 		
-		throw new Exception("Value '"+l+"' not valid");
+		throw new Exception("Value '"+tmpV+"' not valid");
 	}
 	
 	private String toString(Object tmp) throws Exception {

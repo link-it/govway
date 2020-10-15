@@ -1,4 +1,12 @@
-2020-10-13  Andrea Poli <apoli@link.it>
+2020-10-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1077
+	(https://github.com/link-it/govway/issues/70)
+	Nella funzionalità di negoziazione dei token, in presenza di un token con expires_in = 9223372036854775 (sarebbe il Long.MAX_VALUE portato ai secondi), il sistema segnalava erroneamente il token come scaduto.
+	Invece da specifiche tale valore dovrebbe indicare un tempo "infinito".
+
+2020-10-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
 	Risolto Bug OP-1075
