@@ -244,11 +244,7 @@ public class BasicTokenParser implements ITokenParser {
 			return null;
 		}
 		if(tmp!=null) {
-			long l = Long.valueOf(tmp);
-			if(l>0) {
-				l = l * 1000;
-				return new Date(l);
-			}
+			return TokenUtils.parseTimeInSecond(tmp);
 		}
 		return null;
 	}
@@ -273,11 +269,7 @@ public class BasicTokenParser implements ITokenParser {
 			return null;
 		}
 		if(tmp!=null) {
-			long l = Long.valueOf(tmp);
-			if(l>0) {
-				l = l * 1000;
-				return new Date(l);
-			}
+			return TokenUtils.parseTimeInSecond(tmp);
 		}
 		return null;
 	}
@@ -299,11 +291,7 @@ public class BasicTokenParser implements ITokenParser {
 			return null;
 		}
 		if(tmp!=null) {
-			long l = Long.valueOf(tmp);
-			if(l>0) {
-				l = l * 1000;
-				return new Date(l);
-			}
+			return TokenUtils.parseTimeInSecond(tmp);
 		}
 		return null;
 	}
