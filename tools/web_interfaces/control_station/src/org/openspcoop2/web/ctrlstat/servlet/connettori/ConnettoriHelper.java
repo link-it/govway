@@ -3476,7 +3476,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(this.checkLength255(url, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL)==false) {
 						return false;
 					}
-					if(this.isProfiloModIPA(protocollo) && !servizioApplicativo) {
+					if(this.isProfiloModIPA(protocollo) && !servizioApplicativo && this.connettoriCore.isModipaFruizioniConnettoreCheckHttps()) {
 						if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
 							this.pd.setMessage("Il profilo richiede una url con prefisso https://");
 							return false;
@@ -3563,7 +3563,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}
 					
 					if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
-						if(this.isProfiloModIPA(protocollo)) {
+						if(this.isProfiloModIPA(protocollo) && this.connettoriCore.isModipaFruizioniConnettoreCheckHttps()) {
 							this.pd.setMessage("Il profilo richiede una url con prefisso https://");
 							return false;
 						}

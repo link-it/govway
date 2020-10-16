@@ -855,10 +855,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //			}
 //			boolean connettoreOnly = gestioneFruitori;
 			
+			String tmpModificaProfilo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+			boolean modificaProfilo = false;
+			if(tmpModificaProfilo!=null) {
+				modificaProfilo = "true".equals(tmpModificaProfilo);
+			}
+			
 			// Se il connettore e' disabilitato devo controllare che il
 			// connettore del soggetto non sia disabilitato se è di tipo operativo
 			//if (this.isModalitaAvanzata() || connettoreOnly) {
-			if (this.isModalitaAvanzata() || TipoOperazione.CHANGE.equals(tipoOp)) {
+			if ( !modificaProfilo && (this.isModalitaAvanzata() || TipoOperazione.CHANGE.equals(tipoOp)) ) {
 				if (endpointtype.equals(TipiConnettore.DISABILITATO.getNome())) {
 					String eptypeprov = TipiConnettore.DISABILITATO.getNome();
 	

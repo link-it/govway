@@ -861,6 +861,12 @@ public class ControlStationCore {
 		return this.consegnaNotificaConfigurazionePriorita.get(nome);
 	}
 	
+	/** ModI PA */
+	private boolean isModipaFruizioniConnettoreCheckHttps;
+	public boolean isModipaFruizioniConnettoreCheckHttps() {
+		return this.isModipaFruizioniConnettoreCheckHttps;
+	}
+
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -2314,6 +2320,9 @@ public class ControlStationCore {
 		this.consegnaNotificaPriorita = core.consegnaNotificaPriorita;
 		this.consegnaNotificaConfigurazionePriorita = core.consegnaNotificaConfigurazionePriorita;
 		
+		/** ModI PA */
+		this.isModipaFruizioniConnettoreCheckHttps = core.isModipaFruizioniConnettoreCheckHttps;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -2673,6 +2682,7 @@ public class ControlStationCore {
 			for (String priorita : this.consegnaNotificaPriorita) {
 				this.consegnaNotificaConfigurazionePriorita.put(priorita, consoleProperties.getConsegnaNotificaConfigurazionePriorita(priorita));
 			}
+			this.isModipaFruizioniConnettoreCheckHttps = consoleProperties.isModipaFruizioniConnettoreCheckHttps();
 
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

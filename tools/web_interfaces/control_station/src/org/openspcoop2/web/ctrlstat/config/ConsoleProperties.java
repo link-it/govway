@@ -423,6 +423,9 @@ public class ConsoleProperties {
 		return new ConfigurazionePriorita(nome, p);
 	}
 	
+	public boolean isModipaFruizioniConnettoreCheckHttps() throws UtilsException{
+		return this.readBooleanProperty(true, "modipa.fruizioni.connettore.checkHttps");
+	}
 	
 	
 	/* ----- Gestione Password ------- */
