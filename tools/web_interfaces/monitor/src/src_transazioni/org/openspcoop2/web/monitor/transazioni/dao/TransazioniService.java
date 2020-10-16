@@ -50,6 +50,7 @@ import org.openspcoop2.core.transazioni.model.TransazioneModel;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.TransazioniIndexUtils;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchApi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchEvento;
@@ -895,6 +896,30 @@ public class TransazioniService implements ITransazioniService {
 		normalizeInfoTransazioniFromCredenzialiMittenteEventi(transazioneBean, t);
 		
 		normalizeInfoTransazioniFromCredenzialiMittenteGruppi(transazioneBean, t);
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteClientAddress(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+		
+		// Trasporto Mittente
+		String clientAddress = t.getClientAddress();
+		if(StringUtils.isNotEmpty(clientAddress)) {
+			try {
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(clientAddress));
+				String credenziale = credenzialeMittente.getCredenziale();
+				String socket = CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale);
+				String transport = CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale);
+				transazioneBean.setSocketClientAddressLabel(socket);
+				transazioneBean.setTransportClientAddressLabel(transport);
+			} catch(NumberFormatException e) {
+				// informazione non valida
+				transazioneBean.setTrasportoMittenteLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+			} catch(NotFoundException e) {
+				// informazione non piu disponibile
+				transazioneBean.setTrasportoMittenteLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+			}
+		}
+		
 	}
 	
 	public void normalizeInfoTransazioniFromCredenzialiMittenteTrasporto(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {

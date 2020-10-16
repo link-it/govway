@@ -254,7 +254,18 @@ public class Converter {
 				((TransazioneExt)transazione).setRuolo(ruoloTraccia);
 			}
 			if(this.emittente) {
-				((TransazioneExt)transazione).setEmittente(transazioneDB.getPddNomeSoggetto());
+				if(transazioneDB.getPddNomeSoggetto()!=null) { // liste con dati dell'indice e basta, non c'è questo campo
+					((TransazioneExt)transazione).setEmittente(transazioneDB.getPddNomeSoggetto());
+				}
+				else if(PddRuolo.APPLICATIVA.equals(transazioneDB.getPddRuolo()) && transazioneDB.getNomeSoggettoErogatore()!=null) {
+					((TransazioneExt)transazione).setEmittente(transazioneDB.getNomeSoggettoErogatore());
+				}
+				else if(PddRuolo.DELEGATA.equals(transazioneDB.getPddRuolo()) && transazioneDB.getNomeSoggettoFruitore()!=null) {
+					((TransazioneExt)transazione).setEmittente(transazioneDB.getNomeSoggettoFruitore());
+				}
+				else {
+					((TransazioneExt)transazione).setEmittente(transazioneDB.getPddCodice());
+				}
 			}
 			if(this.profilo) {
 				ProfiloEnum profilo = ProfiloEnum.APIGATEWAY;
@@ -283,7 +294,19 @@ public class Converter {
 				((TransazioneExt)transazione).setIdCluster(transazioneDB.getClusterId());
 			}
 			if(this.emittenteExtraInfo) {
-				((TransazioneExt)transazione).setInformazioniEmittente(_newTransazioneSoggetto(transazioneDB.getPddTipoSoggetto(), transazioneDB.getPddCodice(), null));
+				String tipoEmittente = transazioneDB.getPddTipoSoggetto(); // liste con dati dell'indice e basta, non c'è questo campo
+				if(tipoEmittente==null) {
+					if(PddRuolo.APPLICATIVA.equals(transazioneDB.getPddRuolo()) && transazioneDB.getTipoSoggettoErogatore()!=null) {
+						tipoEmittente = transazioneDB.getTipoSoggettoErogatore();
+					}
+					else if(PddRuolo.DELEGATA.equals(transazioneDB.getPddRuolo()) && transazioneDB.getTipoSoggettoFruitore()!=null) {
+						tipoEmittente = transazioneDB.getTipoSoggettoFruitore();
+					}
+					else {
+						tipoEmittente = protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault();
+					}
+				}
+				((TransazioneExt)transazione).setInformazioniEmittente(_newTransazioneSoggetto(tipoEmittente, transazioneDB.getPddCodice(), null));
 			}
 			if(this.stato) {
 				((TransazioneExt)transazione).setStato(transazioneDB.getStato());

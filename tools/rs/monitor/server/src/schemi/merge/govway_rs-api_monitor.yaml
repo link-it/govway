@@ -2649,7 +2649,6 @@ components:
     TransazioneDettaglioRichiestaDatiTrasporto:
       required:
       - "data_ricezione"
-      - "tipo"
       type: "object"
       properties:
         data_ricezione:
@@ -2666,7 +2665,6 @@ components:
     TransazioneDettaglioRispostaDatiTrasporto:
       required:
       - "data_consegna"
-      - "esito_consegna"
       type: "object"
       properties:
         data_ricezione:

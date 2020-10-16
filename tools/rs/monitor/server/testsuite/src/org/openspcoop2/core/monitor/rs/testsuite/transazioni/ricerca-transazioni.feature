@@ -377,23 +377,26 @@ Scenario: Ricerca per Esito Erroneo
     * def filtro = read('classpath:bodies/ricerca-filtro-esito-error.json')
     * eval filtro.intervallo_temporale = intervallo_temporale
 
-    * def expected_risposta = { esito_consegna: '401' }
-    * def expected_risposta_validazione_attiva = { esito_consegna: '400' }
-    * def expected_or = function(x) { return x == '401' || x == '400' }
+    * def expected_risposta = { codice: '16', descrizione: 'Autenticazione Fallita' }
+    * def expected_risposta_validazione_attiva = { codice: '31', descrizione: 'Validazione Richiesta Fallita' }
+    * def expected_or = function(x) { return x == '16' || x == '31' }
+    * def expected_descr_or = function(x) { return x == 'Autenticazione Fallita' || x == 'Validazione Richiesta Fallita' }
 
     # Controllo che le richieste con esito error siano proprio quelle non autorizzate fatte nei test
     Given request filtro
     When method post
     Then status 200
     And assert response.items.length > 0
-    And match each response.items[*].risposta contains { esito_consegna: '#? expected_or(_)' }
+    And match each response.items[*].esito contains { codice: '#? expected_or(_)' }
+    And match each response.items[*].esito contains { descrizione: '#? expected_descr_or(_)' }
 
     * set filtro.tipo = 'fruizione'
     Given request filtro
     When method post
     Then status 200
     And assert response.items.length > 0
-    And match each response.items[*].risposta contains { esito_consegna: '#? expected_or(_)' }
+    And match each response.items[*].esito contains { codice: '#? expected_or(_)' }
+    And match each response.items[*].esito contains { descrizione: '#? expected_descr_or(_)' }
 
 @FiltroEsitoPersonalizzato
 Scenario: Ricerca per Filtro Esito Personalizzato
@@ -537,6 +540,50 @@ Scenario: RicercaSempliceTransazioni tramite richiesta GET con tag 'TESTSUITE'
     * match response.items[*].api.tags == '#notnull'
     * match response.items[*].api.tags[*] contains tag
 
+@IdMessaggioRichiesta
+Scenario: Ricerca singola transazione per Id Messaggio (Richiesta)
+
+    * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
+    * eval filtro.api.nome = setup.erogazione_petstore.api_nome
+    * eval filtro.api.versione = setup.erogazione_petstore.api_versione
+    * eval filtro.intervallo_temporale =  ({ data_inizio: setup.dataInizio, data_fine: setup.dataFine })
+
+
+    # Viene fatta prima una ricerca lasca per recuperare delle transazioni qualsiasi
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length > 0
+
+    # Nella lista, gli id dei messaggi non ci sono per via degli indici. Recupero quindi la singola transazione per id di transazione
+    * def transazione_item = response.items[0]
+    * def id_transazione = transazione_item.id_traccia
+
+    Given path id_transazione
+    When method get
+    Then status 200
+
+    * def transazione = response
+    * def id_messaggio = transazione.richiesta.id
+
+    Given path 'id-messaggio'
+    And params ({ tipo_messaggio: 'richiesta', id: id_messaggio })
+    When method get
+    Then status 200
+    And assert response.items.length > 0
+
+    # Nella lista non ci sono tutte le informazioni per via degli indici. Recupero quindi la singola transazione per id di transazione
+    * def transazione_item2 = response.items[0]
+    * def id_transazione2 = transazione_item2.id_traccia
+
+    Given path id_transazione2
+    When method get
+    Then status 200
+
+    * set transazione.data_emissione = "#ignore"
+    * set response.data_emissione = "#ignore"
+    * match response == transazione
+
 @IdMessaggioRisposta
 Scenario: Ricerca singola transazione per Id Messaggio (Risposta)
 
@@ -552,17 +599,34 @@ Scenario: Ricerca singola transazione per Id Messaggio (Risposta)
     Then status 200
     And assert response.items.length > 0
 
-    * def transazione = response.items[0]
+    # Nella lista, gli id dei messaggi non ci sono per via degli indici. Recupero quindi la singola transazione per id di transazione
+    * def transazione_item = response.items[0]
+    * def id_transazione = transazione_item.id_traccia
+
+    Given path id_transazione
+    When method get
+    Then status 200
+
+    * def transazione = response
     * def id_messaggio = transazione.risposta.id
 
     Given path 'id-messaggio'
     And params ({ tipo_messaggio: 'risposta', id: id_messaggio })
     When method get
     Then status 200
+    And assert response.items.length > 0
+
+    # Nella lista non ci sono tutte le informazioni per via degli indici. Recupero quindi la singola transazione per id di transazione
+    * def transazione_item2 = response.items[0]
+    * def id_transazione2 = transazione_item2.id_traccia
+
+    Given path id_transazione2
+    When method get
+    Then status 200
 
     * set transazione.data_emissione = "#ignore"
-    * set response.items[0].data_emissione = "#ignore"
-    * match response.items[0] == transazione
+    * set response.data_emissione = "#ignore"
+    * match response == transazione
 
 @IdTransazione
 Scenario: Ricerca per Id Transazione.

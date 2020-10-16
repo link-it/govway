@@ -87,6 +87,8 @@ public class TransazioneBean extends Transazione{
 	private Long latenzaServizio = null;
 	private Long latenzaPorta = null;
 
+	private java.lang.String socketClientAddressLabel = null;
+	private java.lang.String transportClientAddressLabel = null;
 	private java.lang.String trasportoMittenteLabel = null;
 	private java.lang.String tipoTrasportoMittenteLabel = null;
 	private java.lang.String tokenIssuerLabel = null;
@@ -113,6 +115,8 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaPorta", Long.class));
+		metodiEsclusi.add(new BlackListElement("setSocketClientAddressLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTransportClientAddressLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTrasportoMittenteLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTipoTrasportoMittenteLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenIssuerLabel", String.class));
@@ -327,6 +331,22 @@ public class TransazioneBean extends Transazione{
 		}
 	}
 
+	public java.lang.String getSocketClientAddressLabel() {
+		return this.socketClientAddressLabel;
+	}
+
+	public void setSocketClientAddressLabel(java.lang.String socketClientAddressLabel) {
+		this.socketClientAddressLabel = socketClientAddressLabel;
+	}
+
+	public java.lang.String getTransportClientAddressLabel() {
+		return this.transportClientAddressLabel;
+	}
+
+	public void setTransportClientAddressLabel(java.lang.String transportClientAddressLabel) {
+		this.transportClientAddressLabel = transportClientAddressLabel;
+	}
+	
 	public java.lang.String getTrasportoMittenteLabel() {
 		return this.trasportoMittenteLabel;
 	}
@@ -744,8 +764,18 @@ public class TransazioneBean extends Transazione{
 		datiMittente.setPddRuolo(this.getPddRuolo());
 		datiMittente.setSoggettoOperativo(this.soggettoPddMonitor);
 	
-		datiMittente.setTransportClientAddress(this.getTransportClientAddress());
-		datiMittente.setSocketClientAddress(getSocketClientAddress());
+		if(this.getTransportClientAddress()!=null){
+			datiMittente.setTransportClientAddress(this.getTransportClientAddress());
+		}
+		else {
+			datiMittente.setTransportClientAddress(this.getTransportClientAddressLabel());
+		}
+		if(this.getSocketClientAddress()!=null) {
+			datiMittente.setSocketClientAddress(getSocketClientAddress());
+		}
+		else {
+			datiMittente.setSocketClientAddress(getSocketClientAddressLabel());
+		}
 		
 		return datiMittente;
 	}

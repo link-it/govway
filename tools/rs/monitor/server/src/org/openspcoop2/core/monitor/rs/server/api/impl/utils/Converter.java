@@ -230,6 +230,14 @@ public class Converter {
 			// converto voce originale
 			transazioneDB.setGruppi(transazioneDB.getGruppiLabel());
 		}
+		if(transazioneDB.getSocketClientAddress()==null && transazioneDB.getSocketClientAddressLabel()!=null) {
+			// converto voce originale
+			transazioneDB.setSocketClientAddress(transazioneDB.getSocketClientAddressLabel());
+		}
+		if(transazioneDB.getTransportClientAddress()==null && transazioneDB.getTransportClientAddressLabel()!=null) {
+			// converto voce originale
+			transazioneDB.setTransportClientAddress(transazioneDB.getTransportClientAddressLabel());
+		}
 		TransazioneExt transazione = converter.toTransazioneExt(transazioneDB, credenzialiMittente, null, null, null);
 	
 		// elimino i campi non previsti in un ItemTransazione

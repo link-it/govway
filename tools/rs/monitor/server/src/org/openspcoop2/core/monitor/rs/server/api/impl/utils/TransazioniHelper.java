@@ -608,6 +608,17 @@ public class TransazioniHelper {
 							}
 						}
 					}
+					
+					// finisce in indirizzoClient e indirizzoClientInoltrato
+					if(transazioneBean.getTransportClientAddressLabel()==null && transazioneBean.getSocketClientAddressLabel()==null) {
+						if(transazioneBean.getClientAddress()!=null && !"".equals(transazioneBean.getClientAddress())) {
+							try {
+								transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteClientAddress(transazioneBean, transazioneBean);
+							}catch(Exception e) {
+								throw new UtilsException(e.getMessage(),e);
+							}
+						}
+					}
 				}
 			}
 			
