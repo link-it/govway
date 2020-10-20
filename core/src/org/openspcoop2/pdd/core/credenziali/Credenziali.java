@@ -95,7 +95,7 @@ public class Credenziali  extends HttpServletCredential implements java.io.Seria
 	public String toString(boolean showBasicPassword, boolean showIssuer, boolean showDigestClientCert, boolean showSerialNumberClientCert, 
 			String start, String end, String separator){
 		String credenzialiFornite = "";
-		if (this.getUsername() != null || this.getSubject() != null || this.getPassword() != null) {
+		if (this.getUsername() != null || this.getSubject() != null || this.getPassword() != null || this.getPrincipal()!=null) {
 			credenzialiFornite = start;
 			boolean printPrincipal = true;
 			if (this.getUsername() != null){

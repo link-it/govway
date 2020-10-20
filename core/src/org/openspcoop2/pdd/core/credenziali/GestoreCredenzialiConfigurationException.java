@@ -25,7 +25,7 @@ package org.openspcoop2.pdd.core.credenziali;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**	
- * Contiene la definizione di una eccezione lanciata dalle classi del package org.openspcoop.pdd.core.handlers
+ * GestoreCredenzialiConfigurationException
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -35,42 +35,38 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 public class GestoreCredenzialiConfigurationException extends Exception {
 
-	private String identitaHandler = null;
-	public String getIdentitaHandler() {
-		return this.identitaHandler;
-	}
-	// Impostato dal gestore degli handler
-	protected void setIdentitaHandler(String identitaHandler) {
-		this.identitaHandler = identitaHandler;
-	}
-
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private IntegrationFunctionError integrationFunctionError;
 	public IntegrationFunctionError getIntegrationFunctionError() {
 		return this.integrationFunctionError;
 	}
 	
-	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, String message, Throwable cause)
+	private String wwwAuthenticateErrorHeader;
+	public String getWwwAuthenticateErrorHeader() {
+		return this.wwwAuthenticateErrorHeader;
+	}
+	
+	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, String wwwAuthenticateErrorHeader, String message, Throwable cause)
 	{
 		super(message, cause);
 		this.integrationFunctionError = integrationFunctionError;
+		this.wwwAuthenticateErrorHeader = wwwAuthenticateErrorHeader;
 	}
-	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, Throwable cause)
+	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, String wwwAuthenticateErrorHeader, Throwable cause)
 	{
 		super(cause);
 		this.integrationFunctionError = integrationFunctionError;
+		this.wwwAuthenticateErrorHeader = wwwAuthenticateErrorHeader;
 	}
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
-	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError) {
-		super();
-		this.integrationFunctionError = integrationFunctionError;
-	}
-	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, String msg) {
+	public GestoreCredenzialiConfigurationException(IntegrationFunctionError integrationFunctionError, String wwwAuthenticateErrorHeader, String msg) {
 		super(msg);
 		this.integrationFunctionError = integrationFunctionError;
+		this.wwwAuthenticateErrorHeader = wwwAuthenticateErrorHeader;
 	}
 
 }

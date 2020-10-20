@@ -25,6 +25,7 @@ import java.util.Map;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.transport.TransportUtils;
 
@@ -52,14 +53,21 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 		
 		Credenziali c = new Credenziali();
 		
+		String realm = "GovWay";
+		String authType = "ProxyAuth";
+		
 		if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME)){
 			String username = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(),GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME);	
 			String password = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(),GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD);
 			if(username==null || "".equals(username)){
-				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, "Username value non fornito");
+				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
+						GestoreCredenzialiEngine.buildWWWProxyAuthBasic(authType, realm, true),
+						"Username value non fornito");
 			}
 			if(password==null || "".equals(password)){
-				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, "Password value non fornito");
+				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
+						GestoreCredenzialiEngine.buildWWWProxyAuthBasic(authType, realm, true),
+						"Password value non fornito");
 			}
 			c.setUsername(username);
 			c.setPassword(password);
@@ -67,7 +75,9 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT)){
 			String subject = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(),GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT);
 			if(subject==null || "".equals(subject)){
-				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, "Subject value non fornito");
+				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
+						GestoreCredenzialiEngine.buildWWWProxyAuthSSL(authType, realm, true),
+						"Subject value non fornito");
 			}
 			c.setSubject(subject);
 		}
@@ -75,10 +85,14 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 			throw new GestoreCredenzialiException("Eccezione generale richiesta dalla testsuite");
 		}
 		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_CONFIGURAZIONE)){
-			throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, "Eccezione, di configurazione, richiesta dalla testsuite");
+			throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
+					GestoreCredenzialiEngine.buildWWWProxyAuthSSL(authType, realm, false),
+					"Eccezione, di configurazione, richiesta dalla testsuite");
 		}
 		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_FORWARD)){
-			throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, "Eccezione, di configurazione, richiesta dalla testsuite");
+			throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+					GestoreCredenzialiEngine.buildWWWAuthSSL(),
+					"Eccezione, di configurazione, richiesta dalla testsuite");
 		}
 		else{
 			// ritorno credenziali originali

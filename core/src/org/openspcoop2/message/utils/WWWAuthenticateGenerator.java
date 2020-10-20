@@ -117,5 +117,28 @@ public class WWWAuthenticateGenerator {
 		return bf.toString();
 	}
 	
+	public static String buildCustomHeaderValue(String auth, String realm, WWWAuthenticateErrorCode errorCode, String error_description) {
+		return buildCustomHeaderValue(auth, realm, errorCode.name(), error_description);
+	}
+	public static String buildCustomHeaderValue(String auth, String realm, String errorCode, String error_description) {
+		
+		StringBuilder bf = new StringBuilder(auth);
+		bf.append(" realm=\"");
+		bf.append(realm);
+		bf.append("\"");
+		if(errorCode!=null) {
+			bf.append(", error=\"");
+			bf.append(errorCode);
+			bf.append("\"");
+		}
+		if(error_description!=null) {
+			bf.append(", error_description=\"");
+			bf.append(error_description);
+			bf.append("\"");
+		}
+		return bf.toString();
+		
+	}
+	
 }
 

@@ -29,7 +29,9 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
+import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -53,6 +55,9 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 
     	EsitoAutenticazionePortaApplicativa esito = new EsitoAutenticazionePortaApplicativa();
     	
+    	OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+    	WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
+    	
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
 		
     	String subject = credenziali.getSubject();
@@ -67,6 +72,9 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
     		esito.setClientAuthenticated(false);
     		esito.setClientIdentified(false);
+    		if(wwwAuthenticateConfig!=null) {
+    			esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
+    		}
 			return esito;
 		}
     	

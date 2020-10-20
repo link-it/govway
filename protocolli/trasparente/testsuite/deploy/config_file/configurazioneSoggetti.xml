@@ -377,6 +377,78 @@
 		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-delegata>
 
+		<porta-delegata nome="AuthenticationREST_https" autenticazione="ssl" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invoke"/>
+		</porta-delegata>
+	
+		<porta-delegata nome="AuthenticationREST_Principal" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invoke"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_PrincipalHeader" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invoke"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="header-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL-HEADER"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_PrincipalQuery" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invoke"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="form-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_PrincipalUrl" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invoke"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="url-based"/>
+		    <proprieta-autenticazione nome="pattern" valore=".+TEST_PRINCIPAL=([^&amp;]*).*"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_PrincipalIPAddress" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invoke"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="indirizzo-ip"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_PrincipalIPForwarded" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invoke"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="x-forwarded-for"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_PrincipalToken" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
+		    <azione identificazione="static" nome="invoke"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="token"/>
+		    <proprieta-autenticazione nome="claim" valore="issuer"/>
+		</porta-delegata>
+
+
+
+
+
 
 
 
@@ -4023,6 +4095,23 @@
 		    <proprieta-autenticazione nome="tipoAutenticazione" valore="indirizzo-ip"/>
 		</porta-delegata>
 
+		<porta-delegata nome="AuthenticationPrincipalIPForwarded" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="x-forwarded-for"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationOptionalPrincipalIPForwarded" autenticazione="principal" autenticazione-opzionale="abilitato"  
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="x-forwarded-for"/>
+		</porta-delegata>
+
 
 		<porta-delegata nome="AuthenticationApiKey" autenticazione="apikey" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
@@ -5132,6 +5221,75 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <proprieta-autenticazione nome="cleanApiKey" valore="false"/>
 		    <proprieta-autenticazione nome="cleanAppId" valore="false"/>
 		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_https" autenticazione="ssl" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione nome="invoke"/>
+		    <servizio-applicativo nome="api"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_Principal" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione nome="invoke"/>
+		    <servizio-applicativo nome="api"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_PrincipalHeader" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione nome="invoke"/>
+		    <servizio-applicativo nome="api"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="header-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL-HEADER"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_PrincipalQuery" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione nome="invoke"/>
+		    <servizio-applicativo nome="api"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="form-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_PrincipalUrl" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione nome="invoke"/>
+		    <servizio-applicativo nome="api"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="url-based"/>
+		    <proprieta-autenticazione nome="pattern" valore=".+TEST_PRINCIPAL=([^&amp;]*).*"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_PrincipalIPAddress" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione nome="invoke"/>
+		    <servizio-applicativo nome="api"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="indirizzo-ip"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_PrincipalIPForwarded" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione nome="invoke"/>
+		    <servizio-applicativo nome="api"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="x-forwarded-for"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_PrincipalToken" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="API"/>
+		    <azione nome="invoke"/>
+		    <servizio-applicativo nome="api"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="token"/>
+		    <proprieta-autenticazione nome="claim" valore="issuer"/>
+		</porta-applicativa>
+
 
 
 		<!-- *** JOSE Signature Compact *** -->
@@ -8651,6 +8809,22 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <proprieta-autenticazione nome="tipoAutenticazione" valore="indirizzo-ip"/>
 		</porta-applicativa>
 
+		<porta-applicativa nome="AuthenticationPrincipalIPForwarded" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="x-forwarded-for"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationOptionalPrincipalIPForwarded" autenticazione="principal" autenticazione-opzionale="abilitato"  
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="x-forwarded-for"/>
+		</porta-applicativa>
 
 
 		<porta-applicativa nome="AuthenticationApiKey" autenticazione="apikey" autorizzazione="none" 

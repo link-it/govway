@@ -26,13 +26,13 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneUtils;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
+import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -82,15 +82,15 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		
 		CryptConfig cryptConfigApplicativi = op2Properties.getCryptConfigAutenticazioneApplicativi();
 		CryptConfig cryptConfigSoggetti = op2Properties.getCryptConfigAutenticazioneSoggetti();
-		String realm = op2Properties.getRealmAutenticazioneBasic();
+		WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazioneBasicWWWAuthenticateConfig();
 		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
 			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
-			if(realm!=null) {
-				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
 			}
 			return esito;
 		}
@@ -142,8 +142,8 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
-			if(realm!=null) {
-				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
 			}
 			return esito;
 		}

@@ -33,6 +33,7 @@ import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneUtils;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
+import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
@@ -147,6 +148,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
     	
     	StringBuilder fullCredential= new StringBuilder();
     	
+    	OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+    	WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazioneApiKeyWWWAuthenticateConfig();	
+    	
 		// Controllo apiKey fornite
     	String apiKey = null;
     	try {
@@ -159,12 +163,18 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
     		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
+			}
 			return esito;
     	}
     	if( apiKey==null || "".equals(apiKey) ){
     		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
     		esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
+			}
 			return esito;
 		}
 		
@@ -181,6 +191,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
     			esito.setClientAuthenticated(false);
     			esito.setClientIdentified(false);
     			esito.setFullCredential(fullCredential.toString());
+    			if(wwwAuthenticateConfig!=null) {
+    				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
+    			}
     			return esito;
         	}
         	if( appId==null || "".equals(appId) ){
@@ -188,6 +201,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
         		esito.setClientAuthenticated(false);
     			esito.setClientIdentified(false);
     			esito.setFullCredential(fullCredential.toString());
+    			if(wwwAuthenticateConfig!=null) {
+    				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
+    			}
     			return esito;
     		}
     	}
@@ -212,13 +228,14 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
     		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
+			}
 			return esito;
     	}
     	
     	
-    	OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		
-		CryptConfig cryptConfigApplicativi = op2Properties.getCryptConfigAutenticazioneApplicativi();
+    	CryptConfig cryptConfigApplicativi = op2Properties.getCryptConfigAutenticazioneApplicativi();
 		CryptConfig cryptConfigSoggetti = op2Properties.getCryptConfigAutenticazioneSoggetti();
 		    		
     	// !NO!: Essendoci il principal del chiamante, il client e' stato autenticato dal container
@@ -270,6 +287,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
+			}
 			return esito;
 		}
 		else {

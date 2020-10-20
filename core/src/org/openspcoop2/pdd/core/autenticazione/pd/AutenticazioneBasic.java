@@ -25,13 +25,13 @@ package org.openspcoop2.pdd.core.autenticazione.pd;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneUtils;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
+import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -85,15 +85,15 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
 		CryptConfig cryptConfigApplicativi = op2Properties.getCryptConfigAutenticazioneApplicativi();
-		String realm = op2Properties.getRealmAutenticazioneBasic();
+		WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazioneBasicWWWAuthenticateConfig();
 		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
 			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali non fornite",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
-			if(realm!=null) {
-				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
 			}
 			return esito;
 		}
@@ -121,8 +121,8 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali fornite non corrette",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
-			if(realm!=null) {
-				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
 			}
 			return esito;
 		}
@@ -130,8 +130,8 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("soggetto proprietario dell'applicativo identificato differente dal soggetto proprietario della porta invocata",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
-			if(realm!=null) {
-				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
 			}
 			return esito;
 		}

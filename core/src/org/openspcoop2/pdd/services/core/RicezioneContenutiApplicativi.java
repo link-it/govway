@@ -1680,11 +1680,14 @@ public class RicezioneContenutiApplicativi {
 					msgDiag.logPersonalizzato("gestoreCredenziali.errore");
 					ErroreIntegrazione errore = null;
 					IntegrationFunctionError integrationFunctionError = null;
+					String wwwAuthenticateErrorHeader = null;
 					if(e instanceof GestoreCredenzialiConfigurationException){
 						errore = ErroriIntegrazione.ERRORE_431_GESTORE_CREDENZIALI_ERROR.
 								getErrore431_ErroreGestoreCredenziali(RicezioneContenutiApplicativi.tipiGestoriCredenziali[i], e);
 						GestoreCredenzialiConfigurationException ge = (GestoreCredenzialiConfigurationException) e;
 						integrationFunctionError = ge.getIntegrationFunctionError();
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+						wwwAuthenticateErrorHeader = ge.getWwwAuthenticateErrorHeader();
 					}else{
 						errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE);
@@ -1692,7 +1695,11 @@ public class RicezioneContenutiApplicativi {
 					}
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
-						this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,integrationFunctionError, errore,e,null)));
+						OpenSPCoop2Message errorMsg = this.generatoreErrore.build(pddContext,integrationFunctionError, errore,e,null);
+						if(wwwAuthenticateErrorHeader!=null) {
+							errorMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
+						}
+						this.msgContext.setMessageResponse(errorMsg);
 					}
 					return;
 				}

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.core.transazioni.utils.credenziali;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.slf4j.Logger;
 
 /**     
  * CredenzialeTrasporto
@@ -115,5 +117,23 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 	}
 	
 
-	
+	public static List<CredenzialeMittente> filterList(List<CredenzialeMittente> originalList, String credenziale, Logger log) {
+		// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
+		List<CredenzialeMittente> filteredList = new ArrayList<CredenzialeMittente>();
+		if(originalList!=null) {
+			for (CredenzialeMittente credenzialeMittentePotenziale : originalList) {
+				String subjectPotenziale =  credenzialeMittentePotenziale.getCredenziale();
+				try {
+					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, credenziale, PrincipalType.subject, log);
+					if(subjectValid) {
+						filteredList.add(credenzialeMittentePotenziale);
+					}
+				}catch(Exception e) {
+					log.error("Analisi della credenziale '"+subjectPotenziale+"' non riuscita: "+e.getMessage(),e);
+				}
+			}
+		}
+		//System.out.println("FILTRO PRIMA["+originalList.size()+"] DOPO["+filteredList.size()+"]");
+		return filteredList;
+	}
 }

@@ -383,60 +383,66 @@ public class RESTCore {
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			String contentType) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
-				false, contentType, false, 
+				false, contentType, false, false, 
 				null, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			String contentType,
 			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
-				false, contentType, false,
+				false, contentType, false, false,
 				headersRequest, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			String contentType,
 			HashMap<String, String> headersRequest, HashMap<String, String> propertiesRequest) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
-				false, contentType, false,
+				false, contentType, false, false,
 				headersRequest, propertiesRequest);
 	}
 	
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
-				isHttpMethodOverride, contentType, false,
+				isHttpMethodOverride, contentType, false, false,
 				null, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType,
 			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
-				isHttpMethodOverride, contentType, false,
+				isHttpMethodOverride, contentType, false, false,
 				headersRequest, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType,
 			HashMap<String, String> headersRequest, HashMap<String, String> propertiesRequest) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
-				isHttpMethodOverride, contentType, false,
+				isHttpMethodOverride, contentType, false, false,
 				headersRequest, propertiesRequest);
 	}
 	
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType, boolean authorizationError) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
-				isHttpMethodOverride, contentType, authorizationError, 
+				isHttpMethodOverride, contentType, authorizationError, false,
 				null, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType, boolean authorizationError,
 			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
-				isHttpMethodOverride, contentType, authorizationError, 
+				isHttpMethodOverride, contentType, authorizationError, false,
+				headersRequest, null);
+	}
+	public HttpResponse invokeAuthenticationError(String tipoTest, int returnCodeAtteso, boolean isRichiesta, boolean isRisposta, 
+			boolean isHttpMethodOverride, String contentType, HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, null, isRichiesta, isRisposta, 
+				isHttpMethodOverride, contentType, false, true,
 				headersRequest, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
-			boolean isHttpMethodOverride, String contentType, boolean authorizationError,
+			boolean isHttpMethodOverride, String contentType, boolean authorizationError, boolean authenticationError,
 			HashMap<String, String> headersRequest, HashMap<String, String> propertiesRequest) throws TestSuiteException, Exception{
 		
 		TestFileEntry fileEntry = null;
@@ -623,13 +629,13 @@ public class RESTCore {
 					//else { viene tornato HttpConstants.REDIRECT_LOCATION }
 				}
 				else {
-					if(!authorizationError) {
+					if(!authorizationError && !authenticationError) {
 						propertiesURLBased.put("returnCode", returnCodeAtteso + "");
 					}
 				}
 			}
 
-			if(!redirect && !authorizationError) {
+			if(!redirect && !authorizationError && !authenticationError) {
 				propertiesURLBased.put("returnHttpHeader", nomeHeaderHttpDaRicevere +":" + valoreHeaderHttpDaRicevere);
 			}
 			
@@ -683,11 +689,17 @@ public class RESTCore {
 				if(httpResponse.getHeaders()!=null) {
 					Reporter.log("Headers: ("+httpResponse.getHeaders().keySet()+")");
 				}
-				Reporter.log("Leggo id da header ["+TestSuiteProperties.getInstance().getIdMessaggioTrasporto()+"]");
-				idMessaggio = httpResponse.getHeader(TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
-				Assert.assertTrue(idMessaggio!=null);
-				Reporter.log("Ricevuto id ["+idMessaggio+"]");
-				repository.add(idMessaggio);
+				if(!authenticationError) {
+					Reporter.log("Leggo id da header ["+TestSuiteProperties.getInstance().getIdMessaggioTrasporto()+"]");
+					idMessaggio = httpResponse.getHeader(TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
+					Assert.assertTrue(idMessaggio!=null);
+					Reporter.log("Ricevuto id ["+idMessaggio+"]");
+					repository.add(idMessaggio);
+				}
+				else {
+					Reporter.log("Leggo id transazione da header ["+TestSuiteProperties.getInstance().getIDTransazioneTrasporto()+"]");
+					idMessaggio = "AuthnError-"+httpResponse.getHeader(TestSuiteProperties.getInstance().getIDTransazioneTrasporto());
+				}
 			}
 			else {
 				idMessaggio = "Preflight-"+httpResponse.getHeader(TestSuiteProperties.getInstance().getIDTransazioneTrasporto());
@@ -751,7 +763,7 @@ public class RESTCore {
 			}
 			
 			// Controllo header di risposta atteso
-			if(!redirect && !authorizationError &&
+			if(!redirect && !authorizationError && !authenticationError &&
 					!"soap11".equals(tipoTest) && !"soap12".equals(tipoTest) && !"preflight".equals(tipoTest)) {
 				String headerRispostaRitornatoValore = httpResponse.getHeader(nomeHeaderHttpDaRicevere);
 				Reporter.log("["+idMessaggio+"] Atteso Header ["+nomeHeaderHttpDaRicevere+"] con valore atteso ["+valoreHeaderHttpDaRicevere+"] e valore ritornato ["+headerRispostaRitornatoValore+"]");
@@ -760,7 +772,7 @@ public class RESTCore {
 			}
 			
 			// Controllo risposta
-			if(!redirect && contenutoRisposta && !authorizationError){
+			if(!redirect && contenutoRisposta && !authorizationError && !authenticationError){
 				
 				byte[] contentAttesoRisposta = rispostaOk ? fileEntry.getBytesRichiesta(): fileEntry.getBytesRispostaKo();
 				String contentTypeAttesoRisposta = contentType != null ? contentType : (rispostaOk) ? fileEntry.getExtRisposta(): fileEntry.getExtRispostaKo();

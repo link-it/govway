@@ -3359,9 +3359,11 @@ public class TransazioniService implements ITransazioniService {
 			boolean caseSensitive = CaseSensitiveMatch.SENSITIVE.equals(caseSensitiveMatch);
 			 
 			IPaginatedExpression pagExpr = null;
+			boolean ricercaIdentificatoAutenticatoSsl = false;
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				CredenzialeSearchTrasporto searchTrasporto = new CredenzialeSearchTrasporto(searchForm.getAutenticazione());
 				pagExpr = searchTrasporto.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+				ricercaIdentificatoAutenticatoSsl = searchTrasporto.isSsl();
 			} 
 			
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
@@ -3394,6 +3396,11 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			findAll = credenzialeMittentiService.findAll(pagExpr);
+			
+			if(ricercaIdentificatoAutenticatoSsl && ricercaEsatta && findAll!=null && !findAll.isEmpty()) {
+				findAll = CredenzialeSearchTrasporto.filterList(findAll, searchForm.getValoreRiconoscimento(), this.log);
+			}
+			
 		}catch(ServiceException e) {
 			this.log.error(e.getMessage(), e);
 		} catch (NotImplementedException e) {

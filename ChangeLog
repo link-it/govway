@@ -1,3 +1,17 @@
+2020-10-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1081
+	Aggiunta generazione dell'header WWW-Authenticate in ogni tipo di autenticazione gestita su GovWay se l'autenticazione fallisce (codice http 401).
+	Anche il gestore delle credenziali, da utilizzare in caso di frontend web, gestisce adesso la possibilità di generare tale header. 
+	È stato inoltre associato uno stato 'autenticazione fallita' alle transazioni che non presentano le credenziali attese dal gestore.
+
+2020-10-20  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA, GovWayConsole]
+	Se si modificava la configurazione del profilo ModI in una fruizione, alcuni parametri del connettore quale l'eventuale abilitazione del debug e l'autenticazione http o token venivano erroneamente disabilitate.
+	Il problema è stato risolto.
+
 2020-10-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor]

@@ -25,7 +25,9 @@ package org.openspcoop2.pdd.core.autenticazione.pd;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
+import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -48,6 +50,9 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 
     	EsitoAutenticazionePortaDelegata esito = new EsitoAutenticazionePortaDelegata();
     	
+    	OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+    	WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
+    	
     	IDSoggetto soggettoFruitore = null;
     	if(datiInvocazione!=null && datiInvocazione.getPd()!=null) {
     		soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
@@ -67,6 +72,9 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali non fornite",subject));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(wwwAuthenticateConfig!=null) {
+    			esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
+    		}
 			return esito;
 		}
     	

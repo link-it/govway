@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.soap.authn;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -41,6 +42,7 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.GestioneViaJmx;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -917,6 +919,98 @@ public class AutenticazionePortaApplicativa extends GestioneViaJmx {
 				200,
 				30000); // readTimeout);
 		
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_IP_FORWARDED"},dataProvider="principalProvider")
+	public void testPrincipalIpForwarded_genericCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalIpForwarded(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					fruitore, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_IP_FORWARDED"},dataProvider="principalProvider")
+	public void testPrincipalIpForwarded_specificCode(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError,
+			IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_testPrincipalIpForwarded(credenzialiInvocazione, genericCode, integrationFunctionError, 
+					fruitore, erroreAtteso, codiceErrore, ricercaEsatta, returnCodeAtteso);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _testPrincipalIpForwarded(CredenzialiInvocazione credenzialiInvocazione,boolean genericCode, IntegrationFunctionError integrationFunctionError,  
+			IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		
+		List<String> listHeaders = HttpUtilities.getClientAddressHeaders(); 
+		for (String headerTest : listHeaders) {
+			
+			Reporter.log("** '"+headerTest+"' **");
+			
+			Date dataInizioTest = DateManager.getDate();
+			
+			String header = null;
+			if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+					TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+				header = headerTest;
+				credenzialiInvocazione.setUsername("192.168.2.3/255.255.255.0");
+			}
+			
+			AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_IP_FORWARDED, fruitore,
+					credenzialiInvocazione, header, null, 
+					addIDUnivoco, 
+					genericCode, integrationFunctionError, erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest,
+					returnCodeAtteso);
+			
+			if(erroreAtteso!=null) {
+				Date dataFineTest = DateManager.getDate();
+				
+				ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+				err.setIntervalloInferiore(dataInizioTest);
+				err.setIntervalloSuperiore(dataFineTest);
+				err.setMsgErrore(erroreAtteso);
+				this.erroriAttesiOpenSPCoopCore.add(err);
+			}
+			
+		}
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_IP_FORWARDED_OPTIONAL"},dataProvider="principalProvider")
+	public void testPrincipalIpForwardedOptional(CredenzialiInvocazione credenzialiInvocazione, IntegrationFunctionError integrationFunctionError, 
+			IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
+		// Fatta eccezione per le credenziali non riconosciute dal container ssl
+		int stato = 200;
+		if(returnCodeAtteso==401) {
+			stato = 401;
+		}
+		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		boolean genericCode = false; // il dettaglio finisce nel diagnostico		
+		
+		String header = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			header = HttpUtilities.getClientAddressHeaders().get(0);
+			credenzialiInvocazione.setUsername("192.168.2.3/255.255.255.0");
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_URL, fruitore,
+				credenzialiInvocazione, header, null, 
+				addIDUnivoco, 
+				genericCode, integrationFunctionError, erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
+				stato,
+				30000); // readTimeout);
 	}
 	
 	

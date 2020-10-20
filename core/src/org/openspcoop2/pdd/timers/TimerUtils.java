@@ -236,7 +236,9 @@ public class TimerUtils {
 					}
 				}
 				finally {
-					dbManager.releaseResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, resource, false);
+					if(dbManager!=null) {
+						dbManager.releaseResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, resource, false);
+					}
 				}
 			}
 			

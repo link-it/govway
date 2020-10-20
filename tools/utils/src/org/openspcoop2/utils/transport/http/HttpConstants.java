@@ -86,10 +86,14 @@ public class HttpConstants {
 	public final static String DIGEST_ALGO_SHA_384 = "SHA-384";
 	public final static String DIGEST_ALGO_SHA_512 = "SHA-512";
 	
+	/** Authentication */
+	public final static String AUTHENTICATION_BASIC = "Basic";
+	public final static String AUTHENTICATION_BEARER = "Bearer";
+	
 	/** Authorization */
 	public final static String AUTHORIZATION = "Authorization";
-	public final static String AUTHORIZATION_PREFIX_BASIC = "Basic ";
-	public final static String AUTHORIZATION_PREFIX_BEARER = "Bearer ";
+	public final static String AUTHORIZATION_PREFIX_BASIC = AUTHENTICATION_BASIC+" ";
+	public final static String AUTHORIZATION_PREFIX_BEARER = AUTHENTICATION_BEARER+" ";
 	public final static String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE = "WWW-Authenticate";
 	public final static String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE_BASIC_REALM_PREFIX = "Basic realm=\"\"";
 	public final static String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE_BASIC_REALM_SUFFIX = "\"";

@@ -1052,12 +1052,19 @@ public class GestoreAutenticazione {
 	    	boolean caseSensitive = true;
 	    	IPaginatedExpression pagEpression = searchCredential.createExpression(credenzialiMittenteService, credential.getCredenziale(), ricercaEsatta, caseSensitive);
 			List<CredenzialeMittente> list = credenzialiMittenteService.findAll(pagEpression);
+			if(list!=null && !list.isEmpty() && credential instanceof CredenzialeTrasporto) {
+				CredenzialeTrasporto cTrasporto = (CredenzialeTrasporto) credential;
+				if(cTrasporto.isSsl()) {
+					list = CredenzialeSearchTrasporto.filterList(list, credential.getCredenziale(), logSql);
+				}
+			}
+
 			if(list==null || list.size()<=0) {
 				// not exists
-				return createCredenzialeMittente(credenzialiMittenteService, scadenzaEntry, searchCredential, credential);
+				return createCredenzialeMittente(credenzialiMittenteService, scadenzaEntry, searchCredential, credential, logSql);
 			}
 			else if(list.size()>1) {
-				throw new Exception("Trovata più di un'occorrenza di credenziale di tipo '"+searchCredential.getTipo()+"'; credenziale: ["+credential+"]");
+				throw new Exception("Trovata più di un'occorrenza di credenziale di tipo '"+searchCredential.getTipo()+"'; credenziale: ["+credential.getCredenziale()+"]");
 			}
 			else {
 				CredenzialeMittente credenziale = list.get(0);
@@ -1081,11 +1088,18 @@ public class GestoreAutenticazione {
     
     private static synchronized CredenzialeMittente createCredenzialeMittente(ICredenzialeMittenteService credenzialeMittentiService,
     		Date scadenzaEntry,
-    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credential) throws Exception {
+    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credential,
+    		Logger log) throws Exception {
     	boolean ricercaEsatta = true;
     	boolean caseSensitive = true;
     	IPaginatedExpression pagEpression = searchCredential.createExpression(credenzialeMittentiService, credential.getCredenziale(), ricercaEsatta, caseSensitive); 
     	List<CredenzialeMittente> list = credenzialeMittentiService.findAll(pagEpression);
+    	if(list!=null && !list.isEmpty() && credential instanceof CredenzialeTrasporto) {
+			CredenzialeTrasporto cTrasporto = (CredenzialeTrasporto) credential;
+			if(cTrasporto.isSsl()) {
+				list = CredenzialeSearchTrasporto.filterList(list, credential.getCredenziale(), log);
+			}
+		}
 		if(list==null || list.size()<=0) {
 			// not exists
 			CredenzialeMittente credenzialeMittente = new CredenzialeMittente();

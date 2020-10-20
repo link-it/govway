@@ -2514,12 +2514,15 @@ public class RicezioneBuste {
 					msgDiag.addKeywordErroreProcessamento(e);
 					msgDiag.logPersonalizzato("gestoreCredenziali.errore");
 					ErroreIntegrazione msgErroreIntegrazione = null;
+					String wwwAuthenticateErrorHeader = null;
 					if(e instanceof GestoreCredenzialiConfigurationException){
 						GestoreCredenzialiConfigurationException ge = (GestoreCredenzialiConfigurationException) e;
 						parametriGenerazioneBustaErrore.setIntegrationFunctionError(ge.getIntegrationFunctionError());
 						msgErroreIntegrazione = 
 								ErroriIntegrazione.ERRORE_431_GESTORE_CREDENZIALI_ERROR.
 									getErrore431_ErroreGestoreCredenziali(RicezioneBuste.tipiGestoriCredenziali[i],e);
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+						wwwAuthenticateErrorHeader = ge.getWwwAuthenticateErrorHeader();
 					}else{
 						msgErroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE);
@@ -2538,6 +2541,9 @@ public class RicezioneBuste {
 						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 						parametriGenerazioneBustaErrore.setErroreIntegrazione(msgErroreIntegrazione);
 						OpenSPCoop2Message errorMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						if(wwwAuthenticateErrorHeader!=null) {
+							errorMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
+						}
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 						parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);

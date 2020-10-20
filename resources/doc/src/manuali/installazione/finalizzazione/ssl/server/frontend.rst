@@ -30,7 +30,7 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
 
    inserendo al posto di #FRONTEND-NAME# il nome associato al frontend che verrà utilizzato nella diagnostica di GovWay.
 
-#. Se il frontend inserisce in header http il DN del Subject e/o dell'Issuer relativo ai certificati client autenticati, deve essere indicato il nome di tali header tramite la seguente configurazione:
+#. Se il frontend inserisce in un header http il DN del Subject e/o dell'Issuer relativo ai certificati client autenticati, deve essere indicato il nome di tali header tramite la seguente configurazione:
 
    ::
 
@@ -53,7 +53,7 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
                                       
    inserendo al posto di #CLIENT-CERT_HEADER-NAME# il nome dell'header http utilizzato per propagare il certificato x.509 (es. 'SSL_CLIENT_CERT'). Il certificato inserito nell'header http dal frontend può essere stato codificato in base64 e/o tramite url encoding. È possibile effettuare la decodifica abilitando la proprietà 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode' e/o la proprietà org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode.
 
-#. Se il frontend inserisce in header http il principal dell'identità relativa al chiamante, deve essere indicato il nome di tale header tramite la seguente configurazione:
+#. Se il frontend inserisce in un header http il principal dell'identità relativa al chiamante, deve essere indicato il nome di tale header tramite la seguente configurazione:
 
    ::
 
@@ -61,6 +61,17 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.principal=#PRINCIPAL_HEADER-NAME#
                               
    inserendo al posto di #PRINCIPAL_HEADER-NAME# il nome dell'header http utilizzato dal frontend. 
+
+#. Le credenziali, raccolte negli header precedentemente dichiarati, verranno utilizzate da GovWay per attuare i processi di autenticazione abilitati su ogni erogazione. La presenza obbligatoria o meno di credenziali veicolate tramite header http può essere abilitata tramite la seguente proprietà:
+
+   ::
+
+      # - none: le richieste in arrivo possono non presentare alcun header che veicola credenziali.
+      # - atLeastOne: le richieste in arrivo devono presentare almeno un header che veicola credenziali.
+      # - ssl/principal: le richieste in arrivo devono presentare gli header richiesti dalla modalità scelta, che è di fatto l'unica modalità di autenticazione poi configurabile sulle erogazioni.
+      # Con la modalità 'none' o 'atLeastOne' è possibile usare il gestore davanti a erogazioni con tipi di autenticazione differenti, 
+      # delegando quindi alla singola erogazione il controllo che le credenziali attese siano effettivamente presenti.
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.modalita=none/atLeastOne/ssl/principal
 
 #. È possibile abilitare l'autenticazione del frontend in modo da accettare gli header http contenenti le credenziali solamente da un frontend autenticato tramite la seguente configurazione:
 

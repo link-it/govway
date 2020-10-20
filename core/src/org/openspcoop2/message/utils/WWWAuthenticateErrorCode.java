@@ -35,7 +35,7 @@ public enum WWWAuthenticateErrorCode {
 //	     parameter, uses more than one method for including an access
 //	     token, or is otherwise malformed.  The resource server SHOULD
 //	     respond with the HTTP 400 (Bad Request) status code.
-
+		 
 		 invalid_token,
 //	     The access token provided is expired, revoked, malformed, or
 //	     invalid for other reasons.  The resource SHOULD respond with
@@ -49,5 +49,6 @@ public enum WWWAuthenticateErrorCode {
 //	     403 (Forbidden) status code and MAY include the "scope"
 //	     attribute with the scope necessary to access the protected
 //	     resource.
+
 	
 }

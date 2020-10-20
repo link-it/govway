@@ -46,14 +46,17 @@ import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.ForwardConfig;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
@@ -61,6 +64,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
+import org.openspcoop2.pdd.core.credenziali.engine.ModalitaAutenticazioneGestoreCredenziali;
 import org.openspcoop2.pdd.core.credenziali.engine.TipoAutenticazioneGestoreCredenziali;
 import org.openspcoop2.pdd.core.handlers.ExitHandler;
 import org.openspcoop2.pdd.core.handlers.InRequestHandler;
@@ -143,6 +147,7 @@ import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.slf4j.Logger;
 
@@ -654,6 +659,14 @@ public class OpenSPCoop2Properties {
 			this.isPrintInfoCertificate();
 			
 			if(this.isGestoreCredenzialiPortaDelegataEnabled()) {
+				
+				String realm = getGestoreCredenzialiPortaDelegataRealm();
+				String authType = getGestoreCredenzialiPortaDelegataAuthType();
+				if( (realm!=null && authType==null) || (realm==null && authType!=null) ) {
+					this.log.error("L'abilitazione del wwwAuthenticate sul gestore delle credenziali (PortaDelegata) richiede che sia definito sia un nome da associare al realm (trovato: "+realm+") che il tipo di autenticazione (trovato: "+authType+")");
+					return false;
+				}
+				
 				TipoAutenticazioneGestoreCredenziali tipo = this.getGestoreCredenzialiPortaDelegataTipoAutenticazioneCanale();
 				switch (tipo) {
 				case NONE:
@@ -695,9 +708,47 @@ public class OpenSPCoop2Properties {
 						return false;
 					}
 				}
+				
+				ModalitaAutenticazioneGestoreCredenziali modalita = getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanale(); 
+				switch (modalita) {
+				case NONE:
+					break;
+				case AT_LEAST_ONE:
+					getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description();
+					// Il controllo è gia stato fatto sopra che sia definito almeno una modalità per passare la credenziale
+					break;
+				case BASIC:
+					if(bu==null || bp==null) {
+						this.log.error("La modalità del gestore delle credenziali (PortaApplicativa) richiede la definizione degli header http dove far veicolare le credenziali basic");
+						return false;
+					}
+					break;
+				case SSL:
+					if(ss==null && sc==null) {
+						this.log.error("La modalità del gestore delle credenziali (PortaApplicativa) richiede la definizione di almeno un header http dove far veicolare le credenziali ssl");
+						return false;
+					}
+					break;
+				case PRINCIPAL:
+					if(p==null) {
+						this.log.error("La modalità del gestore delle credenziali (PortaApplicativa) richiede la definizione dell'header http dove far veicolare le credenziali principal");
+						return false;
+					}
+					break;
+				default:
+					break;
+				}
 			}
 			
 			if(this.isGestoreCredenzialiPortaApplicativaEnabled()) {
+				
+				String realm = getGestoreCredenzialiPortaApplicativaRealm();
+				String authType = getGestoreCredenzialiPortaApplicativaAuthType();
+				if( (realm!=null && authType==null) || (realm==null && authType!=null) ) {
+					this.log.error("L'abilitazione del wwwAuthenticate sul gestore delle credenziali (PortaApplicativa) richiede che sia definito sia un nome da associare al realm (trovato: "+realm+") che il tipo di autenticazione (trovato: "+authType+")");
+					return false;
+				}
+				
 				TipoAutenticazioneGestoreCredenziali tipo = this.getGestoreCredenzialiPortaApplicativaTipoAutenticazioneCanale();
 				switch (tipo) {
 				case NONE:
@@ -738,6 +789,36 @@ public class OpenSPCoop2Properties {
 						this.log.error("L'abilitazione del gestore delle credenziali (PortaApplicativa) richiede la definizione di un header su cui viene indicata la password, se viene definito un header per l'username");
 						return false;
 					}
+				}
+				
+				ModalitaAutenticazioneGestoreCredenziali modalita = getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanale();
+				switch (modalita) {
+				case NONE:
+					break;
+				case AT_LEAST_ONE:
+					getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description();
+					// Il controllo è gia stato fatto sopra che sia definito almeno una modalità per passare la credenziale
+					break;
+				case BASIC:
+					if(bu==null || bp==null) {
+						this.log.error("La modalità del gestore delle credenziali (PortaApplicativa) richiede la definizione degli header http dove far veicolare le credenziali basic");
+						return false;
+					}
+					break;
+				case SSL:
+					if(ss==null && sc==null) {
+						this.log.error("La modalità del gestore delle credenziali (PortaApplicativa) richiede la definizione di almeno un header http dove far veicolare le credenziali ssl");
+						return false;
+					}
+					break;
+				case PRINCIPAL:
+					if(p==null) {
+						this.log.error("La modalità del gestore delle credenziali (PortaApplicativa) richiede la definizione dell'header http dove far veicolare le credenziali principal");
+						return false;
+					}
+					break;
+				default:
+					break;
 				}
 			}
 			
@@ -1325,7 +1406,13 @@ public class OpenSPCoop2Properties {
 			if(this.getCryptConfigAutenticazioneSoggetti()==null) {
 				return false;
 			}
-			this.getRealmAutenticazioneBasic();
+			this.getRealmAutenticazioneBasicWWWAuthenticateConfig();
+			this.getRealmAutenticazioneApiKeyWWWAuthenticateConfig();
+			this.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
+			TipoAutenticazionePrincipal [] tipiPrincipale = TipoAutenticazionePrincipal.values();
+			for (TipoAutenticazionePrincipal tipoAutenticazionePrincipal : tipiPrincipale) {
+				this.getRealmAutenticazionePrincipalWWWAuthenticateConfig(tipoAutenticazionePrincipal);	
+			}
 			
 			// Gestori Credenziali PD
 			String [] gestoriCredenzialiPD = this.getTipoGestoreCredenzialiPD();
@@ -7594,6 +7681,106 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataAutenticazioneCanalePrincipal;
 	}
 	
+	private static ModalitaAutenticazioneGestoreCredenziali getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanale = null;
+	public ModalitaAutenticazioneGestoreCredenziali getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanale() throws Exception{
+		String pName = "org.openspcoop2.pdd.services.pd.gestoreCredenziali.modalita";
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanale==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanale = ModalitaAutenticazioneGestoreCredenziali.toEnumConstant(value);
+					if(OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanale==null) {
+						throw new Exception("Valore indicato non gestito '"+value+"'");
+					}
+				}else{
+					throw new Exception("Proprieta' non impostata");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanale;
+	}
+	
+	private static String getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description = null;
+	private static Boolean getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description_Read = null;
+	public String getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description() throws Exception{
+		String pName = "org.openspcoop2.pdd.services.pd.gestoreCredenziali.modalita.atLeastOne.error_description.notFound";
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description_Read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description = value;
+					}
+				}
+				
+				getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description_Read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop '"+pName+"' errata:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description;
+	}
+	
+	private static String getGestoreCredenzialiPortaDelegataAuthType = null;
+	private static Boolean getGestoreCredenzialiPortaDelegataAuthType_Read = null;
+	public String getGestoreCredenzialiPortaDelegataAuthType() throws Exception{
+		String pName = "org.openspcoop2.pdd.services.pd.gestoreCredenziali.wwwAuthenticate.authType";
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataAuthType_Read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataAuthType = value;
+				}
+				
+				getGestoreCredenzialiPortaDelegataAuthType_Read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop '"+pName+"' errata:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataAuthType;
+	}
+	
+	private static String getGestoreCredenzialiPortaDelegataRealm = null;
+	private static Boolean getGestoreCredenzialiPortaDelegataRealm_Read = null;
+	public String getGestoreCredenzialiPortaDelegataRealm() throws Exception{
+		String pName = "org.openspcoop2.pdd.services.pd.gestoreCredenziali.wwwAuthenticate.realm";
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataRealm_Read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataRealm = value;
+				}
+				
+				getGestoreCredenzialiPortaDelegataRealm_Read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop '"+pName+"' errata:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaDelegataRealm;
+	}
+	
 	private static Boolean getGestoreCredenzialiPortaDelegataHeaderBasicUsername_Read = null;
 	private static String getGestoreCredenzialiPortaDelegataHeaderBasicUsername = null;
 	public String getGestoreCredenzialiPortaDelegataHeaderBasicUsername() throws Exception{
@@ -8015,6 +8202,129 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanaleSslSubject;
 	}
 	
+	private static String getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal = null;
+	public String getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal() throws Exception{
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.principal"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal = value;
+				}else{
+					throw new Exception("Proprieta' non impostata");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.principal' non impostata, errore:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal;
+	}
+	
+	private static ModalitaAutenticazioneGestoreCredenziali getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanale = null;
+	public ModalitaAutenticazioneGestoreCredenziali getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanale() throws Exception{
+		String pName = "org.openspcoop2.pdd.services.pa.gestoreCredenziali.modalita";
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanale==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanale = ModalitaAutenticazioneGestoreCredenziali.toEnumConstant(value);
+					if(OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanale==null) {
+						throw new Exception("Valore indicato non gestito '"+value+"'");
+					}
+				}else{
+					throw new Exception("Proprieta' non impostata");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanale;
+	}
+	
+	private static String getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description = null;
+	private static Boolean getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description_Read = null;
+	public String getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description() throws Exception{
+		String pName = "org.openspcoop2.pdd.services.pa.gestoreCredenziali.modalita.atLeastOne.error_description.notFound";
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description_Read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description = value;
+					}
+				}
+				
+				getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description_Read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop '"+pName+"' errata:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description;
+	}
+	
+	private static String getGestoreCredenzialiPortaApplicativaAuthType = null;
+	private static Boolean getGestoreCredenzialiPortaApplicativaAuthType_Read = null;
+	public String getGestoreCredenzialiPortaApplicativaAuthType() throws Exception{
+		String pName = "org.openspcoop2.pdd.services.pa.gestoreCredenziali.wwwAuthenticate.authType";
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAuthType_Read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAuthType = value;
+				}
+				
+				getGestoreCredenzialiPortaApplicativaAuthType_Read = true;
+
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop '"+pName+"' errata:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAuthType;
+	}
+	
+	private static String getGestoreCredenzialiPortaApplicativaRealm = null;
+	private static Boolean getGestoreCredenzialiPortaApplicativaRealm_Read = null;
+	public String getGestoreCredenzialiPortaApplicativaRealm() throws Exception{
+		String pName = "org.openspcoop2.pdd.services.pa.gestoreCredenziali.wwwAuthenticate.realm";
+		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaRealm_Read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaRealm = value;
+				}
+				
+				getGestoreCredenzialiPortaApplicativaRealm_Read = true;
+
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop '"+pName+"' errata:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg,e);
+			}
+		}
+		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaRealm;
+	}
+	
+	
 	private static Boolean getGestoreCredenzialiPortaApplicativaHeaderSslIssuer_Read = null;
 	private static String getGestoreCredenzialiPortaApplicativaHeaderSslIssuer = null;
 	public String getGestoreCredenzialiPortaApplicativaHeaderSslIssuer() throws Exception{
@@ -8208,29 +8518,7 @@ public class OpenSPCoop2Properties {
 		}
 		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslCertificateReplaceCharacters_dest;
 	}
-	
-	private static String getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal = null;
-	public String getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal() throws Exception{
-		if(OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.principal"); 
-
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal = value;
-				}else{
-					throw new Exception("Proprieta' non impostata");
-				}
-
-			}catch(java.lang.Exception e) {
-				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.principal' non impostata, errore:"+e.getMessage();
-				this.log.error(msg,e);
-				throw new Exception(msg,e);
-			}
-		}
-		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal;
-	}
-	
+		
 	private static Boolean getGestoreCredenzialiPortaApplicativaHeaderBasicUsername_Read = null;
 	private static String getGestoreCredenzialiPortaApplicativaHeaderBasicUsername = null;
 	public String getGestoreCredenzialiPortaApplicativaHeaderBasicUsername() throws Exception{
@@ -14744,25 +15032,284 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getCryptConfigAutenticazioneSoggetti;
 	}
-	
-	private static String getRealmAutenticazioneBasic = null;
-	private static boolean getRealmAutenticazioneBasicRead = false;
-	public String getRealmAutenticazioneBasic() {
-		if(OpenSPCoop2Properties.getRealmAutenticazioneBasicRead == false){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.autenticazione.basic.realm"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.getRealmAutenticazioneBasic = value;
+
+	private static WWWAuthenticateConfig getRealmAutenticazioneBasicWWWAuthenticateConfig = null;
+	private static boolean getRealmAutenticazioneBasicWWWAuthenticateConfig_read = false;
+	public WWWAuthenticateConfig getRealmAutenticazioneBasicWWWAuthenticateConfig() {
+		if(OpenSPCoop2Properties.getRealmAutenticazioneBasicWWWAuthenticateConfig_read == false){
+			
+//			String pNameAuth = "org.openspcoop2.pdd.core.autenticazione.basic.authType";
+//			String authType = null;
+//			try{  
+//				authType = this.reader.getValue_convertEnvProperties(pNameAuth); 
+//				if(authType!=null){
+//					authType = authType.trim();
+//				}
+//			}catch(java.lang.Exception e) {
+//				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+//			}
+			String authType = HttpConstants.AUTHENTICATION_BASIC;
+			
+			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.basic.realm";
+			String realm = null;
+			try {
+				realm = this.reader.getValue_convertEnvProperties(pNameRealm); 
+				if(realm!=null){
+					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.basic.realm': "+e.getMessage(),e);
-				OpenSPCoop2Properties.getRealmAutenticazioneBasic = null;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
 			}
-			OpenSPCoop2Properties.getRealmAutenticazioneBasicRead = true;
+			
+			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
+				getRealmAutenticazioneBasicWWWAuthenticateConfig = new WWWAuthenticateConfig();
+				getRealmAutenticazioneBasicWWWAuthenticateConfig.setAuthType(authType);
+				getRealmAutenticazioneBasicWWWAuthenticateConfig.setRealm(realm);
+				
+				String pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.basic.error_description.notFound";
+				String error_description = null;
+				try {
+					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					if(error_description!=null){
+						error_description = error_description.trim();
+						if(!"".equals(error_description)) {
+							getRealmAutenticazioneBasicWWWAuthenticateConfig.setNotFound_error(WWWAuthenticateErrorCode.invalid_request.name());
+							getRealmAutenticazioneBasicWWWAuthenticateConfig.setNotFound_error_description(error_description);
+						}
+					}
+				}catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+				}
+				
+				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.basic.error_description.invalid";
+				error_description = null;
+				try {
+					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					if(error_description!=null){
+						error_description = error_description.trim();
+						if(!"".equals(error_description)) {
+							getRealmAutenticazioneBasicWWWAuthenticateConfig.setInvalid_error(WWWAuthenticateErrorCode.invalid_request.name());
+							getRealmAutenticazioneBasicWWWAuthenticateConfig.setInvalid_error_description(error_description);
+						}
+					}
+				}catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+				}
+			}
+			
+			OpenSPCoop2Properties.getRealmAutenticazioneBasicWWWAuthenticateConfig_read = true;
 		}
 
-		return OpenSPCoop2Properties.getRealmAutenticazioneBasic;
+		return OpenSPCoop2Properties.getRealmAutenticazioneBasicWWWAuthenticateConfig;
+	}
+	
+	private static WWWAuthenticateConfig getRealmAutenticazioneApiKeyWWWAuthenticateConfig = null;
+	private static boolean getRealmAutenticazioneApiKeyWWWAuthenticateConfig_read = false;
+	public WWWAuthenticateConfig getRealmAutenticazioneApiKeyWWWAuthenticateConfig() {
+		if(OpenSPCoop2Properties.getRealmAutenticazioneApiKeyWWWAuthenticateConfig_read == false){
+			
+			String pNameAuth = "org.openspcoop2.pdd.core.autenticazione.apiKey.authType";
+			String authType = null;
+			try{  
+				authType = this.reader.getValue_convertEnvProperties(pNameAuth); 
+				if(authType!=null){
+					authType = authType.trim();
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+			}
+			
+			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.apiKey.realm";
+			String realm = null;
+			try {
+				realm = this.reader.getValue_convertEnvProperties(pNameRealm); 
+				if(realm!=null){
+					realm = realm.trim();
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+			}
+			
+			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
+				getRealmAutenticazioneApiKeyWWWAuthenticateConfig = new WWWAuthenticateConfig();
+				getRealmAutenticazioneApiKeyWWWAuthenticateConfig.setAuthType(authType);
+				getRealmAutenticazioneApiKeyWWWAuthenticateConfig.setRealm(realm);
+				
+				String pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.apiKey.error_description.notFound";
+				String error_description = null;
+				try {
+					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					if(error_description!=null){
+						error_description = error_description.trim();
+						if(!"".equals(error_description)) {
+							getRealmAutenticazioneApiKeyWWWAuthenticateConfig.setNotFound_error(WWWAuthenticateErrorCode.invalid_request.name());
+							getRealmAutenticazioneApiKeyWWWAuthenticateConfig.setNotFound_error_description(error_description);
+						}
+					}
+				}catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+				}
+				
+				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.apiKey.error_description.invalid";
+				error_description = null;
+				try {
+					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					if(error_description!=null){
+						error_description = error_description.trim();
+						if(!"".equals(error_description)) {
+							getRealmAutenticazioneApiKeyWWWAuthenticateConfig.setInvalid_error(WWWAuthenticateErrorCode.invalid_request.name());
+							getRealmAutenticazioneApiKeyWWWAuthenticateConfig.setInvalid_error_description(error_description);
+						}
+					}
+				}catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+				}
+			}
+			
+			OpenSPCoop2Properties.getRealmAutenticazioneApiKeyWWWAuthenticateConfig_read = true;
+		}
+
+		return OpenSPCoop2Properties.getRealmAutenticazioneApiKeyWWWAuthenticateConfig;
+	}
+	
+	private static WWWAuthenticateConfig getRealmAutenticazioneHttpsWWWAuthenticateConfig = null;
+	private static boolean getRealmAutenticazioneHttpsWWWAuthenticateConfig_read = false;
+	public WWWAuthenticateConfig getRealmAutenticazioneHttpsWWWAuthenticateConfig() {
+		if(OpenSPCoop2Properties.getRealmAutenticazioneHttpsWWWAuthenticateConfig_read == false){
+			
+			String pNameAuth = "org.openspcoop2.pdd.core.autenticazione.https.authType";
+			String authType = null;
+			try{  
+				authType = this.reader.getValue_convertEnvProperties(pNameAuth); 
+				if(authType!=null){
+					authType = authType.trim();
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+			}
+			
+			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.https.realm";
+			String realm = null;
+			try {
+				realm = this.reader.getValue_convertEnvProperties(pNameRealm); 
+				if(realm!=null){
+					realm = realm.trim();
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+			}
+			
+			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
+				getRealmAutenticazioneHttpsWWWAuthenticateConfig = new WWWAuthenticateConfig();
+				getRealmAutenticazioneHttpsWWWAuthenticateConfig.setAuthType(authType);
+				getRealmAutenticazioneHttpsWWWAuthenticateConfig.setRealm(realm);
+				
+				String pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.https.error_description.notFound";
+				String error_description = null;
+				try {
+					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					if(error_description!=null){
+						error_description = error_description.trim();
+						if(!"".equals(error_description)) {
+							getRealmAutenticazioneHttpsWWWAuthenticateConfig.setNotFound_error(WWWAuthenticateErrorCode.invalid_request.name());
+							getRealmAutenticazioneHttpsWWWAuthenticateConfig.setNotFound_error_description(error_description);
+						}
+					}
+				}catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+				}
+				
+				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.https.error_description.invalid";
+				error_description = null;
+				try {
+					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					if(error_description!=null){
+						error_description = error_description.trim();
+						if(!"".equals(error_description)) {
+							getRealmAutenticazioneHttpsWWWAuthenticateConfig.setInvalid_error(WWWAuthenticateErrorCode.invalid_request.name());
+							getRealmAutenticazioneHttpsWWWAuthenticateConfig.setInvalid_error_description(error_description);
+						}
+					}
+				}catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+				}
+			}
+			
+			OpenSPCoop2Properties.getRealmAutenticazioneHttpsWWWAuthenticateConfig_read = true;
+		}
+
+		return OpenSPCoop2Properties.getRealmAutenticazioneHttpsWWWAuthenticateConfig;
+	}
+	
+	private static Map<TipoAutenticazionePrincipal, WWWAuthenticateConfig> getRealmAutenticazionePrincipalWWWAuthenticateConfig = new HashMap<TipoAutenticazionePrincipal, WWWAuthenticateConfig>();
+	public WWWAuthenticateConfig getRealmAutenticazionePrincipalWWWAuthenticateConfig(TipoAutenticazionePrincipal principal) {
+		if(!OpenSPCoop2Properties.getRealmAutenticazionePrincipalWWWAuthenticateConfig.containsKey(principal)){
+			
+			String pNameAuth = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".authType";
+			String authType = null;
+			try{  
+				authType = this.reader.getValue_convertEnvProperties(pNameAuth); 
+				if(authType!=null){
+					authType = authType.trim();
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+			}
+			
+			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".realm";
+			String realm = null;
+			try {
+				realm = this.reader.getValue_convertEnvProperties(pNameRealm); 
+				if(realm!=null){
+					realm = realm.trim();
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+			}
+			
+			WWWAuthenticateConfig wwwConfig = null;
+			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
+				
+				wwwConfig = new WWWAuthenticateConfig();
+				wwwConfig.setAuthType(authType);
+				wwwConfig.setRealm(realm);
+				
+				String pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".error_description.notFound";
+				String error_description = null;
+				try {
+					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					if(error_description!=null){
+						error_description = error_description.trim();
+						if(!"".equals(error_description)) {
+							wwwConfig.setNotFound_error(WWWAuthenticateErrorCode.invalid_request.name());
+							wwwConfig.setNotFound_error_description(error_description);
+						}
+					}
+				}catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+				}
+				
+				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".error_description.invalid";
+				error_description = null;
+				try {
+					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					if(error_description!=null){
+						error_description = error_description.trim();
+						if(!"".equals(error_description)) {
+							wwwConfig.setInvalid_error(WWWAuthenticateErrorCode.invalid_request.name());
+							wwwConfig.setInvalid_error_description(error_description);
+						}
+					}
+				}catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+				}
+				
+			}
+			
+			OpenSPCoop2Properties.getRealmAutenticazionePrincipalWWWAuthenticateConfig.put(principal, wwwConfig);
+		}
+
+		return OpenSPCoop2Properties.getRealmAutenticazionePrincipalWWWAuthenticateConfig.get(principal);
 	}
 	
 	/**

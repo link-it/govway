@@ -170,6 +170,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_URL = "AuthenticationPrincipalUrl";
 	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_URL = "AuthenticationOptionalPrincipalUrl";
 	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_IP = "AuthenticationPrincipalIPAddress";
+	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_IP_FORWARDED = "AuthenticationPrincipalIPForwarded";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_IP_FORWARDED = "AuthenticationOptionalPrincipalIPForwarded";
 	
 	public static final String PORTA_DELEGATA_AUTH_APIKEY = "AuthenticationApiKey";
 	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_APIKEY = "AuthenticationOptionalApiKey";
@@ -227,6 +229,17 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_REST_APIKEY_FORWARD="AuthenticationREST_apiKeyForward";
 	public static final String PORTA_DELEGATA_REST_APPID="AuthenticationREST_appId";
 	public static final String PORTA_DELEGATA_REST_APPID_FORWARD="AuthenticationREST_appIdForward";
+	
+	/** Porte Delegate per il test WWWAuthenticate */
+	public static final String PORTA_DELEGATA_REST_HTTPS = "AuthenticationREST_https";
+	public static final String PORTA_DELEGATA_REST_PRINCIPAL_CONTAINER = "AuthenticationREST_Principal";
+	public static final String PORTA_DELEGATA_REST_PRINCIPAL_HEADER = "AuthenticationREST_PrincipalHeader";
+	public static final String PORTA_DELEGATA_REST_PRINCIPAL_QUERY = "AuthenticationREST_PrincipalQuery";
+	public static final String PORTA_DELEGATA_REST_PRINCIPAL_URL = "AuthenticationREST_PrincipalUrl";
+	public static final String PORTA_DELEGATA_REST_PRINCIPAL_IPADDRESS = "AuthenticationREST_PrincipalIPAddress";
+	public static final String PORTA_DELEGATA_REST_PRINCIPAL_IPFORWARDED = "AuthenticationREST_PrincipalIPForwarded";
+	public static final String PORTA_DELEGATA_REST_PRINCIPAL_TOKEN = "AuthenticationREST_PrincipalToken";
+
 	
 	/** Porte Delegate per il test degli header CORS */
 	public static final String PORTA_DELEGATA_REST_CORS="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST";
@@ -350,6 +363,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_URL = "AuthenticationPrincipalUrl";
 	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_URL = "AuthenticationOptionalPrincipalUrl";
 	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_IP = "AuthenticationPrincipalIPAddress";
+	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_IP_FORWARDED = "AuthenticationPrincipalIPForwarded";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_IP_FORWARDED = "AuthenticationOptionalPrincipalIPForwarded";
 	
 	public static final String PORTA_APPLICATIVA_AUTH_APIKEY = "AuthenticationApiKey";
 	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_APIKEY = "AuthenticationOptionalApiKey";
@@ -405,6 +420,16 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_REST_APIKEY_FORWARD="AuthenticationREST_apiKeyForward";
 	public static final String PORTA_APPLICATIVA_REST_APPID="AuthenticationREST_appId";
 	public static final String PORTA_APPLICATIVA_REST_APPID_FORWARD="AuthenticationREST_appIdForward";
+	
+	/** Porte Applicative per il test WWWAuthenticate */
+	public static final String PORTA_APPLICATIVA_REST_HTTPS = "AuthenticationREST_https";
+	public static final String PORTA_APPLICATIVA_REST_PRINCIPAL_CONTAINER = "AuthenticationREST_Principal";
+	public static final String PORTA_APPLICATIVA_REST_PRINCIPAL_HEADER = "AuthenticationREST_PrincipalHeader";
+	public static final String PORTA_APPLICATIVA_REST_PRINCIPAL_QUERY = "AuthenticationREST_PrincipalQuery";
+	public static final String PORTA_APPLICATIVA_REST_PRINCIPAL_URL = "AuthenticationREST_PrincipalUrl";
+	public static final String PORTA_APPLICATIVA_REST_PRINCIPAL_IPADDRESS = "AuthenticationREST_PrincipalIPAddress";
+	public static final String PORTA_APPLICATIVA_REST_PRINCIPAL_IPFORWARDED = "AuthenticationREST_PrincipalIPForwarded";
+	public static final String PORTA_APPLICATIVA_REST_PRINCIPAL_TOKEN = "AuthenticationREST_PrincipalToken";
 	
 	/** Porte Applicative per il test degli header CORS */
 	public static final String PORTA_APPLICATIVA_REST_CORS="APIMinisteroErogatore/gwCORSviaREST";
@@ -1009,4 +1034,65 @@ public class CostantiTestSuite {
 			COOKIE_CUSTOM2_VALUE = v;
 		}
 	}
+	
+
+	
+	// Autenticazione Basic
+	public static final String TEST_WWWAUTHENTICATE_BASIC_REALM="TestGovWayBasic";
+	public static final String TEST_WWWAUTHENTICATE_BASIC_ERROR_DESCRIPTION_NOTFOUND="TestGovWayBasic The request is missing a required http-basic credentials";
+	public static final String TEST_WWWAUTHENTICATE_BASIC_ERROR_DESCRIPTION_INVALID="TestGovWayBasic Invalid credentials";
+
+	// Autenticazione ApiKey
+	public static final String TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE="ApiKeyTestGovWay";
+	public static final String TEST_WWWAUTHENTICATE_APIKEY_REALM="TestGovWayApiKey";
+	public static final String TEST_WWWAUTHENTICATE_APIKEY_ERROR_DESCRIPTION_NOTFOUND="TestGovWayApiKey The request is missing a required API Key";
+	public static final String TEST_WWWAUTHENTICATE_APIKEY_ERROR_DESCRIPTION_INVALID="TestGovWayApiKey Invalid API Key";
+
+	// Autenticazione TLS
+	public static final String TEST_WWWAUTHENTICATE_HTTPS_AUTHTYPE="mTLSTestGovWay";
+	public static final String TEST_WWWAUTHENTICATE_HTTPS_REALM="TestGovWayMTLS";
+	public static final String TEST_WWWAUTHENTICATE_HTTPS_ERROR_DESCRIPTION_NOTFOUND="TestGovWayMTLS The request is missing a required client certificate";
+	public static final String TEST_WWWAUTHENTICATE_HTTPS_ERROR_DESCRIPTION_INVALID="TestGovWayMTLS Invalid client certificate";
+
+	// Autenticazione Principal
+	// Container
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_AUTHTYPE="PrincipalAuthTestGovWayContainer";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_REALM="TestGovWayContainer";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_ERROR_DESCRIPTION_NOTFOUND="TestGovWayContainer The request is missing a required principal credentials";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_ERROR_DESCRIPTION_INVALID="TestGovWayContainer Invalid principal credentials";
+	// Header Based
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_AUTHTYPE="PrincipalAuthTestGovWayHeaderBased";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_REALM="TestGovWayHeaderBased";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_ERROR_DESCRIPTION_NOTFOUND="TestGovWayHeaderBased The request is missing a required principal credentials";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_ERROR_DESCRIPTION_INVALID="TestGovWayHeaderBased Invalid principal credentials";
+	// Form Based
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_AUTHTYPE="PrincipalAuthTestGovWayFormBased";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_REALM="TestGovWayFormBased";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_ERROR_DESCRIPTION_NOTFOUND="TestGovWayFormBased The request is missing a required principal credentials";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_ERROR_DESCRIPTION_INVALID="TestGovWayFormBased Invalid principal credentials";
+	// Url Based
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_AUTHTYPE="PrincipalAuthTestGovWayUrlBased";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_REALM="TestGovWayUrlBased";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_ERROR_DESCRIPTION_NOTFOUND="TestGovWayUrlBased The request is missing a required principal credentials";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_ERROR_DESCRIPTION_INVALID="TestGovWayUrlBased Invalid principal credentials";
+	// Content Based
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_CONTENT_BASED_AUTHTYPE="PrincipalAuthTestGovWayContentBased";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_CONTENT_BASED_REALM="TestGovWayContentBased";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_CONTENT_BASED_ERROR_DESCRIPTION_NOTFOUND="TestGovWayContentBased The request is missing a required principal credentials";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_CONTENT_BASED_ERROR_DESCRIPTION_INVALID="TestGovWayContentBased Invalid principal credentials";
+	// Client IP
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_AUTHTYPE="PrincipalAuthTestGovWayIP";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_REALM="TestGovWayIP";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_ERROR_DESCRIPTION_NOTFOUND="TestGovWayIP The request is missing a required principal credentials";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_ERROR_DESCRIPTION_INVALID="TestGovWayIP Invalid principal credentials";
+	// X Forwarded For
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_AUTHTYPE="PrincipalAuthTestGovWayIPForwarded";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_REALM="TestGovWayIPForwarded";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_ERROR_DESCRIPTION_NOTFOUND="TestGovWayIPForwarded The request is missing a required principal credentials";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_ERROR_DESCRIPTION_INVALID="TestGovWayIPForwarded Invalid principal credentials";
+	// Token
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_AUTHTYPE="PrincipalAuthTestGovWayToken";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_REALM="TestGovWayToken";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_ERROR_DESCRIPTION_NOTFOUND="TestGovWayToken The request is missing a required principal credentials";
+	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_ERROR_DESCRIPTION_INVALID="TestGovWayToken Invalid principal credentials";
 }

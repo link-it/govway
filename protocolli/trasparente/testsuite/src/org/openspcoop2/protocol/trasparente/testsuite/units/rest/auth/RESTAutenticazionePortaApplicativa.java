@@ -23,11 +23,13 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.rest.auth;
 import java.util.Date;
 import java.util.Vector;
 
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore;
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore.RUOLO;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PosizioneCredenziale;
+import org.openspcoop2.protocol.trasparente.testsuite.units.utils.WWWAuthenticateUtils;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
@@ -37,6 +39,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -179,6 +182,39 @@ public class RESTAutenticazionePortaApplicativa {
 		restCore.postInvoke(repository);
 	}
 	
+//	7) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'basic'. 
+//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
+	
+	@Test(groups={RESTAutenticazionePortaApplicativa.ID_GRUPPO,RESTAutenticazionePortaApplicativa.ID_GRUPPO+".AuthBasic_WWWAuthenticate_credenzialiNonFornite"})
+	public void testAuthBasicWWWAuthenticate_credenzialiNonFornite() throws TestSuiteException, Exception{
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH);
+		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
+		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
+				HttpConstants.AUTHENTICATION_BASIC, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_BASIC_REALM, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_BASIC_ERROR_DESCRIPTION_NOTFOUND);
+	}
+	
+//	8) Invocazione dove il client fornisce credenziali non valide richieste dall'autenticazione 'basic'. 
+//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
+	
+	@Test(groups={RESTAutenticazionePortaApplicativa.ID_GRUPPO,RESTAutenticazionePortaApplicativa.ID_GRUPPO+".AuthBasic_WWWAuthenticate_credenzialiNonValide"})
+	public void testAuthBasicWWWAuthenticate_credenzialiNonValide() throws TestSuiteException, Exception{
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH);
+		restCore.setCredenziali("utenzaInventataNonEsistente","12345678");
+		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
+		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
+				HttpConstants.AUTHENTICATION_BASIC, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_BASIC_REALM, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_BASIC_ERROR_DESCRIPTION_INVALID);
+	}
+	
+	
+	
 	
 	
 	
@@ -208,6 +244,39 @@ public class RESTAutenticazionePortaApplicativa {
 		restCore.invoke("json", 200, repository, true, true, "text/json");
 		restCore.postInvoke(repository);
 	}
+	
+
+//	ApiKey 3) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'api-key'. 
+//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
+	
+	@Test(groups={RESTAutenticazionePortaApplicativa.ID_GRUPPO,RESTAutenticazionePortaApplicativa.ID_GRUPPO+".AuthApiKey_WWWAuthenticate_credenzialiNonFornite"})
+	public void testAuthApiKeyWWWAuthenticate_credenzialiNonFornite() throws TestSuiteException, Exception{
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_REST_APIKEY);
+		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
+		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_REALM, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_ERROR_DESCRIPTION_NOTFOUND);
+	}
+	
+//	ApiKey 4) Invocazione dove il client fornisce credenziali non valide richieste dall'autenticazione 'api-key'. 
+//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
+	
+	@Test(groups={RESTAutenticazionePortaApplicativa.ID_GRUPPO,RESTAutenticazionePortaApplicativa.ID_GRUPPO+".AuthApiKey_WWWAuthenticate_credenzialiNonValide"})
+	public void testAuthApiKeyWWWAuthenticate_credenzialiNonValide() throws TestSuiteException, Exception{
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_REST_APIKEY);
+		restCore.setCredenzialiApiKey("EsempioUtenzaInesistenzaApiKey@MinisteroFruitore.gw", "123456", PosizioneCredenziale.COOKIE);
+		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
+		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_REALM, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_ERROR_DESCRIPTION_INVALID);
+	}
+	
 
 	
 	
@@ -237,6 +306,136 @@ public class RESTAutenticazionePortaApplicativa {
 		restCore.postInvoke(repository);
 	}
 	
+
+//	ApiKey + AppId 3) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'api-key + AppId'. 
+//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
+	
+	@Test(groups={RESTAutenticazionePortaApplicativa.ID_GRUPPO,RESTAutenticazionePortaApplicativa.ID_GRUPPO+".AuthApiKeyAppId_WWWAuthenticate_credenzialiNonFornite"})
+	public void testAuthApiKeyAppIdWWWAuthenticate_credenzialiNonFornite() throws TestSuiteException, Exception{
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_REST_APPID);
+		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
+		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_REALM, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_ERROR_DESCRIPTION_NOTFOUND);
+	}
+	
+//	ApiKey + AppId 4) Invocazione dove il client fornisce credenziali non valide richieste dall'autenticazione 'api-key + AppId'. 
+//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
+	
+	@Test(groups={RESTAutenticazionePortaApplicativa.ID_GRUPPO,RESTAutenticazionePortaApplicativa.ID_GRUPPO+".AuthApiKeyAppId_WWWAuthenticate_credenzialiNonValide"})
+	public void testAuthApiKeyAppIdWWWAuthenticate_credenzialiNonValide() throws TestSuiteException, Exception{
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_REST_APPID);
+		restCore.setCredenzialiMultipleApiKey("EsempioUtenzaInesistenzaApiKey@MinisteroFruitore.gw", "123456", PosizioneCredenziale.COOKIE, PosizioneCredenziale.COOKIE);
+		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
+		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_REALM, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_ERROR_DESCRIPTION_INVALID);
+	}
 		
+	
+	
+	
+	
+//	https 1) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'https'. 
+//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
+	
+	@Test(groups={RESTAutenticazionePortaApplicativa.ID_GRUPPO,RESTAutenticazionePortaApplicativa.ID_GRUPPO+".AuthHttps_WWWAuthenticate_credenzialiNonFornite"})
+	public void testAuthHttpsWWWAuthenticate_credenzialiNonFornite() throws TestSuiteException, Exception{
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_REST_HTTPS);
+		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
+		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_HTTPS_AUTHTYPE, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_HTTPS_REALM, 
+				CostantiTestSuite.TEST_WWWAUTHENTICATE_HTTPS_ERROR_DESCRIPTION_NOTFOUND);
+	}
+	
+	
+	
+	
+//	principal 1) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'principal'. 
+//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
+	
+	@DataProvider(name="principalWWWAuthenticateProvider")
+	public Object[][] principalWWWAuthenticateProvider(){
+		return new Object[][]{
+				{TipoAutenticazionePrincipal.CONTAINER},
+				{TipoAutenticazionePrincipal.HEADER},
+				{TipoAutenticazionePrincipal.FORM},
+				{TipoAutenticazionePrincipal.URL},
+				// non può fallire {TipoAutenticazionePrincipal.INDIRIZZO_IP},
+				{TipoAutenticazionePrincipal.INDIRIZZO_IP_X_FORWARDED_FOR},
+				{TipoAutenticazionePrincipal.TOKEN}
+		};
+	}
+	
+	@Test(groups={RESTAutenticazionePortaApplicativa.ID_GRUPPO,RESTAutenticazionePortaApplicativa.ID_GRUPPO+".AuthPrincipal_WWWAuthenticate_credenzialiNonFornite"},dataProvider="principalWWWAuthenticateProvider")
+	public void testAuthPrincipalWWWAuthenticate_credenzialiNonFornite(TipoAutenticazionePrincipal tipo) throws TestSuiteException, Exception{
+		
+		String nomePorta = null;
+		String authType = null;
+		String realm = null;
+		String error_description = null;
+		switch (tipo) {
+		case CONTAINER:
+			nomePorta = CostantiTestSuite.PORTA_APPLICATIVA_REST_PRINCIPAL_CONTAINER;
+			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_AUTHTYPE;
+			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_REALM;
+			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_ERROR_DESCRIPTION_NOTFOUND;
+			break;
+		case HEADER:
+			nomePorta = CostantiTestSuite.PORTA_APPLICATIVA_REST_PRINCIPAL_HEADER;
+			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_AUTHTYPE;
+			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_REALM;
+			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_ERROR_DESCRIPTION_NOTFOUND;
+			break;
+		case FORM:
+			nomePorta = CostantiTestSuite.PORTA_APPLICATIVA_REST_PRINCIPAL_QUERY;
+			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_AUTHTYPE;
+			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_REALM;
+			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_ERROR_DESCRIPTION_NOTFOUND;
+			break;
+		case URL:
+			nomePorta = CostantiTestSuite.PORTA_APPLICATIVA_REST_PRINCIPAL_URL;
+			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_AUTHTYPE;
+			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_REALM;
+			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_ERROR_DESCRIPTION_NOTFOUND;
+			break;
+		case INDIRIZZO_IP:
+			nomePorta = CostantiTestSuite.PORTA_APPLICATIVA_REST_PRINCIPAL_IPADDRESS;
+			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_AUTHTYPE;
+			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_REALM;
+			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_ERROR_DESCRIPTION_NOTFOUND;
+			break;
+		case INDIRIZZO_IP_X_FORWARDED_FOR:
+			nomePorta = CostantiTestSuite.PORTA_APPLICATIVA_REST_PRINCIPAL_IPFORWARDED;
+			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_AUTHTYPE;
+			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_REALM;
+			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_ERROR_DESCRIPTION_NOTFOUND;
+			break;
+		case TOKEN:
+			nomePorta = CostantiTestSuite.PORTA_APPLICATIVA_REST_PRINCIPAL_TOKEN;
+			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_AUTHTYPE;
+			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_REALM;
+			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_ERROR_DESCRIPTION_NOTFOUND;
+			break;
+		}
+		
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(nomePorta);
+		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
+		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
+				authType, 
+				realm, 
+				error_description);
+	}
 	
 }

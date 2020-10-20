@@ -28,11 +28,13 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneUtils;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autenticazione.PrincipalUtilities;
+import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -145,6 +147,9 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 
     	EsitoAutenticazionePortaDelegata esito = new EsitoAutenticazionePortaDelegata();
     	
+    	OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+    	WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazionePrincipalWWWAuthenticateConfig(this.tipoAutenticazionePrincipal);
+    	
     	IDSoggetto soggettoFruitore = null;
     	if(datiInvocazione!=null && datiInvocazione.getPd()!=null) {
     		soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
@@ -163,12 +168,18 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     		esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal("credenziali non fornite",principal));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
+			}
 			return esito;
     	}
     	if( principal==null || "".equals(principal) ){
 			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal("credenziali non fornite",principal));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(wwwAuthenticateConfig!=null) {
+				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_notFound());
+			}
 			return esito;
 		}
     	

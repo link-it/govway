@@ -63,6 +63,10 @@ public class CredenzialeTrasporto extends AbstractCredenziale {
 		}
 	}
 	
+	public boolean isSsl() {
+		return TipoAutenticazione.SSL.getValue().equalsIgnoreCase(this.tipoAutenticazione);
+	}
+	
 	public static boolean isSsl(String tipoAutenticazione) {
 		return TipoAutenticazione.SSL.getValue().equalsIgnoreCase(tipoAutenticazione);
 	}
