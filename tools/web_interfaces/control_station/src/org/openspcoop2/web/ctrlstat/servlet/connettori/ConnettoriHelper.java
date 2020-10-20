@@ -894,6 +894,27 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 	
+	public Vector<DataElement> addTokenPolicyToDatiAsHidden(Vector<DataElement> dati, boolean autenticazioneToken, String tokenPolicy){
+		DataElement de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(autenticazioneToken? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		dati.addElement(de);
+		
+		// Token Autenticazione
+		if (autenticazioneToken) {
+			de = new DataElement();
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			de.setValue(tokenPolicy);
+			dati.addElement(de);
+		}
+		
+		return dati;
+	}
+	
 	public Vector<DataElement> addProxyToDati(Vector<DataElement> dati,
 			String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword){
 		
@@ -2005,7 +2026,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			dati.addElement(de);
 			
 			if(servizioApplicativoServerEnabled) {
-				dati = this.addEndPointToDatiAsHidden(dati, endpointtype, url, nome, tipo, user, password, initcont, urlpgk, provurl, connfact, sendas, objectName, tipoOperazione, 
+				dati = this.addEndPointToDatiAsHidden(dati, connettoreDebug,
+						endpointtype, autenticazioneHttp,
+						url, nome, tipo, user, password, initcont, urlpgk, provurl, connfact, sendas, objectName, tipoOperazione, 
 						httpsurl, httpstipologia, httpshostverify, 
 						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato, 
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, httpsKeyAlias, httpsTrustStoreCRLs, 
@@ -2014,7 +2037,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta, 
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, 
 						requestOutputFileName, requestOutputFileNameHeaders, requestOutputParentDirCreateIfNotExists, requestOutputOverwriteIfExists, 
-						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						autenticazioneToken, tokenPolicy);
 			}
 		}
 		
@@ -2723,8 +2747,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 
-	public Vector<DataElement> addEndPointToDatiAsHidden(Vector<DataElement> dati,
-			String endpointtype, String url, String nome, String tipo,
+	public Vector<DataElement> addEndPointToDatiAsHidden(Vector<DataElement> dati, String connettoreDebug,
+			String endpointtype, String autenticazioneHttp, 
+			String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
@@ -2740,7 +2765,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
-			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime) {
+			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			boolean autenticazioneToken, String tokenPolicy) {
 
 
 		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
@@ -2767,6 +2793,19 @@ public class ConnettoriHelper extends ConsoleHelper {
 //		dati.addElement(de);
 
 
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+		de.setType(DataElementType.HIDDEN);
+		if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+			de.setValue("true");
+		}
+		else{
+			de.setValue("false");
+		}
+		dati.addElement(de);
+		
+		
 		/** VISUALIZZAZIONE HTTP ONLY MODE */
 
 		if (TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP.equals(tipologiaConnettori)) {
@@ -2938,6 +2977,35 @@ public class ConnettoriHelper extends ConsoleHelper {
 		// Opzioni Avanzate
 		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
 			this.addOpzioniAvanzateHttpToDatiAsHidden(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+		}
+		
+		// Token Policy
+		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+			this.addTokenPolicyToDatiAsHidden(dati, autenticazioneToken, tokenPolicy);
+		}
+	
+		// Autenticazione Http
+		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+			
+			de = new DataElement();
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(autenticazioneHttp);
+			dati.addElement(de);
+			
+			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(StringEscapeUtils.escapeHtml(user));
+				dati.addElement(de);
+
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(StringEscapeUtils.escapeHtml(password));
+				dati.addElement(de);
+			}
 		}
 		
 		return dati;

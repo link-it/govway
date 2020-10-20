@@ -924,7 +924,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 					if(modificaProfilo) {
-						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
+						dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+								endpointtype, autenticazioneHttp,
+								url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
 								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
 								httpsurl, httpstipologia, httpshostverify, 
@@ -940,7 +942,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								autenticazioneToken, token_policy
 								);
 					}
 					else {
@@ -1074,7 +1077,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 				//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 				if(modificaProfilo) {
-					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
+					dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+							endpointtype, autenticazioneHttp,
+							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
 							httpsurl, httpstipologia, httpshostverify, 
@@ -1090,7 +1095,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken, token_policy
 							);
 				}
 				else {
@@ -1199,7 +1205,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, idSoggettoFruitore);
 
 					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
-					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
+					dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+							endpointtype, autenticazioneHttp,
+							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
 							httpsurl, httpstipologia, httpshostverify, 
@@ -1215,7 +1223,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken, token_policy
 							);
 					
 					if(backToStato != null) {
@@ -1388,7 +1397,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 					if(modificaProfilo) {
-						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
+						dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+								endpointtype, autenticazioneHttp,
+								url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
 								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, 
 								httpsurl, httpstipologia, httpshostverify, 
@@ -1404,7 +1415,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								autenticazioneToken, token_policy
 								);
 					}
 					else {

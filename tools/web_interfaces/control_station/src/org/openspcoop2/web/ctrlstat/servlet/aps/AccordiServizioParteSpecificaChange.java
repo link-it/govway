@@ -1225,8 +1225,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					else {
 						dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 						
-						dati = apsHelper.addEndPointToDatiAsHidden(dati,
-								endpointtype, url, nome, tipo,
+						dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+								endpointtype, autenticazioneHttp,
+								url, nome, tipo,
 								user, password, initcont, urlpgk,
 								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
 								httpsurl, httpstipologia, httpshostverify,
@@ -1243,7 +1244,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								autenticazioneToken, token_policy);
 						
 					}
 					
@@ -1419,8 +1421,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 					
-					dati = apsHelper.addEndPointToDatiAsHidden(dati,
-							endpointtype, url, nome, tipo,
+					dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+							endpointtype, autenticazioneHttp,
+							url, nome, tipo,
 							user, password, initcont, urlpgk,
 							provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
 							httpsurl, httpstipologia, httpshostverify,
@@ -1437,7 +1440,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken, token_policy);
 					
 				}
 				
@@ -1541,7 +1545,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 					
-					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
+					dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+							endpointtype, autenticazioneHttp,
+							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
 							httpsurl, httpstipologia, httpshostverify, 
@@ -1558,7 +1564,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken, token_policy);
 					
 					if(backToStato != null) {
 						// backtostato per chiudere la modifica dopo la conferma
@@ -1873,8 +1880,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					else {
 						dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 						
-						dati = apsHelper.addEndPointToDatiAsHidden(dati,
-								endpointtype, url, nome, tipo,
+						dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+								endpointtype, autenticazioneHttp,
+								url, nome, tipo,
 								user, password, initcont, urlpgk,
 								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
 								httpsurl, httpstipologia, httpshostverify,
@@ -1891,7 +1899,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								autenticazioneToken, token_policy);
 						
 					}
 					

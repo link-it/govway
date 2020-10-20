@@ -1164,8 +1164,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 					dati = porteApplicativeHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 
-					dati = porteApplicativeHelper.addEndPointToDatiAsHidden(dati,
-							endpointtype, url, nomeCodaJms, tipoJms,
+					dati = porteApplicativeHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+							endpointtype, autenticazioneHttp,
+							url, nomeCodaJms, tipoJms,
 							user, password, initcont, urlpgk,
 							provurl, connfact, tipoSendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.CHANGE,
 							httpsurl, httpstipologia, httpshostverify,
@@ -1181,7 +1182,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken,token_policy);
 				}
 
 				pd.setDati(dati);
@@ -1281,8 +1283,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 					dati = porteApplicativeHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 
-					dati = porteApplicativeHelper.addEndPointToDatiAsHidden(dati,
-							endpointtype, url, nomeCodaJms, tipoJms,
+					dati = porteApplicativeHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+							endpointtype, autenticazioneHttp,
+							url, nomeCodaJms, tipoJms,
 							user, password, initcont, urlpgk,
 							provurl, connfact, tipoSendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,TipoOperazione.CHANGE,
 							httpsurl, httpstipologia, httpshostverify,
@@ -1298,7 +1301,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken,token_policy);
 				}
 
 				pd.setDati(dati);
