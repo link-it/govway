@@ -51,6 +51,12 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 
 	protected boolean cleanHeaderAuthorization = true;
 	
+	private boolean logError = true;
+	@Override
+	public void setLogError(boolean logError) {
+		this.logError = logError;
+	}
+	
 	@Override
     public void initParametri(ParametriAutenticazione parametri) throws AutenticazioneException {
 		super.initParametri(parametri);
@@ -107,8 +113,9 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();
 			}
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita",e);
-			
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita",e);
+			}
 			esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setClientAuthenticated(false);

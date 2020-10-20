@@ -45,6 +45,12 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 
 public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 
+	private boolean logError = true;
+	@Override
+	public void setLogError(boolean logError) {
+		this.logError = logError;
+	}
+	
     @Override
     public EsitoAutenticazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione) throws AutenticazioneException{
 
@@ -112,8 +118,9 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();
 			}
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSsl non riuscita",e);
-			
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSsl non riuscita",e);
+			}
 			esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setClientIdentified(false);

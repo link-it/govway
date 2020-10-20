@@ -356,6 +356,9 @@ public class GestoreAutenticazione {
     	
     	IAutenticazionePortaDelegata auth = newInstanceAuthPortaDelegata(tipoAutenticazione, pddContext, protocolFactory);
     	auth.initParametri(parametriAutenticazione);
+    	if(messageBox) {
+    		auth.setLogError(false);
+    	}
     	
     	try {
 	    	if(GestoreAutenticazione.cacheAutenticazione==null || !auth.saveAuthenticationResultInCache()){

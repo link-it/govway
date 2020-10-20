@@ -67,6 +67,12 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 	private boolean cleanApiKey = true;
 	private boolean cleanAppId = true;
 	
+	private boolean logError = true;
+	@Override
+	public void setLogError(boolean logError) {
+		this.logError = logError;
+	}
+	
 	@Override
     public void initParametri(ParametriAutenticazione parametri) throws AutenticazioneException {
 		super.initParametri(parametri);
@@ -159,7 +165,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 					datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
 					fullCredential); 
     	}catch(Exception e) {
-    		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey non riuscita",e);
+    		if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey non riuscita",e);
+    		}
     		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
@@ -186,7 +194,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 						datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
 						fullCredential);
         	}catch(Exception e) {
-        		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (AppId) non riuscita",e);
+        		if(this.logError) {
+        			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (AppId) non riuscita",e);
+        		}
         		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
     			esito.setClientAuthenticated(false);
     			esito.setClientIdentified(false);
@@ -224,7 +234,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 	    		password = decodedApiKey[1];
 	    	}
     	}catch(Exception e) {
-    		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") fallita",e);
+    		if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") fallita",e);
+    		}
     		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
@@ -250,7 +262,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazioneApiKey (appId:"+this.appId+") non ha trovato risultati",notFound);
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") non riuscita",e);
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") non riuscita",e);
+			}
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);
@@ -275,7 +289,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 			}
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") (Applicativi) non riuscita",e);
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") (Applicativi) non riuscita",e);
+			}
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);

@@ -50,6 +50,12 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 
 public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 
+	private boolean logError = true;
+	@Override
+	public void setLogError(boolean logError) {
+		this.logError = logError;
+	}
+	
     @Override
     public EsitoAutenticazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione) throws AutenticazioneException{
 
@@ -129,10 +135,14 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 			}
 		}
 		catch(UtilsMultiException notFound){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazioneSsl non ha trovato risultati",notFound);
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazioneSsl non ha trovato risultati",notFound);
+			}
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSsl non riuscita",e);
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSsl non riuscita",e);
+			}
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);
@@ -179,7 +189,9 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 			}
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSsl (Applicativi) non riuscita",e);
+			if(this.logError) {
+    				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSsl (Applicativi) non riuscita",e);
+			}
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);

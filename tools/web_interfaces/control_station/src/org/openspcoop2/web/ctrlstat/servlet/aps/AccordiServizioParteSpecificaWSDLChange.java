@@ -49,9 +49,9 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -391,15 +391,15 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
-			List<AccordoServizioParteComuneSintetico> listAccordi =  
-					AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, superUser, new Search(true), permessi);
+			List<IDAccordoDB> listIdAccordi =  
+					AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, superUser, new Search(true), permessi, false, false);
 
 			//				List<AccordoServizioParteComune> listAccordi = apcCore.accordiList("", new Search(true));
-			if (listAccordi.size() > 0) {
-				accordiList = new String[listAccordi.size()];
-				accordiListLabel = new String[listAccordi.size()];
+			if (listIdAccordi.size() > 0) {
+				accordiList = new String[listIdAccordi.size()];
+				accordiListLabel = new String[listIdAccordi.size()];
 				int i = 0;
-				for (AccordoServizioParteComuneSintetico accordoServizio : listAccordi) {
+				for (IDAccordoDB accordoServizio : listIdAccordi) {
 					accordiList[i] = accordoServizio.getId().toString();
 					accordiListLabel[i] = accordoServizio.getNome();
 					i++;

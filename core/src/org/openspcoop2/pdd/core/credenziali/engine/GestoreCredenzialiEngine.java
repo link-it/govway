@@ -446,10 +446,32 @@ public class GestoreCredenzialiEngine {
 			break;
 		case AT_LEAST_ONE:
 			if( (!existsHeader_basicUsername || !existsHeader_basicPassword) && !existsHeader_sslSubject && !existsHeader_sslCertificate && !existsHeader_principal ){
+				StringBuilder sb = new StringBuilder();
+				if(headerNameBasicUsername!=null) {
+					sb.append(headerNameBasicUsername);
+				}
+				if(headerNameSSLSubject!=null) {
+					if(sb.length()>0) {
+						sb.append(",");
+					}
+					sb.append(headerNameSSLSubject);
+				}
+				if(headerNameSSLCertificate!=null) {
+					if(sb.length()>0) {
+						sb.append(",");
+					}
+					sb.append(headerNameSSLCertificate);
+				}
+				if(headerNamePrincipal!=null) {
+					if(sb.length()>0) {
+						sb.append(",");
+					}
+					sb.append(headerNamePrincipal);
+				}
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 						buildWWWProxyAuthAtleastOne(authType, realm,
 								modalitaAtLeastOne_errorDescription),
-						"Non sono presenti Header HTTP che veicolano credenziali (header non rilevati: "+headerNameBasicUsername+","+headerNameSSLSubject+","+headerNameSSLCertificate+","+headerNamePrincipal+")");
+						"Non sono presenti Header HTTP che veicolano credenziali (header non rilevati: "+sb.toString()+")");
 			}
 			break;
 		case BASIC:

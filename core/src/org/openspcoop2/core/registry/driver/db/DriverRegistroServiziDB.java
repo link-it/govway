@@ -15218,6 +15218,318 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 		}
 	}
+	
+	public List<IDAccordoDB> idAccordiList(String superuser, ISearch ricerca, 
+			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException {
+		return idAccordiListEngine(superuser,ricerca,false,false,
+				soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+	}
+	public List<IDAccordoDB> idAccordiServizioParteComuneList(String superuser, ISearch ricerca, 
+			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException {
+		return idAccordiListEngine(superuser,ricerca,false,true,
+				soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+	}
+	public List<IDAccordoDB> idAccordiServizioCompostiList(String superuser, ISearch ricerca, 
+			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException {
+		return idAccordiListEngine(superuser,ricerca,true,false,
+				soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+	}
+	private List<IDAccordoDB> idAccordiListEngine(String superuser, ISearch ricerca,boolean excludeASParteComune,boolean excludeASComposti, 
+			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException {
+		String nomeMetodo = "idAccordiList";
+		int idLista = Liste.ACCORDI;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
+		String filterProtocolli = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLI);
+		List<String> tipoSoggettiProtocollo = null;
+		try {
+			tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(filterProtocollo, filterProtocolli);
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		boolean searchByTipoSoggetto = (tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0);
+		
+		String filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+		
+		String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+		
+		String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+
+		this.log.debug("search : " + search);
+		this.log.debug("filterProtocollo : " + filterProtocollo);
+		this.log.debug("filterProtocolli : " + filterProtocolli);
+		this.log.debug("filterTipoAPI : " + filterTipoAPI);
+		this.log.debug("filterStatoAccordo : " + filterStatoAccordo);
+		this.log.debug("filterGruppo : " + filterGruppo);
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		ArrayList<IDAccordoDB> lista = new ArrayList<IDAccordoDB>();
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("accordiListEngine");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			if(excludeASComposti && excludeASParteComune){
+				throw new Exception("Non e' possibile invocare il metodo accordiListEngine con entrambi i parametri excludeASParteComune,excludeASComposti impostati al valore true");
+			}
+
+
+			ISQLQueryObject sqlQueryObjectExclude = null;
+			if(excludeASComposti || excludeASParteComune){
+				sqlQueryObjectExclude = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExclude.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
+				sqlQueryObjectExclude.addSelectField(CostantiDB.ACCORDI_SERVIZI_COMPOSTO, "id_accordo");
+				sqlQueryObjectExclude.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo="+CostantiDB.ACCORDI+".id");
+			}
+
+			ISQLQueryObject sqlQueryObjectExistsResource = null;
+			if(soloAccordiConsistentiRest) {
+				sqlQueryObjectExistsResource = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExistsResource.addFromTable(CostantiDB.API_RESOURCES);
+				sqlQueryObjectExistsResource.addSelectField(CostantiDB.API_RESOURCES, "id_accordo");
+				sqlQueryObjectExistsResource.addWhereCondition(CostantiDB.API_RESOURCES+".id_accordo="+CostantiDB.ACCORDI+".id");
+				sqlQueryObjectExistsResource.setANDLogicOperator(true);
+			}
+			
+			ISQLQueryObject sqlQueryObjectExistsPortTypeConAzioni = null;
+			if(soloAccordiConsistentiSoap){
+				ISQLQueryObject sqlQueryObjectExistsPortTypeCheckAzioni = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExistsPortTypeCheckAzioni.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
+				sqlQueryObjectExistsPortTypeCheckAzioni.addSelectField(CostantiDB.PORT_TYPE_AZIONI, "id_port_type");
+				sqlQueryObjectExistsPortTypeCheckAzioni.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".id_port_type="+CostantiDB.PORT_TYPE+".id");
+				sqlQueryObjectExistsPortTypeCheckAzioni.setANDLogicOperator(true);
+				
+				sqlQueryObjectExistsPortTypeConAzioni = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExistsPortTypeConAzioni.addFromTable(CostantiDB.PORT_TYPE);
+				sqlQueryObjectExistsPortTypeConAzioni.addSelectField(CostantiDB.PORT_TYPE, "id_accordo");
+				sqlQueryObjectExistsPortTypeConAzioni.addWhereCondition(CostantiDB.PORT_TYPE+".id_accordo="+CostantiDB.ACCORDI+".id");
+				sqlQueryObjectExistsPortTypeConAzioni.addWhereExistsCondition(false, sqlQueryObjectExistsPortTypeCheckAzioni);
+				sqlQueryObjectExistsPortTypeConAzioni.setANDLogicOperator(true);
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.addSelectCountField("*", "cont");
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".superuser = ?");
+			
+			//query con search
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", search, true, true));
+						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
+						//sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true));  // fa confusone nei protocolli che non supportano il referente
+			}
+			if (searchByTipoSoggetto) {
+				sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));		
+			}
+			
+			if(excludeASParteComune){
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
+			}
+			if(excludeASComposti){
+				sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
+			}
+			
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
+			}
+			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".stato = ?");
+			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
+			}
+			
+			if(soloAccordiConsistentiRest && soloAccordiConsistentiSoap) {
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObjectExistsResource.getWhereExistsCondition(false, sqlQueryObjectExistsResource),
+						sqlQueryObjectExistsPortTypeConAzioni.getWhereExistsCondition(false, sqlQueryObjectExistsPortTypeConAzioni));
+			}
+			else if(soloAccordiConsistentiRest) {
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExistsResource);
+			}
+			else if(soloAccordiConsistentiSoap) {
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExistsPortTypeConAzioni);
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
+				stmt.setString(index++, superuser);
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+				stmt.setString(index++, filterTipoAPI);
+			}
+			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
+				stmt.setString(index++, filterStatoAccordo);
+			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				stmt.setString(index++, filterGruppo);
+			}
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI, "id", "idAccordo");
+			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI, "nome", "nomeAccordo");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "versione");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
+			sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI, "id", "idSoggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
+			//sqlQueryObject.addSelectField("id_referente");
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".superuser = ?");
+			
+			if (!search.equals("")) { // con search
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", search, true, true));
+				//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
+				//sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true));  // fa confusone nei protocolli che non supportano il referente
+			}
+			if (searchByTipoSoggetto) {
+				sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));		
+			}
+
+			if(excludeASParteComune){
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
+			}
+			if(excludeASComposti){
+				sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
+			}
+			
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) { // con filter
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
+			}
+			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".stato = ?");
+			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
+			}
+						
+			if(soloAccordiConsistentiRest && soloAccordiConsistentiSoap) {
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObjectExistsResource.getWhereExistsCondition(false, sqlQueryObjectExistsResource),
+						sqlQueryObjectExistsPortTypeConAzioni.getWhereExistsCondition(false, sqlQueryObjectExistsPortTypeConAzioni));
+			}
+			else if(soloAccordiConsistentiRest) {
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExistsResource);
+			}
+			else if(soloAccordiConsistentiSoap) {
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExistsPortTypeConAzioni);
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("nomeAccordo");
+			sqlQueryObject.addOrderBy("versione");
+			sqlQueryObject.addOrderBy("nome_soggetto");
+			sqlQueryObject.addOrderBy("tipo_soggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+
+			stmt = con.prepareStatement(queryString);
+			index = 1;
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
+				stmt.setString(index++, superuser);
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+				stmt.setString(index++, filterTipoAPI);
+			}
+			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
+				stmt.setString(index++, filterStatoAccordo);
+			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				stmt.setString(index++, filterGruppo);
+			}
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+
+				IDSoggettoDB idSoggettoDB = new IDSoggettoDB(risultato.getString("tipo_soggetto"), risultato.getString("nome_soggetto"));
+				idSoggettoDB.setId(risultato.getLong("idSoggetto"));
+				
+				IDAccordoDB idAccordoDB = new IDAccordoDB(risultato.getString("nomeAccordo"), idSoggettoDB, risultato.getInt("versione"));
+				idAccordoDB.setId(risultato.getLong("idAccordo"));
+				
+				lista.add(idAccordoDB);
+
+			}
+
+			this.log.debug("size lista :" + ((lista == null) ? null : lista.size()));
+
+			return lista;
+
+		} catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 
 	public List<AccordoCooperazione> accordiCooperazioneList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiCooperazioneList";

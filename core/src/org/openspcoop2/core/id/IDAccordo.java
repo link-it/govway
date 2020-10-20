@@ -88,10 +88,16 @@ public class IDAccordo implements java.io.Serializable {
 		
 	@Override 
 	public boolean equals(Object object){
+		return _equals(object, true);
+	}
+	protected boolean _equals(Object object, boolean verifyClass){
 		if(object == null)
 			return false;
-		if(object.getClass().getName().equals(this.getClass().getName()) == false)
-			return false;
+		if(verifyClass) {
+			if(object.getClass().getName().equals(this.getClass().getName()) == false) {
+				return false;
+			}
+		}
 		IDAccordo id = (IDAccordo) object;
 		
 		if(this.nome==null){

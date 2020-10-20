@@ -3126,7 +3126,8 @@ public class RicezioneBuste {
 								errorMessageAutenticazione = esito.getErrorMessage();
 								wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
 								integrationFunctionError = esito.getIntegrationFunctionError();
-								msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, credenziali.toString(Credenziali.SHOW_BASIC_PASSWORD,
+								msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, credenziali.toString(
+										propertiesReader.isAutenticazioneBasicLogPassword() ? Credenziali.SHOW_BASIC_PASSWORD : !Credenziali.SHOW_BASIC_PASSWORD,
 										!Credenziali.SHOW_ISSUER,
 										!Credenziali.SHOW_DIGEST_CLIENT_CERT,
 										!Credenziali.SHOW_SERIAL_NUMBER_CLIENT_CERT)); // Aggiungo la password se presente, evito inoltre di stampare l'issuer e altre info del cert nei diagnostici

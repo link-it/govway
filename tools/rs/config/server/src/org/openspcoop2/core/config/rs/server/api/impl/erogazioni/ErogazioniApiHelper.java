@@ -123,6 +123,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
@@ -288,7 +289,7 @@ public class ErogazioniApiHelper {
 				.toArray(String[]::new);
 		
 		// Determino la lista Api
-		String[] accordiList = AccordiServizioParteSpecificaUtilities.getListaAPI(
+		String[] accordiList = AccordiServizioParteSpecificaUtilities.getListaIdAPI(
 				env.tipo_protocollo,
 				env.userLogin,
 				env.apsCore, 
@@ -977,14 +978,14 @@ public class ErogazioniApiHelper {
 		
 		
 		// Determino la lista Api
-		List<AccordoServizioParteComuneSintetico> listaAPI = AccordiServizioParteSpecificaUtilities.getListaAPI(
+		List<IDAccordoDB> listaIdAPI = AccordiServizioParteSpecificaUtilities.getListaIdAPI(
 				env.tipo_protocollo,
 				env.userLogin,
 				env.apsCore, 
 				env.apsHelper
 			);
 		
-        String[] accordiList =  listaAPI.stream()
+        String[] accordiList =  listaIdAPI.stream()
         		.map( a -> a.getId().toString() )
         		.toArray(String[]::new);
         

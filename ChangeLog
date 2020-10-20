@@ -1,5 +1,15 @@
 2020-10-20  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1083
+	La creazione di una nuova erogazione/fruizione o l'aggiornamento del nome e/o dei parametri del profilo, richiedevano un tempo considerevole per presentare la maschera dei dati quando il numero delle API era elevato.
+	Inoltre l'aggiornamento del nome di una erogazione, che presentava connettori multipli, non veniva riportato sugli applicativi aggiuntivi a quello di default.
+	Entrembe le problematiche sono state risolte.
+	Durante l'intervento è stato anche ottimizzato il diagnostico relativo ad una utenza errata, eliminando dalle informazioni tracciate la password utilizzata dal chiamante.
+	Infine è stato risolto il problema riportato nel log 'Non abilitata la gestione delle transazioni stateful' che si presentava durante l'invocazione del servizio IntegrationManager.
+	
+2020-10-20  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità OP-1081
 	Aggiunta generazione dell'header WWW-Authenticate in ogni tipo di autenticazione gestita su GovWay se l'autenticazione fallisce (codice http 401).

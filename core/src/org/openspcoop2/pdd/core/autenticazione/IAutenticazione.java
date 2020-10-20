@@ -35,6 +35,9 @@ import org.openspcoop2.pdd.core.ICore;
 
 public interface IAutenticazione extends ICore {
 
+	default public void setLogError(boolean logError) {
+	}
+	
 	public void initParametri(ParametriAutenticazione parametri) throws AutenticazioneException;
 
     public boolean saveAuthenticationResultInCache();

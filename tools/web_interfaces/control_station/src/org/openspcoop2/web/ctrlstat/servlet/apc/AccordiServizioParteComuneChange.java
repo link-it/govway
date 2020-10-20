@@ -41,6 +41,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.Soggetto;
@@ -1106,6 +1107,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 			operazioniDaEffettuare = operazioniList.toArray(operazioniDaEffettuare);
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), operazioniDaEffettuare);
 
+			if(gestioneInformazioniGenerali) {
+				if(idNEW.equals(idAccordoOLD)==false){
+					ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
+				}
+			}
+			
 			// preparo lista
 			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);
 			

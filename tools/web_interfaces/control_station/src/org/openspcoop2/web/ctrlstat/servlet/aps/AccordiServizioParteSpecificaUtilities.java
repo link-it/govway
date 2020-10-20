@@ -74,6 +74,7 @@ import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
@@ -171,6 +172,27 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 		}
 		return listaAPI;
+	}
+	
+	public static List<IDAccordoDB> getListaIdAPI(String tipoProtocollo, String userLogin, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
+		
+		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
+		
+		boolean soloAccordiConsistentiRest = false;
+		boolean soloAccordiConsistentiSoap = false;
+		if(!apsHelper.isModalitaCompleta()) {
+			// filtro accordi senza risorse o senza pt/operation
+			soloAccordiConsistentiRest = true;
+			soloAccordiConsistentiSoap = true;
+		}
+		
+		Search searchAccordi = new Search(true);
+		searchAccordi.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
+		List<IDAccordoDB> listaTmp =  
+				AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
+						getPermessiUtente(apsHelper), soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+		
+		return listaTmp;
 	}
 	
 	public static List<PortTypeSintetico> getListaPortTypes(AccordoServizioParteComuneSintetico as, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception{
@@ -835,10 +857,37 @@ public class AccordiServizioParteSpecificaUtilities {
 					// modifica nome Servizi Applicativi che riflette il nome della PA
 					if(oldIDPortaApplicativaForUpdate!=null && tmpPorta.sizeServizioApplicativoList()>0) {
 						for (PortaApplicativaServizioApplicativo portaApplicativaSA : tmpPorta.getServizioApplicativoList()) {
-							if(portaApplicativaSA.getNome().equals(oldIDPortaApplicativaForUpdate.getNome())) {
+							
+							// gw_ENTE/gw_TEST/v1 e __gw_ENTE/gw_TEST/v1__Specific2  
+							boolean equalsName = portaApplicativaSA.getNome().equals(oldIDPortaApplicativaForUpdate.getNome());
+						
+							// gw_ENTE/gw_MULTIPLO/v1__SA1 e __gw_ENTE/gw_MULTIPLO/v1__Specific1__SA1
+							boolean equalsConSuffissoConnettoriMultipli = false;
+							String suffixConnettoreMultiplo = null;
+							if(!equalsName) {
+								if(portaApplicativaSA.getNome().startsWith(oldIDPortaApplicativaForUpdate.getNome())) {
+									String withoutPrefix = portaApplicativaSA.getNome().substring(oldIDPortaApplicativaForUpdate.getNome().length());
+									if(withoutPrefix!=null && withoutPrefix.startsWith(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX) && 
+											!withoutPrefix.equals(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX)) {
+										String checkNumero = withoutPrefix.substring(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
+										if(checkNumero!=null) {
+											try {
+												int numero = Integer.valueOf(checkNumero);
+												if(numero>0) {
+													suffixConnettoreMultiplo = withoutPrefix;
+													equalsConSuffissoConnettoriMultipli = true;
+													//System.out.println("TROVATO ("+portaApplicativaSA.getNome()+")!!!! suffix["+suffixConnettoreMultiplo+"]");
+												}
+											}catch(Throwable t) {}
+										}
+									}
+								}
+							}
+							
+							if(equalsName || equalsConSuffissoConnettoriMultipli) {
 								// devo aggiornare il nome del SA
 								IDServizioApplicativo idSA = new IDServizioApplicativo();
-								idSA.setNome(oldIDPortaApplicativaForUpdate.getNome());
+								idSA.setNome(portaApplicativaSA.getNome());
 								idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPorta.getTipoSoggettoProprietario(), tmpPorta.getNomeSoggettoProprietario()));
 								ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
 
@@ -849,30 +898,59 @@ public class AccordiServizioParteSpecificaUtilities {
 								sa.setTipoSoggettoProprietario(tmpPorta.getTipoSoggettoProprietario());
 								sa.setNomeSoggettoProprietario(tmpPorta.getNomeSoggettoProprietario());
 
-								// __gw_ENTE/gw_TEST/1__Specific2
-								// gw_ENTE/gw_TEST/1
-								String tmp_check_nomeSA = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
-								String check_nomeSA = tmp_check_nomeSA+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
-								String check_nomeSA_oldWithoutV = tmp_check_nomeSA+asps.getOldIDServizioForUpdate().getVersione().intValue();
-								if(sa.getNome().endsWith(check_nomeSA)) {
-									sa.setNome(sa.getNome().replace(check_nomeSA, 
-											"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+								if(equalsName) {
+									// __gw_ENTE/gw_TEST/1__Specific2
+									// gw_ENTE/gw_TEST/1
+									
+									String tmp_check_nomeSA = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+									String check_nomeSA = tmp_check_nomeSA+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									String check_nomeSA_oldWithoutV = tmp_check_nomeSA+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									if(sa.getNome().endsWith(check_nomeSA)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().endsWith(check_nomeSA_oldWithoutV)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA_oldWithoutV)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									listaPA_SA.add(sa);
 								}
-								else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA)) {
-									sa.setNome(sa.getNome().replace(check_nomeSA, 
-											"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+								else if(equalsConSuffissoConnettoriMultipli){
+									
+									// gw_ENTE/gw_MULTIPLO/v1__SA1 e __gw_ENTE/gw_MULTIPLO/v1__Specific1__SA1
+									
+									String tmp_check_nomeSA = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+									String check_nomeSA = tmp_check_nomeSA+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									String check_nomeSA_oldWithoutV = tmp_check_nomeSA+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									if(sa.getNome().endsWith(check_nomeSA+suffixConnettoreMultiplo)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA) && sa.getNome().endsWith(suffixConnettoreMultiplo)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().endsWith(check_nomeSA_oldWithoutV+suffixConnettoreMultiplo)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA_oldWithoutV) && sa.getNome().endsWith(suffixConnettoreMultiplo)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									listaPA_SA.add(sa);
 								}
-								else if(sa.getNome().endsWith(check_nomeSA_oldWithoutV)) {
-									sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
-											"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
-								}
-								else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA_oldWithoutV)) {
-									sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
-											"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
-								}
-								listaPA_SA.add(sa);
-								break;
+								
 							}
+							
 						}
 					}
 					// modifica nome Servizi Applicativi che riflette il nome della PA

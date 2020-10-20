@@ -55,6 +55,10 @@ public class IDSoggettoDB extends IDSoggetto implements Serializable {
 	public IDSoggettoDB() {
 		
 	}
+	public IDSoggettoDB(String tipoSoggetto, String nomeSoggetto) {
+		super.setNome(nomeSoggetto);
+		super.setTipo(tipoSoggetto);
+	}
 	public IDSoggettoDB(IDSoggetto idSoggetto) {
 		super.setNome(idSoggetto.getNome());
 		super.setTipo(idSoggetto.getTipo());
@@ -75,7 +79,7 @@ public class IDSoggettoDB extends IDSoggetto implements Serializable {
 	
 	@Override 
 	public boolean equals(Object object){
-		return super.equals(object);
+		return super._equals(object, false);
 	}
 	
 	// Utile per usare l'oggetto in hashtable come chiave
@@ -86,19 +90,19 @@ public class IDSoggettoDB extends IDSoggetto implements Serializable {
 	
 	@Override
 	public IDSoggettoDB clone(){
-		IDSoggettoDB idSA = new IDSoggettoDB();
+		IDSoggettoDB idSoggetto = new IDSoggettoDB();
 		if(this.getNome()!=null){
-			idSA.setNome(new String(this.getNome()));
+			idSoggetto.setNome(new String(this.getNome()));
 		}
 		if(this.getTipo()!=null){
-			idSA.setTipo(new String(this.getTipo()));
+			idSoggetto.setTipo(new String(this.getTipo()));
 		}
 		if(this.getCodicePorta()!=null){
-			idSA.setCodicePorta(new String(this.getCodicePorta()));
+			idSoggetto.setCodicePorta(new String(this.getCodicePorta()));
 		}
 		if(this.id!=null){
-			idSA.setId(Long.valueOf(this.id));
+			idSoggetto.setId(Long.valueOf(this.id));
 		}
-		return idSA;
+		return idSoggetto;
 	}
 }

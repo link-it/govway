@@ -1399,13 +1399,14 @@ public class OpenSPCoop2Properties {
 			// MustUnderstandHandler (warning)
 			this.isBypassFilterMustUnderstandEnabledForAllHeaders();
 
-			// Realm Autenticazione Basic
+			// Autenticazione
 			if(this.getCryptConfigAutenticazioneApplicativi()==null) {
 				return false;
 			}
 			if(this.getCryptConfigAutenticazioneSoggetti()==null) {
 				return false;
 			}
+			this.isAutenticazioneBasicLogPassword();
 			this.getRealmAutenticazioneBasicWWWAuthenticateConfig();
 			this.getRealmAutenticazioneApiKeyWWWAuthenticateConfig();
 			this.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
@@ -15033,6 +15034,29 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getCryptConfigAutenticazioneSoggetti;
 	}
 
+	private static Boolean isAutenticazioneBasicLogPassword = null;
+	public boolean isAutenticazioneBasicLogPassword() {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.basic.invalidCredentials.logPassword";
+		if(OpenSPCoop2Properties.isAutenticazioneBasicLogPassword == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isAutenticazioneBasicLogPassword = Boolean.valueOf(value);
+				}
+				else {
+					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=false");
+					OpenSPCoop2Properties.isAutenticazioneBasicLogPassword = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=false. Errore: "+e.getMessage(),e);
+				OpenSPCoop2Properties.isAutenticazioneBasicLogPassword = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isAutenticazioneBasicLogPassword;
+	}
+	
 	private static WWWAuthenticateConfig getRealmAutenticazioneBasicWWWAuthenticateConfig = null;
 	private static boolean getRealmAutenticazioneBasicWWWAuthenticateConfig_read = false;
 	public WWWAuthenticateConfig getRealmAutenticazioneBasicWWWAuthenticateConfig() {

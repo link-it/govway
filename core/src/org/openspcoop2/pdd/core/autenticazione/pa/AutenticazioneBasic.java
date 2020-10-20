@@ -52,6 +52,12 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 
 	protected boolean cleanHeaderAuthorization = true;
 	
+	private boolean logError = true;
+	@Override
+	public void setLogError(boolean logError) {
+		this.logError = logError;
+	}
+	
 	@Override
     public void initParametri(ParametriAutenticazione parametri) throws AutenticazioneException {
 		super.initParametri(parametri);
@@ -104,7 +110,9 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazioneBasic (Soggetti) non ha trovato risultati",notFound);
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Soggetti) non riuscita",e);
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Soggetti) non riuscita",e);
+			}
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
@@ -130,7 +138,9 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			}
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Applicativi) non riuscita",e);
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Applicativi) non riuscita",e);
+			}
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);

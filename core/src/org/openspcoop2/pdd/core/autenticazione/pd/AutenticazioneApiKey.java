@@ -66,6 +66,12 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 	private boolean cleanApiKey = true;
 	private boolean cleanAppId = true;
 	
+	private boolean logError = true;
+	@Override
+	public void setLogError(boolean logError) {
+		this.logError = logError;
+	}
+	
 	@Override
     public void initParametri(ParametriAutenticazione parametri) throws AutenticazioneException {
 		super.initParametri(parametri);
@@ -161,7 +167,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 					datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
 					fullCredential); 
     	}catch(Exception e) {
-    		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey non riuscita",e);
+    		if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey non riuscita",e);
+    		}
     		esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal("credenziali non fornite",apiKey));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
@@ -188,7 +196,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 						datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
 						fullCredential);
     		}catch(Exception e) {
-        		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (AppId) non riuscita",e);
+    			if(this.logError) {
+        			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (AppId) non riuscita",e);
+    			}
         		esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal("credenziali non fornite",appId));
     			esito.setClientAuthenticated(false);
     			esito.setClientIdentified(false);
@@ -226,7 +236,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 	    		password = decodedApiKey[1];
 	    	}
     	}catch(Exception e) {
-    		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") fallita",e);
+    		if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") fallita",e);
+    		}
     		esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali fornite non corrette",identitaAutenticata,apiKey));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
@@ -250,8 +262,9 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();
 			}
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") non riuscita",e);
-			
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneApiKey (appId:"+this.appId+") non riuscita",e);
+			}
 			esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 			esito.setClientIdentified(false);

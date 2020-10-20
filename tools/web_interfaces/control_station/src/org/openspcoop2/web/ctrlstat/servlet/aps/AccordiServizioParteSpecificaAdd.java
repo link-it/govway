@@ -68,6 +68,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -547,22 +548,22 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			IDSoggetto soggettoReferente = null;
 			long idReferente = -1;
 
-			List<AccordoServizioParteComuneSintetico> listaAPI = AccordiServizioParteSpecificaUtilities.getListaAPI(this.tipoProtocollo, userLogin, apsCore, apsHelper);
+			List<IDAccordoDB> listaIdAPI = AccordiServizioParteSpecificaUtilities.getListaIdAPI(this.tipoProtocollo, userLogin, apsCore, apsHelper);
 
 			
 
 			int accordoPrimoAccesso = -1;
 
-			if (listaAPI.size() > 0) {
-				accordiList = new String[listaAPI.size()];
-				accordiListLabel = new String[listaAPI.size()];
+			if (listaIdAPI.size() > 0) {
+				accordiList = new String[listaIdAPI.size()];
+				accordiListLabel = new String[listaIdAPI.size()];
 				int i = 0;
-				for (AccordoServizioParteComuneSintetico as : listaAPI) {
+				for (IDAccordoDB as : listaIdAPI) {
 					accordiList[i] = as.getId().toString();
 					soggettoReferente = null;
 					idReferente = -1;
-					if(as.getSoggettoReferente()!=null && as.getSoggettoReferente().getId()!=null)
-						idReferente = as.getSoggettoReferente().getId();
+					if(as.getSoggettoReferenteDB()!=null && as.getSoggettoReferenteDB().getId()!=null)
+						idReferente = as.getSoggettoReferenteDB().getId();
 
 					if(idReferente>0){
 						soggettoReferente = new IDSoggetto();
@@ -577,13 +578,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							}
 						}
 					}
-					accordiListLabel[i] = apsHelper.getLabelIdAccordo(this.tipoProtocollo, idAccordoFactory.getIDAccordoFromAccordo(as));
+					accordiListLabel[i] = apsHelper.getLabelIdAccordo(this.tipoProtocollo, as);
 					i++;
 				}
 			}
 
 			// se ancora non ho scelto l'accordo da mostrare quando entro
-			if(accordoPrimoAccesso == -1 && listaAPI.size() > 0){
+			if(accordoPrimoAccesso == -1 && listaIdAPI.size() > 0){
 				// Se entro in questo caso significa che tutti gli accordi di servizio parte comune esistente s
 				// possiedono come soggetto referente un tipo di protocollo differente da quello di default.
 				// in questo caso prendo il primo che trovo
@@ -832,14 +833,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
 				}
 
-				existsAPCCompatibili = listaAPI!=null && listaAPI.size()>0;
+				existsAPCCompatibili = listaIdAPI!=null && listaIdAPI.size()>0;
 
 				if(soggettiListTmp.size()>0 && existsAPCCompatibili){
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 				}
 				else{
-					if(listaAPI.size()<=0){
+					if(listaIdAPI.size()<=0){
 						pd.setMessage("Non risultano registrate API", Costanti.MESSAGE_TYPE_INFO);
 						pd.disableEditMode();
 
@@ -875,8 +876,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 
-					if(listaAPI.size()>0){
-						this.accordo = listaAPI.get(0).getId()+"";
+					if(listaIdAPI.size()>0){
+						this.accordo = listaIdAPI.get(0).getId()+"";
 					}
 				}
 			}
@@ -2136,7 +2137,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
 			if(apsCore.isSetSearchAfterAdd()) {
-				ricerca.setSearchString(Liste.SERVIZI, asps.getNome());
+				apsCore.setSearchAfterAdd(Liste.SERVIZI, asps.getNome(), session, ricerca);
 			}
 			
 			boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(apsHelper);

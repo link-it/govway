@@ -49,6 +49,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
@@ -703,6 +704,47 @@ public class AccordiServizioParteComuneUtilities {
 			lista = core.accordiList(null, ricerca);
 		}else{
 			lista = core.accordiList(userLogin, ricerca);
+		}
+
+		return lista;
+	}
+	
+	public static List<IDAccordoDB> idAccordiListFromPermessiUtente(AccordiServizioParteComuneCore core,String userLogin,Search ricerca,boolean[] permessiUtente, 
+			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException{
+		List<IDAccordoDB> lista = null;
+		if(permessiUtente != null){
+			if(permessiUtente[0] && !permessiUtente[1]){
+				if(core.isVisioneOggettiGlobale(userLogin)){
+					lista = core.idAccordiServizioParteComuneList(null, ricerca, 
+							soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+				}else{
+					lista = core.idAccordiServizioParteComuneList(userLogin, ricerca, 
+							soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+				}
+
+				return lista;
+			}
+
+			if(!permessiUtente[0] && permessiUtente[1]){
+				if(core.isVisioneOggettiGlobale(userLogin)){
+					lista = core.idAccordiServizioCompostiList(null, ricerca, 
+							soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+				}else{
+					lista = core.idAccordiServizioCompostiList(userLogin, ricerca, 
+							soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+				}
+
+				return lista;
+			}
+		}
+
+
+		if(core.isVisioneOggettiGlobale(userLogin)){
+			lista = core.idAccordiList(null, ricerca, 
+					soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+		}else{
+			lista = core.idAccordiList(userLogin, ricerca, 
+					soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
 		}
 
 		return lista;

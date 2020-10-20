@@ -975,7 +975,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			if(incomplete || apcCore.isSetSearchAfterAdd()) {
-				ricerca.setSearchString(Liste.ACCORDI, as.getNome());
+				apcCore.setSearchAfterAdd(Liste.ACCORDI, as.getNome(), session, ricerca);
 			}
 			
 			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);

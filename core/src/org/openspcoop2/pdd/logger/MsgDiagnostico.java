@@ -2156,7 +2156,9 @@ public class MsgDiagnostico {
 					//System.out.println("@@@@@REPOSITORY@@@@@ LOG MSG DIAG ID TRANSAZIONE ["+idTransazione+"] ADD");
 					RepositoryGestioneStateful.addMsgDiagnostico(msgDiag.getIdTransazione(), msgDiag);
 				}catch(Exception e){
-					exc = e;
+					if(!IntegrationManager.ID_MODULO.equals(this.idModulo)) {
+						exc = e;
+					}
 				}
 			}
 			if(exc!=null) {

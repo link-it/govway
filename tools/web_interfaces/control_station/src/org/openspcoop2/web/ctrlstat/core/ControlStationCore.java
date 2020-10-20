@@ -106,6 +106,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -6536,6 +6537,30 @@ public class ControlStationCore {
 
 	}
 	
+	public List<IDAccordoDB> idAccordiList(String superuser, ISearch ricerca, 
+			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "idAccordiList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().idAccordiList(superuser, ricerca, 
+					soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
 	public List<AccordoCooperazione> accordiCooperazioneList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiCooperazioneList";
@@ -7346,6 +7371,11 @@ public class ControlStationCore {
 		}catch(Throwable t) {
 			return false;
 		}
+	}
+	
+	public void setSearchAfterAdd(int idLista, String search, HttpSession session, ISearch ricerca) {
+		ricerca.setSearchString(idLista, search);
+		ServletUtils.removeRisultatiRicercaFromSession(session, idLista);		
 	}
 	
 	private void _cryptPassword(ServizioApplicativo sa) throws UtilsException {

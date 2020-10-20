@@ -57,6 +57,12 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 	private TipoCredenzialeMittente tipoTokenClaim = null; // uso trasporto come custom
 	private boolean cleanPrincipal = true;
 	
+	private boolean logError = true;
+	@Override
+	public void setLogError(boolean logError) {
+		this.logError = logError;
+	}
+	
 	@Override
     public void initParametri(ParametriAutenticazione parametri) throws AutenticazioneException {
 		super.initParametri(parametri);
@@ -159,7 +165,9 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     				datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true,
     				fullCredential);
     	}catch(Exception e) {
-    		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
+    		if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
+    		}
     		esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
@@ -193,7 +201,9 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazionePrincipal non ha trovato risultati",notFound);
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
+			}
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);
@@ -218,7 +228,9 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			}
 		}
 		catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal (Applicativi) non riuscita",e);
+			if(this.logError) {
+    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal (Applicativi) non riuscita",e);
+			}
 			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);

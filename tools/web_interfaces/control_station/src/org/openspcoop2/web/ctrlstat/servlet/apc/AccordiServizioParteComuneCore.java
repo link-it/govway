@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLDiff;
@@ -1069,6 +1070,55 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverRegistroServiziDB().accordiServizioCompostiList(superuser, ricerca);
+		} catch (DriverRegistroServiziException e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<IDAccordoDB> idAccordiServizioParteComuneList(String superuser, ISearch ricerca, 
+			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "idAccordiServizioParteComuneList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().idAccordiServizioParteComuneList(superuser, ricerca, 
+					soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+		} catch (DriverRegistroServiziException e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<IDAccordoDB> idAccordiServizioCompostiList(String superuser, ISearch ricerca, 
+			boolean soloAccordiConsistentiRest, boolean soloAccordiConsistentiSoap) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "idAccordiServizioCompostiList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().idAccordiServizioCompostiList(superuser, ricerca, 
+					soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
 		} catch (DriverRegistroServiziException e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw e;

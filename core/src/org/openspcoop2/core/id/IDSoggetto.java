@@ -155,10 +155,16 @@ public class IDSoggetto implements java.io.Serializable {
 	
 	@Override 
 	public boolean equals(Object soggetto){
+		return _equals(soggetto, true);
+	}
+	protected boolean _equals(Object soggetto, boolean verifyClass){
 		if(soggetto == null)
 			return false;
-		if(soggetto.getClass().getName().equals(this.getClass().getName()) == false)
-			return false;
+		if(verifyClass) {
+			if(soggetto.getClass().getName().equals(this.getClass().getName()) == false) {
+				return false;
+			}
+		}
 		IDSoggetto id = (IDSoggetto) soggetto;
 		// TIPO
 		if(this.getTipo()==null){

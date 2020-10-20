@@ -1263,7 +1263,7 @@ public final class ServiziApplicativiAdd extends Action {
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 				
 				if(saCore.isSetSearchAfterAdd()) {
-					ricerca.setSearchString(idLista, sa.getNome());
+					saCore.setSearchAfterAdd(idLista, sa.getNome(), session, ricerca);
 				}
 				
 				boolean filtroSoggetto = false;

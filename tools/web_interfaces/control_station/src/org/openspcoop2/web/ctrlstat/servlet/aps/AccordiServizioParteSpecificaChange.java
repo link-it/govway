@@ -39,6 +39,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -65,6 +66,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -418,17 +420,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			if(tipoProtocollo==null) {
 				tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
 			}
-
+			
 			if(cambiaAPI) {
-				List<AccordoServizioParteComuneSintetico> listaAPI = AccordiServizioParteSpecificaUtilities.getListaAPI(tipoProtocollo, userLogin, apsCore, apsHelper);
 				
+				List<IDAccordoDB> listaIdAPI = AccordiServizioParteSpecificaUtilities.getListaIdAPI(tipoProtocollo, userLogin, apsCore, apsHelper);
+			
 				IDAccordo oldIDAccodo = idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				AccordoServizioParteComuneSintetico attuale = null;
-				if (listaAPI.size() > 0) {
+				IDAccordoDB attuale = null;
+				if (listaIdAPI.size() > 0) {
 					int i = 0;
 					int remove = -1;
-					for (AccordoServizioParteComuneSintetico accordoServizioParteComuneSintetico : listaAPI) {
-						IDAccordo oldIDAccodoCheck = idAccordoFactory.getIDAccordoFromAccordo(accordoServizioParteComuneSintetico);
+					for (IDAccordo oldIDAccodoCheck : listaIdAPI) {
 						if(oldIDAccodoCheck.equals(oldIDAccodo)) {
 							remove = i;
 							break;
@@ -436,68 +438,51 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						i++;
 					}
 					if(remove>=0) {
-						attuale = listaAPI.remove(remove);
+						attuale = listaIdAPI.remove(remove);
 					}
 				}
 				
 				if(attuale!=null) {
-					accordiList = new String[listaAPI.size()+1];
-					accordiListLabel = new String[listaAPI.size()+1];
+					accordiList = new String[listaIdAPI.size()+1];
+					accordiListLabel = new String[listaIdAPI.size()+1];
 					accordiList[0] = attuale.getId().toString();
-					accordiListLabel[0] = apsHelper.getLabelIdAccordo(tipoProtocollo, idAccordoFactory.getIDAccordoFromAccordo(attuale)); // Attuale alla posizione 0
+					accordiListLabel[0] = apsHelper.getLabelIdAccordo(tipoProtocollo, attuale); // Attuale alla posizione 0
 					
-					if (listaAPI.size() > 0) {
+					if (listaIdAPI.size() > 0) {
 						int i = 1;
-						for (AccordoServizioParteComuneSintetico as : listaAPI) {
+						for (IDAccordoDB as : listaIdAPI) {
 							accordiList[i] = as.getId().toString();
-							accordiListLabel[i] = apsHelper.getLabelIdAccordo(tipoProtocollo, idAccordoFactory.getIDAccordoFromAccordo(as));
+							accordiListLabel[i] = apsHelper.getLabelIdAccordo(tipoProtocollo, as);
 							i++;
 						}
 					}
 				}
+				
 			}
 			else {
-			
-				List<AccordoServizioParteComuneSintetico> listaTmp =  
-						AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, new Search(true), permessi);
-				List<AccordoServizioParteComuneSintetico> lista = null;
-				if(apsHelper.isModalitaCompleta()) {
-					lista = listaTmp;
-				}
-				else {
+								
+				boolean soloAccordiConsistentiRest = false;
+				boolean soloAccordiConsistentiSoap = false;
+				if(!apsHelper.isModalitaCompleta()) {
 					// filtro accordi senza risorse o senza pt/operation
-					lista = new ArrayList<AccordoServizioParteComuneSintetico>();
-					for (AccordoServizioParteComuneSintetico accordoServizioParteComune : listaTmp) {
-						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(accordoServizioParteComune.getServiceBinding())) {
-							if(accordoServizioParteComune.getResource().size()>0) {
-								lista.add(accordoServizioParteComune);	
-							}
-						}
-						else {
-							boolean ptValido = false;
-							for (PortTypeSintetico pt : accordoServizioParteComune.getPortType()) {
-								if(pt.getAzione().size()>0) {
-									ptValido = true;
-									break;
-								}
-							}
-							if(ptValido) {
-								lista.add(accordoServizioParteComune);	
-							}
-						}
-					}
+					soloAccordiConsistentiRest = true;
+					soloAccordiConsistentiSoap = true;
 				}
-	
+				
+				List<IDAccordoDB> lista =  
+						AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, new Search(true), permessi, 
+								soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
+				
 				if (lista.size() > 0) {
 					accordiList = new String[lista.size()];
 					accordiListLabel = new String[lista.size()];
 					int i = 0;
-					for (AccordoServizioParteComuneSintetico as : lista) {
+					for (IDAccordoDB as : lista) {
 						accordiList[i] = as.getId().toString();
 						IDSoggetto soggettoReferente = null;
 						long idReferente = -1;
-						if(as.getSoggettoReferente()!=null && as.getSoggettoReferente().getId()!=null)
-							idReferente = as.getSoggettoReferente().getId();
+						if(as.getSoggettoReferenteDB()!=null && as.getSoggettoReferenteDB().getId()!=null)
+							idReferente = as.getSoggettoReferenteDB().getId();
 	
 						if(idReferente>0){
 							soggettoReferente = new IDSoggetto();
@@ -508,7 +493,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						i++;
 					}
 				}
-
+				
 			}
 			
 			String providerSoggettoFruitore = null;
@@ -614,7 +599,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}else{
 				list = soggettiCore.soggettiRegistroList(userLogin, new Search(true));
 			}
-
+			
 			if (list.size() > 0) {
 				List<String> soggettiListTmp = new ArrayList<String>();
 				List<String> soggettiListLabelTmp = new ArrayList<String>();
@@ -805,8 +790,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				backToConfermaModificaDatiServizio = null; // non ho ancora cliccato su salva configurazione
 			}
-			
-			
+						
 			// setto la barra del titolo
 			List<Parameter> lstParm = apsHelper.getTitoloAps(TipoOperazione.CHANGE, asps, gestioneFruitori, tmpTitle, null, true, tipoSoggettoFruitore, nomeSoggettoFruitore); 
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
@@ -1158,7 +1142,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					this.wsdlimplfru = new BinaryParameter();
 					this.wsdlimplfru.setValue(asps.getByteWsdlImplementativoFruitore());
 				}
-
+				
 				if(backToStato == null && backToConfermaModificaDatiServizio==null){
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();
@@ -1167,7 +1151,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					// update della configurazione 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
 							this.registryReader, this.configRegistryReader, idAps);
-
+					
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio,
@@ -1188,7 +1172,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,
 							null,null,
 							null,null,null,null,moreThenOneImplementation);
-
+					
 					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
 						boolean forceEnableConnettore = false;
@@ -1264,7 +1248,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}
 
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
+					
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 							ForwardParams.CHANGE());
 				}
@@ -1927,7 +1911,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			//imposto properties custom
 			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
 
-			 List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, apsCore);
+			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, apsCore);
 			
 			// eseguo l'aggiornamento
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), oggettiDaAggiornare.toArray());
@@ -1940,6 +1924,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			//				permessi[0] = pu.isServizi();
 			//				permessi[1] = pu.isAccordiCooperazione();
 
+			String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+			String oldUri = IDServizioFactory.getInstance().getUriFromIDServizio(asps.getOldIDServizioForUpdate());
+			if (!newUri.equals(oldUri)) {
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
+			}
+			
 			List<AccordoServizioParteSpecifica> listaServizi = null;
 			if(apsCore.isVisioneOggettiGlobale(superUser)){
 				listaServizi = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
