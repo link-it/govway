@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -191,25 +192,8 @@ public class ConnettoreUtils {
 				String location = locationParam;
 				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
 					
-					Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
-					String nomePortaInvocata = null;
-					if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
-						nomePortaInvocata = (String) nomePortaInvocataObject;
-					}
-					else if(msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
-						nomePortaInvocata = msg.getTransportRequestContext().getInterfaceName();
-					}
+					String normalizedInterfaceName = normalizeInterfaceName(msg, idModulo, protocolFactory);
 					
-					String normalizedInterfaceName = null;
-					if(nomePortaInvocata!=null) {
-						PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
-						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(idModulo)){
-							normalizedInterfaceName = namingUtils.normalizePA(nomePortaInvocata);
-						}
-						else {
-							normalizedInterfaceName = namingUtils.normalizePD(nomePortaInvocata);
-						}
-					}
 					return RestUtilities.buildUrl(location, p, msg.getTransportRequestContext(),
 							normalizedInterfaceName);
 				}
@@ -225,6 +209,30 @@ public class ConnettoreUtils {
 		return locationParam;
 	}
 
+	public static String normalizeInterfaceName(OpenSPCoop2Message msg, String idModulo, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+		String nomePortaInvocata = null;
+		if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
+			nomePortaInvocata = (String) nomePortaInvocataObject;
+		}
+		else if(msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
+			nomePortaInvocata = msg.getTransportRequestContext().getInterfaceName();
+		}
+		
+		String normalizedInterfaceName = null;
+		if(nomePortaInvocata!=null) {
+			PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
+			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(idModulo)){
+				normalizedInterfaceName = namingUtils.normalizePA(nomePortaInvocata);
+			}
+			else {
+				normalizedInterfaceName = namingUtils.normalizePD(nomePortaInvocata);
+			}
+		}
+		
+		return normalizedInterfaceName;
+	}
+	
 	public static String limitLocation255Character(String location){
 		return TransportUtils.limitLocation255Character(location);
 	}

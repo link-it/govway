@@ -156,6 +156,7 @@ import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemConstants;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -1035,6 +1036,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// devo leggerlo dal messaggio
 			try {
 				consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+				correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
 				if(requestInfo==null) {
 					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					if(o==null) {
@@ -1422,6 +1424,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(consegnaMessagePrimaTrasformazione==null) {
 					if(consegnaPerRiferimento==false){
 						consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+						correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
 					}else{
 						// consegnaMessage deve contenere il messaggio necessario all'invocazione del metodo pubblicaEvento
 						consegnaMessagePrimaTrasformazione = 
@@ -4007,6 +4010,33 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					msgDiag.logPersonalizzato("consegnaConErrore.mittenteAnonimo");
 				}else{
 					msgDiag.logPersonalizzato("consegnaEffettuata.mittenteAnonimo");
+				}
+			}
+		}
+	}
+	
+	private void correctForwardPathNotifiche(TransazioneApplicativoServer transazioneApplicativoServer, OpenSPCoop2Message msg, IProtocolFactory<?> pf) throws ProtocolException {
+		if(transazioneApplicativoServer!=null && ServiceBinding.REST.equals(msg.getServiceBinding())) {
+			// non deve essere effettuato il forward del contesto nel path
+			
+			TransportRequestContext requestContext = msg.getTransportRequestContext();
+			if(requestContext!=null) {
+				String resourcePath = requestContext.getFunctionParameters();
+				if(resourcePath!=null){
+					if(resourcePath.startsWith("/")){
+						resourcePath = resourcePath.substring(1);
+					}
+					if(requestContext.getInterfaceName()!=null) {
+						if(resourcePath.startsWith(requestContext.getInterfaceName())){
+							requestContext.setFunctionParameters(requestContext.getInterfaceName());
+						}		
+						else {
+							String normalizedInterfaceName = ConnettoreUtils.normalizeInterfaceName(msg, ConsegnaContenutiApplicativi.ID_MODULO, pf);
+							if(normalizedInterfaceName!=null && resourcePath.startsWith(normalizedInterfaceName)){
+								requestContext.setFunctionParameters(normalizedInterfaceName);
+							}
+						}
+					}
 				}
 			}
 		}

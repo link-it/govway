@@ -10069,11 +10069,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		
 		
-		
-		de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONSEGNA_FALLITA);
-		de.setType(DataElementType.SUBTITLE);
-		dati.add(de);
+		if(!consegnaSincrona) {
+			de = new DataElement();
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONSEGNA_FALLITA);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+		}
 		
 		// cadenza rispedizione
 		de = new DataElement();
