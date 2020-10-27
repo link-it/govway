@@ -78,7 +78,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="url"/>
+                                <linkit:sql-column-mapping name="url" varchar="4000"/>
                                 <linkit:sql-ddl-column-comment>Definisce una url in caso di connettore di tipo 'http' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[url nel caso http]]></linkit:sql-column-comment>
                             </linkit:generator>
@@ -426,7 +426,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="value"/>
+                                <linkit:sql-column-mapping name="value" varchar="4000"/>
                                 <linkit:sql-ddl-column-comment>Valore associato alla proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

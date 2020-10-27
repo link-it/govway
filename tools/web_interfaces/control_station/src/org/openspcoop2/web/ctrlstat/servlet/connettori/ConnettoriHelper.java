@@ -615,7 +615,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if(this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME)==false) {
 				return false;
 			}
-			if(this.checkLength255(valore, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE)==false) {
+			if(this.checkLength4000(valore, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE)==false) {
 				return false;
 			}
 
@@ -3541,7 +3541,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						this.pd.setMessage("Url non correttamente formata: "+e.getMessage());
 						return false;
 					}
-					if(this.checkLength255(url, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL)==false) {
+					if(this.checkLength4000(url, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL)==false) {
 						return false;
 					}
 					if(this.isProfiloModIPA(protocollo) && !servizioApplicativo && this.connettoriCore.isModipaFruizioniConnettoreCheckHttps()) {
@@ -3626,7 +3626,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							return false;
 						}
 					}
-					if(this.checkLength255(httpsurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL)==false) {
+					if(this.checkLength4000(httpsurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL)==false) {
 						return false;
 					}
 					

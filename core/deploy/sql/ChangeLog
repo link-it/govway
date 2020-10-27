@@ -1,3 +1,10 @@
+2020-10-27  Andrea Poli <apoli@link.it>
+
+	Estesa lunghezza massima di una url a 4000 caratteri.
+
+	ALTER TABLE connettori ALTER COLUMN url TYPE VARCHAR(4000);
+	ALTER TABLE connettori_custom ALTER COLUMN value TYPE VARCHAR(4000);
+
 2020-10-13  Andrea Poli <apoli@link.it>
 
 	Aggiunto supporto per i canali

@@ -8,7 +8,7 @@ CREATE TABLE connettori
 	endpointtype VARCHAR(255) NOT NULL,
 	nome_connettore VARCHAR(2000) NOT NULL,
 	-- url nel caso http
-	url VARCHAR(255),
+	url VARCHAR(4000),
 	-- nel caso di http indicazione se usare chunking
 	transfer_mode VARCHAR(255),
 	transfer_mode_chunk_size INT,
@@ -68,7 +68,7 @@ CREATE SEQUENCE seq_connettori_custom start 1 increment 1 maxvalue 9223372036854
 CREATE TABLE connettori_custom
 (
 	name VARCHAR(255) NOT NULL,
-	value VARCHAR(255) NOT NULL,
+	value VARCHAR(4000) NOT NULL,
 	id_connettore BIGINT NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_connettori_custom') NOT NULL,
