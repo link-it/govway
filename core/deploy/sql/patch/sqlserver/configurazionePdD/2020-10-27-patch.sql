@@ -1,0 +1,2 @@
+ALTER TABLE connettori ALTER COLUMN url VARCHAR(4000);
+ALTER TABLE connettori_custom ALTER COLUMN value VARCHAR(4000);

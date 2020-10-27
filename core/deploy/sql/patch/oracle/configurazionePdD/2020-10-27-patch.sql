@@ -1,0 +1,2 @@
+ALTER TABLE connettori MODIFY url VARCHAR(4000);
+ALTER TABLE connettori_custom MODIFY value VARCHAR(4000);
