@@ -3,7 +3,9 @@
     "tipo": "gateway",
     "access_control": {
         "all_allow_origins": true,
+	"all_allow_headers": false,
         "allow_headers": [ "Authorization", "Content-Type", "SOAPAction"  ],
+	"all_allow_methods": false,
         "allow_methods": [ "POST", "GET", "PUT", "UNLINK"],
         "allow_credentials": true,
         "expose_headers": [ "Authorization", "Content-Type" ]

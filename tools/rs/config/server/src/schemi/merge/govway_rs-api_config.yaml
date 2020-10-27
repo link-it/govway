@@ -8675,11 +8675,17 @@ components:
           items:
             maxLength: 255
             type: "string"
+        all_allow_headers:
+          type: "boolean"
+          default: false
         allow_headers:
           type: "array"
           items:
             maxLength: 255
             type: "string"
+        all_allow_methods:
+          type: "boolean"
+          default: false
         allow_methods:
           type: "array"
           items:

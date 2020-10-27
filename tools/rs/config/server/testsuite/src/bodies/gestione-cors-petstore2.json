@@ -1,0 +1,15 @@
+{
+    "ridefinito": true,
+    "tipo": "gateway",
+    "access_control": {
+        "all_allow_origins": false,
+	"allow_origins": [ "http://origin1", "https://origin2"  ],
+        "all_allow_headers": true,
+        "all_allow_methods": true,
+        "allow_credentials": false,
+        "expose_headers": [ "Authorization", "Content-Type" ]
+        
+        
+    }
+    
+}

@@ -1782,8 +1782,10 @@ public class ErogazioniApiHelper {
 			else if(impl instanceof Fruizione) {
 				canale = ((Fruizione)impl).getCanale();
 			}
-			if(!env.canali.contains(canale)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + canale + "' non è presente nel registro");
+			if(canale!=null) {
+				if(!env.canali.contains(canale)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + canale + "' non è presente nel registro");
+				}
 			}
 		}
 		String canaleStato = null;
@@ -3127,7 +3129,9 @@ public class ErogazioniApiHelper {
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_TIPO, corsTipo.toString() );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, ServletUtils.boolToCheckBoxStatus(c.isAllAllowOrigins()) );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS, allowOrigins );
+		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS, ServletUtils.boolToCheckBoxStatus(c.isAllAllowHeaders()) );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS, allowHeaders );
+		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS, ServletUtils.boolToCheckBoxStatus(c.isAllAllowMethods()) );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS, allowMethods );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS, exposeHeaders );
 	
@@ -3140,6 +3144,8 @@ public class ErogazioniApiHelper {
 				body.getTipo() != TipoGestioneCorsEnum.DISABILITATO,
 				corsTipo,  
 				c.isAllAllowOrigins(), 
+				c.isAllAllowHeaders(), 
+				c.isAllAllowMethods(), 
 				allowHeaders, 
 				allowOrigins, 
 				allowMethods, 
@@ -4118,8 +4124,10 @@ public class ErogazioniApiHelper {
 			if ( ret.getTipo() == TipoGestioneCorsEnum.GATEWAY ) {
 
 				GestioneCorsAccessControl opts = new GestioneCorsAccessControl();
-	aaaaa			
+				
 				opts.setAllAllowOrigins( Helper.statoFunzionalitaConfToBool( paConf.getAccessControlAllAllowOrigins() ));
+				opts.setAllAllowHeaders( Helper.statoFunzionalitaConfToBool( paConf.getAccessControlAllAllowHeaders() ));
+				opts.setAllAllowMethods( Helper.statoFunzionalitaConfToBool( paConf.getAccessControlAllAllowMethods() ));
 				opts.setAllowCredentials(  Helper.statoFunzionalitaConfToBool( paConf.getAccessControlAllowCredentials() ));
 				opts.setAllowHeaders( evalnull( () -> paConf.getAccessControlAllowHeaders().getHeaderList()) );
 				opts.setAllowMethods( evalnull( () -> 

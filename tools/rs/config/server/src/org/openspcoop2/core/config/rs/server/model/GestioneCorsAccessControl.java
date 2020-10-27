@@ -35,7 +35,13 @@ public class GestioneCorsAccessControl  {
   private List<String> allowOrigins = null;
   
   @Schema(description = "")
+  private Boolean allAllowHeaders = false;
+  
+  @Schema(description = "")
   private List<String> allowHeaders = null;
+  
+  @Schema(description = "")
+  private Boolean allAllowMethods = false;
   
   @Schema(description = "")
   private List<HttpMethodEnum> allowMethods = null;
@@ -90,6 +96,25 @@ public class GestioneCorsAccessControl  {
   }
 
  /**
+   * Get allAllowHeaders
+   * @return allAllowHeaders
+  **/
+  @JsonProperty("all_allow_headers")
+  @Valid
+  public Boolean isAllAllowHeaders() {
+    return this.allAllowHeaders;
+  }
+
+  public void setAllAllowHeaders(Boolean allAllowHeaders) {
+    this.allAllowHeaders = allAllowHeaders;
+  }
+
+  public GestioneCorsAccessControl allAllowHeaders(Boolean allAllowHeaders) {
+    this.allAllowHeaders = allAllowHeaders;
+    return this;
+  }
+
+ /**
    * Get allowHeaders
    * @return allowHeaders
   **/
@@ -110,6 +135,25 @@ public class GestioneCorsAccessControl  {
 
   public GestioneCorsAccessControl addAllowHeadersItem(String allowHeadersItem) {
     this.allowHeaders.add(allowHeadersItem);
+    return this;
+  }
+
+ /**
+   * Get allAllowMethods
+   * @return allAllowMethods
+  **/
+  @JsonProperty("all_allow_methods")
+  @Valid
+  public Boolean isAllAllowMethods() {
+    return this.allAllowMethods;
+  }
+
+  public void setAllAllowMethods(Boolean allAllowMethods) {
+    this.allAllowMethods = allAllowMethods;
+  }
+
+  public GestioneCorsAccessControl allAllowMethods(Boolean allAllowMethods) {
+    this.allAllowMethods = allAllowMethods;
     return this;
   }
 
@@ -188,7 +232,9 @@ public class GestioneCorsAccessControl  {
     
     sb.append("    allAllowOrigins: ").append(GestioneCorsAccessControl.toIndentedString(this.allAllowOrigins)).append("\n");
     sb.append("    allowOrigins: ").append(GestioneCorsAccessControl.toIndentedString(this.allowOrigins)).append("\n");
+    sb.append("    allAllowHeaders: ").append(GestioneCorsAccessControl.toIndentedString(this.allAllowHeaders)).append("\n");
     sb.append("    allowHeaders: ").append(GestioneCorsAccessControl.toIndentedString(this.allowHeaders)).append("\n");
+    sb.append("    allAllowMethods: ").append(GestioneCorsAccessControl.toIndentedString(this.allAllowMethods)).append("\n");
     sb.append("    allowMethods: ").append(GestioneCorsAccessControl.toIndentedString(this.allowMethods)).append("\n");
     sb.append("    allowCredentials: ").append(GestioneCorsAccessControl.toIndentedString(this.allowCredentials)).append("\n");
     sb.append("    exposeHeaders: ").append(GestioneCorsAccessControl.toIndentedString(this.exposeHeaders)).append("\n");
