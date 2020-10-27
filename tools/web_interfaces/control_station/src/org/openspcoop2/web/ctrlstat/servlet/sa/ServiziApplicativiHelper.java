@@ -80,6 +80,7 @@ import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -1437,7 +1438,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					List<IDPortaApplicativa> listPA = this.porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
 					if(listPA!=null && listPA.size()>0) {
 						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi di "+
-								list.size()+" erogazion"+(listPA.size()>1?"i":"e"));
+								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e"));
 						return false;
 					}
 				}
@@ -2436,7 +2437,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		// In Uso Button
 		this.addInUsoButton(e, 
 				(this.isSoggettoMultitenantSelezionato() ? sa.getNome() : this.getLabelServizioApplicativoConDominioSoggetto(idServizioApplicativo)), 
-				sa.getId()+"", org.openspcoop2.protocol.sdk.constants.ArchiveType.SERVIZIO_APPLICATIVO);
+				sa.getId()+"", InUsoType.SERVIZIO_APPLICATIVO);
 		
 		return e;
 	}

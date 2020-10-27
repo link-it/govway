@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/postgresql/registroServizi/2020-10-13-patch.sql

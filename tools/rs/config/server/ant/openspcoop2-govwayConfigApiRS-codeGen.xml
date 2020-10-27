@@ -101,6 +101,7 @@
 
 				<!-- config -->
 				<include name="StatoApiDescrizione.java"/>
+				<include name="IdCanale.java"/>
 
 			</fileset>
 		</delete>

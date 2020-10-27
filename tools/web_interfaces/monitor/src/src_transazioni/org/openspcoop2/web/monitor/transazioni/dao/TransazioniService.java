@@ -3118,6 +3118,16 @@ public class TransazioniService implements ITransazioniService {
 			filter.and().equals(Transazione.model().CLUSTER_ID,	this.searchForm.getClusterId().trim());
 			
 		}
+		else if (StringUtils.isNotEmpty(this.searchForm.getCanale())) {
+			
+			List<String> listId = this.searchForm.getIdClusterByCanale(this.searchForm.getCanale());
+			if(listId!=null && !listId.isEmpty()) {
+				filter.and().in(Transazione.model().CLUSTER_ID, listId);
+			}
+			else {
+				filter.and().equals(Transazione.model().CLUSTER_ID,	"--"); // non esistente volutamente
+			}
+		}
 		
 		//Ricerche personalizzate
 		IFilter filtro = this.searchForm.getFiltro();		

@@ -59,5 +59,6 @@ public enum ErrorsHandlerCostant {
 	TOKEN_PD,
 	TOKEN_MAPPING_PD,
 	TOKEN_PA,
-	TOKEN_MAPPING_PA;
+	TOKEN_MAPPING_PA,
+	IN_USO_IN_CANALE_NODO;
 }

@@ -1161,6 +1161,23 @@ public class DBUtils {
 	}
 
 
+	
+	
+	
+	public static List<String> convertToList(String v){
+		List<String> l = new ArrayList<>();
+		if(v!=null && !"".equals(v)) {
+			if(v.contains(",")) {
+				String [] tmp = v.split(",");
+				for (int i = 0; i < tmp.length; i++) {
+					l.add(tmp[i].trim());
+				}
+			}else {
+				l.add(v.trim());
+			}
+		}
+		return l;
+	}
 }
 
 

@@ -168,6 +168,8 @@ ESEMPIO:
 ./update api/PetStore/1/descrizione bodies/api_descrizione.json
 ./update api/PetStore/1/tags bodies/api_modifica_tags.json
 ./update api/PetStore/1/tags bodies/api_modifica_tags_vuoti.json
+./update api/PetStore/1/canale bodies/api_modifica_canale_ridefinito.json
+./update api/PetStore/1/canale bodies/api_modifica_canale_default.json
 
 	+ DELETE: 
 ./rem api/NomeInfoJson/5   
@@ -278,6 +280,7 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 ./add erogazioni bodies/erogazione_petstore_apikey.json
 ./add erogazioni bodies/erogazione_petstore_multipleApikey.json
 ./add erogazioni bodies/erogazione_petstore_multipleApikey2.json
+./add erogazioni bodies/erogazione_petstore_canale.json
 
 	+ UPDATE VERSIONE
 ./update erogazioni/PetStore/2/api bodies/ApiVersione3.json
@@ -441,6 +444,14 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 
 
+	+ UPDATE CANALE
+./update  erogazioni/PetStore/2/configurazioni/canale bodies/api_modifica_canale_ridefinito.json
+./update  erogazioni/PetStore/2/configurazioni/canale bodies/api_modifica_canale_default.json
+	+ GET CANALE
+./get  erogazioni/PetStore/2/configurazioni/canale
+
+
+
 	+ UPDATE REGISTRAZIONE MESSAGGI
 ./update erogazioni/PetStore/2/configurazioni/registrazione-messaggi bodies/registrazione_messaggi.json gruppo=GruppoJson
 
@@ -564,6 +575,7 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 ./add fruizioni bodies/fruizione_petstore_apikey.json
 ./add fruizioni bodies/fruizione_petstore_multipleApikey.json
 ./add fruizioni bodies/fruizione_petstore_multipleApikey2.json
+./add fruizioni bodies/fruizione_petstore_canale.json
 
 	+ UPDATE VERSIONE
 ./update fruizioni/ComuneDiPisa/PetStore/2/api bodies/ApiVersione3.json
@@ -716,6 +728,14 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ GET GESTIONE CORS
 ./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/gestione-cors
+
+
+
+	+ UPDATE CANALE
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/canale bodies/api_modifica_canale_ridefinito.json
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/canale bodies/api_modifica_canale_default.json
+	+ GET CANALE
+./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/canale
 
 
 

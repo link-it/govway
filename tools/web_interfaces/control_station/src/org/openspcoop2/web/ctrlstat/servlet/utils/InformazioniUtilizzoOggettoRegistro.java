@@ -16,20 +16,25 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDGenericProperties;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCore;
@@ -73,17 +78,19 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(archiviCore);
 			RuoliCore ruoliCore = new RuoliCore(archiviCore);
 			ScopeCore scopeCore = new ScopeCore(archiviCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(archiviCore);
+			GruppiCore gruppiCore = new GruppiCore(archiviCore);
 
 			String identificativoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO); 
 			String tipoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO); 
 			String tipoRisposta = registroHelper.getParameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA); 
 
-			ArchiveType archiveType = ArchiveType.valueOf(tipoOggetto);
+			InUsoType inUsoType = InUsoType.valueOf(tipoOggetto);
 			
 			ExporterUtils exporterUtils = new ExporterUtils(archiviCore);
 			List<?> identificativi = null; 
 			List<String> risultatiRicerca = new ArrayList<String>();
-			switch (archiveType) {
+			switch (inUsoType) {
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
 				identificativi = exporterUtils.getIdsAccordiServizioParteComune(identificativoOggetto);
 				for (Object object : identificativi) {
@@ -123,16 +130,33 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 					risultatiRicerca.add(scopeCore.getDettagliScopeInUso(idScope));
 				}
 				break;
+			case CANALE:
+				identificativi = exporterUtils.getIdsCanali(identificativoOggetto);
+				for (Object object : identificativi) {
+					CanaleConfigurazione canale = (CanaleConfigurazione)object;
+					risultatiRicerca.add(confCore.getDettagliCanaleInUso(canale));
+				}
+				break;
+			case GRUPPO:
+				identificativi = exporterUtils.getIdsGruppi(identificativoOggetto);
+				for (Object object : identificativi) {
+					IDGruppo idGruppo = (IDGruppo)object;
+					risultatiRicerca.add(gruppiCore.getDettagliGruppoInUso(idGruppo));
+				}
+				break;
+			case TOKEN_POLICY:
+				identificativi = exporterUtils.getIdsTokenPolicy(identificativoOggetto);
+				for (Object object : identificativi) {
+					IDGenericProperties idGP = (IDGenericProperties)object;
+					risultatiRicerca.add(confCore.getDettagliTokenPolicyInUso(idGP));
+				}
+				break;
 			case ACCORDO_COOPERAZIONE:
 			case ACCORDO_SERVIZIO_COMPOSTO:
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
-			case ALL:
-			case ALL_WITHOUT_CONFIGURAZIONE:
-			case CONFIGURAZIONE:
 			case EROGAZIONE:
 			case FRUITORE:
 			case FRUIZIONE:
-			case GRUPPO:
 			case PDD:
 			case PORTA_APPLICATIVA:
 			case PORTA_DELEGATA:

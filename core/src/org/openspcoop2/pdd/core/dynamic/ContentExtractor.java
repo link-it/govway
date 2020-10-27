@@ -285,6 +285,100 @@ public class ContentExtractor {
 		}
 	}
 	
+	// Utility JSON
+	
+	public void prettyFormatJsonContent() throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().prettyFormatContent();
+		}catch(Exception e) {
+			throw new DynamicException("Operazione fallita: "+e.getMessage(),e);
+		}
+	}
+	
+	public void addSimpleJsonElement(String name, Object value) throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().addSimpleElement(name, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void addSimpleJsonElement(String jsonPath, String name, Object value) throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().addSimpleElement(jsonPath, name, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void addObjectJsonElement(String name, Object value) throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().addObjectElement(name, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void addObjectJsonElement(String jsonPath, String name, Object value) throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().addObjectElement(jsonPath, name, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void addArrayJsonElement(String name, Object value) throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().addArrayElement(name, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void addArrayJsonElement(String jsonPath, String name, Object value) throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().addArrayElement(jsonPath, name, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void removeJsonField(String name) throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().removeElement(name);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void removeJsonField(String jsonPath, String name) throws DynamicException {
+		if(!isRestJson()) {
+			throw new DynamicException("Funzionalità richiede un messaggio JSON");
+		}
+		try {
+			this.message.castAsRestJson().removeElement(jsonPath, name);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	
 	
 }
 

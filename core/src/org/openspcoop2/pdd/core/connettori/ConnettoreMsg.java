@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -117,6 +118,9 @@ public class ConnettoreMsg  {
 	
 	private ForwardProxy forwardProxy;
 	
+	private IDAccordo idAccordo;
+	
+
 
 
 	/* ********  C O S T R U T T O R E  ******** */
@@ -275,6 +279,10 @@ public class ConnettoreMsg  {
 	
 	public void setGenerateErrorWithConnectorPrefix(boolean generateErrorWithConnectorPrefix) {
 		this.generateErrorWithConnectorPrefix = generateErrorWithConnectorPrefix;
+	}
+	
+	public void setIdAccordo(IDAccordo id) {
+		this.idAccordo = id;
 	}
 	
 
@@ -508,5 +516,9 @@ public class ConnettoreMsg  {
 	}
 	public void setForwardProxy(ForwardProxy forwardProxy) {
 		this.forwardProxy = forwardProxy;
+	}
+	
+	public IDAccordo getIdAccordo() {
+		return this.idAccordo;
 	}
 }

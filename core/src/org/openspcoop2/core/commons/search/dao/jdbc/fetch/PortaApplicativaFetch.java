@@ -71,6 +71,8 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "azione", PortaApplicativa.model().NOME_AZIONE.getFieldType()));
 				setParameter(object, "setNomePortaDeleganteAzione", PortaApplicativa.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome_porta_delegante_azione", PortaApplicativa.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType()));
+				setParameter(object, "setCanale", PortaApplicativa.model().CANALE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "canale", PortaApplicativa.model().CANALE.getFieldType()));
 				return object;
 			}
 			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO)){
@@ -123,6 +125,8 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"nome_azione"));
 				setParameter(object, "setNomePortaDeleganteAzione", PortaApplicativa.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType(),
 					this.getObjectFromMap(map,"nome_porta_delegante_azione"));
+				setParameter(object, "setCanale", PortaApplicativa.model().CANALE.getFieldType(),
+					this.getObjectFromMap(map,"canale"));
 				return object;
 			}
 			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO)){

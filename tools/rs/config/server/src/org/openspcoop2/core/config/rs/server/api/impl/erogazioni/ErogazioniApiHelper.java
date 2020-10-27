@@ -131,6 +131,7 @@ import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -366,6 +367,9 @@ public class ErogazioniApiHelper {
 		String fruizioneAutorizzazioneRuoliTipologia = null;
 		String fruizioneAutorizzazioneRuoliMatch = null;
 		
+		boolean gestioneCanaliEnabled = env.gestioneCanali;
+		String canale = null;		
+		
 		if ( isErogazione ) {
 			
 			ServletUtils.setObjectIntoSession(env.requestWrapper.getSession(),
@@ -392,6 +396,7 @@ public class ErogazioniApiHelper {
 		        xamlPolicy.setName(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 		     }
 			
+			canale = pa.getCanale();
 		} else {
 			
 			ServletUtils.setObjectIntoSession(env.requestWrapper.getSession(),
@@ -414,9 +419,18 @@ public class ErogazioniApiHelper {
 			fruizioneAutorizzazioneRuoliMatch = evalnull( () -> pd.getRuoli().getMatch().toString() );
 			
 			if (pd.getXacmlPolicy() != null) {							
-		        xamlPolicy.setValue(pd.getXacmlPolicy().getBytes());
+				xamlPolicy.setValue(pd.getXacmlPolicy().getBytes());
 		        xamlPolicy.setName(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
-		     }
+			}
+			
+			canale = pd.getCanale();
+		}
+		
+		String canaleStato = null;
+		if(canale == null) {
+			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+		} else {
+			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
 		}
 		
 		
@@ -541,7 +555,8 @@ public class ErogazioniApiHelper {
         		autenticazioneToken, 
         		tokenPolicy,
         		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
-    			null // rogazioneServizioApplicativoServer
+    			null, // rogazioneServizioApplicativoServer,
+    			canaleStato, canale, gestioneCanaliEnabled
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -1182,6 +1197,28 @@ public class ErogazioniApiHelper {
 				tipoRuoloFonte									// RuoliFonte: Qualsiasi, Registro, Esterna
 			);*/
 		
+		boolean gestioneCanaliEnabled = env.gestioneCanali;
+		String canale = null;
+		if(gestioneCanaliEnabled) {
+			if(impl instanceof Erogazione) {
+				canale = ((Erogazione)impl).getCanale();
+			}
+			else if(impl instanceof Fruizione) {
+				canale = ((Fruizione)impl).getCanale();
+			}
+			if(canale!=null) {
+				if(!env.canali.contains(canale)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + canale + "' non è presente nel registro");
+				}
+			}
+		}
+		String canaleStato = null;
+		if(canale == null) {
+			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+		} else {
+			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+		}
+		
         if (! env.apsHelper.serviziCheckData(            		
         		tipoOp,
         		soggettiCompatibili,		
@@ -1295,7 +1332,8 @@ public class ErogazioniApiHelper {
         		autenticazioneToken,
         		tokenPolicy,
         		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
-    			null // rogazioneServizioApplicativoServer
+    			null, // rogazioneServizioApplicativoServer
+    			canaleStato, canale, gestioneCanaliEnabled
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -1638,22 +1676,22 @@ public class ErogazioniApiHelper {
 			ErogazioniEnv env,
 			AccordoServizioParteSpecifica asps,
 			org.openspcoop2.core.registry.Connettore regConnettore,
-			APIImpl ero,
+			APIImpl impl,
 			boolean alreadyExists,
 			boolean generaPortaApplicativa) throws Exception
 	{
 		final boolean generaPortaDelegata = !generaPortaApplicativa;
 		
 		// defaults
-		if (ero.getAutenticazione() == null) {
+		if (impl.getAutenticazione() == null) {
 			APIImplAutenticazioneHttps https = new APIImplAutenticazioneHttps();
 			https.setTipo(TipoAutenticazioneEnum.HTTPS);
 			https.setOpzionale(false);
-			ero.setAutenticazione(https);
+			impl.setAutenticazione(https);
 		}
 		
-		final OneOfAPIImplAutorizzazione authz = ero.getAutorizzazione();
-        final OneOfAPIImplAutenticazione authn = ero.getAutenticazione();
+		final OneOfAPIImplAutorizzazione authz = impl.getAutorizzazione();
+        final OneOfAPIImplAutenticazione authn = impl.getAutenticazione();
         
         final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 
@@ -1734,7 +1772,27 @@ public class ErogazioniApiHelper {
         	xamlPolicy.setValue(authzXacml.getPolicy());
         }
         xamlPolicy.setName(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
-                
+              
+		boolean gestioneCanaliEnabled = env.gestioneCanali;
+		String canale = null;
+		if(gestioneCanaliEnabled) {
+			if(impl instanceof Erogazione) {
+				canale = ((Erogazione)impl).getCanale();
+			}
+			else if(impl instanceof Fruizione) {
+				canale = ((Fruizione)impl).getCanale();
+			}
+			if(!env.canali.contains(canale)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + canale + "' non è presente nel registro");
+			}
+		}
+		String canaleStato = null;
+		if(canale == null) {
+			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+		} else {
+			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+		}
+        
         AccordiServizioParteSpecificaUtilities.create(
         		asps,
         		alreadyExists, 
@@ -1779,7 +1837,8 @@ public class ErogazioniApiHelper {
 				ConsoleOperationType.ADD, 
 				env.apsCore, 
 				env.erogazioniHelper,
-        		null // nomeSAServer TODO quando si aggiunge applicativo server
+        		null, // nomeSAServer TODO quando si aggiunge applicativo server
+        		canaleStato, canale, gestioneCanaliEnabled
 			);
 
 		
@@ -2235,6 +2294,11 @@ public class ErogazioniApiHelper {
 			
 			StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );
 			
+			IDPortaApplicativa idPAdefault = new IDPortaApplicativa();
+			idPAdefault.setNome(nomePortaDefault);
+			PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPAdefault);
+			ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, paDefault, apc, false);
+			
 			fillApiImplViewItemWithAsps(
 					env, 
 					asps, 
@@ -2244,7 +2308,8 @@ public class ErogazioniApiHelper {
 					getGestioneCorsFromErogazione(asps, env),
 					idServizio.getSoggettoErogatore().getNome(),
 					stato.stato,
-					stato.descrizione
+					stato.descrizione,
+					canale
 				);
 			
 		} catch (Exception e) {
@@ -2286,7 +2351,8 @@ public class ErogazioniApiHelper {
 		IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 		AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		
-		List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata = env.apsCore.serviziFruitoriMappingList(fruitore.getId(), fruitore.toIDSoggetto(), idServizio, null);	
+		long idFruizione = env.apsCore.getIdFruizioneAccordoServizioParteSpecifica(fruitore.toIDSoggetto(), idServizio);
+		List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata = env.apsCore.serviziFruitoriMappingList(idFruizione, fruitore.toIDSoggetto(), idServizio, null);	
 		List<PortaDelegata> listaPorteDelegateAssociate = new ArrayList<>();
 
 		String nomePortaDefault = null;
@@ -2320,6 +2386,11 @@ public class ErogazioniApiHelper {
 		
 		StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );		
 		
+		IDPortaDelegata idPDdefault = new IDPortaDelegata();
+		idPDdefault.setNome(nomePortaDefault);
+		PortaDelegata pdDefault = env.pdCore.getPortaDelegata(idPDdefault);
+		ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, pdDefault, apc, false);
+		
 		try {
 			fillApiImplViewItemWithAsps(
 					env, 
@@ -2330,7 +2401,8 @@ public class ErogazioniApiHelper {
 					getGestioneCorsFromFruizione(asps, fruitore.toIDSoggetto(), env),
 					fruitore.getNome(),
 					stato.stato,
-					stato.descrizione
+					stato.descrizione,
+					canale
 				);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -2348,7 +2420,8 @@ public class ErogazioniApiHelper {
 			final CorsConfigurazione gestioneCors,
 			final String nomeSoggetto,
 			final StatoApiEnum stato,
-			final String statoDescrizione ) {
+			final String statoDescrizione,
+			final ApiCanale canale) {
 
 		try {
 			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
@@ -2391,6 +2464,7 @@ public class ErogazioniApiHelper {
 			
 			toFill.setStato(stato);
 			toFill.setStatoDescrizione(statoDescrizione);
+			toFill.setCanale(canale);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -2434,6 +2508,7 @@ public class ErogazioniApiHelper {
 		toFill.setTipoServizio(impl.getTipoServizio());
 		toFill.setVersione(impl.getVersione());
 		toFill.setApiTags(impl.getApiTags());
+		toFill.setCanale(impl.getCanale());
 	}
 	
 	
@@ -2536,9 +2611,23 @@ public class ErogazioniApiHelper {
 			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
+		List<String> tags = new ArrayList<String>();
+		if(aspc!=null && aspc.getGruppo()!=null && aspc.getGruppo().size()>0) {
+			for (int i = 0; i < aspc.getGruppo().size(); i++) {
+				tags.add(aspc.getGruppo().get(i).getNome());
+			}
+		}
+		
+		String canaleApi = null;
+		if(aspc!=null) {
+			canaleApi = aspc.getCanale();
+		}
+		String canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pa.getCanale());
+		
 		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, env.protocolFactory, RuoloContesto.PORTA_APPLICATIVA, 
 				ServiceBinding.REST.equals(aspc.getServiceBinding()) ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP, 
-						pa.getNome(), idServizio.getSoggettoErogatore());		
+						pa.getNome(), idServizio.getSoggettoErogatore(),
+						tags, canale);		
 		return urlInvocazioneAPI.getUrl();
 		
 	}
@@ -2560,9 +2649,23 @@ public class ErogazioniApiHelper {
 			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
+		List<String> tags = new ArrayList<String>();
+		if(aspc!=null && aspc.getGruppo()!=null && aspc.getGruppo().size()>0) {
+			for (int i = 0; i < aspc.getGruppo().size(); i++) {
+				tags.add(aspc.getGruppo().get(i).getNome());
+			}
+		}
+		
+		String canaleApi = null;
+		if(aspc!=null) {
+			canaleApi = aspc.getCanale();
+		}
+		String canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pd.getCanale());
+		
 		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, env.protocolFactory, RuoloContesto.PORTA_DELEGATA, 
 				ServiceBinding.REST.equals(aspc.getServiceBinding()) ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP, 
-						pd.getNome(), fruitore);		
+						pd.getNome(), fruitore,
+						tags, canale);		
 		return urlInvocazioneAPI.getUrl();
 		
 	}
@@ -4959,4 +5062,35 @@ public class ErogazioniApiHelper {
 	}
 
 
+	public static ApiCanale toApiCanale(ErogazioniEnv env, PortaApplicativa pa, AccordoServizioParteComuneSintetico apc, boolean throwException) throws Exception{
+		return _toApiCanale(env, pa.getCanale(), apc, throwException);
+	}
+	public static ApiCanale toApiCanale(ErogazioniEnv env, PortaDelegata pd, AccordoServizioParteComuneSintetico apc, boolean throwException) throws Exception{
+		return _toApiCanale(env, pd.getCanale(), apc, throwException);
+	}
+	private static ApiCanale _toApiCanale(ErogazioniEnv env, String canalePorta, AccordoServizioParteComuneSintetico apc, boolean throwException) throws Exception{
+		ApiCanale canale = null;
+		if(env.gestioneCanali) {
+			canale = new ApiCanale();
+			if(canalePorta!=null && !"".equals(canalePorta)) {
+				canale.setNome(canalePorta);
+				canale.setConfigurazione(CanaleEnum.IMPLEMENTAZIONE_API);
+			}
+			else if(apc.getCanale()!=null && !"".equals(apc.getCanale())) {
+				canale.setNome(apc.getCanale());
+				canale.setConfigurazione(CanaleEnum.API);
+			}
+			else {
+				canale.setNome(env.canaleDefault);
+				canale.setConfigurazione(CanaleEnum.DEFAULT);
+			}
+		}
+		else {
+			if(throwException) {
+				throw new Exception("Gestione dei canali non abilitata");
+			}
+		}
+		return canale;
+	}
+	
 }

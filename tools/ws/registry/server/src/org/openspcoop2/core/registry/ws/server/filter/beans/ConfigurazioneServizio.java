@@ -36,7 +36,7 @@ package org.openspcoop2.core.registry.ws.server.filter.beans;
  */
  
 import java.io.Serializable;
- 
+
 import javax.xml.bind.annotation.XmlElement;
 
 /**     

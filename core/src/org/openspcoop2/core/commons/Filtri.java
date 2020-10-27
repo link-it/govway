@@ -94,6 +94,9 @@ public final class Filtri
 	
 	public final static String FILTRO_GRUPPO = "filtroGruppo";
 	
+	public final static String FILTRO_CANALE = "filtroCanale";
+	public final static String PREFIX_VALUE_CANALE_DEFAULT = "__DEFAULT__ ";
+	
 	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {
 		List<String> tipoSoggettiProtocollo = null;
 		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {

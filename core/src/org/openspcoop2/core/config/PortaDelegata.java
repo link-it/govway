@@ -87,6 +87,7 @@ import java.util.List;
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
  * 		&lt;attribute name="options" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="canale" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -733,6 +734,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.options = options;
   }
 
+  public java.lang.String getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(java.lang.String canale) {
+    this.canale = canale;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -1097,5 +1106,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="options",required=false)
   protected java.lang.String options;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="canale",required=false)
+  protected java.lang.String canale;
 
 }

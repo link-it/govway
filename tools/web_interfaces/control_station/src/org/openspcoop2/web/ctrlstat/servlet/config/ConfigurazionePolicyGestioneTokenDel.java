@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,10 +31,11 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.id.IDGenericProperties;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -82,13 +84,29 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 			// Elimino i filtri dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 
-			StringBuilder delMsg = new StringBuilder();
-			List<GenericProperties> elemToRemove = new ArrayList<GenericProperties>();
+			StringBuilder inUsoMessage = new StringBuilder();
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			boolean normalizeObjectIds = !confHelper.isModalitaCompleta();
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				long idGenericProperties = Long.parseLong(idsToRemove.get(i));
-				GenericProperties policy = confCore.getGenericProperties(idGenericProperties); 
+				GenericProperties policy = confCore.getGenericProperties(idGenericProperties);
 				
+				IDGenericProperties idGP = new IDGenericProperties();
+				idGP.setNome(policy.getNome());
+				idGP.setTipologia(policy.getTipologia());
+
+				boolean gpInUso = confCore.isGenericPropertiesInUso(idGP,whereIsInUso,normalizeObjectIds);
+
+				if (gpInUso) {
+					inUsoMessage.append(DBOggettiInUsoUtils.toString(idGP, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+					inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+
+				} else {
+					confCore.performDeleteOperation(userLogin, confHelper.smista(), policy); 
+				}
+				
+				/*
 				boolean delete = true;
 				boolean addMsg = false;
 				
@@ -131,6 +149,7 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 						}
 					}
 				}
+				
 				
 //				if(listaPA != null && listaPA.size() > 0) {
 //					bf.append("<br/>").append(listaPA.size());
@@ -197,6 +216,7 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				confCore.performDeleteOperation(userLogin, confHelper.smista(), (Object[]) elemToRemove.toArray(new GenericProperties[1])); 
 			}
 			
+			
 			String msgCompletato = ConfigurazioneCostanti.MESSAGGIO_CONFERMA_ELIMINAZIONE_POLICY_GESTIONE_TOKEN_OK;
 			
 			if(msgErrore!=null && !"".equals(msgErrore)){
@@ -212,7 +232,14 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				pd.setMessage(msgCompletato);
 			else
 				pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
+				*/
 
+			}// chiudo for
+
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
+			}
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

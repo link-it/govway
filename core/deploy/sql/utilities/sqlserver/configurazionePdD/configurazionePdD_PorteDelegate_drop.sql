@@ -23,6 +23,7 @@
 -- DROP INDEX INDEX_PD_AUTHZ_PROP ON pd_authz_properties ;
 -- DROP INDEX INDEX_PD_AUTH_PROP ON pd_auth_properties ;
 -- DROP INDEX INDEX_PD_SA ON porte_delegate_sa ;
+-- DROP INDEX index_porte_delegate_3 ON porte_delegate ;
 -- DROP INDEX index_porte_delegate_2 ON porte_delegate ;
 DROP TABLE pd_transform_risp_hdr;
 DROP TABLE pd_transform_risp;

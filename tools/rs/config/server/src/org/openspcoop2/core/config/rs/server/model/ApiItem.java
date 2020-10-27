@@ -32,6 +32,9 @@ public class ApiItem extends ApiBaseConSoggetto {
   
   @Schema(required = true, description = "")
   private String statoDescrizione = null;
+  
+  @Schema(description = "")
+  private ApiCanale canale = null;
  /**
    * Get stato
    * @return stato
@@ -72,6 +75,25 @@ public class ApiItem extends ApiBaseConSoggetto {
     return this;
   }
 
+ /**
+   * Get canale
+   * @return canale
+  **/
+  @JsonProperty("canale")
+  @Valid
+  public ApiCanale getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(ApiCanale canale) {
+    this.canale = canale;
+  }
+
+  public ApiItem canale(ApiCanale canale) {
+    this.canale = canale;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -80,6 +102,7 @@ public class ApiItem extends ApiBaseConSoggetto {
     sb.append("    ").append(ApiItem.toIndentedString(super.toString())).append("\n");
     sb.append("    stato: ").append(ApiItem.toIndentedString(this.stato)).append("\n");
     sb.append("    statoDescrizione: ").append(ApiItem.toIndentedString(this.statoDescrizione)).append("\n");
+    sb.append("    canale: ").append(ApiItem.toIndentedString(this.canale)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -603,6 +603,7 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 		sqlQueryObjectGet_portaApplicativa.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().MODE_AZIONE,true));
 		sqlQueryObjectGet_portaApplicativa.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME_AZIONE,true));
 		sqlQueryObjectGet_portaApplicativa.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME_PORTA_DELEGANTE_AZIONE,true));
+		sqlQueryObjectGet_portaApplicativa.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().CANALE,true));
 		sqlQueryObjectGet_portaApplicativa.addWhereCondition("id=?");
 
 		// Get portaApplicativa

@@ -121,6 +121,7 @@ CREATE TABLE porte_applicative
 	id_soggetto BIGINT NOT NULL,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	options VARCHAR(4000),
+	canale VARCHAR(20),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_porte_applicative') NOT NULL,
 	-- unique constraints
@@ -132,6 +133,7 @@ CREATE TABLE porte_applicative
 
 -- index
 CREATE INDEX index_porte_applicative_1 ON porte_applicative (id_soggetto);
+CREATE INDEX index_porte_applicative_2 ON porte_applicative (canale);
 
 
 

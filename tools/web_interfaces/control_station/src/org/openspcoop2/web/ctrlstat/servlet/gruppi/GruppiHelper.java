@@ -36,6 +36,8 @@ import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
@@ -265,7 +267,8 @@ public class GruppiHelper extends ConsoleHelper{
 			// setto le label delle colonne
 			String[] labels = {
 					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME,
-					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING
+					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING,
+					CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER // inuso
 			};
 			this.pd.setLabels(labels);
 
@@ -301,9 +304,10 @@ public class GruppiHelper extends ConsoleHelper{
 							break;
 						}
 					}
-					
 					e.addElement(de);
 
+					this.addInUsoButtonVisualizzazioneClassica(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
+					
 					dati.addElement(e);
 				}
 			}

@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/configurazionePdD/2020-10-13-patch.sql

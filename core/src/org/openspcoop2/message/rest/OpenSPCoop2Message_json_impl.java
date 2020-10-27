@@ -30,8 +30,16 @@ import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
+import org.openspcoop2.utils.json.JsonPathReturnType;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONStyle;
 
 /**
  * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi json
@@ -98,5 +106,166 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 		}
 	}
 
+	@Override
+	public void prettyFormatContent() throws MessageException,MessageNotSupportedException{
+		try {
+			if(this.hasContent()) {
+				String content = this.getContent();
+				JSONUtils jsonUtils = JSONUtils.getInstance(true);
+				JsonNode node = jsonUtils.getAsNode(content);
+				this.updateContent(jsonUtils.toString(node));
+			}
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
 	
+	@Override
+	public void addSimpleElement(String name, Object value) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(true, null, name, value, true, false);
+	}
+	@Override
+	public void addSimpleElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(false, jsonPath, name, value, true, false);
+	}
+	@Override
+	public void addObjectElement(String name, Object value) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(true, null, name, toJSONObject(value), true, false);
+	}
+	@Override
+	public void addObjectElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(false, jsonPath, name, toJSONObject(value), true, false);
+	}
+	private net.minidev.json.JSONObject toJSONObject(Object valueParam) throws MessageException {
+		net.minidev.json.JSONObject value = null;
+		if(valueParam instanceof net.minidev.json.JSONObject) {
+			value = (net.minidev.json.JSONObject) valueParam;
+		}
+		else if(valueParam instanceof String) {
+			try {
+				value = JsonPathExpressionEngine.getJSONObject((String)valueParam);
+			}catch(Exception e) {
+				throw new MessageException(e.getMessage(),e);
+			}
+		}
+		else if(valueParam instanceof JsonNode) {
+			try {
+				value = JsonPathExpressionEngine.getJSONObject((JsonNode)valueParam);
+			}catch(Exception e) {
+				throw new MessageException(e.getMessage(),e);
+			}
+		}
+		else if(valueParam instanceof InputStream) {
+			try {
+				value = JsonPathExpressionEngine.getJSONObject((InputStream)valueParam);
+			}catch(Exception e) {
+				throw new MessageException(e.getMessage(),e);
+			}
+		}
+		else {
+			throw new MessageException("Unsupported type '"+valueParam.getClass().getName()+"'");
+		}
+		return value;
+	}
+	
+	@Override
+	public void addArrayElement(String name, Object value) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(true, null, name, toJSONArray(value), true, false);
+	}
+	@Override
+	public void addArrayElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(false, jsonPath, name, toJSONArray(value), true, false);
+	}
+	private net.minidev.json.JSONArray toJSONArray(Object valueParam) throws MessageException {
+		net.minidev.json.JSONArray value = null;
+		if(valueParam instanceof net.minidev.json.JSONObject) {
+			value = (net.minidev.json.JSONArray) valueParam;
+		}
+		else if(valueParam instanceof String) {
+			try {
+				value = JsonPathExpressionEngine.getJSONArray((String)valueParam);
+			}catch(Exception e) {
+				throw new MessageException(e.getMessage(),e);
+			}
+		}
+		else if(valueParam instanceof JsonNode) {
+			try {
+				value = JsonPathExpressionEngine.getJSONArray((JsonNode)valueParam);
+			}catch(Exception e) {
+				throw new MessageException(e.getMessage(),e);
+			}
+		}
+		else if(valueParam instanceof InputStream) {
+			try {
+				value = JsonPathExpressionEngine.getJSONArray((InputStream)valueParam);
+			}catch(Exception e) {
+				throw new MessageException(e.getMessage(),e);
+			}
+		}
+		else {
+			throw new MessageException("Unsupported type '"+valueParam.getClass().getName()+"'");
+		}
+		return value;
+	}
+
+	@Override
+	public void removeElement(String name) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(true, null, name, null, false, true);
+	}
+	@Override
+	public void removeElement(String jsonPath, String name) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(false, jsonPath, name, null, false, true);
+	}
+	
+	public void _processJsonField(boolean rootElement, String jsonPath, String name, Object value, boolean add, boolean remove) throws MessageException {
+		try {
+			if(!this.hasContent()) {
+				return;
+			}
+			JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+			JSONObject rootObject = JsonPathExpressionEngine.getJSONObject(this.getContent());
+			Object o = rootObject;
+			if(!rootElement) {
+				if(jsonPath==null) {
+					throw new Exception("JsonPath undefined");
+				}
+				o = engine.getMatchPattern(rootObject, jsonPath, JsonPathReturnType.JSON_PATH_OBJECT);
+			}
+			if(o instanceof net.minidev.json.JSONObject) {
+				net.minidev.json.JSONObject oNode = (net.minidev.json.JSONObject) o;
+				if(add) {
+					oNode.appendField(name, value);
+				}
+				else {
+					oNode.remove(name);
+				}
+			}
+			else if(o instanceof net.minidev.json.JSONArray){
+				net.minidev.json.JSONArray arrayNode = (net.minidev.json.JSONArray) o;
+				if(arrayNode.size()>0) {
+					for (int i = 0; i < arrayNode.size(); i++) {
+						Object oNodeArray = arrayNode.get(i);
+						if(oNodeArray instanceof net.minidev.json.JSONObject) {
+							net.minidev.json.JSONObject oNode = (net.minidev.json.JSONObject) oNodeArray;
+							if(add) {
+								oNode.appendField(name, value);
+							}
+							else {
+								oNode.remove(name);
+							}
+						}
+						else {
+							throw new Exception("Tipo dell'oggetto individuato tramite jsonPath (posizione array '"+i+"') non consente l'operazione richiesta: "+oNodeArray.getClass().getName());
+						}
+					}
+				}
+			}
+			else {
+				throw new Exception("Tipo dell'oggetto individuato tramite jsonPath non consente l'operazione richiesta: "+o.getClass().getName());
+			}
+			this.updateContent(rootObject.toJSONString(JSONStyle.NO_COMPRESS));
+		}catch(Exception e) {
+			throw new MessageException("Operazione fallita (pattern: "+jsonPath+"): "+e.getMessage(),e);
+		}
+	}
 }

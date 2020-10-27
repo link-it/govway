@@ -190,6 +190,32 @@ components:
       type: string
       example: 'Nessuna risorsa definita nella API'
       
+    # Canale
+    IdCanale:
+      type: string
+      pattern: ^[_A-Za-z][\-\._A-Za-z0-9]*$
+      maxLength: 20
+      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'
+    ConfigurazioneApiCanale:
+      type: object
+      required:
+        - configurazione
+      properties:
+        configurazione:
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConfigurazioneCanaleEnum'
+        canale:
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
+    ApiCanale:
+      type: object
+      required:
+        - configurazione
+        - nome
+      properties:
+        configurazione:
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CanaleEnum'
+        nome:
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
+
     # Base: API
     ApiBase:
       type: object
@@ -222,7 +248,7 @@ components:
           type: array
           items:
             $ref: 'govway_core.yaml#/components/schemas/NCName'
-          example: [PagamentiTelematici, Anagrafica] 
+          example: [PagamentiTelematici, Anagrafica]
 
     ApiBaseConSoggetto:
       type: object
@@ -887,7 +913,9 @@ components:
             stato:
               $ref: '#/components/schemas/StatoApiEnum'
             stato_descrizione:
-              $ref: '#/components/schemas/StatoApiDescrizione'    
+              $ref: '#/components/schemas/StatoApiDescrizione'
+            canale:
+              $ref: '#/components/schemas/ApiCanale'
                  
     ApiImplViewItem:
       type: object
@@ -2101,4 +2129,10 @@ components:
     CorrelazioneApplicativaRispostaEnum:
       type: string
       enum: ['content-based', 'header-based', 'input-based', 'disabilitato']
-      example: 'content-based'   
+      example: 'content-based'
+    ConfigurazioneCanaleEnum:
+      type: string
+      enum: ['default', 'ridefinito']
+    CanaleEnum:
+      type: string
+      enum: ['default', 'api', 'implementazione-api']

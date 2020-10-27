@@ -86,6 +86,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -244,7 +245,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType,
-			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled) throws Exception {
 		
 		List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 		if(!alreadyExists) {
@@ -265,7 +266,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					gestioneTokenPolicy,  gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					apsCore, apsHelper, nomeSAServer);
+					apsCore, apsHelper, nomeSAServer, canaleStato, canale, gestioneCanaliEnabled);
 					
 		}
 		
@@ -283,7 +284,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					gestioneTokenPolicy,  gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					apsCore);
+					apsCore, canaleStato, canale, gestioneCanaliEnabled);
 			
 		}
 
@@ -320,7 +321,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
-			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled) throws Exception {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			
@@ -420,6 +421,17 @@ public class AccordiServizioParteSpecificaUtilities {
 				autorizzazione_tokenOptions
 				);
 		
+		// canali
+		if(gestioneCanaliEnabled) {
+			if(canaleStato.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO)) {
+				portaApplicativa.setCanale(canale);
+			} else {
+				portaApplicativa.setCanale(null);
+			}
+		} else {
+			portaApplicativa.setCanale(null);
+		}
+		
 		listaOggettiDaCreare.add(portaApplicativa);						
 		listaOggettiDaCreare.add(mappingErogazione);
 	
@@ -441,7 +453,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
-			AccordiServizioParteSpecificaCore apsCore) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, String canaleStato, String canale, boolean gestioneCanaliEnabled) throws Exception {
 		
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 		
@@ -468,6 +480,17 @@ public class AccordiServizioParteSpecificaUtilities {
 				autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 				autorizzazione_tokenOptions
 				);
+		
+		// canali
+		if(gestioneCanaliEnabled) {
+			if(canaleStato.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO)) {
+				portaDelegata.setCanale(canale);
+			} else {
+				portaDelegata.setCanale(null);
+			}
+		} else {
+			portaDelegata.setCanale(null);
+		}
 					
 		// Verifico prima che la porta delegata non esista già
 		if (!porteDelegateCore.existsPortaDelegata(mappingFruizione.getIdPortaDelegata())){

@@ -212,6 +212,9 @@
                             <linkit:sql-table-unique-field name="id_referente"/>
                             <linkit:sql-table-unique-field name="versione"/>
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="canale"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -519,6 +522,17 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
 - 'bozza': l'accordo è in fase di definizione e può essere ignorato dalla Porta di Dominio per l'operatività
 - 'operativo': l'accordo è utilizzabile in una sessione operativa, ma può ancora subire modifiche
 - 'finale': l'accordo è stato completato e non è soggetto a future modifiche]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="canale" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="canale" varchar="20"/>
+                                <linkit:sql-ddl-column-comment>Canale associato all'API</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

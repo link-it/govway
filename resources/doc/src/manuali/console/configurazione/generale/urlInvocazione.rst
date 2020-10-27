@@ -57,10 +57,18 @@ Le regole di applicabilità vengono definite dai seguenti campi:
 - *Ruolo*: (Opzionale) Tipologia di API (Erogazione/Fruizione) per il quale si applica la regola
 - *Tipo API*: (Opzionale) Tipo di API (REST/SOAP) per il quale si applica la regola
 
-La nuova url di invocazione viene definita attraverso i campi 'Base URL' e 'Contesto'. Se è stata fornita una espressione regolare nei due campi possono essere utilizzati le keyword '${posizione}' per impostare un valore dinamico individuato tramite l'espressione regolare fornita. Il primo match, all'interno dell'espressione regolare, è rappresentata da '${0}' (Ad esempio: http://server:8080/${0}/altro/${1}/)
+La nuova url di invocazione viene definita attraverso i campi 'Base URL' e 'Contesto'. 
 
 - *Base URL*: Permette di ridefinire la Base URL utilizzata rispetto a quanto definito nella configurazione generale
 - *Contesto*: Indica il contesto da utilizzare dopo la Base URL
+
+Nei campi 'Base URL' e 'Contesto' è possibile utilizzare le seguenti informazioni dinamiche:
+
+- Se è stata fornita una espressione regolare, nei due campi possono essere utilizzati le keyword '${posizione}' per impostare un valore dinamico individuato tramite l'espressione regolare fornita. Il primo match, all'interno dell'espressione regolare, è rappresentata da '${0}' (Ad esempio: http://server:8080/${0}/altro/${1}/)
+
+- Se è abilitata la gestione dei canali (vedi :ref:`console_canali`) è possibile utilizzare la keyword '${canale}' per impostare l'identificativo del canale associato all'API. Maggiori esempi vengono forniti nella sezione :ref:`console_canali_url`.
+
+- È possibile utilizzare la keyword '${tag}' per impostare l'identificativo del tag associato all'API. Poichè ad un'API è possibile associare più tag verrà utilizzato quello alla prima posizione ma è possibile indicarne uno differente tramite l'espressione ${tag[posizione]}. Il primo tag, all'interno della lista, è rappresentata da '${tag[0]}', ad esempio: http://server:8080/${tag[0]}/
 
 
 *Esempio 1*

@@ -80,6 +80,6 @@ public class ApiChange extends Action {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
 		}  
-
+ 
 	}
 }

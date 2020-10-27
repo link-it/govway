@@ -25,6 +25,7 @@
 -- DROP INDEX INDEX_AC_SOG ON accordi_coop_partecipanti ;
 -- DROP INDEX INDEX_AC_COOP_PAR ON accordi_coop_partecipanti ;
 -- DROP INDEX INDEX_OP_MESSAGES ON operation_messages ;
+-- DROP INDEX index_accordi_2 ON accordi ;
 -- DROP INDEX INDEX_DOC_SEARCH ON documenti ;
 DROP TABLE acc_serv_componenti;
 DROP TABLE acc_serv_composti;

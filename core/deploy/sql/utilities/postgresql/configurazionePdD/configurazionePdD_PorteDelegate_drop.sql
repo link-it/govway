@@ -14,6 +14,7 @@
 -- DROP INDEX INDEX_PD_AUTHZ_PROP;
 -- DROP INDEX INDEX_PD_AUTH_PROP;
 -- DROP INDEX INDEX_PD_SA;
+-- DROP INDEX index_porte_delegate_2;
 -- DROP INDEX index_porte_delegate_1;
 DROP TABLE pd_transform_risp_hdr;
 DROP TABLE pd_transform_risp;

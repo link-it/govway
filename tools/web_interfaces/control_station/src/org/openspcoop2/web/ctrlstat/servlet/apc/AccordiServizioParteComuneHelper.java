@@ -20,12 +20,14 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -36,6 +38,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -2982,7 +2985,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType,
 			String gruppi, List<String> elencoGruppi,
 			boolean gestioneNuovaVersione, int gestioneNuovaVersione_min, boolean gestioneNuovaVersione_ridefinisciInterfaccia, long gestioneNuovaVersione_oldIdApc,
-			boolean confirm
+			boolean confirm, String canaleStato, String canale, List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled
 			) throws Exception {
 
 		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
@@ -3032,6 +3035,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		boolean gestioneSpecificaInterfacce = false;
 		boolean gestioneInformazioniProtocollo = false;
 		boolean gestioneGruppi = false;
+		boolean gestioneCanale = false;
 		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom) {
 			gestioneInformazioniGenerali = true;
 			gestioneInformazioniProfilo = true;
@@ -3040,6 +3044,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			gestioneSpecificaInterfacce = true;
 			gestioneInformazioniProtocollo = true;
 			gestioneGruppi = true;
+			gestioneCanale = true;
 		}
 		else  {
 			if(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI.equals(apiGestioneParziale)) {
@@ -3062,6 +3067,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI.equals(apiGestioneParziale)) {
 				gestioneGruppi = true;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_CANALE.equals(apiGestioneParziale)) {
+				gestioneCanale = true;
 			}
 		}
 		
@@ -3399,6 +3407,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		
 		dati.addElement(de);
+		
+		// Canale
+		this.addCanaleToDati(dati, tipoOperazione, canaleStato, canale, canaleList, gestioneCanaliEnabled, modificheAbilitate,	gestioneCanale);
 
 		de = new DataElement();
 		if( gestioneInformazioniGenerali && modificheAbilitate ){
@@ -4352,6 +4363,68 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		return dati;
 	}
 	
+	public void addCanaleToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale,
+			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled, boolean modificheAbilitate,
+			boolean gestioneCanale) {
+		DataElement de;
+		// canale
+		if(gestioneCanaliEnabled) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE_STATO);
+			de.setValue(canaleStato);
+			de.setValues(AccordiServizioParteComuneCostanti.VALUES_PARAMETRO_APC_CANALE_STATO);
+			
+			List<String> labelsCanaleStato = new ArrayList<>();
+			CanaleConfigurazione canaleConfigurazioneDefault = canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get();
+			labelsCanaleStato.add(MessageFormat.format(AccordiServizioParteComuneCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT, canaleConfigurazioneDefault.getNome()));
+			labelsCanaleStato.add(AccordiServizioParteComuneCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO);
+			
+			de.setLabels(labelsCanaleStato);
+			
+			if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneCanale && modificheAbilitate)){
+				de.setType(DataElementType.SELECT);
+				de.setSelected(canaleStato);
+			}else{
+				if(gestioneCanale) {
+					de.setType(DataElementType.TEXT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE_STATO);
+			de.setSize(this.getSize());
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+			if(canaleStato.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO)) {
+				de = new DataElement();
+				de.setLabel(""); //(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
+				de.setValue(canale);
+				List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
+				de.setValues(canaliListValues);
+				de.setLabels(canaliListValues);
+				
+				if(tipoOperazione.equals(TipoOperazione.ADD) || (gestioneCanale && modificheAbilitate)){
+					de.setType(DataElementType.SELECT);
+					de.setSelected(canale);
+				}else{
+					if(gestioneCanale) {
+						de.setType(DataElementType.TEXT);
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+					}
+					if( !modificheAbilitate && StringUtils.isBlank(canale))
+						de.setValue("");
+				}
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+			}
+		}
+	}
+	
 	public String getLabelWSDLFromFormatoSpecifica(org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica) {
 		switch (formatoSpecifica) {
 		case SWAGGER_2:
@@ -4378,7 +4451,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String stato,String oldStato,String tipoAccordo,boolean validazioneDocumenti,
 			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used,
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica,
-			String gruppi
+			String gruppi, String canaleStato, String canale
 			) throws Exception {
 
 		Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute("ShowAccordiCooperazione");
@@ -4444,6 +4517,24 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPI);
 		de.setSize(this.getSize());
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE_STATO);
+		de.setValue(canaleStato);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE_STATO);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		if(canaleStato.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO)) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
+			de.setValue(canale);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
@@ -4699,7 +4790,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			IDAccordo idAccordoOLD, BinaryParameter wsblconc, BinaryParameter wsblserv, BinaryParameter wsblservcorr,boolean validazioneDocumenti,
 			String tipoProtocollo, String backToStato,
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica,
-			boolean checkReferente, String gruppi)
+			boolean checkReferente, String gruppi, String canaleStato, String canale, boolean gestioneCanaliEnabled)
 					throws Exception {
 		try {
 			int idInt = 0;
@@ -4779,6 +4870,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						return false;
 					}
 				}
+			}
+			
+			if(this.canaleCheckData(canaleStato, canale, gestioneCanaliEnabled) == false) {
+				return false;
 			}
 
 			// La versione deve contenere solo lettere e numeri e '.'

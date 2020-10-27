@@ -52,6 +52,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CanaliConfigurazione }
+     */
+    public CanaliConfigurazione createCanaliConfigurazione() {
+        return new CanaliConfigurazione();
+    }
+
+    /**
      * Create an instance of {@link PortaDelegataAzione }
      */
     public PortaDelegataAzione createPortaDelegataAzione() {
@@ -178,6 +185,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CanaleConfigurazioneNodo }
+     */
+    public CanaleConfigurazioneNodo createCanaleConfigurazioneNodo() {
+        return new CanaleConfigurazioneNodo();
+    }
+
+    /**
      * Create an instance of {@link InvocazionePortaGestioneErrore }
      */
     public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
@@ -280,6 +294,13 @@ public class ObjectFactory {
      */
     public MtomProcessor createMtomProcessor() {
         return new MtomProcessor();
+    }
+
+    /**
+     * Create an instance of {@link CanaleConfigurazione }
+     */
+    public CanaleConfigurazione createCanaleConfigurazione() {
+        return new CanaleConfigurazione();
     }
 
     /**

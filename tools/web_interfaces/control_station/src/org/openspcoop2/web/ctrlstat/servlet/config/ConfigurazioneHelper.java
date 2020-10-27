@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -42,6 +43,9 @@ import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.Dump;
@@ -131,6 +135,7 @@ import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiFruizioni;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
@@ -2316,6 +2321,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
+			// validazione canali
+			if(!this.canaliCheckData()) {
+				return false;
+			}
+			
 			return true;
 
 		} catch (Exception e) {
@@ -2325,6 +2335,90 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 
+	private boolean canaliCheckData() throws Exception {
+		try{
+			String canaliEnabledTmp = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_STATO);
+			boolean canaliEnabled = ServletUtils.isCheckBoxEnabled(canaliEnabledTmp);
+			
+			Configurazione configurazione = this.confCore.getConfigurazioneGenerale();
+			CanaliConfigurazione gestioneCanali = configurazione.getGestioneCanali();
+			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : null;
+			
+			if(canaliEnabled) {
+				String canaliNome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+				String canaliDescrizione = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+				String canaliDefault = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT);
+			
+				if(canaleList == null || canaleList.size() == 0) { // in questa situazione mi dovrei trovare solo quando attivo la funzionalita'
+					if(canaleDatiCheckData(canaliNome, canaliDescrizione) == false) {
+						return false;
+					}
+				} else {
+					if(StringUtils.isEmpty(canaliDefault)){
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT));
+						return false;
+					}
+					
+					boolean found = false;
+					for (CanaleConfigurazione canaleConfigurazione : canaleList) {
+						if(canaleConfigurazione.getNome().equals(canaliDefault)) {
+							found = true;
+							break;
+						}
+					}
+					
+					if(found ==false) {
+						this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_DEFAULT_SELEZIONATO_NON_ESISTE);
+						return false;
+					}
+				}
+			} else {
+				boolean oldEnabled = (gestioneCanali != null && gestioneCanali.getStato().equals(StatoFunzionalita.ABILITATO) ) ? true: false;
+				
+				StringBuilder inUsoMessage = new StringBuilder();
+				
+				if(oldEnabled) { 
+					// se era abilitato e ora sto disabilitando devo controllare che non ci sia nessun canale in uso in API, Erogazioni o Fruizioni
+					
+					if(canaleList != null) {
+						for (CanaleConfigurazione canale : canaleList) {
+							if(ConfigurazioneCanaliUtilities.isCanaleInUsoRegistro(canale, this.confCore, this, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE)) {
+								this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_FUNZIONALITA_CANALI_NON_DISATTIVABILE, inUsoMessage.toString()));
+								return false;
+							}
+						}
+					}
+				}
+			}
+			
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	private boolean canaleDatiCheckData(String canaliNome, String canaliDescrizione) throws Exception {
+		// nome obbligatorio
+		if(StringUtils.isEmpty(canaliNome)){
+			this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME));
+			return false;
+		}
+		
+		if(this.checkLength20(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME)==false) {
+			return false;
+		}
+		
+		if(this.checkNCName(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME)==false) {
+			return false;
+		}
+		
+		if(this.checkLength255(canaliDescrizione, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE)==false) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public boolean configurazioneCheckDataCache() throws Exception {
 
 		try{
@@ -3296,7 +3390,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean responseCachingEnabled,	int responseCachingSeconds, boolean responseCachingMaxResponseSize,	long responseCachingMaxResponseSizeBytes, 
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders, boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery, 
 			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola, 
-			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola, int numeroRegoleProxyPass
+			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola, int numeroRegoleProxyPass,
+			boolean canaliEnabled, int numeroCanali, int numeroNodi, String canaliNome, String canaliDescrizione, List<CanaleConfigurazione> canaleList, String canaliDefault			
 			) throws Exception {
 		DataElement de = new DataElement();
 
@@ -3802,6 +3897,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				visualizzaLinkConfigurazioneRegola, servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola,
 				allHidden);
 		
+		// Configurazione Canali
+		this.addConfigurazioneCanaliToDati(dati, canaliEnabled, numeroCanali, numeroNodi, canaliNome, canaliDescrizione, true, allHidden, canaleList, canaliDefault);
+		
 		
 		if(!allHidden && !multitenantEnabled) {
 			de = new DataElement();
@@ -3931,6 +4029,113 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 	
+	private void addConfigurazioneCanaliToDati(Vector<DataElement> dati, boolean canaliEnabled, int numeroCanali,
+			int numeroNodi, String canaliNome, String canaliDescrizione, boolean addTitle, boolean allHidden, List<CanaleConfigurazione> canaleList, String canaliDefault) throws Exception {
+		
+		boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+		DataElement de;
+		
+		if(!allHidden && addTitle) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+		
+		boolean funzionalitaDisabilitabile = true;
+		if(canaliEnabled) {
+			if(canaleList != null) {
+				for (CanaleConfigurazione canale : canaleList) {
+					if(ConfigurazioneCanaliUtilities.isCanaleInUsoRegistro(canale, this.confCore, this, new StringBuilder(), org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE)) {
+						funzionalitaDisabilitabile = false;
+						break;
+					}
+				}
+			}
+		}
+		
+		de = new DataElement();
+		de.setLabel(addTitle ?  ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_STATO : "");
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_STATO);
+		if(allHidden) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else if(!funzionalitaDisabilitabile) {
+			de.setType(DataElementType.TEXT);
+		}
+		else {
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(true);
+			de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			de.setSelected(canaliEnabled ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+		}
+		de.setValue(canaliEnabled ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+		dati.addElement(de);
+		
+		if(!allHidden) {
+			// se si passa da disabilitato ad abilitato, il numero dei canali e' 0, devo visualizzare la form di inserimento del canale di default
+			if(canaliEnabled) {
+				if(numeroCanali == 0) {
+					// subtitle
+					de = new DataElement();
+					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE_DEFAULT);
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);
+					
+					// nome canale 
+					de = new DataElement();
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+					de.setValue(canaliNome);
+					de.setRequired(true);
+					dati.addElement(de);
+					
+					
+					// descrizione canale
+					de = new DataElement();
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+					de.setValue(canaliDescrizione);
+					dati.addElement(de);
+				} else {
+					// scelta canale default
+					de = new DataElement();
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT);
+					de.setType(DataElementType.SELECT);
+					
+					List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
+					de.setValues(canaliListValues);
+					de.setLabels(canaliListValues);
+					de.setSelected(canaliDefault);
+					dati.addElement(de);
+					
+					// link canali
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_LIST);
+					
+					if (contaListeFromSession)
+						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI +" (" + numeroCanali + ")");
+					else
+						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI);
+					dati.addElement(de);
+					
+					// link nodi
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_LIST);
+					if (contaListeFromSession)
+						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI_NODI +" (" + numeroNodi + ")");
+					else
+						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI_NODI);
+					dati.addElement(de);
+				}
+			}
+		}
+	}
 	public void addRegistrazioneMessaggiToDatiAsHidden(String dumpPD, String dumpPA, Configurazione configurazione,	Vector<DataElement> dati) {
 		DataElement de = new DataElement();
 		
@@ -15090,8 +15295,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<String> lstLabels = new ArrayList<>();
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
-			if(!this.core.isTokenPolicyForceIdEnabled())
+			if(!this.core.isTokenPolicyForceIdEnabled()) {
 				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+			}
+			lstLabels.add(CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER); // inuso
 			
 			// setto le label delle colonne
 			String[] labels = lstLabels.toArray(new String[lstLabels.size()]);
@@ -15139,6 +15346,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						e.addElement(de);
 					}
+					
+					this.addInUsoButtonVisualizzazioneClassica(e, policy.getNome(), policy.getId()+"", InUsoType.TOKEN_POLICY);
 					
 					dati.addElement(e);
 				}
@@ -15567,6 +15776,450 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public CanaliConfigurazione getGestioneCanali(boolean canaliEnabled, String canaliDefault, List<CanaleConfigurazione> canaleList, String canaliNome, 
+			String canaliDescrizione, List<CanaleConfigurazioneNodo> nodoList) {
+		CanaliConfigurazione configurazione = new CanaliConfigurazione();
+		
+		if(canaliEnabled) {
+			configurazione.setStato(StatoFunzionalita.ABILITATO);
+			
+			if(canaleList == null)
+				canaleList = new ArrayList<>();
+			
+			if(canaliDefault != null) {
+				// viene modificato solo il canale default
+				for (CanaleConfigurazione canaleConfigurazione : canaleList) {
+					canaleConfigurazione.setCanaleDefault(false);
+				}
+				
+				for (CanaleConfigurazione canaleConfigurazione : canaleList) {
+					if(canaleConfigurazione.getNome().equals(canaliDefault)) {
+						canaleConfigurazione.setCanaleDefault(true);
+						break;
+					}
+				}
+			} else {
+				// creo il canale default
+				
+				CanaleConfigurazione canaleConfigurazione = new CanaleConfigurazione();
+				canaleConfigurazione.setNome(canaliNome);
+				canaleConfigurazione.setDescrizione(canaliDescrizione);
+				canaleConfigurazione.setCanaleDefault(true);
+				
+				canaleList.add(canaleConfigurazione);
+			}
+			
+			configurazione.setCanaleList(canaleList);
+			
+			if(nodoList == null)
+				nodoList = new ArrayList<>();
+			
+			configurazione.setNodoList(nodoList);
+		} else {
+			configurazione.setStato(StatoFunzionalita.DISABILITATO);
+		}
+		
+		return configurazione;
+	}
+	public void prepareCanaleConfigurazioneList(Search ricerca, List<CanaleConfigurazione> lista) throws Exception {
+		try {
+			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CANALI);
+
+			int idLista = Liste.CONFIGURAZIONE_CANALI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			
+			
+			this.pd.setSearchLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI, null));
+			}else{
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_LIST));
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+			
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME, search);
+			}
+
+			// setto le label delle colonne	
+			List<String> lstLabels = new ArrayList<>();
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT);
+			lstLabels.add(CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER); // inuso
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<CanaleConfigurazione> it = lista.iterator();
+				while (it.hasNext()) {
+					CanaleConfigurazione regola = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					Parameter pIdCanale = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_ID_CANALE, regola.getId() + "");
+					
+					// Nome
+					DataElement de = new DataElement();
+					de.setIdToRemove(regola.getId() + "");
+					de.setValue(regola.getNome());
+					de.setToolTip(regola.getNome());
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_CHANGE, pIdCanale);
+					e.addElement(de);
+					
+					de = new DataElement();
+					if(regola.getDescrizione() != null && regola.getDescrizione().length() > 100) {
+						de.setValue(regola.getDescrizione().substring(0, 97)+"...");
+						de.setToolTip(regola.getDescrizione());
+					} else {
+						de.setValue(regola.getDescrizione());
+					}
+					
+					e.addElement(de);
+					
+					// Default
+					de = new DataElement();
+					de.setWidthPx(10);
+					if(regola.isCanaleDefault()){
+						de.setValue("Si");
+					}
+					else{
+						de.setValue("No");
+					}
+					e.addElement(de);
+					
+					
+					this.addInUsoButtonVisualizzazioneClassica(e, regola.getNome(), regola.getNome(), InUsoType.CANALE);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		
+	}
+	public Vector<DataElement> addCanaleToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idCanaleS,
+			String nome, String descrizione) {
+		
+		DataElement dataElement = new DataElement();
+		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE);
+		dataElement.setType(DataElementType.TITLE);
+		dati.add(dataElement);
+		
+		if(tipoOp.equals(TipoOperazione.CHANGE)) {
+			// old id canale
+			DataElement de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_ID_CANALE);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(idCanaleS);
+			dati.add(de);
+		}
+		
+		// nome
+		DataElement de = new DataElement();
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+		de.setValue(nome);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		// descrizione
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+		de.setValue(descrizione);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public boolean canaleCheckData(TipoOperazione tipoOp, String oldNome) throws Exception {
+		try{
+			String canaliNome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+			String canaliDescrizione = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+			
+			if(canaleDatiCheckData(canaliNome, canaliDescrizione) == false) {
+				return false;
+			}
+			
+			boolean existsCanale = this.confCore.existsCanale(canaliNome);
+			
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				if(existsCanale) { // nome gia' occupato
+					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_GIA_PRESENTE);
+					return false;
+				}
+			} else {
+				// se ho cambiato il nome ed e' gia' scelto allora devo segnalare l'errore.
+				if(!oldNome.equals(canaliNome) && existsCanale) {
+					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_NUOVO_NOME_GIA_PRESENTE);
+					return false;
+				}
+			}
+			
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	public void prepareCanaleNodoConfigurazioneList(Search ricerca, List<CanaleConfigurazioneNodo> lista) throws Exception { 
+		try {
+			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI);
+
+			int idLista = Liste.CONFIGURAZIONE_CANALI_NODI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			
+			
+			this.pd.setSearchLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI_NODI, null));
+			}else{
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI_NODI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_LIST));
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+			 
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME, search);
+			}
+
+			// setto le label delle colonne	
+			List<String> lstLabels = new ArrayList<>();
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI);
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
+
+			// preparo i dati  
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<CanaleConfigurazioneNodo> it = lista.iterator();
+				while (it.hasNext()) {
+					CanaleConfigurazioneNodo regola = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					Parameter pIdCanaleNodo = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_ID_NODO, regola.getId() + "");
+					
+					// Nome
+					DataElement de = new DataElement();
+					de.setIdToRemove(regola.getId() + "");
+					de.setValue(regola.getNome());
+					de.setToolTip(regola.getNome());
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_CHANGE, pIdCanaleNodo);
+					e.addElement(de);
+					
+					// descrizione
+					de = new DataElement();
+					if(regola.getDescrizione() != null && regola.getDescrizione().length() > 100) {
+						de.setValue(regola.getDescrizione().substring(0, 97)+"...");
+						de.setToolTip(regola.getDescrizione());
+					} else {
+						de.setValue(regola.getDescrizione());
+					}
+					
+					e.addElement(de);
+					
+					// Canali
+					de = new DataElement();
+					List<String> canaleList = regola.getCanaleList();
+					if(canaleList == null)
+						canaleList = new ArrayList<String>();
+					
+					String labelTooltip = StringUtils.join(canaleList.toArray(new String[canaleList.size()]), ", ");
+					
+					if(labelTooltip.length() > 100) {
+						de.setValue(labelTooltip.substring(0, 97)+"...");
+						de.setToolTip(labelTooltip);
+					} else {
+						de.setValue(labelTooltip);
+					}
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		
+	}
+	public Vector<DataElement> addCanaleNodoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idNodoS, String oldNome,
+			String nome, String descrizione, String[] canali, List<CanaleConfigurazione> canaleList,
+			boolean selectListNode, List<String> aliasesNodi) {
+		
+		DataElement dataElement = new DataElement();
+		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI_NODO);
+		dataElement.setType(DataElementType.TITLE);
+		dati.add(dataElement);
+					
+		if(tipoOp.equals(TipoOperazione.CHANGE)) {
+			// old id canale
+			DataElement de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_ID_NODO);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(idNodoS);
+			dati.add(de);
+			
+			if(selectListNode && aliasesNodi.contains(oldNome) && aliasesNodi.size()>1 && !oldNome.equals(nome)) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_OLD_NOME);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_OLD_NOME);
+				de.setType(DataElementType.TEXT);
+				de.setValue(oldNome);
+				dati.add(de);
+			}
+		}
+		
+		// nome
+		if(selectListNode) {
+			DataElement de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			de.setValues(aliasesNodi);
+			de.setLabels(aliasesNodi);
+			de.setSelected(nome);
+			de.setRequired(true);
+			de.setType(DataElementType.SELECT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			if(tipoOp.equals(TipoOperazione.CHANGE)) {
+				de.setPostBack(true);
+			}
+			dati.addElement(de);
+		}
+		else {
+			DataElement de = new DataElement();
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			de.setValue(nome);
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+		// descrizione
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE);
+		de.setValue(descrizione);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		// canali
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI);
+		List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
+		de.setValues(canaliListValues);
+		de.setLabels(canaliListValues);
+		de.setSelezionati(canali);
+		de.setRequired(true);
+		de.setType(DataElementType.MULTI_SELECT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI);
+		de.setRows(10);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	public boolean canaleNodoCheckData(TipoOperazione tipoOp, String oldNome) throws Exception { 
+		try{
+			String canaliNome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			String canaliDescrizione = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE);
+			String [] canali = this.getParameterValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI);
+			
+			// nome obbligatorio
+			if(StringUtils.isEmpty(canaliNome)){
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
+						ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME));
+				return false;
+			}
+			
+			if(this.checkLength20(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME)==false) {
+				return false;
+			}
+			
+			if(this.checkNCName(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME)==false) {
+				return false;
+			}
+			
+			if(this.checkLength255(canaliDescrizione, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE)==false) {
+				return false;
+			}
+			
+			if(canali == null || canali.length == 0) {
+				this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_CAMPO_CANALE_OBBLIGATORIO,
+						ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI));
+				return false;
+			}
+			
+			boolean existsCanale = this.confCore.existsCanaleNodo(canaliNome);
+			
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				if(existsCanale) { // nome gia' occupato
+					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_GIA_PRESENTE);
+					return false;
+				}
+			} else {
+				// se ho cambiato il nome ed e' gia' scelto allora devo segnalare l'errore.
+				if(!oldNome.equals(canaliNome) && existsCanale) {
+					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_NUOVO_NOME_GIA_PRESENTE);
+					return false;
+				}
+			}
+			
+			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

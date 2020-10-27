@@ -3183,6 +3183,9 @@ public class RegistroServizi  {
 					if(InformationApiSource.SPECIFIC_REGISTRY.equals(infoWsdlSource)){
 						throw e;
 					}
+					else {
+						this.log.error("Costruisco API tramite il registro (Step1) error: "+e.getMessage(),e);
+					}
 				}
 				
 				this.log.debug("Costruisco API tramite il registro (Step2)...");
@@ -3194,6 +3197,9 @@ public class RegistroServizi  {
 				}catch(DriverRegistroServiziException e){
 					if(InformationApiSource.SPECIFIC_REGISTRY.equals(infoWsdlSource)){
 						throw e;
+					}
+					else {
+						this.log.error("Costruisco API tramite il registro (Step2) error: "+e.getMessage(),e);
 					}
 				}
 				
@@ -3211,6 +3217,9 @@ public class RegistroServizi  {
 					if(InformationApiSource.REGISTRY_SPECIFIC.equals(infoWsdlSource)){
 						throw e;
 					}
+					else {
+						this.log.error("Costruisco API tramite il registro (Step1) error: "+e.getMessage(),e);
+					}
 				}
 				
 				this.log.debug("Costruisco API tramite la specifica (Step2)...");
@@ -3222,6 +3231,9 @@ public class RegistroServizi  {
 				}catch(DriverRegistroServiziException e){
 					if(InformationApiSource.REGISTRY_SPECIFIC.equals(infoWsdlSource)){
 						throw e;
+					}
+					else {
+						this.log.error("Costruisco API tramite il registro (Step2) error: "+e.getMessage(),e);
 					}
 				}
 					

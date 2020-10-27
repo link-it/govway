@@ -61,6 +61,8 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String MESSAGE_METADATI_APC_API_LIST = "API {0}";
 	public final static String MESSAGE_METADATI_APC_API_CON_PROFILO = "API {0}, Profilo Interoperabilit&agrave;: {1}";
 	public final static String MESSAGE_METADATI_APC_API_PROFILO = "Profilo Interoperabilit&agrave;: {0}";
+	public final static String MESSAGE_METADATI_APC_API_LIST_CON_CANALE = "API {0}, Canale: {1}";
+	public final static String MESSAGE_METADATI_APC_API_CON_CANALE_CON_PROFILO = "API {0}, Canale: {1}, Profilo Interoperabilit&agrave;: {2}";
 	
 	public final static String APC_API_ICONA_MODIFICA_API = "&#xE3C9;";
 	public final static String APC_API_ICONA_MODIFICA_API_TOOLTIP = "Modifica";
@@ -100,6 +102,7 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String VALORE_PARAMETRO_APC_API_PROFILO = "apiProfilo";
 	public final static String VALORE_PARAMETRO_APC_API_DESCRIZIONE = "apiDescrizione";
 	public final static String VALORE_PARAMETRO_APC_API_GRUPPI = "apiGruppi";
+	public final static String VALORE_PARAMETRO_APC_API_CANALE = "apiCanale";
 	public final static String VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE = "apiGestioneSpecificaInterfacce";
 	public final static String VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE = "apiOpzioniAvanzate";
 	public final static String VALORE_PARAMETRO_APC_API_GESTIONE_PARZIALE_WSDL_CHANGE = "apiWsdlChange";

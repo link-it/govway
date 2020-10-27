@@ -505,6 +505,71 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+  /api/{nome}/{versione}/canale:
+    get:
+      tags:
+      - "api"
+      summary: "Restituisce il canale associato all'API"
+      description: "Questa operazione consente di ottenere il canale associato all'API\
+        \ identificata dal nome e dalla versione"
+      operationId: "getApiCanale"
+      responses:
+        "200":
+          description: "Canale restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiCanale"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "api"
+      summary: "Consente di modificare il canale associato all'API"
+      description: "Questa operazione consente di aggiornare il canale associato all'API\
+        \ identificata dal nome e dalla versione"
+      operationId: "updateApiCanale"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigurazioneApiCanale"
+        required: true
+      responses:
+        "204":
+          description: "Il canale è stato aggiornato correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
   /api/{nome}/{versione}/allegati:
     get:
       tags:
@@ -1827,6 +1892,70 @@ paths:
       responses:
         "204":
           description: "Configurazione dell'erogazione aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/canale:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce il canale associato all'erogazione"
+      description: "Questa operazione consente di ottenere il canale associato all'erogazione"
+      operationId: "getErogazioneCanale"
+      responses:
+        "200":
+          description: "Canale restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiCanale"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Consente di modificare il canale associato all'erogazione"
+      description: "Questa operazione consente di aggiornare il canale associato all'erogazione"
+      operationId: "updateErogazioneCanale"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigurazioneApiCanale"
+        required: true
+      responses:
+        "204":
+          description: "Il canale è stato aggiornato correttamente"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -4321,6 +4450,73 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/canale:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce il canale associato alla fruizione"
+      description: "Questa operazione consente di ottenere il canale associato alla\
+        \ fruizione"
+      operationId: "getFruizioneCanale"
+      responses:
+        "200":
+          description: "Canale restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiCanale"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Consente di modificare il canale associato alla fruizione"
+      description: "Questa operazione consente di aggiornare il canale associato alla\
+        \ fruizione"
+      operationId: "updateFruizioneCanale"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigurazioneApiCanale"
+        required: true
+      responses:
+        "204":
+          description: "Il canale è stato aggiornato correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi:
     get:
       tags:
@@ -6735,6 +6931,8 @@ components:
           interfaccia:
             type: "string"
             format: "byte"
+          canale:
+            $ref: "#/components/schemas/IdCanale"
     ApiItem:
       type: "object"
       allOf:
@@ -6748,6 +6946,8 @@ components:
             $ref: "#/components/schemas/StatoApiEnum"
           stato_descrizione:
             $ref: "#/components/schemas/StatoApiDescrizione"
+          canale:
+            $ref: "#/components/schemas/ApiCanale"
     ListaApi:
       type: "object"
       allOf:
@@ -7040,6 +7240,8 @@ components:
             $ref: "#/components/schemas/NCName"
           erogazione_versione:
             $ref: "#/components/schemas/Versione"
+          canale:
+            $ref: "#/components/schemas/IdCanale"
     ErogazioneItem:
       type: "object"
       allOf:
@@ -7076,6 +7278,8 @@ components:
             $ref: "#/components/schemas/Versione"
           erogatore:
             $ref: "#/components/schemas/SimpleName"
+          canale:
+            $ref: "#/components/schemas/IdCanale"
     FruizioneItem:
       type: "object"
       allOf:
@@ -7422,6 +7626,31 @@ components:
     StatoApiDescrizione:
       type: "string"
       example: "Nessuna risorsa definita nella API"
+    IdCanale:
+      maxLength: 20
+      pattern: "^[_A-Za-z][\\-\\._A-Za-z0-9]*$"
+      type: "string"
+      description: "Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e\
+        \ dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'"
+    ConfigurazioneApiCanale:
+      required:
+      - "configurazione"
+      type: "object"
+      properties:
+        configurazione:
+          $ref: "#/components/schemas/ConfigurazioneCanaleEnum"
+        canale:
+          $ref: "#/components/schemas/IdCanale"
+    ApiCanale:
+      required:
+      - "configurazione"
+      - "nome"
+      type: "object"
+      properties:
+        configurazione:
+          $ref: "#/components/schemas/CanaleEnum"
+        nome:
+          $ref: "#/components/schemas/IdCanale"
     ApiBase:
       required:
       - "nome"
@@ -8102,6 +8331,8 @@ components:
             $ref: "#/components/schemas/StatoApiEnum"
           stato_descrizione:
             $ref: "#/components/schemas/StatoApiDescrizione"
+          canale:
+            $ref: "#/components/schemas/ApiCanale"
     ApiImplViewItem:
       type: "object"
       allOf:
@@ -9427,6 +9658,17 @@ components:
       - "header-based"
       - "input-based"
       - "disabilitato"
+    ConfigurazioneCanaleEnum:
+      type: "string"
+      enum:
+      - "default"
+      - "ridefinito"
+    CanaleEnum:
+      type: "string"
+      enum:
+      - "default"
+      - "api"
+      - "implementazione-api"
     Problem:
       type: "object"
       properties:

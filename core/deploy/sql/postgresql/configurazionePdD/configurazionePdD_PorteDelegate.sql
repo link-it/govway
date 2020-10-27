@@ -131,6 +131,7 @@ CREATE TABLE porte_delegate
 	id_soggetto BIGINT NOT NULL,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	options VARCHAR(4000),
+	canale VARCHAR(20),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_porte_delegate') NOT NULL,
 	-- unique constraints
@@ -142,6 +143,7 @@ CREATE TABLE porte_delegate
 
 -- index
 CREATE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto);
+CREATE INDEX index_porte_delegate_2 ON porte_delegate (canale);
 
 
 

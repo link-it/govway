@@ -36,6 +36,7 @@ import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
@@ -518,7 +519,7 @@ public class RuoliHelper extends ConsoleHelper{
 //			e.addElement(de);
 		
 		// In Uso Button
-		this.addInUsoButton(e, ruolo.getNome(), ruolo.getNome(), org.openspcoop2.protocol.sdk.constants.ArchiveType.RUOLO);
+		this.addInUsoButton(e, ruolo.getNome(), ruolo.getNome(), InUsoType.RUOLO);
 		
 		return e;
 	}

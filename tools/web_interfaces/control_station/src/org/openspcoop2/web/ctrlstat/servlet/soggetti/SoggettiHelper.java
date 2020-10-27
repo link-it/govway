@@ -52,6 +52,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
@@ -1501,7 +1502,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 //				e.addElement(de);
 		
 		// In Uso Button
-		this.addInUsoButton(e, this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()), elem.getId()+"", org.openspcoop2.protocol.sdk.constants.ArchiveType.SOGGETTO);
+		this.addInUsoButton(e, this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()), elem.getId()+"", InUsoType.SOGGETTO);
 		
 		return e;
 	}

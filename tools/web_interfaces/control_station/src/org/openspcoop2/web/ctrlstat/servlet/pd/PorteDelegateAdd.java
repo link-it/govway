@@ -561,7 +561,7 @@ public final class PorteDelegateAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						null);
+						null, null);
 
 				pd.setDati(dati);
 
@@ -617,7 +617,7 @@ public final class PorteDelegateAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						null);
+						null, null);
 
 				pd.setDati(dati);
 

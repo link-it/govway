@@ -339,6 +339,8 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE_MIN = "apiNewVersionMin";
 	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA = "apiNewVersionRedefine";
 	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE_OLD_ID_APC = "apiNewVersionOldIdApc";
+	public final static String PARAMETRO_APC_CANALE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE;
+	public final static String PARAMETRO_APC_CANALE_STATO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO;
 
 	public final static String PARAMETRO_APC_AZIONI_NOME = "nomeaz";
 	public final static String PARAMETRO_APC_AZIONI_CORRELATA = "azicorr";
@@ -494,6 +496,8 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_GRUPPI = GruppiCostanti.LABEL_GRUPPI;
 	public final static String LABEL_PARAMETRO_APC_GRUPPO = GruppiCostanti.LABEL_GRUPPO;
 	public final static String LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA = "Ridefinisci Interfaccia";
+	public final static String LABEL_PARAMETRO_APC_CANALE = "Canale";
+	public final static String LABEL_PARAMETRO_APC_CANALE_STATO = "Canale";
 
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE = "Tipo";
@@ -569,6 +573,9 @@ public class AccordiServizioParteComuneCostanti {
 	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_FORM = "Form";
 	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_HEADER = "Header";
 	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_QUERY = "Query";
+	
+	public final static String LABEL_DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO = CostantiControlStation.LABEL_DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO_RIDEFINITO;
+	public final static String LABEL_DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT = CostantiControlStation.LABEL_DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO_DEFAULT;
 	
 	public final static String LABEL_SI = "Si";
 	public final static String LABEL_NO = "No";
@@ -665,5 +672,9 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT = "element";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE = "type";
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_DEFAULT;
+	
+	public final static String[] VALUES_PARAMETRO_APC_CANALE_STATO = CostantiControlStation.VALUES_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO;
 }
 

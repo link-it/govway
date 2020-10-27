@@ -46,6 +46,9 @@ import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Cache;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
@@ -116,6 +119,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.RuoliSoggetto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -125,6 +129,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -5159,8 +5164,90 @@ public class ConfigurazionePdDReader {
 		return c.getCache();
 	}
 
+	public CanaliConfigurazione getCanaliConfigurazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		CanaliConfigurazione c = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getGestioneCanali();
+		if(c==null) {
+			c = new CanaliConfigurazione();
+			c.setStato(StatoFunzionalita.DISABILITATO);
+		}
+		return c;
+	}
+	
+	public ConfigurazioneCanaliNodo getConfigurazioneCanaliNodo(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		CanaliConfigurazione c = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getGestioneCanali();
+		boolean isEnabled = (c!=null && StatoFunzionalita.ABILITATO.equals(c.getStato()));
+		
+		ConfigurazioneCanaliNodo ccn = new ConfigurazioneCanaliNodo();
+		ccn.setEnabled(isEnabled);
+		if(isEnabled) {
+			OpenSPCoop2Properties op2Prop = OpenSPCoop2Properties.getInstance();
+			String idNodo = op2Prop.getClusterId(false);
+			ccn.setIdNodo(idNodo);
+			
+			if(c.sizeCanaleList()<=0) {
+				throw new DriverConfigurazioneException("Non risultano canali registrati nella configurazione"); 
+			}
+			for (CanaleConfigurazione canale : c.getCanaleList()) {
+				if(canale.isCanaleDefault()) {
+					ccn.setCanaleDefault(canale.getNome());
+					break;
+				}
+			}
+			if(ccn.getCanaleDefault()==null || "".equals(ccn.getCanaleDefault())) {
+				throw new DriverConfigurazioneException("Non risulta definito un canale di default"); 
+			}
+			
+			List<String> canaliNodo = new ArrayList<String>();
+			if(ccn.getIdNodo()==null || "".equals(ccn.getIdNodo())) {
+				canaliNodo.add(ccn.getCanaleDefault());
+			}
+			else if(c.sizeNodoList()<=0) {
+				canaliNodo.add(ccn.getCanaleDefault());
+			}
+			else {
+				for (CanaleConfigurazioneNodo nodo : c.getNodoList()) {
+					if(ccn.getIdNodo().equals(nodo.getNome())) {
+						if(nodo.sizeCanaleList()<=0) {
+							throw new DriverConfigurazioneException("Non risultano canali associati al nodo '"+ccn.getIdNodo()+"'"); 
+						}
+						for (String canale : nodo.getCanaleList()) {
+							canaliNodo.add(canale);
+						}
+						break;
+					}
+				}
+				if(canaliNodo.isEmpty()) {
+					canaliNodo.add(ccn.getCanaleDefault());
+				}
+			}
+			ccn.setCanaliNodo(canaliNodo);
+		}
+		
+		return ccn;
+	}
+	
 	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(Connection connectionPdD, 
-			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo,
+			AccordoServizioParteComune aspc) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		List<String> tags = new ArrayList<String>();
+		if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
+			for (int i = 0; i < aspc.getGruppi().sizeGruppoList(); i++) {
+				tags.add(aspc.getGruppi().getGruppo(i).getNome());
+			}
+		}
+		
+		String canaleApi = null;
+		if(aspc!=null) {
+			canaleApi = aspc.getCanale();
+		}
+
+		return getConfigurazioneUrlInvocazione(connectionPdD, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo, tags, canaleApi);
+	}	
+	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(Connection connectionPdD, 
+			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo,
+			List<String> tags, 
+			String canaleApi) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		Configurazione config = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 
@@ -5169,7 +5256,30 @@ public class ConfigurazionePdDReader {
 			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 
-		return UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo);
+		String canale = null;
+		if(config.getGestioneCanali()!=null && StatoFunzionalita.ABILITATO.equals(config.getGestioneCanali().getStato()) && config.getGestioneCanali().sizeCanaleList()>0) {
+			if(RuoloContesto.PORTA_APPLICATIVA.equals(ruolo)) {
+				PortaApplicativa pa = null;
+				try {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(interfaceName);
+					pa = this.configurazionePdD.getPortaApplicativa(connectionPdD, idPA);
+				}catch(DriverConfigurazioneNotFound notFound) {}
+				canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pa);
+			}
+			else {
+				PortaDelegata pd = null;
+				try {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(interfaceName);
+					pd = this.configurazionePdD.getPortaDelegata(connectionPdD, idPD);
+				}catch(DriverConfigurazioneNotFound notFound) {}
+				canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pd);
+			}
+		}
+		
+		return UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo,
+				tags, canale);
 	}
 
 

@@ -22,14 +22,13 @@ package org.openspcoop2.web.monitor.eventi.bean;
 
 import javax.faces.event.ActionEvent;
 
-import org.slf4j.Logger;
-
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.slf4j.Logger;
 
 
 /****
@@ -56,6 +55,8 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 	
 	private String idCluster;
 	private String idConfigurazione;
+	
+	private String canale;
 
 	private String severitaDefault = EventiSearchForm.NON_SELEZIONATO;
 
@@ -69,7 +70,7 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 		super();
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(log);
-			this.setUseCount(govwayMonitorProperties.isAttivoUtilizzaCountListaEventi()); 
+			this.setUseCount(govwayMonitorProperties.isAttivoUtilizzaCountListaEventi()); 		
 		}catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -99,6 +100,8 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 		
 		this.idCluster = null;
 		this.idConfigurazione = null;
+		
+		this.canale = null;
 		
 		this.severitaDefault = EventiSearchForm.NON_SELEZIONATO;
 		this.executeQuery = false;
@@ -194,6 +197,22 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 		}
 	}
 
+	public String getCanale() {
+		if("--".equals(this.canale)){
+			return null;
+		}
+		return this.canale;
+	}
+
+	public void setCanale(String canale) {
+		if("--".equals(canale)){
+			this.canale = null;	
+		}
+		else{
+			this.canale = canale;		
+		}
+	}
+	
 	public String getIdConfigurazione() {
 		return this.idConfigurazione;
 	}

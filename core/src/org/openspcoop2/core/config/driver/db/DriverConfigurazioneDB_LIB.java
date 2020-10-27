@@ -51,6 +51,9 @@ import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
@@ -1853,6 +1856,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("id_port_type", "?");
 				// options
 				sqlQueryObject.addInsertField("options", "?");
+				// options
+				sqlQueryObject.addInsertField("canale", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				int index = 1;
@@ -2004,6 +2009,9 @@ public class DriverConfigurazioneDB_LIB {
 				// options
 				stm.setString(index++, aPD.getOptions());
 				
+				// canale
+				stm.setString(index++, aPD.getCanale());
+				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + 
 						DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, 
 								idSoggettoErogatore, tipoSoggErogatore, nomeSoggErogatore, 
@@ -2049,7 +2057,8 @@ public class DriverConfigurazioneDB_LIB {
 								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								aPD.getIdAccordo(),aPD.getIdPortType(),
-								aPD.getOptions()));
+								aPD.getOptions(),
+								aPD.getCanale()));
 				n = stm.executeUpdate();
 				stm.close();
 
@@ -2665,6 +2674,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				// options
 				sqlQueryObject.addUpdateField("options", "?");
+				// canale
+				sqlQueryObject.addUpdateField("canale", "?");
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLUpdate();
@@ -2805,6 +2816,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, aPD.getIdPortType() != null ? aPD.getIdPortType() : -1L);
 				// options
 				stm.setString(index++, aPD.getOptions());
+				// canale
+				stm.setString(index++, aPD.getCanale());
 				
 				// where
 				stm.setLong(index++, idPortaDelegata);
@@ -4883,6 +4896,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("scadenza_correlazione_appl", "?");
 				// options
 				sqlQueryObject.addInsertField("options", "?");
+				// canale
+				sqlQueryObject.addInsertField("canale", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				
@@ -5046,6 +5061,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// options
 				stm.setString(index++, aPA.getOptions());
+				
+				// canale
+				stm.setString(index++, aPA.getCanale());
 				
 				n = stm.executeUpdate();
 				stm.close();
@@ -5830,6 +5848,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("scadenza_correlazione_appl", "?");
 				// options
 				sqlQueryObject.addUpdateField("options", "?");
+				// canale
+				sqlQueryObject.addUpdateField("canale", "?");
 				
 				sqlQueryObject.addWhereCondition("nome_porta=?");
 				sqlQueryObject.setANDLogicOperator(true);
@@ -5992,6 +6012,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPA.getCorrelazioneApplicativa()!=null ? aPA.getCorrelazioneApplicativa().getScadenza() : null);
 				// options
 				stm.setString(index++, aPA.getOptions());
+				// canale
+				stm.setString(index++, aPA.getCanale());
 				
 				// where
 				stm.setString(index++, oldNomePA);
@@ -8543,7 +8565,8 @@ public class DriverConfigurazioneDB_LIB {
 				config.getSystemProperties()==null && 
 				(config.getGenericPropertiesList()==null || config.getGenericPropertiesList().size()<=0) &&
 				config.getGestioneCors()==null && 
-				config.getResponseCaching()==null ) {
+				config.getResponseCaching()==null &&
+				config.getGestioneCanali()==null) {
 						
 			// caso speciale extended info
 			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
@@ -8976,6 +8999,12 @@ public class DriverConfigurazioneDB_LIB {
 			validazione_contenuti_acceptMtomMessage = DriverConfigurazioneDB_LIB.getValue(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage());
 		}
 
+		CanaliConfigurazione configurazioneCanali = config.getGestioneCanali();
+		String configurazioneCanali_stato = null;
+		if(configurazioneCanali!=null) {
+			configurazioneCanali_stato = DriverConfigurazioneDB_LIB.getValue(configurazioneCanali.getStato());
+		}
+		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
 									
@@ -9085,6 +9114,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("consegna_algoritmocache", "?");
 				sqlQueryObject.addInsertField("consegna_idlecache", "?");
 				sqlQueryObject.addInsertField("consegna_lifecache", "?");
+				// canali
+				sqlQueryObject.addInsertField("canali_stato", "?");
 
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -9205,6 +9236,8 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, consegna_algoritmoCache);
 				updateStmt.setString(index++, consegna_idleCache);
 				updateStmt.setString(index++, consegna_lifeCache);
+				// canali
+				updateStmt.setString(index++, configurazioneCanali_stato);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -9234,7 +9267,8 @@ public class DriverConfigurazioneDB_LIB {
 								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
-								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache
+								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache,
+								configurazioneCanali_stato
 								));
 
 				n = updateStmt.executeUpdate();
@@ -9298,7 +9332,12 @@ public class DriverConfigurazioneDB_LIB {
 							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getDescrizione());
 							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.isRegexpr() ? CostantiDB.TRUE : CostantiDB.FALSE);
 							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getRegola());
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getContestoEsterno());
+							// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
+							String s = configUrlInvocazioneRegola.getContestoEsterno();
+							if("".equals(s)) {
+								s = CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO;
+							}
+							updateStmt.setString(indexP++, s);
 							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getBaseUrl());
 							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getProtocollo());
 							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getRuolo()));
@@ -9610,6 +9649,11 @@ public class DriverConfigurazioneDB_LIB {
 					}
 				}
 				
+				// canali
+				if(configurazioneCanali!=null) {
+					CRUDCanaliConfigurazione(type, con, configurazioneCanali);
+				}
+				
 				// ExtendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					
@@ -9727,6 +9771,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("consegna_algoritmocache", "?");
 				sqlQueryObject.addUpdateField("consegna_idlecache", "?");
 				sqlQueryObject.addUpdateField("consegna_lifecache", "?");
+				// canali
+				sqlQueryObject.addUpdateField("canali_stato", "?");
 
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -9847,6 +9893,8 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, consegna_algoritmoCache);
 				updateStmt.setString(index++, consegna_idleCache);
 				updateStmt.setString(index++, consegna_lifeCache);
+				// canali
+				updateStmt.setString(index++, configurazioneCanali_stato);
 				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -9874,7 +9922,8 @@ public class DriverConfigurazioneDB_LIB {
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
-								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache
+								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache,
+								configurazioneCanali_stato
 								));
 
 				n = updateStmt.executeUpdate();
@@ -9938,7 +9987,12 @@ public class DriverConfigurazioneDB_LIB {
 							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getDescrizione());
 							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.isRegexpr() ? CostantiDB.TRUE : CostantiDB.FALSE);
 							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getRegola());
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getContestoEsterno());
+							// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
+							String s = configUrlInvocazioneRegola.getContestoEsterno();
+							if("".equals(s)) {
+								s = CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO;
+							}
+							updateStmt.setString(indexP++, s);
 							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getBaseUrl());
 							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getProtocollo());
 							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getRuolo()));
@@ -10261,6 +10315,9 @@ public class DriverConfigurazioneDB_LIB {
 					}
 				}
 
+				// Canali
+				CRUDCanaliConfigurazione(type, con, configurazioneCanali);
+				
 				// ExtendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					
@@ -10286,6 +10343,9 @@ public class DriverConfigurazioneDB_LIB {
 						extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
 					}
 				}
+				
+				// Canali
+				CRUDCanaliConfigurazione(type, con, configurazioneCanali);
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
@@ -12786,6 +12846,176 @@ public class DriverConfigurazioneDB_LIB {
 			} catch (Exception e) {
 				// ignore exception
 			}
+		}
+	}
+	
+	protected static void readCanaliConfigurazione(Connection con, CanaliConfigurazione configCanali, boolean readNodi) throws Exception {
+		PreparedStatement stm1=null;
+		ResultSet rs1= null;
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm1 = con.prepareStatement(sqlQuery);
+			rs1 = stm1.executeQuery();
+			while(rs1.next()){
+				
+				CanaleConfigurazione canale = new CanaleConfigurazione();
+				canale.setId(rs1.getLong("id"));
+				canale.setNome(rs1.getString("nome"));
+				canale.setDescrizione(rs1.getString("descrizione"));
+				int v = rs1.getInt("canale_default");
+				if(v == CostantiDB.TRUE) {
+					canale.setCanaleDefault(true);
+				}
+				else {
+					canale.setCanaleDefault(false);
+				}
+				configCanali.addCanale(canale);
+				
+			}
+			rs1.close();
+			stm1.close();
+
+			if(readNodi) {
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm1 = con.prepareStatement(sqlQuery);
+				rs1 = stm1.executeQuery();
+				while(rs1.next()){
+					
+					CanaleConfigurazioneNodo nodo = new CanaleConfigurazioneNodo();
+					nodo.setId(rs1.getLong("id"));
+					nodo.setNome(rs1.getString("nome"));
+					nodo.setDescrizione(rs1.getString("descrizione"));
+					List<String> l = DBUtils.convertToList(rs1.getString("canali"));
+					nodo.setCanaleList(l);
+					configCanali.addNodo(nodo);
+					
+				}
+			}
+
+		}finally {
+			try {
+				if(rs1!=null) {
+					rs1.close();
+				}
+			}catch(Exception e) {}
+			try {
+				if(stm1!=null) {
+					stm1.close();
+				}
+			}catch(Exception e) {}
+		}
+	}
+	
+	private static void CRUDCanaliConfigurazione(int type, Connection con, CanaliConfigurazione canaliConfigurazione) throws DriverConfigurazioneException {
+		
+		PreparedStatement updateStmt = null;
+		try {
+			switch (type) {
+			case CREATE:
+		
+				if(canaliConfigurazione==null) {
+					break;
+				}
+				
+				if(canaliConfigurazione.sizeCanaleList()>0) {
+					for (CanaleConfigurazione canale : canaliConfigurazione.getCanaleList()) {
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CANALI);
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("descrizione", "?");
+						sqlQueryObject.addInsertField("canale_default", "?");
+						String updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						int index = 1;
+						updateStmt.setString(index++, canale.getNome());
+						updateStmt.setString(index++, canale.getDescrizione());
+						updateStmt.setInt(index++, canale.isCanaleDefault() ? CostantiDB.TRUE : CostantiDB.FALSE);
+						updateStmt.executeUpdate();
+						updateStmt.close();
+					}
+				}
+				
+				if(canaliConfigurazione.sizeNodoList()>0) {
+					for (CanaleConfigurazioneNodo nodo : canaliConfigurazione.getNodoList()) {
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("descrizione", "?");
+						sqlQueryObject.addInsertField("canali", "?");
+						String updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						int index = 1;
+						updateStmt.setString(index++, nodo.getNome());
+						updateStmt.setString(index++, nodo.getDescrizione());
+						StringBuilder bf = new StringBuilder();
+						for (int i = 0; i < nodo.sizeCanaleList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(nodo.getCanale(i));
+						}
+						String canali = bf.toString();
+						updateStmt.setString(index++, canali);
+						updateStmt.executeUpdate();
+						updateStmt.close();
+					}
+				}
+				
+				break;
+				
+			case UPDATE:
+				
+				// Faccio prima delete
+				CRUDCanaliConfigurazione(DELETE, con, canaliConfigurazione);
+				
+				// Creo la nuova immagine
+				if(canaliConfigurazione!=null) {
+					CRUDCanaliConfigurazione(CREATE, con, canaliConfigurazione);
+				}
+				break;
+				
+			case DELETE:
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CANALI);
+				sqlQueryObject.setANDLogicOperator(true);
+				String updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+
+				break;
+			}
+		
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDCanaliConfigurazione] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDCanaliConfigurazione] Exception [" + se.getMessage() + "].",se);
+		} finally {
+	
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			
 		}
 	}
 	

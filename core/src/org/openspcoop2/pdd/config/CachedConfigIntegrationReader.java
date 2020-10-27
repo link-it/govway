@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.config;
 
 import java.util.List;
 
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -285,5 +286,18 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+	
+	// CONFIGURAZIONE
+	
+	@Override
+	public CanaliConfigurazione getCanaliConfigurazione() throws RegistryNotFound,RegistryException{
+		try{
+			return this.configurazionePdDMangager.getCanaliConfigurazione();
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
 }
 

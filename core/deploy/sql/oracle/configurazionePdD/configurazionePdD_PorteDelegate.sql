@@ -131,6 +131,7 @@ CREATE TABLE porte_delegate
 	id_soggetto NUMBER NOT NULL,
 	ora_registrazione TIMESTAMP,
 	options VARCHAR2(4000),
+	canale VARCHAR2(20),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -142,6 +143,7 @@ CREATE TABLE porte_delegate
 
 -- index
 CREATE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto);
+CREATE INDEX index_porte_delegate_2 ON porte_delegate (canale);
 
 ALTER TABLE porte_delegate MODIFY versione_servizio DEFAULT 1;
 ALTER TABLE porte_delegate MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;

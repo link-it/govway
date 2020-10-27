@@ -35,6 +35,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
@@ -228,7 +229,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String protocollo,BinaryParameter allegatoXacmlPolicy,
 			String descrizione, String tipoFruitore, String nomeFruitore,
 			boolean autenticazioneToken, String tokenPolicy, boolean erogazioneServizioApplicativoServerEnabled,
-			String erogazioneServizioApplicativoServer)	throws Exception {
+			String erogazioneServizioApplicativoServer, String canaleStato, String canale, boolean gestioneCanaliEnabled)	throws Exception {
 
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
@@ -412,6 +413,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			if(descrizione!=null && !"".equals(descrizione)) {
 				if(this.checkLength255(descrizione, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
+			
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				if(this.canaleCheckData(canaleStato, canale, gestioneCanaliEnabled) == false) {
 					return false;
 				}
 			}
@@ -5242,7 +5249,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
-			boolean moreThenOneImplementation) throws Exception{
+			boolean moreThenOneImplementation, String canaleStato, String canaleAPI, String canale, List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled) throws Exception{
 
 		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
@@ -6080,6 +6087,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROFILO);
 		de.setSize(this.getSize());
 		dati.addElement(de);
+		
+		
+		// Gestione canali
+		if(gestioneCanaliEnabled) {
+			if( tipoOp.equals(TipoOperazione.ADD)) {
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE);
+				dataElement.setType(DataElementType.SUBTITLE);
+				dati.add(dataElement);
+				
+				this.addCanaleToDati(dati, tipoOp, canaleStato, canale, canaleAPI, canaleList, gestioneCanaliEnabled, false);
+			} else {
+				// sono dati delle porte applicative/delegate inserisco hidden i valori che mi vengono passati
+				this.addCanaleToDatiAsHidden(dati, tipoOp, canaleStato, canale, gestioneCanaliEnabled);
+			}
+		}
 
 		
 		// Modalita' standard faccio vedere lo stato

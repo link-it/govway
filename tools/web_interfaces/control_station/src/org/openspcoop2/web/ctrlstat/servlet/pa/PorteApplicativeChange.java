@@ -1016,7 +1016,7 @@ public final class PorteApplicativeChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine);
+						messageEngine, pa.getCanale());
 
 				pd.setDati(dati);
 
@@ -1188,7 +1188,7 @@ public final class PorteApplicativeChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine);
+						messageEngine, pa.getCanale());
 
 				pd.setDati(dati);
 

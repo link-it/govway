@@ -1251,6 +1251,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 		}
 		connettoreMsg.setForwardProxy(forwardProxy);
+		connettoreMsg.setIdAccordo(idAccordoServizio);
 
 		// Identificativo di una risposta.
 		String idMessageResponse = null;

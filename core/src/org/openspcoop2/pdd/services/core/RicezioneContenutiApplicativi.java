@@ -75,6 +75,7 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
+import org.openspcoop2.pdd.config.ConfigurazioneCanaliNodo;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
@@ -1222,14 +1223,10 @@ public class RicezioneContenutiApplicativi {
 			}
 		}
 
-	
+
 		
 		
-		
-		
-		
-		
-		
+
 		
 		
 		
@@ -1503,6 +1500,99 @@ public class RicezioneContenutiApplicativi {
 			}
 			
 		}
+		
+		
+		
+		
+		
+
+		
+		
+		Utilities.printFreeMemory("RicezioneContenutiApplicativi - Autorizzazione canale ...");
+		ConfigurazioneCanaliNodo configurazioneCanaliNodo = null;
+		try {	
+			configurazioneCanaliNodo = configurazionePdDReader.getConfigurazioneCanaliNodo(); 
+		} catch (Exception e) {
+			msgDiag.logErroreGenerico(e, "configurazionePdDReader.getConfigurazioneCanaliNodo()");
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTERNAL_REQUEST_ERROR, 
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
+			}
+			return;
+		}
+		boolean canaleNonAutorizzato = false;
+		try {
+			if(configurazioneCanaliNodo!=null && configurazioneCanaliNodo.isEnabled()) {
+			
+				msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+				msgDiag.logPersonalizzato("autorizzazioneCanale.inCorso");
+				
+				String canaleApiInvocata = null;
+				if(portaDelegata!=null) {
+					String canalePorta = portaDelegata.getCanale();
+					if(canalePorta!=null && !"".equals(canalePorta)) {
+						canaleApiInvocata = canalePorta;
+					}
+					else {
+						try {
+							AccordoServizioParteSpecifica asps = registroServiziReader.getAccordoServizioParteSpecifica(idServizio, null, false);
+							if(asps!=null) {
+								AccordoServizioParteComune aspc = registroServiziReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false);
+								if(aspc!=null) {
+									String canaleApi = aspc.getCanale();
+									if(canaleApi!=null && !"".equals(canaleApi)) {
+										canaleApiInvocata = canaleApi;
+									}
+								}
+							}
+						}catch(DriverRegistroServiziNotFound notFound) {
+							// saranno segnalati altri errori dovuti al non riconoscimento del servizio
+						}
+					}
+					
+					if(canaleApiInvocata==null || "".equals(canaleApiInvocata)) {
+						canaleApiInvocata = configurazioneCanaliNodo.getCanaleDefault();
+					}
+					
+					if(!configurazioneCanaliNodo.getCanaliNodo().contains(canaleApiInvocata)) {
+						canaleNonAutorizzato = true;
+						String dettaglio=" (nodo '"+configurazioneCanaliNodo.getIdNodo()+"':"+configurazioneCanaliNodo.getCanaliNodo()+" api-invocata:"+canaleApiInvocata+")";
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, dettaglio);
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+						throw new Exception("L'API invocata richiede un canale differente da quelli associati al nodo; invocazione non autorizzata");
+					}
+					else {
+						msgDiag.logPersonalizzato("autorizzazioneCanale.effettuata");
+					}
+					
+				}
+//				else {
+//					// saranno segnalati altri errori dovuti al non riconoscimento della porta
+//				}
+				
+			}
+		} catch (Exception e) {
+			
+			String msgErrore = e.getMessage();
+			
+			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+			msgDiag.logPersonalizzato("autorizzazioneCanale.fallita");
+			
+			ErroreIntegrazione errore = canaleNonAutorizzato ? ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA_ANONIMO.getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo(msgErrore) : 
+				ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+			IntegrationFunctionError integrationFunctionError = canaleNonAutorizzato ? IntegrationFunctionError.AUTHORIZATION_DENY : IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,integrationFunctionError, errore, e,null)));
+			}
+			return;
+		}
+		
+		
+		
 		
 		
 		

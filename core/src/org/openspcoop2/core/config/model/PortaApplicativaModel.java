@@ -89,6 +89,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.STATO = new Field("stato",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 		this.OPTIONS = new Field("options",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.CANALE = new Field("canale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 	
 	}
 	
@@ -145,6 +146,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 		this.OPTIONS = new ComplexField(father,"options",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.CANALE = new ComplexField(father,"canale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 	
 	}
 	
@@ -247,6 +249,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField ORA_REGISTRAZIONE = null;
 	 
 	public IField OPTIONS = null;
+	 
+	public IField CANALE = null;
 	 
 
 	@Override

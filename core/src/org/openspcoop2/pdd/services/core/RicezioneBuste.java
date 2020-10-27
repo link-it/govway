@@ -63,6 +63,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
@@ -74,6 +75,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
+import org.openspcoop2.pdd.config.ConfigurazioneCanaliNodo;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
@@ -1550,6 +1552,97 @@ public class RicezioneBuste {
 				
 				msgDiag.highDebug("Header integrazione (set context ok)");
 			}
+		}
+		
+		
+		
+		
+		
+		
+		Utilities.printFreeMemory("RicezioneBuste - Autorizzazione canale ...");
+		ConfigurazioneCanaliNodo configurazioneCanaliNodo = null;
+		try {
+			if(!functionAsRouter) {
+				configurazioneCanaliNodo = configurazionePdDReader.getConfigurazioneCanaliNodo();
+			}
+		} catch (Exception e) {
+			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+					"configurazionePdDReader.getConfigurazioneCanaliNodo()");
+			openspcoopstate.releaseResource();
+			return;
+		}
+		boolean canaleNonAutorizzato = false;
+		try {
+			if(configurazioneCanaliNodo!=null && configurazioneCanaliNodo.isEnabled()) {
+			
+				msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+				msgDiag.logPersonalizzato("autorizzazioneCanale.inCorso");
+				
+				String canaleApiInvocata = null;
+				if(pa!=null) {
+					String canalePorta = pa.getCanale();
+					if(canalePorta!=null && !"".equals(canalePorta)) {
+						canaleApiInvocata = canalePorta;
+					}
+					else {
+						try {
+							AccordoServizioParteSpecifica asps = registroServiziReader.getAccordoServizioParteSpecifica(idServizio, null, false);
+							if(asps!=null) {
+								AccordoServizioParteComune aspc = registroServiziReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false);
+								if(aspc!=null) {
+									String canaleApi = aspc.getCanale();
+									if(canaleApi!=null && !"".equals(canaleApi)) {
+										canaleApiInvocata = canaleApi;
+									}
+								}
+							}
+						}catch(DriverRegistroServiziNotFound notFound) {
+							// saranno segnalati altri errori dovuti al non riconoscimento del servizio
+						}
+					}
+					
+					if(canaleApiInvocata==null || "".equals(canaleApiInvocata)) {
+						canaleApiInvocata = configurazioneCanaliNodo.getCanaleDefault();
+					}
+					
+					if(!configurazioneCanaliNodo.getCanaliNodo().contains(canaleApiInvocata)) {
+						canaleNonAutorizzato = true;
+						String dettaglio=" (nodo '"+configurazioneCanaliNodo.getIdNodo()+"':"+configurazioneCanaliNodo.getCanaliNodo()+" api-invocata:"+canaleApiInvocata+")";
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, dettaglio);
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+						throw new Exception("L'API invocata richiede un canale differente da quelli associati al nodo; invocazione non autorizzata");
+					}
+					else {
+						msgDiag.logPersonalizzato("autorizzazioneCanale.effettuata");
+					}
+					
+				}
+				else {
+					// saranno segnalati altri errori dovuti al non riconoscimento della porta
+				}
+				
+			}
+		} catch (Exception e) {
+			
+			String msgErrore = e.getMessage();
+			
+			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+			msgDiag.logPersonalizzato("autorizzazioneCanale.fallita");
+			
+			if(canaleNonAutorizzato) {
+				logCore.error(e.getMessage(),e);
+				setSOAPFault_intestazione(IntegrationFunctionError.AUTHORIZATION_DENY,
+						ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(msgErrore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+			}
+			else {
+				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,null,
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+						"autorizzazioneCanale");
+			}
+			openspcoopstate.releaseResource();
+			return;
 		}
 		
 		

@@ -126,7 +126,16 @@
 											styleClass="inputLinkLong" />
 									</link:prop>
 									
-									<link:prop label="ID Cluster" rendered="#{eventiBean.visualizzaIdCluster}">
+									<link:prop label="#{msg['transazioni.search.canale']}" rendered="#{eventiBean.visualizzaCanali}">
+										<rich:comboBox id="idCanaleCombo" value="#{searchFormEventi.canale}"
+											defaultLabel="Seleziona #{msg['transazioni.search.canale']}" directInputSuggestions="true"
+											width="416" converter="selectItemConverter" enableManualInput="false"
+											rendered="true">
+											<f:selectItems value="#{eventiBean.listCanali}"/>
+											<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+										</rich:comboBox>
+									</link:prop>
+									<link:prop label="#{msg['transazioni.search.idCluster']}" rendered="#{eventiBean.visualizzaIdCluster}">
 										<h:inputText id="idClusterFilter" value="#{searchFormEventi.idCluster}" styleClass="inputLinkLong" rendered="#{eventiBean.visualizzaIdClusterAsSelectList == false}"/>
 										<rich:comboBox id="idClusterCombo" value="#{searchFormEventi.idCluster}"
 											defaultLabel="Seleziona Id" directInputSuggestions="true"

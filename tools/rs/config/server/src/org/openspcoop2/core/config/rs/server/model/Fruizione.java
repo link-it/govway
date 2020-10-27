@@ -38,6 +38,9 @@ public class Fruizione extends APIImpl {
   
   @Schema(required = true, description = "")
   private String erogatore = null;
+  
+  @Schema(description = "")
+  private String canale = null;
  /**
    * Get descrizione
    * @return descrizione
@@ -115,6 +118,25 @@ public class Fruizione extends APIImpl {
     return this;
   }
 
+ /**
+   * Get canale
+   * @return canale
+  **/
+  @JsonProperty("canale")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=20)  public String getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(String canale) {
+    this.canale = canale;
+  }
+
+  public Fruizione canale(String canale) {
+    this.canale = canale;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -125,6 +147,7 @@ public class Fruizione extends APIImpl {
     sb.append("    fruizioneNome: ").append(Fruizione.toIndentedString(this.fruizioneNome)).append("\n");
     sb.append("    fruizioneVersione: ").append(Fruizione.toIndentedString(this.fruizioneVersione)).append("\n");
     sb.append("    erogatore: ").append(Fruizione.toIndentedString(this.erogatore)).append("\n");
+    sb.append("    canale: ").append(Fruizione.toIndentedString(this.canale)).append("\n");
     sb.append("}");
     return sb.toString();
   }

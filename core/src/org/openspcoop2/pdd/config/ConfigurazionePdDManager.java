@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Cache;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -74,6 +75,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -84,6 +86,7 @@ import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -1120,10 +1123,42 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getConfigurazioneConsegnaApplicativiCache(this.getConnection());
 	}
 
+	public CanaliConfigurazione getCanaliConfigurazione() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getCanaliConfigurazione(this.getConnection());
+	}
+	
+	public ConfigurazioneCanaliNodo getConfigurazioneCanaliNodo() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazioneCanaliNodo(this.getConnection());
+	}
+	
 	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, 
-			String interfaceName, IDSoggetto soggettoOperativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			String interfaceName, IDSoggetto soggettoOperativo,
+			IDAccordo idAccordo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		AccordoServizioParteComune aspc = null;
+		try {
+			aspc = this.registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
 		return this.configurazionePdDReader.getConfigurazioneUrlInvocazione(this.getConnection(),
-				protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo);
+				protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo, 
+				aspc);
+	}
+	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, 
+			String interfaceName, IDSoggetto soggettoOperativo,
+			AccordoServizioParteComune aspc) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazioneUrlInvocazione(this.getConnection(),
+				protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo, 
+				aspc);
+	}
+	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, 
+			String interfaceName, IDSoggetto soggettoOperativo,
+			List<String> tags, 
+			String canaleApi) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazioneUrlInvocazione(this.getConnection(),
+				protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo, 
+				tags, 
+				canaleApi);
 	}
 
 	public List<Object> getExtendedInfoConfigurazione() throws DriverConfigurazioneException{

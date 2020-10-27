@@ -10,6 +10,7 @@
 -- DROP INDEX INDEX_AC_SOG;
 -- DROP INDEX INDEX_AC_COOP_PAR;
 -- DROP INDEX INDEX_OP_MESSAGES;
+-- DROP INDEX index_accordi_1;
 -- DROP INDEX INDEX_DOC_SEARCH;
 DROP TRIGGER trg_acc_serv_componenti;
 DROP TRIGGER trg_acc_serv_composti;

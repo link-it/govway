@@ -556,7 +556,8 @@ public class ServicesUtils {
 								 IDService.PORTA_APPLICATIVA.equals(idService) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
 								 requestInfo.getIntegrationServiceBinding(),
 								 requestInfo.getProtocolContext().getInterfaceName(),
-								 requestInfo.getIdentitaPdD());		 
+								 requestInfo.getIdentitaPdD(),
+								 aspc);		 
 						String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 						String contesto = urlInvocazioneApi.getContext();
 						prefixGatewayUrl = Utilities.buildUrl(prefixGatewayUrl, contesto);

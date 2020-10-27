@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.eventi.mbean;
 
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.PdDBaseBean;
@@ -28,7 +29,9 @@ import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -66,6 +69,10 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 	private boolean visualizzaIdClusterAsSelectList = false;
 	private List<String> listIdCluster;
 	
+	private boolean visualizzaCanali = false;
+	private List<String> listCanali;
+	private Map<String,List<String>> mapCanaleToNodi;
+	
 	public EventiBean(){
 
 		// inizializzazione
@@ -79,6 +86,26 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 				this.listIdCluster.add("--");
 				this.listIdCluster.addAll(govwayMonitorare);
 			}
+			
+			
+			this.visualizzaCanali = Utility.isCanaliAbilitato();
+			if(this.visualizzaCanali) {
+				List<String> canali = Utility.getCanali();
+				this.listCanali = new ArrayList<String>();
+				this.listCanali.add("--");
+				this.listCanali.addAll(canali);
+				if(canali!=null && !canali.isEmpty()) {
+					this.mapCanaleToNodi = new HashMap<String, List<String>>();
+					for (String canale : canali) {
+						List<String> nodi = Utility.getNodi(canale);
+						if(nodi==null) {
+							nodi = new ArrayList<String>();
+						}
+						this.mapCanaleToNodi.put(canale, nodi);
+					}
+				}
+			}
+			
 		} catch (Exception e) {
 			EventiBean.log
 			.error("Errore durante l'inizializzazione EventiBean.",
@@ -169,10 +196,42 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 		if(this.listIdCluster!=null && this.listIdCluster.size()>0){
 			for (String id : this.listIdCluster) {
+				if("--".equals(id)) {
+					list.add(new SelectItem(id));
+					continue;
+				}
+				if(this.search!=null && this.search.getCanale()!=null && !"".equals(this.search.getCanale()) && !"--".equals(this.search.getCanale()) &&
+						this.visualizzaCanali && this.mapCanaleToNodi!=null) {
+					List<String> nodi = this.mapCanaleToNodi.get(this.search.getCanale());
+					if(nodi==null || !nodi.contains(id)) {
+						continue;
+					}
+				}
 				list.add(new SelectItem(id));
 			}
 		}
 		return list;
 	}
 
+	public boolean isVisualizzaCanali() {
+		return this.visualizzaCanali;
+	}
+
+	public void setVisualizzaCanali(boolean visualizzaCanali) {
+		this.visualizzaCanali = visualizzaCanali;
+	}
+	
+	public List<SelectItem> getListCanali() {
+		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+		if(this.listCanali!=null && this.listCanali.size()>0){
+			for (String id : this.listCanali) {
+				list.add(new SelectItem(id));
+			}
+		}
+		return list;
+	}
+	
+	public List<String> getIdClusterByCanale(String canale){
+		return this.mapCanaleToNodi.get(canale);
+	}
 }

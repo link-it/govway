@@ -30,6 +30,7 @@
 -- DROP INDEX INDEX_PA_SA_CODA_MAX ON porte_applicative_sa ;
 -- DROP INDEX INDEX_PA_SA_CODA ON porte_applicative_sa ;
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
+-- DROP INDEX index_porte_applicative_3 ON porte_applicative ;
 -- DROP INDEX index_porte_applicative_2 ON porte_applicative ;
 DROP TABLE pa_transform_risp_hdr;
 DROP TABLE pa_transform_risp;

@@ -49,6 +49,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.MODE_AZIONE = new Field("mode_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_AZIONE = new Field("nome_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_PORTA_DELEGANTE_AZIONE = new Field("nome_porta_delegante_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.CANALE = new Field("canale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaApplicativaServizioApplicativoModel(new Field("porta-applicativa-servizio-applicativo",org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 		this.PORTA_APPLICATIVA_AZIONE = new org.openspcoop2.core.commons.search.model.PortaApplicativaAzioneModel(new Field("porta-applicativa-azione",org.openspcoop2.core.commons.search.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 	
@@ -67,6 +68,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.MODE_AZIONE = new ComplexField(father,"mode_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_AZIONE = new ComplexField(father,"nome_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_PORTA_DELEGANTE_AZIONE = new ComplexField(father,"nome_porta_delegante_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.CANALE = new ComplexField(father,"canale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"porta-applicativa-servizio-applicativo",org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 		this.PORTA_APPLICATIVA_AZIONE = new org.openspcoop2.core.commons.search.model.PortaApplicativaAzioneModel(new ComplexField(father,"porta-applicativa-azione",org.openspcoop2.core.commons.search.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 	
@@ -91,6 +93,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField NOME_AZIONE = null;
 	 
 	public IField NOME_PORTA_DELEGANTE_AZIONE = null;
+	 
+	public IField CANALE = null;
 	 
 	public org.openspcoop2.core.commons.search.model.PortaApplicativaServizioApplicativoModel PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO = null;
 	 

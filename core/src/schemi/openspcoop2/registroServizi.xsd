@@ -454,6 +454,7 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="canale" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="accordo-servizio-parte-comune-servizio-composto">
 		<xsd:sequence>

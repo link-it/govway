@@ -1,3 +1,8 @@
+2020-10-13  Andrea Poli <apoli@link.it>
+
+	CREATE INDEX index_mapping_fruizione_pd_2 ON mapping_fruizione_pd (id_porta);
+	CREATE INDEX index_mapping_erogazione_pa_2 ON mapping_erogazione_pa (id_porta);
+
 2019-02-01  Andrea Poli <apoli@link.it>
 
         Aggiunta gestione certificato X509 e Issue

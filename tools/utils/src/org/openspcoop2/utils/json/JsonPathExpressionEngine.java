@@ -80,6 +80,18 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException(e.getMessage(), e);
 		}
 	}
+	public static JSONArray getJSONArray(InputStream is) throws JsonPathException {
+		if(is == null)
+			throw new JsonPathException("Document (InputStream) is null");
+
+		try {
+			return getJSONParser().parse(is, JSONArray.class);
+		} catch (UnsupportedEncodingException e) {
+			throw new JsonPathException(e.getMessage(), e);
+		} catch (ParseException e) {
+			throw new JsonPathException(e.getMessage(), e);
+		}
+	}
 
 	public static JSONObject getJSONObject(String contenuto) throws JsonPathException {
 		if(contenuto == null)
@@ -91,6 +103,16 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException(e.getMessage(), e);
 		}
 	}
+	public static JSONArray getJSONArray(String contenuto) throws JsonPathException {
+		if(contenuto == null)
+			throw new JsonPathException("Document (String) is null");
+
+		try {
+			return getJSONParser().parse(contenuto, JSONArray.class);
+		} catch (ParseException e) {
+			throw new JsonPathException(e.getMessage(), e);
+		}
+	}
 
 	public static JSONObject getJSONObject(JsonNode document) throws JsonPathException {
 		if(document == null)
@@ -98,6 +120,16 @@ public class JsonPathExpressionEngine {
 
 		try {
 			return getJSONParser().parse(getAsString(document), JSONObject.class);
+		} catch (ParseException e) {
+			throw new JsonPathException(e.getMessage(), e);
+		}
+	}
+	public static JSONArray getJSONArray(JsonNode document) throws JsonPathException {
+		if(document == null)
+			throw new JsonPathException("Document (JsonNode) is null");
+
+		try {
+			return getJSONParser().parse(getAsString(document), JSONArray.class);
 		} catch (ParseException e) {
 			throw new JsonPathException(e.getMessage(), e);
 		}
@@ -682,12 +714,44 @@ public class JsonPathExpressionEngine {
 		
 		Exception exceptionNodeSet = null;
 		try{
-			List<String> l = engine.getStringMatchPattern(elementJson, pattern);
+			List<?> l = engine.getStringMatchPattern(elementJson, pattern);
 			if(l!=null && l.size()>0) {
 				if(returnAsList) {
 					for (Object s : l) {
 						if(s instanceof String) {
 							lReturn.add((String)s);
+						}
+						else if(s instanceof Map<?, ?>) {
+							try {
+								Map<?,?> map = (Map<?,?>) s;
+								if(!map.isEmpty()) {
+									StringBuilder sb = new StringBuilder("{");
+									for (Object keyO : map.keySet()) {
+										if(sb.length()>1) {
+											sb.append(",");
+										}
+										//System.out.println("KEY '"+keyO+"' ("+keyO.getClass().getName()+")");
+										String key = (String) keyO;
+										sb.append("\"").append(key).append("\": ");
+										Object valueO = map.get(keyO);
+										if(valueO instanceof Boolean || 
+												valueO instanceof Short ||
+												valueO instanceof Integer ||
+												valueO instanceof Long ||
+												valueO instanceof Double ||
+												valueO instanceof Float) {
+											sb.append(valueO);
+										}
+										else {
+											sb.append("\"").append(valueO).append("\"");
+										}
+									}
+									sb.append("}");
+									lReturn.add(sb.toString());
+								}
+							}catch(Throwable t) {
+								lReturn.add(s.toString());
+							}
 						}
 						else {
 							lReturn.add(s.toString());
@@ -695,21 +759,61 @@ public class JsonPathExpressionEngine {
 					}
 				}
 				else {
-					String risultato = null;
-					if(l.size()==1) {
-						risultato = l.get(0);
-					}
-					else {
-						StringBuilder bf = new StringBuilder();
-						for (String s : l) {
-							if(bf.length()>0) {
-								bf.append(" ");	
-							}
-							bf.append(s);
+					StringBuilder sbReturn = new StringBuilder();
+//					if(l instanceof net.minidev.json.JSONArray) {
+//						sbReturn.append("[");
+//					}
+					
+					boolean first = true;
+					for (Object s : l) {
+						if(!first) {
+							sbReturn.append(",");	
 						}
-						risultato = bf.toString();
+						if(s instanceof String) {
+							sbReturn.append((String)s);
+						}
+						else if(s instanceof Map<?, ?>) {
+							try {
+								Map<?,?> map = (Map<?,?>) s;
+								if(!map.isEmpty()) {
+									StringBuilder sb = new StringBuilder("{");
+									for (Object keyO : map.keySet()) {
+										if(sb.length()>1) {
+											sb.append(",");
+										}
+										//System.out.println("KEY '"+keyO+"' ("+keyO.getClass().getName()+")");
+										String key = (String) keyO;
+										sb.append("\"").append(key).append("\": ");
+										Object valueO = map.get(keyO);
+										if(valueO instanceof Boolean || 
+												valueO instanceof Short ||
+												valueO instanceof Integer ||
+												valueO instanceof Long ||
+												valueO instanceof Double ||
+												valueO instanceof Float) {
+											sb.append(valueO);
+										}
+										else {
+											sb.append("\"").append(valueO).append("\"");
+										}
+									}
+									sb.append("}");
+									sbReturn.append(sb.toString());
+								}
+							}catch(Throwable t) {
+								sbReturn.append(s.toString());
+							}
+						}
+						else {
+							sbReturn.append(s.toString());
+						}
+						first=false;
 					}
-					lReturn.add(risultato);
+					
+//					if(l instanceof net.minidev.json.JSONArray) {
+//						sbReturn.append("]");
+//					}
+					lReturn.add(sbReturn.toString());
 				}
 			}
 						

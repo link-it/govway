@@ -81,6 +81,7 @@ CREATE TABLE accordi
 	privato NUMBER,
 	ora_registrazione TIMESTAMP,
 	stato VARCHAR2(255) NOT NULL,
+	canale VARCHAR2(20),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -92,6 +93,8 @@ CREATE TABLE accordi
 	CONSTRAINT pk_accordi PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_accordi_1 ON accordi (canale);
 
 ALTER TABLE accordi MODIFY id_referente DEFAULT 0;
 ALTER TABLE accordi MODIFY versione DEFAULT 1;

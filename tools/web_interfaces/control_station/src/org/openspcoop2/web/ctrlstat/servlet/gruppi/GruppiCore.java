@@ -26,10 +26,13 @@ import java.util.List;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 
 /**
  * GruppiCore
@@ -179,5 +182,25 @@ public class GruppiCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
+	}
+	
+	public String getDettagliGruppoInUso(IDGruppo gruppo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean gruppoInUso  = this.isGruppoInUso(gruppo.getNome(), whereIsInUso, normalizeObjectIds );
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(gruppoInUso) {
+			String s = DBOggettiInUsoUtils.toString(gruppo, whereIsInUso, false, "\n");
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(RuoliCostanti.LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
 	}
 }

@@ -42,6 +42,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.Soggetto;
@@ -89,6 +91,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
@@ -123,7 +126,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 	private ServiceBinding serviceBinding = null;
 	private MessageType messageType = null;
 	private InterfaceType interfaceType = null;
-	private String gruppi;
+	private String gruppi, canale, canaleStato;
 	
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
@@ -210,6 +213,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 		this.interfaceType = StringUtils.isNotEmpty(formatoSpecificaS) ? InterfaceType.toEnumConstant(formatoSpecificaS) : null;
 		
 		this.gruppi = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPI);
+		this.canale = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE);
+		this.canaleStato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE_STATO);
 
 		if("".equals(this.tipoAccordo))
 			this.tipoAccordo = null;
@@ -236,6 +241,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		boolean gestioneSpecificaInterfacce = false;
 		boolean gestioneInformazioniProtocollo = false;
 		boolean gestioneGruppi = false;
+		boolean gestioneCanale = false;
 		if(isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom) {
 			if(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI.equals(apiGestioneParziale)) {
 				gestioneInformazioniGenerali = true;
@@ -259,11 +265,14 @@ public final class AccordiServizioParteComuneChange extends Action {
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI.equals(apiGestioneParziale)) {
 				gestioneGruppi = true;
 			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_CANALE.equals(apiGestioneParziale)) {
+				gestioneCanale = true;
+			}
 			
 		}
 		
 		boolean addPropertiesHidden = false;
-		if(gestioneInformazioniGenerali || gestioneSoggettoReferente || gestioneDescrizione || gestioneSpecificaInterfacce || gestioneInformazioniProtocollo || gestioneGruppi) {
+		if(gestioneInformazioniGenerali || gestioneSoggettoReferente || gestioneDescrizione || gestioneSpecificaInterfacce || gestioneInformazioniProtocollo || gestioneGruppi|| gestioneCanale) {
 			addPropertiesHidden = true;
 		}
 		
@@ -292,12 +301,18 @@ public final class AccordiServizioParteComuneChange extends Action {
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 		GruppiCore gruppiCore = new GruppiCore(apcCore);
+		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
 		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 		FiltroRicercaGruppi filtroRicerca = new FiltroRicercaGruppi();
 		List<String> elencoGruppi = null;
 
 		AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAcc);
 		boolean asWithAllegati = apcHelper.asWithAllegatiXsd(as);
+		
+		// carico i canali
+		CanaliConfigurazione gestioneCanali = confCore.getCanaliConfigurazione(false);
+		List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
+		boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
 
 		String[] providersList = null;
 		String[] providersListLabel = null;
@@ -567,6 +582,17 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.gruppi = "";
 					}
 				}
+				
+				if(this.canale == null) {
+					this.canale = as.getCanale();
+				}
+				if(this.canaleStato==null) {
+					if(this.canale == null) {
+						this.canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+					} else {
+						this.canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+					}
+				} 
 
 			} catch (Exception ex) {
 				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
@@ -606,7 +632,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			if( this.backToStato == null){
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
-
+ 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
@@ -614,7 +640,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 							this.consoleOperationType, apcHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idAccordoOLD);
-				else 
+				else  
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 							this.consoleOperationType, apcHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idAccordoOLD);
@@ -627,7 +653,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
 						false, -1, false, -1,
-						false);
+						false, this.canaleStato, this.canale, canaleList, gestioneCanaliEnabled);
 
 				// aggiunta campi custom
 				if(addPropertiesHidden) {
@@ -637,7 +663,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				}
 					
 				pd.setDati(dati);
-
+				
 				if(apcHelper.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
 					pd.disableEditMode();
 				}
@@ -661,7 +687,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, 
 				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
 				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato,this.serviceBinding,this.messageType,this.interfaceType,
-				true, this.gruppi);
+				true, this.gruppi, this.canaleStato, this.canale, gestioneCanaliEnabled);
 
 		// updateDynamic
 		if(isOk) {
@@ -730,7 +756,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
 					false, -1, false, -1,
-					false);
+					false, this.canaleStato, this.canale, canaleList, gestioneCanaliEnabled);
 
 			// aggiunta campi custom
 			if(addPropertiesHidden) {
@@ -775,14 +801,14 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
 						false, -1, false, -1,
-						true);
+						true, this.canaleStato, this.canale, canaleList, gestioneCanaliEnabled);
 
 				dati = apcHelper.addAccordiToDatiAsHidden(dati, nome, this.descr, this.profcoll, null, null, null, null, 
 						this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id,						
 						tipoOp, this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione, this.referente,this.versione, providersList, providersListLabel,
 						this.privato,this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId, this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti, this.tipoProtocollo, 
-						listaTipiProtocollo, used, this.serviceBinding,this.messageType,this.interfaceType, this.gruppi);
+						listaTipiProtocollo, used, this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, this.canaleStato, this.canale);
 				
 				if(this.backToStato!= null) {
 					// backtostato per chiudere la modifica dopo la conferma
@@ -930,7 +956,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
 						false, -1, false, -1,
-						false);
+						false, this.canaleStato, this.canale, canaleList, gestioneCanaliEnabled);
 
 				// aggiunta campi custom
 				if(addPropertiesHidden) {
@@ -976,6 +1002,17 @@ public final class AccordiServizioParteComuneChange extends Action {
 				gruppoAccordo.setNome(nomeGruppo);
 				as.getGruppi().addGruppo(gruppoAccordo );
 			}
+		}
+		
+		// canale
+		if(gestioneCanaliEnabled) {
+			if(this.canaleStato.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO)) {
+				as.setCanale(this.canale);
+			} else {
+				as.setCanale(null);
+			}
+		} else {
+			as.setCanale(null);
 		}
 
 		// Modifico i dati dell'accordo nel db
@@ -1066,7 +1103,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 									this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,
 									this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
 									false, -1, false, -1,
-									false);
+									false, this.canaleStato, this.canale, canaleList, gestioneCanaliEnabled);
 
 							// aggiunta campi custom
 							if(addPropertiesHidden) {
@@ -1111,6 +1148,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 				if(idNEW.equals(idAccordoOLD)==false){
 					ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
 				}
+			}
+			else if(gestioneGruppi || gestioneCanale) {
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
 			}
 			
 			// preparo lista

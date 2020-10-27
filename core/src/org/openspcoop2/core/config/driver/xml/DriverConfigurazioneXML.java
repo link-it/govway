@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -2173,6 +2174,18 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti con tipologia '"+tipologia+"' e nome '"+name+"'");
 	}
 	
+	@Override
+	public CanaliConfigurazione getCanaliConfigurazione() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		refreshConfigurazioneXML();
+		
+		CanaliConfigurazione c = this.openspcoop.getConfigurazione().getGestioneCanali();
+		if(c==null) {
+			c = new CanaliConfigurazione();
+			c.setStato(StatoFunzionalita.DISABILITATO);
+		}
+		return c;
+	}
 
 	/**
 	 * Restituisce la configurazione generale della Porta di Dominio 

@@ -1,3 +1,5 @@
+DELETE FROM canali_nodi;
+DELETE FROM canali_configurazione;
 DELETE FROM generic_property;
 DELETE FROM generic_properties;
 DELETE FROM pdd_sys_props;

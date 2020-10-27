@@ -209,6 +209,8 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			
 			portaApplicativa = (PortaApplicativa) portaApplicativaDaClonare.clone();
 			portaApplicativa.setId(null);// annullo il table id
+			portaApplicativa.setGestioneCors(null); // annulla la gestione Cors poiche' gestito solo nella porta di default
+			portaApplicativa.setCanale(null); // annullo il canale poiche' gestito solo nella porta di default
 			portaClonata = true;
 		
 		} else {

@@ -31,8 +31,10 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
@@ -75,6 +77,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -1137,6 +1140,28 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		ConfigurazioniUtils.fillAzioniPD(dettaglioPD, this.utilsServiceManager);
 		//		}
 
+		AccordoServizioParteComune aspc = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch().get(dettaglioPD.getIdAccordoServizioParteComune());
+		IPaginatedExpression gruppiExpr = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().newPaginatedExpression();
+		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aspc.getNome());
+		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, aspc.getVersione());
+		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
+		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
+		List<IdAccordoServizioParteComuneGruppo> lGruppi = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().findAllIds(gruppiExpr);
+		List<String> tags = new ArrayList<String>();
+		if(lGruppi!=null && !lGruppi.isEmpty()) {
+			for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+				tags.add(gruppoCheck.getIdGruppo().getNome());
+			}
+		}
+		
+		String canaleApi = null;
+		if(aspc!=null) {
+			canaleApi = aspc.getCanale();
+		}
+		String canale = CanaliUtils.getCanale(this.driverConfigDB.getCanaliConfigurazione(false), canaleApi, dettaglioPD.getPortaDelegata().getCanale());
+		
+//	a questo punto ho tutto!
+//		
 		dettaglioPD.setPropertyGenerali(ConfigurazioniUtils.getPropertiesGeneraliPD(dettaglioPD));
 		dettaglioPD.setPropertyAutenticazione(ConfigurazioniUtils.getPropertiesAutenticazionePD(dettaglioPD));
 		dettaglioPD.setPropertyAutorizzazione(ConfigurazioniUtils.getPropertiesAutorizzazionePD(dettaglioPD, idPD, this.driverConfigDB, this.driverRegistroDB));  
@@ -1147,7 +1172,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				ConfigurazioniUtils.getServiceBindingFromValues(dettaglioPD.getPortaDelegata().getTipoSoggettoErogatore(), dettaglioPD.getPortaDelegata().getNomeSoggettoErogatore(), 
 						dettaglioPD.getPortaDelegata().getTipoServizio(), dettaglioPD.getPortaDelegata().getNomeServizio(),dettaglioPD.getPortaDelegata().getVersioneServizio(), 
 						this.utilsServiceManager), 
-						idPD.getNome(), idPD.getIdentificativiFruizione().getSoggettoFruitore());
+						idPD.getNome(), idPD.getIdentificativiFruizione().getSoggettoFruitore(),
+						tags, canale);
 		dettaglioPD.setUrlInvocazione(urlInvocazioneAPI.getUrl());
 		
 		dettaglioPD.setPropertyIntegrazione(ConfigurazioniUtils.getPropertiesIntegrazionePD(dettaglioPD));
@@ -1182,14 +1208,34 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		idPA.setIdentificativiErogazione(identificativiErogazione );
 		dettaglioPA.setPortaApplicativaOp2(this.driverConfigDB.getPortaApplicativa(idPA));
 
-
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getTipo());
+
+		AccordoServizioParteComune aspc = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch().get(dettaglioPA.getIdAccordoServizioParteComune());
+		IPaginatedExpression gruppiExpr = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().newPaginatedExpression();
+		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aspc.getNome());
+		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, aspc.getVersione());
+		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
+		gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
+		List<IdAccordoServizioParteComuneGruppo> lGruppi = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().findAllIds(gruppiExpr);
+		List<String> tags = new ArrayList<String>();
+		if(lGruppi!=null && !lGruppi.isEmpty()) {
+			for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+				tags.add(gruppoCheck.getIdGruppo().getNome());
+			}
+		}
+		
+		String canaleApi = null;
+		if(aspc!=null) {
+			canaleApi = aspc.getCanale();
+		}
+		String canale = CanaliUtils.getCanale(this.driverConfigDB.getCanaliConfigurazione(false), canaleApi, dettaglioPA.getPortaApplicativa().getCanale());
 		
 		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(this.configurazioneUrlInvocazione, protocolFactory, RuoloContesto.PORTA_APPLICATIVA, 
 				ConfigurazioniUtils.getServiceBindingFromValues(idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome(), 
 						idServizio.getTipo(), idServizio.getNome(),idServizio.getVersione(), 
 						this.utilsServiceManager), 
-						idPA.getNome(), idServizio.getSoggettoErogatore());
+						idPA.getNome(), idServizio.getSoggettoErogatore(),
+						tags, canale);
 		dettaglioPA.setUrlInvocazione(urlInvocazioneAPI.getUrl());
 
 		if("trasparente".equals(protocolFactory.getProtocol()))	{

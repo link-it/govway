@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -418,6 +419,14 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * 
 	 */
 	public GenericProperties getGenericProperties(String tipologia, String name) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce la configurazione dei canali
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	public CanaliConfigurazione getCanaliConfigurazione() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce la configurazione generale della Porta di Dominio 

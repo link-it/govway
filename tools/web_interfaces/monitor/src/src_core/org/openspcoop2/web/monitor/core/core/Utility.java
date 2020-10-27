@@ -41,6 +41,8 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
@@ -409,6 +411,107 @@ public class Utility {
 		else {
 			return false;
 		}
+	}
+	
+	public static boolean isCanaliAbilitato() {
+		
+		Configurazione configurazioneGenerale = null;
+		
+		if(Utility.configurazioneGenerale!=null) {
+			configurazioneGenerale = Utility.configurazioneGenerale;
+		}
+		else {
+			LoginBean lb = getLoginBean();
+	
+			if(lb!= null && lb.isLoggedIn()){
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+			else if(lb==null){
+				// is null quando si accede via http get service
+				lb = new LoginBean(true);
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+		}
+		
+		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null) {
+			if(configurazioneGenerale.getGestioneCanali().getStato()!=null) {
+				return StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato());
+			}
+		}
+
+		return false;
+	}
+	
+	public static List<String> getCanali() {
+		
+		Configurazione configurazioneGenerale = null;
+		
+		if(Utility.configurazioneGenerale!=null) {
+			configurazioneGenerale = Utility.configurazioneGenerale;
+		}
+		else {
+			LoginBean lb = getLoginBean();
+	
+			if(lb!= null && lb.isLoggedIn()){
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+			else if(lb==null){
+				// is null quando si accede via http get service
+				lb = new LoginBean(true);
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+		}
+		
+		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null) {
+			if(configurazioneGenerale.getGestioneCanali().getStato()!=null && StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato())) {
+				List<String> l = new ArrayList<String>();
+				if(configurazioneGenerale.getGestioneCanali().sizeCanaleList()>0) {
+					for (CanaleConfigurazione c : configurazioneGenerale.getGestioneCanali().getCanaleList()) {
+						l.add(c.getNome());
+					}
+				}
+				return l;
+			}
+		}
+
+		return null;
+	}
+	
+	public static List<String> getNodi(String canale) {
+		
+		Configurazione configurazioneGenerale = null;
+		
+		if(Utility.configurazioneGenerale!=null) {
+			configurazioneGenerale = Utility.configurazioneGenerale;
+		}
+		else {
+			LoginBean lb = getLoginBean();
+	
+			if(lb!= null && lb.isLoggedIn()){
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+			else if(lb==null){
+				// is null quando si accede via http get service
+				lb = new LoginBean(true);
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+		}
+		
+		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null) {
+			if(configurazioneGenerale.getGestioneCanali().getStato()!=null && StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato())) {
+				List<String> l = new ArrayList<String>();
+				if(configurazioneGenerale.getGestioneCanali().sizeNodoList()>0) {
+					for (CanaleConfigurazioneNodo nodo : configurazioneGenerale.getGestioneCanali().getNodoList()) {
+						if(nodo.getCanaleList()!=null && nodo.getCanaleList().contains(canale)) {
+							l.add(nodo.getNome());
+						}
+					}
+				}
+				return l;
+			}
+		}
+
+		return null;
 	}
 	
 	public static boolean isMultitenantAbilitato() {

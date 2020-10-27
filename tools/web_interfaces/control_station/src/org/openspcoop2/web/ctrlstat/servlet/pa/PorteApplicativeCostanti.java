@@ -102,6 +102,9 @@ public class PorteApplicativeCostanti {
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = "porteApplicativeGestioneCors";
 	public final static ForwardParams TIPO_OPERAZIONE_GESTIONE_CORS = ForwardParams.OTHER("");
 	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE = "porteApplicativeGestioneCanale";
+	public final static ForwardParams TIPO_OPERAZIONE_GESTIONE_CANALE = ForwardParams.OTHER("");
+	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = "porteApplicativeVerificaConnettore";
 	public final static ForwardParams TIPO_OPERAZIONE_VERIFICA_CONNETTORE = ForwardParams.OTHER("");
 	
@@ -380,7 +383,9 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS+".do"; 
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS+".do";
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE+".do"; 
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE+".do";
 	
@@ -917,6 +922,9 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_DI;
 	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CANALE = CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CANALE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE_DI;
+	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_TITLE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_TITLE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_DI;
@@ -926,6 +934,7 @@ public class PorteApplicativeCostanti {
 	
 	public final static String LABEL_PORTE_APPLICATIVE_CORS_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_CORS_MODIFICATA_CON_SUCCESSO;
 	public final static String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_RESPONSE_CACHING_MODIFICATA_CON_SUCCESSO;
+	public final static String LABEL_PORTE_APPLICATIVE_CANALE_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_CANALE_MODIFICATA_CON_SUCCESSO;
 	
 	public final static String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE;
 	public final static String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE_DI;
@@ -1049,7 +1058,7 @@ public class PorteApplicativeCostanti {
 
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LEFT = "Consegna Condizionale";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICA_LEFT = "Connettori";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_SINGOLO_CONNETTORE_RIGHT = "La consegna avviene sul connettore che corrispondone alla condizione indicata";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_SINGOLO_CONNETTORE_RIGHT = "La consegna avviene sul connettore che corrisponde alla condizione indicata";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_PIU_CONNETTORI_RIGHT = "La consegna avviene solamente sui connettori che corrispondono alla condizione indicata";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICHE_CONNETTORI_RIGHT = "Solo i connettori che corrispondono alla condizione indicata vengono utilizzati per le notifiche";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LOAD_BALANCER_RIGHT = "Solo i connettori che corrispondono alla condizione indicata concorrono per la consegna";

@@ -97,6 +97,7 @@
 		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato" />
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 		<xsd:attribute name="options" type="xsd:string" use="optional"/> <!-- altri parametri generici -->
+		<xsd:attribute name="canale" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.SoggettoErogatore -->
 	<xsd:complexType name="porta-delegata-soggetto-erogatore">
@@ -180,6 +181,7 @@
 		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato" />
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 		<xsd:attribute name="options" type="xsd:string" use="optional"/> <!-- altri parametri generici -->
+		<xsd:attribute name="canale" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa.SoggettoVirtuale -->
 	<xsd:complexType name="porta-applicativa-soggetto-virtuale">
@@ -666,6 +668,7 @@
 			<xsd:element ref="generic-properties" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="gestione-cors" type="cors-configurazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="response-caching" type="response-caching-configurazione-generale" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="gestione-canali" type="canali-configurazione" maxOccurs="1" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -970,6 +973,29 @@
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="tipologia" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<!-- Canali -->
+	<xsd:complexType name="canali-configurazione">
+		<xsd:sequence>
+			<xsd:element name="canale" type="canale-configurazione" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="nodo" type="canale-configurazione-nodo" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato"/>
+	</xsd:complexType>
+	<xsd:complexType name="canale-configurazione">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" />
+			<xsd:element name="descrizione" type="xsd:string" minOccurs="0" />
+			<xsd:element name="canale-default" type="xsd:boolean" default="false" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="canale-configurazione-nodo">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" />
+			<xsd:element name="descrizione" type="xsd:string" minOccurs="0" />
+			<xsd:element name="canale" type="xsd:string" minOccurs="1" maxOccurs="unbounded" />
+		</xsd:sequence>
 	</xsd:complexType>
 	
 	<!-- CORS -->

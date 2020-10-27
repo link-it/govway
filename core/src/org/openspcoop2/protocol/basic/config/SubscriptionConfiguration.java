@@ -208,6 +208,8 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 			
 			portaDelegata = (PortaDelegata) portaDelegataDaClonare.clone();
 			portaDelegata.setId(null);// annullo il table id
+			portaDelegata.setGestioneCors(null); // annulla la gestione Cors poiche' gestito solo nella porta di default
+			portaDelegata.setCanale(null); // annullo il canale poiche' gestito solo nella porta di default
 			portaClonata = true;
 			
 		} else {

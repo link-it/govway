@@ -1,3 +1,20 @@
+2020-10-13  Andrea Poli <apoli@link.it>
+
+	Aggiunto supporto per i canali
+
+	ALTER TABLE accordi ADD COLUMN canale VARCHAR(20);
+	ALTER TABLE porte_delegate ADD COLUMN canale VARCHAR(20);
+	ALTER TABLE porte_applicative ADD COLUMN canale VARCHAR(20);
+	ALTER TABLE configurazione ADD COLUMN canali_stato VARCHAR(255);
+	Nuove tabelle canali_configurazione e canali_nodi
+
+	CREATE INDEX index_accordi_2 ON accordi (canale);
+	CREATE INDEX index_porte_delegate_3 ON porte_delegate (canale);
+	CREATE INDEX index_porte_applicative_3 ON porte_applicative (canale);
+
+	CREATE INDEX index_mapping_fruizione_pd_2 ON mapping_fruizione_pd (id_porta);
+	CREATE INDEX index_mapping_erogazione_pa_2 ON mapping_erogazione_pa (id_porta);
+
 2020-10-08  Andrea Poli <apoli@link.it>
 
 	Aggiunta informazione sull'API implementata tra i criteri di ricerca delle transazione e di generazione delle statistiche.

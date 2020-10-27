@@ -19,8 +19,10 @@
  */
 package org.openspcoop2.core.config.rs.server.api;
 
+import org.openspcoop2.core.config.rs.server.model.ApiCanale;
 import org.openspcoop2.core.config.rs.server.model.ApiImplStato;
 import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
+import org.openspcoop2.core.config.rs.server.model.ConfigurazioneApiCanale;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneRuoli;
@@ -519,6 +521,27 @@ public interface ErogazioniConfigurazioneApi  {
     public CachingRisposta getErogazioneCachingRisposta(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
 
     /**
+     * Restituisce il canale associato all'erogazione
+     *
+     * Questa operazione consente di ottenere il canale associato all'erogazione
+     *
+     */
+    @GET
+    @Path("/erogazioni/{nome}/{versione}/configurazioni/canale")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Restituisce il canale associato all'erogazione", tags={ "erogazioni-configurazione" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Canale restituito con successo", content = @Content(schema = @Schema(implementation = ApiCanale.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ApiCanale getErogazioneCanale(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
+
+    /**
      * Restituisce la configurazione relativa all'autenticazione per quanto concerne il controllo degli accessi
      *
      * Questa operazione consente di ottenere la configurazione relativa all'autenticazione per quanto concerne il controllo degli accessi
@@ -875,6 +898,28 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public void updateErogazioneCachingRisposta(@Valid CachingRisposta body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
+
+    /**
+     * Consente di modificare il canale associato all'erogazione
+     *
+     * Questa operazione consente di aggiornare il canale associato all'erogazione
+     *
+     */
+    @PUT
+    @Path("/erogazioni/{nome}/{versione}/configurazioni/canale")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Consente di modificare il canale associato all'erogazione", tags={ "erogazioni-configurazione" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Il canale è stato aggiornato correttamente"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void updateErogazioneCanale(@Valid ConfigurazioneApiCanale body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
 
     /**
      * Consente di modificare la configurazione relativa all'autenticazione per quanto concerne il controllo degli accessi

@@ -41,6 +41,7 @@ import java.util.List;
  * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="id-referente" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="service-binding" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="canale" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="accordo-servizio-parte-comune-azione" type="{http://www.openspcoop2.org/core/commons/search}accordo-servizio-parte-comune-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="port-type" type="{http://www.openspcoop2.org/core/commons/search}port-type" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="resource" type="{http://www.openspcoop2.org/core/commons/search}resource" minOccurs="0" maxOccurs="unbounded"/&gt;
@@ -62,6 +63,7 @@ import java.util.List;
   	"versione",
   	"idReferente",
   	"serviceBinding",
+  	"canale",
   	"accordoServizioParteComuneAzione",
   	"portType",
   	"resource",
@@ -119,6 +121,14 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   public void setServiceBinding(java.lang.String serviceBinding) {
     this.serviceBinding = serviceBinding;
+  }
+
+  public java.lang.String getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(java.lang.String canale) {
+    this.canale = canale;
   }
 
   public void addAccordoServizioParteComuneAzione(AccordoServizioParteComuneAzione accordoServizioParteComuneAzione) {
@@ -250,6 +260,10 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="service-binding",required=true,nillable=false)
   protected java.lang.String serviceBinding;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="canale",required=true,nillable=false)
+  protected java.lang.String canale;
 
   @XmlElement(name="accordo-servizio-parte-comune-azione",required=true,nillable=false)
   protected List<AccordoServizioParteComuneAzione> accordoServizioParteComuneAzione = new ArrayList<AccordoServizioParteComuneAzione>();

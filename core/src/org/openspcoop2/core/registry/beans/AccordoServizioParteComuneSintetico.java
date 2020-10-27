@@ -76,6 +76,7 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 		}
 		this.superUser = apc.getSuperUser();
 		this.statoPackage = apc.getStatoPackage();
+		this.canale = apc.getCanale();
 		this.privato = apc.getPrivato();
 		this.byteWsdlDefinitorio = apc.getByteWsdlDefinitorio();
 		this.byteWsdlConcettuale = apc.getByteWsdlConcettuale();
@@ -114,6 +115,8 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 
 	private java.lang.String statoPackage;
 
+	private java.lang.String canale;
+	
 	private Boolean privato = Boolean.valueOf("false");
 
 	private byte[] byteWsdlDefinitorio;
@@ -217,6 +220,13 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 		this.statoPackage = statoPackage;
 	}
 
+	public java.lang.String getCanale() {
+		return this.canale;
+	}
+	public void setCanale(java.lang.String canale) {
+		this.canale = canale;
+	}
+	
 	public Boolean getPrivato() {
 		return this.privato;
 	}

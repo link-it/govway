@@ -222,6 +222,16 @@
              			</xsd:appinfo>
              		</xsd:annotation>
              	</xsd:element>
+             	<xsd:element name="canale" type="xsd:string">
+             		<xsd:annotation>
+             			<xsd:appinfo>
+             				<linkit:generator
+             					xmlns:linkit="http://www.link.it/project_generator">
+             					<linkit:sql-column-mapping name="canale"/>
+             				</linkit:generator>
+             			</xsd:appinfo>
+             		</xsd:annotation>
+             	</xsd:element>
              	<xsd:element ref="accordo-servizio-parte-comune-azione" minOccurs="0" maxOccurs="unbounded">
              		<xsd:annotation>
              			<xsd:appinfo>
@@ -749,6 +759,16 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="canale" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="canale"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -910,6 +930,16 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="nome_porta_delegante_azione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="canale" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="canale"/>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>

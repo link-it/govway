@@ -64,6 +64,8 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "versione", AccordoServizioParteComune.model().VERSIONE.getFieldType()));
 				setParameter(object, "setServiceBinding", AccordoServizioParteComune.model().SERVICE_BINDING.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "service_binding", AccordoServizioParteComune.model().SERVICE_BINDING.getFieldType()));
+				setParameter(object, "setCanale", AccordoServizioParteComune.model().CANALE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "canale", AccordoServizioParteComune.model().CANALE.getFieldType()));
 				return object;
 			}
 			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE)){
@@ -134,6 +136,8 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"versione"));
 				setParameter(object, "setServiceBinding", AccordoServizioParteComune.model().SERVICE_BINDING.getFieldType(),
 					this.getObjectFromMap(map,"service-binding"));
+				setParameter(object, "setCanale", AccordoServizioParteComune.model().CANALE.getFieldType(),
+					this.getObjectFromMap(map,"canale"));
 				return object;
 			}
 			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE)){

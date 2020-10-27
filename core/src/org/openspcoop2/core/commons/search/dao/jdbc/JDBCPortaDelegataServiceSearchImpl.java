@@ -606,6 +606,7 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_portaDelegata.addSelectField(this.getPortaDelegataFieldConverter().toColumn(PortaDelegata.model().MODE_AZIONE,true));
 		sqlQueryObjectGet_portaDelegata.addSelectField(this.getPortaDelegataFieldConverter().toColumn(PortaDelegata.model().NOME_AZIONE,true));
 		sqlQueryObjectGet_portaDelegata.addSelectField(this.getPortaDelegataFieldConverter().toColumn(PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE,true));
+		sqlQueryObjectGet_portaDelegata.addSelectField(this.getPortaDelegataFieldConverter().toColumn(PortaDelegata.model().CANALE,true));
 		sqlQueryObjectGet_portaDelegata.addWhereCondition("id=?");
 
 		// Get portaDelegata

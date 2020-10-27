@@ -34,9 +34,12 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.ContentExtractor;
 import org.openspcoop2.pdd.core.dynamic.Costanti;
+import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
@@ -47,9 +50,12 @@ import org.openspcoop2.utils.io.ArchiveType;
 import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.Entry;
 import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Test
@@ -149,6 +155,23 @@ public class Test {
 	            "\"Enabled\": true,\n"+
 	            "\"Year\": 2018,\n"+
 	            "\"Quote\": 1.45, \n"+
+	            "\"ObjectInternal\": {\n"+
+	            	"  \"Enabled\": true,\n"+
+	            	"  \"TestNumber\": 20,\n"+
+	            	"  \"TestString\": \"ISO\"\n"+
+	            	"}, \n"+
+		        "\"ObjectList\": [\n"+
+			        "  {\n"+
+	            	"    \"ListEnabled\": true,\n"+
+	            	"    \"ListTestNumber\": 20,\n"+
+	            	"    \"ListTestString\": \"ISO\"\n"+
+	            	"  }, \n"+
+			        "  {\n"+
+	            	"    \"ListEnabled\": true,\n"+
+	            	"    \"ListTestNumber\": 20,\n"+
+	            	"    \"ListTestString\": \"ISO\"\n"+
+	            	"  } \n"+
+	            " ],\n"+
 	            "\"List\": [ \"Ford\", \"BMW\", \"Fiat\" ]\n"+
 			"}";
 	private static final String JSON_REQUEST = JSON_PREFIX + JSON_REQUEST_CONTENT + JSON_END;
@@ -647,6 +670,8 @@ public class Test {
 				HttpConstants.CONTENT_TYPE_JSON, JSON_REQUEST.getBytes()).getMessage();
 		OpenSPCoop2Message jsonMessageResponse = messageFactory.createMessage(MessageType.JSON, MessageRole.RESPONSE, 
 				HttpConstants.CONTENT_TYPE_JSON, JSON_RESPONSE.getBytes()).getMessage();
+		OpenSPCoop2Message jsonMessageTestAlterazioni = messageFactory.createMessage(MessageType.JSON, MessageRole.REQUEST, 
+				HttpConstants.CONTENT_TYPE_JSON, JSON_REQUEST.getBytes()).getMessage();
 		
 		OpenSPCoop2Message xmlMessageRequest = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
 				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_REQUEST.getBytes()).getMessage();
@@ -699,6 +724,14 @@ public class Test {
 				busta, parametriTrasportoRisposta,
 				errorHandlerJsonResponse);
 		
+		Map<String, Object> dynamicMapJsonTestAlterazioni = new Hashtable<String, Object>();
+		ErrorHandler errorHandlerJsonTestAlterazioni = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonTestAlterazioni, pddContext, urlInvocazione,
+				jsonMessageTestAlterazioni,
+				null, JSON_REQUEST, 
+				busta, parametriTrasporto, parametriUrl,
+				errorHandlerJsonTestAlterazioni);
+		
 		if(tipoTest==null || TipoTrasformazione.TEMPLATE.equals(tipoTest)) {
 		
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TEMPLATE) , "xml", pddContext, 
@@ -729,6 +762,7 @@ public class Test {
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_FREEMARKER_REQUEST_CONTEXT.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_FREEMARKER_RESPONSE_CONTEXT.getBytes());
 			
+			elaborazioniJson(log, dynamicMapJsonTestAlterazioni);
 		}
 		
 		if(tipoTest==null || TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest)) {
@@ -780,6 +814,8 @@ public class Test {
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE) , "contextVerifica", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_VELOCITY_REQUEST_CONTEXT.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE_CONTEXT.getBytes());
+			
+			elaborazioniJson(log, dynamicMapJsonTestAlterazioni);
 			
 		}
 		
@@ -961,7 +997,7 @@ public class Test {
 						}
 						else {
 							if(!contentEntry.equals(JSON_REQUEST)) {
-								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry+" atteso: "+JSON_REQUEST);
 							}
 						}				
 					}
@@ -1291,4 +1327,286 @@ public class Test {
 		}
 	}
 	
+	private static void elaborazioniJson(Logger log, Map<String, Object> dynamicMapJsonRequest)throws Exception {
+		
+		ContentExtractor ce = (ContentExtractor) dynamicMapJsonRequest.get(Costanti.MAP_REQUEST);
+			
+		List<Object> testOggetti = new ArrayList<Object>();
+		testOggetti.add("valoreElementoAggiunto");
+		testOggetti.add(23);
+		testOggetti.add(23l);
+		testOggetti.add(22.34d);
+		testOggetti.add(93.49f);
+		testOggetti.add(true);
+		
+		String jsonObject = "{\n"+
+		    	"  \"stato\": false,\n"+
+		    	"  \"codice\": 320,\n"+
+		    	"  \"message\": \"prova\"\n"+
+		    	"}";
+		testOggetti.add(new JsonStructure(jsonObject, false));
+
+		String jsonArray = "[\n"+
+		        "  {\n"+
+		    	"    \"stato\": false,\n"+
+		    	"    \"message\": \"prova singola\",\n"+
+		    	"    \"codiceArray\": 30\n"+
+		    	"  } \n"+
+		    " ]";
+		testOggetti.add(new JsonStructure(jsonArray, true));
+		
+		String jsonArray2 = "[\n"+
+		        "  {\n"+
+		    	"    \"stato\": true,\n"+
+		    	"    \"message\": \"prova 1\",\n"+
+		    	"    \"codiceArray\": 20\n"+
+		    	"  }, \n"+
+		        "  {\n"+
+		    	"    \"stato\": false,\n"+
+		    	"    \"message\": \"prova 2\",\n"+
+		    	"    \"codiceArray\": 30\n"+
+		    	"  } \n"+
+		    " ]";
+		testOggetti.add(new JsonStructure(jsonArray2, true));
+    
+		for (Object valoreElemento : testOggetti) {
+			
+			String nomeElemento = "TEST__elementAggiunto__TEST";
+			
+			System.out.println("Test aggiunta elemento semplice senza jsonpath '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
+			if(valoreElemento instanceof JsonStructure) {
+				JsonStructure js = (JsonStructure) valoreElemento;
+				if(js.array) {
+					ce.addArrayJsonElement(nomeElemento, js.json);
+				}
+				else {
+					ce.addObjectJsonElement(nomeElemento, js.json);
+				}
+			}
+			else {
+				ce.addSimpleJsonElement(nomeElemento, valoreElemento);
+			}
+			PatternExtractor pe = new PatternExtractor(ce.getContentAsString(), log); 
+			if(!pe.match("$."+nomeElemento)) {
+				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
+			}
+			String s = pe.read("$."+nomeElemento);
+			if(valoreElemento instanceof String) {
+				if(!valoreElemento.equals(s)) {
+					throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+s+"' differente da quello atteso '"+valoreElemento+"'");
+				}
+			}
+			else if(valoreElemento instanceof JsonStructure) {
+				JsonStructure js = (JsonStructure) valoreElemento;
+				equalsJsonString(nomeElemento,((js.array?"[":"")+s+(js.array?"]":"")),js.json);
+			}
+			else {
+				String valore = valoreElemento.toString();
+				if(!valore.equals(s)) {
+					throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+s+"' differente da quello atteso '"+valore+"'");
+				}
+			}
+			ce.prettyFormatJsonContent();
+			System.out.println(ce.getContentAsString());
+			System.out.println("Test aggiunta elemento semplice senza jsonpath '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ok");
+			
+			System.out.println("Test rimozione elemento semplice senza jsonpath '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
+			ce.removeJsonField(nomeElemento);
+			pe = new PatternExtractor(ce.getContentAsString(), log); 
+			if(pe.match("$."+nomeElemento)) {
+				throw new Exception("Elemento '"+nomeElemento+"' non rimosso");
+			}
+			ce.prettyFormatJsonContent();
+			System.out.println(ce.getContentAsString());
+			System.out.println("Test rimozione elemento semplice senza jsonpath '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ok");
+		}
+		
+		for (Object valoreElemento : testOggetti) {
+			
+			String nomeElemento = "TEST__elementAggiunto__TEST";
+			
+			System.out.println("Test aggiunta elemento semplice '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
+			if(valoreElemento instanceof JsonStructure) {
+				JsonStructure js = (JsonStructure) valoreElemento;
+				if(js.array) {
+					ce.addArrayJsonElement("$", nomeElemento, js.json);
+				}
+				else {
+					ce.addObjectJsonElement("$", nomeElemento, js.json);
+				}
+			}
+			else {
+				ce.addSimpleJsonElement("$", nomeElemento, valoreElemento);
+			}
+			PatternExtractor pe = new PatternExtractor(ce.getContentAsString(), log); 
+			if(!pe.match("$."+nomeElemento)) {
+				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
+			}
+			String s = pe.read("$."+nomeElemento);
+			if(valoreElemento instanceof String) {
+				if(!valoreElemento.equals(s)) {
+					throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+s+"' differente da quello atteso '"+valoreElemento+"'");
+				}
+			}
+			else if(valoreElemento instanceof JsonStructure) {
+				JsonStructure js = (JsonStructure) valoreElemento;
+				equalsJsonString(nomeElemento,((js.array?"[":"")+s+(js.array?"]":"")),js.json);
+			}
+			else {
+				String valore = valoreElemento.toString();
+				if(!valore.equals(s)) {
+					throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+s+"' differente da quello atteso '"+valore+"'");
+				}
+			}
+			ce.prettyFormatJsonContent();
+			System.out.println(ce.getContentAsString());
+			System.out.println("Test aggiunta elemento semplice '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ok");
+			
+			System.out.println("Test rimozione elemento semplice '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
+			ce.removeJsonField("$", nomeElemento);
+			pe = new PatternExtractor(ce.getContentAsString(), log); 
+			if(pe.match("$."+nomeElemento)) {
+				throw new Exception("Elemento '"+nomeElemento+"' non rimosso");
+			}
+			ce.prettyFormatJsonContent();
+			System.out.println(ce.getContentAsString());
+			System.out.println("Test rimozione elemento semplice '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ok");
+		}
+
+		for (Object valoreElemento : testOggetti) {
+			
+			String nomeElemento = "TESTOBJ__elementAggiunto__TESTOBJ";
+			
+			System.out.println("Test aggiunta elemento interno '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
+			if(valoreElemento instanceof JsonStructure) {
+				JsonStructure js = (JsonStructure) valoreElemento;
+				if(js.array) {
+					ce.addArrayJsonElement("$.ObjectInternal", nomeElemento, js.json);
+				}
+				else {
+					ce.addObjectJsonElement("$.ObjectInternal", nomeElemento, js.json);
+				}
+			}
+			else {
+				ce.addSimpleJsonElement("$.ObjectInternal", nomeElemento, valoreElemento);
+			}
+			PatternExtractor pe = new PatternExtractor(ce.getContentAsString(), log); 
+			if(!pe.match("$.ObjectInternal."+nomeElemento)) {
+				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
+			}
+			String s = pe.read("$.ObjectInternal."+nomeElemento);
+			if(valoreElemento instanceof String) {
+				if(!valoreElemento.equals(s)) {
+					throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+s+"' differente da quello atteso '"+valoreElemento+"'");
+				}
+			}
+			else if(valoreElemento instanceof JsonStructure) {
+				JsonStructure js = (JsonStructure) valoreElemento;
+				equalsJsonString(nomeElemento,((js.array?"[":"")+s+(js.array?"]":"")),js.json);
+			}
+			else {
+				String valore = valoreElemento.toString();
+				if(!valore.equals(s)) {
+					throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+s+"' differente da quello atteso '"+valore+"'");
+				}
+			}
+			ce.prettyFormatJsonContent();
+			System.out.println(ce.getContentAsString());
+			System.out.println("Test aggiunta elemento interno '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ok");
+			
+			System.out.println("Test rimozione elemento interno '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
+			ce.removeJsonField("$.ObjectInternal", nomeElemento);
+			pe = new PatternExtractor(ce.getContentAsString(), log); 
+			if(pe.match("$.ObjectInternal."+nomeElemento)) {
+				throw new Exception("Elemento '"+nomeElemento+"' non rimosso");
+			}
+			ce.prettyFormatJsonContent();
+			System.out.println(ce.getContentAsString());
+			System.out.println("Test rimozione elemento interno '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ok");
+		}
+		
+		for (Object valoreElemento : testOggetti) {
+			
+			String nomeElemento = "TESTARRAY__elementAggiunto__TESTARRAY";
+			
+			System.out.println("Test aggiunta elemento ad array '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
+			if(valoreElemento instanceof JsonStructure) {
+				JsonStructure js = (JsonStructure) valoreElemento;
+				if(js.array) {
+					ce.addArrayJsonElement("$.ObjectList[*]", nomeElemento, js.json);
+				}
+				else {
+					ce.addObjectJsonElement("$.ObjectList[*]", nomeElemento, js.json);
+				}
+			}
+			else {
+				ce.addSimpleJsonElement("$.ObjectList[*]", nomeElemento, valoreElemento);
+			}
+			PatternExtractor pe = new PatternExtractor(ce.getContentAsString(), log); 
+			if(!pe.match("$.ObjectList[*]."+nomeElemento)) {
+				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
+			}
+			List<String> l = pe.readList("$.ObjectList[*]."+nomeElemento);
+			if(l==null || l.isEmpty()) {
+				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
+			}
+			for (int i = 0; i < l.size(); i++) {
+				String valoreElementoLista = l.get(i);
+				if(valoreElemento instanceof String) {
+					if(!valoreElemento.equals(valoreElementoLista)) {
+						throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+valoreElementoLista+"' differente da quello atteso '"+valoreElemento+"'");
+					}
+				}
+				else if(valoreElemento instanceof JsonStructure) {
+					JsonStructure js = (JsonStructure) valoreElemento;
+					equalsJsonString(nomeElemento,valoreElementoLista,js.json);
+				}
+				else {
+					String valore = valoreElemento.toString();
+					if(!valore.equals(valoreElementoLista)) {
+						throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+valoreElementoLista+"' differente da quello atteso '"+valore+"'");
+					}
+				}	
+			}
+			ce.prettyFormatJsonContent();
+			System.out.println(ce.getContentAsString());
+			System.out.println("Test aggiunta elemento ad array '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ok");
+			
+			System.out.println("Test rimozione elemento ad array '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
+			ce.removeJsonField("$.ObjectList[*]", nomeElemento);
+			pe = new PatternExtractor(ce.getContentAsString(), log); 
+			if(pe.match("$.ObjectList[*]."+nomeElemento)) {
+				throw new Exception("Elemento '"+nomeElemento+"' non rimosso");
+			}
+			ce.prettyFormatJsonContent();
+			System.out.println(ce.getContentAsString());
+			System.out.println("Test rimozione elemento ad array '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ok");
+		}
+		
+				
+	}
+	private static void equalsJsonString(String nomeElemento, String s1, String s2) throws DynamicException {
+		try {
+			JSONUtils jsonUtils = JSONUtils.getInstance(true);
+			JsonNode nodeS1 = jsonUtils.getAsNode(s1);
+			String prettyS1 = jsonUtils.toString(nodeS1);
+			JsonNode nodeS2 = jsonUtils.getAsNode(s2);
+			String prettyS2 = jsonUtils.toString(nodeS2);
+			if(!prettyS1.equals(prettyS2)) {
+				throw new Exception("Elemento '"+nomeElemento+"' aggiunto con un valore '"+prettyS1+"' differente da quello atteso '"+prettyS2+"'");
+			}
+		}catch(Exception e) {
+			throw new DynamicException("Operazione fallita (s1:"+s1+") (s2:"+s2+"): "+e.getMessage(),e);
+		}
+	}
+	
+}
+
+class JsonStructure{
+	public JsonStructure(String json, boolean array) {
+		this.json = json;
+		this.array = array;
+	}
+	String json = null;	
+	boolean array = false;
 }

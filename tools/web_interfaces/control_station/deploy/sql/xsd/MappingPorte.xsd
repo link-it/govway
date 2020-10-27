@@ -51,6 +51,9 @@
                         <linkit:sql-table-index>
                             <linkit:sql-table-index-field name="id_fruizione"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -136,6 +139,9 @@
                         </linkit:sql-table-foreign-key>
                         <linkit:sql-table-index>
                             <linkit:sql-table-index-field name="id_erogazione"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_porta"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>

@@ -66,6 +66,7 @@ CREATE TABLE accordi
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
+	canale VARCHAR(20),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -79,6 +80,7 @@ CREATE TABLE accordi
 
 -- index
 CREATE UNIQUE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
+CREATE INDEX index_accordi_2 ON accordi (canale);
 
 
 

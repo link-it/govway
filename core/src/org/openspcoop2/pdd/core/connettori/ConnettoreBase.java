@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -189,6 +190,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     private boolean registerSendIntoContext = true;
     public void setRegisterSendIntoContext(boolean registerSendIntoContext) {
 		this.registerSendIntoContext = registerSendIntoContext;
+	}
+
+    private IDAccordo idAccordo = null;
+    protected IDAccordo getIdAccordo() {
+		return this.idAccordo;
 	}
 
 	protected ConnettoreBase(){
@@ -425,6 +431,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 
 		// Negoziazione Token
 		this.policyNegoziazioneToken = request.getPolicyNegoziazioneToken();
+		
+		// API
+		this.idAccordo = request.getIdAccordo();
 		
 		return true;
 	}

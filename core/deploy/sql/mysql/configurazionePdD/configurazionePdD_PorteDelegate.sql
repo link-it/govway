@@ -130,6 +130,7 @@ CREATE TABLE porte_delegate
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
 	options VARCHAR(4000),
+	canale VARCHAR(20),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints
@@ -142,6 +143,7 @@ CREATE TABLE porte_delegate
 -- index
 CREATE UNIQUE INDEX index_porte_delegate_1 ON porte_delegate (nome_porta);
 CREATE INDEX index_porte_delegate_2 ON porte_delegate (id_soggetto);
+CREATE INDEX index_porte_delegate_3 ON porte_delegate (canale);
 
 
 

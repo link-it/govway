@@ -37,6 +37,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -65,6 +67,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -176,6 +179,14 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
+			
+			// carico i canali
+			CanaliConfigurazione gestioneCanali = confCore.getCanaliConfigurazione(false);
+			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
+			boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+			String canale = apsHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE);
+			String canaleStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServ);
 			String nomeservizio = asps.getNome();
@@ -753,6 +764,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			} else {
 				as = apcCore.getAccordoServizioFull(idAccordoFactory.getIDAccordoFromUri(aspsT.getAccordoServizioParteComune()));
 			}
+			
+			String canaleAPI = as != null ? as.getCanale() : null;  
 
 			List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
 			if (portTypes.size() > 0) {
@@ -816,7 +829,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					null,null, null,
 					null,null,null,null,null,
 					null,null,
-					null,null,null,null,false);
+					null,null,null,null,false, canaleStato, canaleAPI, canale, canaleList, gestioneCanaliEnabled);
 
 			dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,

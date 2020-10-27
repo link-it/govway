@@ -67,6 +67,7 @@ CREATE TABLE accordi
 	privato INT DEFAULT 0,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
+	canale VARCHAR(20),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_accordi') NOT NULL,
 	-- check constraints
@@ -78,6 +79,8 @@ CREATE TABLE accordi
 	CONSTRAINT pk_accordi PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_accordi_1 ON accordi (canale);
 
 
 

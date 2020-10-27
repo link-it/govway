@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Api;
 import org.openspcoop2.core.config.rs.server.model.ApiAllegato;
 import org.openspcoop2.core.config.rs.server.model.ApiAzione;
+import org.openspcoop2.core.config.rs.server.model.ApiCanale;
 import org.openspcoop2.core.config.rs.server.model.ApiDescrizione;
 import org.openspcoop2.core.config.rs.server.model.ApiInformazioniGenerali;
 import org.openspcoop2.core.config.rs.server.model.ApiInformazioniGeneraliView;
@@ -47,6 +48,9 @@ import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
 import org.openspcoop2.core.config.rs.server.model.ApiTags;
 import org.openspcoop2.core.config.rs.server.model.ApiViewItem;
+import org.openspcoop2.core.config.rs.server.model.CanaleEnum;
+import org.openspcoop2.core.config.rs.server.model.ConfigurazioneApiCanale;
+import org.openspcoop2.core.config.rs.server.model.ConfigurazioneCanaleEnum;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaApi;
 import org.openspcoop2.core.config.rs.server.model.ListaApiAllegati;
@@ -154,6 +158,15 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				}
 			}
 			
+			boolean gestioneCanaliEnabled = env.gestioneCanali;
+			String canale = as.getCanale();
+			String canaleStato = null;
+			if(canale == null) {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+			} else {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+			}
+						
 			if (!env.apcHelper.accordiCheckData(TipoOperazione.ADD, as.getNome(), as.getDescrizione(),
 					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()), // wsdldef
 					Helper.toBinaryParameter(as.getByteWsdlConcettuale()), // wsdlconc,
@@ -176,7 +189,9 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // messageType
 					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
-					bfTags.toString())) {
+					bfTags.toString(),
+					canaleStato, canale, gestioneCanaliEnabled
+					)) {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -1193,6 +1208,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ret.setStato(item.getStato());
 			ret.setStatoDescrizione(item.getStatoDescrizione());
 			ret.setTags(item.getTags());
+			ret.setCanale(item.getCanale());
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
@@ -1299,6 +1315,57 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+
+	/*
+     * Restituisce il canale associato all'API
+     *
+     * Questa operazione consente di ottenere il canale associato all'API identificata dal nome e dalla versione
+     *
+     */
+	@Override
+    public ApiCanale getApiCanale(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
+
+			if (as == null)
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			ApiCanale canale = null;
+			if(env.gestioneCanali) {
+				canale = new ApiCanale();
+				if(as.getCanale()!=null && !"".equals(as.getCanale())) {
+					canale.setNome(as.getCanale());
+					canale.setConfigurazione(CanaleEnum.API);
+				}
+				else {
+					canale.setNome(env.canaleDefault);
+					canale.setConfigurazione(CanaleEnum.DEFAULT);
+				}
+			}
+			else {
+				throw new Exception("Gestione dei canali non abilitata");
+			}
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return canale;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 
 	/**
 	 * Restituisce la descrizione di una API
@@ -1750,6 +1817,143 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 		}
 	}
 
+    /**
+     * Consente di modificare il canale associato all'API
+     *
+     * Questa operazione consente di aggiornare il canale associato all'API identificata dal nome e dalla versione
+     *
+     */
+	@Override
+    public void updateApiCanale(ConfigurazioneApiCanale body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			if (body == null)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
+			
+			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
+			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+
+			if (as == null)
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			if(!env.gestioneCanali) {
+				throw new Exception("Gestione dei canali non abilitata");
+			}
+			
+			if(ConfigurazioneCanaleEnum.RIDEFINITO.equals(body.getConfigurazione())){
+				if(body.getCanale()==null || "".equals(body.getCanale())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un canale");
+				}
+				if(!env.canali.contains(body.getCanale())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + body.getCanale() + "' non è presente nel registro");
+				}
+				as.setCanale(body.getCanale());
+			}
+			else {
+				as.setCanale(null);
+			}
+
+			boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
+
+			BinaryParameter wsdlserv = new BinaryParameter();
+			wsdlserv.setValue(as.getByteWsdlLogicoErogatore());
+
+			BinaryParameter wsdlconc = new BinaryParameter();
+			wsdlconc.setValue(as.getByteWsdlConcettuale());
+
+			BinaryParameter wsdldef = new BinaryParameter();
+			wsdldef.setValue(as.getByteWsdlDefinitorio());
+
+			/*
+			 * boolean visibilitaAccordoCooperazione=false;
+			 * if("-".equals(this.accordoCooperazioneId)==false &&
+			 * "".equals(this.accordoCooperazioneId)==false &&
+			 * this.accordoCooperazioneId!=null){ AccordoCooperazione ac =
+			 * acCore.getAccordoCooperazione(Long.parseLong(this.accordoCooperazioneId));
+			 * visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato(); }
+			 */
+
+			StringBuilder bfTags = new StringBuilder();
+			if(as.getGruppi()!=null && as.getGruppi().getGruppoList()!=null && !as.getGruppi().getGruppoList().isEmpty()) {
+				for (GruppoAccordo tag : as.getGruppi().getGruppoList()) {
+					if(bfTags.length()>0) {
+						bfTags.append(",");
+					}
+					bfTags.append(tag.getNome());
+				}
+			}
+			
+			boolean gestioneCanaliEnabled = env.gestioneCanali;
+			String canale = as.getCanale();
+			String canaleStato = null;
+			if(canale == null) {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+			} else {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+			}
+			
+			if (!env.apcHelper.accordiCheckData(TipoOperazione.CHANGE, as.getNome(), as.getDescrizione(),
+					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()),
+					Helper.toBinaryParameter(as.getByteWsdlConcettuale()),
+					Helper.toBinaryParameter(as.getByteWsdlLogicoErogatore()),
+					Helper.toBinaryParameter(as.getByteWsdlLogicoFruitore()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdRiferimentoRichiesta()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine()),
+					as.getScadenza() == null ? "" : as.getScadenza(), as.getId().toString(), as.getSoggettoReferente().getNome(),
+					as.getVersione().toString(), null, // AccordoCooperazioneID
+					false, // privato false, null,
+					false, // visibilitaAccordoCooperazione
+					oldIdAccordo, // idAccordoOld
+					null, // wsblconc
+					null, // wsblserv
+					null, // wsblservrorr
+					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
+					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // MessageType
+					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
+					bfTags.toString(),
+					canaleStato, canale, gestioneCanaliEnabled)) {
+
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+
+			// Il profilo di collaborazione di base è Sincrono.
+			// Quindi Nella AccordiServizioPArteComuneChange così come nella Add possiamo
+			// assumerlo costante.
+			// Sono i Servizi e le Azioni ad avere un profilo di collaborazione
+
+			as.setOldIDAccordoForUpdate(oldIdAccordo);
+			List<Object> operazioniList = new ArrayList<Object>(Arrays.asList(as));
+
+			// Questa roba non serve qui perchè la updateDescrizione non cambia il nome e
+			// quindi nemmeno l'ID.
+			IDAccordo idNEW = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+			if (idNEW.equals(oldIdAccordo) == false) {
+				AccordiServizioParteComuneUtilities.findOggettiDaAggiornare(oldIdAccordo, as, env.apcCore, operazioniList);
+			}
+
+			env.apcCore.performUpdateOperation(env.userLogin, false, operazioniList.toArray());
+
+			context.getLogger().info("Invocazione completata con successo");
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
 	/**
 	 * Consente di modificare la descrizione di una API
 	 *
@@ -1809,6 +2013,15 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				}
 			}
 			
+			boolean gestioneCanaliEnabled = env.gestioneCanali;
+			String canale = as.getCanale();
+			String canaleStato = null;
+			if(canale == null) {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+			} else {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+			}
+			
 			if (!env.apcHelper.accordiCheckData(TipoOperazione.CHANGE, as.getNome(), as.getDescrizione(),
 					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()),
 					Helper.toBinaryParameter(as.getByteWsdlConcettuale()),
@@ -1830,7 +2043,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // MessageType
 					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
-					bfTags.toString())) {
+					bfTags.toString(),
+					canaleStato, canale, gestioneCanaliEnabled)) {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -1913,6 +2127,15 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				}
 			}
 			
+			boolean gestioneCanaliEnabled = env.gestioneCanali;
+			String canale = as.getCanale();
+			String canaleStato = null;
+			if(canale == null) {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+			} else {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+			}
+			
 			if (!env.apcHelper.accordiCheckData(TipoOperazione.CHANGE, as.getNome(), as.getDescrizione(),
 					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()),
 					Helper.toBinaryParameter(as.getByteWsdlConcettuale()),
@@ -1934,7 +2157,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // MessageType
 					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
-					bfTags.toString())) {
+					bfTags.toString(),
+					canaleStato, canale, gestioneCanaliEnabled)) {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -2219,6 +2443,15 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				}
 			}
 			
+			boolean gestioneCanaliEnabled = env.gestioneCanali;
+			String canale = as.getCanale();
+			String canaleStato = null;
+			if(canale == null) {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+			} else {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+			}
+			
 			if (!env.apcHelper.accordiCheckData(TipoOperazione.CHANGE, as.getNome(), as.getDescrizione(),
 					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()),
 					Helper.toBinaryParameter(as.getByteWsdlConcettuale()),
@@ -2240,7 +2473,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // MessageType
 					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
-					bfTags.toString())) {
+					bfTags.toString(),
+					canaleStato, canale, gestioneCanaliEnabled)) {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}

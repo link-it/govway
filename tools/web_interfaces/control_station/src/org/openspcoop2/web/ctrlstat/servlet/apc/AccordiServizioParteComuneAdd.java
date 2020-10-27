@@ -39,6 +39,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -80,6 +82,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -132,7 +135,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	
-	private String gruppi;
+	private String gruppi, canale, canaleStato;
 	
 	private boolean nuovaVersione;
 
@@ -195,6 +198,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			this.interfaceType = StringUtils.isNotEmpty(formatoSpecificaS) ? InterfaceType.toEnumConstant(formatoSpecificaS) : null;
 			
 			this.gruppi = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPI);
+			this.canale = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE);
+			this.canaleStato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE_STATO);
 
 			// patch per version spinner fino a che non si trova un modo piu' elegante
 			// Veniva sempre impostato false, lo lascio commentato in questo punto perche' veniva passato nella decode della richiesta multipart...
@@ -251,7 +256,13 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 			GruppiCore gruppiCore = new GruppiCore(apcCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
 			String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo);
+			
+			// carico i canali
+			CanaliConfigurazione gestioneCanali = confCore.getCanaliConfigurazione(false);
+			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
+			boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
 			
 			// Tipi protocollo supportati
 			// Controllo comunque quelli operativi, almeno uno deve esistere
@@ -339,6 +350,16 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					if(this.versione==null || StringUtils.isEmpty(this.versione)) {
 						this.versione = gestioneNuovaVersione_min+"";
 					}
+					if(this.canale==null || StringUtils.isEmpty(this.canale)) {
+						this.canale = aspc.getCanale();
+					}
+					if(this.canaleStato==null || StringUtils.isEmpty(this.canaleStato)) {
+						if(this.canale == null) {
+							this.canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+						} else {
+							this.canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+						}
+					} 
 				}
 				else {
 					String nuovaVersioneRidefinisciInterfaccia_tmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
@@ -634,6 +655,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					//}
 					
 					this.gruppi = "";
+					this.canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+					this.canale = "";
 				}
 
 				// preparo i campi
@@ -659,7 +682,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
 						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
 						this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
-						false);
+						false, this.canaleStato, this.canale, canaleList, gestioneCanaliEnabled);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -684,7 +707,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, 
 					this.scadenza, "0",this.referente, this.versione,this.accordoCooperazione,this.privato,visibilitaAccordoCooperazione,null,
 					this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti, this.tipoProtocollo,null,this.serviceBinding,this.messageType,this.interfaceType,
-					showReferente, this.gruppi);
+					showReferente, this.gruppi, this.canaleStato, this.canale, gestioneCanaliEnabled);
 
 			// updateDynamic
 			if(isOk) {
@@ -755,7 +778,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
 						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
 						this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
-						false);
+						false, this.canaleStato, this.canale, canaleList, gestioneCanaliEnabled);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -881,6 +904,17 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					as.getGruppi().addGruppo(gruppoAccordo );
 				}
 			}
+			
+			// canale
+			if(gestioneCanaliEnabled) {
+				if(this.canaleStato.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO)) {
+					as.setCanale(this.canale);
+				} else {
+					as.setCanale(null);
+				}
+			} else {
+				as.setCanale(null);
+			}
 
 			if(this.nuovaVersione && !nuovaVersioneRidefinisciInterfaccia) {
 				IDAccordo idAcc = apcCore.getIdAccordoServizio(gestioneNuovaVersione_oldIdApc);
@@ -937,7 +971,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
 							this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
 							this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
-							false);
+							false, this.canaleStato, this.canale, canaleList, gestioneCanaliEnabled);
 
 					// aggiunta campi custom
 					dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);

@@ -68,8 +68,11 @@ import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneBasic;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneCustom;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazionePrincipal;
+import org.openspcoop2.core.config.rs.server.model.ApiCanale;
 import org.openspcoop2.core.config.rs.server.model.ApiImplStato;
 import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
+import org.openspcoop2.core.config.rs.server.model.ConfigurazioneApiCanale;
+import org.openspcoop2.core.config.rs.server.model.ConfigurazioneCanaleEnum;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazioneToken;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazione;
@@ -1219,7 +1222,50 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
-    
+   
+    /**
+     * Restituisce il canale associato alla fruizione
+     *
+     * Questa operazione consente di ottenere il canale associato alla fruizione
+     *
+     */
+	@Override
+    public ApiCanale getFruizioneCanale(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( 
+					() -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione"
+				);
+			
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+			final IDPortaDelegata idPd =  ErogazioniApiHelper.getIDGruppoPDDefault(env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore);
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
+			
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, pd, apc, true);
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return canale;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+ 
     /**
      * Restituisce la configurazione relativa all'autenticazione per quanto concerne il controllo degli accessi
      *
@@ -2078,6 +2124,62 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+    /**
+     * Consente di modificare il canale associato alla fruizione
+     *
+     * Questa operazione consente di aggiornare il canale associato alla fruizione
+     *
+     */
+	@Override
+    public void updateFruizioneCanale(ConfigurazioneApiCanale body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);	
+			  
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( 
+					() -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env),
+					"Fruizione"
+				);
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+			final IDPortaDelegata idPd =  ErogazioniApiHelper.getIDGruppoPDDefault(env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore);
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
+			
+			if(ConfigurazioneCanaleEnum.RIDEFINITO.equals(body.getConfigurazione())){
+				if(body.getCanale()==null || "".equals(body.getCanale())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un canale");
+				}
+				if(!env.canali.contains(body.getCanale())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + body.getCanale() + "' non è presente nel registro");
+				}
+				pd.setCanale(body.getCanale());
+			}
+			else {
+				pd.setCanale(null);
+			}
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, pd);
+		    
+			context.getLogger().info("Invocazione completata con successo");
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+
     /**
      * Consente di modificare la configurazione relativa all'autenticazione per quanto concerne il controllo degli accessi
      *

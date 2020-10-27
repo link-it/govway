@@ -48,6 +48,7 @@ import java.util.List;
  * 			&lt;element name="mode_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="nome_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="nome_porta_delegante_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="canale" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="porta-delegata-servizio-applicativo" type="{http://www.openspcoop2.org/core/commons/search}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="porta-delegata-azione" type="{http://www.openspcoop2.org/core/commons/search}porta-delegata-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
@@ -74,6 +75,7 @@ import java.util.List;
   	"modeAzione",
   	"nomeAzione",
   	"nomePortaDeleganteAzione",
+  	"canale",
   	"portaDelegataServizioApplicativo",
   	"portaDelegataAzione"
   }
@@ -187,6 +189,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.nomePortaDeleganteAzione = nomePortaDeleganteAzione;
   }
 
+  public java.lang.String getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(java.lang.String canale) {
+    this.canale = canale;
+  }
+
   public void addPortaDelegataServizioApplicativo(PortaDelegataServizioApplicativo portaDelegataServizioApplicativo) {
     this.portaDelegataServizioApplicativo.add(portaDelegataServizioApplicativo);
   }
@@ -296,6 +306,10 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome_porta_delegante_azione",required=true,nillable=false)
   protected java.lang.String nomePortaDeleganteAzione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="canale",required=true,nillable=false)
+  protected java.lang.String canale;
 
   @XmlElement(name="porta-delegata-servizio-applicativo",required=true,nillable=false)
   protected List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativo = new ArrayList<PortaDelegataServizioApplicativo>();

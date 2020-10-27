@@ -20,6 +20,9 @@
 
 package org.openspcoop2.message;
 
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
+
 /**
  * OpenSPCoop2RestJsonMessage
  *
@@ -30,5 +33,16 @@ package org.openspcoop2.message;
 
 public interface OpenSPCoop2RestJsonMessage extends OpenSPCoop2RestMessage<String> {
 	
+	public void prettyFormatContent() throws MessageException,MessageNotSupportedException;
+	
+	public void addSimpleElement(String name, Object value) throws MessageException,MessageNotSupportedException;
+	public void addSimpleElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException;
+	public void addObjectElement(String name, Object value) throws MessageException,MessageNotSupportedException;
+	public void addObjectElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException;
+	public void addArrayElement(String name, Object value) throws MessageException,MessageNotSupportedException;
+	public void addArrayElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException;
+
+	public void removeElement(String name) throws MessageException,MessageNotSupportedException;
+	public void removeElement(String jsonPath, String name) throws MessageException,MessageNotSupportedException;
 	
 }

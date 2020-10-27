@@ -155,7 +155,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
-			String messageEngine) throws Exception {
+			String messageEngine, String canale) throws Exception {
 
 		boolean multitenant = this.pddCore.isMultitenant();
 
@@ -271,7 +271,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Long.valueOf(idsogg2));
 				soggettoOperativo = new IDSoggetto( soggetto.getTipo() , soggetto.getNome() );
 			}
-			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_DELEGATA, serviceBinding, nomePorta, soggettoOperativo);
+			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_DELEGATA, serviceBinding, nomePorta, soggettoOperativo,
+					aspc, canale);
 			
 			de = new DataElement();
 			if(ServiceBinding.SOAP.equals(serviceBinding)) {

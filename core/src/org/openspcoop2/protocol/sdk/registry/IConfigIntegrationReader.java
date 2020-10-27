@@ -21,6 +21,7 @@ package org.openspcoop2.protocol.sdk.registry;
 
 import java.util.List;
 
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -74,6 +75,10 @@ public interface IConfigIntegrationReader {
 	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException; 
 	
 	public List<IDPortaApplicativa> findIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException;
+	
+	// CONFIGURAZIONE
+	
+	public CanaliConfigurazione getCanaliConfigurazione() throws RegistryNotFound,RegistryException;
 	
 	
 }

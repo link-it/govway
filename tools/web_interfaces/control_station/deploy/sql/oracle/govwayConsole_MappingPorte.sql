@@ -19,6 +19,7 @@ CREATE TABLE mapping_fruizione_pd
 
 -- index
 CREATE INDEX index_mapping_fruizione_pd_1 ON mapping_fruizione_pd (id_fruizione);
+CREATE INDEX index_mapping_fruizione_pd_2 ON mapping_fruizione_pd (id_porta);
 CREATE TRIGGER trg_mapping_fruizione_pd
 BEFORE
 insert on mapping_fruizione_pd
@@ -52,6 +53,7 @@ CREATE TABLE mapping_erogazione_pa
 
 -- index
 CREATE INDEX index_mapping_erogazione_pa_1 ON mapping_erogazione_pa (id_erogazione);
+CREATE INDEX index_mapping_erogazione_pa_2 ON mapping_erogazione_pa (id_porta);
 CREATE TRIGGER trg_mapping_erogazione_pa
 BEFORE
 insert on mapping_erogazione_pa

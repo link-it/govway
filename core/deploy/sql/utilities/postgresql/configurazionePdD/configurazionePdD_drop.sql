@@ -1,5 +1,7 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX index_generic_property_1;
+DROP TABLE canali_nodi;
+DROP TABLE canali_configurazione;
 DROP TABLE generic_property;
 DROP TABLE generic_properties;
 DROP TABLE pdd_sys_props;
@@ -23,6 +25,8 @@ DROP TABLE configurazione;
 DROP TABLE config_cache_regole;
 DROP TABLE routing;
 DROP TABLE registri;
+DROP SEQUENCE seq_canali_nodi;
+DROP SEQUENCE seq_canali_configurazione;
 DROP SEQUENCE seq_generic_property;
 DROP SEQUENCE seq_generic_properties;
 DROP SEQUENCE seq_pdd_sys_props;

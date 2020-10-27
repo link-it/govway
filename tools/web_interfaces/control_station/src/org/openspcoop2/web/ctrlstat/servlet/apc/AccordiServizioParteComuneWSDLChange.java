@@ -40,6 +40,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -71,6 +73,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -196,6 +199,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 			GruppiCore gruppiCore = new GruppiCore(apcCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
+			
+			// carico i canali
+			CanaliConfigurazione gestioneCanali = confCore.getCanaliConfigurazione(false);
+			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
+			boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
 
 			// Flag per controllare il mapping automatico di porttype e operation 
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
@@ -218,6 +227,14 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			if(as.getGruppi() != null) {
 				List<String> nomiGruppi = as.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
 				gruppi = StringUtils.join(nomiGruppi, ",");
+			}
+			
+			String canale = as.getCanale();
+			String canaleStato =  AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+			if(canale == null) {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+			} else {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
 			}
 			
 			isSupportoProfiloAsincrono = acCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
@@ -609,6 +626,14 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				gruppi = StringUtils.join(nomiGruppi, ",");
 			} else 
 				gruppi = "";
+			
+			canale = as.getCanale();
+			
+			if(canale == null) {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT;
+			} else {
+				canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
+			}
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -622,7 +647,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, 
 					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,serviceBinding,messageType,formatoSpecifica,gruppi, elencoGruppi,
 					false, -1, false, -1,
-					false);
+					false, canaleStato, canale, canaleList, gestioneCanaliEnabled);
 
 			// aggiunta campi custom
 			dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

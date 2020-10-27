@@ -21,8 +21,8 @@ package org.openspcoop2.core.config.rs.server.api.impl.api;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Environment;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
@@ -55,7 +55,7 @@ public class ApiEnv extends Environment {
 		this.apcCore = new AccordiServizioParteComuneCore(this.stationCore);
 		this.apcHelper = new AccordiServizioParteComuneHelper(this.stationCore, this.requestWrapper, this.pd, ctx.getServletRequest().getSession());
 		this.archiviCore = new ArchiviCore(this.stationCore);
-		
+				
 		this.gestisciSoggettoReferente =  this.apcCore.isSupportatoSoggettoReferente(this.tipo_protocollo);
 		
 	}

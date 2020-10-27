@@ -339,4 +339,6 @@ public class CostantiConfigurazione {
     public final static String PRIORITA_DEFAULT = "DEFAULT";
 
     public static final String NOME_CONNETTORE_DEFAULT = "Default";
+    
+    public static final String REGOLA_PROXY_PASS_CONTESTO_VUOTO = "_____@@EMPTY@@____";
 }

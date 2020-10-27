@@ -4,6 +4,8 @@
 -- DROP INDEX index_servizi_pdd_1;
 -- DROP INDEX index_config_url_regole_1;
 -- DROP INDEX index_generic_property_1;
+DROP TABLE canali_nodi;
+DROP TABLE canali_configurazione;
 DROP TABLE generic_property;
 DROP TABLE generic_properties;
 DROP TABLE pdd_sys_props;

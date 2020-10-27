@@ -39,6 +39,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="canale" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" /&gt;
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" /&gt;
@@ -81,6 +82,7 @@ import org.openspcoop2.core.registry.constants.FormatoSpecifica;
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
     "versione",
+    "canale",
     "orCondition",
     "limit",
     "offset"
@@ -240,6 +242,19 @@ public class SearchFilterAccordoServizioParteComune extends org.openspcoop2.util
 	
 	public Integer getVersione(){
 		return this.versione;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="canale",required=false,nillable=false)
+	private String canale;
+	
+	public void setCanale(String canale){
+		this.canale = canale;
+	}
+	
+	public String getCanale(){
+		return this.canale;
 	}
 	
 	

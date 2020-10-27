@@ -497,6 +497,70 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
           
+  /api/{nome}/{versione}/canale:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+    get:
+      tags:
+        - api
+      summary: Restituisce il canale associato all'API
+      operationId: getApiCanale
+      description: Questa operazione consente di ottenere il canale associato all'API identificata dal nome e dalla versione
+      responses:
+        "200":
+          description: Canale restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ApiCanale"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - api
+      summary: Consente di modificare il canale associato all'API
+      operationId: updateApiCanale
+      description: Questa operazione consente di aggiornare il canale associato all'API identificata dal nome e dalla versione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConfigurazioneApiCanale'
+      responses: 
+        "204":
+          description: Il canale è stato aggiornato correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          
   /api/{nome}/{versione}/allegati:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -1792,6 +1856,71 @@ paths:
       responses: 
         "204":
           description: Configurazione dell'erogazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /erogazioni/{nome}/{versione}/configurazioni/canale:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"   
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce il canale associato all'erogazione
+      operationId: getErogazioneCanale
+      description: Questa operazione consente di ottenere il canale associato all'erogazione
+      responses:
+        "200":
+          description: Canale restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ApiCanale"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-configurazione
+      summary: Consente di modificare il canale associato all'erogazione
+      operationId: updateErogazioneCanale
+      description: Questa operazione consente di aggiornare il canale associato all'erogazione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConfigurazioneApiCanale'
+      responses: 
+        "204":
+          description: Il canale è stato aggiornato correttamente
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -4219,6 +4348,72 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/canale:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"   
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce il canale associato alla fruizione
+      operationId: getFruizioneCanale
+      description: Questa operazione consente di ottenere il canale associato alla fruizione
+      responses:
+        "200":
+          description: Canale restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ApiCanale"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-configurazione
+      summary: Consente di modificare il canale associato alla fruizione
+      operationId: updateFruizioneCanale
+      description: Questa operazione consente di aggiornare il canale associato alla fruizione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConfigurazioneApiCanale'
+      responses: 
+        "204":
+          description: Il canale è stato aggiornato correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -6589,6 +6784,8 @@ components:
             interfaccia:
               type: string
               format: byte
+            canale:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
 
     ApiItem:
       type: object
@@ -6603,6 +6800,8 @@ components:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/StatoApiEnum'
             stato_descrizione:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/StatoApiDescrizione'
+            canale:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiCanale'
         
     ListaApi:
        type: object
@@ -6902,6 +7101,8 @@ components:
                 $ref: 'govway_core.yaml#/components/schemas/NCName'
             erogazione_versione:
                 $ref: 'govway_core.yaml#/components/schemas/Versione'
+            canale:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
     ErogazioneItem:
       type: object
       allOf:
@@ -6940,6 +7141,8 @@ components:
                 $ref: 'govway_core.yaml#/components/schemas/Versione'
             erogatore:
               $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+            canale:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
     FruizioneItem:
       type: object
       allOf:

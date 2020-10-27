@@ -87,7 +87,10 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
+import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
+import org.openspcoop2.core.config.CanaliConfigurazione;
+import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
@@ -7785,6 +7788,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: canale-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>canaleConfigurazione</var>
+	 * @param canaleConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CanaleConfigurazione canaleConfigurazione) throws SerializerException {
+		this.objToXml(fileName, CanaleConfigurazione.class, canaleConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>canaleConfigurazione</var>
+	 * @param canaleConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CanaleConfigurazione canaleConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CanaleConfigurazione.class, canaleConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>canaleConfigurazione</var>
+	 * @param canaleConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CanaleConfigurazione canaleConfigurazione) throws SerializerException {
+		this.objToXml(file, CanaleConfigurazione.class, canaleConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>canaleConfigurazione</var>
+	 * @param canaleConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CanaleConfigurazione canaleConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CanaleConfigurazione.class, canaleConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>canaleConfigurazione</var>
+	 * @param canaleConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CanaleConfigurazione canaleConfigurazione) throws SerializerException {
+		this.objToXml(out, CanaleConfigurazione.class, canaleConfigurazione, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>canaleConfigurazione</var>
+	 * @param canaleConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CanaleConfigurazione canaleConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CanaleConfigurazione.class, canaleConfigurazione, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param canaleConfigurazione Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CanaleConfigurazione canaleConfigurazione) throws SerializerException {
+		return this.objToXml(CanaleConfigurazione.class, canaleConfigurazione, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param canaleConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CanaleConfigurazione canaleConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CanaleConfigurazione.class, canaleConfigurazione, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param canaleConfigurazione Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CanaleConfigurazione canaleConfigurazione) throws SerializerException {
+		return this.objToXml(CanaleConfigurazione.class, canaleConfigurazione, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>canaleConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param canaleConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CanaleConfigurazione canaleConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CanaleConfigurazione.class, canaleConfigurazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: cors-configurazione-headers
 	 =================================================================================
 	*/
@@ -7897,6 +8018,242 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(CorsConfigurazioneHeaders corsConfigurazioneHeaders,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: canali-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>canaliConfigurazione</var>
+	 * @param canaliConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CanaliConfigurazione canaliConfigurazione) throws SerializerException {
+		this.objToXml(fileName, CanaliConfigurazione.class, canaliConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>canaliConfigurazione</var>
+	 * @param canaliConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CanaliConfigurazione canaliConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CanaliConfigurazione.class, canaliConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>canaliConfigurazione</var>
+	 * @param canaliConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CanaliConfigurazione canaliConfigurazione) throws SerializerException {
+		this.objToXml(file, CanaliConfigurazione.class, canaliConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>canaliConfigurazione</var>
+	 * @param canaliConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CanaliConfigurazione canaliConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CanaliConfigurazione.class, canaliConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>canaliConfigurazione</var>
+	 * @param canaliConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CanaliConfigurazione canaliConfigurazione) throws SerializerException {
+		this.objToXml(out, CanaliConfigurazione.class, canaliConfigurazione, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>canaliConfigurazione</var>
+	 * @param canaliConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CanaliConfigurazione canaliConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CanaliConfigurazione.class, canaliConfigurazione, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param canaliConfigurazione Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CanaliConfigurazione canaliConfigurazione) throws SerializerException {
+		return this.objToXml(CanaliConfigurazione.class, canaliConfigurazione, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param canaliConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CanaliConfigurazione canaliConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CanaliConfigurazione.class, canaliConfigurazione, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param canaliConfigurazione Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CanaliConfigurazione canaliConfigurazione) throws SerializerException {
+		return this.objToXml(CanaliConfigurazione.class, canaliConfigurazione, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>canaliConfigurazione</var> of type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param canaliConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CanaliConfigurazione canaliConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CanaliConfigurazione.class, canaliConfigurazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: canale-configurazione-nodo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>canaleConfigurazioneNodo</var>
+	 * @param canaleConfigurazioneNodo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CanaleConfigurazioneNodo canaleConfigurazioneNodo) throws SerializerException {
+		this.objToXml(fileName, CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>canaleConfigurazioneNodo</var>
+	 * @param canaleConfigurazioneNodo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CanaleConfigurazioneNodo canaleConfigurazioneNodo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param file Xml file to serialize the object <var>canaleConfigurazioneNodo</var>
+	 * @param canaleConfigurazioneNodo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CanaleConfigurazioneNodo canaleConfigurazioneNodo) throws SerializerException {
+		this.objToXml(file, CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param file Xml file to serialize the object <var>canaleConfigurazioneNodo</var>
+	 * @param canaleConfigurazioneNodo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CanaleConfigurazioneNodo canaleConfigurazioneNodo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>canaleConfigurazioneNodo</var>
+	 * @param canaleConfigurazioneNodo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CanaleConfigurazioneNodo canaleConfigurazioneNodo) throws SerializerException {
+		this.objToXml(out, CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>canaleConfigurazioneNodo</var>
+	 * @param canaleConfigurazioneNodo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CanaleConfigurazioneNodo canaleConfigurazioneNodo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param canaleConfigurazioneNodo Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CanaleConfigurazioneNodo canaleConfigurazioneNodo) throws SerializerException {
+		return this.objToXml(CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param canaleConfigurazioneNodo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CanaleConfigurazioneNodo canaleConfigurazioneNodo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param canaleConfigurazioneNodo Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CanaleConfigurazioneNodo canaleConfigurazioneNodo) throws SerializerException {
+		return this.objToXml(CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>canaleConfigurazioneNodo</var> of type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param canaleConfigurazioneNodo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CanaleConfigurazioneNodo canaleConfigurazioneNodo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CanaleConfigurazioneNodo.class, canaleConfigurazioneNodo, prettyPrint).toString();
 	}
 	
 	

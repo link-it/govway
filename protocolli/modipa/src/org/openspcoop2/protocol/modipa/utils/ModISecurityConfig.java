@@ -24,11 +24,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openspcoop2.core.config.CanaliConfigurazione;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
@@ -37,6 +41,8 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
@@ -45,6 +51,8 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -321,7 +329,8 @@ public class ModISecurityConfig {
 		
 	}
 	
-	public ModISecurityConfig(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, boolean rest, boolean fruizione, boolean request) throws ProtocolException {
+	public ModISecurityConfig(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, IState state, IDSoggetto soggettoFruitore, 
+			AccordoServizioParteComune aspc, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, boolean rest, boolean fruizione, boolean request) throws ProtocolException {
 		
 		// METODO USATO IN VALIDAZIONE
 		
@@ -340,11 +349,41 @@ public class ModISecurityConfig {
 				this.checkAudience = true;
 				this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
 				if(this.audience==null) {
+					
+					List<String> tags = new ArrayList<String>();
+					if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
+						for (int i = 0; i < aspc.getGruppi().sizeGruppoList(); i++) {
+							tags.add(aspc.getGruppi().getGruppo(i).getNome());
+						}
+					}
+					
+					IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state);
+					CanaliConfigurazione canaliConfigurazione = configReader.getCanaliConfigurazione();
+					String canaleApi = null;
+					if(aspc!=null) {
+						canaleApi = aspc.getCanale();
+					}
+					String canalePorta = null;
+					if(msg!=null) {
+						Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+						if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
+							String nomePorta = (String) nomePortaInvocataObject;
+							try {
+								IDPortaApplicativa idPA = new IDPortaApplicativa();
+								idPA.setNome(nomePorta);
+								PortaApplicativa pa = configReader.getPortaApplicativa(idPA);
+								canalePorta = pa.getNome();
+							}catch(Throwable t) {}
+						}
+					}
+					String canale = CanaliUtils.getCanale(canaliConfigurazione, canaleApi, canalePorta);
+					
 					UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
 							RuoloContesto.PORTA_APPLICATIVA,
 							rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
 									msg.getTransportRequestContext().getInterfaceName(),
-									new IDSoggetto(aspsParam.getTipoSoggettoErogatore(), aspsParam.getNomeSoggettoErogatore()));		 
+									new IDSoggetto(aspsParam.getTipoSoggettoErogatore(), aspsParam.getNomeSoggettoErogatore()),
+									tags, canale);		 
 					String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 					String contesto = urlInvocazioneApi.getContext();
 					this.audience = Utilities.buildUrl(prefixGatewayUrl, contesto);

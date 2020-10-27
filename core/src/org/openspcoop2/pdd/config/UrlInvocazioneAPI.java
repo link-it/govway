@@ -87,7 +87,8 @@ public class UrlInvocazioneAPI implements Serializable {
 	
 	public static UrlInvocazioneAPI getConfigurazioneUrlInvocazione(ConfigurazioneUrlInvocazione configurazioneUrlInvocazione, 
 			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, 
-			String interfaceName, IDSoggetto soggettoOperativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			String interfaceName, IDSoggetto soggettoOperativo,
+			List<String> tags, String canale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		if(configurazioneUrlInvocazione==null) {
 			configurazioneUrlInvocazione = new ConfigurazioneUrlInvocazione();
@@ -129,7 +130,8 @@ public class UrlInvocazioneAPI implements Serializable {
 					//System.out.println("ESAMINO REGOLA ALLA POSIZIONE '"+posizione+"'");
 					String contesto = getContext(protocolFactory, ruolo, serviceBinding, interfaceNameNormalizzata);
 					if(isMatchRegolaUrlInvocazione(check, protocolFactory, ruolo, serviceBinding, contesto, soggettoOperativo)) { 
-						regola = processMatchRegolaUrlInvocazione(check, contesto); // risolve eventuale match di espressioni regolari.
+						regola = processMatchRegolaUrlInvocazione(check, contesto,
+								tags, canale); // risolve eventuale match di espressioni regolari.
 						break;
 					}	
 				}catch(Exception e) {
@@ -289,7 +291,8 @@ public class UrlInvocazioneAPI implements Serializable {
 		}
 	}
 	
-	private static ConfigurazioneUrlInvocazioneRegola processMatchRegolaUrlInvocazione(ConfigurazioneUrlInvocazioneRegola regolaParam, String contestoParam) throws DriverConfigurazioneException {
+	private static ConfigurazioneUrlInvocazioneRegola processMatchRegolaUrlInvocazione(ConfigurazioneUrlInvocazioneRegola regolaParam, String contestoParam,
+			List<String> tags, String canale) throws DriverConfigurazioneException {
 		
 		ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) regolaParam.clone();
 		
@@ -334,9 +337,9 @@ public class UrlInvocazioneAPI implements Serializable {
 						}
 					}
 				}
+								
 				regola.setContestoEsterno(newContesto);
 				regola.setBaseUrl(baseUrl);
-				return regola;
 			}
 //			catch(RegExpNotFoundException notFound) { NON dovrebbe succedere, gestito prima con l'if
 //				return  null; 
@@ -345,9 +348,73 @@ public class UrlInvocazioneAPI implements Serializable {
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
 		}
-		else {
-			return regola;
+		
+		// tags
+		if(tags!=null && !tags.isEmpty()) {
+			
+			String newContesto = regola.getContestoEsterno();
+			if(newContesto==null) {
+				newContesto = "";
+			}
+			String baseUrl = regola.getBaseUrl();
+			
+			for (int i = 0; i < tags.size(); i++) {
+				String found = tags.get(i);
+				if(found==null) {
+					found = "";
+				}
+				
+				if(i==0) {
+					String key = "${tag}";
+					while(newContesto.contains(key)) {
+						newContesto = newContesto.replace(key, found);
+					}
+					if(baseUrl!=null) {
+						while(baseUrl.contains(key)) {
+							baseUrl = baseUrl.replace(key, found);
+						}	
+					}
+				}
+				
+				String key = "${tag["+i+"]}";
+				while(newContesto.contains(key)) {
+					newContesto = newContesto.replace(key, found);
+				}
+				if(baseUrl!=null) {
+					while(baseUrl.contains(key)) {
+						baseUrl = baseUrl.replace(key, found);
+					}	
+				}
+			}
+			
+			regola.setContestoEsterno(newContesto);
+			regola.setBaseUrl(baseUrl);
 		}
+		
+		// canale
+		if(canale!=null) {
+			String newContesto = regola.getContestoEsterno();
+			if(newContesto==null) {
+				newContesto = "";
+			}
+			String baseUrl = regola.getBaseUrl();
+			
+			String key = "${canale}";
+			while(newContesto.contains(key)) {
+				newContesto = newContesto.replace(key, canale);
+			}
+			if(baseUrl!=null) {
+				while(baseUrl.contains(key)) {
+					baseUrl = baseUrl.replace(key, canale);
+				}	
+			}
+				
+			regola.setContestoEsterno(newContesto);
+			regola.setBaseUrl(baseUrl);
+		}
+		
+		return regola;
+		
 		
 	}
 	

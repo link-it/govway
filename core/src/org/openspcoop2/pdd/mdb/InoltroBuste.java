@@ -1912,6 +1912,7 @@ public class InoltroBuste extends GenericLib{
 			connettoreMsg.setPropertiesUrlBased(propertiesUrlBased);
 			connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
 			connettoreMsg.setForwardProxy(forwardProxy);
+			connettoreMsg.setIdAccordo(idAccordoServizio);
 			IConnettore connectorSender = null;
 
 			// mapping per forward token

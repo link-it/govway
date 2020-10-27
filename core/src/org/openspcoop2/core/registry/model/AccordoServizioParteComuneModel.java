@@ -81,6 +81,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.SCADENZA = new Field("scadenza",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.VERSIONE = new Field("versione",java.lang.Integer.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.CANALE = new Field("canale",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 	
 	}
 	
@@ -129,6 +130,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.SCADENZA = new ComplexField(father,"scadenza",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.CANALE = new ComplexField(father,"canale",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 	
 	}
 	
@@ -215,6 +217,8 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	public IField ORA_REGISTRAZIONE = null;
 	 
 	public IField VERSIONE = null;
+	 
+	public IField CANALE = null;
 	 
 
 	@Override

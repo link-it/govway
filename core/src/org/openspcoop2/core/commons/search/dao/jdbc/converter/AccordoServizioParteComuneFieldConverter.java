@@ -101,6 +101,13 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 				return "service_binding";
 			}
 		}
+		if(field.equals(AccordoServizioParteComune.model().CANALE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".canale";
+			}else{
+				return "canale";
+			}
+		}
 		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -358,6 +365,9 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 			return this.toTable(AccordoServizioParteComune.model().ID_REFERENTE, returnAlias);
 		}
 		if(field.equals(AccordoServizioParteComune.model().SERVICE_BINDING)){
+			return this.toTable(AccordoServizioParteComune.model(), returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().CANALE)){
 			return this.toTable(AccordoServizioParteComune.model(), returnAlias);
 		}
 		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME)){

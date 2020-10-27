@@ -85,7 +85,10 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
+import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
+import org.openspcoop2.core.config.CanaliConfigurazione;
+import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
@@ -4189,6 +4192,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: canale-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazione readCanaleConfigurazione(String fileName) throws DeserializerException {
+		return (CanaleConfigurazione) this.xmlToObj(fileName, CanaleConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazione readCanaleConfigurazione(File file) throws DeserializerException {
+		return (CanaleConfigurazione) this.xmlToObj(file, CanaleConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazione readCanaleConfigurazione(InputStream in) throws DeserializerException {
+		return (CanaleConfigurazione) this.xmlToObj(in, CanaleConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazione readCanaleConfigurazione(byte[] in) throws DeserializerException {
+		return (CanaleConfigurazione) this.xmlToObj(in, CanaleConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazione readCanaleConfigurazioneFromString(String in) throws DeserializerException {
+		return (CanaleConfigurazione) this.xmlToObj(in.getBytes(), CanaleConfigurazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: cors-configurazione-headers
 	 =================================================================================
 	*/
@@ -4246,6 +4312,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public CorsConfigurazioneHeaders readCorsConfigurazioneHeadersFromString(String in) throws DeserializerException {
 		return (CorsConfigurazioneHeaders) this.xmlToObj(in.getBytes(), CorsConfigurazioneHeaders.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: canali-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaliConfigurazione readCanaliConfigurazione(String fileName) throws DeserializerException {
+		return (CanaliConfigurazione) this.xmlToObj(fileName, CanaliConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaliConfigurazione readCanaliConfigurazione(File file) throws DeserializerException {
+		return (CanaliConfigurazione) this.xmlToObj(file, CanaliConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaliConfigurazione readCanaliConfigurazione(InputStream in) throws DeserializerException {
+		return (CanaliConfigurazione) this.xmlToObj(in, CanaliConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaliConfigurazione readCanaliConfigurazione(byte[] in) throws DeserializerException {
+		return (CanaliConfigurazione) this.xmlToObj(in, CanaliConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaliConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaliConfigurazione readCanaliConfigurazioneFromString(String in) throws DeserializerException {
+		return (CanaliConfigurazione) this.xmlToObj(in.getBytes(), CanaliConfigurazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: canale-configurazione-nodo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazioneNodo readCanaleConfigurazioneNodo(String fileName) throws DeserializerException {
+		return (CanaleConfigurazioneNodo) this.xmlToObj(fileName, CanaleConfigurazioneNodo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazioneNodo readCanaleConfigurazioneNodo(File file) throws DeserializerException {
+		return (CanaleConfigurazioneNodo) this.xmlToObj(file, CanaleConfigurazioneNodo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazioneNodo readCanaleConfigurazioneNodo(InputStream in) throws DeserializerException {
+		return (CanaleConfigurazioneNodo) this.xmlToObj(in, CanaleConfigurazioneNodo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazioneNodo readCanaleConfigurazioneNodo(byte[] in) throws DeserializerException {
+		return (CanaleConfigurazioneNodo) this.xmlToObj(in, CanaleConfigurazioneNodo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @return Object type {@link org.openspcoop2.core.config.CanaleConfigurazioneNodo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CanaleConfigurazioneNodo readCanaleConfigurazioneNodoFromString(String in) throws DeserializerException {
+		return (CanaleConfigurazioneNodo) this.xmlToObj(in.getBytes(), CanaleConfigurazioneNodo.class);
 	}	
 	
 	

@@ -40,6 +40,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -212,6 +214,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	
 	private String erogazioneServizioApplicativoServer;
 	private boolean erogazioneServizioApplicativoServerEnabled = false;
+	
+	private String canale, canaleStato;
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -417,6 +421,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			if(apsHelper.isMultipart()){
 				this.decodeRequestValidazioneDocumenti = true;
 			}
+			
+			this.canale = apsHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE);
+			this.canaleStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
@@ -424,6 +431,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
+			
+			// carico i canali
+			CanaliConfigurazione gestioneCanali = confCore.getCanaliConfigurazione(false);
+			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
+			boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
 
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
@@ -1208,6 +1220,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					labelList = AccordiServizioParteSpecificaCostanti.LABEL_APS;
 				}
 			}
+			
+			String canaleAPI = as != null ? as.getCanale() : null;  
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
@@ -1282,6 +1296,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpspwdkey = "";
 					this.httpspwdprivatekey = "";
 					this.versione="1";
+					this.canaleStato = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_DEFAULT;
+					this.canale = "";
 				}
 				
 				if(this.endpointtype==null) {
@@ -1514,7 +1530,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
+						this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled);
 
 				// Controllo se richiedere il connettore
 				
@@ -1624,7 +1641,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.tipoProtocollo, allegatoXacmlPolicy, 
 					this.descrizione, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
 					this.autenticazioneToken,this.token_policy,this.erogazioneServizioApplicativoServerEnabled,
-					this.erogazioneServizioApplicativoServer);
+					this.erogazioneServizioApplicativoServer, this.canaleStato, this.canale, gestioneCanaliEnabled);
 
 			if(isOk){
 				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
@@ -1721,7 +1738,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
+						this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled);
 
 				if(!connettoreStatic) {
 					boolean forceEnableConnettore = false;
@@ -1970,7 +1988,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_token,autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
+							this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled);
 
 					if(!connettoreStatic) {
 					
@@ -2128,7 +2147,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, 
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail, 
 					this.protocolProperties, this.consoleOperationType, 
-					apsCore, apsHelper, this.erogazioneServizioApplicativoServer);
+					apsCore, apsHelper, this.erogazioneServizioApplicativoServer, this.canaleStato, this.canale, gestioneCanaliEnabled);
 
 			// cancello i file temporanei
 			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);

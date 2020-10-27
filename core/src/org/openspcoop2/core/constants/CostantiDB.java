@@ -156,6 +156,9 @@ public final class CostantiDB {
     public static final String GESTIONE_ERRORE = "gestione_errore";
     public static final String GESTIONE_ERRORE_TRASPORTO = "gestione_errore_trasporto";
     public static final String GESTIONE_ERRORE_SOAP = "gestione_errore_soap";
+    public static final String CONFIGURAZIONE_CANALI = "canali_configurazione";
+    public static final String CONFIGURAZIONE_CANALI_NODI = "canali_nodi";
+
     
     public static final String CONFIG_URL_INVOCAZIONE = "config_url_invocazione";
     public static final String CONFIG_URL_REGOLE = "config_url_regole";

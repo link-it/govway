@@ -639,6 +639,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 		sqlQueryObjectGet_accordoServizioParteComune.addSelectField(this.getAccordoServizioParteComuneFieldConverter().toColumn(AccordoServizioParteComune.model().NOME,true));
 		sqlQueryObjectGet_accordoServizioParteComune.addSelectField(this.getAccordoServizioParteComuneFieldConverter().toColumn(AccordoServizioParteComune.model().VERSIONE,true));
 		sqlQueryObjectGet_accordoServizioParteComune.addSelectField(this.getAccordoServizioParteComuneFieldConverter().toColumn(AccordoServizioParteComune.model().SERVICE_BINDING,true));
+		sqlQueryObjectGet_accordoServizioParteComune.addSelectField(this.getAccordoServizioParteComuneFieldConverter().toColumn(AccordoServizioParteComune.model().CANALE,true));
 		sqlQueryObjectGet_accordoServizioParteComune.addWhereCondition("id=?");
 
 		// Get accordoServizioParteComune

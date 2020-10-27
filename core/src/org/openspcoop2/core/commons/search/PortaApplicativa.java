@@ -46,6 +46,7 @@ import java.util.List;
  * 			&lt;element name="mode_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="nome_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="nome_porta_delegante_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="canale" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="porta-applicativa-servizio-applicativo" type="{http://www.openspcoop2.org/core/commons/search}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="porta-applicativa-azione" type="{http://www.openspcoop2.org/core/commons/search}porta-applicativa-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
@@ -70,6 +71,7 @@ import java.util.List;
   	"modeAzione",
   	"nomeAzione",
   	"nomePortaDeleganteAzione",
+  	"canale",
   	"portaApplicativaServizioApplicativo",
   	"portaApplicativaAzione"
   }
@@ -165,6 +167,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setNomePortaDeleganteAzione(java.lang.String nomePortaDeleganteAzione) {
     this.nomePortaDeleganteAzione = nomePortaDeleganteAzione;
+  }
+
+  public java.lang.String getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(java.lang.String canale) {
+    this.canale = canale;
   }
 
   public void addPortaApplicativaServizioApplicativo(PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo) {
@@ -268,6 +278,10 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome_porta_delegante_azione",required=true,nillable=false)
   protected java.lang.String nomePortaDeleganteAzione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="canale",required=true,nillable=false)
+  protected java.lang.String canale;
 
   @XmlElement(name="porta-applicativa-servizio-applicativo",required=true,nillable=false)
   protected List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativo = new ArrayList<PortaApplicativaServizioApplicativo>();

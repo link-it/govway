@@ -107,7 +107,7 @@
 			</a4j:outputPanel>
 			
 			<a4j:outputPanel id="panelFunzionePorta" layout="block" rendered="#{sf_bean.integrationManagerEnabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale'}">
-				<link:prop label="Funzione Gateway">
+				<link:prop label="#{msg['transazioni.search.funzionePorta']}">
 					<rich:comboBox id="tipologiaTransazioneCombo" value="#{sf_bean.tipoRicercaSPCoop}" defaultLabel="Seleziona Funzione Gateway" converter="selectItemConverter"
 							width="416" rendered="#{sf_bean.integrationManagerEnabled}" enableManualInput="false">
 						<f:selectItem itemLabel="Proxy Trasparente" itemValue="spcoop" />
@@ -120,7 +120,7 @@
 
 			<a4j:outputPanel id="panelTipo" layout="block"
 				rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and (sf_bean.showRicercaPanel)}" >
-				<link:prop label="Tipo">
+				<link:prop label="#{msg['transazioni.search.tipoRicerca']}">
 					<rich:comboBox id="tipologiaCombo" value="#{sf_tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
 							width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
 						<f:selectItems value="#{sf_bean.tipologieRicerca}"/>
@@ -129,8 +129,19 @@
 				</link:prop>
 			</a4j:outputPanel>
 			
+			<a4j:outputPanel id="panelCanale" layout="block" rendered="#{sf_bean.visualizzaCanali and (sf_bean.showRicercaPanel)}">
+				<link:prop label="#{msg['transazioni.search.canale']}">
+					<rich:comboBox id="idCanaleCombo" value="#{sf_bean.canale}"
+						defaultLabel="Seleziona #{msg['transazioni.search.canale']}" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="true"
+						rendered="true">
+						<f:selectItems value="#{sf_bean.listCanali}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+			</a4j:outputPanel>
 			<a4j:outputPanel id="panelIdCluster" layout="block" rendered="#{sf_bean.visualizzaIdCluster and (sf_bean.showRicercaPanel)}">
-				<link:prop label="ID Cluster">
+				<link:prop label="#{msg['transazioni.search.idCluster']}">
 					<h:inputText id="idCluster" value="#{sf_bean.clusterId}" styleClass="inputLinkLong" rendered="#{sf_bean.visualizzaIdClusterAsSelectList == false}"/>
 					<rich:comboBox id="idClusterCombo" value="#{sf_bean.clusterId}"
 						defaultLabel="Seleziona Id" directInputSuggestions="true"

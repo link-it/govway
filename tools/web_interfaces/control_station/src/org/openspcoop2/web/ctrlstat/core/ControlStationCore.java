@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.Credenziali;
@@ -6074,6 +6075,39 @@ public class ControlStationCore {
 				}
 			}
 			
+			return config;
+
+		} catch (DriverConfigurazioneNotFound de) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	/**
+	 * Accesso alla configurazione dei canali
+	 * 
+	 * @return configurazione dei canali
+	 * @throws DriverConfigurazioneNotFound
+	 * @throws DriverConfigurazioneException
+	 */
+	public CanaliConfigurazione getCanaliConfigurazione(boolean readNodi) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getCanaliConfigurazione";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			CanaliConfigurazione config = driver.getDriverConfigurazioneDB().getCanaliConfigurazione(readNodi);
 			return config;
 
 		} catch (DriverConfigurazioneNotFound de) {

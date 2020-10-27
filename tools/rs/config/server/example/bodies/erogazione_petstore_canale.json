@@ -1,0 +1,9 @@
+{
+    "connettore": {
+        "endpoint": "https://ginovadifretta.it/petstore"
+    },
+    "api_nome": "PetStore",
+    "api_versione": 1,
+    "erogazione_nome": "PetStoreCanale",
+    "canale": "C2"
+}

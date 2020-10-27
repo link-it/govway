@@ -86,6 +86,7 @@ import java.util.List;
  * 		&lt;attribute name="scadenza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
  * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/&gt;
+ * 		&lt;attribute name="canale" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -674,6 +675,14 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.versione = versione;
   }
 
+  public java.lang.String getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(java.lang.String canale) {
+    this.canale = canale;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -1030,5 +1039,9 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
   protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="canale",required=false)
+  protected java.lang.String canale;
 
 }

@@ -64,6 +64,7 @@ CREATE TABLE accordi
 	privato INT DEFAULT 0,
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
+	canale VARCHAR(20),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints
@@ -77,6 +78,7 @@ CREATE TABLE accordi
 
 -- index
 CREATE UNIQUE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
+CREATE INDEX index_accordi_2 ON accordi (canale);
 
 
 

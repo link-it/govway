@@ -38,11 +38,13 @@ import org.openspcoop2.core.config.rs.server.model.ApiAllegatoItemGenerico;
 import org.openspcoop2.core.config.rs.server.model.ApiAllegatoItemSpecificaSemiformale;
 import org.openspcoop2.core.config.rs.server.model.ApiAllegatoSpecificaSemiformale;
 import org.openspcoop2.core.config.rs.server.model.ApiAzione;
+import org.openspcoop2.core.config.rs.server.model.ApiCanale;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaRest;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiItem;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
+import org.openspcoop2.core.config.rs.server.model.CanaleEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
@@ -227,6 +229,14 @@ public class ApiApiHelper {
 		idSoggReferente.setId(env.soggettiCore.getIdSoggetto(idSoggReferente.getNome(),idSoggReferente.getTipo()));
 		
 		as.setSoggettoReferente(idSoggReferente);
+		
+		// Canale
+		if(env.gestioneCanali && body.getCanale()!=null) {
+			if(!env.canali.contains(body.getCanale())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + body.getCanale() + "' non è presente nel registro");
+			}
+			as.setCanale(body.getCanale());
+		}
 		
 		// Automapping
 		ServerProperties properties = ServerProperties.getInstance();
@@ -595,6 +605,19 @@ public class ApiApiHelper {
 			}
 		}
 		
+		if(env.gestioneCanali) {
+			ApiCanale canale = new ApiCanale();
+			if(as.getCanale()!=null && !"".equals(as.getCanale())) {
+				canale.setNome(as.getCanale());
+				canale.setConfigurazione(CanaleEnum.API);
+			}
+			else {
+				canale.setNome(env.canaleDefault);
+				canale.setConfigurazione(CanaleEnum.DEFAULT);
+			}
+			ret.setCanale(canale);
+		}
+		
 		return ret;
 		
 	}
@@ -624,7 +647,7 @@ public class ApiApiHelper {
 		
 		ret.setVersione(as.getVersione());
 		ret.setReferente(as.getSoggettoReferente().getNome());
-		
+				
 		return ret;	
 	}
 	

@@ -91,6 +91,8 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_LIST = "API {0}: {1}";
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_CON_PROFILO = "API {0}: {1}, Profilo Interoperabilit&agrave;: {2}";
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_PROFILO = "Profilo Interoperabilit&agrave;: {0}";
+	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_LIST_CON_CANALE = "API {0}: {1}, Canale: {2}";
+	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_CON_PROFILO_CON_CANALE = "API {0}: {1}, Canale: {2}, Profilo Interoperabilit&agrave;: {3}";
 	
 	public final static String ASPS_EROGAZIONI_ICONA_CAMBIA_API_TOOLTIP_CON_PARAMETRO = "Cambia {0}";
 		

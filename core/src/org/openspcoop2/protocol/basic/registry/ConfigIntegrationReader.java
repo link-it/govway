@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.basic.registry;
 
 import java.util.List;
 
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -294,6 +295,18 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+
+	// CONFIGURAZIONE
 	
+	@Override
+	public CanaliConfigurazione getCanaliConfigurazione() throws RegistryNotFound,RegistryException{
+		try{
+			return this.driverConfigurazioneGET.getCanaliConfigurazione();
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
 	
 }

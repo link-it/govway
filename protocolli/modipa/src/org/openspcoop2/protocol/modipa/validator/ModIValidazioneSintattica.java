@@ -279,7 +279,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
 						
 						boolean fruizione = !request;
-						ModISecurityConfig securityConfig = new ModISecurityConfig(msg, this.protocolFactory, idSoggettoMittente, asps, sa, rest, fruizione, request);
+						ModISecurityConfig securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, idSoggettoMittente, aspc, asps, sa, rest, fruizione, request);
 						ModITruststoreConfig trustStoreCertificati = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, false);
 						ModITruststoreConfig trustStoreSsl = null;
 						if(securityConfig.isX5u()) {

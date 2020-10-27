@@ -40,7 +40,8 @@ public enum JsonPathReturnType {
 	STRING (XPathConstants.STRING),
 	NUMBER (XPathConstants.NUMBER),
 	BOOLEAN (XPathConstants.BOOLEAN),
-	NODE (XPathConstants.NODE);
+	NODE (XPathConstants.NODE),
+	JSON_PATH_OBJECT(new QName("net.minidev.json.JSONObject"));
 //	NODESET (XPathConstants.NODESET);
 
 	private final QName valore;

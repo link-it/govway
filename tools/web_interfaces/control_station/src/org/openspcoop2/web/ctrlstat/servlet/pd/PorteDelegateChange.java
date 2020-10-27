@@ -988,7 +988,7 @@ public final class PorteDelegateChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine);
+						messageEngine, pde.getCanale());
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -1152,7 +1152,7 @@ public final class PorteDelegateChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine);
+						messageEngine, pde.getCanale());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);

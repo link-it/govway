@@ -51,6 +51,9 @@
                                 <linkit:sql-comment><![CDATA[**** Proprieta Generiche ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="generic-properties" object-type="generic-properties"/>
                                 <linkit:sql-table object-name="generic-property" object-type="generic-property"/>
+                                <linkit:sql-comment><![CDATA[**** Canali ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="canali-configurazione" object-type="canali-configurazione"/>
+                                <linkit:sql-table object-name="canali-configurazione-nodo" object-type="canali-configurazione-nodo"/> 
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -1373,6 +1376,18 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="canali_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="canali_stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la gestione dei canali è abilitata (abilitato/disabilitato)</linkit:sql-ddl-column-comment>      
+                                <linkit:sql-column-comment><![CDATA[Gestione CORS]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -2001,6 +2016,113 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
         </xsd:complexType>
     </xsd:element>
     
+    
+    
+    
+    <xsd:element name="canali-configurazione">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="canali_configurazione"
+                        comment="Definisce i canali attivi e registrati nella configurazione">
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="nome"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome" varchar="20"/>
+                                <linkit:sql-ddl-column-comment>Nome del canale</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="descrizione" type="xsd:string" minOccurs="0" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica del canale</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="canale-default" type="xsd:int">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="canale_default"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se si tratta del canale di default (1=abilitato, 0=disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="canali-configurazione-nodo">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="canali_nodi"
+                        comment="Definisce quali canali sono attivi su un nodo">
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="nome"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome del nodo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="descrizione" type="xsd:string" minOccurs="0" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica del canale</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="canali" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="canali" varchar="4000"/>
+                                <linkit:sql-ddl-column-comment>Elenco di canali (separati da ',') attivi sul nodo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
   
 
 

@@ -35,6 +35,9 @@ public class Erogazione extends APIImpl {
   
   @Schema(description = "")
   private Integer erogazioneVersione = null;
+  
+  @Schema(description = "")
+  private String canale = null;
  /**
    * Get descrizione
    * @return descrizione
@@ -92,6 +95,25 @@ public class Erogazione extends APIImpl {
     return this;
   }
 
+ /**
+   * Get canale
+   * @return canale
+  **/
+  @JsonProperty("canale")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=20)  public String getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(String canale) {
+    this.canale = canale;
+  }
+
+  public Erogazione canale(String canale) {
+    this.canale = canale;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -101,6 +123,7 @@ public class Erogazione extends APIImpl {
     sb.append("    descrizione: ").append(Erogazione.toIndentedString(this.descrizione)).append("\n");
     sb.append("    erogazioneNome: ").append(Erogazione.toIndentedString(this.erogazioneNome)).append("\n");
     sb.append("    erogazioneVersione: ").append(Erogazione.toIndentedString(this.erogazioneVersione)).append("\n");
+    sb.append("    canale: ").append(Erogazione.toIndentedString(this.canale)).append("\n");
     sb.append("}");
     return sb.toString();
   }

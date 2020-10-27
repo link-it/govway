@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -27,6 +29,9 @@ public class Api extends ApiBase {
   
   @Schema(description = "")
   private byte[] interfaccia = null;
+  
+  @Schema(description = "")
+  private String canale = null;
  /**
    * Get interfaccia
    * @return interfaccia
@@ -46,6 +51,25 @@ public class Api extends ApiBase {
     return this;
   }
 
+ /**
+   * Get canale
+   * @return canale
+  **/
+  @JsonProperty("canale")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=20)  public String getCanale() {
+    return this.canale;
+  }
+
+  public void setCanale(String canale) {
+    this.canale = canale;
+  }
+
+  public Api canale(String canale) {
+    this.canale = canale;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -53,6 +77,7 @@ public class Api extends ApiBase {
     sb.append("class Api {\n");
     sb.append("    ").append(Api.toIndentedString(super.toString())).append("\n");
     sb.append("    interfaccia: ").append(Api.toIndentedString(this.interfaccia)).append("\n");
+    sb.append("    canale: ").append(Api.toIndentedString(this.canale)).append("\n");
     sb.append("}");
     return sb.toString();
   }

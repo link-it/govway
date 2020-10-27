@@ -194,6 +194,7 @@
 		<xsd:attribute default="1" name="versione" type="xsd:unsignedInt" use="optional">
 			
 		</xsd:attribute>
+		<xsd:attribute name="canale" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="accordo-servizio-parte-comune-servizio-composto">
 		<xsd:sequence>

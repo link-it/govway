@@ -341,7 +341,8 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 									 ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
 								     this.requestMsg!=null ? this.requestMsg.getServiceBinding() : null,
 								     interfaceName,
-								     this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : null);		 
+								     this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : null,
+								     this.getIdAccordo());		 
 							 prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 							 contesto = urlInvocazioneApi.getContext();
 						 }

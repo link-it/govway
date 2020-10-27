@@ -25,6 +25,7 @@
  			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="versione" type="xsd:unsignedInt" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="canale" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="orCondition" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="limit" type="xsd:integer" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="offset" type="xsd:integer" minOccurs="0" maxOccurs="1" />

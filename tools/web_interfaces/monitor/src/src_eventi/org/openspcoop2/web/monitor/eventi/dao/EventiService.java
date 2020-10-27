@@ -25,6 +25,13 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.eventi.Evento;
+import org.openspcoop2.core.eventi.constants.TipoSeverita;
+import org.openspcoop2.core.eventi.dao.IDBEventoServiceSearch;
+import org.openspcoop2.core.eventi.dao.IEventoServiceSearch;
+import org.openspcoop2.core.eventi.dao.IServiceManager;
+import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -38,21 +45,14 @@ import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-import org.slf4j.Logger;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.eventi.Evento;
-import org.openspcoop2.core.eventi.constants.TipoSeverita;
-import org.openspcoop2.core.eventi.dao.IDBEventoServiceSearch;
-import org.openspcoop2.core.eventi.dao.IEventoServiceSearch;
-import org.openspcoop2.core.eventi.dao.IServiceManager;
-import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
+import org.slf4j.Logger;
 
 
 /**
@@ -406,6 +406,16 @@ public class EventiService implements IEventiService{
 				}
 			}
 			
+		}
+		else if (StringUtils.isNotEmpty(this.searchForm.getCanale())) {
+			
+			List<String> listId = Utility.getNodi(this.searchForm.getCanale());
+			if(listId!=null && !listId.isEmpty()) {
+				expr.and().in(Evento.model().CLUSTER_ID, listId);
+			}
+			else {
+				expr.and().equals(Evento.model().CLUSTER_ID, "--"); // non esistente volutamente
+			}
 		}
 
 

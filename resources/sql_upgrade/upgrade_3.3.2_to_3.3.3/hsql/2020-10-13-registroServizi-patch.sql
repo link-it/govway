@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/hsql/registroServizi/2020-10-13-patch.sql

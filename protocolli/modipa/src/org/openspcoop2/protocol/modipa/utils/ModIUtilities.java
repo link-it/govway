@@ -29,9 +29,12 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.openspcoop2.core.config.CanaliConfigurazione;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -45,6 +48,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -295,17 +299,42 @@ public class ModIUtilities {
 					"' relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
 		}
 
-		return getUrlInvocazionePA(protocolFactory, rest, nomePA, proprietarioPA);
+		return getUrlInvocazionePA(protocolFactory, state, rest, aspc, nomePA, proprietarioPA);
 	}
 	
 	
-	public static String getUrlInvocazionePA(IProtocolFactory<?> protocolFactory, boolean rest, String nomePA, IDSoggetto proprietarioPA) throws Exception {
+	public static String getUrlInvocazionePA(IProtocolFactory<?> protocolFactory, IState state, boolean rest, AccordoServizioParteComune aspc, String nomePA, IDSoggetto proprietarioPA) throws Exception {
+		
+		List<String> tags = new ArrayList<String>();
+		if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
+			for (int i = 0; i < aspc.getGruppi().sizeGruppoList(); i++) {
+				tags.add(aspc.getGruppi().getGruppo(i).getNome());
+			}
+		}
+		
+		IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state);
+		CanaliConfigurazione canaliConfigurazione = configReader.getCanaliConfigurazione();
+		String canaleApi = null;
+		if(aspc!=null) {
+			canaleApi = aspc.getCanale();
+		}
+		String canalePorta = null;
+		if(nomePA!=null) {
+			try {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(nomePA);
+				PortaApplicativa pa = configReader.getPortaApplicativa(idPA);
+				canalePorta = pa.getNome();
+			}catch(Throwable t) {}
+		}
+		String canale = CanaliUtils.getCanale(canaliConfigurazione, canaleApi, canalePorta);
 		
 		UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
 				RuoloContesto.PORTA_APPLICATIVA,
 				rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
 				nomePA,
-				proprietarioPA);		 
+				proprietarioPA,
+				tags, canale);		 
 		String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 		String contesto = urlInvocazioneApi.getContext();
 		return Utilities.buildUrl(prefixGatewayUrl, contesto);

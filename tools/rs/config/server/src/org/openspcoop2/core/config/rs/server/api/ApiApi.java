@@ -22,6 +22,7 @@ package org.openspcoop2.core.config.rs.server.api;
 import org.openspcoop2.core.config.rs.server.model.Api;
 import org.openspcoop2.core.config.rs.server.model.ApiAllegato;
 import org.openspcoop2.core.config.rs.server.model.ApiAzione;
+import org.openspcoop2.core.config.rs.server.model.ApiCanale;
 import org.openspcoop2.core.config.rs.server.model.ApiDescrizione;
 import org.openspcoop2.core.config.rs.server.model.ApiInformazioniGenerali;
 import org.openspcoop2.core.config.rs.server.model.ApiInformazioniGeneraliView;
@@ -32,6 +33,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
 import org.openspcoop2.core.config.rs.server.model.ApiTags;
 import org.openspcoop2.core.config.rs.server.model.ApiViewItem;
+import org.openspcoop2.core.config.rs.server.model.ConfigurazioneApiCanale;
 import java.io.File;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaApi;
@@ -487,6 +489,27 @@ public interface ApiApi  {
     public ApiAzione getApiAzione(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @PathParam("nome_azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
+     * Restituisce il canale associato all'API
+     *
+     * Questa operazione consente di ottenere il canale associato all'API identificata dal nome e dalla versione
+     *
+     */
+    @GET
+    @Path("/api/{nome}/{versione}/canale")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Restituisce il canale associato all'API", tags={ "api" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Canale restituito con successo", content = @Content(schema = @Schema(implementation = ApiCanale.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ApiCanale getApiCanale(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
+
+    /**
      * Restituisce la descrizione di una API
      *
      * Questa operazione consente di ottenere la descrizione di una API identificata dal nome e dalla versione
@@ -676,6 +699,28 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public void updateApiAzione(@Valid ApiAzione body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @PathParam("nome_azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
+
+    /**
+     * Consente di modificare il canale associato all'API
+     *
+     * Questa operazione consente di aggiornare il canale associato all'API identificata dal nome e dalla versione
+     *
+     */
+    @PUT
+    @Path("/api/{nome}/{versione}/canale")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Consente di modificare il canale associato all'API", tags={ "api" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Il canale è stato aggiornato correttamente"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void updateApiCanale(@Valid ConfigurazioneApiCanale body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
      * Consente di modificare la descrizione di una API

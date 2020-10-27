@@ -10855,7 +10855,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						regola.setRegexpr(false);
 					}
 					regola.setRegola(rs1.getString("regola"));
-					regola.setContestoEsterno(rs1.getString("contesto_esterno"));
+					// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
+					String s = rs1.getString("contesto_esterno");
+					if(CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO.equals(s)) {
+						s = "";
+					}
+					regola.setContestoEsterno(s);
 					regola.setBaseUrl(rs1.getString("base_url"));
 					regola.setProtocollo(rs1.getString("protocollo"));
 					regola.setRuolo(DriverConfigurazioneDB_LIB.getEnumRuoloContesto(rs1.getString("ruolo")));
@@ -11198,6 +11203,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				}
 				
+				// Canali
+				String canali_stato = rs.getString("canali_stato");
+				config.setGestioneCanali(new CanaliConfigurazione());
+				config.getGestioneCanali().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(canali_stato));
+				if(StatoFunzionalita.ABILITATO.equals(config.getGestioneCanali().getStato())) {
+					DriverConfigurazioneDB_LIB.readCanaliConfigurazione(con, config.getGestioneCanali(), true);
+				}
 				
 				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
@@ -11343,7 +11355,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					configurazione.setAccessControlAllAllowOrigins(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllAllowOrigins));
 				}
 				if(StatoFunzionalita.DISABILITATO.equals(configurazione.getAccessControlAllAllowOrigins())) {
-					List<String> l = convertToList(rs.getString("cors_allow_origins"));
+					List<String> l = DBUtils.convertToList(rs.getString("cors_allow_origins"));
 					if(!l.isEmpty()) {
 						configurazione.setAccessControlAllowOrigins(new CorsConfigurazioneOrigin());
 					}
@@ -11363,7 +11375,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					configurazione.setAccessControlMaxAge(corsAllowMaxAgeSeconds);
 				}
 				
-				List<String> l = convertToList(rs.getString("cors_allow_headers"));
+				List<String> l = DBUtils.convertToList(rs.getString("cors_allow_headers"));
 				if(!l.isEmpty()) {
 					configurazione.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
 				}
@@ -11371,7 +11383,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					configurazione.getAccessControlAllowHeaders().addHeader(v);
 				}
 				
-				l = convertToList(rs.getString("cors_allow_methods"));
+				l = DBUtils.convertToList(rs.getString("cors_allow_methods"));
 				if(!l.isEmpty()) {
 					configurazione.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
 				}
@@ -11379,7 +11391,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					configurazione.getAccessControlAllowMethods().addMethod(v);
 				}
 				
-				l = convertToList(rs.getString("cors_allow_expose_headers"));
+				l = DBUtils.convertToList(rs.getString("cors_allow_expose_headers"));
 				if(!l.isEmpty()) {
 					configurazione.setAccessControlExposeHeaders(new CorsConfigurazioneHeaders());
 				}
@@ -11424,7 +11436,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			
 			if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(configurazione.getHashGenerator().getQueryParameters())) {
-				List<String> l = convertToList(rs.getString("response_cache_hash_query_list"));
+				List<String> l = DBUtils.convertToList(rs.getString("response_cache_hash_query_list"));
 				for (String v : l) {
 					configurazione.getHashGenerator().addQueryParameter(v);
 				}
@@ -11436,7 +11448,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			
 			if(StatoFunzionalita.ABILITATO.equals(configurazione.getHashGenerator().getHeaders())) {
-				List<String> l = convertToList(rs.getString("response_cache_hash_hdr_list"));
+				List<String> l = DBUtils.convertToList(rs.getString("response_cache_hash_hdr_list"));
 				for (String v : l) {
 					configurazione.getHashGenerator().addHeader(v);
 				}
@@ -11543,22 +11555,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	
-			
-	private List<String> convertToList(String v){
-		List<String> l = new ArrayList<>();
-		if(v!=null && !"".equals(v)) {
-			if(v.contains(",")) {
-				String [] tmp = v.split(",");
-				for (int i = 0; i < tmp.length; i++) {
-					l.add(tmp[i].trim());
-				}
-			}else {
-				l.add(v.trim());
-			}
-		}
-		return l;
-	}
-
+	
 	public Object getConfigurazioneExtended(Configurazione config, String idExtendedConfiguration) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		
@@ -17452,7 +17449,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					regola.setRegexpr(false);
 				}
 				regola.setRegola(risultato.getString("regola"));
-				regola.setContestoEsterno(risultato.getString("contesto_esterno"));
+				// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
+				String s = risultato.getString("contesto_esterno");
+				if(CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO.equals(s)) {
+					s = "";
+				}
+				regola.setContestoEsterno(s);
 				regola.setBaseUrl(risultato.getString("base_url"));
 				regola.setProtocollo(risultato.getString("protocollo"));
 				regola.setRuolo(DriverConfigurazioneDB_LIB.getEnumRuoloContesto(risultato.getString("ruolo")));
@@ -19715,6 +19717,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addSelectField("options");
 			sqlQueryObject.addSelectField("id_sa_default");
+			sqlQueryObject.addSelectField("canale");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+this.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -20087,6 +20090,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				// Servizio Applicativo di default
 				long id_sa_default = rs.getLong("id_sa_default");
 				
+				// Canali
+				String canale = rs.getString("canale");
+				pa.setCanale(canale);
+				
 				rs.close();
 				stm.close();
 
@@ -20344,7 +20351,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 								servizioApplicativo.getDatiConnettore().setPriorita(prioritaConnettore);
 								servizioApplicativo.getDatiConnettore().setPrioritaMax(maxPrioritaConnettore == CostantiDB.TRUE);
 								
-								List<String> l = convertToList(filtriConnettore);
+								List<String> l = DBUtils.convertToList(filtriConnettore);
 								if(!l.isEmpty()) {
 									servizioApplicativo.getDatiConnettore().setFiltroList(l);
 								}
@@ -20811,6 +20818,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addSelectField("options");
+			sqlQueryObject.addSelectField("canale");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -21190,6 +21198,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					pd.setResponseCaching(new ResponseCachingConfigurazione());
 					readResponseCaching(idPortaDelegata, false, true, pd.getResponseCaching(), rs, con);
 				}
+				
+				// Canali
+				String canale = rs.getString("canale");
+				pd.setCanale(canale);
 				
 				rs.close();
 				stm.close();
@@ -28364,5 +28376,499 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				// ignore exception
 			}
 		}
+	}
+	public List<CanaleConfigurazione> canaleConfigurazioneList(ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "canaleConfigurazioneList";
+		int idLista = Liste.CONFIGURAZIONE_CANALI;
+		int offset;
+		int limit;
+		String queryString;
+		String search;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<CanaleConfigurazione> lista = new ArrayList<CanaleConfigurazione>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI);
+			sqlQueryObject.addSelectCountField("id", "cont");
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");            
+			sqlQueryObject.addSelectField("descrizione");     
+			sqlQueryObject.addSelectField("canale_default");         
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			}
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+
+			
+			while (risultato.next()) { 
+				CanaleConfigurazione canale = new CanaleConfigurazione();
+				canale.setId(risultato.getLong("id"));
+				canale.setNome(risultato.getString("nome"));
+				canale.setDescrizione(risultato.getString("descrizione"));
+				int v = risultato.getInt("canale_default");
+				if(v == CostantiDB.TRUE) {
+					canale.setCanaleDefault(true);
+				}
+				else {
+					canale.setCanaleDefault(false);
+				}
+				
+				lista.add(canale);
+			
+			}
+			risultato.close();
+			stmt.close();
+			
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsCanale(String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsCanale";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			int count = 0;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition("nome = ?");
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setString(parameterIndex ++, nome);
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				count = risultato.getInt(1);
+			risultato.close();
+			stmt.close();
+
+			return count > 0;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<CanaleConfigurazioneNodo> canaleNodoConfigurazioneList(ISearch ricerca) throws DriverConfigurazioneException { 
+		String nomeMetodo = "canaleNodoConfigurazioneList";
+		int idLista = Liste.CONFIGURAZIONE_CANALI_NODI;
+		int offset;
+		int limit;
+		String queryString;
+		String search;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<CanaleConfigurazioneNodo> lista = new ArrayList<CanaleConfigurazioneNodo>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
+			sqlQueryObject.addSelectCountField("id", "cont");
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");            
+			sqlQueryObject.addSelectField("descrizione");     
+			sqlQueryObject.addSelectField("canali");         
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			}
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+
+			
+			while (risultato.next()) { 
+				CanaleConfigurazioneNodo canaleNodo = new CanaleConfigurazioneNodo();
+				canaleNodo.setId(risultato.getLong("id"));
+				canaleNodo.setNome(risultato.getString("nome"));
+				canaleNodo.setDescrizione(risultato.getString("descrizione"));
+				List<String> l = DBUtils.convertToList(risultato.getString("canali"));
+				canaleNodo.setCanaleList(l);
+				
+				lista.add(canaleNodo);
+			
+			}
+			risultato.close();
+			stmt.close();
+			
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public boolean existsCanaleNodo(String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsCanaleNodo";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			int count = 0;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition("nome = ?");
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setString(parameterIndex ++, nome);
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				count = risultato.getInt(1);
+			risultato.close();
+			stmt.close();
+
+			return count > 0;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	/**
+	 * Restituisce la configurazione dei canali
+	 * 
+	 * @return Configurazione
+	 * 
+	 */
+	@Override
+	public CanaliConfigurazione getCanaliConfigurazione() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.getCanaliConfigurazione(true);
+	}
+	public CanaliConfigurazione getCanaliConfigurazione(boolean readNodi) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	
+		// ritorna la configurazione generale della PdD
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		PreparedStatement stm1 = null;
+		ResultSet rs1 = null;
+		PreparedStatement stm2 = null;
+		ResultSet rs2 = null;
+
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getCanaliConfigurazione");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getCanaliConfigurazione] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		CanaliConfigurazione config = new CanaliConfigurazione();
+		config.setStato(StatoFunzionalita.DISABILITATO);
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
+			sqlQueryObject.addSelectField(CostantiDB.CONFIGURAZIONE + ".canali_stato");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+
+				// Canali
+				String canali_stato = rs.getString("canali_stato");
+				config.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(canali_stato));
+				if(config.getStato()==null) {
+					config.setStato(StatoFunzionalita.DISABILITATO);
+				}
+				if(StatoFunzionalita.ABILITATO.equals(config.getStato())) {
+					DriverConfigurazioneDB_LIB.readCanaliConfigurazione(con, config, false);
+				}
+			} else {
+				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::getCanaliConfigurazione] Configurazione non presente.");
+			}
+
+		} catch (DriverConfigurazioneNotFound e) {
+			throw e;
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getCanaliConfigurazione] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+				if(rs1!=null) rs1.close();
+				if(stm1!=null) stm1.close();
+				if(rs2!=null) rs2.close();
+				if(stm2!=null) stm2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		return config;
 	}
 }

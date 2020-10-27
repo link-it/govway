@@ -105,6 +105,9 @@ public class ConfigurazioneCostanti {
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA = "configurazioneProxyPassRegola";
 	
+	public final static String OBJECT_NAME_CONFIGURAZIONE_CANALI = "configurazioneCanali";
+	public final static String OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI = "configurazioneCanaliNodi";
+	
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_CONFIGURAZIONE_GENERALE = OBJECT_NAME_CONFIGURAZIONE_GENERALE+".do";
@@ -370,6 +373,30 @@ public class ConfigurazioneCostanti {
 		SERVLET_CONFIGURAZIONE_PROXY_PASS_REGOLA.add(SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST);
 	}
 	
+	public final static String SERVLET_NAME_CONFIGURAZIONE_CANALI_ADD = OBJECT_NAME_CONFIGURAZIONE_CANALI+"Add.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_CANALI_CHANGE = OBJECT_NAME_CONFIGURAZIONE_CANALI+"Change.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_CANALI_DELETE = OBJECT_NAME_CONFIGURAZIONE_CANALI+"Del.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_CANALI_LIST = OBJECT_NAME_CONFIGURAZIONE_CANALI+"List.do";
+	public final static Vector<String> SERVLET_CONFIGURAZIONE_CANALI = new Vector<String>();
+	static{
+		SERVLET_CONFIGURAZIONE_CANALI.add(SERVLET_NAME_CONFIGURAZIONE_CANALI_ADD);
+		SERVLET_CONFIGURAZIONE_CANALI.add(SERVLET_NAME_CONFIGURAZIONE_CANALI_CHANGE);
+		SERVLET_CONFIGURAZIONE_CANALI.add(SERVLET_NAME_CONFIGURAZIONE_CANALI_DELETE);
+		SERVLET_CONFIGURAZIONE_CANALI.add(SERVLET_NAME_CONFIGURAZIONE_CANALI_LIST);
+	}
+	
+	public final static String SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_ADD = OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI+"Add.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_CHANGE = OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI+"Change.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_DELETE = OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI+"Del.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_LIST = OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI+"List.do";
+	public final static Vector<String> SERVLET_CONFIGURAZIONE_CANALI_NODI = new Vector<String>();
+	static{
+		SERVLET_CONFIGURAZIONE_CANALI_NODI.add(SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_ADD);
+		SERVLET_CONFIGURAZIONE_CANALI_NODI.add(SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_CHANGE);
+		SERVLET_CONFIGURAZIONE_CANALI_NODI.add(SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_DELETE);
+		SERVLET_CONFIGURAZIONE_CANALI_NODI.add(SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_LIST);
+	}
+	
 	/* LABEL GENERALI */
 	
 	public final static String LABEL_CONFIGURAZIONE = "Configurazione";
@@ -447,6 +474,18 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO;
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING;
 	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI = "Canali";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI_NODI = "Nodi";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE = "Descrizione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT = "Default";
+	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_OLD_NOME = "Nome attuale";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE = "Descrizione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI = "Canali";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_ID_NODO = "nodiID";
 	
 	public final static String LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE = "Inoltro Buste non Riscontrate";
 	public final static String LABEL_CONFIGURAZIONE_VALIDAZIONE_BUSTE = "Validazione Buste";
@@ -464,6 +503,12 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL;
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
+	public final static String LABEL_CONFIGURAZIONE_CANALI = "Canali";
+	public final static String LABEL_CONFIGURAZIONE_CANALE = "Canale";
+	public final static String LABEL_CONFIGURAZIONE_CANALE_DEFAULT = "Canale di Default";
+	public final static String LABEL_CONFIGURAZIONE_CANALI_NODI = "Nodi";
+	public final static String LABEL_CONFIGURAZIONE_CANALI_NODO = "Nodo";
+	public final static String LABEL_CONFIGURAZIONE_CANALI_NODI_TUTTI_REGISTRATI = "Tutti i nodi sono stati registrati";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHES = "Cache";
 	
@@ -1023,6 +1068,18 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO;
 	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO;
 	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING;
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_STATO = "canaliStato";
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_NOME = "canaliNome";
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE = "canaliDescrizione";
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT = "canaliDefault";
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_ID_CANALE = "canaliID";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME = "nodiNome";
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE = "nodiDescrizione";
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI = "nodiCanali";
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_NODI_ID_NODO = "nodiID";
+	public final static String PARAMETRO_CONFIGURAZIONE_CANALI_NODI_OLD_NOME = "nodiOldNome";
 	
 	/* LABEL PARAMETRI */
 	
@@ -1728,11 +1785,22 @@ public class ConfigurazioneCostanti {
 	
 	/* MESSAGGI */
 	
+	public final static String LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "La policy non risulta utilizzata in alcuna configurazione";
+	public final static String LABEL_CANALE_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il Canale non risulta utilizzato in alcuna configurazione";
+	public static final String MESSAGGIO_FUNZIONALITA_CANALI_NON_DISATTIVABILE = "Impossibile disabilitare la configurazione dei Canali perch&egrave; : {0}";
+	
 	public final static String MESSAGGIO_CONFERMA_ELIMINAZIONE_POLICY_GESTIONE_TOKEN_OK = "Eliminazione Policy selezionate completata";
 	
 	public final static String MESSAGGIO_POLICY_BUILT_IN_CRITERI_NON_ESISTENTI = "Non esistono policy '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN+"' che soddisfano i criteri indicati";
 	public final static String MESSAGGIO_POLICY_BUILT_IN_NON_ESISTENTI = "Non esistono policy '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN+"'";
 	public final static String MESSAGGIO_POLICY_UTENTE_NON_ESISTENTI = "Non esistono policy definite dall'utente nel registro";
+	
+	public final static String MESSAGGIO_CANALE_DEFAULT_SELEZIONATO_NON_ESISTE = "Il Canale di default selezionato non &egrave' registrato nel sistema.";
+	public static final String MESSAGGIO_CANALE_GIA_PRESENTE = "&Egrave; gi&agrave; presente un Canale con questo nome.";
+	public static final String MESSAGGIO_CANALE_NUOVO_NOME_GIA_PRESENTE = "Il nuovo nome scelto &egrave; gi&agrave; utilizzato da un altro Canale.";
+	public static final String MESSAGGIO_CANALE_NODO_GIA_PRESENTE = "&Egrave; gi&agrave; presente un Nodo con questo nome.";
+	public static final String MESSAGGIO_CANALE_NODO_NUOVO_NOME_GIA_PRESENTE = "Il nuovo nome scelto &egrave; gi&agrave; utilizzato da un altro Nodo.";
+	public static final String MESSAGGIO_CANALE_NODO_CAMPO_CANALE_OBBLIGATORIO = "Selezionare almeno un valore nel campo {0}";
 }
 
 	

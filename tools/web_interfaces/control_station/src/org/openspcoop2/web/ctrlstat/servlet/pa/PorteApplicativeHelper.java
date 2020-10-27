@@ -1039,7 +1039,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
-			String messageEngine) throws Exception {
+			String messageEngine,String canalePorta) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1131,7 +1131,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			if(asps!=null) {
 				soggettoOperativo = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 			}
-			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, nomePorta, soggettoOperativo);
+			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, nomePorta, soggettoOperativo,
+					aspc, canalePorta);
 			
 			de = new DataElement();
 			if(ServiceBinding.SOAP.equals(serviceBinding)) {

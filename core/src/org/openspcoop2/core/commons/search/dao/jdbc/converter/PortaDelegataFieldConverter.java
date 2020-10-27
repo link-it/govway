@@ -150,6 +150,13 @@ public class PortaDelegataFieldConverter extends AbstractSQLFieldConverter {
 				return "nome_porta_delegante_azione";
 			}
 		}
+		if(field.equals(PortaDelegata.model().CANALE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".canale";
+			}else{
+				return "canale";
+			}
+		}
 		if(field.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -225,6 +232,9 @@ public class PortaDelegataFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(PortaDelegata.model(), returnAlias);
 		}
 		if(field.equals(PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE)){
+			return this.toTable(PortaDelegata.model(), returnAlias);
+		}
+		if(field.equals(PortaDelegata.model().CANALE)){
 			return this.toTable(PortaDelegata.model(), returnAlias);
 		}
 		if(field.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.NOME)){

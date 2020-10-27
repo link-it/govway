@@ -64,6 +64,7 @@ import java.util.List;
  * 			&lt;element name="generic-properties" type="{http://www.openspcoop2.org/core/config}generic-properties" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-generale" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="gestione-canali" type="{http://www.openspcoop2.org/core/config}canali-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -103,7 +104,8 @@ import java.util.List;
   	"systemProperties",
   	"genericProperties",
   	"gestioneCors",
-  	"responseCaching"
+  	"responseCaching",
+  	"gestioneCanali"
   }
 )
 
@@ -383,6 +385,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
     this.responseCaching = responseCaching;
   }
 
+  public CanaliConfigurazione getGestioneCanali() {
+    return this.gestioneCanali;
+  }
+
+  public void setGestioneCanali(CanaliConfigurazione gestioneCanali) {
+    this.gestioneCanali = gestioneCanali;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -539,5 +549,8 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="response-caching",required=false,nillable=false)
   protected ResponseCachingConfigurazioneGenerale responseCaching;
+
+  @XmlElement(name="gestione-canali",required=false,nillable=false)
+  protected CanaliConfigurazione gestioneCanali;
 
 }

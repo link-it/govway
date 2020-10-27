@@ -19,8 +19,13 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -72,6 +77,9 @@ public class Environment {
 
 	public final boolean multitenant;
 
+	public final boolean gestioneCanali;
+	public String canaleDefault;
+	public List<String> canali = new ArrayList<String>();
 	
 	public Environment(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext ctx) throws Exception {
 		
@@ -98,6 +106,7 @@ public class Environment {
 		this.idSoggetto.setId(-1L);
 		
 		ConfigurazioneCore confCore = new ConfigurazioneCore(this.stationCore);
+		
 		this.multitenant = confCore.getConfigurazioneGenerale().getMultitenant().getStato() == StatoFunzionalita.ABILITATO;
 		
 		try {
@@ -110,6 +119,17 @@ public class Environment {
 		
 		this.delete_404 = ServerProperties.getInstance().isDelete404();
 		this.findall_404 = ServerProperties.getInstance().isFindall404();
+		
+		CanaliConfigurazione canali = confCore.getCanaliConfigurazione(false);
+		this.gestioneCanali = canali!=null && StatoFunzionalita.ABILITATO.equals(canali.getStato());
+		if(this.gestioneCanali && canali.getCanaleList()!=null && !canali.getCanaleList().isEmpty()) {
+			for (CanaleConfigurazione canale : canali.getCanaleList()) {
+				if(canale.isCanaleDefault()) {
+					this.canaleDefault = canale.getNome();
+				}
+				this.canali.add(canale.getNome());
+			}
+		}
 	}
 
 }

@@ -21,16 +21,20 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
+import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
@@ -55,14 +59,18 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -441,7 +449,8 @@ public class ConfigurazioneCore extends ControlStationCore {
 	
 	
 	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(String protocollo,
-			RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo) throws Exception {
+			RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo,
+			AccordoServizioParteComuneSintetico aspc, String canalePorta) throws Exception {
 		
 		IProtocolFactory<?>protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		
@@ -452,7 +461,21 @@ public class ConfigurazioneCore extends ControlStationCore {
 			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
-		return UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo);
+		List<String> tags = new ArrayList<String>();
+		if(aspc!=null && aspc.getGruppo()!=null && aspc.getGruppo().size()>0) {
+			for (int i = 0; i < aspc.getGruppo().size(); i++) {
+				tags.add(aspc.getGruppo().get(i).getNome());
+			}
+		}
+		
+		String canaleApi = null;
+		if(aspc!=null) {
+			canaleApi = aspc.getCanale();
+		}
+		String canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, canalePorta);
+		
+		return UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo,
+				tags, canale);
 
 	}
 	
@@ -1228,5 +1251,173 @@ public class ConfigurazioneCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
+	}
+	public List<CanaleConfigurazione> canaleConfigurazioneList(ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "canaleConfigurazioneList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().canaleConfigurazioneList(ricerca); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public boolean existsCanale(String nome) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "existsCanale";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().existsCanale(nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<CanaleConfigurazioneNodo> canaleNodoConfigurazioneList(ISearch ricerca) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "canaleNodoConfigurazioneList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().canaleNodoConfigurazioneList(ricerca); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsCanaleNodo(String nome) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "existsCanaleNodo";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().existsCanaleNodo(nome); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean isCanaleInUso(CanaleConfigurazione canale, Map<ErrorsHandlerCostant, List<String>> whereIsInUso,	boolean normalizeObjectIds) throws DriverConfigurazioneException {
+		Connection con = null; 
+		String nomeMetodo = "isCanaleInUso";
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+	
+			return DBOggettiInUsoUtils.isCanaleInUso(con, this.tipoDB, canale, whereIsInUso, normalizeObjectIds);
+	
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean isCanaleInUsoRegistro(CanaleConfigurazione canale, Map<ErrorsHandlerCostant, List<String>> whereIsInUso,	boolean normalizeObjectIds) throws DriverConfigurazioneException {
+		Connection con = null; 
+		String nomeMetodo = "isCanaleInUsoRegistro";
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+	
+			return DBOggettiInUsoUtils.isCanaleInUsoRegistro(con, this.tipoDB, canale, whereIsInUso, normalizeObjectIds);
+	
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public String getDettagliCanaleInUso(CanaleConfigurazione canale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean canaleInUso  = this.isCanaleInUso(canale, whereIsInUso, normalizeObjectIds);
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(canaleInUso) {
+			String s = DBOggettiInUsoUtils.toString(canale, whereIsInUso, false, "\n");
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(ConfigurazioneCostanti.LABEL_CANALE_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
+	}
+	
+	public boolean isGenericPropertiesInUso(IDGenericProperties idGP, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+		String nomeMetodo = "isGenericPropertiesInUso";
+		Connection con = null; 
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+	
+			return DBOggettiInUsoUtils.isGenericPropertiesInUso(con, this.tipoDB, idGP, whereIsInUso, normalizeObjectIds);
+	
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public String getDettagliTokenPolicyInUso(IDGenericProperties idGP) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean tokenPolicyInUso  = this.isGenericPropertiesInUso(idGP, whereIsInUso, normalizeObjectIds);
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(tokenPolicyInUso) {
+			String s = DBOggettiInUsoUtils.toString(idGP, whereIsInUso, false, "\n");
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
 	}
 }

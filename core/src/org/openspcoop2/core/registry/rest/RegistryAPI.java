@@ -133,7 +133,11 @@ public class RegistryAPI extends Api implements Serializable {
 			if(rp.getRestrizioni()!=null) {
 				schema = ApiSchemaTypeRestriction.toApiSchemaTypeRestriction(rp.getRestrizioni());
 			}
-			if(schema.getType()==null) {
+			if(schema==null) {
+				schema = new ApiSchemaTypeRestriction();
+				schema.setType(rp.getTipo());
+			}
+			else if(schema.getType()==null) {
 				schema.setType(rp.getTipo());
 			}
 			

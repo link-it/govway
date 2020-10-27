@@ -1586,6 +1586,16 @@
             <forward name="porteDelegateGestioneCorsCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateGestioneCorsError" path="/jsplib/info.jsp"/>
         </action>
+        
+         <!-- Porte Delegate (Gestione Canale) -->
+    
+    	<action path="/porteDelegateGestioneCanale" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateGestioneCanale"
+            scope="request" validate="true">
+            <forward name="porteDelegateGestioneCanaleForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateGestioneCanaleOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateGestioneCanaleCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateGestioneCanaleError" path="/jsplib/info.jsp"/>
+        </action>
 
         <!-- Porte Delegate (Verifica Connettore) -->
     
@@ -2348,6 +2358,16 @@
             <forward name="porteApplicativeGestioneCorsOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeGestioneCorsCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeGestioneCorsError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Porte Applicative (Gestione Canale) -->
+    
+    	<action path="/porteApplicativeGestioneCanale" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeGestioneCanale"
+            scope="request" validate="true">
+            <forward name="porteApplicativeGestioneCanaleForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeGestioneCanaleOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeGestioneCanaleCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeGestioneCanaleError" path="/jsplib/info.jsp"/>
         </action>
 
         <!-- Porte Applicative (Verifica Connettore) -->
@@ -3342,6 +3362,60 @@
             scope="request" validate="true">
             <forward name="configurazioneProxyPassRegolaDel" path="/jsplib/listElement.jsp"/>
             <forward name="configurazioneProxyPassRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Configurazione Canali -->
+
+        <action path="/configurazioneCanaliAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCanaliAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneCanaliAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneCanaliAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneCanaliAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneCanaliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneCanaliList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCanaliList"
+            scope="request" validate="true">
+            <forward name="configurazioneCanaliList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneCanaliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneCanaliChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCanaliChange"
+            scope="request" validate="true">
+            <forward name="configurazioneCanaliChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneCanaliChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneCanaliChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneCanaliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneCanaliDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCanaliDel"
+            scope="request" validate="true">
+            <forward name="configurazioneCanaliDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneCanaliError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Configurazione Canali Nodi-->
+
+        <action path="/configurazioneCanaliNodiAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCanaliNodiAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneCanaliNodiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneCanaliNodiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneCanaliNodiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneCanaliNodiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneCanaliNodiList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCanaliNodiList"
+            scope="request" validate="true">
+            <forward name="configurazioneCanaliNodiList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneCanaliNodiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneCanaliNodiChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCanaliNodiChange"
+            scope="request" validate="true">
+            <forward name="configurazioneCanaliNodiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneCanaliNodiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneCanaliNodiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneCanaliNodiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneCanaliNodiDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCanaliNodiDel"
+            scope="request" validate="true">
+            <forward name="configurazioneCanaliNodiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneCanaliNodiError" path="/jsplib/info.jsp"/>
         </action>
     
      	<!-- Audit (Pagina Iniziale)  -->

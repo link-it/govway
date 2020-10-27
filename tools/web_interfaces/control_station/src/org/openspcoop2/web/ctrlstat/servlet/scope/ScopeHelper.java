@@ -36,6 +36,7 @@ import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 //import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -504,7 +505,7 @@ public class ScopeHelper extends ConsoleHelper{
 //					e.addElement(de);
 
 		// In Uso Button
-		this.addInUsoButton(e, scope.getNome(), scope.getNome(), org.openspcoop2.protocol.sdk.constants.ArchiveType.SCOPE);
+		this.addInUsoButton(e, scope.getNome(), scope.getNome(), InUsoType.SCOPE);
 
 		return e;
 	}
