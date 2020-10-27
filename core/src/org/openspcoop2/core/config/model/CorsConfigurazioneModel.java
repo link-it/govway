@@ -47,6 +47,8 @@ public class CorsConfigurazioneModel extends AbstractModel<CorsConfigurazione> {
 		this.STATO = new Field("stato",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
 		this.ACCESS_CONTROL_ALL_ALLOW_ORIGINS = new Field("access-control-all-allow-origins",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
+		this.ACCESS_CONTROL_ALL_ALLOW_METHODS = new Field("access-control-all-allow-methods",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
+		this.ACCESS_CONTROL_ALL_ALLOW_HEADERS = new Field("access-control-all-allow-headers",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
 		this.ACCESS_CONTROL_ALLOW_CREDENTIALS = new Field("access-control-allow-credentials",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
 		this.ACCESS_CONTROL_MAX_AGE = new Field("access-control-max-age",java.lang.Integer.class,"cors-configurazione",CorsConfigurazione.class);
 	
@@ -63,6 +65,8 @@ public class CorsConfigurazioneModel extends AbstractModel<CorsConfigurazione> {
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
 		this.ACCESS_CONTROL_ALL_ALLOW_ORIGINS = new ComplexField(father,"access-control-all-allow-origins",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
+		this.ACCESS_CONTROL_ALL_ALLOW_METHODS = new ComplexField(father,"access-control-all-allow-methods",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
+		this.ACCESS_CONTROL_ALL_ALLOW_HEADERS = new ComplexField(father,"access-control-all-allow-headers",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
 		this.ACCESS_CONTROL_ALLOW_CREDENTIALS = new ComplexField(father,"access-control-allow-credentials",java.lang.String.class,"cors-configurazione",CorsConfigurazione.class);
 		this.ACCESS_CONTROL_MAX_AGE = new ComplexField(father,"access-control-max-age",java.lang.Integer.class,"cors-configurazione",CorsConfigurazione.class);
 	
@@ -83,6 +87,10 @@ public class CorsConfigurazioneModel extends AbstractModel<CorsConfigurazione> {
 	public IField TIPO = null;
 	 
 	public IField ACCESS_CONTROL_ALL_ALLOW_ORIGINS = null;
+	 
+	public IField ACCESS_CONTROL_ALL_ALLOW_METHODS = null;
+	 
+	public IField ACCESS_CONTROL_ALL_ALLOW_HEADERS = null;
 	 
 	public IField ACCESS_CONTROL_ALLOW_CREDENTIALS = null;
 	 

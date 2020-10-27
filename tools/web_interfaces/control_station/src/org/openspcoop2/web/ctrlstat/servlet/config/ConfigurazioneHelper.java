@@ -3384,7 +3384,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String urlInvocazionePA, String urlInvocazionePD,
 			boolean multitenantEnabled, String multitenantSoggettiFruizioni, String multitenantSoggettiErogazioni,
 			boolean editModeEnabled,
-			boolean corsStato, TipoGestioneCORS corsTipo, boolean corsAllAllowOrigins,	
+			boolean corsStato, TipoGestioneCORS corsTipo, boolean corsAllAllowOrigins, boolean corsAllAllowHeaders, boolean corsAllAllowMethods,	
 			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods, 
 			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds,
 			boolean responseCachingEnabled,	int responseCachingSeconds, boolean responseCachingMaxResponseSize,	long responseCachingMaxResponseSizeBytes, 
@@ -3885,7 +3885,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// Configuriazione CORS
 		this.addConfigurazioneCorsToDati(dati, corsStato, corsTipo, 
-				corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, 
+				corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, 
+				corsAllowHeaders, corsAllowOrigins, corsAllowMethods, 
 				corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds, 
 				true,
 				allHidden);

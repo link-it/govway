@@ -94,6 +94,8 @@ CREATE TABLE porte_applicative
 	cors_stato VARCHAR2(255),
 	cors_tipo VARCHAR2(255),
 	cors_all_allow_origins VARCHAR2(255),
+	cors_all_allow_methods VARCHAR2(255),
+	cors_all_allow_headers VARCHAR2(255),
 	cors_allow_credentials VARCHAR2(255),
 	cors_allow_max_age NUMBER,
 	cors_allow_max_age_seconds NUMBER,

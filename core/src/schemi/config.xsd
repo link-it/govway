@@ -1009,6 +1009,8 @@
 		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato"/>
 		<xsd:attribute name="tipo" type="TipoGestioneCORS" default="gateway"/>
 		<xsd:attribute name="access-control-all-allow-origins" type="StatoFunzionalita" default="abilitato"/>
+		<xsd:attribute name="access-control-all-allow-methods" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="access-control-all-allow-headers" type="StatoFunzionalita" default="disabilitato"/>
 		<xsd:attribute name="access-control-allow-credentials" type="StatoFunzionalita" default="disabilitato"/>
 		<xsd:attribute name="access-control-max-age" type="xsd:integer" use="optional"/>
 	</xsd:complexType>

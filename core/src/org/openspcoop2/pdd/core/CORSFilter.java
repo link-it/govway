@@ -62,15 +62,21 @@ public class CORSFilter extends AbstractCORSFilter {
 		
 		cors.setAllowCredentials(StatoFunzionalita.ABILITATO.equals(config.getAccessControlAllowCredentials()));
 			
-		if(config.getAccessControlAllowHeaders()!=null && config.getAccessControlAllowHeaders().sizeHeaderList()>0) {
-			for (String header: config.getAccessControlAllowHeaders().getHeaderList()) {
-				cors.addAllowHeader(header);
+		cors.setAllowRequestHeader(StatoFunzionalita.ABILITATO.equals(config.getAccessControlAllAllowHeaders()));
+		if(cors.getAllowRequestHeader()==null || cors.getAllowRequestHeader()==false) {
+			if(config.getAccessControlAllowHeaders()!=null && config.getAccessControlAllowHeaders().sizeHeaderList()>0) {
+				for (String header: config.getAccessControlAllowHeaders().getHeaderList()) {
+					cors.addAllowHeader(header);
+				}
 			}
 		}
 		
-		if(config.getAccessControlAllowMethods()!=null && config.getAccessControlAllowMethods().sizeMethodList()>0) {
-			for (String method: config.getAccessControlAllowMethods().getMethodList()) {
-				cors.addAllowMethod(method);
+		cors.setAllowRequestMethod(StatoFunzionalita.ABILITATO.equals(config.getAccessControlAllAllowMethods()));
+		if(cors.getAllowRequestMethod()==null || cors.getAllowRequestMethod()==false) {
+			if(config.getAccessControlAllowMethods()!=null && config.getAccessControlAllowMethods().sizeMethodList()>0) {
+				for (String method: config.getAccessControlAllowMethods().getMethodList()) {
+					cors.addAllowMethod(method);
+				}
 			}
 		}
 		

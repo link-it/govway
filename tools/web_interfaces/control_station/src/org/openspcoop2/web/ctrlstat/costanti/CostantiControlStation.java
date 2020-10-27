@@ -463,7 +463,9 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_APPLICATIVO_DEMANDATO = "Gestione demandata all'implementazione dell'API";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS = "All Allow Origins";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS = "Allow Origins";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS = "All Allow Request Headers";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS = "Allow Request Headers";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS = "All Allow Methods";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS = "Allow Methods";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS = "Allow Credentials";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS = "Expose Response Headers";
@@ -883,7 +885,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_TIPO = "corsTipo";
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS= "corsAAllOrig";
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS = "corsAllOrig";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS= "corsAAllHdr";
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS = "corsAllHead";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS= "corsAAllMeth";
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS = "corsAllMeth";
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS = "corsAllCred";
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS = "corsExpHead";
@@ -1945,6 +1949,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_TOKEN_OPTIONS_NON_INDICATI = "Dati incompleti. Definire almeno un claim utilizzato per autorizzare la richiesta";
 	public static final String MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI = "Non inserire spazi bianchi nei valori del campo {0}";
 	public static final String MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO = "Inserire almeno un valore nel campo {0}";
+	public static final String MESSAGGIO_ERRORE_CORS_DIPENDENZA = "Non è consentito abilitare entrambe le modalità {0} e {1}";
 	public static final String MESSAGGIO_ERRORE_CORS_ALLOW_METHOD_NON_VALIDO = "Il valore {0} indicato per il campo {1} non rappresenta un HTTP-Method valido";
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA = "&Egrave; gi&agrave; presente una regola di trasformazione con i parametri di applicabilit&agrave; indicati.";
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME = "&Egrave; gi&agrave; presente una regola di trasformazione con il nome indicato.";

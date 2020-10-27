@@ -108,6 +108,10 @@ public class PorteApplicativeGestioneCors extends Action {
 			TipoGestioneCORS corsTipo = corsTipoTmp != null ? TipoGestioneCORS.toEnumConstant(corsTipoTmp) : TipoGestioneCORS.GATEWAY;
 			String corsAllAllowOriginsTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
 			boolean corsAllAllowOrigins = ServletUtils.isCheckBoxEnabled(corsAllAllowOriginsTmp);
+			String corsAllAllowHeadersTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
+			boolean corsAllAllowHeaders = ServletUtils.isCheckBoxEnabled(corsAllAllowHeadersTmp);
+			String corsAllAllowMethodsTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
+			boolean corsAllAllowMethods = ServletUtils.isCheckBoxEnabled(corsAllAllowMethodsTmp);
 			String corsAllowHeaders =  porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
 			String corsAllowOrigins =  porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
 			String corsAllowMethods =  porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
@@ -151,11 +155,23 @@ public class PorteApplicativeGestioneCors extends Action {
 								corsAllowOrigins = StringUtils.join(configurazioneTmp.getAccessControlAllowOrigins().getOriginList(), ",");
 							}
 
-							configurazioneTmp.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
-							corsAllowHeaders = StringUtils.join(configurazioneTmp.getAccessControlAllowHeaders().getHeaderList(), ",");
+							corsAllAllowHeaders = false;
+							if(configurazioneTmp.getAccessControlAllAllowHeaders() != null && configurazioneTmp.getAccessControlAllAllowHeaders().equals(StatoFunzionalita.ABILITATO)) {
+								corsAllAllowHeaders = true;
+							}
+							if(!corsAllAllowHeaders) {
+								configurazioneTmp.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
+								corsAllowHeaders = StringUtils.join(configurazioneTmp.getAccessControlAllowHeaders().getHeaderList(), ",");
+							}
 
-							configurazioneTmp.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
-							corsAllowMethods = StringUtils.join(configurazioneTmp.getAccessControlAllowMethods().getMethodList(), ",");
+							corsAllAllowMethods = false;
+							if(configurazioneTmp.getAccessControlAllAllowMethods() != null && configurazioneTmp.getAccessControlAllAllowMethods().equals(StatoFunzionalita.ABILITATO)) {
+								corsAllAllowMethods = true;
+							}
+							if(!corsAllAllowMethods) {
+								configurazioneTmp.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
+								corsAllowMethods = StringUtils.join(configurazioneTmp.getAccessControlAllowMethods().getMethodList(), ",");
+							}
 
 							configurazioneTmp.setAccessControlExposeHeaders(new CorsConfigurazioneHeaders());
 							corsExposeHeaders = StringUtils.join(configurazioneTmp.getAccessControlExposeHeaders().getHeaderList(), ",");
@@ -220,12 +236,24 @@ public class PorteApplicativeGestioneCors extends Action {
 									}
 								}
 
-								if(oldConfigurazione.getAccessControlAllowHeaders() != null) {
-									corsAllowHeaders = StringUtils.join(oldConfigurazione.getAccessControlAllowHeaders().getHeaderList(), ",");
+								corsAllAllowHeaders = false;
+								if(oldConfigurazione.getAccessControlAllAllowHeaders() != null && oldConfigurazione.getAccessControlAllAllowHeaders().equals(StatoFunzionalita.ABILITATO)) {
+									corsAllAllowHeaders = true;
+								}
+								if(!corsAllAllowHeaders) {
+									if(oldConfigurazione.getAccessControlAllowHeaders() != null) {
+										corsAllowHeaders = StringUtils.join(oldConfigurazione.getAccessControlAllowHeaders().getHeaderList(), ",");
+									}
 								}
 
-								if(oldConfigurazione.getAccessControlAllowMethods() != null) {
-									corsAllowMethods = StringUtils.join(oldConfigurazione.getAccessControlAllowMethods().getMethodList(), ",");
+								corsAllAllowMethods = false;
+								if(oldConfigurazione.getAccessControlAllAllowMethods() != null && oldConfigurazione.getAccessControlAllAllowMethods().equals(StatoFunzionalita.ABILITATO)) {
+									corsAllAllowMethods = true;
+								}
+								if(!corsAllAllowMethods) {
+									if(oldConfigurazione.getAccessControlAllowMethods() != null) {
+										corsAllowMethods = StringUtils.join(oldConfigurazione.getAccessControlAllowMethods().getMethodList(), ",");
+									}
 								}
 
 								if(oldConfigurazione.getAccessControlExposeHeaders() != null) {
@@ -270,12 +298,24 @@ public class PorteApplicativeGestioneCors extends Action {
 										}
 									}
 
-									if(oldConfigurazione.getAccessControlAllowHeaders() != null) {
-										corsAllowHeaders = StringUtils.join(oldConfigurazione.getAccessControlAllowHeaders().getHeaderList(), ",");
+									corsAllAllowHeaders = false;
+									if(oldConfigurazione.getAccessControlAllAllowHeaders() != null && oldConfigurazione.getAccessControlAllAllowHeaders().equals(StatoFunzionalita.ABILITATO)) {
+										corsAllAllowHeaders = true;
+									}
+									if(!corsAllAllowHeaders) {
+										if(oldConfigurazione.getAccessControlAllowHeaders() != null) {
+											corsAllowHeaders = StringUtils.join(oldConfigurazione.getAccessControlAllowHeaders().getHeaderList(), ",");
+										}
 									}
 
-									if(oldConfigurazione.getAccessControlAllowMethods() != null) {
-										corsAllowMethods = StringUtils.join(oldConfigurazione.getAccessControlAllowMethods().getMethodList(), ",");
+									corsAllAllowMethods = false;
+									if(oldConfigurazione.getAccessControlAllAllowMethods() != null && oldConfigurazione.getAccessControlAllAllowMethods().equals(StatoFunzionalita.ABILITATO)) {
+										corsAllAllowMethods = true;
+									}
+									if(!corsAllAllowMethods) {
+										if(oldConfigurazione.getAccessControlAllowMethods() != null) {
+											corsAllowMethods = StringUtils.join(oldConfigurazione.getAccessControlAllowMethods().getMethodList(), ",");
+										}
 									}
 
 									if(oldConfigurazione.getAccessControlExposeHeaders() != null) {
@@ -311,11 +351,23 @@ public class PorteApplicativeGestioneCors extends Action {
 										corsAllowOrigins = StringUtils.join(configurazioneTmp.getAccessControlAllowOrigins().getOriginList(), ",");
 									}
 
-									configurazioneTmp.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
-									corsAllowHeaders = StringUtils.join(configurazioneTmp.getAccessControlAllowHeaders().getHeaderList(), ",");
+									corsAllAllowHeaders = false;
+									if(configurazioneTmp.getAccessControlAllAllowHeaders() != null && configurazioneTmp.getAccessControlAllAllowHeaders().equals(StatoFunzionalita.ABILITATO)) {
+										corsAllAllowHeaders = true;
+									}
+									if(!corsAllAllowHeaders) {
+										configurazioneTmp.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
+										corsAllowHeaders = StringUtils.join(configurazioneTmp.getAccessControlAllowHeaders().getHeaderList(), ",");
+									}
 
-									configurazioneTmp.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
-									corsAllowMethods = StringUtils.join(configurazioneTmp.getAccessControlAllowMethods().getMethodList(), ",");
+									corsAllAllowMethods = false;
+									if(configurazioneTmp.getAccessControlAllAllowMethods() != null && configurazioneTmp.getAccessControlAllAllowMethods().equals(StatoFunzionalita.ABILITATO)) {
+										corsAllAllowMethods = true;
+									}
+									if(!corsAllAllowMethods) {
+										configurazioneTmp.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
+										corsAllowMethods = StringUtils.join(configurazioneTmp.getAccessControlAllowMethods().getMethodList(), ",");
+									}
 
 									configurazioneTmp.setAccessControlExposeHeaders(new CorsConfigurazioneHeaders());
 									corsExposeHeaders = StringUtils.join(configurazioneTmp.getAccessControlExposeHeaders().getHeaderList(), ",");
@@ -342,7 +394,7 @@ public class PorteApplicativeGestioneCors extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addConfigurazioneCorsPorteToDati(tipoOperazione, dati, showStato, statoCorsPorta,
-						corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds);
+						corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 
@@ -364,7 +416,8 @@ public class PorteApplicativeGestioneCors extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addConfigurazioneCorsPorteToDati(tipoOperazione, dati, showStato, statoCorsPorta,
-						corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds);
+						corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, 
+						corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 
@@ -377,7 +430,8 @@ public class PorteApplicativeGestioneCors extends Action {
 
 			CorsConfigurazione newConfigurazione = null;
 			if(statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO)) {
-				newConfigurazione = porteApplicativeHelper.getGestioneCors(corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds);
+				newConfigurazione = porteApplicativeHelper.getGestioneCors(corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods,
+						corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds);
 			}
 			
 			pa.setGestioneCors(newConfigurazione);
@@ -417,12 +471,24 @@ public class PorteApplicativeGestioneCors extends Action {
 							}
 						}
 
-						if(configurazioneAggiornata.getAccessControlAllowHeaders() != null) {
-							corsAllowHeaders = StringUtils.join(configurazioneAggiornata.getAccessControlAllowHeaders().getHeaderList(), ",");
+						corsAllAllowHeaders = false;
+						if(configurazioneAggiornata.getAccessControlAllAllowHeaders() != null && configurazioneAggiornata.getAccessControlAllAllowHeaders().equals(StatoFunzionalita.ABILITATO)) {
+							corsAllAllowHeaders = true;
+						}
+						if(!corsAllAllowHeaders) {
+							if(configurazioneAggiornata.getAccessControlAllowHeaders() != null) {
+								corsAllowHeaders = StringUtils.join(configurazioneAggiornata.getAccessControlAllowHeaders().getHeaderList(), ",");
+							}
 						}
 
-						if(configurazioneAggiornata.getAccessControlAllowMethods() != null) {
-							corsAllowMethods = StringUtils.join(configurazioneAggiornata.getAccessControlAllowMethods().getMethodList(), ",");
+						corsAllAllowMethods = false;
+						if(configurazioneAggiornata.getAccessControlAllAllowMethods() != null && configurazioneAggiornata.getAccessControlAllAllowMethods().equals(StatoFunzionalita.ABILITATO)) {
+							corsAllAllowMethods = true;
+						}
+						if(!corsAllAllowMethods) {
+							if(configurazioneAggiornata.getAccessControlAllowMethods() != null) {
+								corsAllowMethods = StringUtils.join(configurazioneAggiornata.getAccessControlAllowMethods().getMethodList(), ",");
+							}
 						}
 
 						if(configurazioneAggiornata.getAccessControlExposeHeaders() != null) {
@@ -446,7 +512,8 @@ public class PorteApplicativeGestioneCors extends Action {
 			}
 
 			porteApplicativeHelper.addConfigurazioneCorsPorteToDati(tipoOperazione, dati, showStato, statoCorsPorta,
-					corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds);
+					corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, 
+					corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds);
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 

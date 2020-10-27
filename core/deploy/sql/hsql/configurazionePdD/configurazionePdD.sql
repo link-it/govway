@@ -161,6 +161,8 @@ CREATE TABLE configurazione
 	cors_stato VARCHAR(255),
 	cors_tipo VARCHAR(255),
 	cors_all_allow_origins VARCHAR(255),
+	cors_all_allow_methods VARCHAR(255),
+	cors_all_allow_headers VARCHAR(255),
 	cors_allow_credentials VARCHAR(255),
 	cors_allow_max_age INT,
 	cors_allow_max_age_seconds INT,

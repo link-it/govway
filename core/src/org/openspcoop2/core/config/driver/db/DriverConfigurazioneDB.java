@@ -11375,23 +11375,35 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					configurazione.setAccessControlMaxAge(corsAllowMaxAgeSeconds);
 				}
 				
-				List<String> l = DBUtils.convertToList(rs.getString("cors_allow_headers"));
-				if(!l.isEmpty()) {
-					configurazione.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
+				String corsAllAllowHeader = rs.getString("cors_all_allow_headers");
+				if(corsAllAllowHeader!=null && !"".equals(corsAllAllowHeader)) {
+					configurazione.setAccessControlAllAllowHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllAllowHeader));
 				}
-				for (String v : l) {
-					configurazione.getAccessControlAllowHeaders().addHeader(v);
-				}
-				
-				l = DBUtils.convertToList(rs.getString("cors_allow_methods"));
-				if(!l.isEmpty()) {
-					configurazione.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
-				}
-				for (String v : l) {
-					configurazione.getAccessControlAllowMethods().addMethod(v);
+				if(StatoFunzionalita.DISABILITATO.equals(configurazione.getAccessControlAllAllowHeaders())) {
+					List<String> l = DBUtils.convertToList(rs.getString("cors_allow_headers"));
+					if(!l.isEmpty()) {
+						configurazione.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
+					}
+					for (String v : l) {
+						configurazione.getAccessControlAllowHeaders().addHeader(v);
+					}
 				}
 				
-				l = DBUtils.convertToList(rs.getString("cors_allow_expose_headers"));
+				String corsAllAllowMethods = rs.getString("cors_all_allow_methods");
+				if(corsAllAllowMethods!=null && !"".equals(corsAllAllowMethods)) {
+					configurazione.setAccessControlAllAllowMethods(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllAllowMethods));
+				}
+				if(StatoFunzionalita.DISABILITATO.equals(configurazione.getAccessControlAllAllowMethods())) {
+					List<String> l = DBUtils.convertToList(rs.getString("cors_allow_methods"));
+					if(!l.isEmpty()) {
+						configurazione.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
+					}
+					for (String v : l) {
+						configurazione.getAccessControlAllowMethods().addMethod(v);
+					}
+				}
+				
+				List<String> l = DBUtils.convertToList(rs.getString("cors_allow_expose_headers"));
 				if(!l.isEmpty()) {
 					configurazione.setAccessControlExposeHeaders(new CorsConfigurazioneHeaders());
 				}
@@ -19694,6 +19706,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("cors_stato");
 			sqlQueryObject.addSelectField("cors_tipo");
 			sqlQueryObject.addSelectField("cors_all_allow_origins");
+			sqlQueryObject.addSelectField("cors_all_allow_methods");
+			sqlQueryObject.addSelectField("cors_all_allow_headers");
 			sqlQueryObject.addSelectField("cors_allow_credentials");
 			sqlQueryObject.addSelectField("cors_allow_max_age");
 			sqlQueryObject.addSelectField("cors_allow_max_age_seconds");
@@ -20796,6 +20810,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("cors_stato");
 			sqlQueryObject.addSelectField("cors_tipo");
 			sqlQueryObject.addSelectField("cors_all_allow_origins");
+			sqlQueryObject.addSelectField("cors_all_allow_methods");
+			sqlQueryObject.addSelectField("cors_all_allow_headers");
 			sqlQueryObject.addSelectField("cors_allow_credentials");
 			sqlQueryObject.addSelectField("cors_allow_max_age");
 			sqlQueryObject.addSelectField("cors_allow_max_age_seconds");

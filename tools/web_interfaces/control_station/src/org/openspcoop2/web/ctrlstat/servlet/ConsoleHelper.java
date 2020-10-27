@@ -11656,7 +11656,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void addConfigurazioneCorsPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoCorsPorta, boolean corsStato, TipoGestioneCORS corsTipo,
-			boolean corsAllAllowOrigins, String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
+			boolean corsAllAllowOrigins, boolean corsAllAllowHeaders, boolean corsAllAllowMethods,
+			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
 			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds) throws Exception {
 		
 		if(showStato) {
@@ -11687,7 +11688,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(!showStato || statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO)) {
 			this.addConfigurazioneCorsToDati(dati, corsStato, corsTipo, 
-					corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, 
+					corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, 
+					corsAllowHeaders, corsAllowOrigins, corsAllowMethods, 
 					corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds, 
 					false,
 					false);
@@ -11697,7 +11699,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	// CORS
 	public void addConfigurazioneCorsToDati(Vector<DataElement> dati, boolean corsStato, TipoGestioneCORS corsTipo,
-			boolean corsAllAllowOrigins, String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
+			boolean corsAllAllowOrigins, boolean corsAllAllowHeaders, boolean corsAllAllowMethods, 
+			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
 			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds,
 			boolean addTitle,
 			boolean allHidden) {
@@ -11794,7 +11797,69 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setValue(corsAllowOrigins);
 					dati.addElement(de);
 				}
-			
+				else {
+					corsAllAllowMethods = false;
+					corsAllAllowHeaders = false;
+				}
+										
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
+				if(allHidden || corsAllAllowOrigins) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(corsAllAllowMethods);
+					de.setPostBack(true);
+				}
+				de.setValue(corsAllAllowMethods+"");
+				dati.addElement(de);
+				
+				if(!corsAllAllowMethods || corsAllAllowOrigins) {
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+					}else {
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setRequired(true);
+						de.enableTags();
+					}
+					de.setValue(corsAllowMethods);
+					dati.addElement(de);
+				}
+							
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
+				if(allHidden || corsAllAllowOrigins) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(corsAllAllowHeaders);
+					de.setPostBack(true);
+				}
+				de.setValue(corsAllAllowHeaders+"");
+				dati.addElement(de);
+				
+				if(!corsAllAllowHeaders || corsAllAllowOrigins) {
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
+					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+					}else {
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setRequired(true);
+						de.enableTags();
+					}
+					de.setValue(corsAllowHeaders);
+					dati.addElement(de);
+				}
+				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
@@ -11805,32 +11870,6 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setSelected(corsAllowCredential);
 				}
 				de.setValue(corsAllowCredential+"");
-				dati.addElement(de);
-								
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
-				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
-				if(allHidden) {
-					de.setType(DataElementType.HIDDEN);
-				}else {
-					de.setType(DataElementType.TEXT_EDIT);
-					de.setRequired(true);
-					de.enableTags();
-				}
-				de.setValue(corsAllowMethods);
-				dati.addElement(de);
-								
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
-				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
-				if(allHidden) {
-					de.setType(DataElementType.HIDDEN);
-				}else {
-					de.setType(DataElementType.TEXT_EDIT);
-					de.setRequired(true);
-					de.enableTags();
-				}
-				de.setValue(corsAllowHeaders);
 				dati.addElement(de);
 				
 				de = new DataElement();
@@ -11878,7 +11917,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public CorsConfigurazione getGestioneCors(boolean corsStato, TipoGestioneCORS corsTipo, boolean corsAllAllowOrigins,
+	public CorsConfigurazione getGestioneCors(boolean corsStato, TipoGestioneCORS corsTipo, 
+			boolean corsAllAllowOrigins, boolean corsAllAllowHeaders, boolean corsAllAllowMethods,
 			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods, boolean corsAllowCredential,
 			String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds) {
 		CorsConfigurazione gestioneCors = new CorsConfigurazione();
@@ -11894,13 +11934,19 @@ public class ConsoleHelper implements IConsoleHelper {
 					gestioneCors.setAccessControlAllowOrigins(accessControlAllowOrigins );
 				}
 
-				CorsConfigurazioneHeaders accessControlAllowHeaders = new CorsConfigurazioneHeaders();
-				accessControlAllowHeaders.setHeaderList(Arrays.asList(corsAllowHeaders.split(",")));
-				gestioneCors.setAccessControlAllowHeaders(accessControlAllowHeaders);
-
-				CorsConfigurazioneMethods accessControlAllowMethods = new CorsConfigurazioneMethods();
-				accessControlAllowMethods.setMethodList(Arrays.asList(corsAllowMethods.split(",")));
-				gestioneCors.setAccessControlAllowMethods(accessControlAllowMethods);
+				gestioneCors.setAccessControlAllAllowHeaders(corsAllAllowHeaders ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				if(!corsAllAllowHeaders) {
+					CorsConfigurazioneHeaders accessControlAllowHeaders = new CorsConfigurazioneHeaders();
+					accessControlAllowHeaders.setHeaderList(Arrays.asList(corsAllowHeaders.split(",")));
+					gestioneCors.setAccessControlAllowHeaders(accessControlAllowHeaders);
+				}
+				
+				gestioneCors.setAccessControlAllAllowMethods(corsAllAllowMethods ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				if(!corsAllAllowMethods) {
+					CorsConfigurazioneMethods accessControlAllowMethods = new CorsConfigurazioneMethods();
+					accessControlAllowMethods.setMethodList(Arrays.asList(corsAllowMethods.split(",")));
+					gestioneCors.setAccessControlAllowMethods(accessControlAllowMethods);
+				}
 
 				gestioneCors.setAccessControlAllowCredentials(corsAllowCredential ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 
@@ -12009,40 +12055,60 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 				}
 				
-				String corsAllowHeaders =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
-				if(StringUtils.isNotEmpty(corsAllowHeaders)) {
-					List<String> asList = Arrays.asList(corsAllowHeaders.split(","));
-					for (String string : asList) {
-						if(string.contains(" ")) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   
-							return false;
-						}
-					}
-				} else {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   
+				String corsAllAllowHeadersTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
+				boolean corsAllAllowHeaders = ServletUtils.isCheckBoxEnabled(corsAllAllowHeadersTmp);
+				if(corsAllAllowHeaders && corsAllAllowOrigins) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_DIPENDENZA, 
+							CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, 
+							CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS));   
 					return false;
 				}
-				
-				String corsAllowMethods =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
-				if(StringUtils.isNotEmpty(corsAllowMethods)) {
-					List<String> asList = Arrays.asList(corsAllowMethods.split(","));
-					for (String string : asList) {
-						if(string.contains(" ")) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
-							return false;
+				if(!corsAllAllowHeaders) {
+					String corsAllowHeaders =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
+					if(StringUtils.isNotEmpty(corsAllowHeaders)) {
+						List<String> asList = Arrays.asList(corsAllowHeaders.split(","));
+						for (String string : asList) {
+							if(string.contains(" ")) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   
+								return false;
+							}
 						}
-						
-						try {
-							// check che HTTP-Method sia supportato
-							Enum.valueOf(HttpRequestMethod.class, string.toUpperCase());
-						} catch(Exception e) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_ALLOW_METHOD_NON_VALIDO, string, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
-							return false;
-						}
+					} else {
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   
+						return false;
 					}
-				}else {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+				}
+				
+				String corsAllAllowMethodsTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
+				boolean corsAllAllowMethods = ServletUtils.isCheckBoxEnabled(corsAllAllowMethodsTmp);
+				if(corsAllAllowMethods && corsAllAllowOrigins) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_DIPENDENZA, 
+							CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, 
+							CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS));   
 					return false;
+				}
+				if(!corsAllAllowMethods) {
+					String corsAllowMethods =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+					if(StringUtils.isNotEmpty(corsAllowMethods)) {
+						List<String> asList = Arrays.asList(corsAllowMethods.split(","));
+						for (String string : asList) {
+							if(string.contains(" ")) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+								return false;
+							}
+							
+							try {
+								// check che HTTP-Method sia supportato
+								Enum.valueOf(HttpRequestMethod.class, string.toUpperCase());
+							} catch(Exception e) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_ALLOW_METHOD_NON_VALIDO, string, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+								return false;
+							}
+						}
+					}else {
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+						return false;
+					}
 				}
 				
 //				String corsAllowCredentialTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);

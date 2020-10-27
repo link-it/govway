@@ -1,3 +1,10 @@
+2020-10-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1085
+	Nella configurazione CORS, quando risultano abilitate una o più specifiche origin, è adesso possibile indicare di autorizzare qualsiasi metodo e/o header http della richiesta,
+	senza dover definire l'elenco dei metodi e/o header autorizzati.
+
 2020-10-27  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

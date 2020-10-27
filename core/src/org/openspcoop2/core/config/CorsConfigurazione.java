@@ -46,6 +46,8 @@ import java.io.Serializable;
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
  * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/config}TipoGestioneCORS" use="optional" default="gateway"/&gt;
  * 		&lt;attribute name="access-control-all-allow-origins" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="access-control-all-allow-methods" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="access-control-all-allow-headers" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
  * 		&lt;attribute name="access-control-allow-credentials" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
  * 		&lt;attribute name="access-control-max-age" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
  * &lt;/complexType&gt;
@@ -179,6 +181,46 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBean imp
     this.accessControlAllAllowOrigins = accessControlAllAllowOrigins;
   }
 
+  public void set_value_accessControlAllAllowMethods(String value) {
+    this.accessControlAllAllowMethods = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_accessControlAllAllowMethods() {
+    if(this.accessControlAllAllowMethods == null){
+    	return null;
+    }else{
+    	return this.accessControlAllAllowMethods.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getAccessControlAllAllowMethods() {
+    return this.accessControlAllAllowMethods;
+  }
+
+  public void setAccessControlAllAllowMethods(org.openspcoop2.core.config.constants.StatoFunzionalita accessControlAllAllowMethods) {
+    this.accessControlAllAllowMethods = accessControlAllAllowMethods;
+  }
+
+  public void set_value_accessControlAllAllowHeaders(String value) {
+    this.accessControlAllAllowHeaders = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_accessControlAllAllowHeaders() {
+    if(this.accessControlAllAllowHeaders == null){
+    	return null;
+    }else{
+    	return this.accessControlAllAllowHeaders.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getAccessControlAllAllowHeaders() {
+    return this.accessControlAllAllowHeaders;
+  }
+
+  public void setAccessControlAllAllowHeaders(org.openspcoop2.core.config.constants.StatoFunzionalita accessControlAllAllowHeaders) {
+    this.accessControlAllAllowHeaders = accessControlAllAllowHeaders;
+  }
+
   public void set_value_accessControlAllowCredentials(String value) {
     this.accessControlAllowCredentials = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
@@ -243,6 +285,18 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBean imp
 
   @XmlAttribute(name="access-control-all-allow-origins",required=false)
   protected StatoFunzionalita accessControlAllAllowOrigins = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_accessControlAllAllowMethods;
+
+  @XmlAttribute(name="access-control-all-allow-methods",required=false)
+  protected StatoFunzionalita accessControlAllAllowMethods = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_accessControlAllAllowHeaders;
+
+  @XmlAttribute(name="access-control-all-allow-headers",required=false)
+  protected StatoFunzionalita accessControlAllAllowHeaders = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_accessControlAllowCredentials;

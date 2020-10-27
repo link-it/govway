@@ -1586,6 +1586,8 @@ public class DriverConfigurazioneDB_LIB {
 		String cors_stato = null;
 		String cors_tipo = null; 
 		String cors_all_allow_origins = null; 
+		String cors_all_allow_methods = null; 
+		String cors_all_allow_headers = null; 
 		String cors_allow_credentials = null; 
 		int cors_allow_max_age = CostantiDB.FALSE;
 		Integer cors_allow_max_age_seconds = null;
@@ -1597,6 +1599,8 @@ public class DriverConfigurazioneDB_LIB {
 			cors_stato = getValue(corsConfigurazione.getStato());
 			cors_tipo = getValue(corsConfigurazione.getTipo());
 			cors_all_allow_origins = getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			cors_all_allow_methods = getValue(corsConfigurazione.getAccessControlAllAllowMethods());
+			cors_all_allow_headers = getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
 			cors_allow_credentials = getValue(corsConfigurazione.getAccessControlAllowCredentials());
 			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
 				cors_allow_max_age = CostantiDB.TRUE;
@@ -1831,6 +1835,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("cors_stato", "?");
 				sqlQueryObject.addInsertField("cors_tipo", "?");
 				sqlQueryObject.addInsertField("cors_all_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_methods", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_headers", "?");
 				sqlQueryObject.addInsertField("cors_allow_credentials", "?");
 				sqlQueryObject.addInsertField("cors_allow_max_age", "?");
 				sqlQueryObject.addInsertField("cors_allow_max_age_seconds", "?");
@@ -1965,6 +1971,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, cors_stato);
 				stm.setString(index++, cors_tipo);
 				stm.setString(index++, cors_all_allow_origins);
+				stm.setString(index++, cors_all_allow_methods);
+				stm.setString(index++, cors_all_allow_headers);
 				stm.setString(index++, cors_allow_credentials);
 				stm.setInt(index++, cors_allow_max_age);
 				if(cors_allow_max_age_seconds!=null) {
@@ -2049,7 +2057,7 @@ public class DriverConfigurazioneDB_LIB {
 								aPD.getRicercaPortaAzioneDelegata(),
 								msg_diag_severita,tracciamento_esiti,
 								aPD.getStato(),
-								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
+								cors_stato, cors_tipo, cors_all_allow_origins, cors_all_allow_methods, cors_all_allow_headers, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
 								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
 								(response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE),
@@ -2649,6 +2657,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("cors_stato", "?");
 				sqlQueryObject.addUpdateField("cors_tipo", "?");
 				sqlQueryObject.addUpdateField("cors_all_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_methods", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_headers", "?");
 				sqlQueryObject.addUpdateField("cors_allow_credentials", "?");
 				sqlQueryObject.addUpdateField("cors_allow_max_age", "?");
 				sqlQueryObject.addUpdateField("cors_allow_max_age_seconds", "?");
@@ -2775,6 +2785,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, cors_stato);
 				stm.setString(index++, cors_tipo);
 				stm.setString(index++, cors_all_allow_origins);
+				stm.setString(index++, cors_all_allow_methods);
+				stm.setString(index++, cors_all_allow_headers);
 				stm.setString(index++, cors_allow_credentials);
 				stm.setInt(index++, cors_allow_max_age);
 				if(cors_allow_max_age_seconds!=null) {
@@ -4621,6 +4633,8 @@ public class DriverConfigurazioneDB_LIB {
 		String cors_stato = null;
 		String cors_tipo = null; 
 		String cors_all_allow_origins = null; 
+		String cors_all_allow_methods = null; 
+		String cors_all_allow_headers = null; 
 		String cors_allow_credentials = null; 
 		int cors_allow_max_age = CostantiDB.FALSE;
 		Integer cors_allow_max_age_seconds = null;
@@ -4632,6 +4646,8 @@ public class DriverConfigurazioneDB_LIB {
 			cors_stato = getValue(corsConfigurazione.getStato());
 			cors_tipo = getValue(corsConfigurazione.getTipo());
 			cors_all_allow_origins = getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			cors_all_allow_methods = getValue(corsConfigurazione.getAccessControlAllAllowMethods());
+			cors_all_allow_headers = getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
 			cors_allow_credentials = getValue(corsConfigurazione.getAccessControlAllowCredentials());
 			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
 				cors_allow_max_age = CostantiDB.TRUE;
@@ -4868,6 +4884,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("cors_stato", "?");
 				sqlQueryObject.addInsertField("cors_tipo", "?");
 				sqlQueryObject.addInsertField("cors_all_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_methods", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_headers", "?");
 				sqlQueryObject.addInsertField("cors_allow_credentials", "?");
 				sqlQueryObject.addInsertField("cors_allow_max_age", "?");
 				sqlQueryObject.addInsertField("cors_allow_max_age_seconds", "?");
@@ -5004,6 +5022,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, cors_stato);
 				stm.setString(index++, cors_tipo);
 				stm.setString(index++, cors_all_allow_origins);
+				stm.setString(index++, cors_all_allow_methods);
+				stm.setString(index++, cors_all_allow_headers);
 				stm.setString(index++, cors_allow_credentials);
 				stm.setInt(index++, cors_allow_max_age);
 				if(cors_allow_max_age_seconds!=null) {
@@ -5820,6 +5840,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("cors_stato", "?");
 				sqlQueryObject.addUpdateField("cors_tipo", "?");
 				sqlQueryObject.addUpdateField("cors_all_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_methods", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_headers", "?");
 				sqlQueryObject.addUpdateField("cors_allow_credentials", "?");
 				sqlQueryObject.addUpdateField("cors_allow_max_age", "?");
 				sqlQueryObject.addUpdateField("cors_allow_max_age_seconds", "?");
@@ -5958,6 +5980,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, cors_stato);
 				stm.setString(index++, cors_tipo);
 				stm.setString(index++, cors_all_allow_origins);
+				stm.setString(index++, cors_all_allow_methods);
+				stm.setString(index++, cors_all_allow_headers);
 				stm.setString(index++, cors_allow_credentials);
 				stm.setInt(index++, cors_allow_max_age);
 				if(cors_allow_max_age_seconds!=null) {
@@ -8652,6 +8676,8 @@ public class DriverConfigurazioneDB_LIB {
 		String cors_stato = null;
 		String cors_tipo = null; 
 		String cors_all_allow_origins = null; 
+		String cors_all_allow_methods = null; 
+		String cors_all_allow_headers = null; 
 		String cors_allow_credentials = null; 
 		int cors_allow_max_age = CostantiDB.FALSE;
 		Integer cors_allow_max_age_seconds = null;
@@ -8663,6 +8689,8 @@ public class DriverConfigurazioneDB_LIB {
 			cors_stato = getValue(corsConfigurazione.getStato());
 			cors_tipo = getValue(corsConfigurazione.getTipo());
 			cors_all_allow_origins = getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			cors_all_allow_methods = getValue(corsConfigurazione.getAccessControlAllAllowMethods());
+			cors_all_allow_headers = getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
 			cors_allow_credentials = getValue(corsConfigurazione.getAccessControlAllowCredentials());
 			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
 				cors_allow_max_age = CostantiDB.TRUE;
@@ -9082,6 +9110,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("cors_stato", "?");
 				sqlQueryObject.addInsertField("cors_tipo", "?");
 				sqlQueryObject.addInsertField("cors_all_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_methods", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_headers", "?");
 				sqlQueryObject.addInsertField("cors_allow_credentials", "?");
 				sqlQueryObject.addInsertField("cors_allow_max_age", "?");
 				sqlQueryObject.addInsertField("cors_allow_max_age_seconds", "?");
@@ -9189,6 +9219,8 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, cors_stato);
 				updateStmt.setString(index++, cors_tipo);
 				updateStmt.setString(index++, cors_all_allow_origins);
+				updateStmt.setString(index++, cors_all_allow_methods);
+				updateStmt.setString(index++, cors_all_allow_headers);
 				updateStmt.setString(index++, cors_allow_credentials);
 				updateStmt.setInt(index++, cors_allow_max_age);
 				if(cors_allow_max_age_seconds!=null) {
@@ -9259,7 +9291,7 @@ public class DriverConfigurazioneDB_LIB {
 								(multitenant!=null ? getValue(multitenant.getStato()) : null),
 								(multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null),
 								(multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null),
-								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
+								cors_stato, cors_tipo, cors_all_allow_origins, cors_all_allow_methods, cors_all_allow_headers, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
 								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
 								(response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE),
@@ -9739,6 +9771,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("cors_stato", "?");
 				sqlQueryObject.addUpdateField("cors_tipo", "?");
 				sqlQueryObject.addUpdateField("cors_all_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_methods", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_headers", "?");
 				sqlQueryObject.addUpdateField("cors_allow_credentials", "?");
 				sqlQueryObject.addUpdateField("cors_allow_max_age", "?");
 				sqlQueryObject.addUpdateField("cors_allow_max_age_seconds", "?");
@@ -9846,6 +9880,8 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, cors_stato);
 				updateStmt.setString(index++, cors_tipo);
 				updateStmt.setString(index++, cors_all_allow_origins);
+				updateStmt.setString(index++, cors_all_allow_methods);
+				updateStmt.setString(index++, cors_all_allow_headers);
 				updateStmt.setString(index++, cors_allow_credentials);
 				updateStmt.setInt(index++, cors_allow_max_age);
 				if(cors_allow_max_age_seconds!=null) {
@@ -9917,7 +9953,7 @@ public class DriverConfigurazioneDB_LIB {
 								(multitenant!=null ? getValue(multitenant.getStato()) : null),
 								(multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null),
 								(multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null),
-								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
+								cors_stato, cors_tipo, cors_all_allow_origins, cors_all_allow_methods, cors_all_allow_headers, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
 								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,

@@ -4118,7 +4118,7 @@ public class ErogazioniApiHelper {
 			if ( ret.getTipo() == TipoGestioneCorsEnum.GATEWAY ) {
 
 				GestioneCorsAccessControl opts = new GestioneCorsAccessControl();
-				
+	aaaaa			
 				opts.setAllAllowOrigins( Helper.statoFunzionalitaConfToBool( paConf.getAccessControlAllAllowOrigins() ));
 				opts.setAllowCredentials(  Helper.statoFunzionalitaConfToBool( paConf.getAccessControlAllowCredentials() ));
 				opts.setAllowHeaders( evalnull( () -> paConf.getAccessControlAllowHeaders().getHeaderList()) );

@@ -210,6 +210,10 @@ public final class ConfigurazioneGenerale extends Action {
 			TipoGestioneCORS corsTipo = corsTipoTmp != null ? TipoGestioneCORS.toEnumConstant(corsTipoTmp) : TipoGestioneCORS.GATEWAY;
 			String corsAllAllowOriginsTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
 			boolean corsAllAllowOrigins = ServletUtils.isCheckBoxEnabled(corsAllAllowOriginsTmp);
+			String corsAllAllowHeadersTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
+			boolean corsAllAllowHeaders = ServletUtils.isCheckBoxEnabled(corsAllAllowHeadersTmp);
+			String corsAllAllowMethodsTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
+			boolean corsAllAllowMethods = ServletUtils.isCheckBoxEnabled(corsAllAllowMethodsTmp);
 			String corsAllowHeaders =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
 			String corsAllowOrigins =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
 			String corsAllowMethods =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
@@ -375,7 +379,8 @@ public final class ConfigurazioneGenerale extends Action {
 							urlInvocazionePA, urlInvocazionePD,
 							multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
 							true,
-							corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
+							corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, 
+							corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 							responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
 							responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 							responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
@@ -734,7 +739,8 @@ public final class ConfigurazioneGenerale extends Action {
 				
 
 				// cors
-				CorsConfigurazione gestioneCors = confHelper.getGestioneCors(corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge,	corsMaxAgeSeconds);
+				CorsConfigurazione gestioneCors = confHelper.getGestioneCors(corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, 
+						corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge,	corsMaxAgeSeconds);
 				newConfigurazione.setGestioneCors(gestioneCors);
 				
 				// Response Caching
@@ -783,7 +789,8 @@ public final class ConfigurazioneGenerale extends Action {
 						urlInvocazionePA, urlInvocazionePD,
 						multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
 						false,
-						corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
+						corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, 
+						corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 						responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
 						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
@@ -953,11 +960,23 @@ public final class ConfigurazioneGenerale extends Action {
 								corsAllowOrigins = StringUtils.join(configurazioneTmp.getAccessControlAllowOrigins().getOriginList(), ",");
 							}
 
-							configurazioneTmp.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
-							corsAllowHeaders = StringUtils.join(configurazioneTmp.getAccessControlAllowHeaders().getHeaderList(), ",");
+							corsAllAllowHeaders = false;
+							if(configurazioneTmp.getAccessControlAllAllowHeaders() != null && configurazioneTmp.getAccessControlAllAllowHeaders().equals(StatoFunzionalita.ABILITATO)) {
+								corsAllAllowHeaders = true;
+							}
+							if(!corsAllAllowHeaders) {
+								configurazioneTmp.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
+								corsAllowHeaders = StringUtils.join(configurazioneTmp.getAccessControlAllowHeaders().getHeaderList(), ",");
+							}
 
-							configurazioneTmp.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
-							corsAllowMethods = StringUtils.join(configurazioneTmp.getAccessControlAllowMethods().getMethodList(), ",");
+							corsAllAllowMethods = false;
+							if(configurazioneTmp.getAccessControlAllAllowMethods() != null && configurazioneTmp.getAccessControlAllAllowMethods().equals(StatoFunzionalita.ABILITATO)) {
+								corsAllAllowMethods = true;
+							}
+							if(!corsAllAllowMethods) {
+								configurazioneTmp.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
+								corsAllowMethods = StringUtils.join(configurazioneTmp.getAccessControlAllowMethods().getMethodList(), ",");
+							}
 
 							configurazioneTmp.setAccessControlExposeHeaders(new CorsConfigurazioneHeaders());
 							corsExposeHeaders = StringUtils.join(configurazioneTmp.getAccessControlExposeHeaders().getHeaderList(), ",");
@@ -1177,12 +1196,24 @@ public final class ConfigurazioneGenerale extends Action {
 								}
 							}
 
-							if(gestioneCors.getAccessControlAllowHeaders() != null) {
-								corsAllowHeaders = StringUtils.join(gestioneCors.getAccessControlAllowHeaders().getHeaderList(), ",");
+							corsAllAllowHeaders = false;
+							if(gestioneCors.getAccessControlAllAllowHeaders() != null && gestioneCors.getAccessControlAllAllowHeaders().equals(StatoFunzionalita.ABILITATO)) {
+								corsAllAllowHeaders = true;
+							}
+							if(!corsAllAllowHeaders) {
+								if(gestioneCors.getAccessControlAllowHeaders() != null) {
+									corsAllowHeaders = StringUtils.join(gestioneCors.getAccessControlAllowHeaders().getHeaderList(), ",");
+								}
 							}
 
-							if(gestioneCors.getAccessControlAllowMethods() != null) {
-								corsAllowMethods = StringUtils.join(gestioneCors.getAccessControlAllowMethods().getMethodList(), ",");
+							corsAllAllowMethods = false;
+							if(gestioneCors.getAccessControlAllAllowMethods() != null && gestioneCors.getAccessControlAllAllowMethods().equals(StatoFunzionalita.ABILITATO)) {
+								corsAllAllowMethods = true;
+							}
+							if(!corsAllAllowMethods) {
+								if(gestioneCors.getAccessControlAllowMethods() != null) {
+									corsAllowMethods = StringUtils.join(gestioneCors.getAccessControlAllowMethods().getMethodList(), ",");
+								}
 							}
 
 							if(gestioneCors.getAccessControlExposeHeaders() != null) {
@@ -1297,7 +1328,8 @@ public final class ConfigurazioneGenerale extends Action {
 					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
 					urlInvocazionePA, urlInvocazionePD,
 					multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni, true, 
-					corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
+					corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowHeaders, corsAllAllowMethods, 
+					corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 					responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
 					responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 					responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
