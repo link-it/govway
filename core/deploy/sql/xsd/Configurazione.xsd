@@ -2040,7 +2040,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="nome" varchar="20"/>
+                                <linkit:sql-column-mapping name="nome"/>
                                 <linkit:sql-ddl-column-comment>Nome del canale</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

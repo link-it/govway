@@ -193,9 +193,8 @@ components:
     # Canale
     IdCanale:
       type: string
-      pattern: ^[_A-Za-z][\-\._A-Za-z0-9]*$
-      maxLength: 20
-      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'
+      pattern: ^[^\s]+$
+      maxLength: 255
     ConfigurazioneApiCanale:
       type: object
       required:

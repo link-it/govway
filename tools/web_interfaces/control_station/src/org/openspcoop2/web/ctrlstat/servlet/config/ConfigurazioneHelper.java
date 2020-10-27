@@ -2404,11 +2404,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return false;
 		}
 		
-		if(this.checkLength20(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME)==false) {
+		if(this.checkSpazi(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME)==false) {
 			return false;
 		}
 		
-		if(this.checkNCName(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME)==false) {
+		if(this.checkLength255(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME)==false) {
 			return false;
 		}
 		
@@ -16186,14 +16186,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			if(this.checkLength20(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME)==false) {
+			if(this.checkSpazi(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME)==false) {
 				return false;
 			}
 			
-			if(this.checkNCName(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME)==false) {
+			if(this.checkLength255(canaliNome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME)==false) {
 				return false;
 			}
-			
+						
 			if(this.checkLength255(canaliDescrizione, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE)==false) {
 				return false;
 			}

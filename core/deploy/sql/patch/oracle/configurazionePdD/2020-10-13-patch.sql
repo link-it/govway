@@ -1,12 +1,12 @@
-ALTER TABLE porte_delegate ADD canale VARCHAR2(20);
-ALTER TABLE porte_applicative ADD canale VARCHAR2(20);
+ALTER TABLE porte_delegate ADD canale VARCHAR2(255);
+ALTER TABLE porte_applicative ADD canale VARCHAR2(255);
 ALTER TABLE configurazione ADD canali_stato VARCHAR2(255);
 
 CREATE SEQUENCE seq_canali_configurazione MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
 CREATE TABLE canali_configurazione
 (
-	nome VARCHAR2(20) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	descrizione VARCHAR2(255),
 	canale_default NUMBER NOT NULL,
 	-- fk/pk columns

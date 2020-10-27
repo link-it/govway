@@ -574,7 +574,7 @@ CREATE SEQUENCE seq_canali_configurazione start 1 increment 1 maxvalue 922337203
 
 CREATE TABLE canali_configurazione
 (
-	nome VARCHAR(20) NOT NULL,
+	nome VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	canale_default INT NOT NULL,
 	-- fk/pk columns

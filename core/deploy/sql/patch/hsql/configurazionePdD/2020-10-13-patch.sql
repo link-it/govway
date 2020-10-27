@@ -1,5 +1,5 @@
-ALTER TABLE porte_delegate ADD COLUMN canale VARCHAR(20);
-ALTER TABLE porte_applicative ADD COLUMN canale VARCHAR(20);
+ALTER TABLE porte_delegate ADD COLUMN canale VARCHAR(255);
+ALTER TABLE porte_applicative ADD COLUMN canale VARCHAR(255);
 ALTER TABLE configurazione ADD COLUMN canali_stato VARCHAR(255);
 
 
@@ -7,7 +7,7 @@ CREATE SEQUENCE seq_canali_configurazione AS BIGINT START WITH 1 INCREMENT BY 1 
 
 CREATE TABLE canali_configurazione
 (
-	nome VARCHAR(20) NOT NULL,
+	nome VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	canale_default INT NOT NULL,
 	-- fk/pk columns

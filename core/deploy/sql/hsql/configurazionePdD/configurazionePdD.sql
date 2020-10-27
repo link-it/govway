@@ -634,7 +634,7 @@ CREATE SEQUENCE seq_canali_configurazione AS BIGINT START WITH 1 INCREMENT BY 1 
 
 CREATE TABLE canali_configurazione
 (
-	nome VARCHAR(20) NOT NULL,
+	nome VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	canale_default INT NOT NULL,
 	-- fk/pk columns

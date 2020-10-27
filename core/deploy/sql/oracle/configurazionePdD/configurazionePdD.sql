@@ -833,7 +833,7 @@ CREATE SEQUENCE seq_canali_configurazione MINVALUE 1 MAXVALUE 922337203685477580
 
 CREATE TABLE canali_configurazione
 (
-	nome VARCHAR2(20) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	descrizione VARCHAR2(255),
 	canale_default NUMBER NOT NULL,
 	-- fk/pk columns

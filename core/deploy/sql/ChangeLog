@@ -2,9 +2,9 @@
 
 	Aggiunto supporto per i canali
 
-	ALTER TABLE accordi ADD COLUMN canale VARCHAR(20);
-	ALTER TABLE porte_delegate ADD COLUMN canale VARCHAR(20);
-	ALTER TABLE porte_applicative ADD COLUMN canale VARCHAR(20);
+	ALTER TABLE accordi ADD COLUMN canale VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN canale VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN canale VARCHAR(255);
 	ALTER TABLE configurazione ADD COLUMN canali_stato VARCHAR(255);
 	Nuove tabelle canali_configurazione e canali_nodi
 

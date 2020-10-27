@@ -58,7 +58,7 @@ public class ConfigurazioneApiCanale  {
   **/
   @JsonProperty("canale")
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=20)  public String getCanale() {
+ @Pattern(regexp="^[^\\s]+$") @Size(max=255)  public String getCanale() {
     return this.canale;
   }
 

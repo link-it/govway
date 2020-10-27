@@ -129,7 +129,7 @@ CREATE TABLE porte_delegate
 	id_soggetto BIGINT NOT NULL,
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	options VARCHAR(4000),
-	canale VARCHAR(20),
+	canale VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

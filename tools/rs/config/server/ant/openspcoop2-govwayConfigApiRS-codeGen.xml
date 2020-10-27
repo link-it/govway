@@ -136,6 +136,8 @@
 
 		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model"
 			token="^[_A-Za-z][\-\._A-Za-z0-9]*$" value="^[_A-Za-z][\\-\\._A-Za-z0-9]*$" includes="*.java"/>
+		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model"
+			token="^[^\s]+$" value="^[^\\s]+$" includes="*.java"/>
 
 	</target>
 

@@ -121,7 +121,7 @@ CREATE TABLE porte_applicative
 	id_soggetto BIGINT NOT NULL,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	options VARCHAR(4000),
-	canale VARCHAR(20),
+	canale VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_porte_applicative') NOT NULL,
 	-- unique constraints

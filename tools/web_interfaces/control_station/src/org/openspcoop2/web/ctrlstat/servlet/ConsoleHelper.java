@@ -2368,9 +2368,6 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkLength20(String value, String object) throws Exception{
-		return this.checkLength(value, object, -1, 20);
-	}
 	public boolean checkLength4000(String value, String object) throws Exception{
 		return this.checkLength(value, object, -1, 4000);
 	}
@@ -2392,6 +2389,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				this.pd.setMessage("L'informazione fornita nel campo '"+object+"' deve possedere una lunghezza minore di "+maxLength);
 				return false;
 			}
+		}
+		return true;
+	}
+	
+	public boolean checkSpazi(String value, String object) throws Exception{
+		if(value.contains(" ")) {
+			this.pd.setMessage("L'informazione fornita nel campo '"+object+"' non deve contenere spazi");
+			return false;
 		}
 		return true;
 	}

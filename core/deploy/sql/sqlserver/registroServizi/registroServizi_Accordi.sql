@@ -64,7 +64,7 @@ CREATE TABLE accordi
 	privato INT DEFAULT 0,
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
-	canale VARCHAR(20),
+	canale VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints

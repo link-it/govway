@@ -7627,11 +7627,9 @@ components:
       type: "string"
       example: "Nessuna risorsa definita nella API"
     IdCanale:
-      maxLength: 20
-      pattern: "^[_A-Za-z][\\-\\._A-Za-z0-9]*$"
+      maxLength: 255
+      pattern: "^[^\\s]+$"
       type: "string"
-      description: "Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e\
-        \ dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'"
     ConfigurazioneApiCanale:
       required:
       - "configurazione"
