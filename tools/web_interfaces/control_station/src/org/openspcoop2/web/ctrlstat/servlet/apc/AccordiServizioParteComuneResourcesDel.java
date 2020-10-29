@@ -32,16 +32,12 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -78,11 +74,8 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -105,24 +98,17 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			// }
 			ArrayList<String> resourcesToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
-//			IDResource idRisorsa = new IDResource();
-//			idRisorsa.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
-			
-			List<IDServizio> idServiziWithAccordo = null;
-			try{
-				idServiziWithAccordo = apsCore.getIdServiziWithAccordo(idAccordoFactory.getIDAccordoFromAccordo(as),true);
-			}catch(DriverRegistroServiziNotFound dNotF){}
-			
+				
 			StringBuilder inUsoMessage = new StringBuilder();
 			
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneRisorse(as, userLogin, apcCore, apcHelper, 
-					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, idServiziWithAccordo, resourcesToRemove);
+				inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, resourcesToRemove);
 			
-			// imposto msg di errore se presente
 			if (inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());
 			}
 
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

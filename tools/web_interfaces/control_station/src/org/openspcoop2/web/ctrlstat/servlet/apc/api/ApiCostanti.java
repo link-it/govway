@@ -73,6 +73,8 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String APC_API_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";
 	
 	public final static String APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA = "&#xE884;";
+	public final static String APC_API_ICONA_DOWNLOAD_DOCUMENTO_ARCHIVE = "&#xE149;";
+	
 	public final static String APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP = "Download";
 	public final static String APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP_CON_PARAMETRO = "Download {0}";
 	

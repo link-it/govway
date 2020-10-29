@@ -410,6 +410,7 @@ public class ClientTest {
 			
 
 			// step2. Aggiungo entry
+			String rigaCompletaCaratteriStrani = null;
 			for (int i = 0; i < ROW; i++) {
 				String insertMsgDiagnosticoWithGdo = "INSERT INTO msgdiagnostici (descrizione,gdo,gdo2,tipo_mittente,mittente,tipo_destinatario,destinatario,campo_vuoto) VALUES (?,?,?,?,?,?,?,?)";
 				String insertMsgDiagnosticoWithoutGdo = "INSERT INTO msgdiagnostici (descrizione,gdo2,tipo_mittente,mittente,tipo_destinatario,destinatario,campo_vuoto) VALUES (?,?,?,?,?,?,?)";
@@ -421,6 +422,7 @@ public class ClientTest {
 				if(i==20){
 					// genero entry per caratteri speciali like
 					descrizione =  "descrizione con caratteri particolari: "+rigaCaratteriStrani;
+					rigaCompletaCaratteriStrani = descrizione;
 				}
 				String campoVuoto = null;
 				if(i==0){
@@ -527,6 +529,7 @@ public class ClientTest {
 				
 				// step5. Test escape char like
 				testLikeEscapeChar_engine(tipoDatabase,  "msgdiagnostici", con,selectForUpdate, caratteriStraniParte1, caratteriStraniParte2);
+				testLikeEscapeChar_likeConfig_engine(tipoDatabase,  "msgdiagnostici", con,selectForUpdate, caratteriStraniParte1, caratteriStraniParte2, rigaCompletaCaratteriStrani);
 				
 				
 				// step6. Test query
@@ -1273,6 +1276,920 @@ public class ClientTest {
 	
 	
 
+	
+	private static void testLikeEscapeChar_likeConfig_engine(TipiDatabase tipo, String table, Connection con, boolean selectForUpdate, 
+			String caratteriStraniParte1, String caratteriStraniParte2, String rigaCompletaCaratteriStrani) throws Exception {
+		Statement stmtQuery = null;
+		ResultSet rs = null;
+		try{
+			
+			boolean escape = true;
+			boolean contains = true;
+			boolean caseInsensitive = true;
+			
+			
+			// TEST 1.
+			
+			SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			String ricerca = caratteriStraniParte1;
+			LikeConfig likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setContains(contains);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			String test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest (Parte1)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 1 (toLower).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = caratteriStraniParte1.toLowerCase();
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setContains(contains);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte1)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			
+			
+			
+			// TEST 1b.
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			ricerca = caratteriStraniParte2;
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setContains(contains);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest (Parte2)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 1b (toLower).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = caratteriStraniParte2.toLowerCase();
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setContains(contains);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte2)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			// TEST 2 (caseInsensistive=false).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			ricerca = caratteriStraniParte1;
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setContains(contains);
+			likeConfig.setCaseInsensitive(!caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest (Parte1)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 2 (caseInsensistive=false) (toLower).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = caratteriStraniParte1.toLowerCase();
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setContains(contains);
+			likeConfig.setCaseInsensitive(!caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte1)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					if(TipiDatabase.MYSQL.equals(tipo) || TipiDatabase.SQLSERVER.equals(tipo)){
+						info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+								" (time:"+rs.getTimestamp("gdo")+")");
+					}
+					else{
+						throw new Exception("Atteso fallimento del test");
+					}
+				}
+				else{
+					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			
+			
+			
+			// TEST 2 (caseInsensistive=false).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			ricerca = caratteriStraniParte2;
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setContains(contains);
+			likeConfig.setCaseInsensitive(!caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest (Parte2)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 2 (caseInsensistive=false) (toLower).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = caratteriStraniParte2.toLowerCase();
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setContains(contains);
+			likeConfig.setCaseInsensitive(!caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte2)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					if(TipiDatabase.MYSQL.equals(tipo) || TipiDatabase.SQLSERVER.equals(tipo)){
+						info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+								" (time:"+rs.getTimestamp("gdo")+")");
+					}
+					else{
+						throw new Exception("Atteso fallimento del test");
+					}
+				}
+				else{
+					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			// START WITH
+			
+			
+			// TEST 3.
+			
+			sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			ricerca = rigaCompletaCaratteriStrani.substring(0, 100); // primi 100 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setStartsWith(true);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest (Parte3)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 3 (toLower).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = rigaCompletaCaratteriStrani.substring(0, 100).toLowerCase(); // primi 100 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setStartsWith(true);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte3)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 4 (caseInsensistive=false).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			ricerca = rigaCompletaCaratteriStrani.substring(0, 100); // primi 100 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setStartsWith(true);
+			likeConfig.setCaseInsensitive(!caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest (Parte4)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 4 (caseInsensistive=false) (toLower).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = rigaCompletaCaratteriStrani.substring(0, 100).toLowerCase(); // primi 100 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setStartsWith(true);
+			likeConfig.setCaseInsensitive(!caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte4)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					if(TipiDatabase.MYSQL.equals(tipo) || TipiDatabase.SQLSERVER.equals(tipo)){
+						info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+								" (time:"+rs.getTimestamp("gdo")+")");
+					}
+					else{
+						throw new Exception("Atteso fallimento del test");
+					}
+				}
+				else{
+					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 4 errore
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = rigaCompletaCaratteriStrani.substring(0, 100); // primi 100 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setEndsWith(true);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte4 errore)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					if(TipiDatabase.MYSQL.equals(tipo) || TipiDatabase.SQLSERVER.equals(tipo)){
+						info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+								" (time:"+rs.getTimestamp("gdo")+")");
+					}
+					else{
+						throw new Exception("Atteso fallimento del test");
+					}
+				}
+				else{
+					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			// ENDS WITH
+			
+			
+			// TEST 5.
+			
+			sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			ricerca = rigaCompletaCaratteriStrani.substring(50, rigaCompletaCaratteriStrani.length()); // escludo primi 50 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setEndsWith(true);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest (Parte5)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 5 (toLower).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = rigaCompletaCaratteriStrani.substring(50, rigaCompletaCaratteriStrani.length()).toLowerCase(); // escludo primi 50 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setEndsWith(true);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte5)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 6 (caseInsensistive=false).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			ricerca = rigaCompletaCaratteriStrani.substring(50, rigaCompletaCaratteriStrani.length()); // escludo primi 50 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setEndsWith(true);
+			likeConfig.setCaseInsensitive(!caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest (Parte6)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+							" (time:"+rs.getTimestamp("gdo")+")");
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 6 (caseInsensistive=false) (toLower).
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = rigaCompletaCaratteriStrani.substring(50, rigaCompletaCaratteriStrani.length()).toLowerCase(); // escludo primi 50 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setEndsWith(true);
+			likeConfig.setCaseInsensitive(!caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte6)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					if(TipiDatabase.MYSQL.equals(tipo) || TipiDatabase.SQLSERVER.equals(tipo)){
+						info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+								" (time:"+rs.getTimestamp("gdo")+")");
+					}
+					else{
+						throw new Exception("Atteso fallimento del test");
+					}
+				}
+				else{
+					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			// TEST 6 errore
+			
+			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			
+			sqlQueryObject.addFromTable(table);
+			sqlQueryObject.addSelectField("descrizione");
+			sqlQueryObject.addSelectField("gdo");
+			sqlQueryObject.setLimit(1);
+			sqlQueryObject.addOrderBy("gdo");
+			sqlQueryObject.setSortType(true);
+			// essendo abilitato il caseInsensitive deve trovarla lo stesso anche se faccio il toLowerCase
+			ricerca = rigaCompletaCaratteriStrani.substring(50, rigaCompletaCaratteriStrani.length()); // escludo primi 50 caratteri.
+			likeConfig = new LikeConfig();
+			likeConfig.setEscape(escape);
+			likeConfig.setStartsWith(true);
+			likeConfig.setCaseInsensitive(caseInsensitive);
+			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, likeConfig);
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntestLower (Parte6 errore)-"+table+" escapeLikeConfig:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					if(TipiDatabase.MYSQL.equals(tipo) || TipiDatabase.SQLSERVER.equals(tipo)){
+						info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
+								" (time:"+rs.getTimestamp("gdo")+")");
+					}
+					else{
+						throw new Exception("Atteso fallimento del test");
+					}
+				}
+				else{
+					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
+				}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+
+		}finally{
+			try{
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+			}catch(Exception eClose){}
+			try{
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception eClose){}
+		}
+	}
+	
 
 
 	private static void test0_engine(TipiDatabase tipo, Connection con, boolean selectForUpdate) throws Exception {

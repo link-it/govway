@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -40,16 +41,22 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.ResourceSintetica;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -57,6 +64,8 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
@@ -104,6 +113,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 	private boolean decodeRequestValidazioneDocumenti = false;
 	private String editMode = null;
 	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
+	
+	private boolean aggiornaEsistenti = true;
+	private boolean decodeRequestAggiornaEsistenti= false;
+	
+	private boolean eliminaNonPresentiNuovaInterfaccia = true;
+	private boolean decodeRequestEliminaNonPresentiNuovaInterfaccia= false;
 	
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
@@ -156,8 +171,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				this.decodeRequestValidazioneDocumenti = true;
 				String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 				this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
+				
+				this.decodeRequestAggiornaEsistenti = true;
+				String aggiornaEsistentiS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UPDATE_WSDL_AGGIORNA);
+				this.aggiornaEsistenti = ServletUtils.isCheckBoxEnabled(aggiornaEsistentiS);
+				
+				this.decodeRequestEliminaNonPresentiNuovaInterfaccia = true;
+				String eliminaNonPresentiNuovaInterfacciaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UPDATE_WSDL_ELIMINA);
+				this.eliminaNonPresentiNuovaInterfaccia = ServletUtils.isCheckBoxEnabled(eliminaNonPresentiNuovaInterfacciaS);
 			}
-
+	
 			//rimuovo eventuali tracce della procedura 
 			if(actionConfirm == null){
 				session.removeAttribute(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
@@ -171,10 +194,20 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			if(ServletUtils.isEditModeInProgress(this.editMode)){// && apcHelper.isEditModeInProgress()){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
+				this.aggiornaEsistenti = true;
+				this.eliminaNonPresentiNuovaInterfaccia = true;
 			}else{
 				if(!this.decodeRequestValidazioneDocumenti){
 					String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 					this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
+				}
+				if(!this.decodeRequestAggiornaEsistenti){
+					String aggiornaEsistentiS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UPDATE_WSDL_AGGIORNA);
+					this.aggiornaEsistenti = ServletUtils.isCheckBoxEnabled(aggiornaEsistentiS);
+				}
+				if(!this.decodeRequestEliminaNonPresentiNuovaInterfaccia){
+					String eliminaNonPresentiNuovaInterfacciaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UPDATE_WSDL_ELIMINA);
+					this.eliminaNonPresentiNuovaInterfaccia = ServletUtils.isCheckBoxEnabled(eliminaNonPresentiNuovaInterfacciaS);
 				}
 			}
 
@@ -364,7 +397,8 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare);
+						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare,
+						serviceBinding, this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia);
 
 				pd.setDati(dati);
 
@@ -387,7 +421,8 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare);
+						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare,
+						serviceBinding, this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia);
 
 				pd.setDati(dati);
 
@@ -429,23 +464,38 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 							// salvo lo stato dell'invio
 							apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-									oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare);
+									oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare,
+									serviceBinding, this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia);
 
 							pd.setDati(dati);
 
 							String uriAccordo = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
 							String oggetto = null;
+							String nuoviOggetti = null;
 							String updateOggetti = null;
+							String warnUpdateOggetti = null;
 							if(as.sizePortTypeList() > 0) {
 								oggetto = as.sizePortTypeList()+" servizi";
-								updateOggetti = "servizi";
+								nuoviOggetti = "nuovi servizi e/o azioni";
+								updateOggetti = "dei servizi e delle azioni";
+								warnUpdateOggetti = "I servizi e le azioni";
 							}
 							else {
 								oggetto = as.sizeResourceList()+" risorse";
-								updateOggetti = "risorse";
+								nuoviOggetti = "nuove risorse";
+								updateOggetti = "delle risorse";
+								warnUpdateOggetti = "Le risorse";
 							}
 							String msg = "Attenzione, l'accordo ["+uriAccordo+"] contiene la definizione di "+oggetto+" e "+(as.sizeAllegatoList()+as.sizeSpecificaSemiformaleList())+" allegati. <BR/>"+
-									"Il caricamento della specifica comporter&agrave; l'aggiornamento dei "+updateOggetti+"/allegati esistenti e/o la creazione di nuovi "+updateOggetti+"/allegati. Procedere?";
+									"Il caricamento della specifica comporter&agrave;:<BR/>"+
+									"- l'aggiornamento degli allegati esistenti e l'eventuale creazione di nuovi allegati;<BR/>"+
+									"- l'eventuale creazione di "+nuoviOggetti+""+
+									(this.aggiornaEsistenti? ";<BR/>- l'aggiornamento "+updateOggetti+" esistenti" : "")+
+									(this.eliminaNonPresentiNuovaInterfaccia? ";<BR/>- l'eliminazione "+updateOggetti+" non presenti nella nuova interfaccia" : "")+
+									".<BR/><BR/>"+
+									(!this.aggiornaEsistenti ? warnUpdateOggetti+" esistenti non verranno aggiornati.<BR/>" : "")+ 
+									(!this.eliminaNonPresentiNuovaInterfaccia ? warnUpdateOggetti+" non presenti nella nuova interfaccia verranno mantenute.<BR/>" : "")+ 
+									"<BR/>Procedere con l'operazione richiesta?";
 							
 							String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
 							String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
@@ -474,11 +524,108 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 			
 			// Arrivo qui quando l'utente ha schiacciato Ok nella maschera di conferma, oppure l'accordo non aveva servizi, o sono in un wsdl definitorio.
-			
+			List<IDResource> risorseEliminate = new ArrayList<IDResource>();
+			List<IDPortType> portTypeEliminati = new ArrayList<IDPortType>();
+			List<IDPortTypeAzione> operationEliminate = new ArrayList<IDPortTypeAzione>();
 			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(this.tipo, this.wsdl, as,
 					enableAutoMapping, this.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard,
 					tipoProtocollo, 
-					apcCore);
+					apcCore,
+					this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia,
+					risorseEliminate, portTypeEliminati, operationEliminate);
+			
+			String newLine = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+			StringBuilder inUsoMessage = new StringBuilder();
+						
+			if(portTypeEliminati!=null && !portTypeEliminati.isEmpty()) {
+				boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
+				for (IDPortType idPortType : portTypeEliminati) {
+					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+					boolean portTypeInUso = apcCore.isPortTypeInUso(idPortType,whereIsInUso,normalizeObjectIds);
+					if (portTypeInUso) {
+						inUsoMessage.append(DBOggettiInUsoUtils.toString(idPortType, whereIsInUso, true, newLine));
+						inUsoMessage.append(newLine);
+					} 
+				}
+				if(operationEliminate!=null && !operationEliminate.isEmpty()) {
+					for (IDPortTypeAzione idOperazione : operationEliminate) {
+						
+						// controllo che non esista già nella lista dei port type precedentemente segnalati
+						boolean find = false;
+						for (IDPortType idPortType : portTypeEliminati) {
+							if(idPortType.equals(idOperazione.getIdPortType())) {
+								find = true;
+								break;
+							}
+						}
+						if(find) {
+							continue;
+						}
+						
+						HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+						boolean operazioneInUso = apcCore.isOperazioneInUso(idOperazione,whereIsInUso,normalizeObjectIds);
+						if (operazioneInUso) {
+							inUsoMessage.append(DBOggettiInUsoUtils.toString(idOperazione, whereIsInUso, true, newLine));
+							inUsoMessage.append(newLine);
+						} 
+					}
+				}
+			}
+			if(inUsoMessage.length()==0) {
+				if(risorseEliminate!=null && !risorseEliminate.isEmpty()) {
+					
+					AccordoServizioParteComuneSintetico asSintetico = apcCore.getAccordoServizioSintetico(Long.valueOf(idAcc));
+					
+					boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
+					for (IDResource idRisorsa : risorseEliminate) {
+						HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+						boolean operazioneInUso = apcCore.isRisorsaInUso(idRisorsa,whereIsInUso,normalizeObjectIds);
+						if (operazioneInUso) {
+
+							// traduco nomeRisorsa in path
+							String methodPath = null;
+							if(asSintetico.getResource()!=null) {
+								for (int j = 0; j < asSintetico.getResource().size(); j++) {
+									ResourceSintetica risorsa = asSintetico.getResource().get(j);
+									if (idRisorsa.getNome().equals(risorsa.getNome())) {
+										methodPath = NamingUtils.getLabelResource(risorsa);
+										break;
+									}
+								}
+							}
+							if(methodPath==null) {
+								methodPath = idRisorsa.getNome();
+							}
+							
+							inUsoMessage.append(DBOggettiInUsoUtils.toString(idRisorsa, methodPath, whereIsInUso, true, newLine));
+							inUsoMessage.append(newLine);
+						} 
+					}
+				}
+			}
+			if(inUsoMessage.length()>0) {
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, listaParams);
+
+				// preparo i campi
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+				apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
+						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare,
+						serviceBinding, this.aggiornaEsistenti, this.eliminaNonPresentiNuovaInterfaccia);
+
+				pd.setMessage("Non è possibile procedere con l'aggiornamento dell'interfaccia a causa di dipendenze verso oggetti che verrebbero eliminati.<BR/><BR/>"+inUsoMessage.toString());
+				
+				pd.setDati(dati);
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
+						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
+			}
+
 			
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);

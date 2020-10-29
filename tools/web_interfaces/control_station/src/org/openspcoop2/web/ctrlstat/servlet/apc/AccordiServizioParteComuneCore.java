@@ -35,6 +35,9 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -47,12 +50,15 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.ResourceSintetica;
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
@@ -63,6 +69,7 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
@@ -1613,48 +1620,14 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	}
 
 	
-	public void popolaResourceDaUnAltroASPC(AccordoServizioParteComune aspcDestinazione, AccordoServizioParteComune aspcSorgente) throws Exception{
+	public void popolaResourceDaUnAltroASPC(AccordoServizioParteComune aspcDestinazione, AccordoServizioParteComune aspcSorgente, 
+			boolean aggiornaRisorseEsistenti, boolean eliminaRisorseNonPresentiNuovaInterfaccia, List<IDResource> risorseEliminate) throws Exception{
 		String nomeMetodo = "popolaResourceDaUnAltroASPC";
 		try {
 			if(aspcSorgente.sizeResourceList() > 0){
 				for (Resource nuovoResource : aspcSorgente.getResourceList()) {
 					
-					Resource vecchioResourceByMethodPath = null;
-					for (Resource vecchioResourceTMP : aspcDestinazione.getResourceList()) {
-						
-						if(vecchioResourceTMP.getMethod()==null) {
-							if(nuovoResource.getMethod()!=null) {
-								continue;
-							}
-						}else {
-							if(!vecchioResourceTMP.getMethod().equals(nuovoResource.getMethod())) {
-								continue;
-							}
-						}
-						
-						if(vecchioResourceTMP.getPath()==null) {
-							if(nuovoResource.getPath()!=null) {
-								continue;
-							}
-						}else {
-							if(!vecchioResourceTMP.getPath().equals(nuovoResource.getPath())) {
-								continue;
-							}
-						}
-						
-						vecchioResourceByMethodPath = vecchioResourceTMP;
-						break;
-					}					
-					
-					/* Fix: search by method e path
-					Resource vecchioResource = null;
-					for (Resource vecchioResourceTMP : aspcDestinazione.getResourceList()) {
-						if(vecchioResourceTMP.getNome().equals(nuovoResource.getNome())){
-							vecchioResource = vecchioResourceTMP;
-							break;
-						}
-					}
-					*/
+					Resource vecchioResourceByMethodPath = find(nuovoResource, aspcDestinazione.getResourceList());
 					
 					// non ho trovato l'elemento corrente nel aspc destinazione
 					if(vecchioResourceByMethodPath == null){
@@ -1679,14 +1652,95 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 						
 						aspcDestinazione.addResource(nuovoResource);
 					} else {
-						// ho trovato l'elemento, aggiorno i valori  rimpiazzando la risorsa
-						for (int i = 0; i < aspcDestinazione.sizeResourceList(); i++) {
-							if(aspcDestinazione.getResource(i).getNome().equals(vecchioResourceByMethodPath.getNome())) {
-								aspcDestinazione.removeResource(i);
-								break;
+						if(aggiornaRisorseEsistenti) {
+							// ho trovato l'elemento, aggiorno i valori  rimpiazzando la risorsa
+							Resource vecchiaResource = null;
+							for (int i = 0; i < aspcDestinazione.sizeResourceList(); i++) {
+								if(aspcDestinazione.getResource(i).getNome().equals(vecchioResourceByMethodPath.getNome())) {
+									vecchiaResource = aspcDestinazione.removeResource(i);
+									break;
+								}
+							}
+							aspcDestinazione.addResource(nuovoResource);
+							
+							if(vecchiaResource!=null) {
+
+								if(!CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(vecchiaResource.getProfAzione())) {
+									continue;
+								}
+
+								boolean ridefinisci = false;
+								if(vecchiaResource.getConfermaRicezione()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaResource.getConfermaRicezione())) {
+									nuovoResource.setConfermaRicezione(vecchiaResource.getConfermaRicezione());
+									ridefinisci = true;
+								}
+								if(vecchiaResource.getConsegnaInOrdine()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaResource.getConsegnaInOrdine())) {
+									nuovoResource.setConsegnaInOrdine(vecchiaResource.getConsegnaInOrdine());
+									ridefinisci = true;
+								}
+								if(vecchiaResource.getIdCollaborazione()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaResource.getIdCollaborazione())) {
+									nuovoResource.setIdCollaborazione(vecchiaResource.getIdCollaborazione());
+									ridefinisci = true;
+								}
+								if(vecchiaResource.getIdRiferimentoRichiesta()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaResource.getIdRiferimentoRichiesta())) {
+									nuovoResource.setIdRiferimentoRichiesta(vecchiaResource.getIdRiferimentoRichiesta());
+									ridefinisci = true;
+								}
+								if(vecchiaResource.getScadenza()!=null && !"".equals(vecchiaResource.getScadenza())) {
+									nuovoResource.setScadenza(vecchiaResource.getScadenza());
+									ridefinisci = true;
+								}
+								if(vecchiaResource.getDescrizione()!=null && !"".equals(vecchiaResource.getDescrizione())) {
+									nuovoResource.setDescrizione(vecchiaResource.getDescrizione());
+									ridefinisci = true;
+								}
+								// filtro duplicati gestito nel BasicArchive.setProtocolInfo
+								if(vecchiaResource.getFiltroDuplicati()!=null) {
+									if(!vecchiaResource.getFiltroDuplicati().equals(nuovoResource.getFiltroDuplicati())) {
+										nuovoResource.setFiltroDuplicati(vecchiaResource.getFiltroDuplicati());
+										ridefinisci = true;
+									}
+								}
+								if(ridefinisci) {
+									nuovoResource.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+								}
+								
 							}
 						}
-						aspcDestinazione.addResource(nuovoResource);
+					}
+				}
+			}
+			
+			if(eliminaRisorseNonPresentiNuovaInterfaccia) {
+				
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspcDestinazione);
+				
+				if(aspcDestinazione.sizeResourceList() > 0){
+					List<Resource> risorseDaEliminare = new ArrayList<Resource>();
+					for (Resource oldResource : aspcDestinazione.getResourceList()) {
+						
+						Resource find = find(oldResource, aspcSorgente.getResourceList());
+						if(find==null) {
+							risorseDaEliminare.add(oldResource);
+						}
+						
+					}
+					if(!risorseDaEliminare.isEmpty()) {
+						while(risorseDaEliminare.size()>0) {
+							Resource risorsaDaEliminare = risorseDaEliminare.remove(0);
+							for (int i = 0; i < aspcDestinazione.sizeResourceList(); i++) {
+								if(aspcDestinazione.getResource(i).getNome().equals(risorsaDaEliminare.getNome())) {
+									aspcDestinazione.removeResource(i);
+									IDResource idResource = new IDResource();
+									idResource.setIdAccordo(idAccordo);
+									idResource.setNome(risorsaDaEliminare.getNome());
+									
+									risorseEliminate.add(idResource);
+									
+									break;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1697,9 +1751,49 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public void popolaPorttypeOperationDaUnAltroASPC(AccordoServizioParteComune aspcDestinazione, AccordoServizioParteComune aspcSorgente) throws Exception{
+	private Resource find(Resource resourceSearched, List<Resource> resources) {
+		if(resources==null || resources.isEmpty()) {
+			return null;
+		}
+		Resource resourceByMethodPath = null;
+		for (Resource resourceTMP : resources) {
+			
+			if(resourceTMP.getMethod()==null) {
+				if(resourceSearched.getMethod()!=null) {
+					continue;
+				}
+			}else {
+				if(!resourceTMP.getMethod().equals(resourceSearched.getMethod())) {
+					continue;
+				}
+			}
+			
+			if(resourceTMP.getPath()==null) {
+				if(resourceSearched.getPath()!=null) {
+					continue;
+				}
+			}else {
+				if(!resourceTMP.getPath().equals(resourceSearched.getPath())) {
+					continue;
+				}
+			}
+			
+			resourceByMethodPath = resourceTMP;
+			break;
+		}	
+		return resourceByMethodPath;
+	}
+	
+	public void popolaPorttypeOperationDaUnAltroASPC(AccordoServizioParteComune aspcDestinazione, AccordoServizioParteComune aspcSorgente, 
+			boolean aggiornaServiziAzioniEsistenti, boolean eliminaServiziAzioniNonPresentiNuovaInterfaccia,
+			List<IDPortType> portTypeEliminati, List<IDPortTypeAzione> operationEliminate) throws Exception{
 		String nomeMetodo = "popolaPorttypeOperationDaUnAltroASPC";
 		try {
+			IDAccordo idAccordo = null;
+			if(eliminaServiziAzioniNonPresentiNuovaInterfaccia) {
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspcDestinazione);
+			}
+			
 			if(aspcSorgente.sizePortTypeList() > 0){
 				for (PortType nuovoPortType : aspcSorgente.getPortTypeList()) {
 					PortType vecchioPortType = null;
@@ -1714,34 +1808,230 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 					if(vecchioPortType == null){
 						aspcDestinazione.addPortType(nuovoPortType);
 					} else {
-						// ho trovato l'elemento, aggiorno i valori  rimpiazzando la risorsa
-						for (int i = 0; i < aspcDestinazione.sizePortTypeList(); i++) {
-							if(aspcDestinazione.getPortType(i).getNome().equals(vecchioPortType.getNome())) {
-								aspcDestinazione.removePortType(i);
-								break;
+						if(aggiornaServiziAzioniEsistenti) {
+							// ho trovato l'elemento, aggiorno i valori  rimpiazzando la risorsa
+							PortType oldPT = null;
+							for (int i = 0; i < aspcDestinazione.sizePortTypeList(); i++) {
+								if(aspcDestinazione.getPortType(i).getNome().equals(vecchioPortType.getNome())) {
+									oldPT = aspcDestinazione.removePortType(i);
+									break;
+								}
 							}
-						}
-						aspcDestinazione.addPortType(nuovoPortType);
-						
-						// analisi delle azioni presenti
-						if(nuovoPortType.sizeAzioneList() > 0){
-							for (Operation vecchiaAzione : vecchioPortType.getAzioneList()) {
-								boolean find = false;
-								for (Operation nuovaAzione : nuovoPortType.getAzioneList()) {
-									if(nuovaAzione.getNome().equals(vecchiaAzione.getNome())) {
-										find = true;
-										break;
+							aspcDestinazione.addPortType(nuovoPortType);
+							
+							if(oldPT!=null) {
+								// riporto funzionalità non gestite nel BasicArchive.setProtocolInfo
+								for (Operation vecchiaAzione : oldPT.getAzioneList()) {
+									
+									if(!CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(vecchiaAzione.getProfAzione())) {
+										continue;
+									}
+																			
+									Operation nuovaAzione = null;
+									for (Operation azCheck : nuovoPortType.getAzioneList()) {
+										if(azCheck.getNome().equals(vecchiaAzione.getNome())) {
+											nuovaAzione = azCheck;
+											break;
+										}
+									}
+									if(nuovaAzione!=null) {
+										boolean ridefinisci = false;
+										if(vecchiaAzione.getConfermaRicezione()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaAzione.getConfermaRicezione())) {
+											nuovaAzione.setConfermaRicezione(vecchiaAzione.getConfermaRicezione());
+											ridefinisci = true;
+										}
+										if(vecchiaAzione.getConsegnaInOrdine()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaAzione.getConsegnaInOrdine())) {
+											nuovaAzione.setConsegnaInOrdine(vecchiaAzione.getConsegnaInOrdine());
+											ridefinisci = true;
+										}
+										if(vecchiaAzione.getIdCollaborazione()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaAzione.getIdCollaborazione())) {
+											nuovaAzione.setIdCollaborazione(vecchiaAzione.getIdCollaborazione());
+											ridefinisci = true;
+										}
+										if(vecchiaAzione.getIdRiferimentoRichiesta()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaAzione.getIdRiferimentoRichiesta())) {
+											nuovaAzione.setIdRiferimentoRichiesta(vecchiaAzione.getIdRiferimentoRichiesta());
+											ridefinisci = true;
+										}
+										if(vecchiaAzione.getScadenza()!=null && !"".equals(vecchiaAzione.getScadenza())) {
+											nuovaAzione.setScadenza(vecchiaAzione.getScadenza());
+											ridefinisci = true;
+										}
+										// filtro duplicati gestito nel BasicArchive.setProtocolInfo
+										if(vecchiaAzione.getFiltroDuplicati()!=null) {
+											if(!vecchiaAzione.getFiltroDuplicati().equals(nuovaAzione.getFiltroDuplicati())) {
+												nuovaAzione.setFiltroDuplicati(vecchiaAzione.getFiltroDuplicati());
+												ridefinisci = true;
+											}
+										}
+										if(ridefinisci) {
+											nuovaAzione.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+											if(nuovaAzione.getProfiloCollaborazione()!=null) {
+												nuovaAzione.setProfiloCollaborazione(nuovaAzione.getProfiloCollaborazione());
+											}
+											else if(nuovoPortType.getProfiloCollaborazione()!=null) {
+												nuovaAzione.setProfiloCollaborazione(nuovoPortType.getProfiloCollaborazione());
+											}
+											else {
+												nuovaAzione.setProfiloCollaborazione(aspcDestinazione.getProfiloCollaborazione());
+											}
+										}
 									}
 								}
-								if(!find) {
-									nuovoPortType.addAzione(vecchiaAzione);
+							}
+						
+							// riporto le azioni presenti nel vecchio e non nel nuovo.
+							if(nuovoPortType.sizeAzioneList() > 0){
+								for (Operation vecchiaAzione : vecchioPortType.getAzioneList()) {
+									boolean find = false;
+									for (Operation nuovaAzione : nuovoPortType.getAzioneList()) {
+										if(nuovaAzione.getNome().equals(vecchiaAzione.getNome())) {
+											find = true;
+											break;
+										}
+									}
+									if(!find) {
+										if(eliminaServiziAzioniNonPresentiNuovaInterfaccia) {
+											IDPortType idPortType = new IDPortType();
+											idPortType.setIdAccordo(idAccordo);
+											idPortType.setNome(vecchioPortType.getNome());
+											
+											IDPortTypeAzione idPortTypeAzione = new IDPortTypeAzione();
+											idPortTypeAzione.setIdPortType(idPortType);
+											idPortTypeAzione.setNome(vecchiaAzione.getNome());
+											operationEliminate.add(idPortTypeAzione);
+										}
+										else {
+											nuovoPortType.addAzione(vecchiaAzione);
+										}
+									}
+								}
+							}
+							else {
+								if(vecchioPortType.sizeAzioneList()>0) {
+									for (Operation op : vecchioPortType.getAzioneList()) {
+										if(eliminaServiziAzioniNonPresentiNuovaInterfaccia) {
+											IDPortType idPortType = new IDPortType();
+											idPortType.setIdAccordo(idAccordo);
+											idPortType.setNome(vecchioPortType.getNome());
+											
+											IDPortTypeAzione idPortTypeAzione = new IDPortTypeAzione();
+											idPortTypeAzione.setIdPortType(idPortType);
+											idPortTypeAzione.setNome(op.getNome());
+											operationEliminate.add(idPortTypeAzione);
+										}
+										else {
+											nuovoPortType.addAzione(op);
+										}
+									}
 								}
 							}
 						}
 						else {
-							if(vecchioPortType.sizeAzioneList()>0) {
-								for (Operation op : vecchioPortType.getAzioneList()) {
-									nuovoPortType.addAzione(op);
+							// Aggiungo solo le azioni nuove
+							if(nuovoPortType.sizeAzioneList() > 0){
+								for (Operation nuovaAzione : nuovoPortType.getAzioneList()) {
+									boolean find = false;
+									for (Operation vecchiaAzione : vecchioPortType.getAzioneList()) {
+										if(nuovaAzione.getNome().equals(vecchiaAzione.getNome())) {
+											find = true;
+											break;
+										}
+									}
+									if(!find) {
+										vecchioPortType.addAzione(nuovaAzione);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(eliminaServiziAzioniNonPresentiNuovaInterfaccia) {
+				
+				// elimino port type non più presenti
+				if(aspcDestinazione.sizePortTypeList() > 0){
+					List<PortType> portTypeDaEliminare = new ArrayList<PortType>();
+					for (PortType oldPortType : aspcDestinazione.getPortTypeList()) {
+						
+						if(aspcSorgente.sizePortTypeList() > 0){
+							boolean find = false;
+							for (PortType nuovoPortType : aspcSorgente.getPortTypeList()) {
+								if(nuovoPortType.getNome().equals(oldPortType.getNome())){
+									find = true;
+									break;
+								}
+							}
+							if(!find) {
+								portTypeDaEliminare.add(oldPortType);
+							}
+						}
+						
+					}
+					if(!portTypeDaEliminare.isEmpty()) {
+						while(portTypeDaEliminare.size()>0) {
+							PortType ptDaEliminare = portTypeDaEliminare.remove(0);
+							for (int i = 0; i < aspcDestinazione.sizePortTypeList(); i++) {
+								if(aspcDestinazione.getPortType(i).getNome().equals(ptDaEliminare.getNome())) {
+									aspcDestinazione.removePortType(i);
+									
+									IDPortType idPortType = new IDPortType();
+									idPortType.setIdAccordo(idAccordo);
+									idPortType.setNome(ptDaEliminare.getNome());
+									portTypeEliminati.add(idPortType);
+									
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+				// elimino azioni non più presenti
+				if(aspcDestinazione.sizePortTypeList() > 0){
+					for (PortType oldPortType : aspcDestinazione.getPortTypeList()) {
+						
+						List<Operation> operationDaEliminare = new ArrayList<Operation>();
+						if(oldPortType.sizeAzioneList() > 0){
+							for (Operation oldOperation : oldPortType.getAzioneList()) {
+								
+								// find operation in new
+								PortType newPortType = null;
+								for (PortType nuovoPortType : aspcSorgente.getPortTypeList()) {
+									if(nuovoPortType.getNome().equals(oldPortType.getNome())){
+										newPortType = nuovoPortType;
+										break;
+									}
+								}
+								boolean find = false;
+								if(newPortType!=null && newPortType.sizeAzioneList()>0) {
+									for (Operation nuovaAzione : newPortType.getAzioneList()) {
+										if(nuovaAzione.getNome().equals(oldOperation.getNome())) {
+											find = true;
+											break;
+										}
+									}
+								}
+								if(!find) {
+									operationDaEliminare.add(oldOperation);
+								}
+							}
+						}
+						while(operationDaEliminare.size()>0) {
+							Operation opDaEliminare = operationDaEliminare.remove(0);
+							for (int i = 0; i < oldPortType.sizeAzioneList(); i++) {
+								if(oldPortType.getAzione(i).getNome().equals(opDaEliminare.getNome())) {
+									oldPortType.removeAzione(i);
+									
+									IDPortType idPortType = new IDPortType();
+									idPortType.setIdAccordo(idAccordo);
+									idPortType.setNome(oldPortType.getNome());
+									
+									IDPortTypeAzione idPortTypeAzione = new IDPortTypeAzione();
+									idPortTypeAzione.setIdPortType(idPortType);
+									idPortTypeAzione.setNome(opDaEliminare.getNome());
+									operationEliminate.add(idPortTypeAzione);
+									
+									break;
 								}
 							}
 						}
@@ -2116,6 +2406,153 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			inUsoMessage.append("\n");
 		} else {
 			inUsoMessage.append(ApiCostanti.LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
+	}
+	
+	public boolean isRisorsaInUso(IDResource idRisorsa, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "isRisorsaInUso";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.isRisorsaInUso(idRisorsa, whereIsInUso, normalizeObjectIds);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public String getDettagliRisorsaInUso(IDResource idResource) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean risorsaInUso  = this.isRisorsaInUso(idResource, whereIsInUso, normalizeObjectIds );
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(risorsaInUso) {
+			
+			// traduco nomeRisorsa in path
+			AccordoServizioParteComuneSintetico as = this.getAccordoServizioSintetico(idResource.getIdAccordo());			
+			String methodPath = null;
+			if(as.getResource()!=null) {
+				for (int j = 0; j < as.getResource().size(); j++) {
+					ResourceSintetica risorsa = as.getResource().get(j);
+					if (idResource.getNome().equals(risorsa.getNome())) {
+						try {
+							methodPath = NamingUtils.getLabelResource(risorsa);
+						}catch(Exception e) {
+							throw new DriverRegistroServiziException(e.getMessage(),e);
+						}
+						break;
+					}
+				}
+			}
+			if(methodPath==null) {
+				methodPath = idResource.getNome();
+			}
+			
+			String s = DBOggettiInUsoUtils.toString(idResource, methodPath, whereIsInUso, false, "\n");
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(AccordiServizioParteComuneCostanti.LABEL_IN_USO_ACCORDO_RISORSA_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
+	}
+	
+	public boolean isPortTypeInUso(IDPortType idPT, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "isPortTypeInUso";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.isPortTypeInUso(idPT, whereIsInUso, normalizeObjectIds);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public String getDettagliPortTypeInUso(IDPortType idPT) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean ptInUso  = this.isPortTypeInUso(idPT, whereIsInUso, normalizeObjectIds );
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(ptInUso) {
+			String s = DBOggettiInUsoUtils.toString(idPT, whereIsInUso, false, "\n");
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(AccordiServizioParteComuneCostanti.LABEL_IN_USO_ACCORDO_PORT_TYPE_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
+	}
+	
+	public boolean isOperazioneInUso(IDPortTypeAzione idOperazione, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "isOperazioneInUso";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.isOperazioneInUso(idOperazione, whereIsInUso, normalizeObjectIds);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public String getDettagliOperazioneInUso(IDPortTypeAzione idOperazione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean risorsaInUso  = this.isOperazioneInUso(idOperazione, whereIsInUso, normalizeObjectIds );
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(risorsaInUso) {
+			String s = DBOggettiInUsoUtils.toString(idOperazione, whereIsInUso, false, "\n");
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(AccordiServizioParteComuneCostanti.LABEL_IN_USO_ACCORDO_OPERAZIONE_BODY_HEADER_NESSUN_RISULTATO);
 		}
 		
 		return inUsoMessage.toString();

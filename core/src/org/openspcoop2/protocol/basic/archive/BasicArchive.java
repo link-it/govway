@@ -45,6 +45,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.ParameterType;
+import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.RepresentationType;
 import org.openspcoop2.core.registry.constants.RepresentationXmlType;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
@@ -257,6 +258,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						ptOpenSPCoop.setFiltroDuplicati(CostantiRegistroServizi.ABILITATO);					
 					}
 					
+					// Calcolo profilo del port-type
+					ProfiloCollaborazione profiloPt = accordoServizioParteComune.getProfiloCollaborazione();
+					if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(ptOpenSPCoop.getProfiloPT()) && ptOpenSPCoop.getProfiloCollaborazione()!=null) {
+						profiloPt = ptOpenSPCoop.getProfiloCollaborazione();
+					}
+					
 					// SoapBinding
 					if(bindingWSDL!=null){
 						AccordoServizioWrapperUtilities.setPortTypeSoapBindingStyle(bindingWSDL, log, ptOpenSPCoop);
@@ -295,10 +302,15 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						
 						// profilo di collaborazione (non basta guardare l'output, poiche' puo' avere poi un message vuoto e quindi equivale a non avere l'output)
 						//if(opWSDL.getOutput()!=null){
+						ProfiloCollaborazione profiloOp = null;
 						if(opOpenSPCoop.getMessageOutput()!=null){
-							opOpenSPCoop.setProfiloCollaborazione(CostantiRegistroServizi.SINCRONO);
+							profiloOp = CostantiRegistroServizi.SINCRONO;
 						}else{
-							opOpenSPCoop.setProfiloCollaborazione(CostantiRegistroServizi.ONEWAY);
+							profiloOp = CostantiRegistroServizi.ONEWAY;
+						}
+						opOpenSPCoop.setProfiloCollaborazione(profiloOp);
+						if(profiloPt.equals(profiloOp)) {
+							opOpenSPCoop.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
 						}
 						
 						// cerco operation binding (se il wsdl contiene la parte implementativa)

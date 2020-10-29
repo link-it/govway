@@ -29,11 +29,8 @@ import java.util.Vector;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -46,7 +43,6 @@ import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
@@ -56,9 +52,6 @@ import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.Parameter;
 
 
@@ -105,112 +98,36 @@ public class AccordiServizioParteComuneUtilities {
 		
 	}
 	
-	public static void deleteAccordoServizioParteComuneRisorse(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
-			StringBuilder inUsoMessage, String newLine, List<IDServizio> idServiziWithAccordo, List<String> risorse) throws Exception {
-		
-		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
-		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
-		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
+	public static boolean deleteResource(AccordoServizioParteComune as, IDResource idResource, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
+		boolean risorsaInUso = apcCore.isRisorsaInUso(idResource,whereIsInUso,normalizeObjectIds);
 		
 		boolean modificaAS_effettuata = false;
-		for (int i = 0; i < risorse.size(); i++) {
-			String nomeRisorsa = risorse.get(i);
+		
+		if (risorsaInUso) {
 			
 			// traduco nomeRisorsa in path
 			String methodPath = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
 				Resource risorsa = as.getResource(j);
-				if (nomeRisorsa.equals(risorsa.getNome())) {
+				if (idResource.getNome().equals(risorsa.getNome())) {
 					methodPath = NamingUtils.getLabelResource(risorsa);
 					break;
 				}
 			}
 			if(methodPath==null) {
-				methodPath = nomeRisorsa;
+				methodPath = idResource.getNome();
 			}
 			
-			// Se esiste un mapping
-			List<MappingErogazionePortaApplicativa> lPA = porteApplicativeCore.getMappingConGruppiPerAzione(nomeRisorsa, idServiziWithAccordo);
-			if(lPA!=null && !lPA.isEmpty()) {
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè riassegnata in un gruppo dell'erogazione del servizio: "+newLine);
-				for(int j=0;j<lPA.size();j++){
-					inUsoMessage.append("- "+lPA.get(j).getIdServizio()+" (gruppo: '"+lPA.get(j).getDescrizione()+"')"+newLine);
-				}
-				continue;
-			}
-			List<MappingFruizionePortaDelegata> lPD = porteDelegateCore.getMappingConGruppiPerAzione(nomeRisorsa, idServiziWithAccordo);
-			if(lPD!=null && !lPD.isEmpty()) {
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè riassegnata in un gruppo della fruizione del servizio: "+newLine);
-				for(int j=0;j<lPD.size();j++){
-					inUsoMessage.append("- "+lPD.get(j).getIdServizio()+" (fruitore: "+lPD.get(j).getIdFruitore()+") (gruppo: '"+lPD.get(j).getDescrizione()+"')"+newLine);
-				}
-				continue;
-			}
-			
-			// Controllo se assegnata in filtri di rate limiting
-			if(confCore.usedInConfigurazioneControlloTrafficoAttivazionePolicy(null,null, nomeRisorsa)) {
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in politiche di Rate Limiting"+newLine);
-				continue;
-			}
-			
-			// Controllo se assegnata in criteri di applicabilita delle trasformazioni
-			if(porteApplicativeCore.azioneUsataInTrasformazioniPortaApplicativa(nomeRisorsa)) {
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in erogazioni per la configurazione di trasformazioni"+newLine);
-				continue;
-			}
-			if(porteDelegateCore.azioneUsataInTrasformazioniPortaDelegata(nomeRisorsa)) {
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in fruizioni per la configurazione di trasformazioni"+newLine);
-				continue;
-			}
-			
-			// Controllo che l'azione non sia in uso (se esistono servizi, allora poi saranno state create PD o PA)
-			if(idServiziWithAccordo!=null && idServiziWithAccordo.size()>0){
-				
-				// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti.
-				if (porteApplicativeCore.existsPortaApplicativaAzione(nomeRisorsa)) {
-					List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeRisorsa);
-					if(inUsoMessage.length()>0) {
-						inUsoMessage.append(newLine);
-					}
-					inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in porte applicative: "+newLine);
-					for(int j=0;j<idPAs.size();j++){
-						inUsoMessage.append("- "+idPAs.get(j).toString()+newLine);
-					}
-					continue;
-				}
-				if (porteDelegateCore.existsPortaDelegataAzione(nomeRisorsa)) {
-					List<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(nomeRisorsa);
-					if(inUsoMessage.length()>0) {
-						inUsoMessage.append(newLine);
-					}
-					inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in porte delegate: "+newLine);
-					for(int j=0;j<idPDs.size();j++){
-						inUsoMessage.append("- "+idPDs.get(j).toString()+newLine);
-					}
-					continue;
-				}
-				
-			}
-			
+			inUsoMessage.append(DBOggettiInUsoUtils.toString(idResource, methodPath, whereIsInUso, true, newLine));
+			inUsoMessage.append(newLine);
+
+		} else {
 			// Effettuo eliminazione
 			for (int j = 0; j < as.sizeResourceList(); j++) {
 				Resource risorsa = as.getResource(j);
-				if (nomeRisorsa.equals(risorsa.getNome())) {
+				if (idResource.getNome().equals(risorsa.getNome())) {
 					modificaAS_effettuata = true;
 					as.removeResource(j);
 					break;
@@ -218,273 +135,139 @@ public class AccordiServizioParteComuneUtilities {
 			}
 		}
 		
-		// effettuo le operazioni
-		if(modificaAS_effettuata)
-			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
-		
+		return modificaAS_effettuata;
 	}
 	
-	public static void deleteAccordoServizioParteComunePortTypes(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
-			StringBuilder inUsoMessage, String newLine, IDPortType idPT, List<String> ptsToRemove) throws Exception {
-		
-		AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
-		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
-		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
-		
-		String nomept = "";
+	public static void deleteAccordoServizioParteComuneRisorse(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
+			StringBuilder inUsoMessage, String newLine, List<String> resourcesToRemove) throws Exception {
+
 		boolean modificaAS_effettuata = false;
-		for (int i = 0; i < ptsToRemove.size(); i++) {
-
-			nomept = ptsToRemove.get(i);
-
-			idPT.setNome(nomept);
-			List<IDServizio> idServizi = null;
-			try{
-				idServizi = apsCore.getIdServiziWithPortType(idPT);
-			}catch(DriverRegistroServiziNotFound dNotF){}
+		
+		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);
+				
+		for (int i = 0; i < resourcesToRemove.size(); i++) {
+			String nomeRisorsa = resourcesToRemove.get(i);
+			IDResource idRisorsa = new IDResource();
+			idRisorsa.setNome(nomeRisorsa);
+			idRisorsa.setIdAccordo(idAccordo);
 			
-			if(idServizi==null || idServizi.size()<=0){
+			boolean modificato = AccordiServizioParteComuneUtilities.deleteResource(as, idRisorsa, userLogin, apcCore, apcHelper, inUsoMessage, newLine);
+			if(modificato) {
+				modificaAS_effettuata = true;
+			}
 			
-				// Check che il port type non sia correlato da altri porttype.
-				Vector<String> tmp = new Vector<String>();
-				for (int j = 0; j < as.sizePortTypeList(); j++) {
-					PortType pt = as.getPortType(j);
-					if(pt.getNome().equals(nomept)==false){
-						for (int check = 0; check < pt.sizeAzioneList(); check++) {
-							Operation opCheck = pt.getAzione(check);
-							if(opCheck.getCorrelataServizio()!=null && nomept.equals(opCheck.getCorrelataServizio())){
-								tmp.add("azione "+opCheck.getNome()+" del servizio "+pt.getNome());
-							}
-						}
-					}
+		}// chiudo for
+		if(modificaAS_effettuata) {
+			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
+		}
+	}
+	
+	public static boolean deletePortType(AccordoServizioParteComune as, IDPortType idPortType, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
+		boolean portTypeInUso = apcCore.isPortTypeInUso(idPortType,whereIsInUso,normalizeObjectIds);
+		
+		boolean modificaAS_effettuata = false;
+		
+		if (portTypeInUso) {
+			inUsoMessage.append(DBOggettiInUsoUtils.toString(idPortType, whereIsInUso, true, newLine));
+			inUsoMessage.append(newLine);
+
+		} else {
+			// Effettuo eliminazione
+			for (int j = 0; j < as.sizePortTypeList(); j++) {
+				PortType pt = as.getPortType(j);
+				if (idPortType.getNome().equals(pt.getNome())) {
+					modificaAS_effettuata = true;
+					as.removePortType(j);
+					break;
 				}
-				if(tmp.size()>0){
-					if(inUsoMessage.length()>0) {
-						inUsoMessage.append(newLine);
-					}
-					inUsoMessage.append("Servizio ["+nomept+"] non rimosso poichè correlato da azioni di altri servizi della API: "+newLine);
-					for(int j=0; j<tmp.size();j++){
-						inUsoMessage.append("- "+tmp.get(j).toString()+newLine);
-					}
-					continue;
-				}
-				
-				// Effettuo eliminazione
-				for (int j = 0; j < as.sizePortTypeList(); j++) {
-					PortType pt = as.getPortType(j);
-					if (nomept.equals(pt.getNome())) {
-						modificaAS_effettuata = true;
-						as.removePortType(j);
-						break;
-					}
-				}
-				
-			}else{
-				
-				// Se esiste un mapping segnalo l'errore specifico
-				List<MappingErogazionePortaApplicativa> lPA = porteApplicativeCore.getMapping(idServizi, true, false);
-				if(lPA!=null && !lPA.isEmpty()) {
-					if(inUsoMessage.length()>0) {
-						inUsoMessage.append(newLine);
-					}
-					inUsoMessage.append("Servizio "+nomept+" non rimuovibile poichè implementato nell'erogazione del servizio: "+newLine);
-					for(int j=0;j<lPA.size();j++){
-						inUsoMessage.append("- "+lPA.get(j).getIdServizio()+newLine);
-					}
-					continue;
-				}
-				List<MappingFruizionePortaDelegata> lPD = porteDelegateCore.getMapping(idServizi, true, false);
-				if(lPD!=null && !lPD.isEmpty()) {
-					if(inUsoMessage.length()>0) {
-						inUsoMessage.append(newLine);
-					}
-					inUsoMessage.append("Servizio "+nomept+" non rimuovibile poichè implementato nella fruizione del servizio: "+newLine);
-					for(int j=0;j<lPD.size();j++){
-						inUsoMessage.append("- "+lPD.get(j).getIdServizio()+" (fruitore: "+lPD.get(j).getIdFruitore()+")"+newLine);
-					}
-					continue;
-				}
-				
-				// Altrimenti segnalo l'errore più generico sull'accordo
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Servizio ["+nomept+"] non rimosso poichè viene implementato dai seguenti servizi: "+newLine);
-				for(int j=0; j<idServizi.size();j++){
-					inUsoMessage.append("- "+idServizi.get(j).toString()+newLine);
-				}
-				//continue;
-				
 			}
 		}
 		
-
-		// effettuo le operazioni
-		if(modificaAS_effettuata)
+		return modificaAS_effettuata;
+	}
+	
+	public static void deleteAccordoServizioParteComunePortTypes(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
+			StringBuilder inUsoMessage, String newLine, List<String> ptsToRemove) throws Exception {
+		
+		boolean modificaAS_effettuata = false;
+		
+		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);
+				
+		for (int i = 0; i < ptsToRemove.size(); i++) {
+			String nomePT = ptsToRemove.get(i);
+			
+			IDPortType idPT = new IDPortType();
+			idPT.setNome(nomePT);
+			idPT.setIdAccordo(idAccordo);
+						
+			boolean modificato = AccordiServizioParteComuneUtilities.deletePortType(as, idPT, userLogin, apcCore, apcHelper, inUsoMessage, newLine);
+			if(modificato) {
+				modificaAS_effettuata = true;
+			}
+			
+		}// chiudo for
+		if(modificaAS_effettuata) {
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
+		}
 		
 	}
 	
-	public static void deleteAccordoServizioParteComuneOperations(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
-			StringBuilder inUsoMessage, String newLine, PortType pt, List<IDServizio> idServiziWithPortType, List<String> optsToRemove) throws Exception {
-	
-		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
-		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
-		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
+	public static boolean deleteOperazione(PortType pt, IDPortTypeAzione idOperazione, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
+		boolean operazioneInUso = apcCore.isOperazioneInUso(idOperazione,whereIsInUso,normalizeObjectIds);
 		
-		String nomept = pt.getNome();
+		boolean modificaAS_effettuata = false;
 		
+		if (operazioneInUso) {
+			inUsoMessage.append(DBOggettiInUsoUtils.toString(idOperazione, whereIsInUso, true, newLine));
+			inUsoMessage.append(newLine);
 
-		for (int i = 0; i < optsToRemove.size(); i++) {
-
-			String nomeop = optsToRemove.get(i);
-			
-			
-			// Controllo che l'azione non sia stata correlata da un'altra azione
-			ArrayList<String> tmp = new ArrayList<String>();
-			for (int b = 0; b < as.sizePortTypeList(); b++) {
-				PortType ptCheck = as.getPortType(b);
-				for (int check = 0; check < ptCheck.sizeAzioneList(); check++) {
-					Operation opCheck = ptCheck.getAzione(check);
-					if(!ptCheck.getNome().equals(nomept) || !opCheck.getNome().equals(nomeop)){
-						// controllo le altre azioni che non siano correlate a quella da eliminare
-						if(opCheck.getCorrelata()!=null && opCheck.getCorrelata().equals(nomeop)){
-							if(opCheck.getCorrelataServizio()==null && ptCheck.getNome().equals(nomept)){
-								tmp.add(opCheck.getNome()+" del servizio "+ptCheck.getNome());
-							}
-							if(opCheck.getCorrelataServizio()!=null && opCheck.getCorrelataServizio().equals(nomept)){
-								tmp.add(opCheck.getNome()+" del servizio "+ptCheck.getNome());
-							}
-						}
-					}
-				}
-			}
-			if(tmp.size()>0){
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Azione "+nomeop+" non rimuovibile poichè perche' correlata ad altre azioni:"+newLine );
-				for(int p=0; p<tmp.size();p++){
-					inUsoMessage.append("- "+tmp.get(p)+newLine);
-				}
-				continue;
-			}
-			
-			// Controllo se assegnata in filtri di rate limiting
-			if(confCore.usedInConfigurazioneControlloTrafficoAttivazionePolicy(null,null, nomeop)) {
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Azione '"+nomeop+"' non rimuovibile poichè in uso in politiche di Rate Limiting"+newLine);
-				continue;
-			}
-			
-			// Controllo se assegnata in criteri di applicabilita delle trasformazioni
-			if(porteApplicativeCore.azioneUsataInTrasformazioniPortaApplicativa(nomeop)) {
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Azione '"+nomeop+"' non rimuovibile poichè in uso in erogazioni per la configurazione di trasformazioni"+newLine);
-				continue;
-			}
-			if(porteDelegateCore.azioneUsataInTrasformazioniPortaDelegata(nomeop)) {
-				if(inUsoMessage.length()>0) {
-					inUsoMessage.append(newLine);
-				}
-				inUsoMessage.append("Azione '"+nomeop+"' non rimuovibile poichè in uso in fruizioni per la configurazione di trasformazioni"+newLine);
-				continue;
-			}
-						
-			// Controllo che l'azione non sia in uso (se esistono servizi, allora poi saranno state create PD o PA)
-			if(idServiziWithPortType!=null && idServiziWithPortType.size()>0){
-			
-				// Se esiste un mapping
-				List<MappingErogazionePortaApplicativa> lPA = porteApplicativeCore.getMappingConGruppiPerAzione(nomeop, idServiziWithPortType);
-				if(lPA!=null && !lPA.isEmpty()) {
-					if(inUsoMessage.length()>0) {
-						inUsoMessage.append(newLine);
-					}
-					inUsoMessage.append("Azione "+nomeop+" non rimuovibile poichè riassegnata in un gruppo dell'erogazione del servizio: "+newLine);
-					for(int j=0;j<lPA.size();j++){
-						inUsoMessage.append("- "+lPA.get(j).getIdServizio()+" (gruppo: '"+lPA.get(j).getDescrizione()+"')"+newLine);
-					}
-					continue;
-				}
-				List<MappingFruizionePortaDelegata> lPD = porteDelegateCore.getMappingConGruppiPerAzione(nomeop, idServiziWithPortType);
-				if(lPD!=null && !lPD.isEmpty()) {
-					if(inUsoMessage.length()>0) {
-						inUsoMessage.append(newLine);
-					}
-					inUsoMessage.append("Azione "+nomeop+" non rimuovibile poichè riassegnata in un gruppo della fruizione del servizio: "+newLine);
-					for(int j=0;j<lPD.size();j++){
-						inUsoMessage.append("- "+lPD.get(j).getIdServizio()+" (fruitore: "+lPD.get(j).getIdFruitore()+") (gruppo: '"+lPD.get(j).getDescrizione()+"')"+newLine);
-					}
-					continue;
-				}
-				
-				if(apcCore.isUnicaAzioneInAccordi(nomeop)){
-					
-					// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti.
-					if (porteApplicativeCore.existsPortaApplicativaAzione(nomeop)) {
-						List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeop);
-						if(inUsoMessage.length()>0) {
-							inUsoMessage.append(newLine);
-						}
-						inUsoMessage.append("Azione "+nomeop+" non rimuovibile poichè in uso in porte applicative: "+newLine);
-						for(int j=0;j<idPAs.size();j++){
-							inUsoMessage.append("- "+idPAs.get(j).toString()+newLine);
-						}
-						continue;
-					}
-					if (porteDelegateCore.existsPortaDelegataAzione(nomeop)) {
-						List<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(nomeop);
-						if(inUsoMessage.length()>0) {
-							inUsoMessage.append(newLine);
-						}
-						inUsoMessage.append("Azione "+nomeop+" non rimuovibile poichè in uso in porte delegate: "+newLine);
-						for(int j=0;j<idPDs.size();j++){
-							inUsoMessage.append("- "+idPDs.get(j).toString()+newLine);
-						}
-						continue;
-					}
-					
-				}else{
-					
-					// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti,
-					// poichè non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
-					// Allora non permetto l'eliminazione poichè esistono dei servizi che implementano l'accordo
-					
-					// RILASCIO CONTROLLO: non permette di eliminare azioni che comunque non sono usate nelle principali funzionalità sopra verificate.
-					
-					/*
-					if(inUsoMessage.length()>0) {
-						inUsoMessage.append(newLine);
-					}
-					inUsoMessage.append("Azione "+nomeop+" non rimuovibile poichè il servizio "+nomept+" della API viene implementato dai seguenti servizi: "+newLine);
-					for(int j=0; j<idServiziWithPortType.size();j++){
-						inUsoMessage.append("- "+idServiziWithPortType.get(j).toString()+newLine);
-					}
-					continue;
-					*/
-					
-				}
-				
-			}
-			
-			
-			// effettuo eliminazione
+		} else {
+			// Effettuo eliminazione
 			for (int j = 0; j < pt.sizeAzioneList(); j++) {
 				Operation op = pt.getAzione(j);
-				if (nomeop.equals(op.getNome())) {
+				if (idOperazione.getNome().equals(op.getNome())) {
+					modificaAS_effettuata = true;
 					pt.removeAzione(j);
 					break;
 				}
 			}
 		}
-
-		// effettuo le operazioni
-		apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);
 		
+		return modificaAS_effettuata;
+	}
+	
+	
+	public static void deleteAccordoServizioParteComuneOperations(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
+			StringBuilder inUsoMessage, String newLine, PortType pt, List<String> optsToRemove) throws Exception {
+	
+		boolean modificaAS_effettuata = false;
+		
+		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);
+		IDPortType idPortType = new IDPortType();
+		idPortType.setNome(pt.getNome());
+		idPortType.setIdAccordo(idAccordo);
+		
+		for (int i = 0; i < optsToRemove.size(); i++) {
+			String nomeop = optsToRemove.get(i);
+			
+			IDPortTypeAzione idOperazione = new IDPortTypeAzione();
+			idOperazione.setNome(nomeop);
+			idOperazione.setIdPortType(idPortType);
+			
+			boolean modificato = AccordiServizioParteComuneUtilities.deleteOperazione(pt, idOperazione, userLogin, apcCore, apcHelper, inUsoMessage, newLine);
+			if(modificato) {
+				modificaAS_effettuata = true;
+			}
+			
+		}// chiudo for
+		if(modificaAS_effettuata) {
+			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);
+		}
+				
 	}
 	
 	@SuppressWarnings("incomplete-switch")
@@ -897,10 +680,24 @@ public class AccordiServizioParteComuneUtilities {
 			//getAziCorrList = core.accordiPorttypeOperationList(ptSel.getId().intValue(), ptSel.getProfiloCollaborazione(), new Search(true));*/
 			getAziCorrList = operationsListSelezionate.get(servcorr);
 		} else {
-			if ((profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT) && 
-					as.getProfiloCollaborazione().equals("asincronoAsimmetrico")) || 
-					(profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO) && 
-							profcollop.equals("asincronoAsimmetrico"))){
+			
+			boolean calcolaLista = false;
+			if(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) && profcollop.equals("asincronoAsimmetrico")) {
+				calcolaLista = true;
+			}
+			else if(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT.contentEquals(profProtocollo)) {
+				if(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(pt.getProfiloPT())) {
+					if(pt.getProfiloCollaborazione()!=null) {
+						calcolaLista = "asincronoAsimmetrico".equals(pt.getProfiloCollaborazione().getValue());
+					}
+				}
+				else {
+					if(as.getProfiloCollaborazione()!=null) {
+						calcolaLista = "asincronoAsimmetrico".equals(as.getProfiloCollaborazione().getValue());
+					}
+				}
+			}
+			if (calcolaLista){
 				//getAziCorrList = core.accordiPorttypeOperationList(pt.getId().intValue(), "asincronoAsimmetrico", new Search(true));
 				getAziCorrList = operationsListSelezionate.get(servcorr);
 				ptSel = pt;
@@ -1024,7 +821,9 @@ public class AccordiServizioParteComuneUtilities {
 	public static void updateInterfacciaAccordoServizioParteComune(String tipoParam, String wsdlParam, AccordoServizioParteComune as,
 			boolean enableAutoMapping, boolean validazioneDocumenti, boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes, boolean facilityUnicoWSDL_interfacciaStandard,
 			String tipoProtocollo, 
-			AccordiServizioParteComuneCore apcCore) throws Exception {
+			AccordiServizioParteComuneCore apcCore,
+			boolean aggiornaEsistenti, boolean eliminaNonPresentiNuovaInterfaccia,
+			List<IDResource> risorseEliminate,List<IDPortType> portTypeEliminati, List<IDPortTypeAzione> operationEliminate) throws Exception {
 		// il wsdl definitorio rimane fuori dal nuovo comportamento quindi il flusso della pagina continua come prima
 		if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 			as.setByteWsdlDefinitorio(wsdlParam.getBytes());
@@ -1114,10 +913,13 @@ public class AccordiServizioParteComuneUtilities {
 
 					// se l'aggiornamento ha creato nuovi oggetti o aggiornato i vecchi aggiorno la configurazione
 					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
-						apcCore.popolaResourceDaUnAltroASPC(as,asNuovo);
+						apcCore.popolaResourceDaUnAltroASPC(as,asNuovo,
+								aggiornaEsistenti, eliminaNonPresentiNuovaInterfaccia, risorseEliminate);
 					}
 					else {
-						apcCore.popolaPorttypeOperationDaUnAltroASPC(as,asNuovo);
+						apcCore.popolaPorttypeOperationDaUnAltroASPC(as,asNuovo,
+								aggiornaEsistenti, eliminaNonPresentiNuovaInterfaccia,
+								portTypeEliminati, operationEliminate);
 					}
 					
 					// popolo gli allegati

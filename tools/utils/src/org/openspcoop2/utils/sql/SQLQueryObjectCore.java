@@ -1423,7 +1423,18 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		return this.createWhereLikeCondition(columnName, searchPattern,escape);
 	}
 
-	private String createWhereLikeCondition(String columnName,String searchPattern,boolean escape, boolean contains, boolean caseInsensitive) throws SQLQueryObjectException{
+	@Override
+	public String getWhereLikeCondition(String columnName,String searchPattern, LikeConfig c) throws SQLQueryObjectException{
+		return this.createWhereLikeCondition(columnName,searchPattern,
+				c.isEscape(),
+				c.isContains(), c.isStartsWith(), c.isEndsWith(),
+				c.isCaseInsensitive());
+	}
+	
+	private String createWhereLikeCondition(String columnName,String searchPattern,
+			boolean escape, 
+			boolean contains, boolean startsWith, boolean endsWith,  
+			boolean caseInsensitive) throws SQLQueryObjectException{
 		if(columnName==null || "".equals(columnName))
 			throw new SQLQueryObjectException("Where Condition column name is null or empty string");
 		if(searchPattern==null || "".equals(searchPattern))
@@ -1441,29 +1452,77 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			if(escapePattern.isUseEscapeClausole()){
 				escapeClausole = " ESCAPE '"+escapePattern.getEscapeClausole()+"'";
 			}
-			if(contains && caseInsensitive)
-				buildCondition ="( lower("+columnName+") LIKE '%"+escapePattern.getEscapeValue().toLowerCase()+"%'"+escapeClausole+" )";
-			else if(contains)
-				buildCondition ="( "+columnName+" LIKE '%"+escapePattern.getEscapeValue()+"%'"+escapeClausole+" )";
-			else if(caseInsensitive)
-				buildCondition ="( lower("+columnName+") LIKE '"+escapePattern.getEscapeValue().toLowerCase()+"'"+escapeClausole+" )";
-			else
-				buildCondition ="( "+columnName+" LIKE '"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
+			if(contains) {
+				if(caseInsensitive) {
+					buildCondition ="( lower("+columnName+") LIKE '%"+escapePattern.getEscapeValue().toLowerCase()+"%'"+escapeClausole+" )";
+				}
+				else {
+					buildCondition ="( "+columnName+" LIKE '%"+escapePattern.getEscapeValue()+"%'"+escapeClausole+" )";
+				}
+			}
+			else if(startsWith) {
+				if(caseInsensitive) {
+					buildCondition ="( lower("+columnName+") LIKE '"+escapePattern.getEscapeValue().toLowerCase()+"%'"+escapeClausole+" )";
+				}
+				else {
+					buildCondition ="( "+columnName+" LIKE '"+escapePattern.getEscapeValue()+"%'"+escapeClausole+" )";
+				}
+			}
+			else if(endsWith) {
+				if(caseInsensitive) {
+					buildCondition ="( lower("+columnName+") LIKE '%"+escapePattern.getEscapeValue().toLowerCase()+"'"+escapeClausole+" )";
+				}
+				else {
+					buildCondition ="( "+columnName+" LIKE '%"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
+				}
+			}
+			else {
+				if(caseInsensitive) {
+					buildCondition ="( lower("+columnName+") LIKE '"+escapePattern.getEscapeValue().toLowerCase()+"'"+escapeClausole+" )";
+				}
+				else {
+					buildCondition ="( "+columnName+" LIKE '"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
+				}
+			}	
 		}
 		else{
-			if(contains && caseInsensitive)
-				buildCondition ="( lower("+columnName+") LIKE '%"+searchPattern.toLowerCase()+"%' )";
-			else if(contains)
-				buildCondition ="( "+columnName+" LIKE '%"+searchPattern+"%' )";
-			else if(caseInsensitive)
-				buildCondition ="( lower("+columnName+") LIKE '"+searchPattern.toLowerCase()+"' )";
-			else
-				buildCondition ="( "+columnName+" LIKE '"+searchPattern+"' )";
+			if(contains) {
+				if(caseInsensitive) {
+					buildCondition ="( lower("+columnName+") LIKE '%"+searchPattern.toLowerCase()+"%' )";
+				}
+				else {
+					buildCondition ="( "+columnName+" LIKE '%"+searchPattern+"%' )";
+				}
+			}
+			else if(startsWith) {
+				if(caseInsensitive) {
+					buildCondition ="( lower("+columnName+") LIKE '"+searchPattern.toLowerCase()+"%' )";
+				}
+				else {
+					buildCondition ="( "+columnName+" LIKE '"+searchPattern+"%' )";
+				}
+			}
+			else if(endsWith) {
+				if(caseInsensitive) {
+					buildCondition ="( lower("+columnName+") LIKE '%"+searchPattern.toLowerCase()+"' )";
+				}
+				else {
+					buildCondition ="( "+columnName+" LIKE '%"+searchPattern+"' )";
+				}
+			}
+			else {
+				if(caseInsensitive) {
+					buildCondition ="( lower("+columnName+") LIKE '"+searchPattern.toLowerCase()+"' )";
+				}
+				else {
+					buildCondition ="( "+columnName+" LIKE '"+searchPattern+"' )";
+				}
+			}				
 		}
 
 		return buildCondition;
 	}
-
+	
 	/**
 	 * Aggiunge una condizione di ricerca
 	 * es: SELECT * from tabella WHERE (columnName LIKE 'searchPattern')
@@ -1480,13 +1539,30 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addWhereLikeCondition(String columnName,String searchPattern, boolean escape, boolean contains, boolean caseInsensitive) throws SQLQueryObjectException{
 
-		String buildCondition = this.createWhereLikeCondition(columnName, searchPattern, escape, contains, caseInsensitive);
+		String buildCondition = this.createWhereLikeCondition(columnName, searchPattern, 
+				escape, 
+				contains, false, false, 
+				caseInsensitive);
 		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition.toString()))
 			throw new SQLQueryObjectException("Where Condition "+buildCondition.toString()+" gia' esistente tra le condizioni di where");
 		this.conditions.add(buildCondition);
 		return this;
 	}
 
+	@Override
+	public ISQLQueryObject addWhereLikeCondition(String columnName,String searchPattern, LikeConfig likeConfig) throws SQLQueryObjectException{
+		
+		String buildCondition = this.createWhereLikeCondition(columnName, searchPattern, 
+				likeConfig.isEscape(), 
+				likeConfig.isContains(), likeConfig.isStartsWith(), likeConfig.isEndsWith(), 
+				likeConfig.isCaseInsensitive());
+		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition.toString()))
+			throw new SQLQueryObjectException("Where Condition "+buildCondition.toString()+" gia' esistente tra le condizioni di where");
+		this.conditions.add(buildCondition);
+		return this;
+		
+	}
+	
 	/**
 	 * Ritorna una condizione di ricerca
 	 * es: "columnName LIKE 'searchPattern'"
@@ -1498,11 +1574,17 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public String getWhereLikeCondition(String columnName,String searchPattern, boolean contains, boolean caseInsensitive) throws SQLQueryObjectException{
-		return this.createWhereLikeCondition(columnName, searchPattern, true, contains, caseInsensitive);
+		return this.createWhereLikeCondition(columnName, searchPattern, 
+				true, 
+				contains, false, false,
+				caseInsensitive);
 	}
 	@Override
 	public String getWhereLikeCondition(String columnName,String searchPattern,boolean escape, boolean contains, boolean caseInsensitive) throws SQLQueryObjectException{
-		return this.createWhereLikeCondition(columnName, searchPattern, escape, contains, caseInsensitive);
+		return this.createWhereLikeCondition(columnName, searchPattern, 
+				escape, 
+				contains, false, false,
+				caseInsensitive);
 	}
 
 	private String createWhereExistsCondition(boolean notExists,ISQLQueryObject sqlQueryObject)throws SQLQueryObjectException{

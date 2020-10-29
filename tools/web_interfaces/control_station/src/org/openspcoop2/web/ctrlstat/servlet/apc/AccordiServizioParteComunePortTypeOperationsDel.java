@@ -32,18 +32,13 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.id.IDPortType;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -80,11 +75,8 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
@@ -117,19 +109,11 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 				if (nomept.equals(pt.getNome()))
 					break;
 			}
-
-			List<IDServizio> idServiziWithPortType = null;
-			try{
-				IDPortType idPT = new IDPortType();
-				idPT.setNome(pt.getNome());
-				idPT.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
-				idServiziWithPortType = apsCore.getIdServiziWithPortType(idPT);
-			}catch(DriverRegistroServiziNotFound dNotF){}
 			
 			StringBuilder inUsoMessage = new StringBuilder();
 			
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneOperations(as, userLogin, apcCore, apcHelper, 
-					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, pt, idServiziWithPortType, optsToRemove);
+					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, pt, optsToRemove);
 			
 			// imposto msg di errore se presente
 			if (inUsoMessage.length()>0) {

@@ -20,6 +20,9 @@ import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -96,6 +99,27 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDAccordo idAccordo = (IDAccordo)object;
 					risultatiRicerca.add(apcCore.getDettagliAccordoInUso(idAccordo));
+				}
+				break;
+			case RISORSA:
+				identificativi = exporterUtils.getIdsAccordiServizioParteComuneRisorsa(identificativoOggetto);
+				for (Object object : identificativi) {
+					IDResource idRisorsa = (IDResource)object;
+					risultatiRicerca.add(apcCore.getDettagliRisorsaInUso(idRisorsa));
+				}
+				break;
+			case PORT_TYPE:
+				identificativi = exporterUtils.getIdsAccordiServizioParteComunePortType(identificativoOggetto);
+				for (Object object : identificativi) {
+					IDPortType idPT = (IDPortType)object;
+					risultatiRicerca.add(apcCore.getDettagliPortTypeInUso(idPT));
+				}
+				break;
+			case OPERAZIONE:
+				identificativi = exporterUtils.getIdsAccordiServizioParteComuneOperazione(identificativoOggetto);
+				for (Object object : identificativi) {
+					IDPortTypeAzione idOperazione = (IDPortTypeAzione)object;
+					risultatiRicerca.add(apcCore.getDettagliOperazioneInUso(idOperazione));
 				}
 				break;
 			case SERVIZIO_APPLICATIVO:

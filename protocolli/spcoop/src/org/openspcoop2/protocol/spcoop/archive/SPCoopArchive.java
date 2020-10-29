@@ -187,6 +187,7 @@ public class SPCoopArchive extends BasicArchive {
 							}else{
 								opOpenSPCoop.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
 							}
+							opOpenSPCoop.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 							if(tmp.equals(operationAsincronaRisposta)){
 								opOpenSPCoop.setCorrelata(operationAsincronaRichiesta);
 								// search servizio della richiesta
@@ -224,6 +225,7 @@ public class SPCoopArchive extends BasicArchive {
 								}else{
 									opOpenSPCoop.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
 								}
+								opOpenSPCoop.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 								//System.out.println("PROFILO ["+opOpenSPCoop.getProfiloCollaborazione()+"]");
 								if(risposta){
 									// search servizio della richiesta

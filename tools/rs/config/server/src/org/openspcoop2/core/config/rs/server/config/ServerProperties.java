@@ -179,6 +179,14 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "validazioneDocumenti"));
 	}
 	
+	public boolean isUpdateInterfacciaApi_updateIfExists() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.updateIfExists"));
+	}
+	
+	public boolean isUpdateInterfacciaApi_deleteIfNotFound() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.deleteIfNotFound"));
+	}
+	
 	public boolean isDelete404() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "delete_404"));
 	}

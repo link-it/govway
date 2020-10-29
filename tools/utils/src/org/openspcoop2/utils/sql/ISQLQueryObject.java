@@ -640,6 +640,10 @@ public interface ISQLQueryObject {
 	public String getWhereLikeCondition(String columnName,String searchPattern, boolean escape, boolean contains, boolean caseInsensitive) throws SQLQueryObjectException;
 	
 	
+	public ISQLQueryObject addWhereLikeCondition(String columnName,String searchPattern, LikeConfig likeConfig) throws SQLQueryObjectException;
+	public String getWhereLikeCondition(String columnName,String searchPattern, LikeConfig likeConfig) throws SQLQueryObjectException;
+	
+	
 	/**
 	 * Aggiunge una condizione di ricerca con EXISTS
 	 * La query su cui viene effettuato il controllo di exists e' definito dal parametro sqlQueryObject

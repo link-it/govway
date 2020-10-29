@@ -637,6 +637,31 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			
 			de.addImage(image);
 		}
+		// xsdSchemaCollction
+		if(!this.isModalitaStandard()) {
+			boolean asWithAllegati = this.asWithAllegatiXsd(as);
+			if(asWithAllegati) {
+				List<Parameter> listParametersApiWsdlDownload = new ArrayList<>();
+				Parameter pIdAccordoDownload = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, as.getId()+"");
+				Parameter pTipoDocumentoDownload = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_XSD_SCHEMA_COLLECTION);
+				Parameter pTipoAccordoDownload = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE);
+				Parameter pApiGestioneParziale = new Parameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE, ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE);
+				listParametersApiWsdlDownload.add(pIdAccordoDownload);
+				listParametersApiWsdlDownload.add(pTipoDocumentoDownload);
+				listParametersApiWsdlDownload.add(pTipoAccordoDownload);
+				listParametersApiWsdlDownload.add(pApiGestioneParziale);
+				
+				image = new DataElementImage();
+				image.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, listParametersApiWsdlDownload.toArray(new Parameter[1]));
+				image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP_CON_PARAMETRO, 
+						AccordiServizioParteComuneCostanti.LABEL_XSD_SCHEMA_COLLECTION));
+				image.setImage(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_ARCHIVE);
+				image.setTarget(TargetType.SELF);
+				image.setDisabilitaAjaxStatus();
+				
+				de.addImage(image);
+			}
+		}
 		
 		dati.addElement(de);
 		

@@ -299,6 +299,8 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
 	public final static String PARAMETRO_APC_DESCRIZIONE = "descr";
 	public final static String PARAMETRO_APC_TIPO_WSDL = "tipo";
+	public final static String PARAMETRO_APC_UPDATE_WSDL_AGGIORNA = "wsdlAggiorna";
+	public final static String PARAMETRO_APC_UPDATE_WSDL_ELIMINA = "wsdlElimina";
 	public final static String PARAMETRO_APC_WSDL = "wsdl";
 	public final static String PARAMETRO_APC_WSDL_WARN = "wsdlWarn";
 	public final static String PARAMETRO_APC_WSDL_DEFINITORIO = "wsdldef";
@@ -458,6 +460,12 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA = "Visibilità API";
 	public final static String LABEL_PARAMETRO_APC_IS_SERVIZIO_COMPOSTO = "Servizio Composto";
 	public final static String LABEL_PARAMETRO_APC_STATO_PACKAGE = CostantiControlStation.LABEL_PARAMETRO_STATO_PACKAGE;
+	public final static String LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_LEFT = ""; // "Aggiornamento";
+	public final static String LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_LEFT = ""; //"Cancellazione";
+	public final static String LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_REST = "Le risorse esistenti vengono aggiornate";
+	public final static String LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_REST = "Elimina le risorse non presenti nella nuova interfaccia";
+	public final static String LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_SOAP = "Le azioni esistenti vengono aggiornate";
+	public final static String LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_SOAP = "Elimina i servizi e le azioni non presenti nella nuova interfaccia";
 	public final static String LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA = "Validazione Specifica";
 	public final static String LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICHE = "Validazione Specifiche";
 	public final static String LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE = "Accordo Cooperazione";
@@ -676,5 +684,9 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_DEFAULT = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_DEFAULT;
 	
 	public final static String[] VALUES_PARAMETRO_APC_CANALE_STATO = CostantiControlStation.VALUES_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO;
+	
+	public final static String LABEL_IN_USO_ACCORDO_RISORSA_BODY_HEADER_NESSUN_RISULTATO = "La risorsa non risulta utilizzata in alcuna configurazione";
+	public final static String LABEL_IN_USO_ACCORDO_PORT_TYPE_BODY_HEADER_NESSUN_RISULTATO = "Il servizio non risulta utilizzato in alcuna configurazione";
+	public final static String LABEL_IN_USO_ACCORDO_OPERAZIONE_BODY_HEADER_NESSUN_RISULTATO = "L'azione non risulta utilizzata in alcuna configurazione";
 }
 

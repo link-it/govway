@@ -40,6 +40,9 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -210,6 +213,66 @@ public class ExporterUtils {
 		for (String id : idsToExport) {
 			long idLong = Long.parseLong(id);
 			idsAccordi.add(this.aspcCore.getIdAccordoServizio(idLong));
+		}
+		return idsAccordi;
+	}
+	
+	public List<?> getIdsAccordiServizioParteComuneRisorsa(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDResource> idsAccordi = new ArrayList<IDResource>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			if(!id.contains("@")) {
+				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+			}
+			String [] tmp = id.split("@");
+			if(tmp==null || tmp.length!=2) {
+				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+			}
+			IDResource idR = new IDResource();
+			idR.setNome(tmp[0]);
+			idR.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(tmp[1]));
+			idsAccordi.add(idR);
+		}
+		return idsAccordi;
+	}
+	
+	public List<?> getIdsAccordiServizioParteComunePortType(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDPortType> idsAccordi = new ArrayList<IDPortType>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			if(!id.contains("@")) {
+				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+			}
+			String [] tmp = id.split("@");
+			if(tmp==null || tmp.length!=2) {
+				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+			}
+			IDPortType idPT = new IDPortType();
+			idPT.setNome(tmp[0]);
+			idPT.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(tmp[1]));
+			idsAccordi.add(idPT);
+		}
+		return idsAccordi;
+	}
+	
+	public List<?> getIdsAccordiServizioParteComuneOperazione(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDPortTypeAzione> idsAccordi = new ArrayList<IDPortTypeAzione>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			if(!id.contains("@")) {
+				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+			}
+			String [] tmp = id.split("@");
+			if(tmp==null || tmp.length!=3) {
+				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+			}
+			IDPortTypeAzione idOperazione = new IDPortTypeAzione();
+			idOperazione.setNome(tmp[0]);
+			IDPortType idPT = new IDPortType();
+			idPT.setNome(tmp[1]);
+			idPT.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(tmp[2]));
+			idOperazione.setIdPortType(idPT);
+			idsAccordi.add(idOperazione);
 		}
 		return idsAccordi;
 	}

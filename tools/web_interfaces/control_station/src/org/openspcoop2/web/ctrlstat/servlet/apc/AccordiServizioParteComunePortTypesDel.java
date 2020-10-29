@@ -32,10 +32,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -76,8 +74,6 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			
@@ -103,13 +99,11 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 			// }
 			ArrayList<String> ptsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
-			IDPortType idPT = new IDPortType();
-			idPT.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
 			
 			StringBuilder inUsoMessage = new StringBuilder();
 			
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComunePortTypes(as, userLogin, apcCore, apcHelper, 
-					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, idPT, ptsToRemove);
+					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, ptsToRemove);
 			
 			// imposto msg di errore se presente
 			if (inUsoMessage.length()>0) {

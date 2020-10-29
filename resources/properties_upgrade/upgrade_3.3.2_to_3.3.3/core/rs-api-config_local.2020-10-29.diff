@@ -1,0 +1,18 @@
+diff --git ant/setup/deploy/resources/core/rs-api-config_local.properties ant/setup/deploy/resources/core/rs-api-config_local.properties
+index 5e110c01a..8b0267f87 100644
+--- ant/setup/deploy/resources/core/rs-api-config_local.properties
++++ ant/setup/deploy/resources/core/rs-api-config_local.properties
+@@ -31,6 +31,13 @@
+ #delete_404=true
+ # Solleva errore 404 nelle findall quando la lista di oggetti trovati e' vuota
+ #findall_404=false
++
+ # Imposta la validazione dei documenti per un API
+ #validazioneDocumenti=true
++
++# Impostazioni riguardanti l'aggiornamento dell'interfaccia di un API
++# Aggiornamento delle risorse esistenti
++#updateInterfacciaApi.updateIfExists=true
++# Eliminazione delle risorse non presenti nella nuova interfaccia
++#updateInterfacciaApi.deleteIfNotFound=true
+ # ================================================

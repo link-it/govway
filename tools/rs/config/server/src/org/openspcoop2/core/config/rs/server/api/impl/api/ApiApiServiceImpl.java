@@ -61,7 +61,8 @@ import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
-import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.GruppiAccordo;
@@ -76,7 +77,6 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
 import org.openspcoop2.utils.json.YAMLUtils;
@@ -94,7 +94,6 @@ import org.openspcoop2.web.ctrlstat.core.SerialiableFormFile;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviHelper;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
@@ -648,21 +647,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Nessun Servizio registrato sulla api con nome " + nomeServizio);
 
 			if (BaseHelper.findFirst(pt.getAzioneList(), op -> op.getNome().equals(nomeAzione)).isPresent()) {
-				final AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(env.apcCore);
-
-				List<IDServizio> idServiziWithPortType = null;
-				try {
-					IDPortType idPT = new IDPortType();
-					idPT.setNome(pt.getNome());
-					idPT.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
-					idServiziWithPortType = apsCore.getIdServiziWithPortType(idPT);
-				} catch (DriverRegistroServiziNotFound dNotF) {
-				}
-
 				StringBuilder inUsoMessage = new StringBuilder();
 
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneOperations(as, env.userLogin, env.apcCore,
-						env.apcHelper, inUsoMessage, "\n", pt, idServiziWithPortType, Arrays.asList(nomeAzione));
+						env.apcHelper, inUsoMessage, "\n", pt, Arrays.asList(nomeAzione));
 
 				if (inUsoMessage.length() > 0)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
@@ -702,18 +690,14 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(env.apcCore);
 			final AccordoServizioParteComune as = BaseHelper
 					.supplyOrNotFound(() -> ApiApiHelper.getAccordoFull(nome, versione, env), "API");
 
 			if (BaseHelper.findFirst(as.getResourceList(), res -> res.getNome().equals(nomeRisorsa)).isPresent()) {
 
-				List<IDServizio> idServiziWithAccordo = BaseHelper.evalnull(
-						() -> apsCore.getIdServiziWithAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), true));
-
 				StringBuilder inUsoMessage = new StringBuilder();
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneRisorse(as, env.userLogin, env.apcCore,
-						env.apcHelper, inUsoMessage, "\n", idServiziWithAccordo, Arrays.asList(nomeRisorsa));
+						env.apcHelper, inUsoMessage, "\n", Arrays.asList(nomeRisorsa));
 
 				if (inUsoMessage.length() > 0)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
@@ -755,12 +739,9 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			if (BaseHelper.findFirst(as.getPortTypeList(), pt -> pt.getNome().equals(nomeServizio)).isPresent()) {
 
-				final IDPortType idPT = new IDPortType();
-				idPT.setIdAccordo(env.idAccordoFactory.getIDAccordoFromAccordo(as));
-
 				final StringBuilder inUsoMessage = new StringBuilder();
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComunePortTypes(as, env.userLogin, env.apcCore,
-						env.apcHelper, inUsoMessage, "\n", idPT, Arrays.asList(nomeServizio));
+						env.apcHelper, inUsoMessage, "\n", Arrays.asList(nomeServizio));
 
 				if (inUsoMessage.length() > 0) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
@@ -2211,7 +2192,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			final String wsdl = new String(body.getInterfaccia());
 
-			final boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
+			ServerProperties serverProperties = ServerProperties.getInstance();
+			final boolean validazioneDocumenti = serverProperties.isValidazioneDocumenti();
 
 			if (!env.apcHelper.accordiWSDLCheckData(env.pd, tipoWsdl, wsdl, as, validazioneDocumenti, env.tipo_protocollo)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
@@ -2221,10 +2203,18 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ServerProperties properties = ServerProperties.getInstance();
 
+			boolean aggiornaEsistenti = serverProperties.isUpdateInterfacciaApi_updateIfExists();
+			boolean eliminaNonPresentiNuovaInterfaccia = serverProperties.isUpdateInterfacciaApi_deleteIfNotFound();
+			List<IDResource> risorseEliminate = new ArrayList<IDResource>();
+			List<IDPortType> portTypeEliminati = new ArrayList<IDPortType>();
+			List<IDPortTypeAzione> operationEliminate = new ArrayList<IDPortTypeAzione>();
+			
 			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(tipoWsdl, wsdl, as,
 					properties.isEnabledAutoMapping(), properties.isValidazioneDocumenti(),
 					properties.isEnabledAutoMappingEstraiXsdSchemiFromWsdlTypes(), facilityUnicoWSDL_interfacciaStandard,
-					env.tipo_protocollo, env.apcCore);
+					env.tipo_protocollo, env.apcCore,
+					aggiornaEsistenti, eliminaNonPresentiNuovaInterfaccia,
+					risorseEliminate, portTypeEliminati, operationEliminate);
 
 			// effettuo le operazioni
 			env.apcCore.performUpdateOperation(env.userLogin, false, as);

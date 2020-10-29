@@ -1,3 +1,12 @@
+2020-10-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1087
+	Durante l'aggiornamento dell'interfaccia di un API è adesso possibile:
+	- indicare se aggiornare o meno le risorse/azioni esistenti
+	- indicare se eliminare le risorse non più esistenti nella nuova interfaccia
+	È stata inoltre aggiunta la possibilità di conoscere dove venga utilizzata una specifica risorsa o azione nella configurazione.
+
 2020-10-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
