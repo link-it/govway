@@ -154,6 +154,30 @@ public abstract class AbstractApiValidator   {
 						throw new ValidatorException("Content-Type '"+baseTypeHttp+"' unsupported");
 				}
 			}
+			else {
+				
+				// senza content-type
+				
+				if(httpEntity instanceof HttpBaseRequestEntity<?>) {
+					
+					if(operation.getRequest()!=null &&  operation.getRequest().sizeBodyParameters()>0){
+						
+						boolean required = false;
+						for(ApiBodyParameter input: operation.getRequest().getBodyParameters()) {
+							if(input.isRequired()) {
+								required = true;
+							}
+						}
+						if(required) {
+							throw new ValidatorException("Request without payload (Content-Type 'null') unsupported");
+						}
+						
+					}
+					
+				}
+				
+				
+			}
 			
 			if(httpEntity instanceof HttpBaseRequestEntity<?>) {
 			

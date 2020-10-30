@@ -628,12 +628,12 @@ public class TestOpenApi4j {
 						//if(!msg.contains(atteso)) {
 						String atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
 						if(!msg.equals(atteso)) {
-							String checkErrore = "Validazione con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							String checkErrore = "Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 							System.out.println("\t "+checkErrore);
 							throw new Exception(checkErrore);
 						}
 						else {
-							System.out.println("\t Validazione con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
+							System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
 						}
 					}
 					else {
@@ -708,12 +708,12 @@ public class TestOpenApi4j {
 					if(openapi4j) {
 						String atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
 						if(!msg.contains(atteso)) {
-							String checkErrore = "Validazione con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							String checkErrore = "Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 							System.out.println("\t "+checkErrore);
 							throw new Exception(checkErrore);
 						}
 						else {
-							System.out.println("\t Validazione con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
+							System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
 						}
 					}
 					else {
@@ -737,6 +737,205 @@ public class TestOpenApi4j {
 		}
 		
 		System.out.println("Test #11 completato\n\n");
+		
+		
+		System.out.println("Test #12 (Richiesta POST senza contenuto /documenti/in-line/send[Optional/Required]  (Request Body 'required'))");
+		
+		// https://swagger.io/docs/specification/describing-request-body/
+		//  Request bodies are optional by default. To mark the body as required, use required: true.
+		
+		String testUrl12_default = baseUri+"/documenti/in-line/send";
+		TextHttpRequestEntity httpEntity12_default = new TextHttpRequestEntity();
+		httpEntity12_default.setMethod(HttpRequestMethod.POST);
+		httpEntity12_default.setUrl(testUrl12_default);
+		Map<String, String> parametersTrasporto12_default = new HashMap<>();
+		httpEntity12_default.setParametersTrasporto(parametersTrasporto12_default);
+		
+		String testUrl12_optional = baseUri+"/documenti/in-line/sendOptional";
+		TextHttpRequestEntity httpEntity12_optional = new TextHttpRequestEntity();
+		httpEntity12_optional.setMethod(HttpRequestMethod.POST);
+		httpEntity12_optional.setUrl(testUrl12_optional);
+		Map<String, String> parametersTrasporto12_optional = new HashMap<>();
+		httpEntity12_optional.setParametersTrasporto(parametersTrasporto12_optional);
+		
+		String testUrl12_required = baseUri+"/documenti/in-line/sendRequired";
+		TextHttpRequestEntity httpEntity12_required = new TextHttpRequestEntity();
+		httpEntity12_required.setMethod(HttpRequestMethod.POST);
+		httpEntity12_required.setUrl(testUrl12_required);
+		Map<String, String> parametersTrasporto12_required = new HashMap<>();
+		httpEntity12_required.setParametersTrasporto(parametersTrasporto12_required);
+		
+		List<String> contentTypeTest12List = new ArrayList<String>();
+		contentTypeTest12List.add(null);
+		contentTypeTest12List.add(HttpConstants.CONTENT_TYPE_PLAIN);
+		contentTypeTest12List.add(HttpConstants.CONTENT_TYPE_JSON);
+		
+		for (String contentTypeTest12 : contentTypeTest12List) {
+			
+			String tipoTestPrefix = "Content-Type:'"+contentTypeTest12+"' ";
+		
+			parametersTrasporto12_default.put(HttpConstants.CONTENT_TYPE, contentTypeTest12);
+			httpEntity12_default.setContentType(contentTypeTest12);
+			parametersTrasporto12_optional.put(HttpConstants.CONTENT_TYPE, contentTypeTest12);
+			httpEntity12_optional.setContentType(contentTypeTest12);
+			parametersTrasporto12_required.put(HttpConstants.CONTENT_TYPE, contentTypeTest12);
+			httpEntity12_required.setContentType(contentTypeTest12);
+			
+			for (int i = 0; i < 6; i++) {
+				
+				boolean openapi4j = (i==3 || i==4 || i==5);
+				IApiValidator apiValidator = null;
+				
+				String tipoTest = tipoTestPrefix;
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+				
+				TextHttpRequestEntity httpEntity12 = null;
+				boolean required = false;
+				if(i==0 || i==3) {
+					httpEntity12 = httpEntity12_default;
+					tipoTest = tipoTest + " (required:default)";
+				}
+				else if(i==1 || i==4) {
+					httpEntity12 = httpEntity12_optional;
+					tipoTest = tipoTest + " (required:false)";
+				}
+				else if(i==2 || i==5) {
+					httpEntity12 = httpEntity12_required;
+					required = true;
+					tipoTest = tipoTest + " (required:true)";
+				}
+				
+				
+				System.out.println("\t Validazione richiesta senza contenuto "+tipoTest+"  ...");
+				boolean esito = false;
+				try {
+					apiValidator.validate(httpEntity12);
+					esito = true;
+				}
+				catch(Exception e) {
+					
+					String msg = e.getMessage();
+					if(msg==null || "null".equals(msg)) {
+						e.printStackTrace(System.out);
+					}
+					
+					if(!required && contentTypeTest12==null) {
+						String checkErrore = "Validazione richiesta "+tipoTest+" senza contenuto terminato con un errore non atteso: '"+msg+"'";
+						System.out.println("\t "+checkErrore);
+						throw new Exception(checkErrore);
+					}
+					
+					if(openapi4j) {
+						String atteso = "Body is required but none provided. (code: 200)";
+						if(!required && contentTypeTest12!=null) {
+							atteso = "Content-Type '"+contentTypeTest12+"' unsupported";
+						}
+						if(!msg.contains(atteso)) {
+							String checkErrore = "Validazione richiesta "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione richiesta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+					else {
+						String atteso = "Required body undefined";
+						if(!required && contentTypeTest12!=null) {
+							atteso = "Content-Type '"+contentTypeTest12+"' unsupported";
+							if(HttpConstants.CONTENT_TYPE_JSON.equals(contentTypeTest12) && !openapi4j) {
+								atteso = "Validator not found";
+							}
+						}
+						if(!msg.equals(atteso)) {
+							String checkErrore = "Validazione richiesta "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione richiesta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+				}
+				if(required) {
+					if(esito) {
+						System.out.println("\t Validazione richiesta "+tipoTest+" senza contenuto: atteso errore");
+						throw new Exception("Validazione richiesta "+tipoTest+" senza contenuto: atteso errore");
+					}
+				}
+				else {
+					System.out.println("\t Validazione richiesta senza contenuto "+tipoTest+" ok");
+				}
+			}
+			
+			TextHttpResponseEntity httpEntityResponseTest12 = new TextHttpResponseEntity();
+			httpEntityResponseTest12.setStatus(200);
+			httpEntityResponseTest12.setMethod(HttpRequestMethod.POST);
+			httpEntityResponseTest12.setUrl(testUrl12_default);	 // per la risposta una risorsa vale l'altra come test
+			Map<String, String> parametersTrasportoRispostaTest12 = new HashMap<>();
+			httpEntityResponseTest12.setParametersTrasporto(parametersTrasportoRispostaTest12);
+			
+			for (int i = 0; i < 2; i++) {
+				
+				boolean openapi4j = (i==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = tipoTestPrefix;
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+				
+				System.out.println("\t Validazione risposta senza contenuto "+tipoTest+"  ...");
+				boolean esito = false;
+				try {
+					apiValidator.validate(httpEntityResponseTest12);	
+					esito = true;
+				}
+				catch(Exception e) {
+					//e.printStackTrace(System.out);
+					String msg = e.getMessage();
+					if(openapi4j) {
+						String atteso = "Content type 'null' is not allowed for body content. (code: 203)";
+						if(!msg.contains(atteso)) {
+							String checkErrore = "Validazione "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione risposta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+					else {
+						String atteso = "Required body undefined";
+						if(!msg.equals(atteso)) {
+							String checkErrore = "Validazione risposta "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione risposta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+				}
+				if(esito) {
+					System.out.println("\t Validazione risposta "+tipoTest+" senza contenuto: atteso errore");
+					throw new Exception("Validazione risposta "+tipoTest+" senza contenuto: atteso errore");
+				}
+			}
+		}
+			
+		System.out.println("Test #12 completato\n\n");
 	}
 
 }

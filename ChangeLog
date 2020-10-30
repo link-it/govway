@@ -5,8 +5,12 @@
 	È adesso possibile configurare la validazione dei contenuti al fine di:
 	- [API SOAP] disabilitare la validazione della SOAPAction (API SOAP);
 	- [API REST] disabilitare o abilitare la validazione su codici http e/o content-type definiti puntualmente. È inoltre possibile disabilitare la validazione su risposte vuote e/o su risposte contenenti problem details.
-	Infine è stato corretto un bug sulla validazione della risposta, su operazioni che non prevedevano una risposta applicativa. 
-        La validazione non rilevava l'errore di contenuto non ammesso, se tale contenuto era compatibile con la risposta definita per il codice http 'default'.
+	Infine sono stati corretti i seguenti problemi presenti sulla validazione tramite OpenAPI 3:
+	- sulla validazione della risposta, su operazioni che non prevedevano una risposta applicativa, l
+          la validazione non rilevava l'errore di contenuto non ammesso, se tale contenuto era compatibile con la risposta definita per il codice http 'default'.
+	- la validazione trattava come 'required' i contenuti delle richieste per cui nell'interfaccia non veniva definito l'attributo 'required' nel request-body.
+          Il comportamento è stato modificato per adeguarsi a quando descritto nella specifica "https://swagger.io/docs/specification/describing-request-body/"
+	  "Request bodies are optional by default. To mark the body as required, use required: true."
 
 2020-10-29  Andrea Poli <apoli@link.it>
 

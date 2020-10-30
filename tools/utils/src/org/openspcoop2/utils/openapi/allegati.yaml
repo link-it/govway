@@ -97,6 +97,75 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /documenti/in-line/sendOptional:
+    post:
+      tags:
+        - in-line
+      description: Esempio di invio dei documenti (in-line) nella richiesta
+      operationId: SendDocumentInLine
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiInLine'
+      responses:
+        "200":
+          description: |-
+            Risposta di esempio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/in-line/sendRequired:
+    post:
+      tags:
+        - in-line
+      description: Esempio di invio dei documenti (in-line) nella richiesta
+      operationId: SendDocumentInLine
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiInLine'
+      responses:
+        "200":
+          description: |-
+            Risposta di esempio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
   /documenti/by-riferimento-id/receive:
     post:

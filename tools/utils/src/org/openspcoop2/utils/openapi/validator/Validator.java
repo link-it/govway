@@ -887,7 +887,14 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			ApiOperation operation, Object... args) throws ProcessingException, ValidatorException {
 
 		List<ApiBodyParameter> bodyParameters = this.getBodyParameters(httpEntity, operation);
+
+		// se e' attivo openApi4j intanto valido subito
+		if(this.openApi4j!=null) {
+			validateWithOpenApi4j(httpEntity, operation);
+		}
 		
+		
+		// Controllo poi i campi required come controllo aggiuntivo a openApi4j
 		boolean required = false;
 		if(bodyParameters!=null && !bodyParameters.isEmpty()) {
 			for(ApiBodyParameter body: bodyParameters) {
@@ -895,21 +902,16 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					required = true;
 			}
 		}
-		
 		if(required) {
-			
 			if(httpEntity.getContent() == null) {
 				throw new ValidatorException("Required body undefined");
 			}
-
 		}
 		
-		if(bodyParameters!=null && !bodyParameters.isEmpty()) {
+		// infine se non e' attivo openApi4j effettuo la validazione alternativa
+		if(this.openApi4j==null) {
+			if(bodyParameters!=null && !bodyParameters.isEmpty()) {
 			
-			if(this.openApi4j!=null) {
-				validateWithOpenApi4j(httpEntity, operation);
-			}
-			else {
 				try {
 					
 					boolean isJson =  httpEntity.getContentType()!=null && httpEntity.getContentType().toLowerCase().contains("json"); // supporta per adesso solo json, la validazione xml non è funzionante
@@ -946,13 +948,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				}
 			}
 		}
-		else {
-			
-			if(this.openApi4j!=null) {
-				validateWithOpenApi4j(httpEntity, operation);
-			}
-			
-		}
+
 	}
 
 	/**
@@ -963,7 +959,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		List<IJsonSchemaValidator> lst = new ArrayList<>();
 		
 		if(this.onlySchemas) {
-			lst.addAll(this.validatorMap.values());
+			if(this.validatorMap!=null) {
+				lst.addAll(this.validatorMap.values());
+			}
 		}
 		else {
 		
@@ -984,7 +982,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					
 					//System.out.println("SEARCH ["+body.getElement().getClass().getName()+"] ["+body.getElement()+"] key["+key+"] ...");
 					
-					if(this.validatorMap.containsKey(key)) {
+					if(this.validatorMap!=null && this.validatorMap.containsKey(key)) {
 						//System.out.println("ADD VALIDATORE ["+key+"]: ["+this.validatorMap.get(key)+"]");
 						lst.add(this.validatorMap.get(key));
 					}

@@ -136,10 +136,18 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "Invalid value 'APIGatewayERRATO' in query parameter 'profiloRefInLineByStatus' (expected type 'string'): Uncorrect enum value, expected: 'APIGateway,SPCoop,FatturaPA,eDelivery'";
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "profiloRefInLineByStatus: Value 'APIGatewayERRATO' is not defined in the schema. (code: 1006)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"', trovato: "+e.getMessage());
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "Invalid value 'APIGatewayERRATO' in query parameter 'profiloRefInLineByStatus' (expected type 'string'): Uncorrect enum value, expected: 'APIGateway,SPCoop,FatturaPA,eDelivery'";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"', trovato: "+e.getMessage());
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #3-a (Richiesta GET con parametri query errati) completato\n\n");
@@ -155,10 +163,18 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "Invalid value 'PROVA_PROVA' in query parameter 'soggettoInLineByStatus' (expected type 'string'): Pattern match failed ('^[0-9A-Za-z]+$')";
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "soggettoInLineByStatus: 'PROVA_PROVA' does not respect pattern '^[0-9A-Za-z]+$'. (code: 1025)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"': "+e.getMessage());
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "Invalid value 'PROVA_PROVA' in query parameter 'soggettoInLineByStatus' (expected type 'string'): Pattern match failed ('^[0-9A-Za-z]+$')";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"': "+e.getMessage());
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #3-b (Richiesta GET con parametri query errati) completato\n\n");
@@ -174,10 +190,18 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "Invalid value 'P' in query parameter 'soggettoInLineByStatus' (expected type 'string'): Too short, expected min length '2'";
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "soggettoInLineByStatus: Min length is '2', found '1'. (code: 1017)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "Invalid value 'P' in query parameter 'soggettoInLineByStatus' (expected type 'string'): Too short, expected min length '2'";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #3-c (Richiesta GET con parametri query errati) completato\n\n");
@@ -194,10 +218,18 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "Invalid value '"+pLongValue+"' in query parameter 'soggettoRef' (expected type 'string'): Too big, expected max length '255'";
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "soggettoRef: Max length is '255', found '291'. (code: 1012)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "Invalid value '"+pLongValue+"' in query parameter 'soggettoRef' (expected type 'string'): Too big, expected max length '255'";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #3-d (Richiesta GET con parametri query errati) completato\n\n");
@@ -213,10 +245,18 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "Invalid value '23' in query parameter 'esempioNumerico' (expected type 'int32'): Value lowest than the minimum '100'"; 
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "Minimum is '100', found '23'. (code: 1015)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "Invalid value '23' in query parameter 'esempioNumerico' (expected type 'int32'): Value lowest than the minimum '100'"; 
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #3-e (Richiesta GET con parametri query errati) completato\n\n");
@@ -232,10 +272,18 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "Invalid value '600' in query parameter 'esempioNumerico' (expected type 'int32'): Value equals to the maximum '600' and exclusive maximum is enabled"; 
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "esempioNumerico: Excluded maximum is '600', found '600'. (code: 1009)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "Invalid value '600' in query parameter 'esempioNumerico' (expected type 'int32'): Value equals to the maximum '600' and exclusive maximum is enabled"; 
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #3-f (Richiesta GET con parametri query errati) completato\n\n");
@@ -251,10 +299,16 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "esempioNumerico: Maximum is '600', found '800'. (code: 1010)";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+							}
+						}
+						else if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "Invalid value '800' in query parameter 'esempioNumerico' (expected type 'int32'): Value higher than the maximum '600'"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 						System.out.println("["+testName+"] Test #3-g (Richiesta GET con parametri query errati) completato\n\n");
@@ -270,10 +324,18 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "Invalid value '55GG33' in query parameter 'esempioNumerico' (expected type 'int32'): For input string: \"55GG33\""; 
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "esempioNumerico: Value '55GG33' does not match format 'int32'. (code: 1007)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "Invalid value '55GG33' in query parameter 'esempioNumerico' (expected type 'int32'): For input string: \"55GG33\""; 
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #3-h (Richiesta GET con parametri query errati) completato\n\n");
@@ -303,9 +365,17 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					String msgErroreAtteso = "Required body undefined"; 
-					if(!e.getMessage().equals(msgErroreAtteso)) {
-						throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "Body is required but none provided. (code: 200)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
+					}
+					else {
+						String msgErroreAtteso = "Required body undefined"; 
+						if(!e.getMessage().equals(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
 					}
 					System.out.println("["+testName+"] Test #4-empty completato\n\n");
 				}	
@@ -324,13 +394,13 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "Content type 'application/ERRORE' is not allowed for body content";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						String msgErroreAtteso = "Content-Type 'application/ERRORE' unsupported"; 
 						if(!e.getMessage().equals(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					System.out.println("["+testName+"] Test #4-contentTypeSconosciuto completato\n\n");
@@ -351,14 +421,14 @@ public class Test {
 						if(useOpenApi4j) {
 							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
-									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 								}
 							}
 						}
@@ -380,14 +450,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.name: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -416,9 +486,17 @@ public class Test {
 					apiValidator.validate(httpEntity6_empty);	
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					String msgErroreAtteso = "Required body undefined"; 
-					if(!e.getMessage().equals(msgErroreAtteso)) {
-						throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Null value is not allowed. (code: 1021)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
+					}
+					else {
+						String msgErroreAtteso = "Required body undefined"; 
+						if(!e.getMessage().equals(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
 					}
 					System.out.println("["+testName+"] Test #6-empty completato\n\n");
 				}
@@ -437,26 +515,43 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "Content type 'application/ERRORE' is not allowed for body content.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						String msgErroreAtteso = "Content-Type 'application/ERRORE' (http response status '200') unsupported"; 
 						if(!e.getMessage().equals(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					System.out.println("["+testName+"] Test #6-empty completato\n\n");
 				}
 				System.out.println("["+testName+"] Test #6-contentTypeSconosciuto completato\n\n");
 		
-				System.out.println("["+testName+"] Test #6 (Risposta POST senza body json corretto)");
+				System.out.println("["+testName+"] Test #6-contentTypeOkSenzaBody (Risposta POST senza body ma con content_type json corretto)");
 				TextHttpResponseEntity httpEntity6_empty_ok = new TextHttpResponseEntity();
 				httpEntity6_empty_ok.setMethod(HttpRequestMethod.POST);
 				httpEntity6_empty_ok.setUrl("/pets");
 				setContentType("application/json",httpEntity6_empty_ok);
 				httpEntity6_empty_ok.setStatus(405);
-				apiValidator.validate(httpEntity6_empty_ok);	
+				try{
+					apiValidator.validate(httpEntity6_empty_ok);
+				}catch(ValidatorException e) {
+					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "Content type 'application/json' is not allowed for body content. (code: 203)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
+					}
+					else {
+						String msgErroreAtteso = "Content-Type 'application/json' (http response status '405') unsupported"; 
+						if(!e.getMessage().equals(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
+					}
+					System.out.println("["+testName+"] Test #6-contentTypeOkSenzaBody completato\n\n");
+				}
 				System.out.println("["+testName+"] Test #6 completato\n\n");
 				
 				System.out.println("["+testName+"] Test #6-error (Risposta POST senza body json corretto)");
@@ -484,9 +579,17 @@ public class Test {
 					apiValidator.validate(httpEntity6_error_empty);	
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					String msgErroreAtteso = "Required body undefined"; 
-					if(!e.getMessage().equals(msgErroreAtteso)) {
-						throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "Content type 'application/json' is not allowed for body content. (code: 203)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
+					}
+					else {
+						String msgErroreAtteso = "Required body undefined"; 
+						if(!e.getMessage().equals(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
 					}
 					System.out.println("["+testName+"] Test #6-error-empty completato\n\n");
 				}
@@ -507,14 +610,14 @@ public class Test {
 						if(useOpenApi4j) {
 							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
-									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 								}
 							}
 						}
@@ -537,14 +640,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.name: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -567,14 +670,14 @@ public class Test {
 						if(useOpenApi4j) {
 							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
-									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 								}
 							}
 						}
@@ -597,14 +700,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Field 'code' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.code: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -637,14 +740,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -665,14 +768,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.name: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -716,14 +819,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -745,14 +848,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.name: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -774,14 +877,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -803,14 +906,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Field 'code' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.code: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -848,7 +951,7 @@ public class Test {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 						System.out.println("["+testName+"] Test #14-additionalProperties completato\n\n");
@@ -868,7 +971,7 @@ public class Test {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.name: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 						System.out.println("["+testName+"] Test #14-required completato\n\n");
@@ -912,14 +1015,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -941,14 +1044,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.name: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -970,14 +1073,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
@@ -999,14 +1102,14 @@ public class Test {
 					if(useOpenApi4j) {
 						String msgErroreAtteso = "body: Field 'code' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = "$.code: is missing but it is required";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
 						}
 					}
