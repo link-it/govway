@@ -1,0 +1,14 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Body>
+        <ns2:MRequest xmlns:ns2="http://amministrazioneesempio.it/nomeinterfacciaservizio">
+            <M>
+                <a>
+                    <a1s>1</a1s>
+                    <a1s>2</a1s>
+                    <a2>RGFuJ3MgVG9vbHMgYXJlIGNvb2wh</a2>
+                </a>
+                <b>Stringa di esempio</b>
+            </M>
+        </ns2:MRequest>
+    </soap:Body>
+</soap:Envelope>

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.resources;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,18 @@ public class ScriptInvoker {
 	public void run() throws UtilsException{
 		this.run("");
 	}
-	public void run(String ... parameters) throws UtilsException{
+	
+
+	public void run(String ... parameters) throws UtilsException {
+		this.run(null, parameters);
+	}
+	
+	
+	public void run(File workingDir) throws UtilsException {
+		this.run((File)null, "");
+	}
+	
+	public void run(File workingDir, String ... parameters) throws UtilsException{
 		
 		try{
 		
@@ -67,8 +79,14 @@ public class ScriptInvoker {
 					script.add(parameters[i]);
 				}
 			}
+	
+			java.lang.Process processStatus = null;
+			if (workingDir!=null) {
+				processStatus = runtime.exec(script.toArray(new String[1]),null,workingDir);
+			} else {
+				processStatus = runtime.exec(script.toArray(new String[1]));
+			}
 			
-			java.lang.Process processStatus = runtime.exec(script.toArray(new String[1]));
 			java.io.BufferedInputStream berror = new java.io.BufferedInputStream(processStatus.getErrorStream());
 			java.io.BufferedInputStream bin = new java.io.BufferedInputStream(processStatus.getInputStream());
 

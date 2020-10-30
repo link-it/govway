@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions  
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:tns="http://amministrazioneesempio.it/nomeinterfacciaservizio" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" 
+	name="SOAPBlockingImplService" 
+	targetNamespace="http://amministrazioneesempio.it/nomeinterfacciaservizio">
+	<wsdl:types>
+		<xs:schema 
+			xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+			xmlns:tns="http://amministrazioneesempio.it/nomeinterfacciaservizio" 
+			attributeFormDefault="unqualified" elementFormDefault="unqualified" 
+			targetNamespace="http://amministrazioneesempio.it/nomeinterfacciaservizio">
+			<xs:element name="MOnlyRequestOp" type="tns:MRequestType"/>
+			<xs:element name="MRequestOp" type="tns:MRequestType"/>
+			<xs:element name="MRequestOp1" type="tns:MRequestType"/>
+			<xs:element name="MRequestResponseOp" type="tns:MRequestResponseType"/>
+			<xs:complexType name="MRequestType">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="M" type="tns:mType"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="mType">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="oId" type="xs:int"/>
+					<xs:element minOccurs="0" name="a" type="tns:aComplexType"/>
+					<xs:element minOccurs="0" name="b" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="aComplexType">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="a1s" type="tns:a1ComplexType"/>
+					<xs:element minOccurs="0" name="a2" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="a1ComplexType">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="a1" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="MRequestResponseType">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="return" type="tns:mResponseType"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="mResponseType">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="c" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="errorMessageFault">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="customFaultCode" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ErrorMessageFault" nillable="true" type="tns:errorMessageFault"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="MRequest">
+		<wsdl:part element="tns:MRequestOp" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="MRequest1">
+		<wsdl:part element="tns:MRequestOp1" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="MRequestResponse">
+		<wsdl:part element="tns:MRequestResponseOp" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="MOnlyRequest">
+		<wsdl:part element="tns:MOnlyRequestOp" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="ErrorMessageException">
+		<wsdl:part element="tns:ErrorMessageFault" name="ErrorMessageException"/>
+	</wsdl:message>
+	<wsdl:portType name="SOAPBlockingImpl">
+		<wsdl:operation name="MRequestResponse">
+			<wsdl:input message="tns:MRequest" name="MRequest"/>
+			<wsdl:output message="tns:MRequestResponse" name="MRequestResponse"/>
+			<wsdl:fault message="tns:ErrorMessageException" name="ErrorMessageException"/>
+		</wsdl:operation>
+		<wsdl:operation name="MRequestResponse1">
+			<wsdl:input message="tns:MRequest1" name="MRequest1"/>
+			<wsdl:output message="tns:MRequestResponse" name="MRequestResponse"/>
+			<wsdl:fault message="tns:ErrorMessageException" name="ErrorMessageException"/>
+		</wsdl:operation>
+		<wsdl:operation name="MOnlyRequest">
+			<wsdl:input message="tns:MOnlyRequest" name="MOnlyRequest"/>
+			<wsdl:fault message="tns:ErrorMessageException" name="ErrorMessageException"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="SOAPBlockingImplServiceSoapBinding" type="tns:SOAPBlockingImpl">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="MRequestResponse">
+			<soap:operation soapAction="" style="document"/>
+			<wsdl:input name="MRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="MRequestResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="ErrorMessageException">
+				<soap:fault name="ErrorMessageException" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="MOnlyRequest">
+			<soap:operation soapAction="" style="document"/>
+			<wsdl:input name="MOnlyRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:fault name="ErrorMessageException">
+				<soap:fault name="ErrorMessageException" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="SOAPBlockingImplService">
+		<wsdl:port binding="tns:SOAPBlockingImplServiceSoapBinding" name="SOAPBlockingImplPort">
+			<soap:address location="https://api.amministrazioneesempio.it/soap/nomeinterfacciaservizio/v1"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

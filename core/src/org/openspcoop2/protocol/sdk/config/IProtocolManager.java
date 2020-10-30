@@ -242,7 +242,8 @@ public interface IProtocolManager extends IComponentFactory {
     public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
     		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
-    		IRegistryReader registryReader) throws ProtocolException;
+    		IRegistryReader registryReader,
+    		boolean integration) throws ProtocolException;
 	
 	
 	

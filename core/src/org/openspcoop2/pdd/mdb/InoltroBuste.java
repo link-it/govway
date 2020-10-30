@@ -1844,10 +1844,20 @@ public class InoltroBuste extends GenericLib{
 					esito.setEsitoInvocazione(true);
 				}else{
 					if(sendRispostaApplicativa){
+						
+						ErroreIntegrazione erroreIntegrazione = null;
+						if(e!=null && e instanceof ProtocolException && ((ProtocolException)e).isInteroperabilityError() ) {
+							erroreIntegrazione = ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
+									getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), protocolFactory);
+						}
+						else {
+							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO);
+						}
+						
 						OpenSPCoop2Message responseMessageError = 
 								this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED,
-										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO),e,
+										erroreIntegrazione,e,
 												(responseMessage!=null ? responseMessage.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreImbusta);
@@ -2608,7 +2618,8 @@ public class InoltroBuste extends GenericLib{
 				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
 						bustaRichiesta, nParams,
 						requestMessagePrimaTrasformazione.getTransportRequestContext(),transportResponseContext,
-						protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
+						protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()),
+						false);
 			} catch (Exception e) {
 				
 				if(e instanceof ProtocolException) {
@@ -3329,7 +3340,7 @@ public class InoltroBuste extends GenericLib{
 						}else{
 							msgDiag.logErroreGenerico(e,"validator.getHeader("+bustaRisposta.getID()+")");
 						}
-						
+												
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Errore durante lo sbustamento della risposta: "+e.getMessage());
 						tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerProtocolloRisposta,bustaRisposta,esitoTraccia,
 								Tracciamento.createLocationString(true, location),
@@ -3872,6 +3883,11 @@ public class InoltroBuste extends GenericLib{
 				// Se non impostati, imposto i domini
 				org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(bustaRisposta, requestInfo.getIdentitaPdD(), registroServiziManager, protocolFactory);
 
+				// aggiunto dal protocollo
+				if(richiestaDelegata!=null && richiestaDelegata.getIdCollaborazione()==null && bustaRisposta.getCollaborazione()!=null) {
+					richiestaDelegata.setIdCollaborazione(bustaRisposta.getCollaborazione());
+				}
+				
 				isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
 				bustaDiServizio = validatore.isBustaDiServizio();
 				erroriValidazione = validatore.getEccezioniValidazione();

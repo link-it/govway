@@ -158,7 +158,9 @@ public class JsonUtils {
 		if(msg!=null && !"".equals(msg) && !"null".equals(msg)) {
 			messaggio = new String(msg);
 			if(innerMsg!=null && !"".equals(innerMsg) && !"null".equals(innerMsg) && !innerMsg.equals(msg)) {
-				messaggio = messaggio + " ; " + innerMsg;
+				if(!messaggio.contains(innerMsg)) {
+					messaggio = messaggio + " ; " + innerMsg;
+				}
 			}
 		}
 		else{
@@ -550,7 +552,7 @@ public class JsonUtils {
 			KeyStore trustStoreCertificatiX509, CertStore crlX509, String headerName,
 			boolean verifaCA) throws Exception {
 		if(trustStoreCertificatiX509!=null) {
-			if(verifaCA && certificatoInfo.isVerified(trustStoreCertificatiX509)==false) {
+			if(verifaCA && certificatoInfo.isVerified(trustStoreCertificatiX509, true)==false) {
 				throw new Exception("Certificato presente nell'header '"+headerName+"' non è verificabile rispetto alle CA conosciute");
 			}
 			try {

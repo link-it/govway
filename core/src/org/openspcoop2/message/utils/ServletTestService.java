@@ -65,6 +65,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
+import org.springframework.web.util.UriUtils;
 
 
 /**
@@ -106,6 +107,7 @@ public class ServletTestService extends HttpServlet {
 		String value = request.getParameter(parameter);
 		if(value!=null) {
 			value = value.trim();
+			value = UriUtils.decode(value, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
 		}
 		if(whitePropertiesList!=null) {
 			if(whitePropertiesList.contains(parameter)==false) {
@@ -280,11 +282,19 @@ public class ServletTestService extends HttpServlet {
 			if(split==null){
 				throw new ServletException("Ricevuta una richiesta di verifica header non conforme (pattern nome:valore) (split null)");
 			}
-			if(split.length!=2){
+			if(split.length<2){
 				throw new ServletException("Ricevuta una richiesta di verifica header non conforme (pattern nome:valore) (split:"+split.length+")");
 			}
 			String key = split[0];
-			String valore = split[1];
+			String valore = null;
+			for (int j = 1; j < split.length; j++) {
+				if(j==1) {
+					valore = split[1];
+				}
+				else {
+					valore = valore + ":"+ split[j];
+				}
+			}
 			
 			String v = TransportUtils.getHeader(request, key);
 			if(v==null){
@@ -305,11 +315,19 @@ public class ServletTestService extends HttpServlet {
 			if(split==null){
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter non conforme (pattern nome:valore) (split null)");
 			}
-			if(split.length!=2){
+			if(split.length<2){
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter non conforme (pattern nome:valore) (split:"+split.length+")");
 			}
 			String key = split[0];
-			String valore = split[1];
+			String valore = null;
+			for (int j = 1; j < split.length; j++) {
+				if(j==1) {
+					valore = split[1];
+				}
+				else {
+					valore = valore + ":"+ split[j];
+				}
+			}
 			
 			String v = TransportUtils.getParameter(request, key);
 			if(v==null){
@@ -330,11 +348,19 @@ public class ServletTestService extends HttpServlet {
 			if(split==null){
 				throw new ServletException("Ricevuta una richiesta di verifica cookie non conforme (pattern nome:valore) (split null)");
 			}
-			if(split.length!=2){
+			if(split.length<2){
 				throw new ServletException("Ricevuta una richiesta di verifica cookie non conforme (pattern nome:valore) (split:"+split.length+")");
 			}
 			String key = split[0];
-			String valore = split[1];
+			String valore = null;
+			for (int j = 1; j < split.length; j++) {
+				if(j==1) {
+					valore = split[1];
+				}
+				else {
+					valore = valore + ":"+ split[j];
+				}
+			}
 			
 			String v = TransportUtils.getCookie(request, key);
 			if(v==null){
@@ -750,13 +776,20 @@ public class ServletTestService extends HttpServlet {
 				if(split==null){
 					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split null)");
 				}
-				if(split.length!=2){
+				if(split.length<2){
 					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split:"+split.length+")");
 				}
 				String returnHeaderKey = null; 
 				String returnHeaderValue = null;
 				returnHeaderKey = split[0];
-				returnHeaderValue = split[1];	
+				for (int j = 1; j < split.length; j++) {
+					if(j==1) {
+						returnHeaderValue = split[1];
+					}
+					else {
+						returnHeaderValue = returnHeaderValue + ":"+ split[j];
+					}
+				}
 				headers.put(returnHeaderKey, returnHeaderValue);
 			}
 			

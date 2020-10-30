@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "#regex ^Token scaduto in data '.+'$",
+    "govway_id": "#string"
+}

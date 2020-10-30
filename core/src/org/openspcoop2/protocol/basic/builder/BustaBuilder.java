@@ -331,7 +331,7 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 				soapMessage.setFaultCode(f, code, eccezioneName);
 				
 				// Set fault String
-				f.setFaultString(ecc.getDescrizione(this.protocolFactory));
+				soapMessage.setFaultString(f, ecc.getDescrizione(this.protocolFactory));
 				
 				// Set fault Actor
 				f.setFaultActor(org.openspcoop2.utils.Costanti.OPENSPCOOP2);

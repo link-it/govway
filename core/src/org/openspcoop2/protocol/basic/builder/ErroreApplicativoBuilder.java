@@ -1034,11 +1034,11 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 								genericDetails = false;
 							}
 							if(codeDetailsErrorWrapper.getDetails()!=null && !genericDetails) {
-								fault.setFaultString(codeDetailsErrorWrapper.getDetails());
+								SoapUtils.setFaultString(fault, codeDetailsErrorWrapper.getDetails());
 							}
 							else {
 								String errorMsg = erroriProperties.getGenericDetails(functionError);
-								fault.setFaultString(errorMsg);
+								SoapUtils.setFaultString(fault, errorMsg);
 							}
 						
 							Detail d = fault.getDetail();
@@ -1050,7 +1050,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 							d.appendChild(d.getOwnerDocument().importNode(rispostaApplicativaElement, true));
 							
 						}else{
-							fault.setFaultString(Utilities.toString(this.errorFactory, rispostaApplicativaElement, true));
+							SoapUtils.setFaultString(fault, Utilities.toString(this.errorFactory, rispostaApplicativaElement, true));
 						}
 						
 						// DettaglioEccezione

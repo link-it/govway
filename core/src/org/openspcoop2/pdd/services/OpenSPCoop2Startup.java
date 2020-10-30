@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -75,6 +76,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
@@ -526,7 +528,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			
-			
+			if(propertiesReader.isHttpDisableKeepAlive()) {
+				/* ------------ 
+				 * Disabilita KeepAlive
+				 */
+				try{
+					System.setProperty("http.keepAlive","false");
+					OpenSPCoop2Startup.log.info("Impostazione http.keepAlive=false effettuata");
+				}catch(Exception e){
+					this.logError("Impostazione http.keepAlive=false non riuscita",e);
+					return;
+				}
+			}
 			
 			
 			
@@ -659,6 +672,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
 				OpenSPCoop2MessageFactory.initDefaultMessageFactory(true);
 								
+				// Locale SOAPFault String
+				Locale localeSoapFaultString = propertiesReader.getLocaleSOAPFaultString();
+				if(localeSoapFaultString!=null) {
+					OpenSPCoop2Startup.log.info("Locale SOAPFault String: "+localeSoapFaultString);
+					SoapUtils.setSoapFaultStringLocale(localeSoapFaultString);
+				}
+				
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));
 				MessageSecurityFactory.setMessageSecurityDigestReaderClassName(classNameReader.getMessageSecurityDigestReader(propertiesReader.getMessageSecurityDigestReader()));

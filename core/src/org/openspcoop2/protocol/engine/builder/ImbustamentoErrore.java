@@ -46,6 +46,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SOAPFaultCode;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.builder.CodeDetailsError;
@@ -688,11 +689,11 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 							genericDetails = false;
 						}
 						if(codeDetailsErrorWrapper.getDetails()!=null && !genericDetails) {
-							fault.setFaultString(codeDetailsErrorWrapper.getDetails());
+							SoapUtils.setFaultString(fault, codeDetailsErrorWrapper.getDetails());
 						}
 						else {
 							String errorMsg = erroriProperties.getGenericDetails(functionError);
-							fault.setFaultString(errorMsg);
+							SoapUtils.setFaultString(fault, errorMsg);
 						}
 						
 						if(Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE) {
@@ -731,10 +732,10 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					else {
 						String soapFaultCodePrefix = this.getFaultCodePrefix(messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 						if(erroreValidazione){
-							fault.setFaultString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString(this.protocolFactory));
+							SoapUtils.setFaultString(fault, MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString(this.protocolFactory));
 							fault.setFaultCode(SOAPFaultCode.Sender.toQName(messageType,soapFaultCodePrefix)); //costanti.get_FAULT_CODE_VALIDAZIONE
 						}else{
-							fault.setFaultString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO.toString(this.protocolFactory));
+							SoapUtils.setFaultString(fault, MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO.toString(this.protocolFactory));
 							fault.setFaultCode(SOAPFaultCode.Receiver.toQName(messageType,soapFaultCodePrefix)); 
 						}
 					}

@@ -272,7 +272,8 @@ public class SDIProtocolManager extends BasicManager {
 	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
     		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
-    		IRegistryReader registryReader) throws ProtocolException{
+    		IRegistryReader registryReader,
+    		boolean integration) throws ProtocolException{
     			
 		if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio())){
 			if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
@@ -288,7 +289,7 @@ public class SDIProtocolManager extends BasicManager {
 		}
 		
 		return super.updateOpenSPCoop2MessageResponse(msg, busta, 
-				notifierInputStreamParams,transportRequestContext,transportResponseContext,registryReader);
+				notifierInputStreamParams,transportRequestContext,transportResponseContext,registryReader,integration);
 	}
 	
 	

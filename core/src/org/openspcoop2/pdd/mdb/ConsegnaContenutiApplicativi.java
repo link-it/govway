@@ -2413,7 +2413,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
 							bustaRichiesta, nParams,
 							consegnaMessagePrimaTrasformazione.getTransportRequestContext(),transportResponseContext,
-							protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
+							protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()),
+							true);
 				}
 			} catch (Exception e) {
 				msgDiag.addKeywordErroreProcessamento(e, "Aggiornamento messaggio fallito");

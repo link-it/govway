@@ -31,14 +31,17 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
@@ -198,8 +201,25 @@ public class ModIUtilities {
 		return null;
 	}
 	
-	
-	public static String getReplyTo(IDServizio idServizio, IDSoggetto idSoggettoMittente, 
+	public static String getReplyToErogazione(IDSoggetto idSoggettoErogatoreServizioCorrelato, 
+			AccordoServizioParteComune aspc, String portType, String azione,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
+			IProtocolFactory<?> protocolFactory, IState state) throws Exception {
+		return getReplyTo(false, null, idSoggettoErogatoreServizioCorrelato, 
+				aspc, portType, azione,
+				registryReader, configIntegrationReader, 
+				protocolFactory, state);
+	}
+	public static String getReplyToFruizione(IDSoggetto idSoggettoFrutore, IDSoggetto idSoggettoErogatoreServizioCorrelato, 
+			AccordoServizioParteComune aspc, String portType, String azione,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
+			IProtocolFactory<?> protocolFactory, IState state) throws Exception {
+		return getReplyTo(true, idSoggettoFrutore, idSoggettoErogatoreServizioCorrelato, 
+				aspc, portType, azione,
+				registryReader, configIntegrationReader, 
+				protocolFactory, state);
+	}
+	private static String getReplyTo(boolean fruizione, IDSoggetto idSoggettoFrutore, IDSoggetto idSoggettoErogatoreServizioCorrelato, 
 			AccordoServizioParteComune aspc, String portType, String azione,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
 			IProtocolFactory<?> protocolFactory, IState state) throws Exception {
@@ -262,7 +282,7 @@ public class ModIUtilities {
 			
 		FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi(); 
 		filtroServizi.setIdAccordoServizioParteComune(idAccordoRisposta);
-		filtroServizi.setSoggettoErogatore(idSoggettoMittente);
+		filtroServizi.setSoggettoErogatore(idSoggettoErogatoreServizioCorrelato);
 		if(!rest) {
 			filtroServizi.setPortType(portTypeRisposta);
 		}
@@ -272,38 +292,73 @@ public class ModIUtilities {
 		}catch(RegistryNotFound notFound) {
 		}
 		if(lIdServizio==null || lIdServizio.size()<=0) {
-			throw new RegistryNotFound("Non è stata individuata alcun'erogazione da parte del soggetto '"+NamingUtils.getLabelSoggetto(idSoggettoMittente)+
-					"' relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
+			if(fruizione) {
+				throw new RegistryNotFound("Non è stata individuata alcuna fruzione verso l'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta)+
+						" erogata dal soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato));
+			}
+			else {
+				throw new RegistryNotFound("Non è stata individuata alcun'erogazione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato)+
+					" relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
+			}
 		}
 		if(lIdServizio.size()>1) {
-			throw new RegistryNotFound("Sono state individuate più di un'erogazione da parte del soggetto '"+NamingUtils.getLabelSoggetto(idSoggettoMittente)+
-					"' relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
+			if(fruizione) {
+				throw new RegistryNotFound("Sono state individuate più fruzioni verso l'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta)+
+						" erogata dal soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato));
+			}
+			else {
+				throw new RegistryNotFound("Sono state individuate più di un'erogazione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato)+
+					" relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
+			}
 		}
 		IDServizio idServizioCorrelato = lIdServizio.get(0);
 		
-		List<MappingErogazionePortaApplicativa> listMapping = ConfigurazionePdDManager.getInstance(state).getMappingErogazionePortaApplicativaList(idServizioCorrelato);
-		if(listMapping==null) {
-			throw new RegistryNotFound("(outbound empty) Non è stata individuata alcun'erogazione da parte del soggetto '"+NamingUtils.getLabelSoggetto(idSoggettoMittente)+
-					"' relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
-		}
-		String nomePA = null;
-		IDSoggetto proprietarioPA = null;
-		for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : listMapping) {
-			if(mappingErogazionePortaApplicativa.isDefault()) {
-				nomePA = mappingErogazionePortaApplicativa.getIdPortaApplicativa().getNome();
-				proprietarioPA = idServizioCorrelato.getSoggettoErogatore();
+		if(fruizione) {
+			List<MappingFruizionePortaDelegata> listMapping = ConfigurazionePdDManager.getInstance(state).getMappingFruizionePortaDelegataList(idSoggettoFrutore, idServizioCorrelato);
+			if(listMapping==null) {
+				throw new RegistryNotFound("(outbound empty) Non è stata individuata alcuna fruzione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoFrutore)+
+						" verso l'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta)+
+						" erogata dal soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato));
 			}
+			String nomePD = null;
+			IDSoggetto proprietarioPD = null;
+			for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : listMapping) {
+				if(mappingFruizionePortaDelegata.isDefault()) {
+					nomePD = mappingFruizionePortaDelegata.getIdPortaDelegata().getNome();
+					proprietarioPD = idSoggettoFrutore;
+				}
+			}
+			if(nomePD==null) {
+				throw new RegistryNotFound("(outbound) Non è stata individuata alcuna fruzione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoFrutore)+
+						" verso l'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta)+
+						" erogata dal soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato));
+			}
+			return getUrlInvocazione(protocolFactory, state, rest, aspc, RuoloContesto.PORTA_DELEGATA, nomePD, proprietarioPD);
 		}
-		if(nomePA==null) {
-			throw new RegistryNotFound("(outbound) Non è stata individuata alcun'erogazione da parte del soggetto '"+NamingUtils.getLabelSoggetto(idSoggettoMittente)+
-					"' relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
+		else {
+			List<MappingErogazionePortaApplicativa> listMapping = ConfigurazionePdDManager.getInstance(state).getMappingErogazionePortaApplicativaList(idServizioCorrelato);
+			if(listMapping==null) {
+				throw new RegistryNotFound("(inbound empty) Non è stata individuata alcun'erogazione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato)+
+						" relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
+			}
+			String nomePA = null;
+			IDSoggetto proprietarioPA = null;
+			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : listMapping) {
+				if(mappingErogazionePortaApplicativa.isDefault()) {
+					nomePA = mappingErogazionePortaApplicativa.getIdPortaApplicativa().getNome();
+					proprietarioPA = idServizioCorrelato.getSoggettoErogatore();
+				}
+			}
+			if(nomePA==null) {
+				throw new RegistryNotFound("(inbound) Non è stata individuata alcun'erogazione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato)+
+						" relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
+			}
+			return getUrlInvocazione(protocolFactory, state, rest, aspc, RuoloContesto.PORTA_APPLICATIVA, nomePA, proprietarioPA);
 		}
-
-		return getUrlInvocazionePA(protocolFactory, state, rest, aspc, nomePA, proprietarioPA);
 	}
 	
 	
-	public static String getUrlInvocazionePA(IProtocolFactory<?> protocolFactory, IState state, boolean rest, AccordoServizioParteComune aspc, String nomePA, IDSoggetto proprietarioPA) throws Exception {
+	public static String getUrlInvocazione(IProtocolFactory<?> protocolFactory, IState state, boolean rest, AccordoServizioParteComune aspc, RuoloContesto ruoloContesto, String nomePorta, IDSoggetto proprietarioPorta) throws Exception {
 		
 		List<String> tags = new ArrayList<String>();
 		if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
@@ -319,21 +374,31 @@ public class ModIUtilities {
 			canaleApi = aspc.getCanale();
 		}
 		String canalePorta = null;
-		if(nomePA!=null) {
-			try {
-				IDPortaApplicativa idPA = new IDPortaApplicativa();
-				idPA.setNome(nomePA);
-				PortaApplicativa pa = configReader.getPortaApplicativa(idPA);
-				canalePorta = pa.getNome();
-			}catch(Throwable t) {}
+		if(nomePorta!=null) {
+			if(RuoloContesto.PORTA_APPLICATIVA.equals(ruoloContesto)) {
+				try {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(nomePorta);
+					PortaApplicativa pa = configReader.getPortaApplicativa(idPA);
+					canalePorta = pa.getNome();
+				}catch(Throwable t) {}
+			}
+			else {
+				try {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(nomePorta);
+					PortaDelegata pd = configReader.getPortaDelegata(idPD);
+					canalePorta = pd.getNome();
+				}catch(Throwable t) {}
+			}
 		}
 		String canale = CanaliUtils.getCanale(canaliConfigurazione, canaleApi, canalePorta);
 		
 		UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
-				RuoloContesto.PORTA_APPLICATIVA,
+				ruoloContesto,
 				rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
-				nomePA,
-				proprietarioPA,
+				nomePorta,
+				proprietarioPorta,
 				tags, canale);		 
 		String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 		String contesto = urlInvocazioneApi.getContext();
@@ -441,16 +506,15 @@ public class ModIUtilities {
 			SOAPHeader header = msg.getSOAPHeader();
 			if(header==null){
 				header = msg.getSOAPPart().getEnvelope().addHeader();
-				hdrElement = msg.newSOAPHeaderElement(header, new QName(namespace,localName,prefix));
-
-				if(actor!=null && !"".equals(actor)) {
-					hdrElement.setActor(actor);
-				}
-				hdrElement.setMustUnderstand(mustUnderstand);
-				
-				msg.addHeaderElement(header, hdrElement);
 			}
+			hdrElement = msg.newSOAPHeaderElement(header, new QName(namespace,localName,prefix));
+
+			if(actor!=null && !"".equals(actor)) {
+				hdrElement.setActor(actor);
+			}
+			hdrElement.setMustUnderstand(mustUnderstand);
 				
+			msg.addHeaderElement(header, hdrElement);
 		}
 		if(value instanceof String) {
 			hdrElement.setValue( (String) value);

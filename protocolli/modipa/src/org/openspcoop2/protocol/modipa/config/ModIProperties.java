@@ -195,7 +195,8 @@ public class ModIProperties {
 			getRestLocationHeader();
 			
 			// .. PUSH ..
-			isRestSecurityTokenPushReplyToUpdateOrCreate();
+			isRestSecurityTokenPushReplyToUpdateOrCreateInFruizione();
+			isRestSecurityTokenPushReplyToUpdateInErogazione();
 			isRestSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists();
 			getRestSecurityTokenPushRequestHttpStatus();
 			getRestSecurityTokenPushResponseHttpStatus();
@@ -238,7 +239,8 @@ public class ModIProperties {
 			getSoapRequestDigestActor();
 			
 			// .. PUSH ..
-			isSoapSecurityTokenPushReplyToUpdateOrCreate();
+			isSoapSecurityTokenPushReplyToUpdateOrCreateInFruizione();
+			isSoapSecurityTokenPushReplyToUpdateInErogazione();
 			isSoapSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists();
 			
 			/* **** CONFIGURAZIONE **** */
@@ -1363,7 +1365,7 @@ public class ModIProperties {
 	// .. PUSH ..
 	
 	private static Boolean getRestSecurityTokenPushReplyToUpdateOrCreate = null;
-	public boolean isRestSecurityTokenPushReplyToUpdateOrCreate() throws Exception{
+	public boolean isRestSecurityTokenPushReplyToUpdateOrCreateInFruizione() throws Exception{
     	if(ModIProperties.getRestSecurityTokenPushReplyToUpdateOrCreate==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.replyTo.header.updateOrCreate";
     		try{  
@@ -1385,6 +1387,31 @@ public class ModIProperties {
     	}
     	
     	return ModIProperties.getRestSecurityTokenPushReplyToUpdateOrCreate;
+	}
+	
+	private static Boolean getRestSecurityTokenPushReplyToUpdate = null;
+	public boolean isRestSecurityTokenPushReplyToUpdateInErogazione() throws Exception{
+    	if(ModIProperties.getRestSecurityTokenPushReplyToUpdate==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.push.replyTo.header.update";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getRestSecurityTokenPushReplyToUpdate = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestSecurityTokenPushReplyToUpdate;
 	}
 	
 	private static Boolean getRestSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists = null;
@@ -2167,7 +2194,7 @@ public class ModIProperties {
 	// .. PUSH ..
 	
 	private static Boolean getSoapSecurityTokenPushReplyToUpdateOrCreate = null;
-	public boolean isSoapSecurityTokenPushReplyToUpdateOrCreate() throws Exception{
+	public boolean isSoapSecurityTokenPushReplyToUpdateOrCreateInFruizione() throws Exception{
     	if(ModIProperties.getSoapSecurityTokenPushReplyToUpdateOrCreate==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.push.replyTo.header.updateOrCreate";
     		try{  
@@ -2189,6 +2216,31 @@ public class ModIProperties {
     	}
     	
     	return ModIProperties.getSoapSecurityTokenPushReplyToUpdateOrCreate;
+	}
+	
+	private static Boolean getSoapSecurityTokenPushReplyToUpdate = null;
+	public boolean isSoapSecurityTokenPushReplyToUpdateInErogazione() throws Exception{
+    	if(ModIProperties.getSoapSecurityTokenPushReplyToUpdate==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.push.replyTo.header.update";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapSecurityTokenPushReplyToUpdate = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getSoapSecurityTokenPushReplyToUpdate;
 	}
 	
 	private static Boolean getSoapSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists = null;

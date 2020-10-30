@@ -30,6 +30,14 @@ package org.openspcoop2.protocol.sdk;
  */
 public class ProtocolException extends Exception {
 
+	private boolean interoperabilityError = false; // indicazione che si tratta di un errore di validazione del protocollo
+	public boolean isInteroperabilityError() {
+		return this.interoperabilityError;
+	}
+	public void setInteroperabilityError(boolean interoperabilityError) {
+		this.interoperabilityError = interoperabilityError;
+	}
+
 	private boolean forceTrace; // indicazione se deve essere forzato il tracciamento
 	public boolean isForceTrace() {
 		return this.forceTrace;

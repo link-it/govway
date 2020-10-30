@@ -231,12 +231,17 @@ public class CertificateInfo implements Serializable {
 		certPathValidator.validate(CertificateFactory.getInstance("X.509").generateCertPath(lCertificate), pkixParameters);
 	}
 	
-	public boolean isVerified(KeyStore trustStore) {
+	public boolean isVerified(KeyStore trustStore, boolean checkSameCertificateInTrustStore) {
 		try {
 			Enumeration<String> aliasesEnum = trustStore.aliases();
 			while (aliasesEnum.hasMoreElements()) {
 				String alias = (String) aliasesEnum.nextElement();
 				java.security.cert.Certificate certificate = trustStore.getCertificate(alias);
+				if(checkSameCertificateInTrustStore) {
+					if(this.equals(certificate)) {
+						return true;
+					}
+				}
 				if(this.isVerified(certificate)) {
 					return true;
 				}

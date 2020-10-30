@@ -198,7 +198,8 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
     		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
-    		IRegistryReader registryReader) throws ProtocolException{
+    		IRegistryReader registryReader,
+    		boolean integration) throws ProtocolException{
     	return msg;
     }
 	

@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html",
+    "title": "InteroperabilityInvalidResponse",
+    "status": 502,
+    "detail": "Signature verification failed: [COMPACT] Signature verification failure: Process 'x5c' error: Certificato presente nell'header 'x5c' scaduto: NotAfter: Tue Jul 09 12:30:00 CEST 2019",
+    "govway_id": "#uuid"
+}

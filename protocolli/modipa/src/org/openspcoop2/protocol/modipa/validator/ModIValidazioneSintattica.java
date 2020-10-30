@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModITruststoreConfig;
+import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -126,6 +127,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						datiRichiesta.getVersioneServizio());
 				
 				IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state);
+				IConfigIntegrationReader configIntegrationReader = this.getProtocolFactory().getCachedConfigIntegrationReader(this.state);
 				
 				AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
 				
@@ -150,7 +152,6 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					idSA.setIdSoggettoProprietario(idSoggettoMittente);
 					idSA.setNome(datiRichiesta.getServizioApplicativoFruitore());
 					
-					IConfigIntegrationReader configIntegrationReader = this.getProtocolFactory().getCachedConfigIntegrationReader(this.state); 
 					sa = configIntegrationReader.getServizioApplicativo(idSA);
 				}
 				
@@ -235,15 +236,31 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						apiContenenteRisorsa = aspc;
 					}
 					
+					String replyTo = null;
+					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
+						if(request &&  ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(asyncInteractionType)) {
+							// devo cercare l'url di invocazione del servizio fruito correlato.
+							
+							try {
+								replyTo = ModIUtilities.getReplyToFruizione(idServizio.getSoggettoErogatore(), idSoggettoMittente, aspc, nomePortType, azione, 
+										registryReader, configIntegrationReader, this.protocolFactory, this.state);
+							}catch(Exception e) {
+								throw new Exception("Configurazione presente nel registro non corretta: "+e.getMessage(),e);
+							}
+						}
+					}
+					
 					if(!isFault) {
 						if(rest) {
 							validatoreSintatticoRest.validateInteractionProfile(msg, request, asyncInteractionType, asyncInteractionRole, 
 									apiContenenteRisorsa, azione,
-									bustaRitornata, erroriValidazione);
+									bustaRitornata, erroriValidazione,
+									replyTo);
 						}
 						else {
 							validatoreSintatticoSoap.validateInteractionProfile(msg, request, asyncInteractionType, asyncInteractionRole, 
-									bustaRitornata, erroriValidazione);
+									bustaRitornata, erroriValidazione,
+									replyTo);
 						}
 					}
 				}

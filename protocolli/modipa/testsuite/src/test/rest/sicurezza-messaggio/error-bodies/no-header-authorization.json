@@ -1,0 +1,7 @@
+{
+    "govway_id": "#string",
+    "detail": "Header HTTP 'Authorization' non presente",
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400
+}

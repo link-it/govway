@@ -1,0 +1,10 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Body>
+        <ns2:MProcessingStatusResponse xmlns:ns2="http://amministrazioneesempio.it/nomeinterfacciaservizio">
+            <return>
+                <status>done</status>
+                <message>Richiesta completata</message>
+            </return>
+        </ns2:MProcessingStatusResponse>
+    </soap:Body>
+</soap:Envelope>

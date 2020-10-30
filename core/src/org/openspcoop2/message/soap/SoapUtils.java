@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.mail.internet.ContentType;
 import javax.xml.namespace.QName;
@@ -91,6 +92,29 @@ public class SoapUtils {
 		return messageFactory.getSoapMessageFactory();
 	}
 		
+	
+	// SOAP Fault String 'Locale' for LANG
+	
+	private static Locale soapFaultStringLocale = null;
+	public static void setSoapFaultStringLocale(Locale soapFaultStringLocale) {
+		SoapUtils.soapFaultStringLocale = soapFaultStringLocale;
+	}
+	public static void setFaultString(SOAPFault fault, String faultString) throws SOAPException {
+		 setFaultString(fault, faultString, null);
+	}
+	public static void setFaultString(SOAPFault fault, String faultString, Locale lParam) throws SOAPException {
+		if(lParam!=null) {
+			fault.setFaultString(faultString, lParam);
+		}
+		else if(soapFaultStringLocale!=null) {
+			fault.setFaultString(faultString, soapFaultStringLocale);
+		}
+		else {
+			fault.setFaultString(faultString);
+		}
+	}
+	
+	
 	
 	
 	// SOAP Content Type

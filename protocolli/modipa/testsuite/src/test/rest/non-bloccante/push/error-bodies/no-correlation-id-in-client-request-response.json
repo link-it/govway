@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html",
+    "title": "InteroperabilityInvalidResponse",
+    "status": 502,
+    "detail": "Header HTTP 'X-Correlation-ID' non presente",
+    "govway_id": "#string"
+}

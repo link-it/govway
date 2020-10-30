@@ -1,0 +1,26 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+    <env:Header/>
+    <env:Body>
+        <env:Fault>
+            <env:Code>
+                <env:Value>env:Sender</env:Value>
+                <env:Subcode>
+                    <env:Value xmlns:integration="http://govway.org/integration/fault">integration:BadRequest</env:Value>
+                </env:Subcode>
+            </env:Code>
+            <env:Reason>
+                <env:Text xml:lang="en-US">Il servizio richiede una funzionalità non supportata dal protocollo modipa: Header SOAP 'X-Correlation-ID', richiesto dal profilo non bloccante PUSH, non trovato</env:Text>
+            </env:Reason>
+            <env:Role>http://govway.org/integration</env:Role>
+            <env:Detail>
+                <problem xmlns="urn:ietf:rfc:7807">
+                    <type>https://govway.org/handling-errors/400/BadRequest.html</type>
+                    <title>BadRequest</title>
+                    <status>400</status>
+                    <detail>Il servizio richiede una funzionalità non supportata dal protocollo modipa: Header SOAP 'X-Correlation-ID', richiesto dal profilo non bloccante PUSH, non trovato</detail>
+                    <govway_id>#string</govway_id>
+                </problem>
+            </env:Detail>
+        </env:Fault>
+    </env:Body>
+</env:Envelope>

@@ -90,8 +90,9 @@ public class AS4ProtocolVersionManager extends BasicVersionManager {
 	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
     		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
-    		IRegistryReader registryReader) throws ProtocolException{
-		return this.protocolManager.updateOpenSPCoop2MessageResponse(msg, busta, notifierInputStreamParams, transportRequestContext, transportResponseContext, registryReader);
+    		IRegistryReader registryReader,
+    		boolean integration) throws ProtocolException{
+		return this.protocolManager.updateOpenSPCoop2MessageResponse(msg, busta, notifierInputStreamParams, transportRequestContext, transportResponseContext, registryReader, integration);
 	}
 	
 	@Override

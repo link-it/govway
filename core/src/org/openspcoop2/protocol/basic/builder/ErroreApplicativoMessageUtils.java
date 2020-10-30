@@ -154,7 +154,7 @@ public class ErroreApplicativoMessageUtils {
 				faultPulito.setFaultNode(faultNode);
 			}
 			if(faultString!=null)
-				faultPulito.setFaultString(faultString);
+				SoapUtils.setFaultString(faultPulito , faultString);
 			Detail detailFaultPulito = faultPulito.addDetail();
 			detailFaultPulito = faultPulito.getDetail();
 		

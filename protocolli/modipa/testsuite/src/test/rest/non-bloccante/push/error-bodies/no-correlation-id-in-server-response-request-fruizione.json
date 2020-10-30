@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/BadRequest.html",
+    "title": "BadRequest",
+    "status": 400,
+    "detail": "Il servizio richiede una funzionalità non supportata dal protocollo modipa: Header http 'X-Correlation-ID', richiesto dal profilo non bloccante PUSH, non trovato",
+    "govway_id": "#string"
+}

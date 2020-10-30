@@ -5,7 +5,7 @@ Errori 400 (Bad Request)
 
 In questa sezione vengono riportati tutti i possibili codici di errore generati da GovWay relativi ad una richiesta client malformata.
 
-Nella configurazione di default di GovWay, le casistiche di errore 'AttachmentsRequestFailed', 'MessageSecurityRequestFailed', 'InteroperabilitRequestManagementFailed' e 'TransformationRuleRequestFailed'
+Nella configurazione di default di GovWay, le casistiche di errore 'AttachmentsRequestFailed', 'MessageSecurityRequestFailed', 'InteroperabilityRequestManagementFailed' e 'TransformationRuleRequestFailed'
 sono tutte restituiti al client con il solo codice di errore :ref:`errori_400_BadRequest`. La scelta è finalizzata ad evitare disclosure di informazioni relative al domino interno.
 
 È possibile abilitare temporaneamente la generazione dei codici puntuali accendendo alla voce 'Strumenti - Runtime' della console di gestione e selezionando 'Errore Puntuale' per la 'Richiesta' nella sezione "Errori generati dal Gateway - Codici di errore 'GovWay-Transaction-ErrorType'" (:numref:`error400specifici`).
@@ -21,7 +21,7 @@ L'abilitazione permanente può essere invece effettuata disabilitando la seguent
 
 	::
 
-		# Gateway non in grado di gestire la richiesta: AttachmentsRequestFailed, MessageSecurityRequestFailed, InteroperabilitRequestManagementFailed, TransformationRuleRequestFailed
+		# Gateway non in grado di gestire la richiesta: AttachmentsRequestFailed, MessageSecurityRequestFailed, InteroperabilityRequestManagementFailed, TransformationRuleRequestFailed
 		WRAP_400_INTERNAL_BAD_REQUEST.enabled=false
 
 .. toctree::

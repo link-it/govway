@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/409/Conflict.html",
+    "title": "Conflict",
+    "status": 409,
+    "detail": "La busta presenta un identificativo già processato in precedenza",
+    "govway_id": "#uuid"
+}

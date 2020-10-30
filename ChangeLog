@@ -1,3 +1,44 @@
+2020-10-30  Francesco Scarlato <scarlato@link.it>
+
+	* [GovWayCore, ProtocolloModIPA, TestsuiteProtocolloModIPA]
+	Risolti i seguenti problemi:
+	- Aggiunti gli header contenente gli identificatori anche sulle erogazioni (es. GovWay-Conversation-ID).
+	- Corretto digest salvato nelle tracce per i profili IDAS03: veniva erroneamente salvato in codifica hex invece che in codifica base64.
+	- Corrette utility JWT al fine di validare un certificato in un truststore verificandone anche l'uguaglianza con il certificato stesso.
+          Prima del fix, se il certificato da validare era nel truststore e la sua CA non era presente, la validazione non andava a buon fine.
+	- Corretto controllo che l'applicativo venga identificato, tramite uno dei meccanismi di autenticazione, per poter usare funzionalità di sicurezza.
+	- Corretto problema che non consentiva, in presenza di validazione dei contenuti attivi, la generazione dell'header SOAP 'X-Correlation-ID' nel profilo di interazione PUSH, 
+	  quando il backend server non generava di proprio conto tale header.
+	- Risolto problema che avveniva durante la creazione dell'header SOAP 'X-Correlation-ID' se il messaggio di risposta di una Richiesta PULL non conteneva il SOAPHeader.
+	- Gestito aggiornamento del valore dell'header 'ReplyTo', sia in REST che SOAP, sull'erogazione prima di contattare il backend 
+          in modo da tradurre il valore con la relativa url di invocazione del servizio di callback correlato.
+	- Aggiunta impostazione del Locale per il fault string del SOAPFault. Il locale utilizzato è adesso indicabile in govway.properties tramite le proprietà 
+          'org.openspcoop2.pdd.erroreApplicativo.faultString.language' e 'org.openspcoop2.pdd.erroreApplicativo.faultString.country'.
+	- Corretto errore ritornato al client in caso di header SOAP Correlation-ID non trovato.
+	- Corretto bug presente nella gestione della fase di Richiesta per il profilo PUSH e PULL SOAP. Se il server non generava un header X-Correlation-ID,
+	  GovWay creava un header valorizzandolo con l'id del messaggio invece che con l'id di transazione come descritto da documentazione.
+	- Corretti esiti riportati per la fase di imbustamento SOAP quando mancavano elementi obbligatori nel profilo PULL.
+	- Corretto messaggio di errore per richiesta stato PULL, dove vengono riportati tutti i codici http ammessi.
+	- Corretto 503->502 per l'integration error 'internalResponseError'.
+	- Corretta gestione del dettaglio dell'errore, nel caso sia abilitato.
+	- Corretto esito della transazione, quando avviene un errore di 'protocollo' anche durante la fase di imbustamento.
+	- Aggiunto controllo sul codice http nella fase di imbustamento per il protocollo rest, profili non bloccante.
+	- Corretta lista di codici http attesi: presentava una , davanti al codice http.
+	- Aggiunto IDCollaborazione letto dalla risposta per generare l'header GovWay-Conversation-ID.
+	- Aggiunta alla firma del metodo updateOpenSPCoop2MessageResponse in ProtocolManager la possibilità di capire se viene invocato dalla porta applicativa (integration=true) o dalla porta delegata.
+	Aggiunta una testsuite dedicata al protocollo ModI.
+	Nell'intervento sono stati risolti anche i seguenti problemi relativi ad altre parti:
+	- Corretta classe tools/web_interfaces/monitor/src/src_core/org/openspcoop2/web/monitor/core/bean/ApplicationBean.java per risolvere nullPointer che capitava dopo un utilizzo prolungato della console:
+         Caused by: javax.el.ELException: /commons/includes/menu.xhtml @33,58 rendered="#{applicationBean.showTransazioniBase}": java.lang.NullPointerException
+            at deployment.govwayMonitor.war//com.sun.facelets.el.TagValueExpression.getValue(TagValueExpression.java:76)
+            at deployment.govwayMonitor.war//javax.faces.component.UIComponentBase.isRendered(UIComponentBase.java:393)
+            ... 103 more
+          Caused by: java.lang.NullPointerException
+            at deployment.govwayMonitor.war//org.openspcoop2.web.monitor.core.bean.ApplicationBean.getShowTransazioniBase(ApplicationBean.java:270)
+	- Corretto refuso nella documentazione 'resources/doc/src/manuali/console/handling-errors/400/index.rst': InteroperabilitRequestManagementFailed.
+	- Aggiunta la possibilità di disabilitare il 'keep-alive' sui connettori http tramite la definizione della proprietà 'org.openspcoop2.pdd.services.http.disableKeepAlive=true' in govway_local.properties.
+	- Aggiunto, al servizio TestService, la possibilità di contenenre nel valore dei parametri checkEqualsHttpHeader, checkEqualsQueryParameter, checkEqualsCookie e returnHttpHeader il valore ':'.
+
 2020-10-30  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

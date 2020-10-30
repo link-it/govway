@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "Signature verification failed: [COMPACT] Signature verification failure: Process 'x5c' error: Certificato presente nell'header 'x5c' non valido: Certificate has been revoked, reason: KEY_COMPROMISE, revocation date: Tue Jul 09 12:32:00 CEST 2019, authority: CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT, extension OIDs: [2.5.29.21, 2.5.29.24]",
+    "govway_id": "#uuid"
+}

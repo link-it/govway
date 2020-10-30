@@ -1,0 +1,7 @@
+{
+    "govway_id": "#uuid",
+    "detail": "Header HTTP 'idar03testheader' possiede un valore differente rispetto a quello presente negli header firmati",
+    "type": "https:\/\/govway.org\/handling-errors\/400\/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400
+}

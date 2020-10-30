@@ -185,10 +185,11 @@
 			<lib dir="${libs}/jackson">
 				<include name="*.jar"/>
 			</lib>
-			<lib dir="${libs}/jax">
-				<include name="jaxws-*.jar"/>
+			<lib dir="${libs}/spring">
+				<include name="*.jar"/>
 			</lib>
 			<lib dir="${libs}/jax">
+				<include name="jaxws-*.jar"/>
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${libs}/log">

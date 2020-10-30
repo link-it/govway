@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3_lib"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.3.dev"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

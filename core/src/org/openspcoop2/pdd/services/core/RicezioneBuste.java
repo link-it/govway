@@ -7613,13 +7613,21 @@ public class RicezioneBuste {
 						msgDiag.logErroreGenerico(e,"imbustatore.after-security-imbustamento(risposta)");
 					}
 	
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO));
-					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
-
-					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					OpenSPCoop2Message errorOpenSPCoopMsg = null;
 					
+					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
+					if(e!=null && e instanceof ProtocolException && ((ProtocolException)e).isInteroperabilityError() ) {
+						parametriGenerazioneBustaErrore.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.
+								getErroreCooperazione(e.getMessage()));
+						errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+					}
+					else {
+						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO));
+						errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					}
+
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
 					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
@@ -7695,7 +7703,12 @@ public class RicezioneBuste {
 				headerIntegrazioneRisposta.getBusta().setServizio(bustaRichiesta.getServizio());
 				headerIntegrazioneRisposta.getBusta().setVersioneServizio(bustaRichiesta.getVersioneServizio());
 				headerIntegrazioneRisposta.getBusta().setAzione(bustaRichiesta.getAzione());
-				headerIntegrazioneRisposta.getBusta().setIdCollaborazione(bustaRichiesta.getCollaborazione());
+				if(bustaRichiesta.getCollaborazione()!=null) {
+					headerIntegrazioneRisposta.getBusta().setIdCollaborazione(bustaRichiesta.getCollaborazione());
+				}
+				else if(bustaRisposta!=null && bustaRisposta.getCollaborazione()!=null) {
+					headerIntegrazioneRisposta.getBusta().setIdCollaborazione(bustaRisposta.getCollaborazione());
+				}
 				headerIntegrazioneRisposta.getBusta().setID(bustaRichiesta.getID());
 				headerIntegrazioneRisposta.getBusta().setProfiloDiCollaborazione(bustaRichiesta.getProfiloDiCollaborazione());
 				headerIntegrazioneRisposta.setIdApplicativo(correlazioneApplicativa);

@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -432,6 +433,23 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 			QName eccezioneName) throws MessageException,MessageNotSupportedException {
 		try{
 			fault.setFaultCode(eccezioneName);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void setFaultString(SOAPFault fault, String message) throws MessageException,MessageNotSupportedException{
+		try{
+			SoapUtils.setFaultString(fault, message, null);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void setFaultString(SOAPFault fault, String message, Locale locale) throws MessageException,MessageNotSupportedException{
+		try{
+			SoapUtils.setFaultString(fault, message, locale);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}

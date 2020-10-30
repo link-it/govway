@@ -1,0 +1,214 @@
+openapi: 3.0.1
+info:
+ title: RESTblocking
+ version: "1.0"
+ description: |-
+   Questo file descrive semplicemente i metodi di un'API
+   e non indica tutte le informazioni di metadatazione che
+   normalmente vanno inserite.
+ license:
+   name: Apache 2.0 License
+   url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+ /resources/object:
+   post:
+     description: Crea M
+     operationId: createM
+     requestBody:
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/MType'
+     responses:
+       201:
+         description: Esecuzione di M avvenuta con successo
+       400:
+         description: Richiesta non valida
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+       default:
+         description: |-
+           Errore inatteso. Non ritornare informazioni
+           sulla logica interna e/o non pertinenti all'interfaccia.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+ /resources/object/{id_resource}:
+   get:
+     description: Esegue M
+     operationId: getM
+     parameters:
+     - name: id_resource
+       in: path
+       required: true
+       schema:
+         type: integer
+         format: int32
+     responses:
+       200:
+         description: Esecuzione di M avvenuta con successo
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/MType'
+       400:
+         description: Richiesta non valida
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+       404:
+         description: Identificativo non trovato
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+       default:
+         description: |-
+           Errore inatteso. Non ritornare informazioni
+           sulla logica interna e/o non pertinenti all'interfaccia.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+   put:
+     description: Aggiorna M
+     operationId: updateM
+     parameters:
+     - name: id_resource
+       in: path
+       required: true
+       schema:
+         type: integer
+         format: int32
+     requestBody:
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/MType'
+     responses:
+       200:
+         description: Esecuzione di M avvenuta con successo
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/MResponseType'
+       400:
+         description: Richiesta non valida
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+       404:
+         description: Identificativo non trovato
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+       default:
+         description: |-
+           Errore inatteso. Non ritornare informazioni
+           sulla logica interna e/o non pertinenti all'interfaccia.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+   delete:
+     description: Elimina M
+     operationId: deleteM
+     parameters:
+     - name: id_resource
+       in: path
+       required: true
+       schema:
+         type: integer
+         format: int32
+     responses:
+       204:
+         description: Esecuzione di M avvenuta con successo
+       400:
+         description: Richiesta non valida
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+       404:
+         description: Identificativo non trovato
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+       default:
+         description: |-
+           Errore inatteso. Non ritornare informazioni
+           sulla logica interna e/o non pertinenti all'interfaccia.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorMessage'
+
+components:
+ schemas:
+   MType:
+     type: object
+     properties:
+       a:
+         $ref: '#/components/schemas/AComplexType'
+       b:
+         type: string
+   MResponseType:
+     type: object
+     properties:
+       c:
+         type: string
+   AComplexType:
+     type: object
+     properties:
+       a1s:
+         type: array
+         items:
+           type: integer
+           format: int32
+       a2:
+         type: string
+   ErrorMessage:
+      type: object
+      additionalProperties: true
+      properties:
+        detail:
+          description: |
+            A human readable explanation specific to this occurrence of the
+            problem.
+          type: string
+        instance:
+          description: |
+            An absolute URI that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.
+          format: uri
+          type: string
+        status:
+          description: |
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          exclusiveMaximum: true
+          format: int32
+          maximum: 600
+          minimum: 100
+          type: integer
+        title:
+          description: |
+            A short, summary of the problem type. Written in english and readable
+            for engineers (usually not suited for non technical stakeholders and
+            not localized); example: Service Unavailable
+          type: string
+        type:
+          default: about:blank
+          description: |
+            An absolute URI that identifies the problem type.  When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          format: uri
+          type: string

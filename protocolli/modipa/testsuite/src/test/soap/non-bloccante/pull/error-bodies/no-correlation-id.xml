@@ -1,0 +1,28 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+    <env:Header/>
+    <env:Body>
+        <env:Fault>
+            <env:Code>
+                <env:Value>env:Receiver</env:Value>
+                <env:Subcode>
+                    <env:Value xmlns:integration="http://govway.org/integration/fault">integration:InteroperabilityInvalidResponse</env:Value>
+                </env:Subcode>
+            </env:Code>
+            <env:Reason>
+                <env:Text xml:lang="en-US">modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
+Header SOAP 'X-Correlation-ID' non presente</env:Text>
+            </env:Reason>
+            <env:Role>http://govway.org/integration</env:Role>
+            <env:Detail>
+                <problem xmlns="urn:ietf:rfc:7807">
+                    <type>https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html</type>
+                    <title>InteroperabilityInvalidResponse</title>
+                    <status>502</status>
+                    <detail>modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
+Header SOAP 'X-Correlation-ID' non presente</detail>
+                    <govway_id>#string</govway_id>
+                </problem>
+            </env:Detail>
+        </env:Fault>
+    </env:Body>
+</env:Envelope>

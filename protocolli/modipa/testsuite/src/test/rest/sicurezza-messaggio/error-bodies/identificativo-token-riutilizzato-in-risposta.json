@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/502/ConflictResponse.html",
+    "title": "ConflictResponse",
+    "status": 502,
+    "detail": "La busta presenta un identificativo già processato in precedenza",
+    "govway_id": "#uuid"
+}

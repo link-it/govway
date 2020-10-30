@@ -31,7 +31,6 @@ import java.util.Properties;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.message.token.Timestamp;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -65,6 +64,7 @@ import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.openspcoop2.utils.xml.XPathReturnType;
@@ -85,7 +85,8 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 	}
 
 	public void validateInteractionProfile(OpenSPCoop2Message msg, boolean request, String asyncInteractionType, String asyncInteractionRole, 
-			Busta busta, List<Eccezione> erroriValidazione) throws Exception {
+			Busta busta, List<Eccezione> erroriValidazione,
+			String replyTo) throws Exception {
 		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
 		
@@ -114,6 +115,9 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SERVIZIO_CORRELATO_NON_PRESENTE, 
 									"Header SOAP '"+replyToName+"' non presente"));
 							return;
+						}
+						if(this.modiProperties.isSoapSecurityTokenPushReplyToUpdateInErogazione()) {
+							ModIUtilities.addSOAPHeaderReplyTo(soapMessage, replyTo); // aggiorna il valore se già esistente
 						}
 					}
 					else {
@@ -436,7 +440,8 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			else {
 				SignatureDigestAlgorithm s = SignatureDigestAlgorithm.toEnumConstant(bodyRef.getDigestAlgorithm());
 				String digestValue = s!=null ? (s.name()+"=") : "";
-				digestValue = digestValue + Hex.encodeHexString(bodyRef.getDigestValue());
+				//System.out.println("In Hex: "+org.apache.commons.codec.binary.Hex.encodeHexString(bodyRef.getDigestValue()));
+				digestValue = digestValue + Base64Utilities.encodeAsString(bodyRef.getDigestValue());
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST, digestValue);
 				
 				if(request && includiRequestDigest && this.context!=null && securityHeader!=null) {

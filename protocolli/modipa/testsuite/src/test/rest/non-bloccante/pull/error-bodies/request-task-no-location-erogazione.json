@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/502/InteroperabilityResponseManagementFailed.html",
+    "title": "InteroperabilityResponseManagementFailed",
+    "status": 502,
+    "detail": "Header http 'Location', richiesto dal profilo non bloccante PULL, non trovato",
+    "govway_id": "#string"
+}

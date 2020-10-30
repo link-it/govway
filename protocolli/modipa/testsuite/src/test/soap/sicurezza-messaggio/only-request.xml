@@ -1,0 +1,17 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Body>
+        <ns2:MOnlyRequestOp xmlns:ns2="http://amministrazioneesempio.it/nomeinterfacciaservizio">
+            <M>
+                <oId>1</oId>
+                <a>
+                    <a1s>
+                        <a1>1</a1>
+                        <a1>2</a1>
+                    </a1s>
+                    <a2>RGFuJ3MgVG9vbHMgYXJlIGNvb2wh</a2>
+                </a>
+                <b>Stringa di esempio</b>
+            </M>
+        </ns2:MOnlyRequestOp>
+    </soap:Body>
+</soap:Envelope>

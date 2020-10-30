@@ -1,0 +1,8 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Header>
+        <ns2:X-Correlation-ID xmlns:ns2="http://amministrazioneesempio.it/nomeinterfacciaservizio">d2f49459-1624-4710-b80c-15e33d64b608</ns2:X-Correlation-ID>
+    </soap:Header>
+    <soap:Body>
+        <ns2:MProcessingStatus xmlns:ns2="http://amministrazioneesempio.it/nomeinterfacciaservizio"/>
+    </soap:Body>
+</soap:Envelope>

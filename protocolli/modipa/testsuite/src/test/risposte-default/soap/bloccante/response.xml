@@ -1,0 +1,1 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><soap:Body><ns2:MRequestResponse xmlns:ns2="http://amministrazioneesempio.it/nomeinterfacciaservizio"><return><c>Risultato C</c></return></ns2:MRequestResponse></soap:Body></soap:Envelope>

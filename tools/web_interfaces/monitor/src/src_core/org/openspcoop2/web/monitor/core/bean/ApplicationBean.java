@@ -189,17 +189,11 @@ public class ApplicationBean implements Serializable {
 		}
 	}
 
-	public boolean isFunzionalitaAbilitata(String nomeFunzionalita){
-		boolean abilitata = false;
-
-		if(this.funzionalita != null){
-			Boolean ab = this.funzionalita.get(nomeFunzionalita);
-
-			if(ab!= null){
-				abilitata = ab.booleanValue();
-			}
-		}
-		return abilitata;
+	public boolean isFunzionalitaAbilitata(String function) {
+		return this.funzionalita!=null && this.funzionalita.get(function)!=null && this.funzionalita.get(function);
+	}
+	public boolean isRuoloAbilitato(String role) {
+		return this.roles!=null && this.roles.get(role)!=null && this.roles.get(role);
 	}
 	
 	public Map<String, Boolean>  getRuoliUtente(UserDetailsBean u) {
@@ -267,7 +261,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE))
 			return false;
 
 		if(this.roles == null)
@@ -281,9 +275,9 @@ public class ApplicationBean implements Serializable {
 
 		// le transazioni sono visualizzabili dall' operatore
 		if (
-				//	this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)	||
+				//	this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)	||
 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -293,7 +287,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI))
 			return false;
 
 		if(this.roles == null)
@@ -307,9 +301,9 @@ public class ApplicationBean implements Serializable {
 
 		// le transazioni sono visualizzabili dall' operatore
 		if (
-				this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)	||
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)	||
 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -319,7 +313,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE))
 			return false;
 
 		if(this.roles == null)
@@ -333,9 +327,9 @@ public class ApplicationBean implements Serializable {
 
 		// le ricerche sono visualizzabili dall' operatore
 		if (
-				//				this.roles.get(ApplicationBean.AMMINISTRATORE)	||
+				//				this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)	||
 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -345,7 +339,7 @@ public class ApplicationBean implements Serializable {
 
 	public boolean getShowSonde() {
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE))
 			return false;
 
 		if(this.roles == null)
@@ -356,8 +350,8 @@ public class ApplicationBean implements Serializable {
 
 		// gli allarmi sono visualizzabili dall' operatore
 		if (
-				this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)				|| 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)				|| 
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -367,7 +361,7 @@ public class ApplicationBean implements Serializable {
 
 	public boolean getShowAllarmi() {
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_ALLARMI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ALLARMI))
 			return false;
 
 		if(this.roles == null)
@@ -378,8 +372,8 @@ public class ApplicationBean implements Serializable {
 
 		// gli allarmi sono visualizzabili dall' operatore
 		if (
-				this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)				|| 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)				|| 
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -399,14 +393,15 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		/// sezione visibile solo all'operatore ed amministratore
-		if(this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)
-				&& this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
-				&& this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE)){
+		if(this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE)){
 			return true;
 		}
 		//per il ruolo operatore bisogna verificare se e' abilitato il live per i non admin
-		if (this.roles.get(ApplicationBean.RUOLO_OPERATORE) && this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
-				&& this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE_OPERATORE) )
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE) 
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE_OPERATORE) )
 			return true;
 
 		return false;
@@ -426,14 +421,15 @@ public class ApplicationBean implements Serializable {
 			return false;
 		
 		/// sezione visibile solo all'operatore ed amministratore
-		if(this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)
-				&& this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
-				&& this.funzionalita.get(ApplicationBean.FUNZIONALITA_ESITI_LIVE)){
+		if(this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ESITI_LIVE)){
 			return true;
 		}
 		//per il ruolo operatore bisogna verificare se e' abilitato il live per i non admin
-		if (this.roles.get(ApplicationBean.RUOLO_OPERATORE) && this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
-				&& this.funzionalita.get(ApplicationBean.FUNZIONALITA_ESITI_LIVE_OPERATORE) )
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE) 
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ESITI_LIVE_OPERATORE) )
 			return true;
 
 		return false;
@@ -442,7 +438,7 @@ public class ApplicationBean implements Serializable {
 	public boolean getShowProcessi() {
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_PROCESSI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_PROCESSI))
 			return false;
 
 		if(this.roles == null)
@@ -453,8 +449,8 @@ public class ApplicationBean implements Serializable {
 
 		// processi visualizzabili solo da amministratore   
 		if (
-				this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)			
-				//				|| 	this.roles.get(ApplicationBean.OPERATORE)
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)			
+				//				|| 	this.isRuoloAbilitato(ApplicationBean.OPERATORE)
 				)
 			return true;
 
@@ -464,7 +460,7 @@ public class ApplicationBean implements Serializable {
 	public boolean getShowEventi() {
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_EVENTI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_EVENTI))
 			return false;
 
 		if(this.roles == null)
@@ -475,8 +471,8 @@ public class ApplicationBean implements Serializable {
 
 		// eventi visualizzabili solo da amministratore   
 		if (
-				this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)			
-				//				|| 	this.roles.get(ApplicationBean.OPERATORE)
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)			
+				//				|| 	this.isRuoloAbilitato(ApplicationBean.OPERATORE)
 				)
 			return true;
 
@@ -495,7 +491,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI))
 			return false;
 
 		if(this.roles == null)
@@ -509,9 +505,9 @@ public class ApplicationBean implements Serializable {
 
 		// le informazioni sono visualizzabili dall' operatore
 		if (
-				//				this.roles.get(ApplicationBean.AMMINISTRATORE)	||
+				//				this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)	||
 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -522,7 +518,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_EVENTI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_EVENTI))
 			return false;
 
 		if(this.roles == null)
@@ -533,9 +529,9 @@ public class ApplicationBean implements Serializable {
 
 		// le informazioni sono visualizzabili dall' operatore
 		if (
-				//				this.roles.get(ApplicationBean.AMMINISTRATORE)	||
+				//				this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)	||
 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -553,7 +549,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE))
 			return false;
 
 		if(this.roles == null)
@@ -567,9 +563,9 @@ public class ApplicationBean implements Serializable {
 
 		// le statistiche sono visualizzabili dall' operatore
 		if (
-				//				this.roles.get(ApplicationBean.AMMINISTRATORE)				|| 
+				//				this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)				|| 
 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -579,7 +575,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE))
 			return false;
 
 		if(this.roles == null)
@@ -593,12 +589,12 @@ public class ApplicationBean implements Serializable {
 
 		// le statistiche sono visualizzabili dall' operatore
 		if (
-				//						this.roles.get(ApplicationBean.AMMINISTRATORE)				|| 
+				//						this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)				|| 
 
-				this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
-		return this.funzionalita.get(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE);
+		return this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE);
 	}
 
 
@@ -606,7 +602,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE))
 			return false;
 
 		if(this.roles == null)
@@ -619,8 +615,8 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// le statistiche sono visualizzabili dall' amministratore
-		if (this.roles.get(ApplicationBean.RUOLO_OPERATORE)
-				|| this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE)
+				|| this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE))
 			return true;
 
 		return false;
@@ -646,7 +642,7 @@ public class ApplicationBean implements Serializable {
 
 		// I moduli di configurazione possono non essere presenti nella versione open 
 		if((this.getShowConfigurazioneAllarmi() || this.getShowConfigurazioneSonde() || this.getShowConfigurazioneLibreria() || this.getShowConfigurazioneProcessi()) 
-				&& (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE)	|| this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)))
+				&& (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE)	|| this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)))
 			return true;
 
 		return false;
@@ -658,7 +654,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE))
 			return false;
 
 		if(this.roles == null)
@@ -668,7 +664,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// la configurazione delle statistiche e' visibile al configuratore
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return true;
 
 		// return this.modules.get(ApplicationBean.STATISTICHE_BASE);
@@ -679,7 +675,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE))
 			return false;
 
 		if(this.roles == null)
@@ -689,7 +685,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// le la configurazione delle ricerche e' visualizzabile dal configuratore
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return true;
 
 		return false;
@@ -700,7 +696,7 @@ public class ApplicationBean implements Serializable {
 
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI))
 			return false;
 
 		if(this.roles == null)
@@ -709,7 +705,7 @@ public class ApplicationBean implements Serializable {
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
 
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return true;
 
 		return false;
@@ -727,8 +723,8 @@ public class ApplicationBean implements Serializable {
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
 
-		//		if (this.roles.get(ApplicationBean.AMMINISTRATORE))
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		//		if (this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return true;
 
 		return false;
@@ -739,7 +735,7 @@ public class ApplicationBean implements Serializable {
 		// la sezione delle sonde e' visibile solo all'amministratore
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE))
 			return false;
 
 		if(this.roles == null)
@@ -748,7 +744,7 @@ public class ApplicationBean implements Serializable {
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
 
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return true;
 
 		return false;
@@ -766,14 +762,14 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// sezione visibile solo al configuratore
-		if (!this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		if (!this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return false;
 
-		if (this.funzionalita.get(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE)
-				|| this.funzionalita.get(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE)
-				|| this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI)
-				//				|| this.funzionalita.get(ApplicationBean.FUNZIONALITA_ALLARMI)
-				|| this.funzionalita.get(ApplicationBean.FUNZIONALITA_PROCESSI))
+		if (this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE)
+				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE)
+				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI)
+				//				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ALLARMI)
+				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_PROCESSI))
 			return true;
 
 		return false;
@@ -784,7 +780,7 @@ public class ApplicationBean implements Serializable {
 		checkRoles();
 		
 		// gestione password deve essere abilitata a prescindere dall'utenza
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_GESTIONE_PASSWORD))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_GESTIONE_PASSWORD))
 			return false;
 
 		if(this.roles == null)
@@ -793,7 +789,7 @@ public class ApplicationBean implements Serializable {
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
 
-//		if (!this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE))
+//		if (!this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE))
 //			return true;
 		
 		return true;
@@ -803,7 +799,7 @@ public class ApplicationBean implements Serializable {
 	public boolean getShowConfigurazioneProcessi() {
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_PROCESSI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_PROCESSI))
 			return false;
 
 		if(this.roles == null)
@@ -813,7 +809,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// processi visualizzabili dal configuratore
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return true;
 
 		return false;
@@ -822,7 +818,7 @@ public class ApplicationBean implements Serializable {
 	public boolean getShowConfigurazioneAllarmi() {
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_ALLARMI))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ALLARMI))
 			return false;
 
 		if(this.roles == null)
@@ -832,7 +828,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// processi visualizzabili dal configuratore
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return true;
 
 		return false;
@@ -841,7 +837,7 @@ public class ApplicationBean implements Serializable {
 	public boolean getShowReport(){
 		checkRoles();
 
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_REPORT))
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_REPORT))
 			return false;
 
 		if(this.roles == null)
@@ -851,7 +847,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// visualizzazione consentita solo all'amministratore
-		if (this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return false;
@@ -890,7 +886,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// controllo utente possiede ruolo utente
-		if (this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE))
 			return true;
 		
 		return false;
@@ -908,7 +904,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// controllo utente possiede ruolo utente
-		if (this.roles.get(ApplicationBean.RUOLO_USER))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_USER))
 			return true;
 		
 		return false;
@@ -925,7 +921,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// controllo utente possiede ruolo configuratore
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return true;
 
 		return false;
@@ -942,7 +938,7 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		// controllo utente possiede ruolo operatore
-		if (this.roles.get(ApplicationBean.RUOLO_OPERATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 		
 		return false;
@@ -951,7 +947,7 @@ public class ApplicationBean implements Serializable {
 	public void setOperatore(boolean operatore) {}
 	
 	public boolean isGraficiSvgEnabled(){
-		return this.funzionalita.get(ApplicationBean.FUNZIONALITA_GRAFICI_SVG);
+		return this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_GRAFICI_SVG);
 	}
 
 	public void cleanSVG(){
@@ -1204,5 +1200,5 @@ public class ApplicationBean implements Serializable {
 		}
 		return null; // DEVE ESSERE NULL PER NON NAVIGARE
 	}
-	
+
 }

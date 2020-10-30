@@ -23,6 +23,7 @@ package org.openspcoop2.message;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -104,6 +105,8 @@ public interface OpenSPCoop2SoapMessage extends OpenSPCoop2Message {
 	public void removeHeaderElement(SOAPHeader hdr,SOAPHeaderElement hdrElement) throws MessageException,MessageNotSupportedException;
 	
 	public void setFaultCode(SOAPFault fault, SOAPFaultCode code, QName eccezioneName) throws MessageException,MessageNotSupportedException;
+	public void setFaultString(SOAPFault fault, String message) throws MessageException,MessageNotSupportedException;
+	public void setFaultString(SOAPFault fault, String message, Locale locale) throws MessageException,MessageNotSupportedException;
 		
 	
 	/* Ws Security */

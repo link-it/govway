@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/502/InvalidResponse.html",
+    "title": "InvalidResponse",
+    "status": 502,
+    "detail": "Invalid response received from the API Implementation",
+    "govway_id": "#string"
+}

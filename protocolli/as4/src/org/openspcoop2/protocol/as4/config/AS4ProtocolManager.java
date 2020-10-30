@@ -93,7 +93,8 @@ public class AS4ProtocolManager extends BasicManager {
 	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
     		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
-    		IRegistryReader registryReader) throws ProtocolException{
+    		IRegistryReader registryReader,
+    		boolean integration) throws ProtocolException{
 		try {
 			if(busta!=null && msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())) {
 				OpenSPCoop2SoapMessage soapMsg = (OpenSPCoop2SoapMessage) msg.castAsSoap();
@@ -176,7 +177,7 @@ public class AS4ProtocolManager extends BasicManager {
 					}
 				}
 			}
-			return super.updateOpenSPCoop2MessageResponse(msg, busta, notifierInputStreamParams, transportRequestContext, transportResponseContext, registryReader);
+			return super.updateOpenSPCoop2MessageResponse(msg, busta, notifierInputStreamParams, transportRequestContext, transportResponseContext, registryReader, integration);
 		}
 		catch(ProtocolException pe) {
 			throw pe;
