@@ -1,3 +1,7 @@
+.. |br| raw:: html
+
+    <br/>
+
 .. _erogazioneREST:
 
 Erogazione API REST
@@ -17,7 +21,7 @@ configurazione effettuare il download dell'interfaccia OpenAPI 3.0 del servizio 
 all'indirizzo 'https://raw.githubusercontent.com/Mermade/openapi3-examples/master/fail/apimatic-converted-petstore.json'.
 
 .. figure:: ../_figure_howto/erogazioneRESTBase.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_erogazioneREST_fig
 
@@ -80,7 +84,12 @@ procedere come segue:
       l'API nel dominio interno. Per il nostro esempio utilizzare la
       url:
 
-      -  *http://petstore.swagger.io/v2*
+      -  *https://petstore.swagger.io/v2*
+
+      .. note:: **Verifica del certificato server**
+       |br|
+       Per validare il certificato ritornato dal server 'petstore.swagger.io' deve essere effettuata una opportuna configurazione del trustStore tls come descritto nella sezione :ref:`avanzate_connettori_https`.
+       Poichè non è obiettivo di questo scenario si suggerisce di disabilitare la validazione del certificato server.
 
    .. figure:: ../_figure_howto/erogazioneRESTBaseRegistrazioneErogazione.png
        :scale: 100%

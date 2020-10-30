@@ -23,8 +23,11 @@
 
 package org.openspcoop2.pdd.core;
 
+import java.util.List;
+
 import javax.xml.soap.SOAPEnvelope;
 
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -39,6 +42,8 @@ import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.CostantiProprieta;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -78,6 +83,8 @@ public class ValidatoreMessaggiApplicativi {
 	private org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
 	/** WSDLValidator */
 	private WSDLValidator wsdlValidator = null;
+	/** Validate SOAPAction */
+	private boolean validateSoapAction = true;
 	
 	
 	
@@ -113,7 +120,8 @@ public class ValidatoreMessaggiApplicativi {
 	
 	/* ------ Costruttore -------------- */
 	public ValidatoreMessaggiApplicativi(RegistroServiziManager registro,IDServizio idServizio,
-			OpenSPCoop2Message message,boolean readWSDLAccordoServizio, boolean gestioneXsiType_rpcLiteral)throws ValidatoreMessaggiApplicativiException{
+			OpenSPCoop2Message message,boolean readWSDLAccordoServizio, boolean gestioneXsiType_rpcLiteral,
+			List<Proprieta> proprieta)throws ValidatoreMessaggiApplicativiException{
 		
 		if(registro==null){
 			ValidatoreMessaggiApplicativiException ex 
@@ -228,6 +236,12 @@ public class ValidatoreMessaggiApplicativi {
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
+		
+		this.validateSoapAction = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_checkSoapAction();
+		if(proprieta!=null && !proprieta.isEmpty()) {
+			boolean defaultSoapAction = this.validateSoapAction;
+			this.validateSoapAction = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SOAPACTION_ENABLED, defaultSoapAction);
+		}
 	}
 	
 	
@@ -303,7 +317,7 @@ public class ValidatoreMessaggiApplicativi {
 	 * @param isRichiesta Indicazione sul tipo di messaggio applicativo da gestire
 	 * 
 	 */
-	public void validateWithWsdlLogicoImplementativo(boolean isRichiesta, boolean checkSoapAction) throws ValidatoreMessaggiApplicativiException {
+	public void validateWithWsdlLogicoImplementativo(boolean isRichiesta) throws ValidatoreMessaggiApplicativiException {
 		
 		try{
 			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())==false){
@@ -311,7 +325,7 @@ public class ValidatoreMessaggiApplicativi {
 			}
 			
 			this.wsdlValidator.wsdlConformanceCheck(isRichiesta, this.message.castAsSoap().getSoapAction(), this.idServizio.getAzione(),
-					checkSoapAction, false);
+					this.validateSoapAction, false);
 		}catch(Exception e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);

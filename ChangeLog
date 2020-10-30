@@ -1,3 +1,13 @@
+2020-10-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1089
+	È adesso possibile configurare la validazione dei contenuti al fine di:
+	- [API SOAP] disabilitare la validazione della SOAPAction (API SOAP);
+	- [API REST] disabilitare o abilitare la validazione su codici http e/o content-type definiti puntualmente. È inoltre possibile disabilitare la validazione su risposte vuote e/o su risposte contenenti problem details.
+	Infine è stato corretto un bug sulla validazione della risposta, su operazioni che non prevedevano una risposta applicativa. 
+        La validazione non rilevava l'errore di contenuto non ammesso, se tale contenuto era compatibile con la risposta definita per il codice http 'default'.
+
 2020-10-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

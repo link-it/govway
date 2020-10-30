@@ -54,7 +54,7 @@ riguardo si rimanda alla specifica `OIDC Connect -
 UserInfo <https://openid.net/specs/openid-connect-core-1_0.html#UserInfo>`__.
 
 .. figure:: ../_figure_howto/oauth_scenario_userInfo.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_oauthUserInfo_fig
 

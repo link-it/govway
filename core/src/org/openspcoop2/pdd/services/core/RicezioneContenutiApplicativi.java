@@ -3759,14 +3759,14 @@ public class RicezioneContenutiApplicativi {
 					msgDiag.mediumDebug("Validazione xsd della richiesta (initValidator)...");
 					ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = new ValidatoreMessaggiApplicativi(
 							registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage,readInterface,
-							propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione());
+							propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
+							proprietaValidazioneContenutoApplicativoApplicativo);
 				
 					// Validazione WSDL
 					if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 						|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
 						msgDiag.mediumDebug("Validazione wsdl della richiesta ...");
-						validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true,
-								propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
+						validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true);
 					}
 					
 					// Validazione XSD

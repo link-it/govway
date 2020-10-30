@@ -61,7 +61,7 @@ descritto nella sezione ? dove però l'api viene protetta tramite
    validazione del token, ad esempio sotto forma di header http.
 
 .. figure:: ../_figure_howto/oauth_scenario.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_oauth_fig
 

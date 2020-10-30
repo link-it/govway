@@ -13,7 +13,7 @@ token* ricevuto ma lo valida direttamente secondo la specifica JWS (`RFC
 7515 <https://tools.ietf.org/html/rfc7515>`__).
 
 .. figure:: ../_figure_howto/oauth_scenario_jwt.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_oauthJWT_fig
 

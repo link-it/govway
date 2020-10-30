@@ -32,7 +32,7 @@ all'interno del token:
    successo la verifica.
 
    .. figure:: ../_figure_howto/oauth_scenario_claim.jpg
-       :scale: 100%
+       :scale: 80%
        :align: center
        :name: quick_oauthAutorizzazioneClaims_fig
 

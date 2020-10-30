@@ -109,8 +109,15 @@ public abstract class AbstractApiValidator   {
 					status = ((HttpBaseResponseEntity<?>)httpEntity).getStatus();
 					
 					if(responses != null) {
+						
+						// Fix: se si traccia del codice http esatto non devo andare a verificare il codice di default
+						
+						// prima faccio la verifica con codice esatto
+						ApiResponse outputDefault = null;
+						boolean findExactResponseCode = false;
 						for(ApiResponse output: responses) {
-							if(status==output.getHttpReturnCode() || output.isDefaultHttpReturnCode()) {
+							if(status==output.getHttpReturnCode()) {
+								findExactResponseCode = true;
 								if(output.sizeBodyParameters()>0) {
 									for(ApiBodyParameter outputBodyParameter: output.getBodyParameters()) {
 										if(outputBodyParameter.isAllMediaType() || ContentTypeUtilities.isMatch(baseTypeHttp, outputBodyParameter.getMediaType()) ) {
@@ -118,6 +125,21 @@ public abstract class AbstractApiValidator   {
 											break;
 										} 
 									}
+								}
+							}
+							else if(output.isDefaultHttpReturnCode()) {
+								outputDefault = output;
+							}
+						}
+						
+						// poi con l'eventuale default
+						if(!contentTypeSupported && !findExactResponseCode && outputDefault!=null) {
+							if(outputDefault.sizeBodyParameters()>0) {
+								for(ApiBodyParameter outputBodyParameter: outputDefault.getBodyParameters()) {
+									if(outputBodyParameter.isAllMediaType() || ContentTypeUtilities.isMatch(baseTypeHttp, outputBodyParameter.getMediaType()) ) {
+										contentTypeSupported = true;
+										break;
+									} 
 								}
 							}
 						}

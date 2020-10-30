@@ -21,7 +21,7 @@ seguito descritta, che non possiede una vera logica autorizzativa ma
 serve solo a titolo di esempio per descrivere la funzionalità.
 
 .. figure:: ../_figure_howto/oauth_scenario_xacml.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_oauthXACML_fig
 

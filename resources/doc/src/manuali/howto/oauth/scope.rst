@@ -33,7 +33,7 @@ esemplificativo che tali scope sono necessari per poter invocare il
 servizio *PetStore*.
 
 .. figure:: ../_figure_howto/oauth_scenario_scope.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_oauthScope_fig
 

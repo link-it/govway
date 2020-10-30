@@ -38,7 +38,7 @@ Petstore* per il metodo http:
 Una rappresentazione di questo scenario è mostrata nella :numref:`quick_gruppiRisorse_fig`.
 
 .. figure:: ../_figure_howto/gruppiRisorseRESTBase.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_gruppiRisorse_fig
 

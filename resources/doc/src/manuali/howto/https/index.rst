@@ -14,7 +14,7 @@ deve però inoltrare le informazioni sui certificati client validati
 all'application server (es. via mod\_jk).
 
 .. figure:: ../_figure_howto/oauth_scenario_ssl.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_oauthHTTPS_fig
 

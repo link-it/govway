@@ -3142,7 +3142,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									isFault = MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								
-								if(hasContent && (isFault==false) ){
+								boolean validazioneAbilitata = true;
+								if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
+									validazioneAbilitata = hasContent && (isFault==false);
+								}
+								else {
+									validazioneAbilitata = ValidatoreMessaggiApplicativiRest.isValidazioneAbilitata(proprietaValidazioneContenutoApplicativoApplicativo, responseMessage, codiceRitornato);
+								}
+								if( validazioneAbilitata ){
 									
 									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaInCorso");
 									
@@ -3166,7 +3173,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
 											new ValidatoreMessaggiApplicativi(registroServiziManager,idSValidazioneXSD,
 													responseMessage,readInterface,
-													this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione());
+													this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
+													proprietaValidazioneContenutoApplicativoApplicativo);
 	
 										// Validazione WSDL 
 										if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
@@ -3174,8 +3182,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 												CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 										){
 											msgDiag.mediumDebug("Validazione wsdl della risposta ...");
-											validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false,
-													this.propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
+											validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false);
 										}
 										
 										// Validazione XSD

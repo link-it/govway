@@ -1,3 +1,7 @@
+.. |br| raw:: html
+
+    <br/>
+
 .. _erogazioneSOAP:
 
 Erogazione API SOAP
@@ -17,7 +21,7 @@ dell'interfaccia WSDL disponibile in
 https://ws.cdyne.com/creditcardverify/luhnchecker.asmx?wsdl.
 
 .. figure:: ../_figure_howto/erogazioneSOAPBase.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_erogazioneSOAP_fig
 
@@ -80,7 +84,12 @@ procedere come segue:
       l'API nel dominio interno. Per il nostro esempio utilizzare la
       url:
 
-      -  *http://ws.cdyne.com/creditcardverify/luhnchecker.asmx*
+      -  *https://ws.cdyne.com/creditcardverify/luhnchecker.asmx*
+
+      .. note:: **Verifica del certificato server**
+       |br|
+       Per validare il certificato ritornato dal server 'ws.cdyne.com' deve essere effettuata una opportuna configurazione del trustStore tls come descritto nella sezione :ref:`avanzate_connettori_https`.
+       Poichè non è obiettivo di questo scenario si suggerisce di disabilitare la validazione del certificato server.
 
    .. figure:: ../_figure_howto/erogazioneSOAPBaseRegistrazioneErogazione.png
        :scale: 100%

@@ -946,6 +946,13 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				}
 			}
 		}
+		else {
+			
+			if(this.openApi4j!=null) {
+				validateWithOpenApi4j(httpEntity, operation);
+			}
+			
+		}
 	}
 
 	/**
@@ -1004,6 +1011,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				if(operation.getHttpMethod().toString().equalsIgnoreCase(method) && operation.getPath().equals(path)) {
 					operationOpenApi4j = op;
 					pathOpenApi4j = pathO;
+					break;
 				}
 			}
 		}

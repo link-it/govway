@@ -31,7 +31,7 @@ soggetto, che rappresenta un client esterno al dominio di gestione, sia
 di un applicativo interno al dominio gestito.
 
 .. figure:: ../_figure_howto/oauth_scenario_ssl_identificazione.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_oauthHTTPSIdMittenti_fig
 

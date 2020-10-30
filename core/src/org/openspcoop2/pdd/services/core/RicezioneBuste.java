@@ -5869,7 +5869,8 @@ public class RicezioneBuste {
 							msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 							ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
 								new ValidatoreMessaggiApplicativi(registroServiziReader,idServizio,requestMessage,readInterface,
-										propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione());
+										propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
+										proprietaValidazioneContenutoApplicativoApplicativo);
 	
 							// Validazione WSDL 
 							if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
@@ -5877,8 +5878,7 @@ public class RicezioneBuste {
 									CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 							){
 								msgDiag.mediumDebug("Validazione wsdl della richiesta ...");
-								validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true,
-										propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
+								validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true);
 							}
 							
 							// Validazione XSD

@@ -12,7 +12,7 @@ soggetto nella url di invocazione. Una rappresentazione di uno scenario
 multi-tenant è mostrata nella :numref:`quick_multitenant_fig`.
 
 .. figure:: ../_figure_howto/multitenant.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_multitenant_fig
 

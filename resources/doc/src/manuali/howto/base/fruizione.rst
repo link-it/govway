@@ -1,3 +1,7 @@
+.. |br| raw:: html
+
+    <br/>
+
 .. _fruizioneAPI:
 
 Fruizione API
@@ -22,7 +26,7 @@ client invocando l'url esposta da GovWay. Una rappresentazione di questo
 scenario è mostrata nella :numref:`quick_fruizione_fig`.
 
 .. figure:: ../_figure_howto/fruizioneRESTBase.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_fruizione_fig
 
@@ -72,7 +76,12 @@ procedere come segue:
       l'API nel dominio esterno. Per il nostro esempio utilizzare la
       url:
 
-      -  *http://petstore.swagger.io/v2*
+      -  *https://petstore.swagger.io/v2*
+
+      .. note:: **Verifica del certificato server**
+       |br|
+       Per validare il certificato ritornato dal server 'petstore.swagger.io' deve essere effettuata una opportuna configurazione del trustStore tls come descritto nella sezione :ref:`avanzate_connettori_https`.
+       Poichè non è obiettivo di questo scenario si suggerisce di disabilitare la validazione del certificato server.
 
    .. figure:: ../_figure_howto/fruizioneRESTBaseRegistrazioneFruizione.png
        :scale: 100%

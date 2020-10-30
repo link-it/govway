@@ -1,3 +1,7 @@
+.. |br| raw:: html
+
+    <br/>
+
 .. _scenari_erogazione_pubblica:
 
 Erogazione pubblica
@@ -47,6 +51,12 @@ La configurazione si effettua dalla govwayConsole, nella sezione "Erogazione > A
 2. Selezionare l'accesso API "pubblico" nel riquadro Controllo dei Accessi.
 
 3. Verificare che il campo "Endpoint", nel riquadro Connettore, sia stato correttamente inizializzato sulla base del valore di default presente nel descritto della API.
+
+   .. note:: **Verifica del certificato server**
+       |br|
+       Poichè il servizio PetStore è disponibile solamente in https, modificare il prefisso dell'endpoint fornito.
+       Inoltre per validare il certificato ritornato dal server 'petstore.swagger.io' deve essere effettuata una opportuna configurazione del trustStore tls come descritto nella sezione :ref:`avanzate_connettori_https`.
+       Poichè non è obiettivo di questo scenario si suggerisce di disabilitare la validazione del certificato server.
 
    .. figure:: ../_figure_scenari/ErogazionePubblica_new.png
     :scale: 80%

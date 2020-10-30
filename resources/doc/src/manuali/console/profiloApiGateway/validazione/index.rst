@@ -7,7 +7,7 @@ Per attivare la validazione dei messaggi in transito sul gateway si
 accede al collegamento presente nella colonna *Validazione* presente tra
 gli elementi di configurazione della specifica erogazione/fruizione.
 
-   .. figure:: ../_figure_console/Validazione.png
+   .. figure:: ../../_figure_console/Validazione.png
     :scale: 100%
     :align: center
     :name: validazione
@@ -31,19 +31,19 @@ Compilare il form di configurazione (:numref:`validazione`):
 
 I tipi di validazione previsti sono:
 
--  *Schemi XSD*, la validazione si basa sugli schemi xsd allegati alle
-   API. Utilizzato per la validazione sintattica dei messaggi XML sia
-   nel caso Soap che Rest.
-
--  *Wsdl*, la validazione si basa sull'interfaccia wsdl fornita con la
+-  *Wsdl 1.1*, la validazione si basa sull'interfaccia wsdl fornita con la
    API. Questo tipo di validazione è più rigorosa in quanto controlla
    non solo la conformità sintattica ma viene validato il messaggio in
    transito verificando che sia idoneo al PortType e Operation in uso.
    Questo tipo di validazione è applicabile solo al caso Soap.
 
-   *Swagger 2.0 o OpenAPI 3.0*, nei casi in cui si è fornito un
+-  *Swagger 2.0 o OpenAPI 3.0*, nei casi in cui si è fornito un
    descrittore formale per una API Rest, la validazione sarà effettuata
    utilizzando gli strumenti associati allo specifico formato.
+
+-  *Schemi XSD*, la validazione si basa sugli schemi xsd allegati alle
+   API. Utilizzato per la validazione sintattica dei messaggi XML sia
+   nel caso Soap che Rest.
 
 Nel caso di servizi Soap, se i messaggi che transitanto sulla porta di
 dominio possiedono il formato MTOM, per poterli validare è necessario
@@ -54,13 +54,9 @@ una volta completato il processo di validazione.
 .. note::
     Per la validazione dei messaggi riguardanti API REST con specifiche di interfaccia OpenAPI 3.x, è possibile attuare una configurazione avanzata del tipo di validazione effettuato. Maggiori dettagli vengono forniti nella sezione :ref:`configAvanzataValidazione`.
 
+.. toctree::
+   :maxdepth: 2
 
-**Validazione differente tra richiesta e risposta**
-
-Attivando la validazione dei messaggi, questa riguarderà sia le richieste, inviate al servizio, che le conseguenti risposte.
-
-È possibile differenziare il tipo di validazione registrando le seguenti :ref:`configProprieta` sull'erogazione o sulla fruizione:
-
-- *validation.request.enabled* o *validation.response.enabled* : consentono di modificare l'impostazione configurata rispettivamente per la richiesta o la risposta. I valori associabili alle proprietà sono 'true', 'false' o 'warning'.
-- *validation.request.type* o *validation.response.type* : consentono di modificare il tipo di validazione. Per una validazione basata sulla Specifica dell'API utilizzare il valore 'interface', mentre per utilizzare solamente gli schemi indicare il valore 'xsd'.
-- *validation.request.acceptMtom* o *validation.response.acceptMtom* : consentono di modificare l'impostazione configurata per i messaggi che possiedono il formato MTOM. I valori associabili alle proprietà sono 'true' o 'false'.
+   richiestaRisposta
+   configurazioneAvanzataSoap
+   configurazioneAvanzataRest

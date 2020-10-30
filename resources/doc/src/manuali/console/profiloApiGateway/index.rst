@@ -25,7 +25,7 @@ nell'intestazione della pagina.
 	configSpecificaRisorsa
 	controlloAccessi/index
 	rateLimiting/index
-	validazione
+	validazione/index
 	cacheRisposta
 	sicurezzaMessaggio
 	trasformazioni/index

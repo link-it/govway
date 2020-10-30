@@ -68,12 +68,18 @@ public class TestOpenApi4j {
 		config.setProcessInclude(false);
 		apiReader.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), config, apiSchemaYaml);
 		Api api = apiReader.read();
-		IApiValidator apiValidator = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
 		configO.getOpenApi4JConfig().setUseOpenApi4J(true);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), api, configO);
 		
-		apiValidator.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), api, configO);
+		IApiValidator apiValidatorNoOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configNoOpenApi4j = new OpenapiApiValidatorConfig();
+		configNoOpenApi4j.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
+		configNoOpenApi4j.getOpenApi4JConfig().setUseOpenApi4J(false);
+		apiValidatorNoOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), api, configNoOpenApi4j);
 		
 		
 		
@@ -101,7 +107,7 @@ public class TestOpenApi4j {
 					"}"+
 				"]}";
 		httpEntity.setContent(json);
-		apiValidator.validate(httpEntity);	
+		apiValidatorOpenApi4j.validate(httpEntity);	
 		System.out.println("Test #1 completato\n\n");
 		
 		
@@ -122,7 +128,7 @@ public class TestOpenApi4j {
 				"]}";
 		httpEntity.setContent(jsonErrato2);
 		try {
-			apiValidator.validate(httpEntity);
+			apiValidatorOpenApi4j.validate(httpEntity);
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #2 Errore trovato: " + e.getMessage());
@@ -150,7 +156,7 @@ public class TestOpenApi4j {
 				"]}";
 		httpEntity.setContent(jsonErrato3);
 		try {
-			apiValidator.validate(httpEntity);
+			apiValidatorOpenApi4j.validate(httpEntity);
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #3 Errore trovato: " + e.getMessage());
@@ -179,7 +185,7 @@ public class TestOpenApi4j {
 				"]}";
 		httpEntity.setContent(jsonErrato4);
 		try {
-			apiValidator.validate(httpEntity);
+			apiValidatorOpenApi4j.validate(httpEntity);
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #4 Errore trovato: " + e.getMessage());
@@ -207,7 +213,7 @@ public class TestOpenApi4j {
 		httpEntityDynamicPath.setParametersTrasporto(parametersTrasportoDynamicPath);
 		httpEntityDynamicPath.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		httpEntityDynamicPath.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
-		apiValidator.validate(httpEntityDynamicPath);
+		apiValidatorOpenApi4j.validate(httpEntityDynamicPath);
 			
 		System.out.println("Test #5 completato\n\n");
 		
@@ -219,7 +225,7 @@ public class TestOpenApi4j {
 		TextHttpRequestEntity httpEntityGET = new TextHttpRequestEntity();
 		httpEntityGET.setMethod(HttpRequestMethod.GET);
 		httpEntityGET.setUrl(testUrl5);	
-		apiValidator.validate(httpEntityGET);	
+		apiValidatorOpenApi4j.validate(httpEntityGET);	
 		
 		TextHttpResponseEntity httpEntityResponse = new TextHttpResponseEntity();
 		httpEntityResponse.setStatus(200);
@@ -231,7 +237,7 @@ public class TestOpenApi4j {
 		httpEntityResponse.setParametersTrasporto(parametersTrasportoRisposta);
 		httpEntityResponse.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		httpEntityResponse.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
-		apiValidator.validate(httpEntityResponse);	
+		apiValidatorOpenApi4j.validate(httpEntityResponse);	
 		System.out.println("Test #6 completato\n\n");
 		
 		
@@ -264,7 +270,7 @@ public class TestOpenApi4j {
 					"}"+
 				"]}";
 		httpEntity7.setContent(json7);
-		apiValidator.validate(httpEntity7);	
+		apiValidatorOpenApi4j.validate(httpEntity7);	
 		System.out.println("Test #7 completato\n\n");
 		
 		
@@ -313,7 +319,7 @@ public class TestOpenApi4j {
 			httpEntity8.setContent(json8);
 			try {
 				System.out.println("\t (Valore:"+valore+") validate ...");
-				apiValidator.validate(httpEntity8);
+				apiValidatorOpenApi4j.validate(httpEntity8);
 				if(esito) {
 					System.out.println("\t (Valore:"+valore+") validate ok");
 				}
@@ -394,7 +400,7 @@ public class TestOpenApi4j {
 			httpEntity9.setContent(json9);
 			try {
 				System.out.println("\t (Valore:"+valore+") validate ...");
-				apiValidator.validate(httpEntity9);
+				apiValidatorOpenApi4j.validate(httpEntity9);
 				if(esito) {
 					System.out.println("\t (Valore:"+valore+") validate ok");
 				}
@@ -422,6 +428,315 @@ public class TestOpenApi4j {
 			}
 		}
 		System.out.println("Test #9 completato\n\n");
+		
+		
+		
+		
+		System.out.println("Test #10 (Richiesta POST con parametro /documenti/noresponse/send)");
+		String testUrl10 = baseUri+"/documenti/noresponse/send";
+		TextHttpRequestEntity httpEntityTest10 = new TextHttpRequestEntity();
+		httpEntityTest10.setMethod(HttpRequestMethod.POST);
+		httpEntityTest10.setUrl(testUrl10);	
+		Map<String, String> parametersTrasportoTest10 = new HashMap<>();
+		parametersTrasportoTest10.put("api_key", "aaa");
+		parametersTrasportoTest10.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+		httpEntityTest10.setParametersTrasporto(parametersTrasportoTest10);
+		httpEntityTest10.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+		String jsonTest10 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\",\"allegati\":"+
+				"["+
+					"{\"nome\":\"HelloWorld.pdf\",\"descrizione\":\"File di esempio 'HelloWorld.pdf'\",\"tipoMIME\":\"application/pdf\","+
+					  "\"dataDocumento\":\"2020-04-24T13:06:18.823+02:00\","+
+					  "\"documento\":{\"tipoDocumento\":\"riferimento-uri\","+
+					  				  "\"uri\":\"https://api.agenziaentrate.it/retrieve-document/0.1//documenti/f6892e27-5cbd-4789-b875-bdcb18f4557f\","+
+					  				  "\"impronta\":\"KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA=\"}"+
+					"},"+
+					"{\"nome\":\"PROVA.txt\",\"descrizione\":\"File di esempio 'PROVA.txt'\",\"tipoMIME\":\"text/plain\","+
+					  "\"dataDocumento\":\"2020-04-24T13:06:18.851+02:00\","+
+					  "\"documento\":{\"tipoDocumento\":\"inline\",\"contenuto\":\"SGVsbG8gV29ybGQhCg==\"}"+
+					"}"+
+				"]}";
+		httpEntityTest10.setContent(jsonTest10);
+		apiValidatorOpenApi4j.validate(httpEntityTest10);	
+		
+		TextHttpResponseEntity httpEntityResponseTest10 = new TextHttpResponseEntity();
+		httpEntityResponseTest10.setStatus(201);
+		httpEntityResponseTest10.setMethod(HttpRequestMethod.POST);
+		httpEntityResponseTest10.setUrl(testUrl10);	
+		Map<String, String> parametersTrasportoRispostaTest10 = new HashMap<>();
+		parametersTrasportoRispostaTest10.put("api_key", "aaa");
+		httpEntityResponseTest10.setParametersTrasporto(parametersTrasportoRispostaTest10);
+		
+		System.out.println("\t Validazione senza content-type ...");
+		apiValidatorOpenApi4j.validate(httpEntityResponseTest10);	
+		System.out.println("\t Validazione senza content-type ok");
+		
+		List<String> contentTypeTest10List = new ArrayList<String>();
+		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_PLAIN);
+		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_TEXT_XML);
+		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807);
+		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_JSON);
+		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+		for (String contentTypeTest10 : contentTypeTest10List) {
+			
+			for (int i = 0; i < 4; i++) {
+				
+				boolean addContenuto = (i==1 || i==3);
+				String tipoTest = "senza";
+				if(addContenuto) {
+					tipoTest = "con";
+				}
+				
+				boolean openapi4j = (i==0 || i==1);
+				IApiValidator apiValidator = null;
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = "[openapi4j] "+ tipoTest;
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = "[json] "+ tipoTest;
+				}
+
+				
+				System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto ...");
+				parametersTrasportoRispostaTest10.put(HttpConstants.CONTENT_TYPE, contentTypeTest10);
+				httpEntityResponseTest10.setContentType(contentTypeTest10);
+				httpEntityResponseTest10.setParametersTrasporto(parametersTrasportoRispostaTest10);
+				if(addContenuto) {
+					httpEntityResponseTest10.setContent(jsonTest10); // contenuto a caso
+				}
+				else {
+					httpEntityResponseTest10.setContent(null);
+				}
+				boolean esito = false;
+				try {
+					apiValidator.validate(httpEntityResponseTest10);	
+					esito = true;
+				}
+				catch(Exception e) {
+					String msg = e.getMessage();
+					if(openapi4j) {
+						String atteso = "Content type '"+contentTypeTest10+"' is not allowed for body content. (code: 203)";
+						if(!msg.contains(atteso)) {
+							String checkErrore = "Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+					else {
+						String atteso = "Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported";
+						if(!msg.equals(atteso)) {
+							String checkErrore = "Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+				}
+				if(esito) {
+					System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto: atteso errore");
+					throw new Exception("Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto: atteso errore");
+				}
+			}
+			
+		}
+		
+		System.out.println("Test #10 completato\n\n");
+		
+		
+		
+		
+		System.out.println("Test #11 (Richiesta POST con parametro /documenti/norequestresponse/send)");
+		String testUrl11 = baseUri+"/documenti/norequestresponse/send";
+		
+		List<String> contentTypeTest11List = new ArrayList<String>();
+		contentTypeTest11List.add(HttpConstants.CONTENT_TYPE_PLAIN);
+		contentTypeTest11List.add(HttpConstants.CONTENT_TYPE_TEXT_XML);
+		contentTypeTest11List.add(HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807);
+		contentTypeTest11List.add(HttpConstants.CONTENT_TYPE_JSON);
+		contentTypeTest11List.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+		
+		String jsonTest11 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\",\"allegati\":"+
+				"["+
+					"{\"nome\":\"HelloWorld.pdf\",\"descrizione\":\"File di esempio 'HelloWorld.pdf'\",\"tipoMIME\":\"application/pdf\","+
+					  "\"dataDocumento\":\"2020-04-24T13:06:18.823+02:00\","+
+					  "\"documento\":{\"tipoDocumento\":\"riferimento-uri\","+
+					  				  "\"uri\":\"https://api.agenziaentrate.it/retrieve-document/0.1//documenti/f6892e27-5cbd-4789-b875-bdcb18f4557f\","+
+					  				  "\"impronta\":\"KNdo5OCzZu8Hh7FwKxfpqPMTAHsC2ZRxOds5WTiu4QA=\"}"+
+					"},"+
+					"{\"nome\":\"PROVA.txt\",\"descrizione\":\"File di esempio 'PROVA.txt'\",\"tipoMIME\":\"text/plain\","+
+					  "\"dataDocumento\":\"2020-04-24T13:06:18.851+02:00\","+
+					  "\"documento\":{\"tipoDocumento\":\"inline\",\"contenuto\":\"SGVsbG8gV29ybGQhCg==\"}"+
+					"}"+
+				"]}";
+		
+		TextHttpRequestEntity httpEntityTest11 = new TextHttpRequestEntity();
+		httpEntityTest11.setMethod(HttpRequestMethod.POST);
+		httpEntityTest11.setUrl(testUrl11);	
+		Map<String, String> parametersTrasportoTest11 = new HashMap<>();
+		parametersTrasportoTest11.put("api_key", "aaa");
+		httpEntityTest11.setParametersTrasporto(parametersTrasportoTest11);
+		
+		System.out.println("\t Validazione richiesta senza content-type ...");
+		apiValidatorOpenApi4j.validate(httpEntityTest11);	
+		System.out.println("\t Validazione richiesta senza content-type ok");
+		
+		for (String contentTypeTest11 : contentTypeTest11List) {
+			
+			for (int i = 0; i < 2; i++) {
+				boolean addContenuto = (i==1);
+				String tipoTest = "senza";
+				if(addContenuto) {
+					tipoTest = "con";
+				}
+		
+				boolean openapi4j = (i==0 || i==1);
+				IApiValidator apiValidator = null;
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = "[openapi4j] "+ tipoTest;
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = "[json] "+ tipoTest;
+				}
+				
+				System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto ...");
+				parametersTrasportoTest11.put(HttpConstants.CONTENT_TYPE, contentTypeTest11);
+				httpEntityTest11.setContentType(contentTypeTest11);
+				if(addContenuto) {
+					httpEntityTest11.setContent(jsonTest11);
+				}
+				else {
+					httpEntityTest11.setContent(null);
+				}
+				boolean esito = false;
+				try {
+					apiValidator.validate(httpEntityTest11);	
+					esito = true;
+				}
+				catch(Exception e) {
+					String msg = e.getMessage();
+					if(openapi4j) {
+						// Per adesso openapi4j non sembra accorgersi dell'errore.
+						//String atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
+						//if(!msg.contains(atteso)) {
+						String atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
+						if(!msg.equals(atteso)) {
+							String checkErrore = "Validazione con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+					else {
+						String atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
+						if(!msg.equals(atteso)) {
+							String checkErrore = "Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+				}
+				if(esito) {
+					System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto: atteso errore");
+					throw new Exception("Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto: atteso errore");
+				}
+				
+			}
+		}
+		
+		TextHttpResponseEntity httpEntityResponseTest11 = new TextHttpResponseEntity();
+		httpEntityResponseTest11.setStatus(201);
+		httpEntityResponseTest11.setMethod(HttpRequestMethod.POST);
+		httpEntityResponseTest11.setUrl(testUrl11);	
+		Map<String, String> parametersTrasportoRispostaTest11 = new HashMap<>();
+		parametersTrasportoRispostaTest11.put("api_key", "aaa");
+		httpEntityResponseTest11.setParametersTrasporto(parametersTrasportoRispostaTest11);
+		
+		System.out.println("\t Validazione risposta senza content-type ...");
+		apiValidatorOpenApi4j.validate(httpEntityResponseTest11);	
+		System.out.println("\t Validazione risposta senza content-type ok");
+
+		for (String contentTypeTest11 : contentTypeTest11List) {
+			
+			for (int i = 0; i < 2; i++) {
+				boolean addContenuto = (i==1);
+				String tipoTest = "senza";
+				if(addContenuto) {
+					tipoTest = "con";
+				}
+				
+				boolean openapi4j = (i==0 || i==1);
+				IApiValidator apiValidator = null;
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = "[openapi4j] "+ tipoTest;
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = "[json] "+ tipoTest;
+				}
+				
+				System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto ...");
+				parametersTrasportoRispostaTest11.put(HttpConstants.CONTENT_TYPE, contentTypeTest11);
+				httpEntityResponseTest11.setContentType(contentTypeTest11);
+				httpEntityResponseTest11.setParametersTrasporto(parametersTrasportoRispostaTest11);
+				if(addContenuto) {
+					httpEntityResponseTest11.setContent(jsonTest11); // contenuto a caso
+				}
+				else {
+					httpEntityResponseTest11.setContent(null);
+				}
+				boolean esito = false;
+				try {
+					apiValidator.validate(httpEntityResponseTest11);	
+					esito = true;
+				}
+				catch(Exception e) {
+					String msg = e.getMessage();
+					if(openapi4j) {
+						String atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
+						if(!msg.contains(atteso)) {
+							String checkErrore = "Validazione con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+					else {
+						String atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported";
+						if(!msg.equals(atteso)) {
+							String checkErrore = "Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+							System.out.println("\t "+checkErrore);
+							throw new Exception(checkErrore);
+						}
+						else {
+							System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
+						}
+					}
+				}
+				if(esito) {
+					System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto: atteso errore");
+					throw new Exception("Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto: atteso errore");
+				}
+			}
+			
+		}
+		
+		System.out.println("Test #11 completato\n\n");
 	}
 
 }

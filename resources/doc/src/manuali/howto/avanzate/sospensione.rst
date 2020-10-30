@@ -26,7 +26,7 @@ sospensione è utile in diversi scenari quali ad esempio:
 Una rappresentazione di questo scenario è mostrata nella :numref:`quick_sospensione_fig`.
 
 .. figure:: ../_figure_howto/sospensioneBase.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: quick_sospensione_fig
 
