@@ -26,6 +26,10 @@ tags:
     description: Consente di inviare o ricevere documenti sia in-line che per riferimento tramite un id o tramite una uri relativa o assolutata
   - name: document-retrieve
     description: Consente di recuperare un documento, per il quale si è ricevuto un riferimento
+  - name: empty
+    description: Test su body vuoti
+  - name: date
+    description: Test su date
     
 paths:
           
@@ -486,9 +490,9 @@ paths:
   /documenti/noresponse/send:
     post:
       tags:
-        - mixed
+        - empty
       description: Esempio di invio dei documenti nella richiesta
-      operationId: SendDocumentByRiferimentoMixed
+      operationId: noresponse
       requestBody:
         content:
           application/json:
@@ -516,9 +520,9 @@ paths:
   /documenti/norequestresponse/send:
     post:
       tags:
-        - mixed
+        - empty
       description: Esempio di invio dei documenti nella richiesta
-      operationId: SendDocumentByRiferimentoMixed
+      operationId: norequestresponse
       responses:
         "201":
           description: |-
@@ -537,7 +541,92 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
-       
+
+  /documenti/datetest/{data_documento_path}:
+    post:
+      tags:
+        - date
+      description: Esempio
+      operationId: datetest
+      parameters:
+      - $ref: '#/components/parameters/data_documento_path'
+      - $ref: '#/components/parameters/data_documento_query'
+      - $ref: '#/components/parameters/data_documento_header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConData'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConData'
+          headers:
+             data_documento_risposta_header:
+               schema:
+                 type: string
+                 format: date  
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'    
+          
+  /documenti/datetimetest/{datetime_documento_path}:
+    post:
+      tags:
+        - date
+      description: Esempio
+      operationId: datetimetest
+      parameters:
+      - $ref: '#/components/parameters/datetime_documento_path'
+      - $ref: '#/components/parameters/datetime_documento_query'
+      - $ref: '#/components/parameters/datetime_documento_header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConDatetime'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConDatetime'
+          headers:
+             datetime_documento_risposta_header:
+               schema:
+                 type: string
+                 format: date-time  
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'    
           
 components:
 
@@ -549,6 +638,50 @@ components:
       schema:
         type: string
         format: uuid
+        
+    data_documento_path:
+      name: data_documento_path
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+    data_documento_query:
+      name: data_documento_query
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+    data_documento_header:
+      name: data_documento_header
+      in: header
+      required: true
+      schema:
+        type: string
+        format: date
+        
+    datetime_documento_path:
+      name: datetime_documento_path
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date-time
+    datetime_documento_query:
+      name: datetime_documento_query
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date-time
+    datetime_documento_header:
+      name: datetime_documento_header
+      in: header
+      required: true
+      schema:
+        type: string
+        format: date-time
         
   schemas:
 
@@ -664,7 +797,7 @@ components:
         - $ref: '#/components/schemas/Allegato'
         - type: object      
           required:
-            - identificativo
+            - id
             - impronta
           properties:
              id:
@@ -873,3 +1006,21 @@ components:
         prev:
           description: Link to previous result page. Null if you are on first page.
           type: string 
+          
+    OggettoConData:
+      type: object
+      required:
+        - data
+      properties:
+          data:
+             type: string
+             format: date
+      additionalProperties: false
+    OggettoConDatetime:
+      type: object
+      required:
+        - data
+      properties:
+          data:
+             type: string
+             format: date-time

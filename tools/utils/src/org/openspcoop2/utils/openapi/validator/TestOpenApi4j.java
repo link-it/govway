@@ -63,23 +63,29 @@ public class TestOpenApi4j {
 		
 		String baseUri = "http://petstore.swagger.io/api";
 		
-		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-		ApiReaderConfig config = new ApiReaderConfig();
-		config.setProcessInclude(false);
-		apiReader.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), config, apiSchemaYaml);
-		Api api = apiReader.read();
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+		
+		IApiReader apiReaderNoOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configNoOpenApi4j = new ApiReaderConfig();
+		configNoOpenApi4j.setProcessInclude(false);
+		apiReaderNoOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configNoOpenApi4j, apiSchemaYaml);
+		Api apiNoOpenApi4j = apiReaderNoOpenApi4j.read();
 		
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
 		configO.getOpenApi4JConfig().setUseOpenApi4J(true);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), api, configO);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 		
 		IApiValidator apiValidatorNoOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-		OpenapiApiValidatorConfig configNoOpenApi4j = new OpenapiApiValidatorConfig();
-		configNoOpenApi4j.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-		configNoOpenApi4j.getOpenApi4JConfig().setUseOpenApi4J(false);
-		apiValidatorNoOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), api, configNoOpenApi4j);
+		OpenapiApiValidatorConfig configNo = new OpenapiApiValidatorConfig();
+		configNo.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
+		configNo.getOpenApi4JConfig().setUseOpenApi4J(false);
+		apiValidatorNoOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiNoOpenApi4j, configNo);
 		
 		
 		
@@ -851,7 +857,7 @@ public class TestOpenApi4j {
 						if(!required && contentTypeTest12!=null) {
 							atteso = "Content-Type '"+contentTypeTest12+"' unsupported";
 							if(HttpConstants.CONTENT_TYPE_JSON.equals(contentTypeTest12) && !openapi4j) {
-								atteso = "Validator not found";
+								atteso = "Content undefined";
 							}
 						}
 						if(!msg.equals(atteso)) {
@@ -936,6 +942,956 @@ public class TestOpenApi4j {
 		}
 			
 		System.out.println("Test #12 completato\n\n");
+		
+		
+		
+
+		System.out.println("Test #13 (Richiesta POST con parametro /documenti/datetest e elemento valido/nonValido secondo il pattern definito per la data in RFC 3339, section 5.6)");
+		
+		String testUrl13= baseUri+"/documenti/datetest/";
+		List<String> valori_test13 = new ArrayList<String>();
+		List<Boolean> esiti_test13 = new ArrayList<Boolean>();
+		valori_test13.add("2020-07-22");esiti_test13.add(true); // ok
+		valori_test13.add("2020 07 21");esiti_test13.add(false); // ko
+		valori_test13.add("2020/07/21");esiti_test13.add(false); // ko
+		valori_test13.add("20200721");esiti_test13.add(false); // ko
+		valori_test13.add("2020-07");esiti_test13.add(false); // ok
+		valori_test13.add("2017-07-21T17:32:28");esiti_test13.add(false); // date-time valido, ma il tipo è date
+		valori_test13.add("2017-07-21T17:32:28Z");esiti_test13.add(false); // date-time valido, ma il tipo è date
+		valori_test13.add("2017-07-21T17:32:28+01:00");esiti_test13.add(false); // date-time valido, ma il tipo è date
+
+		// ** Test sul body **
+		for (int i = 0; i < valori_test13.size(); i++) {
+			String valore = valori_test13.get(i);
+			boolean esito = esiti_test13.get(i);
+			
+			TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
+			httpEntity13.setMethod(HttpRequestMethod.POST);
+			httpEntity13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' sul body
+			Map<String, String> parametersUrl13 = new HashMap<>();
+			parametersUrl13.put("data_documento_query","2020-07-19"); // uso data valida, il test e' sul body	
+			httpEntity13.setParametersQuery(parametersUrl13);
+			Map<String, String> parametersTrasporto13 = new HashMap<>();
+			parametersTrasporto13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto13.put("data_documento_header","2020-07-23"); // uso data valida, il test e' sul body	
+			httpEntity13.setParametersTrasporto(parametersTrasporto13);
+			httpEntity13.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			String json13 = "{\"data\": \""+valore+"\"}";
+			httpEntity13.setContent(json13);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[body con valore ok '"+valore+"']" : "[body con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity13);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+			
+			TextHttpResponseEntity httpEntityResponseTest13 = new TextHttpResponseEntity();
+			httpEntityResponseTest13.setStatus(200);
+			httpEntityResponseTest13.setMethod(HttpRequestMethod.POST);
+			httpEntityResponseTest13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' sul body
+			Map<String, String> parametersTrasportoRispostaTest13 = new HashMap<>();
+			httpEntityResponseTest13.setParametersTrasporto(parametersTrasportoRispostaTest13);
+			parametersTrasportoRispostaTest13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto13.put("data_documento_risposta_header","2020-07-23"); // uso data valida, il test e' sul body	
+			httpEntityResponseTest13.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			httpEntityResponseTest13.setContent(json13); 
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[body response con valore ok '"+valore+"']" : "[body response con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntityResponseTest13);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+		}
+		
+		// ** Test su header **
+		
+		for (int i = 0; i < valori_test13.size(); i++) {
+			String valore = valori_test13.get(i);
+			boolean esito = esiti_test13.get(i);
+			
+			TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
+			httpEntity13.setMethod(HttpRequestMethod.POST);
+			httpEntity13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' su header
+			Map<String, String> parametersUrl13 = new HashMap<>();
+			parametersUrl13.put("data_documento_query","2020-07-19"); // uso data valida, il test e' su header	
+			httpEntity13.setParametersQuery(parametersUrl13);
+			Map<String, String> parametersTrasporto13 = new HashMap<>();
+			parametersTrasporto13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto13.put("data_documento_header",valore);	
+			httpEntity13.setParametersTrasporto(parametersTrasporto13);
+			httpEntity13.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' su header	
+			String json13 = "{\"data\": \"2020-07-20\"}";
+			httpEntity13.setContent(json13);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[header con valore ok '"+valore+"']" : "[header con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity13);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "data_documento_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+			
+			TextHttpResponseEntity httpEntityResponseTest13 = new TextHttpResponseEntity();
+			httpEntityResponseTest13.setStatus(200);
+			httpEntityResponseTest13.setMethod(HttpRequestMethod.POST);
+			httpEntityResponseTest13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' su header
+			Map<String, String> parametersTrasportoRispostaTest13 = new HashMap<>();
+			httpEntityResponseTest13.setParametersTrasporto(parametersTrasportoRispostaTest13);
+			parametersTrasportoRispostaTest13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasportoRispostaTest13.put("data_documento_risposta_header",valore);
+			httpEntityResponseTest13.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			httpEntityResponseTest13.setContent(json13); 
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[header response con valore ok '"+valore+"']" : "[header response con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntityResponseTest13);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "data_documento_risposta_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_risposta_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+		}
+		
+		// ** Test su query paramater **
+		
+		for (int i = 0; i < valori_test13.size(); i++) {
+			String valore = valori_test13.get(i);
+			boolean esito = esiti_test13.get(i);
+			
+			TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
+			httpEntity13.setMethod(HttpRequestMethod.POST);
+			httpEntity13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' su query parameter
+			Map<String, String> parametersUrl13 = new HashMap<>();
+			parametersUrl13.put("data_documento_query",valore); 	
+			httpEntity13.setParametersQuery(parametersUrl13);
+			Map<String, String> parametersTrasporto13 = new HashMap<>();
+			parametersTrasporto13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto13.put("data_documento_header","2020-07-19"); // uso data valida, il test e' su query parameter	
+			httpEntity13.setParametersTrasporto(parametersTrasporto13);
+			httpEntity13.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' su query parameter	
+			String json13 = "{\"data\": \"2020-07-20\"}";
+			httpEntity13.setContent(json13);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[query parameter con valore ok '"+valore+"']" : "[query parameter con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity13);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "data_documento_query: Value '"+valore+"' does not match format 'date'. (code: 1007)";						
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'data_documento_query' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+		}
+		
+		// ** Test su path **
+		
+		for (int i = 0; i < valori_test13.size(); i++) {
+			String valore = valori_test13.get(i);
+			boolean esito = esiti_test13.get(i);
+			
+			if(valore.contains(" ")) { // non permesso in un path
+				continue;
+			}
+			if(valore.contains("/")) { // indica un altra risorsa
+				continue;
+			}
+			
+			TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
+			httpEntity13.setMethod(HttpRequestMethod.POST);
+			httpEntity13.setUrl(testUrl13+valore); 
+			Map<String, String> parametersUrl13 = new HashMap<>();
+			parametersUrl13.put("data_documento_query","2020-07-21"); // uso data valida, il test e' su path
+			httpEntity13.setParametersQuery(parametersUrl13);
+			Map<String, String> parametersTrasporto13 = new HashMap<>();
+			parametersTrasporto13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto13.put("data_documento_header","2020-07-19"); // uso data valida, il test e' su path
+			httpEntity13.setParametersTrasporto(parametersTrasporto13);
+			httpEntity13.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' path
+			String json13 = "{\"data\": \"2020-07-20\"}";
+			httpEntity13.setContent(json13);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[path parameter con valore ok '"+valore+"']" : "[path parameter con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity13);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+		}
+		
+		System.out.println("Test #13 completato\n\n");
+		
+		
+		
+		
+		
+		System.out.println("Test #14 (Richiesta POST con parametro /documenti/datetimetest e elemento valido/nonValido secondo il pattern definito per la data in RFC 3339, section 5.6)");
+		
+		String testUrl14= baseUri+"/documenti/datetimetest/";
+		List<String> valori_test14 = new ArrayList<String>();
+		List<Boolean> esiti_test14 = new ArrayList<Boolean>();
+		// Lasciare i primi sopra, poiche' la validazione json non si accorge dell'errore che manca Z o offset.
+		valori_test14.add("2017-07-21T17:32:28");esiti_test14.add(false); // manca o l'offset o Z
+		valori_test14.add("2017-07-21T17:32:28.000");esiti_test14.add(false); // manca o l'offset o Z
+		valori_test14.add("2017-07-21T17:32:28+0100");esiti_test14.add(false); // manca il :
+		// altri
+		valori_test14.add("2017-07-21T17:32:28Z");esiti_test14.add(true); // date-time valido, ma il tipo è date
+		valori_test14.add("2017-07-21T17:32:28+01:00");esiti_test14.add(true); // date-time valido, ma il tipo è date
+		valori_test14.add("2017-07-21T17:32:27-02:00");esiti_test14.add(true); // date-time valido, ma il tipo è date
+		valori_test14.add("2017-07-21T17:32:28.303Z");esiti_test14.add(true); // date-time valido, ma il tipo è date
+		valori_test14.add("2017-07-21T17:32:28.929+01:00");esiti_test14.add(true); // date-time valido, ma il tipo è date
+		valori_test14.add("2017-07-21T17:32:27.123-02:00");esiti_test14.add(true); // date-time valido, ma il tipo è date
+		valori_test14.add("2020-07-22");esiti_test14.add(false); // date valido, ma il tipo è date
+		valori_test14.add("2017-07-21 17:32:28");esiti_test14.add(false); // ko
+		valori_test14.add("2017/07/21T17:32:28");esiti_test14.add(false); // ko
+		valori_test14.add("2017 07 21T17:32:28");esiti_test14.add(false); // ko
+		valori_test14.add("2017-07-21T17 32 28");esiti_test14.add(false); // ko
+		valori_test14.add("2017-07-21T173228");esiti_test14.add(false); // ko
+		valori_test14.add("2017-07-21T17:32:28 01:00");esiti_test14.add(false); // ko
+		valori_test14.add("2017-07-21T17:32:28+01");esiti_test14.add(false); // ko
+
+		// ** Test sul body **
+		for (int i = 0; i < valori_test14.size(); i++) {
+			String valore = valori_test14.get(i);
+			boolean esito = esiti_test14.get(i);
+			
+			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
+			httpEntity14.setMethod(HttpRequestMethod.POST);
+			httpEntity14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' sul body
+			Map<String, String> parametersUrl14 = new HashMap<>();
+			parametersUrl14.put("datetime_documento_query","2020-07-19T17:32:28Z"); // uso data valida, il test e' sul body	
+			httpEntity14.setParametersQuery(parametersUrl14);
+			Map<String, String> parametersTrasporto14 = new HashMap<>();
+			parametersTrasporto14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto14.put("datetime_documento_header","2020-07-23T17:32:28Z"); // uso data valida, il test e' sul body	
+			httpEntity14.setParametersTrasporto(parametersTrasporto14);
+			httpEntity14.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			String json14 = "{\"data\": \""+valore+"\"}";
+			httpEntity14.setContent(json14);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[body con valore ok '"+valore+"']" : "[body con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity14);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						if(i<3 && !openapi4j) {
+							System.out.println("\t "+tipoTest+" validate, la validazione JSON non rileva l'accezione!!!!");
+							continue;
+						}
+						
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+			
+			TextHttpResponseEntity httpEntityResponseTest14 = new TextHttpResponseEntity();
+			httpEntityResponseTest14.setStatus(200);
+			httpEntityResponseTest14.setMethod(HttpRequestMethod.POST);
+			httpEntityResponseTest14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' sul body
+			Map<String, String> parametersTrasportoRispostaTest14 = new HashMap<>();
+			httpEntityResponseTest14.setParametersTrasporto(parametersTrasportoRispostaTest14);
+			parametersTrasportoRispostaTest14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto14.put("data_documento_risposta_header","2020-07-23T17:32:28Z"); // uso data valida, il test e' sul body	
+			httpEntityResponseTest14.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			httpEntityResponseTest14.setContent(json14); 
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[body response con valore ok '"+valore+"']" : "[body response con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntityResponseTest14);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						if(i<3 && !openapi4j) {
+							System.out.println("\t "+tipoTest+" validate, la validazione JSON non rileva l'accezione!!!!");
+							continue;
+						}
+						
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+		}
+		
+		// ** Test su header **
+		
+		for (int i = 0; i < valori_test14.size(); i++) {
+			String valore = valori_test14.get(i);
+			boolean esito = esiti_test14.get(i);
+			
+			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
+			httpEntity14.setMethod(HttpRequestMethod.POST);
+			httpEntity14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' su header
+			Map<String, String> parametersUrl14 = new HashMap<>();
+			parametersUrl14.put("datetime_documento_query","2020-07-19T17:32:28Z"); // uso data valida, il test e' su header	
+			httpEntity14.setParametersQuery(parametersUrl14);
+			Map<String, String> parametersTrasporto14 = new HashMap<>();
+			parametersTrasporto14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto14.put("datetime_documento_header",valore);	
+			httpEntity14.setParametersTrasporto(parametersTrasporto14);
+			httpEntity14.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' su header	
+			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
+			httpEntity14.setContent(json14);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[header con valore ok '"+valore+"']" : "[header con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity14);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "datetime_documento_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in http header 'datetime_documento_header' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+						if(!valore.contains("T")) {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
+						else {
+							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+						}
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+			
+			TextHttpResponseEntity httpEntityResponseTest14 = new TextHttpResponseEntity();
+			httpEntityResponseTest14.setStatus(200);
+			httpEntityResponseTest14.setMethod(HttpRequestMethod.POST);
+			httpEntityResponseTest14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' su header
+			Map<String, String> parametersTrasportoRispostaTest14 = new HashMap<>();
+			httpEntityResponseTest14.setParametersTrasporto(parametersTrasportoRispostaTest14);
+			parametersTrasportoRispostaTest14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasportoRispostaTest14.put("datetime_documento_risposta_header",valore);
+			httpEntityResponseTest14.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			httpEntityResponseTest14.setContent(json14); 
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[header response con valore ok '"+valore+"']" : "[header response con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntityResponseTest14);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "datetime_documento_risposta_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in http header 'datetime_documento_risposta_header' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+						if(!valore.contains("T")) {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
+						else {
+							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+						}
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+		}
+		
+		// ** Test su query paramater **
+		
+		for (int i = 0; i < valori_test14.size(); i++) {
+			String valore = valori_test14.get(i);
+			boolean esito = esiti_test14.get(i);
+			
+			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
+			httpEntity14.setMethod(HttpRequestMethod.POST);
+			httpEntity14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' su query parameter
+			Map<String, String> parametersUrl14 = new HashMap<>();
+			parametersUrl14.put("datetime_documento_query",valore); 	
+			httpEntity14.setParametersQuery(parametersUrl14);
+			Map<String, String> parametersTrasporto14 = new HashMap<>();
+			parametersTrasporto14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto14.put("datetime_documento_header","2020-07-19T17:32:28Z"); // uso data valida, il test e' su query parameter	
+			httpEntity14.setParametersTrasporto(parametersTrasporto14);
+			httpEntity14.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' su query parameter	
+			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
+			httpEntity14.setContent(json14);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[query parameter con valore ok '"+valore+"']" : "[query parameter con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity14);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "datetime_documento_query: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'datetime_documento_query' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+						if(!valore.contains("T")) {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
+						else {
+							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+						}
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+		}
+		
+		// ** Test su path **
+		
+		for (int i = 0; i < valori_test14.size(); i++) {
+			String valore = valori_test14.get(i);
+			boolean esito = esiti_test14.get(i);
+			
+			if(valore.contains(" ")) { // non permesso in un path
+				continue;
+			}
+			if(valore.contains("/")) { // indica un altra risorsa
+				continue;
+			}
+			
+			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
+			httpEntity14.setMethod(HttpRequestMethod.POST);
+			httpEntity14.setUrl(testUrl14+valore); 
+			Map<String, String> parametersUrl14 = new HashMap<>();
+			parametersUrl14.put("datetime_documento_query","2020-07-21T17:32:28Z"); // uso data valida, il test e' su path
+			httpEntity14.setParametersQuery(parametersUrl14);
+			Map<String, String> parametersTrasporto14 = new HashMap<>();
+			parametersTrasporto14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			parametersTrasporto14.put("datetime_documento_header","2020-07-19T17:32:28Z"); // uso data valida, il test e' su path
+			httpEntity14.setParametersTrasporto(parametersTrasporto14);
+			httpEntity14.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' path
+			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
+			httpEntity14.setContent(json14);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = esito ? "[path parameter con valore ok '"+valore+"']" : "[path parameter con valore errato '"+valore+"']";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity14);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+						if(!valore.contains("T")) {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
+						else {
+							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+						}
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+						if(!valore.contains("T")) {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
+						else {
+							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+						}
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+			}
+		}
+		
+		System.out.println("Test #14 completato\n\n");
 	}
 
 }

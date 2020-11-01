@@ -69,6 +69,7 @@ import org.openspcoop2.utils.openapi.OpenapiApiValidatorStructure;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.AbstractApiValidator;
 import org.openspcoop2.utils.rest.ApiFormats;
@@ -88,6 +89,7 @@ import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -118,12 +120,15 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	
 	boolean onlySchemas = false;
 	
+	private Logger log;
+	
 	private final static String VALIDATION_STRUCTURE = "VALIDATION_STRUCTURE";
 	
 	@Override
 	public void init(Logger log, Api api, ApiValidatorConfig config)
 			throws ProcessingException {
 
+		this.log = log;
 		if(api == null)
 			throw new ProcessingException("Api cannot be null");
 
@@ -1091,6 +1096,26 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					}
 					String key = (String) keys.next();
 					String value = (String) queryParams.get(key);
+					try{
+						key = TransportUtils.urlEncodeParam(key,Charset.UTF_8.getValue());
+					}catch(Exception e){
+						if(this.log!=null) {
+							this.log.error("URLEncode key["+key+"] error: "+e.getMessage(),e);
+						}
+						else {
+							e.printStackTrace(System.out);
+						}
+					}			
+					try{
+						value = TransportUtils.urlEncodeParam(value,Charset.UTF_8.getValue());
+					}catch(Exception e){
+						if(this.log!=null) {
+							this.log.error("URLEncode value["+value+"] error: "+e.getMessage(),e);
+						}
+						else {
+							e.printStackTrace(System.out);
+						}
+					}
 					sb.append(key);
 					sb.append("=");
 					sb.append(value);
@@ -1102,6 +1127,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		    if (HttpRequestMethod.GET.toString().equalsIgnoreCase(method)) {
 		    	builder.query(queryString);
 		    } else {
+		    	if(queryString!=null) {
+		    		builder.query(queryString); // senno non vengono validati i query parameters
+		    	}
 		    	if(content!=null) {
 		    		String s = null;
 		    		byte[] b = null;

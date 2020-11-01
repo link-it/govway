@@ -399,15 +399,23 @@ public class TransportUtils {
 				try{
 					key = urlEncodeParam(key,Charset.UTF_8.getValue());
 				}catch(Exception e){
-					e.printStackTrace(System.out);
-					log.error("URLEncode [key] error: "+e.getMessage(),e);
+					if(log!=null) {
+						log.error("URLEncode key["+key+"] error: "+e.getMessage(),e);
+					}
+					else {
+						e.printStackTrace(System.out);
+					}
 				}
 				
 				try{
 					value = urlEncodeParam(value,Charset.UTF_8.getValue());
 				}catch(Exception e){
-					e.printStackTrace(System.out);
-					log.error("URLEncode [value] error: "+e.getMessage(),e);
+					if(log!=null) {
+						log.error("URLEncode value:["+value+"] error: "+e.getMessage(),e);
+					}
+					else {
+						e.printStackTrace(System.out);
+					}
 				}
 				
 				String keyValue = key+"="+value;

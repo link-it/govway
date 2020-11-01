@@ -33,6 +33,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -187,6 +189,7 @@ public class DateUtils {
 		return calendar.getTime();
 	}
 	
+	private static final String DATETIME_PATTERN = "^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])[tT ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([zZ]|[+-]\\d{2}:\\d{2})$";
 	public static void validateDateTimeAsRFC3339_sec5_6(String dateTime) throws UtilsException {
 		// RFC 3339, section 5.6
 		// es 2017-07-21T17:32:28Z
@@ -200,6 +203,11 @@ public class DateUtils {
 			String [] split = dateTime.split("T");
 			if(split==null || split.length!=2) {
 				throw new Exception("Expected 'full-date T full-time' format");
+			}
+			
+			// check regexp
+			if(_isMatch(dateTime, DATETIME_PATTERN)==false) {
+				throw new Exception("Uncorrect format");
 			}
 			
 			// full-date = date-fullyear "-" date-month "-" date-mday
@@ -217,6 +225,7 @@ public class DateUtils {
 	}
 	
 	private static final String FULL_DATE_FORMAT = "yyyy-MM-dd";
+	private static final String DATE_PATTERN = "^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])$";
 	public static void validateDateAsRFC3339_sec5_6(String fullDate) throws UtilsException {
 		// RFC 3339, section 5.6
 		// es 2017-07-21
@@ -227,6 +236,10 @@ public class DateUtils {
 			// date-mday       = 2DIGIT  ; 01-28, 01-29, 01-30, 01-31 based on month/year
 			if(fullDate==null || "".equals(fullDate)) {
 				throw new Exception("undefined");
+			}
+			// check regexp
+			if(_isMatch(fullDate, DATE_PATTERN)==false) {
+				throw new Exception("Uncorrect format");
 			}
 			try {
 				SimpleDateFormat sdf = new SimpleDateFormat(FULL_DATE_FORMAT);
@@ -243,6 +256,7 @@ public class DateUtils {
 	private static final String FULL_TIME_FORMAT_SECONDS = "HH:mm:ss.SSS";
 	private static final String FULL_TIME_FORMAT_WITHOUT_SECONDS = "HH:mm:ss";
 	private static final String FULL_TIME_FORMAT_OFFSET = "HH:mm";
+	private static final String TIME_PATTERN = "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([zZ]|[+-]\\d{2}:\\d{2})$";
 	public static void validateTimeAsRFC3339_sec5_6(String fullTime) throws UtilsException {
 		// RFC 3339, section 5.6
 		// es 17:32:28Z
@@ -260,6 +274,10 @@ public class DateUtils {
 			}
 			if(fullTime.length()<9) {
 				throw new Exception("too short");
+			}
+			// check regexp
+			if(_isMatch(fullTime, TIME_PATTERN)==false) {
+				throw new Exception("Uncorrect format");
 			}
 			String partialTime = null;
 			if(fullTime.endsWith("Z")) {
@@ -314,6 +332,22 @@ public class DateUtils {
 			
 		}catch(Throwable e){
 			throw new UtilsException("Found time '"+fullTime+"' has wrong format (see RFC 3339, section 5.6): "+e.getMessage(),e);
+		}
+	}
+	
+	private static boolean _isMatch(String contenuto, String pattern) throws Exception{
+		
+		if( (pattern == null) || (pattern.length() == 0))
+			throw new Exception("Pattern di ricerca non fornito");
+		if( (contenuto == null) || (contenuto.length() == 0))
+			throw new Exception("Contenuto su cui effettuare una ricerca non fornita");
+		
+		try{
+			Pattern p = Pattern.compile(pattern);
+			Matcher matcher = p.matcher(contenuto);
+			return matcher.matches();
+		}catch(Exception e){
+			throw new Exception("isMatch contenuto["+contenuto+"] pattern["+pattern+"] error: "+e.getMessage(),e);
 		}
 	}
 	
