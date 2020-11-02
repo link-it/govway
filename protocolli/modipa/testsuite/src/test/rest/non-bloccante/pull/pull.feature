@@ -98,58 +98,6 @@ Scenario: Giro OK
     * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_uid })
     * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_uid })
 
-@location-not-an-uri
-Scenario: Header Location che non corrisponde ad una URI
-
-    * def pending_response = read('classpath:test/risposte-default/rest/non-bloccante/pending.json')
-    # Il problem è fatto in questa maniera perchè l'erogazione restituisce un errore di validazione con un 
-    # fault, mentre nell'openapi su questo endpoint non è specificato questo tipo di rispota.
-    # Sicchè la fruizione si arrabbia dicento che il content-type application/json non è valido
-    * def problem =
-    """
-    {
-        type: "https://govway.org/handling-errors/502/InvalidResponseContent.html",
-        title: "InvalidResponseContent",
-        status: 502,
-        detail: "Response content not conform to API specification: Validation error(s) :\nContent type 'application/problem+json' is not allowed for body content. (code: 203)\nFrom: \n",
-        govway_id: "#string"
-    }
-    """
-
-    Given url url_invocazione_validazione
-    And path 'tasks', 'queue'
-    And request body_req
-    And params ({ returnCode: 202, returnHttpHeader:'Location: /tasks/queue/' + task_uid})
-    When method post
-    Then status 202
-
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
-
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_uid })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_uid })
-
-    * def completed_params = 
-    """
-    ({ 
-        returnCode: 303,
-        returnHttpHeader: 'Location: /non/an/URI',
-        destFile: '/etc/govway/test/protocolli/modipa/rest/non-bloccante/completed.json',
-        destFileContentType: 'application/json' 
-    })
-    """
-
-    Given url url_invocazione_validazione
-    And path 'tasks', 'queue', task_uid
-    And params completed_params
-    When method get
-    Then status 502
-    And match response == problem
-
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_uid })
-
 @request-task-no-location
 Scenario: Richiesta processamento con stato 202 e senza Header Location
 

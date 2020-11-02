@@ -19,43 +19,6 @@ Background:
     * def check_id_collaborazione = read('./check-tracce/id-collaborazione.feature')
 
 
-@location-not-an-uri
-Scenario: Header Location che non corrisponde ad una URI
-
-    * def url_invocazione = govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/ApiDemoNonBlockingRestPullProxy/v1"
-    * def task_id = "Test-Location-Not-An-URI"
-    * def completed_params = 
-    """
-    ({ 
-        returnCode: 303,
-        returnHttpHeader: 'Location: http://127.0.0.1:8080/TestService/echo/tasks/result/' + task_id,
-        destFile: '/etc/govway/test/protocolli/modipa/rest/non-bloccante/completed.json',
-        destFileContentType: 'application/json' 
-        })
-    """
-    * def problem = 
-    """
-    {
-        type: "https://govway.org/handling-errors/502/InvalidResponseContent.html",
-        title: "InvalidResponseContent",
-        status: 502,
-        detail: "Response content not conform to API specification: Validation error(s) :\nLocation: Value '/govway/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/ApiDemoNonBlockingRestPullProxy/v1/Not/An/Uri' does not match format 'uri'. (code: 1007)\nFrom: Location.<format>\n",
-        govway_id: "#string"
-    }
-    """
-
-    Given url url_invocazione
-    And path 'tasks', 'queue', task_id
-    And params completed_params
-    When method get
-    Then status 502
-    And match response == problem
-    And match header GovWay-Conversation-ID == task_id
-    And match header GovWay-Transaction-ErrorType == 'InvalidResponseContent'
-
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-
-
 @request-task-no-location
 Scenario: Test Fruizione con header location rimosso dal proxy
 

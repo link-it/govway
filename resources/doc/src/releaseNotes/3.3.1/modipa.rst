@@ -1,5 +1,5 @@
-Miglioramenti al Profilo di Interoperabilità ModI PA
------------------------------------------------------
+Miglioramenti al Profilo di Interoperabilità 'ModI PA'
+-------------------------------------------------------
 
 È adesso possibile estendere il profilo di sicurezza messaggio IDAR03/IDAS03 in modo che il token di sicurezza ModI PA contenga:
 
