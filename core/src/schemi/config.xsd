@@ -374,11 +374,77 @@
 	
 	<!-- Validazione XSD -->
 	<xsd:complexType name="validazione-contenuti-applicativi">
+		<xsd:sequence>
+			<xsd:element name="configurazione" type="validazione-contenuti-applicativi-stato" maxOccurs="1" minOccurs="0"/> <!-- Lascio min a 0 per retroncompabitibilita -->
+			<xsd:element name="richiesta" type="validazione-contenuti-applicativi-richiesta" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="risposta" type="validazione-contenuti-applicativi-risposta" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<!-- Lascio questi tre attributi per retrocompatibilita -->
 		<xsd:attribute name="stato" type="StatoFunzionalitaConWarning" default="disabilitato"/>
-		<xsd:attribute name="tipo" type="ValidazioneContenutiApplicativiTipo" default="xsd"/>
+		<xsd:attribute name="tipo" type="ValidazioneContenutiApplicativiTipo" default="interface"/>
 		<xsd:attribute name="accept-mtom-message" type="StatoFunzionalita" use="optional" default="disabilitato"/> <!-- il default e' il true/false a seconda della funzionalita' packaging/unpackaging MTOM -->
 	</xsd:complexType>
-
+	<xsd:complexType name="validazione-contenuti-applicativi-stato">
+		<xsd:sequence>
+			<xsd:element name="configurazione-pattern" type="validazione-contenuti-applicativi-pattern" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="stato" type="StatoFunzionalitaConWarning" default="disabilitato"/>
+		<xsd:attribute name="tipo" type="ValidazioneContenutiApplicativiTipo" default="interface"/>
+		<xsd:attribute name="accept-mtom-message" type="StatoFunzionalita" use="optional" default="disabilitato"/> <!-- il default e' il true/false a seconda della funzionalita' packaging/unpackaging MTOM -->
+		<xsd:attribute name="soap-action" type="StatoFunzionalita" use="optional" default="abilitato"/>
+		<xsd:attribute name="json-schema" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="validazione-contenuti-applicativi-pattern">
+		<xsd:sequence>
+			<xsd:element name="pattern" type="validazione-contenuti-applicativi-pattern-regola" maxOccurs="unbounded" minOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="and" type="xsd:boolean" use="optional" default="true"/>
+		<xsd:attribute name="not" type="xsd:boolean" use="optional" default="false"/>
+	</xsd:complexType>
+	<xsd:complexType name="validazione-contenuti-applicativi-pattern-regola">
+		<xsd:sequence>
+			<xsd:element name="regola" type="xsd:string" maxOccurs="1" minOccurs="1"/><!-- può essere diverse coppie nome=valore, anche costanti, come per l'autorizzazione dei contenuti -->
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="and" type="xsd:boolean" use="optional" default="true"/> <!-- tra le righe della regola -->
+		<xsd:attribute name="not" type="xsd:boolean" use="optional" default="false"/>
+	</xsd:complexType>
+	<xsd:complexType name="validazione-contenuti-applicativi-richiesta">
+		<xsd:sequence>
+			<xsd:element name="configurazione" type="validazione-contenuti-applicativi-stato" maxOccurs="1" minOccurs="1"/>
+			<xsd:element name="applicabilita" type="validazione-contenuti-applicativi-richiesta-applicabilita" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="validazione-contenuti-applicativi-richiesta-applicabilita">
+		<xsd:sequence>
+			<xsd:element name="azione" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="content-type" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="match" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="validazione-contenuti-applicativi-risposta">
+		<xsd:sequence>
+			<xsd:element name="configurazione" type="validazione-contenuti-applicativi-stato" maxOccurs="1" minOccurs="1"/>
+			<xsd:element name="applicabilita" type="validazione-contenuti-applicativi-risposta-applicabilita" maxOccurs="1" minOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="validazione-contenuti-applicativi-risposta-applicabilita">
+		<xsd:sequence>
+			<xsd:element name="azione" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="content-type" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="match" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="return-code-min" type="xsd:integer" use="optional"/>
+		<xsd:attribute name="return-code-max" type="xsd:integer" use="optional"/>
+		<xsd:attribute name="rest-problem-detail" type="StatoFunzionalita" use="optional" />
+		<xsd:attribute name="rest-empty-response" type="StatoFunzionalita" use="optional" />
+	</xsd:complexType>
+	
+	
 	<!-- Trasformazione -->
 	<xsd:complexType name="trasformazioni">
 		<xsd:sequence>
@@ -1165,6 +1231,8 @@
 			<xsd:enumeration value="interface"/>
 			<xsd:enumeration value="openspcoop"/>
 			<xsd:enumeration value="xsd"/>
+			<xsd:enumeration value="json"/>
+			<xsd:enumeration value="pattern"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="TipoConnessioneRisposte">

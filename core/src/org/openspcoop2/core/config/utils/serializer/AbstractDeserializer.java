@@ -51,6 +51,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRest;
 import org.openspcoop2.core.config.TrasformazioneSoap;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola;
 import org.openspcoop2.core.config.IdSoggetto;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
@@ -60,6 +61,8 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.IdPortaApplicativa;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
@@ -115,7 +118,9 @@ import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
@@ -138,9 +143,11 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.ProtocolProperty;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta;
 import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita;
 import org.openspcoop2.core.config.MessageSecurityFlow;
 
 import java.io.InputStream;
@@ -2050,6 +2057,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: validazione-contenuti-applicativi-pattern-regola
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPatternRegola readValidazioneContenutiApplicativiPatternRegola(String fileName) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPatternRegola) this.xmlToObj(fileName, ValidazioneContenutiApplicativiPatternRegola.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPatternRegola readValidazioneContenutiApplicativiPatternRegola(File file) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPatternRegola) this.xmlToObj(file, ValidazioneContenutiApplicativiPatternRegola.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPatternRegola readValidazioneContenutiApplicativiPatternRegola(InputStream in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPatternRegola) this.xmlToObj(in, ValidazioneContenutiApplicativiPatternRegola.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPatternRegola readValidazioneContenutiApplicativiPatternRegola(byte[] in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPatternRegola) this.xmlToObj(in, ValidazioneContenutiApplicativiPatternRegola.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPatternRegola readValidazioneContenutiApplicativiPatternRegolaFromString(String in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPatternRegola) this.xmlToObj(in.getBytes(), ValidazioneContenutiApplicativiPatternRegola.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: id-soggetto
 	 =================================================================================
 	*/
@@ -2611,6 +2681,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public IdPortaApplicativa readIdPortaApplicativaFromString(String in) throws DeserializerException {
 		return (IdPortaApplicativa) this.xmlToObj(in.getBytes(), IdPortaApplicativa.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: validazione-contenuti-applicativi-pattern
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPattern readValidazioneContenutiApplicativiPattern(String fileName) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPattern) this.xmlToObj(fileName, ValidazioneContenutiApplicativiPattern.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPattern readValidazioneContenutiApplicativiPattern(File file) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPattern) this.xmlToObj(file, ValidazioneContenutiApplicativiPattern.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPattern readValidazioneContenutiApplicativiPattern(InputStream in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPattern) this.xmlToObj(in, ValidazioneContenutiApplicativiPattern.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPattern readValidazioneContenutiApplicativiPattern(byte[] in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPattern) this.xmlToObj(in, ValidazioneContenutiApplicativiPattern.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiPattern readValidazioneContenutiApplicativiPatternFromString(String in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiPattern) this.xmlToObj(in.getBytes(), ValidazioneContenutiApplicativiPattern.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: validazione-contenuti-applicativi-stato
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiStato readValidazioneContenutiApplicativiStato(String fileName) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiStato) this.xmlToObj(fileName, ValidazioneContenutiApplicativiStato.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiStato readValidazioneContenutiApplicativiStato(File file) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiStato) this.xmlToObj(file, ValidazioneContenutiApplicativiStato.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiStato readValidazioneContenutiApplicativiStato(InputStream in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiStato) this.xmlToObj(in, ValidazioneContenutiApplicativiStato.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiStato readValidazioneContenutiApplicativiStato(byte[] in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiStato) this.xmlToObj(in, ValidazioneContenutiApplicativiStato.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiStato readValidazioneContenutiApplicativiStatoFromString(String in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiStato) this.xmlToObj(in.getBytes(), ValidazioneContenutiApplicativiStato.class);
 	}	
 	
 	
@@ -6082,6 +6278,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: validazione-contenuti-applicativi-richiesta-applicabilita
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiestaApplicabilita readValidazioneContenutiApplicativiRichiestaApplicabilita(String fileName) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiestaApplicabilita) this.xmlToObj(fileName, ValidazioneContenutiApplicativiRichiestaApplicabilita.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiestaApplicabilita readValidazioneContenutiApplicativiRichiestaApplicabilita(File file) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiestaApplicabilita) this.xmlToObj(file, ValidazioneContenutiApplicativiRichiestaApplicabilita.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiestaApplicabilita readValidazioneContenutiApplicativiRichiestaApplicabilita(InputStream in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiestaApplicabilita) this.xmlToObj(in, ValidazioneContenutiApplicativiRichiestaApplicabilita.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiestaApplicabilita readValidazioneContenutiApplicativiRichiestaApplicabilita(byte[] in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiestaApplicabilita) this.xmlToObj(in, ValidazioneContenutiApplicativiRichiestaApplicabilita.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiestaApplicabilita readValidazioneContenutiApplicativiRichiestaApplicabilitaFromString(String in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiestaApplicabilita) this.xmlToObj(in.getBytes(), ValidazioneContenutiApplicativiRichiestaApplicabilita.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: accesso-dati-autorizzazione
 	 =================================================================================
 	*/
@@ -6139,6 +6398,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public AccessoDatiAutorizzazione readAccessoDatiAutorizzazioneFromString(String in) throws DeserializerException {
 		return (AccessoDatiAutorizzazione) this.xmlToObj(in.getBytes(), AccessoDatiAutorizzazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: validazione-contenuti-applicativi-richiesta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiesta readValidazioneContenutiApplicativiRichiesta(String fileName) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiesta) this.xmlToObj(fileName, ValidazioneContenutiApplicativiRichiesta.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiesta readValidazioneContenutiApplicativiRichiesta(File file) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiesta) this.xmlToObj(file, ValidazioneContenutiApplicativiRichiesta.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiesta readValidazioneContenutiApplicativiRichiesta(InputStream in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiesta) this.xmlToObj(in, ValidazioneContenutiApplicativiRichiesta.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiesta readValidazioneContenutiApplicativiRichiesta(byte[] in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiesta) this.xmlToObj(in, ValidazioneContenutiApplicativiRichiesta.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRichiesta readValidazioneContenutiApplicativiRichiestaFromString(String in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRichiesta) this.xmlToObj(in.getBytes(), ValidazioneContenutiApplicativiRichiesta.class);
 	}	
 	
 	
@@ -7531,6 +7853,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: validazione-contenuti-applicativi-risposta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRisposta readValidazioneContenutiApplicativiRisposta(String fileName) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRisposta) this.xmlToObj(fileName, ValidazioneContenutiApplicativiRisposta.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRisposta readValidazioneContenutiApplicativiRisposta(File file) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRisposta) this.xmlToObj(file, ValidazioneContenutiApplicativiRisposta.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRisposta readValidazioneContenutiApplicativiRisposta(InputStream in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRisposta) this.xmlToObj(in, ValidazioneContenutiApplicativiRisposta.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRisposta readValidazioneContenutiApplicativiRisposta(byte[] in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRisposta) this.xmlToObj(in, ValidazioneContenutiApplicativiRisposta.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRisposta readValidazioneContenutiApplicativiRispostaFromString(String in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRisposta) this.xmlToObj(in.getBytes(), ValidazioneContenutiApplicativiRisposta.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: stato-servizi-pdd-porta-delegata
 	 =================================================================================
 	*/
@@ -7714,6 +8099,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public DumpConfigurazioneRegola readDumpConfigurazioneRegolaFromString(String in) throws DeserializerException {
 		return (DumpConfigurazioneRegola) this.xmlToObj(in.getBytes(), DumpConfigurazioneRegola.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: validazione-contenuti-applicativi-risposta-applicabilita
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRispostaApplicabilita readValidazioneContenutiApplicativiRispostaApplicabilita(String fileName) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRispostaApplicabilita) this.xmlToObj(fileName, ValidazioneContenutiApplicativiRispostaApplicabilita.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRispostaApplicabilita readValidazioneContenutiApplicativiRispostaApplicabilita(File file) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRispostaApplicabilita) this.xmlToObj(file, ValidazioneContenutiApplicativiRispostaApplicabilita.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRispostaApplicabilita readValidazioneContenutiApplicativiRispostaApplicabilita(InputStream in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRispostaApplicabilita) this.xmlToObj(in, ValidazioneContenutiApplicativiRispostaApplicabilita.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRispostaApplicabilita readValidazioneContenutiApplicativiRispostaApplicabilita(byte[] in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRispostaApplicabilita) this.xmlToObj(in, ValidazioneContenutiApplicativiRispostaApplicabilita.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @return Object type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ValidazioneContenutiApplicativiRispostaApplicabilita readValidazioneContenutiApplicativiRispostaApplicabilitaFromString(String in) throws DeserializerException {
+		return (ValidazioneContenutiApplicativiRispostaApplicabilita) this.xmlToObj(in.getBytes(), ValidazioneContenutiApplicativiRispostaApplicabilita.class);
 	}	
 	
 	

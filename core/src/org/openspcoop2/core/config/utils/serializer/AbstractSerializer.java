@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRest;
 import org.openspcoop2.core.config.TrasformazioneSoap;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola;
 import org.openspcoop2.core.config.IdSoggetto;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
@@ -62,6 +63,8 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.IdPortaApplicativa;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
@@ -117,7 +120,9 @@ import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
@@ -140,9 +145,11 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.ProtocolProperty;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta;
 import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita;
 import org.openspcoop2.core.config.MessageSecurityFlow;
 
 import java.io.ByteArrayOutputStream;
@@ -3776,6 +3783,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: validazione-contenuti-applicativi-pattern-regola
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiPatternRegola</var>
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiPatternRegola</var>
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiPatternRegola</var>
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiPatternRegola</var>
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiPatternRegola</var>
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiPatternRegola</var>
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiPatternRegola</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola}
+	 * 
+	 * @param validazioneContenutiApplicativiPatternRegola Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiPatternRegola validazioneContenutiApplicativiPatternRegola,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiPatternRegola.class, validazioneContenutiApplicativiPatternRegola, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: id-soggetto
 	 =================================================================================
 	*/
@@ -4832,6 +4957,242 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(IdPortaApplicativa idPortaApplicativa,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(IdPortaApplicativa.class, idPortaApplicativa, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: validazione-contenuti-applicativi-pattern
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiPattern</var>
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiPattern</var>
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiPattern</var>
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiPattern</var>
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiPattern</var>
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiPattern</var>
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiPattern</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern}
+	 * 
+	 * @param validazioneContenutiApplicativiPattern Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiPattern validazioneContenutiApplicativiPattern,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiPattern.class, validazioneContenutiApplicativiPattern, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: validazione-contenuti-applicativi-stato
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiStato</var>
+	 * @param validazioneContenutiApplicativiStato Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiStato</var>
+	 * @param validazioneContenutiApplicativiStato Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiStato</var>
+	 * @param validazioneContenutiApplicativiStato Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiStato</var>
+	 * @param validazioneContenutiApplicativiStato Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiStato</var>
+	 * @param validazioneContenutiApplicativiStato Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiStato</var>
+	 * @param validazioneContenutiApplicativiStato Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param validazioneContenutiApplicativiStato Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param validazioneContenutiApplicativiStato Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param validazioneContenutiApplicativiStato Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiStato</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato}
+	 * 
+	 * @param validazioneContenutiApplicativiStato Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiStato.class, validazioneContenutiApplicativiStato, prettyPrint).toString();
 	}
 	
 	
@@ -11328,6 +11689,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: validazione-contenuti-applicativi-richiesta-applicabilita
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiRichiestaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita}
+	 * 
+	 * @param validazioneContenutiApplicativiRichiestaApplicabilita Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiRichiestaApplicabilita validazioneContenutiApplicativiRichiestaApplicabilita,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRichiestaApplicabilita.class, validazioneContenutiApplicativiRichiestaApplicabilita, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: accesso-dati-autorizzazione
 	 =================================================================================
 	*/
@@ -11440,6 +11919,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(AccessoDatiAutorizzazione accessoDatiAutorizzazione,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: validazione-contenuti-applicativi-richiesta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiRichiesta</var>
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiRichiesta</var>
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiRichiesta</var>
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiRichiesta</var>
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiRichiesta</var>
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiRichiesta</var>
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiRichiesta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta}
+	 * 
+	 * @param validazioneContenutiApplicativiRichiesta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiRichiesta validazioneContenutiApplicativiRichiesta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRichiesta.class, validazioneContenutiApplicativiRichiesta, prettyPrint).toString();
 	}
 	
 	
@@ -14042,6 +14639,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: validazione-contenuti-applicativi-risposta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiRisposta</var>
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiRisposta</var>
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiRisposta</var>
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiRisposta</var>
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiRisposta</var>
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiRisposta</var>
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiRisposta</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta}
+	 * 
+	 * @param validazioneContenutiApplicativiRisposta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiRisposta validazioneContenutiApplicativiRisposta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRisposta.class, validazioneContenutiApplicativiRisposta, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: stato-servizi-pdd-porta-delegata
 	 =================================================================================
 	*/
@@ -14390,6 +15105,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(DumpConfigurazioneRegola dumpConfigurazioneRegola,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(DumpConfigurazioneRegola.class, dumpConfigurazioneRegola, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: validazione-contenuti-applicativi-risposta-applicabilita
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param file Xml file to serialize the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param out OutputStream to serialize the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var>
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>validazioneContenutiApplicativiRispostaApplicabilita</var> of type {@link org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita}
+	 * 
+	 * @param validazioneContenutiApplicativiRispostaApplicabilita Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ValidazioneContenutiApplicativiRispostaApplicabilita validazioneContenutiApplicativiRispostaApplicabilita,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ValidazioneContenutiApplicativiRispostaApplicabilita.class, validazioneContenutiApplicativiRispostaApplicabilita, prettyPrint).toString();
 	}
 	
 	

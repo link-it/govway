@@ -52,6 +52,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiPatternRegola }
+     */
+    public ValidazioneContenutiApplicativiPatternRegola createValidazioneContenutiApplicativiPatternRegola() {
+        return new ValidazioneContenutiApplicativiPatternRegola();
+    }
+
+    /**
      * Create an instance of {@link CanaliConfigurazione }
      */
     public CanaliConfigurazione createCanaliConfigurazione() {
@@ -63,6 +70,13 @@ public class ObjectFactory {
      */
     public PortaDelegataAzione createPortaDelegataAzione() {
         return new PortaDelegataAzione();
+    }
+
+    /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiRispostaApplicabilita }
+     */
+    public ValidazioneContenutiApplicativiRispostaApplicabilita createValidazioneContenutiApplicativiRispostaApplicabilita() {
+        return new ValidazioneContenutiApplicativiRispostaApplicabilita();
     }
 
     /**
@@ -112,6 +126,13 @@ public class ObjectFactory {
      */
     public CorsConfigurazioneMethods createCorsConfigurazioneMethods() {
         return new CorsConfigurazioneMethods();
+    }
+
+    /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiPattern }
+     */
+    public ValidazioneContenutiApplicativiPattern createValidazioneContenutiApplicativiPattern() {
+        return new ValidazioneContenutiApplicativiPattern();
     }
 
     /**
@@ -381,6 +402,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiStato }
+     */
+    public ValidazioneContenutiApplicativiStato createValidazioneContenutiApplicativiStato() {
+        return new ValidazioneContenutiApplicativiStato();
+    }
+
+    /**
      * Create an instance of {@link CorrelazioneApplicativaElemento }
      */
     public CorrelazioneApplicativaElemento createCorrelazioneApplicativaElemento() {
@@ -399,6 +427,13 @@ public class ObjectFactory {
      */
     public CorrelazioneApplicativaRispostaElemento createCorrelazioneApplicativaRispostaElemento() {
         return new CorrelazioneApplicativaRispostaElemento();
+    }
+
+    /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiRichiesta }
+     */
+    public ValidazioneContenutiApplicativiRichiesta createValidazioneContenutiApplicativiRichiesta() {
+        return new ValidazioneContenutiApplicativiRichiesta();
     }
 
     /**
@@ -535,6 +570,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiRichiestaApplicabilita }
+     */
+    public ValidazioneContenutiApplicativiRichiestaApplicabilita createValidazioneContenutiApplicativiRichiestaApplicabilita() {
+        return new ValidazioneContenutiApplicativiRichiestaApplicabilita();
+    }
+
+    /**
      * Create an instance of {@link AccessoDatiGestioneToken }
      */
     public AccessoDatiGestioneToken createAccessoDatiGestioneToken() {
@@ -609,6 +651,13 @@ public class ObjectFactory {
      */
     public CorrelazioneApplicativa createCorrelazioneApplicativa() {
         return new CorrelazioneApplicativa();
+    }
+
+    /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiRisposta }
+     */
+    public ValidazioneContenutiApplicativiRisposta createValidazioneContenutiApplicativiRisposta() {
+        return new ValidazioneContenutiApplicativiRisposta();
     }
 
     /**

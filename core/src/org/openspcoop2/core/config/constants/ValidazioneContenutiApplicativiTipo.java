@@ -41,7 +41,11 @@ public enum ValidazioneContenutiApplicativiTipo implements IEnumeration , Serial
 	@javax.xml.bind.annotation.XmlEnumValue("openspcoop")
 	OPENSPCOOP ("openspcoop"),
 	@javax.xml.bind.annotation.XmlEnumValue("xsd")
-	XSD ("xsd");
+	XSD ("xsd"),
+	@javax.xml.bind.annotation.XmlEnumValue("json")
+	JSON ("json"),
+	@javax.xml.bind.annotation.XmlEnumValue("pattern")
+	PATTERN ("pattern");
 	
 	
 	/** Value */

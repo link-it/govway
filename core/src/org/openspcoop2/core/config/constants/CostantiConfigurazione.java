@@ -281,6 +281,11 @@ public class CostantiConfigurazione {
     public final static String REPOSITORY_BUSTE_BYTEWISE_ORACLE = TipiDatabase.ORACLE.toString();
 
     
+    /** tipo di pattern per la validazione */
+    public final static String VALIDAZIONE_PATTERN_QUALSIASI = "qualsiasi";
+    public final static String VALIDAZIONE_PATTERN_RICHIESTA = "richiesta";
+    public final static String VALIDAZIONE_PATTERN_RISPOSTA = "risposta";
+    
 	/** Logger */
 	public static final String DRIVER_DB_LOGGER = "DRIVER_DB_CONFIGURAZIONE";
 	

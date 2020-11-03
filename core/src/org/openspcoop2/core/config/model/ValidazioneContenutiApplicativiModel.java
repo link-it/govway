@@ -40,6 +40,9 @@ public class ValidazioneContenutiApplicativiModel extends AbstractModel<Validazi
 	
 		super();
 	
+		this.CONFIGURAZIONE = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiStatoModel(new Field("configurazione",org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class));
+		this.RICHIESTA = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiRichiestaModel(new Field("richiesta",org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class));
+		this.RISPOSTA = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiRispostaModel(new Field("risposta",org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class));
 		this.STATO = new Field("stato",java.lang.String.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class);
 		this.ACCEPT_MTOM_MESSAGE = new Field("accept-mtom-message",java.lang.String.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class);
@@ -50,6 +53,9 @@ public class ValidazioneContenutiApplicativiModel extends AbstractModel<Validazi
 	
 		super(father);
 	
+		this.CONFIGURAZIONE = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiStatoModel(new ComplexField(father,"configurazione",org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class));
+		this.RICHIESTA = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiRichiestaModel(new ComplexField(father,"richiesta",org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class));
+		this.RISPOSTA = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiRispostaModel(new ComplexField(father,"risposta",org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class));
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class);
 		this.ACCEPT_MTOM_MESSAGE = new ComplexField(father,"accept-mtom-message",java.lang.String.class,"validazione-contenuti-applicativi",ValidazioneContenutiApplicativi.class);
@@ -58,6 +64,12 @@ public class ValidazioneContenutiApplicativiModel extends AbstractModel<Validazi
 	
 	
 
+	public org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiStatoModel CONFIGURAZIONE = null;
+	 
+	public org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiRichiestaModel RICHIESTA = null;
+	 
+	public org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiRispostaModel RISPOSTA = null;
+	 
 	public IField STATO = null;
 	 
 	public IField TIPO = null;

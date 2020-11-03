@@ -138,6 +138,7 @@ import org.openspcoop2.core.config.TrasformazioneSoap;
 import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneBuste;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
@@ -1707,6 +1708,29 @@ public class DriverConfigurazioneDB_LIB {
 			response_cache_regole = responseCachingConfigurazone.getRegolaList();
 		}
 		
+		StatoFunzionalitaConWarning validazione_stato = null;
+		ValidazioneContenutiApplicativiTipo validazione_tipo = null;
+		if(aPD.getValidazioneContenutiApplicativi()!=null) {
+			if(aPD.getValidazioneContenutiApplicativi().getConfigurazione()!=null) {
+				ValidazioneContenutiApplicativiStato configurazione = aPD.getValidazioneContenutiApplicativi().getConfigurazione();
+				validazione_stato = configurazione.getStato();
+				validazione_tipo = configurazione.getTipo();
+			}
+			else {
+				// retrocompatibilita se letto da xml
+				validazione_stato = aPD.getValidazioneContenutiApplicativi().getStato();
+				validazione_tipo = aPD.getValidazioneContenutiApplicativi().getTipo();
+			}
+		}
+//		sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
+//		sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
+//		sqlQueryObject.addInsertField("validazione_contenuti_mtom", "?");
+//		sqlQueryObject.addInsertField("validazione_contenuti_soapa", "?");
+//		sqlQueryObject.addInsertField("validazione_contenuti_json", "?");
+//		sqlQueryObject.addInsertField("validazione_contenuti_pat_and", "?");
+//		sqlQueryObject.addInsertField("validazione_contenuti_pat_not", "?");
+		
+		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
 		
@@ -1818,6 +1842,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_mtom", "?");
+				sqlQueryObject.addInsertField("validazione_contenuti_soapa", "?");
+				sqlQueryObject.addInsertField("validazione_contenuti_json", "?");
+				sqlQueryObject.addInsertField("validazione_contenuti_pat_and", "?");
+				sqlQueryObject.addInsertField("validazione_contenuti_pat_not", "?");
 				sqlQueryObject.addInsertField("allega_body", "?");
 				sqlQueryObject.addInsertField("scarta_body", "?");
 				sqlQueryObject.addInsertField("gestione_manifest", "?");
@@ -1930,7 +1958,10 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD.getIntegrazione());
 				//correlazione applicativa scadenza
 				stm.setString(index++, aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null);
-				//validazione xsd
+				//validazione
+				if(aPD.getValidazioneContenutiApplicativi()!=null) {
+					
+				}
 				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getStato()) : null);
 				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getTipo()) : null);
 				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
@@ -2639,7 +2670,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("scadenza_correlazione_appl", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_tipo", "?");
-				sqlQueryObject.addUpdateField("validazione_contenuti_mtom", "?");				
+				sqlQueryObject.addUpdateField("validazione_contenuti_mtom", "?");
+				sqlQueryObject.addUpdateField("validazione_contenuti_soapa", "?");
+				sqlQueryObject.addUpdateField("validazione_contenuti_json", "?");
+				sqlQueryObject.addUpdateField("validazione_contenuti_pat_and", "?");
+				sqlQueryObject.addUpdateField("validazione_contenuti_pat_not", "?");
 				sqlQueryObject.addUpdateField("allega_body", "?");
 				sqlQueryObject.addUpdateField("scarta_body", "?");
 				sqlQueryObject.addUpdateField("gestione_manifest", "?");
@@ -4851,6 +4886,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_mtom", "?");
+				sqlQueryObject.addInsertField("validazione_contenuti_soapa", "?");
+				sqlQueryObject.addInsertField("validazione_contenuti_json", "?");
+				sqlQueryObject.addInsertField("validazione_contenuti_pat_and", "?");
+				sqlQueryObject.addInsertField("validazione_contenuti_pat_not", "?");
 				sqlQueryObject.addInsertField("allega_body", "?");
 				sqlQueryObject.addInsertField("scarta_body", "?");
 				sqlQueryObject.addInsertField("gestione_manifest", "?");
@@ -5805,7 +5844,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("integrazione", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_tipo", "?");
-				sqlQueryObject.addUpdateField("validazione_contenuti_mtom", "?");	
+				sqlQueryObject.addUpdateField("validazione_contenuti_mtom", "?");
+				sqlQueryObject.addUpdateField("validazione_contenuti_soapa", "?");
+				sqlQueryObject.addUpdateField("validazione_contenuti_json", "?");
+				sqlQueryObject.addUpdateField("validazione_contenuti_pat_and", "?");
+				sqlQueryObject.addUpdateField("validazione_contenuti_pat_not", "?");
 				sqlQueryObject.addUpdateField("id_soggetto", "?");
 				sqlQueryObject.addUpdateField("allega_body", "?");
 				sqlQueryObject.addUpdateField("scarta_body", "?");
