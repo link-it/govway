@@ -42,103 +42,7 @@ import java.util.List;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
-import org.openspcoop2.core.config.AccessoConfigurazione;
-import org.openspcoop2.core.config.AccessoDatiAutenticazione;
-import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
-import org.openspcoop2.core.config.AccessoDatiGestioneToken;
-import org.openspcoop2.core.config.AccessoDatiKeystore;
-import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroRegistro;
-import org.openspcoop2.core.config.Attachments;
-import org.openspcoop2.core.config.Cache;
-import org.openspcoop2.core.config.CanaleConfigurazione;
-import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
-import org.openspcoop2.core.config.CanaliConfigurazione;
-import org.openspcoop2.core.config.Configurazione;
-import org.openspcoop2.core.config.ConfigurazioneMultitenant;
-import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
-import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.CorrelazioneApplicativa;
-import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
-import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
-import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
-import org.openspcoop2.core.config.CorsConfigurazione;
-import org.openspcoop2.core.config.Credenziali;
-import org.openspcoop2.core.config.Dump;
-import org.openspcoop2.core.config.DumpConfigurazione;
-import org.openspcoop2.core.config.DumpConfigurazioneRegola;
-import org.openspcoop2.core.config.GenericProperties;
-import org.openspcoop2.core.config.GestioneErrore;
-import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
-import org.openspcoop2.core.config.GestioneErroreSoapFault;
-import org.openspcoop2.core.config.GestioneToken;
-import org.openspcoop2.core.config.IndirizzoRisposta;
-import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
-import org.openspcoop2.core.config.IntegrationManager;
-import org.openspcoop2.core.config.InvocazioneCredenziali;
-import org.openspcoop2.core.config.InvocazionePorta;
-import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
-import org.openspcoop2.core.config.InvocazioneServizio;
-import org.openspcoop2.core.config.MessageSecurity;
-import org.openspcoop2.core.config.MessageSecurityFlow;
-import org.openspcoop2.core.config.MessageSecurityFlowParameter;
-import org.openspcoop2.core.config.MessaggiDiagnostici;
-import org.openspcoop2.core.config.MtomProcessor;
-import org.openspcoop2.core.config.MtomProcessorFlow;
-import org.openspcoop2.core.config.MtomProcessorFlowParameter;
-import org.openspcoop2.core.config.OpenspcoopAppender;
-import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
-import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
-import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.PortaApplicativaServizio;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.PortaDelegataAzione;
-import org.openspcoop2.core.config.PortaDelegataServizio;
-import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
-import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
-import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.Proprieta;
-import org.openspcoop2.core.config.ProtocolProperty;
-import org.openspcoop2.core.config.ResponseCachingConfigurazione;
-import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
-import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
-import org.openspcoop2.core.config.RispostaAsincrona;
-import org.openspcoop2.core.config.Risposte;
-import org.openspcoop2.core.config.Route;
-import org.openspcoop2.core.config.RouteGateway;
-import org.openspcoop2.core.config.RouteRegistro;
-import org.openspcoop2.core.config.RoutingTable;
-import org.openspcoop2.core.config.RoutingTableDefault;
-import org.openspcoop2.core.config.RoutingTableDestinazione;
-import org.openspcoop2.core.config.Ruolo;
-import org.openspcoop2.core.config.Scope;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.StatoServiziPdd;
-import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
-import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
-import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
-import org.openspcoop2.core.config.SystemProperties;
-import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
-import org.openspcoop2.core.config.Tracciamento;
-import org.openspcoop2.core.config.Transazioni;
-import org.openspcoop2.core.config.TrasformazioneRegola;
-import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
-import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
-import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
-import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
-import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
-import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
-import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
-import org.openspcoop2.core.config.TrasformazioneRest;
-import org.openspcoop2.core.config.TrasformazioneSoap;
-import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
-import org.openspcoop2.core.config.Trasformazioni;
-import org.openspcoop2.core.config.ValidazioneBuste;
-import org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato;
+import org.openspcoop2.core.config.*;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
@@ -1710,25 +1614,32 @@ public class DriverConfigurazioneDB_LIB {
 		
 		StatoFunzionalitaConWarning validazione_stato = null;
 		ValidazioneContenutiApplicativiTipo validazione_tipo = null;
+		StatoFunzionalita validazione_mtom = null;
+		StatoFunzionalita validazione_soapaction = null;
+		String validazione_jsonschema = null;
+		StatoFunzionalita validazione_pattern_and= null;
+		StatoFunzionalita validazione_pattern_not= null;
 		if(aPD.getValidazioneContenutiApplicativi()!=null) {
 			if(aPD.getValidazioneContenutiApplicativi().getConfigurazione()!=null) {
 				ValidazioneContenutiApplicativiStato configurazione = aPD.getValidazioneContenutiApplicativi().getConfigurazione();
 				validazione_stato = configurazione.getStato();
 				validazione_tipo = configurazione.getTipo();
+				validazione_mtom = configurazione.getAcceptMtomMessage();
+				validazione_soapaction = configurazione.getSoapAction();
+				validazione_jsonschema = configurazione.getJsonSchema();
+				if(configurazione.getConfigurazionePattern()!=null) {
+					validazione_pattern_and=configurazione.getConfigurazionePattern().getAnd() ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
+					validazione_pattern_not=configurazione.getConfigurazionePattern().getNot() ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
+				}
 			}
 			else {
 				// retrocompatibilita se letto da xml
 				validazione_stato = aPD.getValidazioneContenutiApplicativi().getStato();
 				validazione_tipo = aPD.getValidazioneContenutiApplicativi().getTipo();
+				validazione_mtom = aPD.getValidazioneContenutiApplicativi().getAcceptMtomMessage();
 			}
 		}
-//		sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
-//		sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
-//		sqlQueryObject.addInsertField("validazione_contenuti_mtom", "?");
-//		sqlQueryObject.addInsertField("validazione_contenuti_soapa", "?");
-//		sqlQueryObject.addInsertField("validazione_contenuti_json", "?");
-//		sqlQueryObject.addInsertField("validazione_contenuti_pat_and", "?");
-//		sqlQueryObject.addInsertField("validazione_contenuti_pat_not", "?");
+
 		
 		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
@@ -1958,14 +1869,16 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD.getIntegrazione());
 				//correlazione applicativa scadenza
 				stm.setString(index++, aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null);
+				
 				//validazione
-				if(aPD.getValidazioneContenutiApplicativi()!=null) {
-					
-				}
-				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getStato()) : null);
-				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getTipo()) : null);
-				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
-
+				stm.setString(index++, validazione_stato!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_stato) : null);
+				stm.setString(index++, validazione_tipo!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_tipo) : null);
+				stm.setString(index++, validazione_mtom!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_mtom) : null);
+				stm.setString(index++, validazione_soapaction!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_soapaction) : null);
+				stm.setString(index++, validazione_jsonschema);
+				stm.setString(index++, validazione_pattern_and!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_pattern_and) : null);
+				stm.setString(index++, validazione_pattern_not!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_pattern_not) : null);
+				
 				// InvocazionePorta: funzionalita' attachment
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getAllegaBody()) : null);
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getScartaBody()) : null);
@@ -2529,6 +2442,9 @@ public class DriverConfigurazioneDB_LIB {
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), aPD.getId(), true);
 				
+				// validazioni
+				CRUDValidazione(type, con, aPD.getValidazioneContenutiApplicativi(), aPD.getId(), true);
+				
 				
 				// extendedInfo
 				i=0;
@@ -2788,10 +2704,14 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD.getIntegrazione());
 				//scadenza correlazione applicativa
 				stm.setString(index++, aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null);
-				//validazione xsd
-				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getStato()) : null);
-				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getTipo()) : null);
-				stm.setString(index++, aPD.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
+				//validazione
+				stm.setString(index++, validazione_stato!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_stato) : null);
+				stm.setString(index++, validazione_tipo!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_tipo) : null);
+				stm.setString(index++, validazione_mtom!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_mtom) : null);
+				stm.setString(index++, validazione_soapaction!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_soapaction) : null);
+				stm.setString(index++, validazione_jsonschema);
+				stm.setString(index++, validazione_pattern_and!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_pattern_and) : null);
+				stm.setString(index++, validazione_pattern_not!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_pattern_not) : null);
 				// InvocazionePorta: funzionalita' attachment
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getAllegaBody()) : null);
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getScartaBody()) : null);
@@ -3492,6 +3412,10 @@ public class DriverConfigurazioneDB_LIB {
 				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), idPortaDelegata, true);
 				
 				
+				// validazioni
+				CRUDValidazione(type, con, aPD.getValidazioneContenutiApplicativi(), idPortaDelegata, true);
+				
+				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, CRUDType.UPDATE);
@@ -3521,6 +3445,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), idPortaDelegata, true);
+				
+				// validazioni
+				CRUDValidazione(type, con, aPD.getValidazioneContenutiApplicativi(), idPortaDelegata, true);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -4794,6 +4721,34 @@ public class DriverConfigurazioneDB_LIB {
 			behaviour = aPA.getBehaviour().getNome();
 		}
 		
+		StatoFunzionalitaConWarning validazione_stato = null;
+		ValidazioneContenutiApplicativiTipo validazione_tipo = null;
+		StatoFunzionalita validazione_mtom = null;
+		StatoFunzionalita validazione_soapaction = null;
+		String validazione_jsonschema = null;
+		StatoFunzionalita validazione_pattern_and= null;
+		StatoFunzionalita validazione_pattern_not= null;
+		if(aPA.getValidazioneContenutiApplicativi()!=null) {
+			if(aPA.getValidazioneContenutiApplicativi().getConfigurazione()!=null) {
+				ValidazioneContenutiApplicativiStato configurazione = aPA.getValidazioneContenutiApplicativi().getConfigurazione();
+				validazione_stato = configurazione.getStato();
+				validazione_tipo = configurazione.getTipo();
+				validazione_mtom = configurazione.getAcceptMtomMessage();
+				validazione_soapaction = configurazione.getSoapAction();
+				validazione_jsonschema = configurazione.getJsonSchema();
+				if(configurazione.getConfigurazionePattern()!=null) {
+					validazione_pattern_and=configurazione.getConfigurazionePattern().getAnd() ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
+					validazione_pattern_not=configurazione.getConfigurazionePattern().getNot() ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
+				}
+			}
+			else {
+				// retrocompatibilita se letto da xml
+				validazione_stato = aPA.getValidazioneContenutiApplicativi().getStato();
+				validazione_tipo = aPA.getValidazioneContenutiApplicativi().getTipo();
+				validazione_mtom = aPA.getValidazioneContenutiApplicativi().getAcceptMtomMessage();
+			}
+		}
+		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
 		
@@ -4995,10 +4950,15 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPA.getRicevutaAsincronaAsimmetrica()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicevutaAsincronaAsimmetrica()) : null);
 				//integrazione
 				stm.setString(index++, aPA.getIntegrazione()!=null ? aPA.getIntegrazione() : null);
-				//validazione xsd
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getStato()) : null);
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getTipo()) : null);
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
+				
+				//validazione
+				stm.setString(index++, validazione_stato!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_stato) : null);
+				stm.setString(index++, validazione_tipo!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_tipo) : null);
+				stm.setString(index++, validazione_mtom!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_mtom) : null);
+				stm.setString(index++, validazione_soapaction!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_soapaction) : null);
+				stm.setString(index++, validazione_jsonschema);
+				stm.setString(index++, validazione_pattern_and!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_pattern_and) : null);
+				stm.setString(index++, validazione_pattern_not!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_pattern_not) : null);
 				
 				// InvocazionePorta: funzionalita' attachment
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAllegaBody()) : null);
@@ -5742,6 +5702,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), aPA.getId(), false);
+
+				// validazioni
+				CRUDValidazione(type, con, aPA.getValidazioneContenutiApplicativi(), aPA.getId(), false);
 				
 				
 				// extendedInfo
@@ -5966,11 +5929,16 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPA.getRicevutaAsincronaAsimmetrica()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicevutaAsincronaAsimmetrica()) : null);
 				//integrazione
 				stm.setString(index++, aPA.getIntegrazione()!=null ? aPA.getIntegrazione() : null);
-				//validazione xsd
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getStato()) : null);
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getTipo()) : null);
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
-				stm.setLong(index++, idProprietario);//il nuovo proprietario se cambiato
+				//validazione
+				stm.setString(index++, validazione_stato!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_stato) : null);
+				stm.setString(index++, validazione_tipo!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_tipo) : null);
+				stm.setString(index++, validazione_mtom!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_mtom) : null);
+				stm.setString(index++, validazione_soapaction!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_soapaction) : null);
+				stm.setString(index++, validazione_jsonschema);
+				stm.setString(index++, validazione_pattern_and!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_pattern_and) : null);
+				stm.setString(index++, validazione_pattern_not!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_pattern_not) : null);
+				//il nuovo proprietario se cambiato
+				stm.setLong(index++, idProprietario);
 				// InvocazionePorta: funzionalita' attachment
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAllegaBody()) : null);
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getScartaBody()) : null);
@@ -6968,6 +6936,10 @@ public class DriverConfigurazioneDB_LIB {
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
 				
+
+				// validazioni
+				CRUDValidazione(type, con, aPA.getValidazioneContenutiApplicativi(), idPortaApplicativa, false);
+				
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
@@ -7002,6 +6974,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
+				
+				// validazioni
+				CRUDValidazione(type, con, aPA.getValidazioneContenutiApplicativi(), idPortaApplicativa, false);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -9061,13 +9036,37 @@ public class DriverConfigurazioneDB_LIB {
 				routingEnabled =  CostantiConfigurazione.ABILITATO.toString();
 		}
 		
-		String validazione_contenuti_stato = null;
-		String validazione_contenuti_tipo = null;
-		String validazione_contenuti_acceptMtomMessage = null;
-		if(config.getValidazioneContenutiApplicativi()!=null){
-			validazione_contenuti_stato = DriverConfigurazioneDB_LIB.getValue(config.getValidazioneContenutiApplicativi().getStato());
-			validazione_contenuti_tipo = DriverConfigurazioneDB_LIB.getValue(config.getValidazioneContenutiApplicativi().getTipo());
-			validazione_contenuti_acceptMtomMessage = DriverConfigurazioneDB_LIB.getValue(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage());
+		StatoFunzionalitaConWarning validazione_stato = null;
+		ValidazioneContenutiApplicativiTipo validazione_tipo = null;
+		StatoFunzionalita validazione_mtom = null;
+		// Per adesso non gestiti nella configurazione
+		@SuppressWarnings("unused")
+		StatoFunzionalita validazione_soapaction = null;
+		@SuppressWarnings("unused")
+		String validazione_jsonschema = null;
+		@SuppressWarnings("unused")
+		StatoFunzionalita validazione_pattern_and= null;
+		@SuppressWarnings("unused")
+		StatoFunzionalita validazione_pattern_not= null;
+		if(config.getValidazioneContenutiApplicativi()!=null) {
+			if(config.getValidazioneContenutiApplicativi().getConfigurazione()!=null) {
+				ValidazioneContenutiApplicativiStato configurazione = config.getValidazioneContenutiApplicativi().getConfigurazione();
+				validazione_stato = configurazione.getStato();
+				validazione_tipo = configurazione.getTipo();
+				validazione_mtom = configurazione.getAcceptMtomMessage();
+				validazione_soapaction = configurazione.getSoapAction();
+				validazione_jsonschema = configurazione.getJsonSchema();
+				if(configurazione.getConfigurazionePattern()!=null) {
+					validazione_pattern_and=configurazione.getConfigurazionePattern().getAnd() ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
+					validazione_pattern_not=configurazione.getConfigurazionePattern().getNot() ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
+				}
+			}
+			else {
+				// retrocompatibilita se letto da xml
+				validazione_stato = config.getValidazioneContenutiApplicativi().getStato();
+				validazione_tipo = config.getValidazioneContenutiApplicativi().getTipo();
+				validazione_mtom = config.getValidazioneContenutiApplicativi().getAcceptMtomMessage();
+			}
 		}
 
 		CanaliConfigurazione configurazioneCanali = config.getGestioneCanali();
@@ -9214,9 +9213,9 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, dumpApplicativo);
 				updateStmt.setString(index++, dumpPD);
 				updateStmt.setString(index++, dumpPA);
-				updateStmt.setString(index++, validazione_contenuti_stato);
-				updateStmt.setString(index++, validazione_contenuti_tipo);
-				updateStmt.setString(index++, validazione_contenuti_acceptMtomMessage);
+				updateStmt.setString(index++, validazione_stato!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_stato) : null);
+				updateStmt.setString(index++, validazione_tipo!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_tipo) : null);
+				updateStmt.setString(index++, validazione_mtom!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_mtom) : null);
 				// registro cache
 				updateStmt.setString(index++, registro_statoCache);
 				updateStmt.setString(index++, registro_dimensioneCache);
@@ -9324,7 +9323,9 @@ public class DriverConfigurazioneDB_LIB {
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
 								val_manifest, tracciamentoBuste, transazioniTempiElaborazione, transazioniToken, dumpApplicativo, dumpPD, dumpPA,
-								validazione_contenuti_stato,validazione_contenuti_tipo,validazione_contenuti_acceptMtomMessage,
+								(validazione_stato!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_stato) : null),
+								(validazione_tipo!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_tipo) : null),
+								(validazione_mtom!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_mtom) : null),
 								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
 								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
 								authz_statoCache, authz_dimensioneCache, authz_algoritmoCache, authz_idleCache, authz_lifeCache,
@@ -9875,9 +9876,9 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, dumpApplicativo);
 				updateStmt.setString(index++, dumpPD);
 				updateStmt.setString(index++, dumpPA);
-				updateStmt.setString(index++, validazione_contenuti_stato);
-				updateStmt.setString(index++, validazione_contenuti_tipo);
-				updateStmt.setString(index++, validazione_contenuti_acceptMtomMessage);
+				updateStmt.setString(index++, validazione_stato!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_stato) : null);
+				updateStmt.setString(index++, validazione_tipo!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_tipo) : null);
+				updateStmt.setString(index++, validazione_mtom!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_mtom) : null);
 				// registro cache
 				updateStmt.setString(index++, registro_statoCache);
 				updateStmt.setString(index++, registro_dimensioneCache);
@@ -9986,7 +9987,9 @@ public class DriverConfigurazioneDB_LIB {
 								routingEnabled, gestioneManifest, 
 								val_manifest, 
 								tracciamentoBuste, transazioniTempiElaborazione, transazioniToken, dumpApplicativo, dumpPD, dumpPA,
-								validazione_contenuti_stato,validazione_contenuti_tipo,
+								(validazione_stato!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_stato) : null),
+								(validazione_tipo!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_tipo) : null),
+								(validazione_mtom!=null ? DriverConfigurazioneDB_LIB.getValue(validazione_mtom) : null),
 								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
 								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
 								authz_statoCache, authz_dimensioneCache, authz_algoritmoCache, authz_idleCache, authz_lifeCache,
@@ -11807,8 +11810,1030 @@ public class DriverConfigurazioneDB_LIB {
 		return trasformazioni;
 	}
 	
+	public static ValidazioneContenutiApplicativi readValidazioneContenutiApplicativi(long idPorta, boolean portaDelegata, Connection con) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		// ritorna la validazione
+
+		ValidazioneContenutiApplicativi validazioneContenutiApplicativi = null;
+		
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		String sqlQuery = "";
+
+		try {
+			
+			String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE : CostantiDB.PORTE_APPLICATIVE;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectField("validazione_contenuti_stato");
+			sqlQueryObject.addSelectField("validazione_contenuti_tipo");
+			sqlQueryObject.addSelectField("validazione_contenuti_mtom");
+			sqlQueryObject.addSelectField("validazione_contenuti_soapa");
+			sqlQueryObject.addSelectField("validazione_contenuti_json");
+			sqlQueryObject.addSelectField("validazione_contenuti_pat_and");
+			sqlQueryObject.addSelectField("validazione_contenuti_pat_not");
+			sqlQueryObject.addWhereCondition("id = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, idPorta);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				
+				validazioneContenutiApplicativi = readValidazioneContenutiApplicativiBase(rs, false);
+				
+			}
+			rs.close();
+			stm.close();
+			
+			validazioneContenutiApplicativi = readAndUpdateValidazioneContenutiApplicativi(idPorta, portaDelegata, validazioneContenutiApplicativi, con);
+			
+			return validazioneContenutiApplicativi;
+
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::readValidazioneContenutiApplicativi] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+		}
+	}
 	
+	public static ValidazioneContenutiApplicativi readValidazioneContenutiApplicativiBase(ResultSet rs, boolean configurazione) throws Exception {
+		
+		String validazioneContenuti_stato = rs.getString("validazione_contenuti_stato");
+		if(  (validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals("")))
+		{
+			ValidazioneContenutiApplicativi val = new ValidazioneContenutiApplicativi();
+			
+			/* Lasciati solo per backward compatibility */
+			/*
+			if((validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))  )
+				val.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
+			if((validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  )
+				val.setTipo(DriverConfigurazioneDB_LIB.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
+			if((validazioneContenuti_acceptMtomMessage!=null && !validazioneContenuti_acceptMtomMessage.equals(""))  )
+				val.setAcceptMtomMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
+			*/
+			
+			val.setConfigurazione(new ValidazioneContenutiApplicativiStato());
+			if((validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))  )
+				val.getConfigurazione().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
+			
+			if(!StatoFunzionalitaConWarning.DISABILITATO.equals(val.getConfigurazione().getStato())) {
+			
+				String validazioneContenuti_tipo = rs.getString("validazione_contenuti_tipo");
+				if((validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  )
+					val.getConfigurazione().setTipo(DriverConfigurazioneDB_LIB.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
+				
+				String validazioneContenuti_acceptMtomMessage = rs.getString("validazione_contenuti_mtom");
+				if((validazioneContenuti_acceptMtomMessage!=null && !validazioneContenuti_acceptMtomMessage.equals(""))  )
+					val.getConfigurazione().setAcceptMtomMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
+				
+				if(!configurazione) {
+				
+					String validazioneContenuti_soapAction = rs.getString("validazione_contenuti_soapa");
+					if((validazioneContenuti_soapAction!=null && !validazioneContenuti_soapAction.equals(""))  )
+						val.getConfigurazione().setSoapAction(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_soapAction));
+					
+					String validazioneContenuti_jsonSchema = rs.getString("validazione_contenuti_json");
+					if((validazioneContenuti_jsonSchema!=null && !validazioneContenuti_jsonSchema.equals(""))  )
+						val.getConfigurazione().setJsonSchema(validazioneContenuti_jsonSchema);
+					
+					if(ValidazioneContenutiApplicativiTipo.PATTERN.equals(val.getConfigurazione().getTipo())) {
+						
+						val.getConfigurazione().setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+						
+						String validazioneContenuti_pattern_and = rs.getString("validazione_contenuti_pat_and");
+						if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
+							val.getConfigurazione().getConfigurazionePattern().setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
+						
+						String validazioneContenuti_pattern_not = rs.getString("validazione_contenuti_pat_not");
+						if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
+							val.getConfigurazione().getConfigurazionePattern().setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
+						
+					}
+					
+				}
+
+			}
+			
+			
+			return val;
+		}
+		
+		return null;
+	}
 	
+	public static ValidazioneContenutiApplicativi readAndUpdateValidazioneContenutiApplicativi(long idPorta, boolean portaDelegata, ValidazioneContenutiApplicativi valParam, Connection con) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		// ritorna la configurazione generale della PdD
+
+		ValidazioneContenutiApplicativi validazioneContenutiApplicativi = valParam;
+		
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		PreparedStatement stm1 = null;
+		ResultSet rs1 = null;
+
+		String sqlQuery = "";
+
+		try {
+			if(validazioneContenutiApplicativi!=null && 
+					validazioneContenutiApplicativi.getConfigurazione()!=null &&
+					!StatoFunzionalitaConWarning.DISABILITATO.equals(validazioneContenutiApplicativi.getConfigurazione().getStato()) &&
+					ValidazioneContenutiApplicativiTipo.PATTERN.equals(validazioneContenutiApplicativi.getConfigurazione().getTipo())) {
+				
+				// carico regole dei pattern
+				String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tableName);
+				sqlQueryObject.addWhereCondition("tipo_validazione=?");
+				sqlQueryObject.addWhereCondition("id_configurazione=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+
+				log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+				stm = con.prepareStatement(sqlQuery);
+				int index = 1;
+				stm.setString(index++, CostantiConfigurazione.VALIDAZIONE_PATTERN_QUALSIASI);
+				stm.setLong(index++, idPorta);
+				rs = stm.executeQuery();
+				while (rs.next()) {
+					
+					if(validazioneContenutiApplicativi.getConfigurazione().getConfigurazionePattern()==null) {
+						validazioneContenutiApplicativi.getConfigurazione().setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+					}
+					
+					ValidazioneContenutiApplicativiPatternRegola pattern = new ValidazioneContenutiApplicativiPatternRegola();
+					
+					pattern.setId(rs.getLong("id"));
+					pattern.setNome(rs.getString("nome"));
+					pattern.setRegola(rs.getString("regola"));
+					
+					String validazioneContenuti_pattern_and = rs.getString("pattern_and");
+					if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
+						pattern.setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
+					
+					String validazioneContenuti_pattern_not = rs.getString("pattern_not");
+					if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
+						pattern.setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
+				
+					validazioneContenutiApplicativi.getConfigurazione().getConfigurazionePattern().addPattern(pattern);
+				} 
+				rs.close(); rs = null;
+				stm.close(); stm = null;
+				
+			}
+			
+			// Richiesta
+			
+			String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA ;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("posizione");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setLong(index++, idPorta);
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				if(validazioneContenutiApplicativi==null) {
+					validazioneContenutiApplicativi = new ValidazioneContenutiApplicativi();
+				}
+				ValidazioneContenutiApplicativiRichiesta richiesta = new ValidazioneContenutiApplicativiRichiesta();
+				
+				richiesta.setId(rs.getLong("id"));
+				richiesta.setNome(rs.getString("nome"));
+				richiesta.setPosizione(rs.getInt("posizione"));
+				
+				ValidazioneContenutiApplicativiStato configurazione = new ValidazioneContenutiApplicativiStato();
+				String validazioneContenuti_stato = rs.getString("stato");
+				if(  (validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))) {
+					configurazione.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
+				}
+				
+				if(!StatoFunzionalitaConWarning.DISABILITATO.equals(configurazione.getStato())) {
+					
+					String validazioneContenuti_tipo = rs.getString("tipo");
+					if((validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  )
+						configurazione.setTipo(DriverConfigurazioneDB_LIB.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
+					
+					String validazioneContenuti_acceptMtomMessage = rs.getString("mtom");
+					if((validazioneContenuti_acceptMtomMessage!=null && !validazioneContenuti_acceptMtomMessage.equals(""))  )
+						configurazione.setAcceptMtomMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
+					
+					String validazioneContenuti_soapAction = rs.getString("soapaction");
+					if((validazioneContenuti_soapAction!=null && !validazioneContenuti_soapAction.equals(""))  )
+						configurazione.setSoapAction(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_soapAction));
+					
+					String validazioneContenuti_jsonSchema = rs.getString("json");
+					if((validazioneContenuti_jsonSchema!=null && !validazioneContenuti_jsonSchema.equals(""))  )
+						configurazione.setJsonSchema(validazioneContenuti_jsonSchema);
+					
+					if(ValidazioneContenutiApplicativiTipo.PATTERN.equals(configurazione.getTipo())) {
+						
+						configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+						
+						String validazioneContenuti_pattern_and = rs.getString("validazione_contenuti_pat_and");
+						if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
+							configurazione.getConfigurazionePattern().setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
+						
+						String validazioneContenuti_pattern_not = rs.getString("validazione_contenuti_pat_not");
+						if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
+							configurazione.getConfigurazionePattern().setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
+						
+							
+						// carico regole dei pattern
+						String tableNameP = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+						ISQLQueryObject sqlQueryObjectP = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectP.addFromTable(tableNameP);
+						sqlQueryObjectP.addWhereCondition("tipo_validazione=?");
+						sqlQueryObjectP.addWhereCondition("id_configurazione=?");
+						sqlQueryObjectP.setANDLogicOperator(true);
+						String sqlQueryP = sqlQueryObjectP.createSQLQuery();
+
+						log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQueryP));
+						stm1 = con.prepareStatement(sqlQueryP);
+						int indexP = 1;
+						stm1.setString(indexP++, CostantiConfigurazione.VALIDAZIONE_PATTERN_RICHIESTA);
+						stm1.setLong(indexP++, richiesta.getId());
+						rs1 = stm1.executeQuery();
+						while (rs1.next()) {
+							
+							if(configurazione.getConfigurazionePattern()==null) {
+								configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+							}
+							
+							ValidazioneContenutiApplicativiPatternRegola pattern = new ValidazioneContenutiApplicativiPatternRegola();
+							
+							pattern.setId(rs1.getLong("id"));
+							pattern.setNome(rs1.getString("nome"));
+							pattern.setRegola(rs1.getString("regola"));
+							
+							String validazioneContenuti_pattern_and_p = rs1.getString("pattern_and");
+							if((validazioneContenuti_pattern_and_p!=null && !validazioneContenuti_pattern_and_p.equals(""))  )
+								pattern.setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and_p)));
+							
+							String validazioneContenuti_pattern_not_p = rs1.getString("pattern_not");
+							if((validazioneContenuti_pattern_not_p!=null && !validazioneContenuti_pattern_not_p.equals(""))  )
+								pattern.setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not_p)));
+						
+							configurazione.getConfigurazionePattern().addPattern(pattern);
+						} 
+						rs1.close(); rs1 = null;
+						stm1.close(); stm1 = null;
+							
+					}
+
+				}
+				
+				String applicabilita_azioni = rs.getString("applicabilita_azioni");
+				String applicabilita_ct = rs.getString("applicabilita_ct");
+				String applicabilita_pattern = rs.getString("applicabilita_pattern");
+				if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
+						(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+						) {
+					ValidazioneContenutiApplicativiRichiestaApplicabilita applicabilita = new ValidazioneContenutiApplicativiRichiestaApplicabilita();
+					
+					if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
+						if(applicabilita_azioni.contains(",")) {
+							String [] tmp = applicabilita_azioni.split(",");
+							for (int i = 0; i < tmp.length; i++) {
+								applicabilita.addAzione(tmp[i].trim());
+							}
+						}
+						else {
+							applicabilita.addAzione(applicabilita_azioni);
+						}
+					}
+					
+					if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+						if(applicabilita_ct.contains(",")) {
+							String [] tmp = applicabilita_ct.split(",");
+							for (int i = 0; i < tmp.length; i++) {
+								applicabilita.addContentType(tmp[i].trim());
+							}
+						}
+						else {
+							applicabilita.addContentType(applicabilita_ct);
+						}
+					}
+					
+					if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+						applicabilita.setMatch(applicabilita_pattern);
+					}
+					
+					richiesta.setApplicabilita(applicabilita);
+				}
+				
+				validazioneContenutiApplicativi.addRichiesta(richiesta);
+			}
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+			
+			
+			
+			// Risposta
+			
+			tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA ;
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("posizione");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			index = 1;
+			stm.setLong(index++, idPorta);
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				if(validazioneContenutiApplicativi==null) {
+					validazioneContenutiApplicativi = new ValidazioneContenutiApplicativi();
+				}
+				ValidazioneContenutiApplicativiRisposta risposta = new ValidazioneContenutiApplicativiRisposta();
+				
+				risposta.setId(rs.getLong("id"));
+				risposta.setNome(rs.getString("nome"));
+				risposta.setPosizione(rs.getInt("posizione"));
+				
+				ValidazioneContenutiApplicativiStato configurazione = new ValidazioneContenutiApplicativiStato();
+				String validazioneContenuti_stato = rs.getString("stato");
+				if(  (validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))) {
+					configurazione.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
+				}
+				
+				if(!StatoFunzionalitaConWarning.DISABILITATO.equals(configurazione.getStato())) {
+					
+					String validazioneContenuti_tipo = rs.getString("tipo");
+					if((validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  )
+						configurazione.setTipo(DriverConfigurazioneDB_LIB.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
+					
+					String validazioneContenuti_acceptMtomMessage = rs.getString("mtom");
+					if((validazioneContenuti_acceptMtomMessage!=null && !validazioneContenuti_acceptMtomMessage.equals(""))  )
+						configurazione.setAcceptMtomMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
+					
+					String validazioneContenuti_soapAction = rs.getString("soapaction");
+					if((validazioneContenuti_soapAction!=null && !validazioneContenuti_soapAction.equals(""))  )
+						configurazione.setSoapAction(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_soapAction));
+					
+					String validazioneContenuti_jsonSchema = rs.getString("json");
+					if((validazioneContenuti_jsonSchema!=null && !validazioneContenuti_jsonSchema.equals(""))  )
+						configurazione.setJsonSchema(validazioneContenuti_jsonSchema);
+					
+					if(ValidazioneContenutiApplicativiTipo.PATTERN.equals(configurazione.getTipo())) {
+						
+						configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+						
+						String validazioneContenuti_pattern_and = rs.getString("validazione_contenuti_pat_and");
+						if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
+							configurazione.getConfigurazionePattern().setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
+						
+						String validazioneContenuti_pattern_not = rs.getString("validazione_contenuti_pat_not");
+						if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
+							configurazione.getConfigurazionePattern().setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
+						
+							
+						// carico regole dei pattern
+						String tableNameP = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+						ISQLQueryObject sqlQueryObjectP = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectP.addFromTable(tableNameP);
+						sqlQueryObjectP.addWhereCondition("tipo_validazione=?");
+						sqlQueryObjectP.addWhereCondition("id_configurazione=?");
+						sqlQueryObjectP.setANDLogicOperator(true);
+						String sqlQueryP = sqlQueryObjectP.createSQLQuery();
+
+						log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQueryP));
+						stm1 = con.prepareStatement(sqlQueryP);
+						int indexP = 1;
+						stm1.setString(indexP++, CostantiConfigurazione.VALIDAZIONE_PATTERN_RISPOSTA);
+						stm1.setLong(indexP++, risposta.getId());
+						rs1 = stm1.executeQuery();
+						while (rs1.next()) {
+							
+							if(configurazione.getConfigurazionePattern()==null) {
+								configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+							}
+							
+							ValidazioneContenutiApplicativiPatternRegola pattern = new ValidazioneContenutiApplicativiPatternRegola();
+							
+							pattern.setId(rs1.getLong("id"));
+							pattern.setNome(rs1.getString("nome"));
+							pattern.setRegola(rs1.getString("regola"));
+							
+							String validazioneContenuti_pattern_and_p = rs1.getString("pattern_and");
+							if((validazioneContenuti_pattern_and_p!=null && !validazioneContenuti_pattern_and_p.equals(""))  )
+								pattern.setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and_p)));
+							
+							String validazioneContenuti_pattern_not_p = rs1.getString("pattern_not");
+							if((validazioneContenuti_pattern_not_p!=null && !validazioneContenuti_pattern_not_p.equals(""))  )
+								pattern.setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not_p)));
+						
+							configurazione.getConfigurazionePattern().addPattern(pattern);
+						} 
+						rs1.close(); rs1 = null;
+						stm1.close(); stm1 = null;
+							
+					}
+
+				}
+				
+				String applicabilita_azioni = rs.getString("applicabilita_azioni");
+				String applicabilita_ct = rs.getString("applicabilita_ct");
+				String applicabilita_pattern = rs.getString("applicabilita_pattern");
+				int applicabilita_status_min = rs.getInt("applicabilita_status_min");
+				int applicabilita_status_max = rs.getInt("applicabilita_status_max");
+				String applicabilita_problem_detail = rs.getString("applicabilita_problem_detail");
+				String applicabilita_empty_response = rs.getString("applicabilita_empty_response");
+				if( (applicabilita_status_min >0 || applicabilita_status_max>0) ||
+						(applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
+						(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) ||
+						(applicabilita_problem_detail!=null && !"".equals(applicabilita_problem_detail)) ||
+						(applicabilita_empty_response!=null && !"".equals(applicabilita_empty_response))
+						) {
+					ValidazioneContenutiApplicativiRispostaApplicabilita applicabilita = new ValidazioneContenutiApplicativiRispostaApplicabilita();
+					
+					if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
+						if(applicabilita_azioni.contains(",")) {
+							String [] tmp = applicabilita_azioni.split(",");
+							for (int i = 0; i < tmp.length; i++) {
+								applicabilita.addAzione(tmp[i].trim());
+							}
+						}
+						else {
+							applicabilita.addAzione(applicabilita_azioni);
+						}
+					}
+					
+					if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+						if(applicabilita_ct.contains(",")) {
+							String [] tmp = applicabilita_ct.split(",");
+							for (int i = 0; i < tmp.length; i++) {
+								applicabilita.addContentType(tmp[i].trim());
+							}
+						}
+						else {
+							applicabilita.addContentType(applicabilita_ct);
+						}
+					}
+					
+					if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+						applicabilita.setMatch(applicabilita_pattern);
+					}
+					
+					if(applicabilita_status_min>0) {
+						applicabilita.setReturnCodeMin(applicabilita_status_min);
+					}
+					if(applicabilita_status_max>0) {
+						applicabilita.setReturnCodeMax(applicabilita_status_max);
+					}
+					
+					if(applicabilita_problem_detail!=null && !"".equals(applicabilita_problem_detail)){
+						applicabilita.setRestProblemDetail(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(applicabilita_problem_detail));
+					}
+					
+					if(applicabilita_empty_response!=null && !"".equals(applicabilita_empty_response)){
+						applicabilita.setRestEmptyResponse(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(applicabilita_empty_response));
+					}
+					
+					risposta.setApplicabilita(applicabilita);
+				}
+				
+				validazioneContenutiApplicativi.addRisposta(risposta);
+			}
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::readValidazioneContenutiApplicativi] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+				if(rs1!=null) rs1.close();
+				if(stm1!=null) stm1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+		}
+		
+		
+		return validazioneContenutiApplicativi;
+	}
+	
+	private static void _normalizePositions(ValidazioneContenutiApplicativi validazione) {
+		if(validazione==null || (validazione.sizeRichiestaList()<=0 && validazione.sizeRispostaList()<=0 )) {
+			return;
+		}
+		
+		// normalizzazione delle richieste
+		if(validazione.sizeRichiestaList()>0) {
+			List<Integer> posizioni = new ArrayList<Integer>();
+			HashMap<Integer, ValidazioneContenutiApplicativiRichiesta> regole = new HashMap<>();
+			for (ValidazioneContenutiApplicativiRichiesta regola : validazione.getRichiestaList()) {
+				posizioni.add(regola.getPosizione());
+				regole.put(regola.getPosizione(), regola);
+			}
+			while(validazione.sizeRichiestaList()>0) {
+				validazione.removeRichiesta(0);
+			}
+			Collections.sort( posizioni );
+			int posNew = 1;
+			for (Integer pos : posizioni) {
+				ValidazioneContenutiApplicativiRichiesta regola = regole.get(pos);
+				regola.setPosizione(posNew);
+				validazione.addRichiesta(regola);
+				posNew++;
+			}
+		}
+		
+		// normalizzazione delle risposte
+		if(validazione.sizeRispostaList()>0) {
+			List<Integer> posizioni = new ArrayList<Integer>();
+			HashMap<Integer, ValidazioneContenutiApplicativiRisposta> regole = new HashMap<>();
+			for (ValidazioneContenutiApplicativiRisposta regola : validazione.getRispostaList()) {
+				posizioni.add(regola.getPosizione());
+				regole.put(regola.getPosizione(), regola);
+			}
+			while(validazione.sizeRichiestaList()>0) {
+				validazione.removeRichiesta(0);
+			}
+			Collections.sort( posizioni );
+			int posNew = 1;
+			for (Integer pos : posizioni) {
+				ValidazioneContenutiApplicativiRisposta regola = regole.get(pos);
+				regola.setPosizione(posNew);
+				validazione.addRisposta(regola);
+				posNew++;
+			}
+		}
+	}
+	
+	private static void CRUDValidazione(int type, Connection con, ValidazioneContenutiApplicativi validazione, 
+			Long idProprietario, boolean portaDelegata) throws Exception {
+		
+		PreparedStatement updateStmt = null;
+		ResultSet rs = null;
+		try {
+			switch (type) {
+			case CREATE:
+		
+				_normalizePositions(validazione);
+				
+				if(validazione.getConfigurazione()!=null && validazione.getConfigurazione().getConfigurazionePattern()!=null && 
+						validazione.getConfigurazione().getConfigurazionePattern().sizePatternList()>0) {
+					
+					int n = 0;
+					for (ValidazioneContenutiApplicativiPatternRegola regola : validazione.getConfigurazione().getConfigurazionePattern().getPatternList()) {
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+						sqlQueryObject.addInsertTable(tableName);
+						sqlQueryObject.addInsertField("id_configurazione", "?");
+						sqlQueryObject.addInsertField("tipo_validazione", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("regola", "?");
+						sqlQueryObject.addInsertField("pattern_and", "?");
+						sqlQueryObject.addInsertField("pattern_not", "?");
+						String sqlQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(sqlQuery);
+						int index = 1;
+						updateStmt.setLong(index++, idProprietario);
+						updateStmt.setString(index++, CostantiConfigurazione.VALIDAZIONE_PATTERN_QUALSIASI);
+						updateStmt.setString(index++, regola.getNome());
+						updateStmt.setString(index++, regola.getRegola());
+						updateStmt.setString(index++, regola.getAnd() ? DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO) );
+						updateStmt.setString(index++, regola.getNot() ? DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO) );
+						updateStmt.executeUpdate();
+						updateStmt.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di pattern 'qualsiasi' con nome [" + regola.getNome()+"] alla validazione della porta con id [" + idProprietario + "]");
+					}
+					DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " regole di pattern 'qualsiasi' alla porta con id [" + idProprietario + "]");
+				}
+				
+				if(validazione.sizeRichiestaList()>0) {
+					
+					int n = 0;
+					for (ValidazioneContenutiApplicativiRichiesta richiesta : validazione.getRichiestaList()) {
+						
+						String applicabilita_azioni = null;
+						if(richiesta.getApplicabilita()!=null && richiesta.getApplicabilita().sizeAzioneList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int i = 0; i < richiesta.getApplicabilita().sizeAzioneList(); i++) {
+								if(i>0) {
+									bf.append(",");
+								}
+								bf.append(richiesta.getApplicabilita().getAzione(i));
+							}
+							if(bf.length()>0) {
+								applicabilita_azioni = bf.toString();
+							}
+						}
+						
+						String applicabilita_ct = null;
+						if(richiesta.getApplicabilita()!=null && richiesta.getApplicabilita().sizeContentTypeList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int i = 0; i < richiesta.getApplicabilita().sizeContentTypeList(); i++) {
+								if(i>0) {
+									bf.append(",");
+								}
+								bf.append(richiesta.getApplicabilita().getContentType(i));
+							}
+							if(bf.length()>0) {
+								applicabilita_ct = bf.toString();
+							}
+						}
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_porta", idProprietario , InsertAndGeneratedKeyJDBCType.LONG) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", richiesta.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", richiesta.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("stato", richiesta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(richiesta.getConfigurazione().getStato()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", richiesta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(richiesta.getConfigurazione().getTipo()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("mtom", richiesta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(richiesta.getConfigurazione().getAcceptMtomMessage()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soapaction", richiesta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(richiesta.getConfigurazione().getSoapAction()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("json", richiesta.getConfigurazione()!=null ? richiesta.getConfigurazione().getJsonSchema() : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						String pattern_and = null;
+						String pattern_not = null;
+						if(richiesta.getConfigurazione()!=null && richiesta.getConfigurazione().getConfigurazionePattern()!=null) {
+							pattern_and = richiesta.getConfigurazione().getConfigurazionePattern().isAnd() ?
+									 DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO); 
+						}
+						if(richiesta.getConfigurazione()!=null && richiesta.getConfigurazione().getConfigurazionePattern()!=null) {
+							pattern_not = richiesta.getConfigurazione().getConfigurazionePattern().isNot() ?
+									 DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO); 
+						}
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pattern_and", pattern_and , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pattern_not", pattern_not , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_azioni", applicabilita_azioni , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_ct", applicabilita_ct , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_pattern", (richiesta.getApplicabilita()!=null ? richiesta.getApplicabilita().getMatch() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						// Insert and return generated key
+						String tableName = null;
+						String columnIdName = null;
+						String sequence = null;
+						String tableForId = null;
+						if(portaDelegata) {
+							tableName = CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA;
+							columnIdName = CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA_COLUMN_ID;
+							sequence = CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA_SEQUENCE;
+							tableForId = CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA_TABLE_FOR_ID;
+						}
+						else {
+							tableName = CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA;
+							columnIdName = CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA_COLUMN_ID;
+							sequence = CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA_SEQUENCE;
+							tableForId = CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA_TABLE_FOR_ID;
+						}
+						long idrichiesta = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(tipoDB), 
+								new CustomKeyGeneratorObject(tableName, columnIdName, sequence, tableForId),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idrichiesta<=0){
+							throw new Exception("ID autoincrementale non ottenuto");
+						}
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta richiesta con nome [" + richiesta.getNome()+"] alla validazione della porta con id [" + idProprietario + "]");
+						
+						
+						if(richiesta.getConfigurazione()!=null && richiesta.getConfigurazione().getConfigurazionePattern()!=null && 
+								richiesta.getConfigurazione().getConfigurazionePattern().sizePatternList()>0) {
+							
+							int nr = 0;
+							for (ValidazioneContenutiApplicativiPatternRegola regola : validazione.getConfigurazione().getConfigurazionePattern().getPatternList()) {
+								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+								tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+								sqlQueryObject.addInsertTable(tableName);
+								sqlQueryObject.addInsertField("id_configurazione", "?");
+								sqlQueryObject.addInsertField("tipo_validazione", "?");
+								sqlQueryObject.addInsertField("nome", "?");
+								sqlQueryObject.addInsertField("regola", "?");
+								sqlQueryObject.addInsertField("pattern_and", "?");
+								sqlQueryObject.addInsertField("pattern_not", "?");
+								String sqlQuery = sqlQueryObject.createSQLInsert();
+								updateStmt = con.prepareStatement(sqlQuery);
+								int index = 1;
+								updateStmt.setLong(index++, idrichiesta);
+								updateStmt.setString(index++, CostantiConfigurazione.VALIDAZIONE_PATTERN_RICHIESTA);
+								updateStmt.setString(index++, regola.getNome());
+								updateStmt.setString(index++, regola.getRegola());
+								updateStmt.setString(index++, regola.getAnd() ? DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO) );
+								updateStmt.setString(index++, regola.getNot() ? DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO) );
+								updateStmt.executeUpdate();
+								updateStmt.close();
+								nr++;
+								DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di pattern 'richiesta' con nome [" + regola.getNome()+"] alla validazione della porta con id [" + idProprietario + "] e richiesta con id ["+idrichiesta+"]");
+							}
+							DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + nr + " regole di pattern 'richiesta' alla porta con id [" + idProprietario + "] e richiesta con id ["+idrichiesta+"]");
+						}
+						
+					}
+					DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " richieste alla porta con id [" + idProprietario + "]");
+				}
+					
+					
+				if(validazione.sizeRispostaList()>0) {
+					
+					int n = 0;
+					for (ValidazioneContenutiApplicativiRisposta risposta : validazione.getRispostaList()) {
+						
+						String applicabilita_azioni = null;
+						if(risposta.getApplicabilita()!=null && risposta.getApplicabilita().sizeAzioneList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int i = 0; i < risposta.getApplicabilita().sizeAzioneList(); i++) {
+								if(i>0) {
+									bf.append(",");
+								}
+								bf.append(risposta.getApplicabilita().getAzione(i));
+							}
+							if(bf.length()>0) {
+								applicabilita_azioni = bf.toString();
+							}
+						}
+						
+						String applicabilita_ct = null;
+						if(risposta.getApplicabilita()!=null && risposta.getApplicabilita().sizeContentTypeList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int i = 0; i < risposta.getApplicabilita().sizeContentTypeList(); i++) {
+								if(i>0) {
+									bf.append(",");
+								}
+								bf.append(risposta.getApplicabilita().getContentType(i));
+							}
+							if(bf.length()>0) {
+								applicabilita_ct = bf.toString();
+							}
+						}
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_porta", idProprietario , InsertAndGeneratedKeyJDBCType.LONG) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", risposta.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", risposta.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("stato", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getStato()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getTipo()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("mtom", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getAcceptMtomMessage()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soapaction", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getSoapAction()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("json", risposta.getConfigurazione()!=null ? risposta.getConfigurazione().getJsonSchema() : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						String pattern_and = null;
+						String pattern_not = null;
+						if(risposta.getConfigurazione()!=null && risposta.getConfigurazione().getConfigurazionePattern()!=null) {
+							pattern_and = risposta.getConfigurazione().getConfigurazionePattern().isAnd() ?
+									 DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO); 
+						}
+						if(risposta.getConfigurazione()!=null && risposta.getConfigurazione().getConfigurazionePattern()!=null) {
+							pattern_not = risposta.getConfigurazione().getConfigurazionePattern().isNot() ?
+									 DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO); 
+						}
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pattern_and", pattern_and , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pattern_not", pattern_not , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_azioni", applicabilita_azioni , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_ct", applicabilita_ct , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_pattern", (risposta.getApplicabilita()!=null ? risposta.getApplicabilita().getMatch() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_status_min", 
+								(risposta.getApplicabilita()!=null && risposta.getApplicabilita().getReturnCodeMin()!=null && 
+										risposta.getApplicabilita().getReturnCodeMin().intValue()>0) ? risposta.getApplicabilita().getReturnCodeMin().intValue() : null , InsertAndGeneratedKeyJDBCType.INT) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_status_max", 
+								(risposta.getApplicabilita()!=null && risposta.getApplicabilita().getReturnCodeMax()!=null && 
+										risposta.getApplicabilita().getReturnCodeMax().intValue()>0) ? risposta.getApplicabilita().getReturnCodeMax().intValue() : null , InsertAndGeneratedKeyJDBCType.INT) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_problem_detail", risposta.getApplicabilita()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getApplicabilita().getRestProblemDetail()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_empty_response", risposta.getApplicabilita()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getApplicabilita().getRestEmptyResponse()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						
+						// Insert and return generated key
+						String tableName = null;
+						String columnIdName = null;
+						String sequence = null;
+						String tableForId = null;
+						if(portaDelegata) {
+							tableName = CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA;
+							columnIdName = CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA_COLUMN_ID;
+							sequence = CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA_SEQUENCE;
+							tableForId = CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA_TABLE_FOR_ID;
+						}
+						else {
+							tableName = CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA;
+							columnIdName = CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA_COLUMN_ID;
+							sequence = CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA_SEQUENCE;
+							tableForId = CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA_TABLE_FOR_ID;
+						}
+						long idrisposta = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(tipoDB), 
+								new CustomKeyGeneratorObject(tableName, columnIdName, sequence, tableForId),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idrisposta<=0){
+							throw new Exception("ID autoincrementale non ottenuto");
+						}
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta risposta con nome [" + risposta.getNome()+"] alla validazione della porta con id [" + idProprietario + "]");
+						
+						
+						if(risposta.getConfigurazione()!=null && risposta.getConfigurazione().getConfigurazionePattern()!=null && 
+								risposta.getConfigurazione().getConfigurazionePattern().sizePatternList()>0) {
+							
+							int nr = 0;
+							for (ValidazioneContenutiApplicativiPatternRegola regola : validazione.getConfigurazione().getConfigurazionePattern().getPatternList()) {
+								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+								tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+								sqlQueryObject.addInsertTable(tableName);
+								sqlQueryObject.addInsertField("id_configurazione", "?");
+								sqlQueryObject.addInsertField("tipo_validazione", "?");
+								sqlQueryObject.addInsertField("nome", "?");
+								sqlQueryObject.addInsertField("regola", "?");
+								sqlQueryObject.addInsertField("pattern_and", "?");
+								sqlQueryObject.addInsertField("pattern_not", "?");
+								String sqlQuery = sqlQueryObject.createSQLInsert();
+								updateStmt = con.prepareStatement(sqlQuery);
+								int index = 1;
+								updateStmt.setLong(index++, idrisposta);
+								updateStmt.setString(index++, CostantiConfigurazione.VALIDAZIONE_PATTERN_RISPOSTA);
+								updateStmt.setString(index++, regola.getNome());
+								updateStmt.setString(index++, regola.getRegola());
+								updateStmt.setString(index++, regola.getAnd() ? DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO) );
+								updateStmt.setString(index++, regola.getNot() ? DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO) : DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.DISABILITATO) );
+								updateStmt.executeUpdate();
+								updateStmt.close();
+								nr++;
+								DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di pattern 'risposta' con nome [" + regola.getNome()+"] alla validazione della porta con id [" + idProprietario + "] e risposta con id ["+idrisposta+"]");
+							}
+							DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + nr + " regole di pattern 'risposta' alla porta con id [" + idProprietario + "] e risposta con id ["+idrisposta+"]");
+						}
+						
+					}
+					DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " risposte alla porta con id [" + idProprietario + "]");
+				}
+
+				break;
+				
+			case UPDATE:
+				
+				// Per la delete recupero l'immagine attuale del configurazione
+				ValidazioneContenutiApplicativi validazioneOld = DriverConfigurazioneDB_LIB.readValidazioneContenutiApplicativi(idProprietario, portaDelegata, con);
+				if(validazioneOld!=null) {
+					CRUDValidazione(DELETE, con, validazioneOld, idProprietario, portaDelegata);
+				}
+				
+				// Creo la nuova immagine
+				if(validazione!=null) {
+					
+					_normalizePositions(validazione);
+					
+					CRUDValidazione(CREATE, con, validazione, idProprietario, portaDelegata);
+				}
+				break;
+				
+			case DELETE:
+				
+				if(validazione==null) {
+					break;
+				}
+				
+				String tableName_pattern = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN;
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(tableName_pattern);
+				sqlQueryObject.addWhereCondition("id_configurazione=?");
+				sqlQueryObject.addWhereCondition("tipo_validazione=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				String updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idProprietario);
+				updateStmt.setString(2, CostantiConfigurazione.VALIDAZIONE_PATTERN_QUALSIASI);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				
+				String tableName_richiesta = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA;
+				List<Long> idValRichiestaList = new ArrayList<>();
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(tableName_richiesta);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLQuery();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idProprietario);
+				rs = updateStmt.executeQuery();
+				while(rs.next()) {
+					idValRichiestaList.add(rs.getLong("id"));
+				}
+				rs.close();
+				updateStmt.close();
+				if(!idValRichiestaList.isEmpty()) {
+					for (Long idRichiesta : idValRichiestaList) {
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(tableName_pattern);
+						sqlQueryObject.addWhereCondition("id_configurazione=?");
+						sqlQueryObject.addWhereCondition("tipo_validazione=?");
+						sqlQueryObject.setANDLogicOperator(true);
+						updateQuery = sqlQueryObject.createSQLDelete();
+						updateStmt = con.prepareStatement(updateQuery);
+						updateStmt.setLong(1, idRichiesta);
+						updateStmt.setString(2, CostantiConfigurazione.VALIDAZIONE_PATTERN_RICHIESTA);
+						updateStmt.executeUpdate();
+						updateStmt.close();
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(tableName_richiesta);
+						sqlQueryObject.addWhereCondition("id_porta=?");
+						sqlQueryObject.setANDLogicOperator(true);
+						updateQuery = sqlQueryObject.createSQLDelete();
+						updateStmt = con.prepareStatement(updateQuery);
+						updateStmt.setLong(1, idProprietario);
+						updateStmt.executeUpdate();
+						updateStmt.close();
+						
+					}
+				}
+				
+				String tableName_risposta = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA;
+				List<Long> idValRispostaList = new ArrayList<>();
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(tableName_risposta);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLQuery();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idProprietario);
+				rs = updateStmt.executeQuery();
+				while(rs.next()) {
+					idValRispostaList.add(rs.getLong("id"));
+				}
+				rs.close();
+				updateStmt.close();
+				if(!idValRispostaList.isEmpty()) {
+					for (Long idRisposta : idValRispostaList) {
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(tableName_pattern);
+						sqlQueryObject.addWhereCondition("id_configurazione=?");
+						sqlQueryObject.addWhereCondition("tipo_validazione=?");
+						sqlQueryObject.setANDLogicOperator(true);
+						updateQuery = sqlQueryObject.createSQLDelete();
+						updateStmt = con.prepareStatement(updateQuery);
+						updateStmt.setLong(1, idRisposta);
+						updateStmt.setString(2, CostantiConfigurazione.VALIDAZIONE_PATTERN_RISPOSTA);
+						updateStmt.executeUpdate();
+						updateStmt.close();
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(tableName_risposta);
+						sqlQueryObject.addWhereCondition("id_porta=?");
+						sqlQueryObject.setANDLogicOperator(true);
+						updateQuery = sqlQueryObject.createSQLDelete();
+						updateStmt = con.prepareStatement(updateQuery);
+						updateStmt.setLong(1, idProprietario);
+						updateStmt.executeUpdate();
+						updateStmt.close();
+						
+					}
+				}
+				
+				break;
+			}
+		
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDValidazione] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDValidazione] Exception [" + se.getMessage() + "].",se);
+		} finally {
+	
+			try {
+				if(rs!=null)rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			
+		}
+	}
 	
 	
 	

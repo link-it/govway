@@ -27,8 +27,10 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="validazione-contenuti-applicativi"&gt;
  *     &lt;sequence&gt;
+ *         &lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config/management}validazione-contenuti-applicativi-stato" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="tipo" type="{http://www.openspcoop2.org/core/config}ValidazioneContenutiApplicativiTipo" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="accept-mtom-message" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" /&gt;
  *     &lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -41,6 +43,8 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
+import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiApplicativiStato;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 
 /**     
  * ValidazioneContenutiApplicativi
@@ -52,13 +56,27 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "validazione-contenuti-applicativi", namespace="http://www.openspcoop2.org/core/config/management", propOrder = {
+    "configurazione",
     "stato",
-    "tipo"
+    "tipo",
+    "acceptMtomMessage"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "validazione-contenuti-applicativi")
 public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
+	
+	@XmlElement(name="configurazione",required=false,nillable=false)
+	private ValidazioneContenutiApplicativiStato configurazione;
+	
+	public void setConfigurazione(ValidazioneContenutiApplicativiStato configurazione){
+		this.configurazione = configurazione;
+	}
+	
+	public ValidazioneContenutiApplicativiStato getConfigurazione(){
+		return this.configurazione;
+	}
+	
 	
 	@XmlElement(name="stato",required=false,nillable=false)
 	private StatoFunzionalitaConWarning stato;
@@ -81,6 +99,18 @@ public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans
 	
 	public ValidazioneContenutiApplicativiTipo getTipo(){
 		return this.tipo;
+	}
+	
+	
+	@XmlElement(name="accept-mtom-message",required=false,nillable=false)
+	private StatoFunzionalita acceptMtomMessage;
+	
+	public void setAcceptMtomMessage(StatoFunzionalita acceptMtomMessage){
+		this.acceptMtomMessage = acceptMtomMessage;
+	}
+	
+	public StatoFunzionalita getAcceptMtomMessage(){
+		return this.acceptMtomMessage;
 	}
 	
 	

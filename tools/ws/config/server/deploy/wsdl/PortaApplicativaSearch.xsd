@@ -133,11 +133,33 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	
+	<xsd:element name="validazione-contenuti-applicativi-pattern" type="tns:validazione-contenuti-applicativi-pattern" />
+	<xsd:complexType name="validazione-contenuti-applicativi-pattern">
+		<xsd:sequence>
+ 			<xsd:element name="and" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="not" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="validazione-contenuti-applicativi-stato" type="tns:validazione-contenuti-applicativi-stato" />
+	<xsd:complexType name="validazione-contenuti-applicativi-stato">
+		<xsd:sequence>
+ 			<xsd:element name="configurazione-pattern" type="tns:validazione-contenuti-applicativi-pattern" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="stato" type="api:StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="api:ValidazioneContenutiApplicativiTipo" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="accept-mtom-message" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="soap-action" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="json-schema" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
 	<xsd:element name="validazione-contenuti-applicativi" type="tns:validazione-contenuti-applicativi" />
 	<xsd:complexType name="validazione-contenuti-applicativi">
 		<xsd:sequence>
+ 			<xsd:element name="configurazione" type="tns:validazione-contenuti-applicativi-stato" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="stato" type="api:StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo" type="api:ValidazioneContenutiApplicativiTipo" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="accept-mtom-message" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 

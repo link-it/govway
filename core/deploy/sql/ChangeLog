@@ -1,3 +1,19 @@
+2020-11-02  Andrea Poli <apoli@link.it>
+
+	Aggiunte nuove funzionalità per la validazione dei contenuti
+
+	ALTER TABLE porte_applicative ADD COLUMN validazione_contenuti_soapa VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN validazione_contenuti_json VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN validazione_contenuti_pat_and VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN validazione_contenuti_pat_not VARCHAR(255);
+	Aggiunte tabelle pa_val_pattern, pa_val_richiesta e pa_val_risposta
+
+	ALTER TABLE porte_delegate ADD COLUMN validazione_contenuti_soapa VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN validazione_contenuti_json VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN validazione_contenuti_pat_and VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN validazione_contenuti_pat_not VARCHAR(255);
+	Aggiunte tabelle pd_val_pattern, pd_val_richiesta e pd_val_risposta
+
 2020-10-27  Andrea Poli <apoli@link.it>
 
 	Estesa lunghezza massima di una url a 4000 caratteri.

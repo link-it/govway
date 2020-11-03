@@ -1,3 +1,6 @@
+DELETE FROM pd_val_risposta;
+DELETE FROM pd_val_richiesta;
+DELETE FROM pd_val_pattern;
 DELETE FROM pd_transform_risp_hdr;
 DELETE FROM pd_transform_risp;
 DELETE FROM pd_transform_url;

@@ -1,3 +1,6 @@
+DELETE FROM pa_val_risposta;
+DELETE FROM pa_val_richiesta;
+DELETE FROM pa_val_pattern;
 DELETE FROM pa_transform_risp_hdr;
 DELETE FROM pa_transform_risp;
 DELETE FROM pa_transform_url;

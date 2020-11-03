@@ -46,6 +46,9 @@
                                 <linkit:sql-table object-name="porte-applicative-trasformazioni-url" object-type="porte-applicative-trasformazioni-url"/>
                                 <linkit:sql-table object-name="porte-applicative-trasformazioni-risposta" object-type="porte-applicative-trasformazioni-risposta"/>
                                 <linkit:sql-table object-name="porte-applicative-trasformazioni-header-risposta" object-type="porte-applicative-trasformazioni-header-risposta"/>
+                                <linkit:sql-table object-name="porte-applicative-validazione-pattern" object-type="porte-applicative-validazione-pattern"/>
+                                <linkit:sql-table object-name="porte-applicative-validazione-richiesta" object-type="porte-applicative-validazione-richiesta"/>
+                                <linkit:sql-table object-name="porte-applicative-validazione-risposta" object-type="porte-applicative-validazione-risposta"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -411,9 +414,11 @@ Se attivo le regole specifiche di trattamento della richiesta e/o della risposta
                                 <linkit:sql-column-mapping name="validazione_contenuti_tipo"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata
 - 'xsd': il messaggio viene validato rispetto agli schemi XSD registrati nell'accordo di servizio
-- 'wsdl': si tratta di una validazione più rigida rispetto a quella xsd, poichè oltre a verificare che il messaggio sia valido verifica anche che sia quello atteso per l'operazione in corso
-- 'openspcoop': validazione equivalente a quella 'wsdl' dove tutte le informazioni prelevate tipicamente in un wsdl (style,use,soapAction,...) sono invece state indicate direttamente sul registro dei servizi della PdD]]></linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[wsdl/interface/xsd]]></linkit:sql-column-comment>
+- 'json': il messaggio viene validato rispetto agli schemi Json registrati nell'accordo di servizio
+- 'pattern': il messaggio viene validato rispetto ai pattern registrati nell'accordo di servizio
+- 'interface': si tratta di una validazione più rigida rispetto a quella xsd, poichè oltre a verificare che il messaggio sia valido verifica anche che sia quello atteso per l'operazione in corso
+- 'openspcoop': validazione equivalente a quella 'interface' dove tutte le informazioni prelevate tipicamente in una interfaccia (style,use,soapAction,...) sono invece state indicate direttamente sul registro dei servizi]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[openspcoop/interface/xsd/json/pattern]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -426,6 +431,54 @@ Se attivo le regole specifiche di trattamento della richiesta e/o della risposta
                                 <linkit:sql-column-mapping name="validazione_contenuti_mtom"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata ed il messaggio è nel formato MTOM.
 Indicazione se prima di procedere con la validazione tramite schemi xsd si deve effettuare una trasformazione temporanea degli elementi MTOM/XOP-Message in modo da poter superare una validazione xsd (abilitato/disabilitato)]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="validazione_contenuti_soapa" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="validazione_contenuti_soapa"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata la validazione della SOAPAction nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'interface' o 'openspcoop' ed il messaggio è nel formato SOAP (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="validazione_contenuti_json" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="validazione_contenuti_json"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Nome nell'interfaccia json caricata come allegato sull'API, nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'json' ed il messaggio è nel formato REST.]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Nome interfaccia json]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="validazione_contenuti_pat_and" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="validazione_contenuti_pat_and"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata una validazione in 'and' dei pattern forniti nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'pattern' (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="validazione_contenuti_pat_not" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="validazione_contenuti_pat_not"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata una validazione 'not' dei pattern forniti nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'pattern' (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -3115,6 +3168,495 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
     </xsd:element>
     
     
+    <xsd:element name="porte-applicative-validazione-pattern">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_val_pattern"
+                        comment="Elenco di pattern associati alla porta">
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="tipo_validazione" />
+                            <linkit:sql-table-unique-column name="id_configurazione" />
+                            <linkit:sql-table-unique-column name="nome" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_configurazione" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_configurazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id), pa_val_richiesta(id) o pa_val_risposta(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo_validazione" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Tipo di validazione, all'interno della porta applicativa tra 'qualsiasi', 'richiesta' e 'risposta'</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della regola</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="regola" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="regola" text="true"/>
+                                <linkit:sql-ddl-column-comment>Regole da applicare per la validazione</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern_and" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern_and"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata una validazione in 'and' dei pattern forniti nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'pattern' (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern_not" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern_not"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata una validazione 'not' dei pattern forniti nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'pattern' (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-validazione-richiesta">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_val_richiesta"
+                        comment="Elenco di regole specifiche di validazione della richiesta associate alla porta">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="nome" />
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="posizione" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della regola, all'interno della porta applicativa</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="posizione" type="xsd:integer" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Posizione di applicabilità della regola, all'interno della porta applicativa</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="stato" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Modalità di validazione del contenuto applicativo (abilitato/disabilitato/warningOnly)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata
+- 'xsd': il messaggio viene validato rispetto agli schemi XSD registrati nell'accordo di servizio
+- 'json': il messaggio viene validato rispetto agli schemi Json registrati nell'accordo di servizio
+- 'pattern': il messaggio viene validato rispetto ai pattern registrati nell'accordo di servizio
+- 'interface': si tratta di una validazione più rigida rispetto a quella xsd, poichè oltre a verificare che il messaggio sia valido verifica anche che sia quello atteso per l'operazione in corso
+- 'openspcoop': validazione equivalente a quella 'interface' dove tutte le informazioni prelevate tipicamente in una interfaccia (style,use,soapAction,...) sono invece state indicate direttamente sul registro dei servizi]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[openspcoop/interface/xsd/json/pattern]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="mtom" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="mtom"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata ed il messaggio è nel formato MTOM.
+Indicazione se prima di procedere con la validazione tramite schemi xsd si deve effettuare una trasformazione temporanea degli elementi MTOM/XOP-Message in modo da poter superare una validazione xsd (abilitato/disabilitato)]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soapaction" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soapaction"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata la validazione della SOAPAction nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'interface' o 'openspcoop' ed il messaggio è nel formato SOAP (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="json" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="json"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Nome nell'interfaccia json caricata come allegato sull'API, nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'json' ed il messaggio è nel formato REST.]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Nome interfaccia json]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern_and" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern_and"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata una validazione in 'and' dei pattern forniti nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'pattern' (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern_not" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern_not"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata una validazione 'not' dei pattern forniti nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'pattern' (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_azioni" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_azioni" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al nome dell'azione invocata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_ct" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_ct" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al content type</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_pattern" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_pattern" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base ad un pattern (xpath o jsonpath)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-validazione-risposta">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_val_risposta"
+                        comment="Elenco di regole specifiche di validazione della risposta associate alla porta">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="nome" />
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="posizione" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della regola, all'interno della porta applicativa</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="posizione" type="xsd:integer" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Posizione di applicabilità della regola, all'interno della porta applicativa</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="stato" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Modalità di validazione del contenuto applicativo (abilitato/disabilitato/warningOnly)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata
+- 'xsd': il messaggio viene validato rispetto agli schemi XSD registrati nell'accordo di servizio
+- 'json': il messaggio viene validato rispetto agli schemi Json registrati nell'accordo di servizio
+- 'pattern': il messaggio viene validato rispetto ai pattern registrati nell'accordo di servizio
+- 'interface': si tratta di una validazione più rigida rispetto a quella xsd, poichè oltre a verificare che il messaggio sia valido verifica anche che sia quello atteso per l'operazione in corso
+- 'openspcoop': validazione equivalente a quella 'interface' dove tutte le informazioni prelevate tipicamente in una interfaccia (style,use,soapAction,...) sono invece state indicate direttamente sul registro dei servizi]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[openspcoop/interface/xsd/json/pattern]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="mtom" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="mtom"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata ed il messaggio è nel formato MTOM.
+Indicazione se prima di procedere con la validazione tramite schemi xsd si deve effettuare una trasformazione temporanea degli elementi MTOM/XOP-Message in modo da poter superare una validazione xsd (abilitato/disabilitato)]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="json" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="json"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Nome nell'interfaccia json caricata come allegato sull'API, nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'json' ed il messaggio è nel formato REST.]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Nome interfaccia json]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern_and" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern_and"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata una validazione in 'and' dei pattern forniti nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'pattern' (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern_not" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern_not"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere effettuata una validazione 'not' dei pattern forniti nel caso la validazione sia abilitata (vedi colonna 'validazione_contenuti_stato') con tipo 'pattern' (abilitato/disabilitato).]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_azioni" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_azioni" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al nome dell'azione invocata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_ct" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_ct" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al content type</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_pattern" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_pattern" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base ad un pattern (xpath o jsonpath)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_status_min" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_status_min" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al valore minimo del return code http</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_status_max" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_status_max" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al valore massimo del return code http</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_problem_detail" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_problem_detail" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, se il payload contiene un rest problem detail (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_empty_response" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_empty_response" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, se il payload contiene una risposta vuota (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>    
     
     
     

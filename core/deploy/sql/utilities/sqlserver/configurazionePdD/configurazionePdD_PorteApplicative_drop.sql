@@ -1,4 +1,9 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_pa_val_risposta_2 ON pa_val_risposta ;
+-- DROP INDEX index_pa_val_risposta_1 ON pa_val_risposta ;
+-- DROP INDEX index_pa_val_richiesta_2 ON pa_val_richiesta ;
+-- DROP INDEX index_pa_val_richiesta_1 ON pa_val_richiesta ;
+-- DROP INDEX index_pa_val_pattern_1 ON pa_val_pattern ;
 -- DROP INDEX idx_pa_trasf_resp_2 ON pa_transform_risp ;
 -- DROP INDEX idx_pa_trasf_resp_1 ON pa_transform_risp ;
 -- DROP INDEX index_pa_transform_sa_1 ON pa_transform_sa ;
@@ -32,6 +37,9 @@
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
 -- DROP INDEX index_porte_applicative_3 ON porte_applicative ;
 -- DROP INDEX index_porte_applicative_2 ON porte_applicative ;
+DROP TABLE pa_val_risposta;
+DROP TABLE pa_val_richiesta;
+DROP TABLE pa_val_pattern;
 DROP TABLE pa_transform_risp_hdr;
 DROP TABLE pa_transform_risp;
 DROP TABLE pa_transform_url;

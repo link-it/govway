@@ -56,6 +56,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiPattern }
+     */
+    public ValidazioneContenutiApplicativiPattern createValidazioneContenutiApplicativiPattern() {
+        return new ValidazioneContenutiApplicativiPattern();
+    }
+    
+    /**
      * Create an instance of {@link InvocazionePortaGestioneErrore }
      */
     public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
@@ -88,6 +95,13 @@ public class ObjectFactory {
      */
     public MtomProcessorFlow createMtomProcessorFlow() {
         return new MtomProcessorFlow();
+    }
+    
+    /**
+     * Create an instance of {@link ValidazioneContenutiApplicativiStato }
+     */
+    public ValidazioneContenutiApplicativiStato createValidazioneContenutiApplicativiStato() {
+        return new ValidazioneContenutiApplicativiStato();
     }
     
     /**

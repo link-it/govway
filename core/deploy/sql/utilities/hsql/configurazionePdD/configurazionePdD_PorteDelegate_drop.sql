@@ -1,4 +1,9 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_pd_val_risposta_2;
+-- DROP INDEX index_pd_val_risposta_1;
+-- DROP INDEX index_pd_val_richiesta_2;
+-- DROP INDEX index_pd_val_richiesta_1;
+-- DROP INDEX index_pd_val_pattern_1;
 -- DROP INDEX idx_pd_trasf_resp_2;
 -- DROP INDEX idx_pd_trasf_resp_1;
 -- DROP INDEX index_pd_transform_sa_1;
@@ -25,6 +30,12 @@
 -- DROP INDEX INDEX_PD_SA;
 -- DROP INDEX index_porte_delegate_3;
 -- DROP INDEX index_porte_delegate_2;
+DROP TABLE pd_val_risposta_init_seq;
+DROP TABLE pd_val_risposta;
+DROP TABLE pd_val_richiesta_init_seq;
+DROP TABLE pd_val_richiesta;
+DROP TABLE pd_val_pattern_init_seq;
+DROP TABLE pd_val_pattern;
 DROP TABLE pd_transform_risp_hdr_init_seq;
 DROP TABLE pd_transform_risp_hdr;
 DROP TABLE pd_transform_risp_init_seq;
@@ -69,6 +80,9 @@ DROP TABLE porte_delegate_sa_init_seq;
 DROP TABLE porte_delegate_sa;
 DROP TABLE porte_delegate_init_seq;
 DROP TABLE porte_delegate;
+DROP SEQUENCE seq_pd_val_risposta;
+DROP SEQUENCE seq_pd_val_richiesta;
+DROP SEQUENCE seq_pd_val_pattern;
 DROP SEQUENCE seq_pd_transform_risp_hdr;
 DROP SEQUENCE seq_pd_transform_risp;
 DROP SEQUENCE seq_pd_transform_url;

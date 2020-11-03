@@ -69,10 +69,18 @@ CREATE TABLE porte_delegate
 	ricevuta_asincrona_asim VARCHAR(255),
 	-- abilitato/disabilitato/warningOnly
 	validazione_contenuti_stato VARCHAR(255),
-	-- wsdl/interface/xsd
+	-- openspcoop/interface/xsd/json/pattern
 	validazione_contenuti_tipo VARCHAR(255),
 	-- abilitato/disabilitato
 	validazione_contenuti_mtom VARCHAR(255),
+	-- abilitato/disabilitato
+	validazione_contenuti_soapa VARCHAR(255),
+	-- Nome interfaccia json
+	validazione_contenuti_json VARCHAR(255),
+	-- abilitato/disabilitato
+	validazione_contenuti_pat_and VARCHAR(255),
+	-- abilitato/disabilitato
+	validazione_contenuti_pat_not VARCHAR(255),
 	-- lista di tipi separati dalla virgola
 	integrazione VARCHAR(255),
 	-- scadenza correlazione applicativa
@@ -580,5 +588,106 @@ CREATE TABLE pd_transform_risp_hdr
 
 -- index
 CREATE INDEX idx_pd_trasf_hdr_resp_1 ON pd_transform_risp_hdr (id_transform_risp);
+
+
+
+CREATE TABLE pd_val_pattern
+(
+	id_configurazione BIGINT NOT NULL,
+	tipo_validazione VARCHAR(255) NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	regola CLOB NOT NULL,
+	-- abilitato/disabilitato
+	pattern_and VARCHAR(255),
+	-- abilitato/disabilitato
+	pattern_not VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT unique_pd_val_pattern_1 UNIQUE (tipo_validazione,id_configurazione,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_pd_val_pattern PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pd_val_pattern_1 ON pd_val_pattern (tipo_validazione,id_configurazione,nome);
+
+
+
+CREATE TABLE pd_val_richiesta
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
+	-- abilitato/disabilitato/warningOnly
+	stato VARCHAR(255) NOT NULL,
+	-- openspcoop/interface/xsd/json/pattern
+	tipo VARCHAR(255),
+	-- abilitato/disabilitato
+	mtom VARCHAR(255),
+	-- abilitato/disabilitato
+	soapaction VARCHAR(255),
+	-- Nome interfaccia json
+	json VARCHAR(255),
+	-- abilitato/disabilitato
+	pattern_and VARCHAR(255),
+	-- abilitato/disabilitato
+	pattern_not VARCHAR(255),
+	applicabilita_azioni CLOB,
+	applicabilita_ct CLOB,
+	applicabilita_pattern CLOB,
+	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT unique_pd_val_richiesta_1 UNIQUE (id_porta,nome),
+	CONSTRAINT unique_pd_val_richiesta_2 UNIQUE (id_porta,posizione),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_val_richiesta_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_val_richiesta PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pd_val_richiesta_1 ON pd_val_richiesta (id_porta,nome);
+CREATE UNIQUE INDEX index_pd_val_richiesta_2 ON pd_val_richiesta (id_porta,posizione);
+
+
+
+CREATE TABLE pd_val_risposta
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
+	-- abilitato/disabilitato/warningOnly
+	stato VARCHAR(255) NOT NULL,
+	-- openspcoop/interface/xsd/json/pattern
+	tipo VARCHAR(255),
+	-- abilitato/disabilitato
+	mtom VARCHAR(255),
+	-- Nome interfaccia json
+	json VARCHAR(255),
+	-- abilitato/disabilitato
+	pattern_and VARCHAR(255),
+	-- abilitato/disabilitato
+	pattern_not VARCHAR(255),
+	applicabilita_azioni CLOB,
+	applicabilita_ct CLOB,
+	applicabilita_pattern CLOB,
+	applicabilita_status_min INT,
+	applicabilita_status_max INT,
+	applicabilita_problem_detail VARCHAR(255),
+	applicabilita_empty_response VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT unique_pd_val_risposta_1 UNIQUE (id_porta,nome),
+	CONSTRAINT unique_pd_val_risposta_2 UNIQUE (id_porta,posizione),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_val_risposta_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_val_risposta PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pd_val_risposta_1 ON pd_val_risposta (id_porta,nome);
+CREATE UNIQUE INDEX index_pd_val_risposta_2 ON pd_val_risposta (id_porta,posizione);
 
 

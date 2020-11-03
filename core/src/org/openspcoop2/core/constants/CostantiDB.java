@@ -120,7 +120,13 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER = "pa_transform_risp_hdr";
     public static final String PORTE_APPLICATIVE_VALIDAZIONE_PATTERN = "pa_val_pattern";
     public static final String PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA = "pa_val_richiesta";
+    public static final String PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA_COLUMN_ID = "id";
+    public static final String PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA_SEQUENCE = "seq_pa_val_richiesta";
+    public static final String PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA_TABLE_FOR_ID = "pa_val_richiesta_init_seq";
     public static final String PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA = "pa_val_risposta";
+    public static final String PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA_COLUMN_ID = "id";
+    public static final String PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA_SEQUENCE = "seq_pa_val_risposta";
+    public static final String PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA_TABLE_FOR_ID = "pa_val_risposta_init_seq";
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
     public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP = "pd_auth_properties";
@@ -151,7 +157,13 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER = "pd_transform_risp_hdr";
     public static final String PORTE_DELEGATE_VALIDAZIONE_PATTERN = "pd_val_pattern";
     public static final String PORTE_DELEGATE_VALIDAZIONE_RICHIESTA = "pd_val_richiesta";
+    public static final String PORTE_DELEGATE_VALIDAZIONE_RICHIESTA_COLUMN_ID = "id";
+    public static final String PORTE_DELEGATE_VALIDAZIONE_RICHIESTA_SEQUENCE = "seq_pd_val_richiesta";
+    public static final String PORTE_DELEGATE_VALIDAZIONE_RICHIESTA_TABLE_FOR_ID = "pd_val_richiesta_init_seq";
     public static final String PORTE_DELEGATE_VALIDAZIONE_RISPOSTA = "pd_val_risposta";
+    public static final String PORTE_DELEGATE_VALIDAZIONE_RISPOSTA_COLUMN_ID = "id";
+    public static final String PORTE_DELEGATE_VALIDAZIONE_RISPOSTA_SEQUENCE = "seq_pd_val_risposta";
+    public static final String PORTE_DELEGATE_VALIDAZIONE_RISPOSTA_TABLE_FOR_ID = "pd_val_risposta_init_seq";
     public static final String REGISTRI = "registri";
     public static final String SERVIZI_PDD = "servizi_pdd";
     public static final String SERVIZI_PDD_FILTRI = "servizi_pdd_filtri";
