@@ -1,3 +1,10 @@
+2020-11-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	(https://github.com/link-it/govway/issues/72)
+	Nell'ultimo rinnovo di certificato del GAD di Collaudo, pagoPA ha modificato il subject.
+	Adeguata la configurazione interna della GovLet.
+
 2020-10-30  Francesco Scarlato <scarlato@link.it>
 
 	* [GovWayCore, ProtocolloModIPA, TestsuiteProtocolloModIPA]
