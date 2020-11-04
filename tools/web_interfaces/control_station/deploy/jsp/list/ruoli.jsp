@@ -175,6 +175,8 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 						BodyElement urlElement = dialog.getBody().remove(0);
 						
 						request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+						
+						String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
 						%>
 						<div class="iconUsoBoxList" id="<%=idDivIconUso %>" <%=deTip %> >
 							<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
@@ -183,7 +185,7 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 							</span>
        					</div>
 						<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
-							<jsp:param name="idFinestraModale" value="idFinestraModale_<%=numeroEntry %>"/>
+							<jsp:param name="idFinestraModale" value="<%=identificativoFinestraModale %>"/>
 						</jsp:include>
 						<script type="text/javascript">
 						// info

@@ -570,6 +570,8 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 															BodyElement urlElement = dialog.getBody().remove(0);
 															
 															request.setAttribute("idFinestraModale_"+i, de.getDialog());
+															
+															String identificativoFinestraModale = "idFinestraModale_" + i;
 															%>
 															<div class="iconUsoBoxList" id="<%=idDivIconUso %>" <%=deTip %> >
 																<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
@@ -578,7 +580,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 																</span>
 									       					</div>
 															<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
-																<jsp:param name="idFinestraModale" value="idFinestraModale_<%=i %>"/>
+																<jsp:param name="idFinestraModale" value="<%=identificativoFinestraModale %>"/>
 															</jsp:include>
 															<script type="text/javascript">
 															// info
