@@ -94,6 +94,26 @@
 		<echo message="Eliminazione configurazione effettuata" />
 	</target>
 
+	<target name="load_config">
+		<echo message="Caricamento configurazione in corso (delete) ..." />
+		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+			<arg value="false" />
+		        <classpath>
+		                <path refid="karate_testsuite" />
+		                <pathelement path="${build_testsuite}"/>
+		        </classpath>
+		</java>
+		<echo message="Caricamento configurazione in corso (create) ..." />
+		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+			<arg value="true" />
+		        <classpath>
+		                <path refid="karate_testsuite" />
+		                <pathelement path="${build_testsuite}"/>
+		        </classpath>
+		</java>
+		<echo message="Caricamento configurazione completata" />
+	</target>
+
 	<target name="run_test">
 
 		<delete dir="${output}"/>
