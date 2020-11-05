@@ -206,9 +206,9 @@
 				<include name="${xalan_serializer_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2_libs}/">
-				<include name="openspcoop2_utils_*.jar"/>
-				<include name="openspcoop2_core_*.jar"/>
-				<include name="openspcoop2_message_*.jar"/>
+				<include name="openspcoop2_utils*.jar"/>
+				<include name="openspcoop2_core*.jar"/>
+				<include name="openspcoop2_message*.jar"/>
 			</lib>
 		</war>
 		
