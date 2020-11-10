@@ -2135,7 +2135,181 @@ public class TestOpenApi4j {
 			
 		}
 		
-		System.out.println("Test #15 completato\n\n");
+		System.out.println("Test #16 completato\n\n");
+		
+		
+		
+		
+		
+		System.out.println("Test #17 (Problem Detail)");
+		
+		String json17_fault_type = "{\n"+
+				   "\"type\": \"https://example.com/probs/out-of-credit\","+
+				   "\"altro\": \"You do not have enough credit.\","+
+				   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+				    "}";
+		String json17_fault_title = "{\n"+
+				   "\"codice\": \"https://example.com/probs/out-of-credit\","+
+				   "\"title\": \"You do not have enough credit.\","+
+				   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+				    "}";
+		String json17_fault_status = "{\n"+
+				   "\"altro\": \"https://example.com/probs/out-of-credit\","+
+				   "\"status\": 200,"+
+				   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+				    "}";
+		String json17_fault_type_title = "{\n"+
+				   "\"type\": \"https://example.com/probs/out-of-credit\","+
+				   "\"title\": \"You do not have enough credit.\","+
+				   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+				    "}";
+		String json17_fault_type_status = "{\n"+
+				   "\"type\": \"https://example.com/probs/out-of-credit\","+
+				   "\"status\": 200,"+
+				   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+				    "}";
+		String json17_fault_title_status = "{\n"+
+				   "\"altro\": \"https://example.com/probs/out-of-credit\","+
+				   "\"title\": \"You do not have enough credit.\","+
+				   "\"status\": 200,"+
+				   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+				    "}";
+		String json17_fault_type_title_status = "{\n"+
+				   "\"type\": \"https://example.com/probs/out-of-credit\","+
+				   "\"title\": \"You do not have enough credit.\","+
+				   "\"status\": 200,"+
+				   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+				    "}";
+		String json17_fault_none = "{\n"+
+				   "\"altro\": \"https://example.com/probs/out-of-credit\","+
+				   "\"error\": 200,"+
+				   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+				    "}";
+		
+		String testUrl17= baseUri+"/problem/"+UUID.randomUUID().toString();
+		List<Integer> valori_test17 = new ArrayList<Integer>();
+		List<String> msg_test17 = new ArrayList<String>();
+		List<Boolean> esiti_test17 = new ArrayList<Boolean>();
+		
+		// ricade in 400 dove vi e' il problem detail rivisto per far si che almeno un elemento tra type, title e status sia required
+		valori_test17.add(400);msg_test17.add(json17_fault_type);esiti_test17.add(true); 
+		valori_test17.add(400);msg_test17.add(json17_fault_title);esiti_test17.add(true); 
+		valori_test17.add(400);msg_test17.add(json17_fault_status);esiti_test17.add(true); 
+		valori_test17.add(400);msg_test17.add(json17_fault_type_title);esiti_test17.add(true); 
+		valori_test17.add(400);msg_test17.add(json17_fault_type_status);esiti_test17.add(true);
+		valori_test17.add(400);msg_test17.add(json17_fault_title_status);esiti_test17.add(true);
+		valori_test17.add(400);msg_test17.add(json17_fault_type_title_status);esiti_test17.add(true);
+		valori_test17.add(400);msg_test17.add(json17_fault_none);esiti_test17.add(false);
+		
+		// ricade in default dove vi e' il problem detail originale e quindi un messaggio json di risposta non ha vincoli
+		valori_test17.add(404);msg_test17.add(json17_fault_type);esiti_test17.add(true); 
+		valori_test17.add(404);msg_test17.add(json17_fault_title);esiti_test17.add(true); 
+		valori_test17.add(404);msg_test17.add(json17_fault_status);esiti_test17.add(true); 
+		valori_test17.add(404);msg_test17.add(json17_fault_type_title);esiti_test17.add(true); 
+		valori_test17.add(404);msg_test17.add(json17_fault_type_status);esiti_test17.add(true);
+		valori_test17.add(404);msg_test17.add(json17_fault_title_status);esiti_test17.add(true);
+		valori_test17.add(404);msg_test17.add(json17_fault_type_title_status);esiti_test17.add(true);
+		valori_test17.add(404);msg_test17.add(json17_fault_none);esiti_test17.add(true);
+
+		// ** Test sul body **
+		for (int i = 0; i < valori_test17.size(); i++) {
+			Integer code = valori_test17.get(i);
+			boolean esito = esiti_test17.get(i);
+			String msg = msg_test17.get(i);
+			String ct = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
+			
+			TextHttpResponseEntity httpEntityResponseTest17 = new TextHttpResponseEntity();
+			httpEntityResponseTest17.setStatus(code);
+			httpEntityResponseTest17.setMethod(HttpRequestMethod.GET);
+			httpEntityResponseTest17.setUrl(testUrl17);	
+			Map<String, String> parametersTrasportoRispostaTest17 = new HashMap<>();
+			parametersTrasportoRispostaTest17.put(HttpConstants.CONTENT_TYPE, ct);
+			httpEntityResponseTest17.setParametersTrasporto(parametersTrasportoRispostaTest17);
+			httpEntityResponseTest17.setContentType(ct);
+			httpEntityResponseTest17.setContent(msg);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String msgRisposta = "None";
+				if(json17_fault_type_title.equals(msg)) {
+					 msgRisposta = "Type";
+				}
+				else if(json17_fault_title.equals(msg)) {
+					 msgRisposta = "Title";
+				}
+				else if(json17_fault_status.equals(msg)) {
+					 msgRisposta = "Status";
+				}
+				else if(json17_fault_type_title.equals(msg)) {
+					 msgRisposta = "Type e Title";
+				}
+				else if(json17_fault_type_status.equals(msg)) {
+					 msgRisposta = "Type e Status";
+				}
+				else if(json17_fault_title_status.equals(msg)) {
+					 msgRisposta = "Title e Status";
+				}
+				else if(json17_fault_type_title_status.equals(msg)) {
+					 msgRisposta = "Type e Title e Status";
+				}
+				String tipoTest = "Code:"+code+" "+msgRisposta;
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntityResponseTest17);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>500) {
+						error = error.substring(0, 498)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "body: Field 'type' is required. (code: 1026)";
+						String msgErroreAtteso2 = "body: Field 'title' is required. (code: 1026)";
+						String msgErroreAtteso3 = "body: Field 'status' is required. (code: 1026)";
+						if(!e.getMessage().contains(msgErroreAtteso) || !e.getMessage().contains(msgErroreAtteso2) || !e.getMessage().contains(msgErroreAtteso3)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "1028 $.type: is missing but it is required";
+						String msgErroreAtteso2 = "1028 $.title: is missing but it is required";
+						String msgErroreAtteso3 = "1028 $.status: is missing but it is required";
+						if(!e.getMessage().contains(msgErroreAtteso) || !e.getMessage().contains(msgErroreAtteso2) || !e.getMessage().contains(msgErroreAtteso3)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
+						}
+					}
+				}
+			}
+			
+		}
+		
+		System.out.println("Test #17 completato\n\n");
 	}
 
 }
