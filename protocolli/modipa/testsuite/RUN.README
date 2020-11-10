@@ -73,9 +73,10 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.alias=ExampleServer
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.password=123456
 
-+ Copiare nella cartella dell'application server che serve il contenuto statico, i ExampleClient1.crt ed ExampleServer.crt, utilizzati
++ Copiare nella cartella dell'application server che serve il contenuto statico, i ExampleClient1.crt, ExampleClient2.crt ed ExampleServer.crt, utilizzati
 	nei test per verificare il riferimento x509 x5u. Ad esempio per wildfly:
 		cp /etc/govway/keys/xca/ExampleClient1.crt wildfly-18.0.0.Final/welcome-content
+		cp /etc/govway/keys/xca/ExampleClient2.crt wildfly-18.0.0.Final/welcome-content
 		cp /etc/govway/keys/xca/ExampleServer.crt wildfly-18.0.0.Final/welcome-content
 
 + Aggiungere in /etc/hosts la riga

@@ -1,3 +1,20 @@
+2020-11-10  Francesco Scarlato <scarlato@link.it>
+
+	* [GovWayCore, ProtocolloModIPA, TestsuiteProtocolloModIPA]
+	Aggiunta funzionalità OP-1054
+	Realizzato adeguamento del protocollo 'ModI PA' alla versione finale delle Linee Guida di Interoperabilità rilasciate in data 15/09/2020 'https://trasparenza.agid.gov.it/archivio19_regolamenti_0_5386.html':
+	- Nomenclatura: i nomi dei pattern di interazione e sicurezza sono stati allineati alla nuova terminologia.
+	- Profilo Interazione CRUD: alle risorse di una API REST viene adesso per default assegnato il pattern di interazione 'CRUD_REST'.
+	- Profili di Interazione su API REST: i profili bloccanti e non bloccanti sono adesso assegnabili alle risorse solamente se compatibili con i metodi HTTP e i codici di risposta richiesti dalla specifica.
+	- Firma del payload su API REST: sostituito l'header 'Authorization' con il nuovo header 'Agid-JWT-Signature' per il pattern di sicurezza 'INTEGRITY_REST_01'.
+	- Aggiunta gestione 'window' come descritto in https://datatracker.ietf.org/doc/draft-polli-ratelimit-headers/ 
+          attivabile tramite la proprietà 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows' del file govway_local.properties
+	- La url che viene indicata nel claim 'x5u' di un token di sicurezza per API REST deve adesso essere registrata sull'applicativo e non più sulla fruizione in modo da consentire url differenti per applicativi differenti.
+	- Aggiunta possibilità di inviare l'intera catena dei certificati anche per API REST all'interno del claim 'x5c'.
+	- È adesso possibile attivare la sicurezza messaggio puntualmente solamente sulla richiesta o sulla risposta di una operazione. 
+          Per API REST è possibile definire dei criteri di applicabilità della sicurezza messaggio anche in base a Content-Type o codici di risposta HTTP.
+	- Eliminati algorimi digest '224'.
+
 2020-11-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

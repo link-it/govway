@@ -20,14 +20,17 @@
 
 package org.openspcoop2.protocol.modipa.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 /**
@@ -172,9 +175,13 @@ public class ModIProperties {
 			
 			this.isGenerazioneTracce();
 			
+			/* **** Versionamento **** */ 
+			
+			this.isModIVersioneBozza();
+			
 			/* **** REST **** */ 
 			
-			getRestSecurityTokenHeader();
+			getRestSecurityTokenHeaderModI();
 			if(isRestSecurityTokenClaimsIssuerEnabled()) {
 				getRestSecurityTokenClaimsIssuerHeaderValue();
 			}
@@ -190,22 +197,33 @@ public class ModIProperties {
 			isRestSecurityTokenResponseDigestClean();
 			isRestSecurityTokenResponseDigestHEADuseServerHeader();
 			isRestSecurityTokenFaultProcessEnabled();
+			getRestResponseSecurityTokenAudienceDefault(null);
 			getRestCorrelationIdHeader();
 			getRestReplyToHeader();
 			getRestLocationHeader();
+			isRestProfiliInterazioneCheckCompatibility();
+			
+			// .. Bloccante ..
+			getRestBloccanteHttpStatus();
+			getRestBloccanteHttpMethod();
 			
 			// .. PUSH ..
 			isRestSecurityTokenPushReplyToUpdateOrCreateInFruizione();
 			isRestSecurityTokenPushReplyToUpdateInErogazione();
 			isRestSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists();
-			getRestSecurityTokenPushRequestHttpStatus();
-			getRestSecurityTokenPushResponseHttpStatus();
+			getRestNonBloccantePushRequestHttpStatus();
+			getRestNonBloccantePushRequestHttpMethod();
+			getRestNonBloccantePushResponseHttpStatus();
+			getRestNonBloccantePushResponseHttpMethod();
 			
 			// .. PULL ..
-			getRestSecurityTokenPullRequestHttpStatus();
-			getRestSecurityTokenPullRequestStateNotReadyHttpStatus();
-			getRestSecurityTokenPullRequestStateOkHttpStatus();
-			getRestSecurityTokenPullResponseHttpStatus();
+			getRestNonBloccantePullRequestHttpStatus();
+			getRestNonBloccantePullRequestHttpMethod();
+			getRestNonBloccantePullRequestStateNotReadyHttpStatus();
+			getRestNonBloccantePullRequestStateOkHttpStatus();
+			getRestNonBloccantePullRequestStateHttpMethod();
+			getRestNonBloccantePullResponseHttpStatus();
+			getRestNonBloccantePullResponseHttpMethod();
 			
 			/* **** SOAP **** */
 			
@@ -237,6 +255,12 @@ public class ModIProperties {
 			useSoapBodyRequestDigestNamespace();
 			isSoapRequestDigestMustUnderstand();
 			getSoapRequestDigestActor();
+			
+			getSoapResponseSecurityTokenAudienceDefault(null);
+			
+			isSoapSecurityTokenWsaToSoapAction();
+			isSoapSecurityTokenWsaToOperation();
+			isSoapSecurityTokenWsaToDisabled();
 			
 			// .. PUSH ..
 			isSoapSecurityTokenPushReplyToUpdateOrCreateInFruizione();
@@ -902,10 +926,42 @@ public class ModIProperties {
 	
 	
 	
+    /* **** Nomenclatura **** */ 
+    
+    private static Boolean isModIVersioneBozza = null;
+	public Boolean isModIVersioneBozza(){
+		if(ModIProperties.isModIVersioneBozza==null){
+			
+			Boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.usaVersioneBozza";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					ModIProperties.isModIVersioneBozza = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprietà '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					ModIProperties.isModIVersioneBozza = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprietà '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				ModIProperties.isModIVersioneBozza = defaultValue;
+			}
+		}
+
+		return ModIProperties.isModIVersioneBozza;
+	}
+	
+	
+	
+	
 	/* **** REST **** */ 
 	
 	private static String getRestSecurityTokenHeader= null;
-	public String getRestSecurityTokenHeader() throws Exception{
+	public String getRestSecurityTokenHeaderModI() throws ProtocolException{
     	if(ModIProperties.getRestSecurityTokenHeader==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.header";
     		try{  
@@ -922,7 +978,7 @@ public class ModIProperties {
 			}catch(java.lang.Exception e) {
 				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
 				this.log.error(msgErrore);
-				throw new Exception(msgErrore,e);
+				throw new ProtocolException(msgErrore,e);
 			}
     	}
     	
@@ -1287,6 +1343,35 @@ public class ModIProperties {
     	return ModIProperties.getRestSecurityTokenFaultProcessEnabled;
 	}
 	
+	private static Boolean getRestResponseSecurityTokenAudienceDefault_read= null;
+	private static String getRestResponseSecurityTokenAudienceDefault= null;
+	public String getRestResponseSecurityTokenAudienceDefault(String soggettoMittente) throws ProtocolException{
+    	if(ModIProperties.getRestResponseSecurityTokenAudienceDefault_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.response.securityToken.audience.default";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getRestResponseSecurityTokenAudienceDefault = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    		
+    		getRestResponseSecurityTokenAudienceDefault_read = true;
+    	}
+    	
+    	if(ModICostanti.CONFIG_MODIPA_SOGGETTO_MITTENTE_KEYWORD.equalsIgnoreCase(ModIProperties.getRestResponseSecurityTokenAudienceDefault) && soggettoMittente!=null && !StringUtils.isEmpty(soggettoMittente)) {
+			return soggettoMittente;
+		}
+    	else {
+    		return ModIProperties.getRestResponseSecurityTokenAudienceDefault;
+    	}
+	}	
+	
 	private static String getRestCorrelationIdHeader= null;
 	public String getRestCorrelationIdHeader() throws Exception{
     	if(ModIProperties.getRestCorrelationIdHeader==null){
@@ -1361,6 +1446,98 @@ public class ModIProperties {
     	
     	return ModIProperties.getRestLocationHeader;
 	}
+	
+	private static Boolean getRestProfiliInterazioneCheckCompatibility_read= null;
+	private static Boolean getRestProfiliInterazioneCheckCompatibility= null;
+	public boolean isRestProfiliInterazioneCheckCompatibility() throws ProtocolException{
+    	if(ModIProperties.getRestProfiliInterazioneCheckCompatibility_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.profiliInterazione.checkCompatibility";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getRestProfiliInterazioneCheckCompatibility = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    		
+    		ModIProperties.getRestProfiliInterazioneCheckCompatibility_read = true;
+    	}
+    	
+    	return ModIProperties.getRestProfiliInterazioneCheckCompatibility;
+	}
+	
+	// .. BLOCCANTE ..
+	
+	private static Integer [] getRestBloccanteHttpStatus = null;
+	public Integer [] getRestBloccanteHttpStatus() throws ProtocolException{
+    	if(ModIProperties.getRestBloccanteHttpStatus==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.bloccante.httpStatus";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX.equalsIgnoreCase(value)) {
+						ModIProperties.getRestBloccanteHttpStatus = new Integer[1];
+						ModIProperties.getRestBloccanteHttpStatus[0] = ModICostanti.MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE;
+					}
+					else {
+						String [] tmp = value.split(",");
+						ModIProperties.getRestBloccanteHttpStatus = new Integer[tmp.length];
+						for (int i = 0; i < tmp.length; i++) {
+							ModIProperties.getRestBloccanteHttpStatus[i] = Integer.valueOf(tmp[i].trim());
+						}
+					}
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestBloccanteHttpStatus;
+	}
+	
+	private static List<HttpRequestMethod> getRestBloccanteHttpMethod = null;
+	public List<HttpRequestMethod> getRestBloccanteHttpMethod() throws ProtocolException{
+    	if(ModIProperties.getRestBloccanteHttpMethod==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.bloccante.httpMethod";
+    		try{
+    			getRestBloccanteHttpMethod = new ArrayList<HttpRequestMethod>();
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						ModIProperties.getRestBloccanteHttpMethod.add(HttpRequestMethod.valueOf(tmp[i].trim().toUpperCase()));
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non corretta, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestBloccanteHttpMethod;
+	}
+	
 	
 	// .. PUSH ..
 	
@@ -1440,7 +1617,7 @@ public class ModIProperties {
 	}
 	
 	private static Integer [] getRestSecurityTokenPushRequestHttpStatus = null;
-	public Integer [] getRestSecurityTokenPushRequestHttpStatus() throws Exception{
+	public Integer [] getRestNonBloccantePushRequestHttpStatus() throws ProtocolException{
     	if(ModIProperties.getRestSecurityTokenPushRequestHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.request.httpStatus";
     		try{  
@@ -1461,15 +1638,41 @@ public class ModIProperties {
 			}catch(java.lang.Exception e) {
 				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
 				this.log.error(msgErrore);
-				throw new Exception(msgErrore,e);
+				throw new ProtocolException(msgErrore,e);
 			}
     	}
     	
     	return ModIProperties.getRestSecurityTokenPushRequestHttpStatus;
 	}
 	
+	private static List<HttpRequestMethod> getRestNonBloccantePushRequestHttpMethod = null;
+	public List<HttpRequestMethod> getRestNonBloccantePushRequestHttpMethod() throws ProtocolException{
+    	if(ModIProperties.getRestNonBloccantePushRequestHttpMethod==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.push.request.httpMethod";
+    		try{
+    			getRestNonBloccantePushRequestHttpMethod = new ArrayList<HttpRequestMethod>();
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						ModIProperties.getRestNonBloccantePushRequestHttpMethod.add(HttpRequestMethod.valueOf(tmp[i].trim().toUpperCase()));
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non corretta, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestNonBloccantePushRequestHttpMethod;
+	}
+	
 	private static Integer [] getRestSecurityTokenPushResponseHttpStatus = null;
-	public Integer [] getRestSecurityTokenPushResponseHttpStatus() throws Exception{
+	public Integer [] getRestNonBloccantePushResponseHttpStatus() throws ProtocolException{
     	if(ModIProperties.getRestSecurityTokenPushResponseHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.response.httpStatus";
     		try{  
@@ -1490,17 +1693,69 @@ public class ModIProperties {
 			}catch(java.lang.Exception e) {
 				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
 				this.log.error(msgErrore);
-				throw new Exception(msgErrore,e);
+				throw new ProtocolException(msgErrore,e);
 			}
     	}
     	
     	return ModIProperties.getRestSecurityTokenPushResponseHttpStatus;
 	}
 	
+	private static List<HttpRequestMethod> getRestNonBloccantePushResponseHttpMethod = null;
+	public List<HttpRequestMethod> getRestNonBloccantePushResponseHttpMethod() throws ProtocolException{
+    	if(ModIProperties.getRestNonBloccantePushResponseHttpMethod==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.push.response.httpMethod";
+    		try{
+    			getRestNonBloccantePushResponseHttpMethod = new ArrayList<HttpRequestMethod>();
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						ModIProperties.getRestNonBloccantePushResponseHttpMethod.add(HttpRequestMethod.valueOf(tmp[i].trim().toUpperCase()));
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non corretta, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestNonBloccantePushResponseHttpMethod;
+	}
+	
+	private static List<HttpRequestMethod> getRestNonBloccantePushHttpMethod = null;
+	public List<HttpRequestMethod> getRestNonBloccantePushHttpMethod() throws ProtocolException{
+		
+		if(getRestNonBloccantePushHttpMethod!=null) {
+			return getRestNonBloccantePushHttpMethod;
+		}
+		
+		getRestNonBloccantePushHttpMethod = new ArrayList<HttpRequestMethod>();
+		
+		List<HttpRequestMethod> req = getRestNonBloccantePushRequestHttpMethod();
+		if(req!=null && !req.isEmpty()){
+			getRestNonBloccantePushHttpMethod.addAll(req);
+		}
+		
+		List<HttpRequestMethod> res = getRestNonBloccantePushResponseHttpMethod();
+		if(res!=null && !res.isEmpty()){
+			for (HttpRequestMethod httpRequestMethod : res) {
+				if(!getRestNonBloccantePushHttpMethod.contains(httpRequestMethod)) {
+					getRestNonBloccantePushHttpMethod.add(httpRequestMethod);
+				}
+			}
+		}
+		
+		return getRestNonBloccantePushHttpMethod;
+	}
+	
 	// .. PULL ..
 	
 	private static Integer [] getRestSecurityTokenPullRequestHttpStatus = null;
-	public Integer [] getRestSecurityTokenPullRequestHttpStatus() throws Exception{
+	public Integer [] getRestNonBloccantePullRequestHttpStatus() throws ProtocolException{
     	if(ModIProperties.getRestSecurityTokenPullRequestHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.request.httpStatus";
     		try{  
@@ -1521,15 +1776,41 @@ public class ModIProperties {
 			}catch(java.lang.Exception e) {
 				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
 				this.log.error(msgErrore);
-				throw new Exception(msgErrore,e);
+				throw new ProtocolException(msgErrore,e);
 			}
     	}
     	
     	return ModIProperties.getRestSecurityTokenPullRequestHttpStatus;
 	}
 	
+	private static List<HttpRequestMethod> getRestNonBloccantePullRequestHttpMethod = null;
+	public List<HttpRequestMethod> getRestNonBloccantePullRequestHttpMethod() throws ProtocolException{
+    	if(ModIProperties.getRestNonBloccantePullRequestHttpMethod==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.request.httpMethod";
+    		try{
+    			getRestNonBloccantePullRequestHttpMethod = new ArrayList<HttpRequestMethod>();
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						ModIProperties.getRestNonBloccantePullRequestHttpMethod.add(HttpRequestMethod.valueOf(tmp[i].trim().toUpperCase()));
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non corretta, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestNonBloccantePullRequestHttpMethod;
+	}
+	
 	private static Integer [] getRestSecurityTokenPullRequestStateNotReadyHttpStatus = null;
-	public Integer [] getRestSecurityTokenPullRequestStateNotReadyHttpStatus() throws Exception{
+	public Integer [] getRestNonBloccantePullRequestStateNotReadyHttpStatus() throws ProtocolException{
     	if(ModIProperties.getRestSecurityTokenPullRequestStateNotReadyHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.requestState.notReady.httpStatus";
     		try{  
@@ -1550,7 +1831,7 @@ public class ModIProperties {
 			}catch(java.lang.Exception e) {
 				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
 				this.log.error(msgErrore);
-				throw new Exception(msgErrore,e);
+				throw new ProtocolException(msgErrore,e);
 			}
     	}
     	
@@ -1558,7 +1839,7 @@ public class ModIProperties {
 	}
 	
 	private static Integer [] getRestSecurityTokenPullRequestStateOkHttpStatus = null;
-	public Integer [] getRestSecurityTokenPullRequestStateOkHttpStatus() throws Exception{
+	public Integer [] getRestNonBloccantePullRequestStateOkHttpStatus() throws ProtocolException{
     	if(ModIProperties.getRestSecurityTokenPullRequestStateOkHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.requestState.ok.httpStatus";
     		try{  
@@ -1579,15 +1860,41 @@ public class ModIProperties {
 			}catch(java.lang.Exception e) {
 				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
 				this.log.error(msgErrore);
-				throw new Exception(msgErrore,e);
+				throw new ProtocolException(msgErrore,e);
 			}
     	}
     	
     	return ModIProperties.getRestSecurityTokenPullRequestStateOkHttpStatus;
 	}
 	
+	private static List<HttpRequestMethod> getRestNonBloccantePullRequestStateHttpMethod = null;
+	public List<HttpRequestMethod> getRestNonBloccantePullRequestStateHttpMethod() throws ProtocolException{
+    	if(ModIProperties.getRestNonBloccantePullRequestStateHttpMethod==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.requestState.httpMethod";
+    		try{
+    			getRestNonBloccantePullRequestStateHttpMethod = new ArrayList<HttpRequestMethod>();
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						ModIProperties.getRestNonBloccantePullRequestStateHttpMethod.add(HttpRequestMethod.valueOf(tmp[i].trim().toUpperCase()));
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non corretta, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestNonBloccantePullRequestStateHttpMethod;
+	}
+	
 	private static Integer [] getRestSecurityTokenPullResponseHttpStatus = null;
-	public Integer [] getRestSecurityTokenPullResponseHttpStatus() throws Exception{
+	public Integer [] getRestNonBloccantePullResponseHttpStatus() throws ProtocolException{
     	if(ModIProperties.getRestSecurityTokenPullResponseHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.response.httpStatus";
     		try{  
@@ -1608,11 +1915,72 @@ public class ModIProperties {
 			}catch(java.lang.Exception e) {
 				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
 				this.log.error(msgErrore);
-				throw new Exception(msgErrore,e);
+				throw new ProtocolException(msgErrore,e);
 			}
     	}
     	
     	return ModIProperties.getRestSecurityTokenPullResponseHttpStatus;
+	}
+	
+	private static List<HttpRequestMethod> getRestNonBloccantePullResponseHttpMethod = null;
+	public List<HttpRequestMethod> getRestNonBloccantePullResponseHttpMethod() throws ProtocolException{
+    	if(ModIProperties.getRestNonBloccantePullResponseHttpMethod==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.response.httpMethod";
+    		try{
+    			getRestNonBloccantePullResponseHttpMethod = new ArrayList<HttpRequestMethod>();
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						ModIProperties.getRestNonBloccantePullResponseHttpMethod.add(HttpRequestMethod.valueOf(tmp[i].trim().toUpperCase()));
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non corretta, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestNonBloccantePullResponseHttpMethod;
+	}
+	
+	private static List<HttpRequestMethod> getRestNonBloccantePullHttpMethod = null;
+	public List<HttpRequestMethod> getRestNonBloccantePullHttpMethod() throws ProtocolException{
+		
+		if(getRestNonBloccantePullHttpMethod!=null) {
+			return getRestNonBloccantePullHttpMethod;
+		}
+		
+		getRestNonBloccantePullHttpMethod = new ArrayList<HttpRequestMethod>();
+		
+		List<HttpRequestMethod> req = getRestNonBloccantePullRequestHttpMethod();
+		if(req!=null && !req.isEmpty()){
+			getRestNonBloccantePullHttpMethod.addAll(req);
+		}
+		
+		List<HttpRequestMethod> reqState = getRestNonBloccantePullRequestStateHttpMethod();
+		if(reqState!=null && !reqState.isEmpty()){
+			for (HttpRequestMethod httpRequestMethod : reqState) {
+				if(!getRestNonBloccantePullHttpMethod.contains(httpRequestMethod)) {
+					getRestNonBloccantePullHttpMethod.add(httpRequestMethod);
+				}
+			}
+		}
+		
+		List<HttpRequestMethod> res = getRestNonBloccantePullResponseHttpMethod();
+		if(res!=null && !res.isEmpty()){
+			for (HttpRequestMethod httpRequestMethod : res) {
+				if(!getRestNonBloccantePullHttpMethod.contains(httpRequestMethod)) {
+					getRestNonBloccantePullHttpMethod.add(httpRequestMethod);
+				}
+			}
+		}
+		
+		return getRestNonBloccantePullHttpMethod;
 	}
 	
 	
@@ -2189,6 +2557,83 @@ public class ModIProperties {
     	}
     	
     	return ModIProperties.getSoapRequestDigestActor;
+	}
+	
+	private static Boolean getSoapSecurityTokenWsaTo_read= null;
+	private static String getSoapSecurityTokenWsaTo= null;
+	private String getSoapSecurityTokenWsaTo() throws ProtocolException{
+    	if(ModIProperties.getSoapSecurityTokenWsaTo_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.securityToken.wsaTo";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapSecurityTokenWsaTo = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    		
+    		getSoapSecurityTokenWsaTo_read = true;
+    	}
+    	
+    	return ModIProperties.getSoapSecurityTokenWsaTo;
+	}
+	private static Boolean getSoapSecurityTokenWsaTo_soapAction= null;
+	private static Boolean getSoapSecurityTokenWsaTo_operation= null;
+	private static Boolean getSoapSecurityTokenWsaTo_none= null;
+	public boolean isSoapSecurityTokenWsaToSoapAction() throws ProtocolException {
+		if(getSoapSecurityTokenWsaTo_soapAction==null) {
+			getSoapSecurityTokenWsaTo_soapAction = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_SOAP_ACTION.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
+		}
+		return getSoapSecurityTokenWsaTo_soapAction;
+	}
+	public boolean isSoapSecurityTokenWsaToOperation() throws ProtocolException {
+		if(getSoapSecurityTokenWsaTo_operation==null) {
+			getSoapSecurityTokenWsaTo_operation = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_OPERATION.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
+		}
+		return getSoapSecurityTokenWsaTo_operation;
+	}
+	public boolean isSoapSecurityTokenWsaToDisabled() throws ProtocolException {
+		if(getSoapSecurityTokenWsaTo_none==null) {
+			getSoapSecurityTokenWsaTo_none = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_NONE.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
+		}
+		return getSoapSecurityTokenWsaTo_none;
+	}
+	
+	private static Boolean getSoapResponseSecurityTokenAudienceDefault_read= null;
+	private static String getSoapResponseSecurityTokenAudienceDefault= null;
+	public String getSoapResponseSecurityTokenAudienceDefault(String soggettoMittente) throws ProtocolException{
+    	if(ModIProperties.getSoapResponseSecurityTokenAudienceDefault_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.response.securityToken.audience.default";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapResponseSecurityTokenAudienceDefault = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    		
+    		getSoapResponseSecurityTokenAudienceDefault_read = true;
+    	}
+    	
+    	if(ModICostanti.CONFIG_MODIPA_SOGGETTO_MITTENTE_KEYWORD.equalsIgnoreCase(ModIProperties.getSoapResponseSecurityTokenAudienceDefault) && soggettoMittente!=null && !StringUtils.isEmpty(soggettoMittente)) {
+			return soggettoMittente;
+		}
+    	else {
+    		return ModIProperties.getSoapResponseSecurityTokenAudienceDefault;
+    	}
 	}
 	
 	// .. PUSH ..

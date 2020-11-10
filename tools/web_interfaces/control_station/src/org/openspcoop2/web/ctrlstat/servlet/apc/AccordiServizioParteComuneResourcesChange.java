@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -35,6 +36,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -235,8 +237,13 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			IDResource idRisorsa = new IDResource();
 			idRisorsa.setIdAccordo(idAs);
 			idRisorsa.setNome(oldNomeRisorsa);
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			boolean normalizeObjectIds = true;
+			boolean inUse = apcCore.isRisorsaInUso(idRisorsa, whereIsInUso, normalizeObjectIds);
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigResource(this.consoleOperationType, apcHelper, 
-					this.registryReader, this.configRegistryReader, idRisorsa);
+					this.registryReader, this.configRegistryReader, idRisorsa, 
+					(nomeRisorsa == null ? resourceOLD.get_value_method() : httpMethod), 
+					(nomeRisorsa == null ? resourceOLD.getPath() : path));
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			if(this.protocolPropertiesSet == null){
@@ -314,12 +321,12 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idRisorsa);
+						this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path);
 
 				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, (long) idResInt, nomeRisorsa, descr, path, httpMethod, messageType, as.getStatoPackage(), tipoAccordo, protocollo, this.protocolFactory, serviceBinding,messageTypeRequest,messageTypeResponse,
 						profProtocollo, 
 						filtrodupaz, deffiltrodupaz, confricaz, defconfricaz, idcollaz, defidcollaz, idRifRichiestaAz, defIdRifRichiestaAz, consordaz, defconsordaz, scadenzaaz, 
-						defscadenzaaz);
+						defscadenzaaz, inUse);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -395,7 +402,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			// updateDynamic
 			if(isOk) {
 				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idRisorsa);
+						this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path);
 			}
 				
 			// Validazione base dei parametri custom 
@@ -414,7 +421,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				try{
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idRisorsa);
+							this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -434,11 +441,11 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idRisorsa);
+						this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path);
 
 				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, (long) idResInt, nomeRisorsa, descr, path, httpMethod, messageType, as.getStatoPackage(), tipoAccordo, protocollo, this.protocolFactory, serviceBinding,messageTypeRequest,messageTypeResponse,
 						profProtocollo, 
-						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz,idRifRichiestaAz,idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz);
+						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz,idRifRichiestaAz,idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz, inUse);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

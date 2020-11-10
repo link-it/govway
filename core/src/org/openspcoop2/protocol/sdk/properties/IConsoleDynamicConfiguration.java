@@ -99,12 +99,12 @@ public interface IConsoleDynamicConfiguration {
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException;
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException;
 	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException;
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException;
 	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException;
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException;

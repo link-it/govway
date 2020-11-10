@@ -322,7 +322,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		/* CHANGE_BINARY */
 		de = new DataElement();
 		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY);
-		de.setValue("true");
+		de.setValue(ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY);
 		dati.addElement(de);
@@ -611,8 +611,15 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 							registryReader, configRegistryReader, idPt);
 				case RESOURCE:
 					IDResource idAccordoRisorsa = (IDResource) idOggettoProprietario;
+					String httpMethod = null;
+					String path = null;
+					try {
+						Resource r = registryReader.getResourceAccordo(idAccordoRisorsa);
+						httpMethod = r.getMethod()!=null ? r.getMethod().getValue() : null;
+						path = r.getPath();
+					}catch(Exception e) {}
 					return consoleDynamicConfiguration.getDynamicConfigResource(consoleOperationType, this, 
-							registryReader, configRegistryReader, idAccordoRisorsa);
+							registryReader, configRegistryReader, idAccordoRisorsa, httpMethod, path);
 				case SOGGETTO:
 					IDSoggetto idSoggetto = (IDSoggetto) idOggettoProprietario;
 					return consoleDynamicConfiguration.getDynamicConfigSoggetto(consoleOperationType, this, 
@@ -948,8 +955,15 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					break;
 				case RESOURCE:
 					IDResource idAccordoRisorsa = (IDResource) idOggettoProprietario;
+					String httpMethod = null;
+					String path = null;
+					try {
+						Resource r = registryReader.getResourceAccordo(idAccordoRisorsa);
+						httpMethod = r.getMethod()!=null ? r.getMethod().getValue() : null;
+						path = r.getPath();
+					}catch(Exception e) {}
 					consoleDynamicConfiguration.validateDynamicConfigResource(consoleConfiguration, consoleOperationType, this, protocolProperties, 
-							registryReader, configRegistryReader, idAccordoRisorsa);
+							registryReader, configRegistryReader, idAccordoRisorsa, httpMethod, path);
 					break;
 				case SOGGETTO:
 					IDSoggetto idSoggetto = (IDSoggetto) idOggettoProprietario;

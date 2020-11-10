@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -98,7 +99,7 @@ public class SoggettiCostanti {
 	public final static String PARAMETRO_SOGGETTO_ID = "id";
 	public final static String PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE = CostantiControlStation.PARAMETRO_ACCESSO_DA_CHANGE;
 	public final static String PARAMETRO_SOGGETTO_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
-	public final static String PARAMETRO_SOGGETTO_DOMINIO = "dominio";
+	public final static String PARAMETRO_SOGGETTO_DOMINIO = Costanti.CONSOLE_PARAMETRO_SOGGETTO_DOMINIO;
 	public final static String PARAMETRO_SOGGETTO_NOME = "nomeprov";
 	public final static String PARAMETRO_SOGGETTO_TIPO = "tipoprov";
 	public final static String PARAMETRO_SOGGETTO_TIPOLOGIA = "tipologia";

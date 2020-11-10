@@ -138,7 +138,14 @@ public class ModIImbustamento {
 			String interactionProfile = ModIPropertiesUtils.readPropertyInteractionProfile(aspc, nomePortType, azione);
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE, interactionProfile);
 			
-			if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE.equals(interactionProfile)) {
+			if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE.equals(interactionProfile)) {
+			
+				if(rest) {
+					imbustamentoRest.addSyncInteractionProfile(msg, ruoloMessaggio);
+				}
+				
+			}
+			else if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE.equals(interactionProfile)) {
 				
 				String asyncInteractionType = ModIPropertiesUtils.readPropertyAsyncInteractionProfile(aspc, nomePortType, azione);
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_TIPO, asyncInteractionType);
@@ -207,13 +214,13 @@ public class ModIImbustamento {
 				}
 				
 				if(rest) {
-					imbustamentoRest.addInteractionProfile(msg, busta, ruoloMessaggio, 
+					imbustamentoRest.addAsyncInteractionProfile(msg, busta, ruoloMessaggio, 
 							asyncInteractionType, asyncInteractionRole,
 							replyTo,
 							apiContenenteRisorsa, azione);
 				}
 				else {
-					imbustamentoSoap.addInteractionProfile(msg, busta, ruoloMessaggio, 
+					imbustamentoSoap.addAsyncInteractionProfile(msg, busta, ruoloMessaggio, 
 							asyncInteractionType, asyncInteractionRole,
 							replyTo,
 							apiContenenteRisorsa, azione);
@@ -232,21 +239,10 @@ public class ModIImbustamento {
 			String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione);
 			if(securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile)) {
 				
-				// check Fault
-				boolean addSecurity = true;
-				boolean isFault = false;
-				boolean processFault = false;
-				if(rest) {
-					isFault = msg.isFault() || msg.castAsRest().isProblemDetailsForHttpApis_RFC7807();	
-					processFault = this.modiProperties.isRestSecurityTokenFaultProcessEnabled();
-				}
-				else {
-					isFault = msg.isFault() || msg.castAsSoap().getSOAPBody().hasFault();
-					processFault = this.modiProperties.isSoapSecurityTokenFaultProcessEnabled();
-				}
-				if(isFault && !processFault) {
-					addSecurity = false;
-				}
+				// check config
+				boolean isRichiesta = MessageRole.REQUEST.equals(messageRole);
+				boolean addSecurity = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, isRichiesta, 
+						msg, rest, this.modiProperties);
 												
 				if(addSecurity) {
 				
@@ -254,6 +250,11 @@ public class ModIImbustamento {
 							ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
 					
 					boolean fruizione = MessageRole.REQUEST.equals(messageRole);
+					
+					String headerTokenRest = null;
+					if(rest) {
+						headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione);
+					}
 					
 					boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
 					
@@ -284,7 +285,7 @@ public class ModIImbustamento {
 					}
 					
 					if(rest) {
-						String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest);
+						String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest);
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(token));
 					}
 					else {

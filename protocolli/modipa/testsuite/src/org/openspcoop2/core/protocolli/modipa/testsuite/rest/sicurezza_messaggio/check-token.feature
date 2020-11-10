@@ -3,7 +3,8 @@ Feature: Controllo Token JWT REST
 Scenario:
     * def decodeToken = read('classpath:utils/decode-token.js')
 
-    * def token = decodeToken(token)
+    * def kind = karate.get('kind', 'Bearer')
+    * def token = decodeToken(token, kind)
 
     * def tok_header =
     """

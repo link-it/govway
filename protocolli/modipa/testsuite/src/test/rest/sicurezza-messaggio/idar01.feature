@@ -181,12 +181,12 @@ And match header Authorization == '#notpresent'
 * def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
 
 
 @disabled-security-on-action
@@ -229,6 +229,28 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01X5U-X5T/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'riferimento-x509-x5u-x5t-client2'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
 
 
@@ -423,3 +445,69 @@ When method post
 Then status 502
 And match response == read('error-bodies/certificato-server-revocato.json')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+@risposta-not-200
+Scenario: Test senza validazione OpenAPI per controllare che secondo specifica ModiPA lo status code delle post sia 200
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01NoValidazione/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'risposta-not-200'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+And match response == read('error-bodies/risposta-not-200.json')
+
+
+@connettivita-base-header-agid
+Scenario: Test connettività base
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01HeaderAgid/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'connettivita-base-header-agid'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+
+@applicativo-senza-sicurezza
+Scenario: Alla fruizione viene presentato un applicativo senza la sicurezza messaggio abilitata
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingNoModipa', password: 'ApplicativoBlockingNoModipa' })
+When method post
+Then status 400
+And match response == read('error-bodies/applicativo-senza-sicurezza.json')
+And match header GovWay-Transaction-ErrorType == 'BadRequest'
+
+
+@applicativo-senza-x5u
+Scenario: Alla fruizione viene presentato un applicativo che non ha la url x5u del certificato configurata
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01X5U-X5T/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'riferimento-x509-x5u-x5t'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2NoX5U', password: 'ApplicativoBlockingIDA01ExampleClient2NoX5U' })
+When method post
+Then status 400
+And match response == read('error-bodies/applicativo-senza-x5u.json')
+And match header GovWay-Transaction-ErrorType == 'BadRequest'

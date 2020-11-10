@@ -24,8 +24,8 @@ And match response == read('response.json')
 And match header Authorization == '#notpresent'
 
 
-* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
-* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
 * def request_digest = get client_token $.payload.signed_headers..digest
 * def response_digest = get server_token $.payload.signed_headers..digest
 
@@ -180,10 +180,10 @@ And match header Authorization == '#notpresent'
 * def client_token_header = responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0]
 * def server_token_header = responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0]
 
-* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
 * def request_digest = get client_token $.payload.signed_headers..digest
 
-* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
 * def response_digest = get server_token $.payload.signed_headers..digest
 
 # Contattiamo direttamente l'erogazione con il token che si ripete
@@ -191,7 +191,7 @@ And match header Authorization == '#notpresent'
 Given url govway_base_path + "/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1"
 And path 'resources', 1, 'M'
 And request read('request.json')
-And header Authorization = client_token_header
+And header Agid-JWT-Signature = client_token_header
 And header Digest = request_digest[0]
 When method post
 Then status 409
@@ -210,3 +210,49 @@ When method post
 Then status 502
 And match response == read('error-bodies/identificativo-token-riutilizzato-in-risposta.json')
 And match header GovWay-Transaction-ErrorType == 'ConflictResponse'
+
+
+@connettivita-base-header-bearer
+Scenario: Test connettività base
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0302HeaderBearer/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'connettivita-base-idar0302-header-bearer'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+* def request_digest = get client_token $.payload.signed_headers..digest
+* def response_digest = get server_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' }
+])
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta })

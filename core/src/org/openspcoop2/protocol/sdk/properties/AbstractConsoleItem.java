@@ -42,6 +42,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private TreeMap<String,T> mapLabelValues;
 	private String note;
 	private ConsoleItemInfo info;
+	private String labelRight;
 
 	protected AbstractConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		super(id, label, type);
@@ -102,6 +103,10 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 		this.mapLabelValues.put(key, value);
 	}
 	
+	public void removeLabelValue(String label){
+		this.mapLabelValues.remove(label);
+	}
+	
 	public String getNote() {
 		return this.note;
 	}
@@ -115,5 +120,11 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	public void setInfo(ConsoleItemInfo info) {
 		this.info = info;
 	}
-	
+
+	public String getLabelRight() {
+		return this.labelRight;
+	}
+	public void setLabelRight(String labelRight) {
+		this.labelRight = labelRight;
+	}
 }

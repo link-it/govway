@@ -51,6 +51,7 @@ public class RisultatoVerificaPolicy {
 	private Long maxValue;
 	private Long actualValue;
 	private Long msBeforeResetCounters; // solo nel caso di finestra corrente
+	private Long msWindow; // solo nel caso di finestra corrente
 	
 	public boolean isViolata() {
 		return this.violata;
@@ -130,5 +131,11 @@ public class RisultatoVerificaPolicy {
 	}
 	public void setMsBeforeResetCounters(Long secondBeforeResetCounters) {
 		this.msBeforeResetCounters = secondBeforeResetCounters;
+	}
+	public Long getMsWindow() {
+		return this.msWindow;
+	}
+	public void setMsWindow(Long msWindow) {
+		this.msWindow = msWindow;
 	}
 }

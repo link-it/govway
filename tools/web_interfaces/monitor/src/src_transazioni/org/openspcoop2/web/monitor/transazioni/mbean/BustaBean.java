@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -63,14 +64,18 @@ public class BustaBean extends Busta {
 	private List<RiscontroBean> listaRiscontriBean;
 
 	private List<TrasmissioneBean> listaTrasmissioniBean;
+	
+	private ServiceBinding tipoApi;
 
-	public BustaBean(String protocollo) {
+	public BustaBean(String protocollo, ServiceBinding tipoApi) {
 		super(protocollo);
+		this.tipoApi = tipoApi;
 	}
 
-	public BustaBean(Busta busta, IProtocolFactory<?> protocolFactory) {
+	public BustaBean(Busta busta, IProtocolFactory<?> protocolFactory, ServiceBinding tipoApi) {
 		super(busta.getProtocollo());
 		this.protocolFactory = protocolFactory;
+		this.tipoApi = tipoApi;
 
 		if(protocolFactory==null){
 			throw new RuntimeException("protocolFactory is null (verificare che sia presente il jar del protocollo "+busta.getProtocollo()+")");
@@ -199,7 +204,7 @@ public class BustaBean extends Busta {
 	
 		Hashtable<String,Map<String, String>> map = new Hashtable<>();
 		try {
-			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this);
+			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this, this.tipoApi);
 			if(extInfoList==null || extInfoList.isEmpty() || extInfoList.size()<=1) {
 				Map<String, String> mapDefault = this.getProperties();
 				if(mapDefault!=null && !mapDefault.isEmpty()) {
@@ -225,7 +230,7 @@ public class BustaBean extends Busta {
 		List<Map.Entry<String, List<Map.Entry<String, String>>>> toRet = new ArrayList<>();
 		
 		try {
-			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this);
+			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this, this.tipoApi);
 			if(extInfoList==null || extInfoList.isEmpty() || extInfoList.size()<=1) {
 				
 				Map.Entry<String, List<Map.Entry<String, String>>> entry = this.getMapEntryExtInfoDefault();

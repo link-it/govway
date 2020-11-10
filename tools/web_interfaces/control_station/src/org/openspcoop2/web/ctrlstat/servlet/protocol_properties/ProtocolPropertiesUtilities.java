@@ -234,6 +234,7 @@ public class ProtocolPropertiesUtilities {
 		de.setType(type);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
+		de.setLabelRight(item.getLabelRight());
 		de.setPostBack(item.isReloadOnChange()); 
 		de.setNote(item.getNote());
 		de.setSize(size);
@@ -434,6 +435,7 @@ public class ProtocolPropertiesUtilities {
 		de.setType(DataElementType.CHECKBOX);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
+		de.setLabelRight(item.getLabelRight());
 		de.setPostBack(item.isReloadOnChange()); 
 		de.setNote(item.getNote());
 		de.setSize(size);
@@ -474,6 +476,7 @@ public class ProtocolPropertiesUtilities {
 		de.setType(DataElementType.HIDDEN);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
+		de.setLabelRight(item.getLabelRight());
 		de.setPostBack(item.isReloadOnChange()); 
 		de.setNote(item.getNote());
 		de.setSize(size);
@@ -524,6 +527,7 @@ public class ProtocolPropertiesUtilities {
 		de.setType(DataElementType.SELECT);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
+		de.setLabelRight(item.getLabelRight());
 		de.setPostBack(item.isReloadOnChange()); 
 		de.setNote(item.getNote());
 		de.setSize(size);
@@ -588,6 +592,7 @@ public class ProtocolPropertiesUtilities {
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
+		de.setLabelRight(item.getLabelRight());
 		de.setPostBack(item.isReloadOnChange());
 		de.setNote(item.getNote());
 		de.setSize(size);

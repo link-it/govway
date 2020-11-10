@@ -297,6 +297,16 @@ public class CachedRegistryReader implements IRegistryReader {
 		}
 	}
 	
+	@Override
+	public boolean inUso(IDSoggetto idSoggetto) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
+	}
+	
+	@Override
+	public String getDettagliInUso(IDSoggetto idSoggetto) throws RegistryException {
+		throw new RuntimeException("Not Implemented");
+	}
+	
 	
 	
 	// ACCORDI PARTE COMUNE
@@ -390,6 +400,16 @@ public class CachedRegistryReader implements IRegistryReader {
 		}
 	}
 	
+	@Override
+	public boolean inUso(IDAccordo idAccordo) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
+	}
+	
+	@Override
+	public String getDettagliInUso(IDAccordo idAccordo) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
+	}
+	
 	
 	
 	
@@ -464,6 +484,16 @@ public class CachedRegistryReader implements IRegistryReader {
 		}catch(Exception e){
 			throw new RegistryException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public boolean inUso(IDPortType id) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
+	}
+	
+	@Override
+	public String getDettagliInUso(IDPortType id) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
 	}
 		
 	@Override
@@ -546,6 +576,15 @@ public class CachedRegistryReader implements IRegistryReader {
 		}catch(Exception e){
 			throw new RegistryException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public boolean inUso(IDPortTypeAzione id) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
+	}
+	@Override
+	public String getDettagliInUso(IDPortTypeAzione id) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
 	}
 	
 	@Override
@@ -690,6 +729,15 @@ public class CachedRegistryReader implements IRegistryReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	} 
+	
+	@Override
+	public boolean inUso(IDResource id) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
+	}
+	@Override
+	public String getDettagliInUso(IDResource id) throws RegistryException{
+		throw new RuntimeException("Not Implemented");
+	}
 	
 	
 	// ACCORDI PARTE SPECIFICA

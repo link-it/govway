@@ -175,7 +175,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			
 			String labelRisorsa = NamingUtils.getLabelResource(risorsa); 
-			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pNomeRisorsa,pIdRisorsa));
+			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pIdRisorsa));
 			
 			if(!isRequest) {
 				String labelResponse = AccordiServizioParteComuneCostanti.LABEL_RISPOSTE;

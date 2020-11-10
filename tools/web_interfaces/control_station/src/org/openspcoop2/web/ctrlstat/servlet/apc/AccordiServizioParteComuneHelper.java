@@ -6471,7 +6471,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String profProtocollo, 
 			String filtrodupaz, String deffiltrodupaz, String confricaz, String defconfricaz, 
 			String idcollaz, String defidcollaz, String idRifRichiestaAz, String defIdRifRichiestaAz, String consordaz, String defconsordaz, String scadenzaaz, 
-			String defscadenzaaz) throws Exception {
+			String defscadenzaaz, boolean inUse) throws Exception {
 		try {
 			boolean modificheAbilitate = false;
 			if( tipoOperazione.equals(TipoOperazione.ADD) ){
@@ -6501,46 +6501,62 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_RISORSA);
 			dati.addElement(de);
 			
-			dati.addElement(this.getHttpMethodDataElement(tipoOperazione, httpMethod));	
+			DataElement deHttpMethod = this.getHttpMethodDataElement(tipoOperazione, httpMethod); 
+			if(inUse) {
+				deHttpMethod.setType(DataElementType.TEXT);
+				deHttpMethod.setValue(httpMethod);
+			}
+			dati.addElement(deHttpMethod);	
 			
 			boolean nameRequired = (AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod) || httpMethod==null);
 			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
 			de.setValue(path);
-			de.setType(DataElementType.TEXT_EDIT);
-			if( !modificheAbilitate && (path ==null || "".equals(path)) )
-				de.setValue(" ");
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PATH);
-			de.setSize(this.getSize());
-			de.setRequired(!(nameRequired));
-			List<String> l = this.apcCore.getGetApiResourcePathQualsiasiSpecialChar();
-			if(de.isRequired()) {
-				boolean httpMethodAndPathQualsiasi = this.apcCore.isApiResourceHttpMethodAndPathQualsiasiEnabled();
-				if(httpMethodAndPathQualsiasi && l!=null && !l.isEmpty()) {
-					de.setInfo(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH, 
-							AccordiServizioParteComuneCostanti.getLABEL_PARAMETRO_APC_RESOURCES_PATH_INFO(l.get(0), true));
-				}
+			if(inUse) {
+				de.setType(DataElementType.TEXT);
 			}
 			else {
-				if(l!=null && !l.isEmpty()) {
-					de.setInfo(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH, 
-							AccordiServizioParteComuneCostanti.getLABEL_PARAMETRO_APC_RESOURCES_PATH_INFO(l.get(0), false));
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setRequired(!(nameRequired));
+				List<String> l = this.apcCore.getGetApiResourcePathQualsiasiSpecialChar();
+				if(de.isRequired()) {
+					boolean httpMethodAndPathQualsiasi = this.apcCore.isApiResourceHttpMethodAndPathQualsiasiEnabled();
+					if(httpMethodAndPathQualsiasi && l!=null && !l.isEmpty()) {
+						de.setInfo(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH, 
+								AccordiServizioParteComuneCostanti.getLABEL_PARAMETRO_APC_RESOURCES_PATH_INFO(l.get(0), true));
+					}
 				}
+				else {
+					if(l!=null && !l.isEmpty()) {
+						de.setInfo(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH, 
+								AccordiServizioParteComuneCostanti.getLABEL_PARAMETRO_APC_RESOURCES_PATH_INFO(l.get(0), false));
+					}
+				}
+				de.setRequired(false); // lascio sempre a false poiche' altrimenti non si capisce quando si rientra in edit che il carattere vuoto e' ammesso. Sembra un bug
 			}
-			de.setRequired(false); // lascio sempre a false poiche' altrimenti non si capisce quando si rientra in edit che il carattere vuoto e' ammesso. Sembra un bug
+			if( !modificheAbilitate && (path ==null || "".equals(path)) ) {
+				de.setValue(" ");
+			}
+			de.setSize(this.getSize());			
 			dati.addElement(de);	
 	
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME);
 			de.setValue(nomeRisorsa);
-			de.setType(DataElementType.TEXT_EDIT);
-			if(!nameRequired) {
-				de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE);
-			}
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
+			if(inUse) {
+				de.setType(DataElementType.TEXT);
+			}
+			else {
+				de.setType(DataElementType.TEXT_EDIT);
+				if(!nameRequired) {
+					de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE);
+				}
+				de.setRequired(nameRequired);
+			}
 			de.setSize(this.getSize());
-			de.setRequired(nameRequired);
 			dati.addElement(de);
 
 			de = new DataElement();
@@ -7246,7 +7262,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			
 			String labelRisorsa = NamingUtils.getLabelResource(risorsa);
-			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pNomeRisorsa,pIdRisorsa));
+			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pIdRisorsa));
 			
 			String labelResponse = AccordiServizioParteComuneCostanti.LABEL_RISPOSTE;
 			// setto la barra del titolo
@@ -7421,7 +7437,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			
 			String labelRisorsa = NamingUtils.getLabelResource(risorsa); 
-			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pNomeRisorsa,pIdRisorsa));
+			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pIdRisorsa));
 			
 			if(!isRequest) {
 				String labelResponse = AccordiServizioParteComuneCostanti.LABEL_RISPOSTE;
@@ -7577,7 +7593,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			
 			String labelRisorsa = NamingUtils.getLabelResource(risorsa);
-			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pNomeRisorsa,pIdRisorsa));
+			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pIdRisorsa));
 			
 			if(!isRequest) {
 				String labelResponse = AccordiServizioParteComuneCostanti.LABEL_RISPOSTE;

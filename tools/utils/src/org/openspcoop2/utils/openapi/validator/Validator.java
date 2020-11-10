@@ -1011,7 +1011,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			for (String method : pathO.getOperations().keySet()) {
 				Operation op = pathO.getOperation(method);
 				//System.out.println("CHECK: ["+method+"] "+path);
-				if(operation.getHttpMethod().toString().equalsIgnoreCase(method) && operation.getPath().equals(path)) {
+				String normalizePath = ApiOperation.normalizePath(path);
+				if(operation.getHttpMethod().toString().equalsIgnoreCase(method) && operation.getPath().equals(normalizePath)) {
 					operationOpenApi4j = op;
 					pathOpenApi4j = pathO;
 					break;

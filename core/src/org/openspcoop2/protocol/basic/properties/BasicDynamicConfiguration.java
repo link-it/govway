@@ -162,19 +162,19 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	
 	@Override
 	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException{
 	}
 	
 	@Override
 	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException{
 	}
 	
 	@Override

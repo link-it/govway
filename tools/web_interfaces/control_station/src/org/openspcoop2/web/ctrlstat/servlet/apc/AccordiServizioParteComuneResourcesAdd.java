@@ -208,7 +208,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			idRisorsa.setIdAccordo(idAs);
 			idRisorsa.setNome(nomeRisorsa);
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigResource(this.consoleOperationType, apcHelper, 
-					this.registryReader, this.configRegistryReader, idRisorsa );
+					this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path );
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 			
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
@@ -250,12 +250,12 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idRisorsa);
+						this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path);
 
 				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr, path,httpMethod, messageType,  as.getStatoPackage(),tipoAccordo,protocollo, 
 						this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse,
 						profProtocollo, 
-						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, idRifRichiestaAz, idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz);
+						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, idRifRichiestaAz, idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz, false);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -326,7 +326,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			// updateDynamic
 			if(isOk) {
 				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idRisorsa);
+						this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path);
 			}
 			
 			// Validazione base dei parametri custom 
@@ -345,7 +345,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 				try{
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idRisorsa);
+							this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -364,11 +364,11 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idRisorsa);
+						this.registryReader, this.configRegistryReader, idRisorsa, httpMethod, path);
 
 				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse,
 						profProtocollo, 
-						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, idRifRichiestaAz, idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz);
+						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, idRifRichiestaAz, idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz, false);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);

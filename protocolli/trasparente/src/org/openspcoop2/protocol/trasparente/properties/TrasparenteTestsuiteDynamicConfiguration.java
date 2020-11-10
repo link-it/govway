@@ -203,7 +203,8 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	/*** RESOURCE ***/
 
 	@Override
-	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id)
+	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
+			IDResource id, String httpMethod, String path)
 					throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleHelper, registryReader, this.protocolFactory, protocolPropertyList);
@@ -212,14 +213,14 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
-			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
-			IDResource id) throws ProtocolException {
+			IDResource id, String httpMethod, String path) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
 	

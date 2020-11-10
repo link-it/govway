@@ -58,7 +58,8 @@ public class ProtocolPropertiesCostanti {
 	public final static String PARAMETRO_PP_PROTOCOLLO = "protocollo";
 	public static final String PARAMETRO_PP_TIPO_ACCORDO = "tipoAccordo";
 	public final static String PARAMETRO_PP_ID_ALLEGATO = "idAllegato";
-	public static final String PARAMETRO_PP_CHANGE_BINARY = "changeBinary";
+	public static final String PARAMETRO_PP_CHANGE_BINARY = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_PP_CHANGE_BINARY;
+	public static final String PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE;
 	
 	/* LABEL PARAMETRI */
 	

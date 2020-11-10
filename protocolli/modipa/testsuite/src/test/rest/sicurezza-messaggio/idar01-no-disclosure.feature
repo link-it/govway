@@ -85,3 +85,29 @@ And match response == read('error-bodies/invalid-response.json')
 And match header GovWay-Transaction-ErrorType == 'InvalidResponse'
 
 
+@applicativo-senza-sicurezza
+Scenario: Alla fruizione viene presentato un applicativo senza la sicurezza messaggio abilitata
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingNoModipa', password: 'ApplicativoBlockingNoModipa' })
+When method post
+Then status 400
+And match response == read('error-bodies/bad-request.json')
+And match header GovWay-Transaction-ErrorType == 'BadRequest'
+
+
+@applicativo-senza-x5u
+Scenario: Alla fruizione viene presentato un applicativo che non ha la url x5u del certificato configurata
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01X5U-X5T/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'riferimento-x509-x5u-x5t'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2NoX5U', password: 'ApplicativoBlockingIDA01ExampleClient2NoX5U' })
+When method post
+Then status 400
+And match response == read('error-bodies/bad-request.json')
+And match header GovWay-Transaction-ErrorType == 'BadRequest'
+

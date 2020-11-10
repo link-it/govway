@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.apc.api;
 
 import java.util.Vector;
 
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 
@@ -98,8 +99,8 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_API_GESTIONE_GRUPPO = AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPO;
 	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE = AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE;
 	
-	public final static String PARAMETRO_APC_API_GESTIONE_PARZIALE = "apiGestioneParziale";
-	public final static String VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI = "apiInfoGenerali";
+	public final static String PARAMETRO_APC_API_GESTIONE_PARZIALE = Costanti.CONSOLE_PARAMETRO_APC_API_GESTIONE_PARZIALE;
+	public final static String VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI = Costanti.CONSOLE_VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI;
 	public final static String VALORE_PARAMETRO_APC_API_SOGGETTO_REFERENTE = "apiSoggettoReferente";
 	public final static String VALORE_PARAMETRO_APC_API_PROFILO = "apiProfilo";
 	public final static String VALORE_PARAMETRO_APC_API_DESCRIZIONE = "apiDescrizione";

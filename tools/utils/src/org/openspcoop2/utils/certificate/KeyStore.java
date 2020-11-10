@@ -125,6 +125,13 @@ public class KeyStore {
 			throw new UtilsException(e.getMessage(),e);
 		}	
 	}
+	public Certificate[] getCertificateChain(String alias) throws UtilsException{
+		try{
+			return this.keystore.getCertificateChain(alias);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
 	
 	public Certificate getCertificateByDigestMD5UrlEncoded(String digest) throws UtilsException{
 		return getCertificateByDigestUrlEncoded(digest, MessageDigestUtils.ALGO_MD5);

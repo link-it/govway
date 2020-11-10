@@ -181,10 +181,21 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				if(audienceAttesoObject!=null) {
 					String audienceAtteso = (String) audienceAttesoObject;
 					if(!audienceAtteso.equals(audience)) {
-						this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
-								isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
-									CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
-								"Token contenente un claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"' non valido"));
+						
+						boolean buildSecurityTokenInRequest = true;
+						Object buildSecurityTokenInRequestObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN);
+						if(buildSecurityTokenInRequestObject!=null && buildSecurityTokenInRequestObject instanceof Boolean) {
+							buildSecurityTokenInRequest = (Boolean) buildSecurityTokenInRequestObject;
+						}
+						
+						if(isRichiesta || buildSecurityTokenInRequest) {
+						
+							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+									isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+										CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+									"Token contenente un claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"' non valido"));
+							
+						}
 					}
 				}
 				

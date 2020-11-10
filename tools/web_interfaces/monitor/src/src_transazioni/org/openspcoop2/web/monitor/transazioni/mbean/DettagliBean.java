@@ -36,7 +36,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -537,11 +539,22 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			Hashtable<String, String> properties = new Hashtable<String, String>();
 			properties.put("id_transazione", this.idTransazione);
 			boolean notNull = false;
+			
+			ServiceBinding tipoApi = null;
+			if(this.getDettaglio()!=null) {
+				if(TipoAPI.REST.getValoreAsInt() == this.getDettaglio().getTipoApi()) {
+					tipoApi = ServiceBinding.REST;
+				}
+				else if(TipoAPI.SOAP.getValoreAsInt() == this.getDettaglio().getTipoApi()) {
+					tipoApi = ServiceBinding.SOAP;
+				}
+			}
+			
 			if (!this.isRisposta) {
-				this.tracciaRichiesta = new TracciaBean(this.driver.getTraccia(RuoloMessaggio.RICHIESTA, properties));
+				this.tracciaRichiesta = new TracciaBean(this.driver.getTraccia(RuoloMessaggio.RICHIESTA, properties),tipoApi);
 				notNull = this.tracciaRichiesta!=null;
 			} else {
-				this.tracciaRisposta = new TracciaBean(this.driver.getTraccia(RuoloMessaggio.RISPOSTA, properties));
+				this.tracciaRisposta = new TracciaBean(this.driver.getTraccia(RuoloMessaggio.RISPOSTA, properties),tipoApi);
 				notNull = this.tracciaRisposta!=null;
 			}
 
@@ -704,7 +717,17 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	public void setTraccia(Traccia traccia) {
 		
-		TracciaBean tr = new TracciaBean(traccia);
+		ServiceBinding tipoApi = null;
+		if(this.getDettaglio()!=null) {
+			if(TipoAPI.REST.getValoreAsInt() == this.getDettaglio().getTipoApi()) {
+				tipoApi = ServiceBinding.REST;
+			}
+			else if(TipoAPI.SOAP.getValoreAsInt() == this.getDettaglio().getTipoApi()) {
+				tipoApi = ServiceBinding.SOAP;
+			}
+		}
+		
+		TracciaBean tr = new TracciaBean(traccia, tipoApi);
 		if (!this.isRisposta) {
 			this.tracciaRichiesta = tr;
 		}

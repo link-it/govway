@@ -34,6 +34,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
@@ -2908,7 +2909,7 @@ public class ConfigurazionePdDReader {
 		else if(CostantiConfigurazione.ERRORE_APPLICATIVO_XML.equals(proprietaSA.getFault()))
 			gestioneErrore.setFaultAsXML(true);
 		// fault actor
-		if(proprietaSA.getFaultActor()!=null)
+		if(proprietaSA.getFaultActor()!=null && StringUtils.isNotEmpty(proprietaSA.getFaultActor()))
 			gestioneErrore.setFaultActor(proprietaSA.getFaultActor());
 		// fault generic code abilitato/disabilitato
 		if(CostantiConfigurazione.ABILITATO.equals(proprietaSA.getGenericFaultCode()))
@@ -2916,7 +2917,7 @@ public class ConfigurazionePdDReader {
 		else if(CostantiConfigurazione.DISABILITATO.equals(proprietaSA.getGenericFaultCode()))
 			gestioneErrore.setFaultAsGenericCode(false);
 		// fault prefix code
-		if(proprietaSA.getPrefixFaultCode()!=null)
+		if(proprietaSA.getPrefixFaultCode()!=null && StringUtils.isNotEmpty(proprietaSA.getPrefixFaultCode()))
 			gestioneErrore.setFaultPrefixCode(proprietaSA.getPrefixFaultCode());
 
 		return;

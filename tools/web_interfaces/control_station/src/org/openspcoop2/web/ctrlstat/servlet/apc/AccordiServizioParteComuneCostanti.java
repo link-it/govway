@@ -25,6 +25,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
@@ -294,7 +295,7 @@ public class AccordiServizioParteComuneCostanti {
 	/* PARAMETRI */
 
 	public final static String PARAMETRO_APC_ID = "id";
-	public final static String PARAMETRO_APC_NOME = "nome";
+	public final static String PARAMETRO_APC_NOME = Costanti.CONSOLE_PARAMETRO_APC_NOME;
 	public final static String PARAMETRO_APC_TIPO_ACCORDO = "tipoAccordo";
 	public final static String PARAMETRO_APC_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
 	public final static String PARAMETRO_APC_DESCRIZIONE = "descr";
@@ -319,7 +320,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_SCADENZA = "scadenza";
 	public final static String PARAMETRO_APC_REFERENTE = "referente";
 	public final static String PARAMETRO_APC_REFERENTE_1_2 = "referenteLabelAccordo1.2";
-	public final static String PARAMETRO_APC_VERSIONE = "versione";
+	public final static String PARAMETRO_APC_VERSIONE = Costanti.CONSOLE_PARAMETRO_APC_VERSIONE;
 	public final static String PARAMETRO_APC_PRIVATO = "privato";
 	public final static String PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA = "privatoLabel";
 	public final static String PARAMETRO_APC_IS_SERVIZIO_COMPOSTO = "isServizioComposto";

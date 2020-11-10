@@ -84,7 +84,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		super(log, state, context, modiProperties, validazioneUtils);
 	}
 
-	public void validateInteractionProfile(OpenSPCoop2Message msg, boolean request, String asyncInteractionType, String asyncInteractionRole, 
+	public void validateAsyncInteractionProfile(OpenSPCoop2Message msg, boolean request, String asyncInteractionType, String asyncInteractionRole, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			String replyTo) throws Exception {
 		
@@ -179,7 +179,8 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 	
 	public SOAPEnvelope validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
-			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig) throws Exception {
+			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig,
+			boolean buildSecurityTokenInRequest) throws Exception {
 		
 		MessageSecurityContextParameters messageSecurityContextParameters = new MessageSecurityContextParameters();
 		messageSecurityContextParameters.setFunctionAsClient(false);
@@ -503,9 +504,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		if(wsAddressingHeader!=null) {
 		
 			if(wsAddressingHeader.getTo()==null || wsAddressingHeader.getToValue()==null) {
-				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
-					CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
-						"Header WSAddressing '"+Costanti.WSA_SOAP_HEADER_TO+"' non presente"));
+				if(request || buildSecurityTokenInRequest) {
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
+						CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
+							"Header WSAddressing '"+Costanti.WSA_SOAP_HEADER_TO+"' non presente"));
+				}
 			}
 			else {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, wsAddressingHeader.getToValue());
@@ -574,11 +577,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
 			}
 			catch(XPathNotFoundException notFound) {
-				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
-						"Cornice Sicurezza; elemento 'Subject/NameID'"));
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+"; elemento 'Subject/NameID'"));
 			}catch(Exception e) {
-				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
-						"Cornice Sicurezza; elemento 'Subject/NameID'"));
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_VALIDO, 
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+"; elemento 'Subject/NameID'"));
 			}
 			
 			String attributeNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_user();
@@ -593,11 +596,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, user);
 			}
 			catch(XPathNotFoundException notFound) {
-				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
-						"Cornice Sicurezza; elemento 'Attribute/"+attributeNameUser+"'"));
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+"; elemento 'Attribute/"+attributeNameUser+"'"));
 			}catch(Exception e) {
-				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
-						"Cornice Sicurezza; elemento 'Attribute/"+attributeNameUser+"'"));
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_VALIDO, 
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+"; elemento 'Attribute/"+attributeNameUser+"'"));
 			}
 			
 			String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_ipuser();
@@ -612,11 +615,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, ipUser);
 			}
 			catch(XPathNotFoundException notFound) {
-				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
-						"Cornice Sicurezza; elemento 'Attribute/"+attributeNameIpUser+"'"));
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+"; elemento 'Attribute/"+attributeNameIpUser+"'"));
 			}catch(Exception e) {
-				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
-						"Cornice Sicurezza; elemento 'Attribute/"+attributeNameIpUser+"'"));
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_VALIDO, 
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+"; elemento 'Attribute/"+attributeNameIpUser+"'"));
 			}
 			
 		}

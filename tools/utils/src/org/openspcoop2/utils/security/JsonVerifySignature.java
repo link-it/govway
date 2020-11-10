@@ -353,6 +353,7 @@ public class JsonVerifySignature {
 			
 			if(jwsHeaders.getX509Chain()!=null && !jwsHeaders.getX509Chain().isEmpty() && this.options.isPermitUseHeaderX5C()) {
 				try {
+					// https://tools.ietf.org/html/rfc7515#section-4.1.6: The certificate containing the public key corresponding to the key used to digitally sign the JWS MUST be the first certificate.
 					byte [] cer = Base64Utilities.decode(jwsHeaders.getX509Chain().get(0));
 					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
 					if(this.trustStoreCertificatiX509!=null) {

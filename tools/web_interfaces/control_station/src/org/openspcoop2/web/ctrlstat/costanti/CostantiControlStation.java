@@ -841,7 +841,7 @@ public class CostantiControlStation {
 	
 	public final static String PARAMETRO_RESET_SEARCH = "resetSearch";
 	
-	public final static String PARAMETRO_SERVICE_BINDING = "serviceBinding";
+	public final static String PARAMETRO_SERVICE_BINDING = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_SERVICE_BINDING;
 	public final static String PARAMETRO_SERVICE_BINDING_SEARCH = "serviceBindingSearch";
 	public final static String PARAMETRO_MESSAGE_TYPE = "messageType";
 	public final static String PARAMETRO_INTERFACE_TYPE = "interfaceType";

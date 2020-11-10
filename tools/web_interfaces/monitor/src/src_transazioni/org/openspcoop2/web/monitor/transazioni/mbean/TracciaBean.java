@@ -22,6 +22,7 @@ package org.openspcoop2.web.monitor.transazioni.mbean;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -55,7 +56,7 @@ public class TracciaBean extends Traccia {
 	
 	private BustaBean bustaBean;
 
-	public TracciaBean(Traccia traccia) {
+	public TracciaBean(Traccia traccia, ServiceBinding tipoApi) {
 		// creo la protocol factory
 		try {
 			this.protocolFactory = ProtocolFactoryManager.getInstance()
@@ -75,7 +76,7 @@ public class TracciaBean extends Traccia {
 
 		this.setListaAllegati(traccia.getListaAllegati());
 		// copia della busta
-		this.bustaBean = new BustaBean(traccia.getBusta(), this.protocolFactory);
+		this.bustaBean = new BustaBean(traccia.getBusta(), this.protocolFactory, tipoApi);
 
 	}
 

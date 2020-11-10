@@ -1892,6 +1892,250 @@ public class TestOpenApi4j {
 		}
 		
 		System.out.println("Test #14 completato\n\n");
+		
+		
+		
+		
+		
+		System.out.println("Test #15 (Risposte che mappano il default)");
+		
+		String json15RispostaOK = "{\"esito\": \"OK\"}";
+		
+		String json15RispostaOK_fault = "{\n"+
+			   "\"type\": \"https://example.com/probs/out-of-credit\","+
+			   "\"title\": \"You do not have enough credit.\","+
+			   "\"detail\": \"Your current balance is 30, but that costs 50.\""+
+			    "}";
+		
+		String json15RispostaOK_completamente_diversa= "{\n"+
+				   "\"altro\": \"https://example.com/probs/out-of-credit\","+
+				   "\"altro2\": \"discorso casuale.\","+
+				   "\"altro3\": 23,"+
+				   "\"oggetto\": {"+
+				     "\"esito\": \"OK\","+
+					  "\"desc\": \"descr\""+
+				   "}"+
+				    "}";
+		
+		String testUrl15= baseUri+"/oggetti/"+UUID.randomUUID().toString();
+		List<Integer> valori_test15 = new ArrayList<Integer>();
+		List<String> msg_test15 = new ArrayList<String>();
+		List<String> ct_test15 = new ArrayList<String>();
+		List<Boolean> esiti_test15 = new ArrayList<Boolean>();
+		
+		valori_test15.add(200);msg_test15.add(json15RispostaOK);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(true); 
+		valori_test15.add(200);msg_test15.add(json15RispostaOK_fault);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(false); 
+		valori_test15.add(200);msg_test15.add(json15RispostaOK_completamente_diversa);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(false); 
+		valori_test15.add(200);msg_test15.add(json15RispostaOK_fault);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(false); 
+		valori_test15.add(200);msg_test15.add(json15RispostaOK_completamente_diversa);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(false); 
+		valori_test15.add(200);msg_test15.add(null);ct_test15.add(null);esiti_test15.add(false); 
+		
+		valori_test15.add(201);msg_test15.add(json15RispostaOK_fault);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(true); // ricade in default 
+		valori_test15.add(201);msg_test15.add(json15RispostaOK);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(false); // ricade in default 
+		valori_test15.add(201);msg_test15.add(json15RispostaOK_completamente_diversa);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(false); // ricade in default 
+		valori_test15.add(201);msg_test15.add(json15RispostaOK);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(false); // ricade in default 
+		valori_test15.add(201);msg_test15.add(json15RispostaOK_fault);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(false); // ricade in default 
+		valori_test15.add(201);msg_test15.add(null);ct_test15.add(null);esiti_test15.add(false); // ricade in default 
+		
+		valori_test15.add(401);msg_test15.add(json15RispostaOK_fault);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(true); // ricade in default 
+		valori_test15.add(401);msg_test15.add(json15RispostaOK);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(false); // ricade in default 
+		valori_test15.add(401);msg_test15.add(json15RispostaOK_completamente_diversa);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(false); // ricade in default 
+		valori_test15.add(401);msg_test15.add(json15RispostaOK);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(false); // ricade in default 
+		valori_test15.add(401);msg_test15.add(json15RispostaOK_fault);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(false); // ricade in default 
+		valori_test15.add(401);msg_test15.add(null);ct_test15.add(null);esiti_test15.add(false); // ricade in default 
+		
+		// ricade in 400 dove vi e' il problem detail originale e quindi un messaggio json di risposta OK può essere 'scambiato' per una qualsiasi risposta
+		valori_test15.add(400);msg_test15.add(json15RispostaOK_fault);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(true); 
+		valori_test15.add(400);msg_test15.add(json15RispostaOK);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(true); // QUESTO CASO SOPRA FALLIVA, QUA PASSA!!!!!
+		valori_test15.add(400);msg_test15.add(json15RispostaOK_completamente_diversa);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);esiti_test15.add(true); // QUESTO CASO SOPRA FALLIVA, QUA PASSA!!!!!
+		valori_test15.add(400);msg_test15.add(json15RispostaOK);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(false); 
+		valori_test15.add(400);msg_test15.add(json15RispostaOK_fault);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(false);
+		valori_test15.add(400);msg_test15.add(null);ct_test15.add(null);esiti_test15.add(false);
+
+		// ** Test sul body **
+		for (int i = 0; i < valori_test15.size(); i++) {
+			Integer code = valori_test15.get(i);
+			boolean esito = esiti_test15.get(i);
+			String msg = msg_test15.get(i);
+			String ct = ct_test15.get(i);
+			
+			TextHttpResponseEntity httpEntityResponseTest15 = new TextHttpResponseEntity();
+			httpEntityResponseTest15.setStatus(code);
+			httpEntityResponseTest15.setMethod(HttpRequestMethod.GET);
+			httpEntityResponseTest15.setUrl(testUrl15);	
+			Map<String, String> parametersTrasportoRispostaTest15 = new HashMap<>();
+			if(ct!=null) {
+				parametersTrasportoRispostaTest15.put(HttpConstants.CONTENT_TYPE, ct);
+			}
+			httpEntityResponseTest15.setParametersTrasporto(parametersTrasportoRispostaTest15);
+			httpEntityResponseTest15.setContentType(ct);
+			httpEntityResponseTest15.setContent(msg);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String msgRisposta = "RispostaOk";
+				if(msg==null) {
+					 msgRisposta = "EmptyResponse";
+				}
+				else if(json15RispostaOK_fault.equals(msg)) {
+					 msgRisposta = "ProblemDetail";
+				}
+				else if(json15RispostaOK_completamente_diversa.equals(msg)) {
+					 msgRisposta = "RispostaCompletamenteDiversa";
+				}
+				String tipoTest = "AttesoEsitoOk:"+esito+" Risposta:"+msgRisposta+" ContentType:"+ct+" ReturnCode:"+code;
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntityResponseTest15);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					if(openapi4j) {
+						String msgErroreAtteso = "Content type '"+ct+"' is not allowed for body content. (code: 203)";
+						String msgErroreAtteso2 = "body: Field 'esito' is required. (code: 1026)";
+						if(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(ct) && code.intValue() != 200) {
+							msgErroreAtteso2 = "body: Field 'type' is required. (code: 1026)";
+						}
+						if(!e.getMessage().contains(msgErroreAtteso) && !e.getMessage().contains(msgErroreAtteso2)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
+						}
+					}
+					else {
+						if(ct==null) {
+							String msgErroreAtteso = "Required body undefined";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								System.out.println("\t "+tipoTest+" ERRORE!");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							}
+						}
+						else {
+							String msgErroreAtteso = "Content-Type '"+ct+"' (http response status '"+code+"') unsupported";
+							String msgErroreAtteso2 = "1028 $.esito: is missing but it is required";
+							if(code.intValue() != 200) {
+								msgErroreAtteso2 = "1028 $.type: is missing but it is required";
+							}
+							if(!e.getMessage().contains(msgErroreAtteso) && !e.getMessage().contains(msgErroreAtteso2)) {
+								System.out.println("\t "+tipoTest+" ERRORE!");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
+							}
+						}
+					}
+				}
+			}
+			
+		}
+		
+		System.out.println("Test #15 completato\n\n");
+		
+		
+		
+		
+		
+		
+		
+		System.out.println("Test #16 (Risposte con '/' come casi speciali)");
+		
+		String json16RispostaOK = "{\"esito\": \"OK\"}";
+				
+		List<String> url_test16 = new ArrayList<String>();
+		List<Boolean> esiti_test16 = new ArrayList<Boolean>();
+		
+		url_test16.add("/oggettislashfinale/");esiti_test16.add(true); 
+		url_test16.add("/oggettislashfinale");esiti_test16.add(true);
+		url_test16.add("/");esiti_test16.add(true); 
+		
+		
+		// ** Test sul body **
+		for (int i = 0; i < url_test16.size(); i++) {
+			
+			String urltest = url_test16.get(i);
+			boolean esito = esiti_test16.get(i);
+			
+			String msg = json16RispostaOK;
+			String ct = HttpConstants.CONTENT_TYPE_JSON;
+			int code = 200;
+			
+			TextHttpResponseEntity httpEntityResponseTest16 = new TextHttpResponseEntity();
+			httpEntityResponseTest16.setStatus(code);
+			httpEntityResponseTest16.setMethod(HttpRequestMethod.GET);
+			httpEntityResponseTest16.setUrl(urltest);	
+			Map<String, String> parametersTrasportoRispostaTest16 = new HashMap<>();
+			parametersTrasportoRispostaTest16.put(HttpConstants.CONTENT_TYPE, ct);
+			httpEntityResponseTest16.setParametersTrasporto(parametersTrasportoRispostaTest16);
+			httpEntityResponseTest16.setContentType(ct);
+			httpEntityResponseTest16.setContent(msg);
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = "Url '"+urltest+"'";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntityResponseTest16);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione atteso: "+e.getMessage(),e); // gestire se serve
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+				}
+			}
+			
+		}
+		
+		System.out.println("Test #15 completato\n\n");
 	}
 
 }

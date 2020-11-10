@@ -149,6 +149,38 @@ public class Costanti {
     
     public final static String REQUISITI_INPUT_RACCOLTI = "[[InformationMissingRequisiti]]";
     
+    public static final String SPCOOP_PROTOCOL_NAME = "spcoop";
+    
+    public static final String MODIPA_PROTOCOL_NAME = "modipa";
+    
+    public static final String MODIPA_VALUE_UNDEFINED = "-";
+    
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA = "modipaInteractionAsyncApiRequest";
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA = "modipaInteractionAsyncServiceRequest";
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = "modipaInteractionAsyncActionRequest";
+    
+    
+	public final static String CONSOLE_PARAMETRO_SOGGETTO_DOMINIO = "dominio";
+	
+	public final static String CONSOLE_PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA = "tipoSA";
+	
+	public static final String CONSOLE_PARAMETRO_PP_CHANGE_BINARY = "changeBinary";
+	public static final String CONSOLE_PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE = "true";
+	
+	public final static String CONSOLE_PARAMETRO_SERVICE_BINDING = "serviceBinding";
+	
+	public final static String CONSOLE_PARAMETRO_APC_API_GESTIONE_PARZIALE = "apiGestioneParziale";
+	public final static String CONSOLE_VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI = "apiInfoGenerali";
+	
+	public final static String CONSOLE_PARAMETRO_APC_NOME = "nome";
+	public final static String CONSOLE_PARAMETRO_APC_VERSIONE = "versione";
+	
+	public final static String CONSOLE_PARAMETRO_APS_PORT_TYPE = "port_type";
+	
+	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE = "tipologiaErogazione";
+	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
+	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
+	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = "completa";
 }
 
 

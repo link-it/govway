@@ -188,10 +188,10 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	/* PARAMETRI */
 	
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE = "tipologiaErogazione";
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = "completa";
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE;
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE;
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE;
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA;
 	
 	public final static String PARAMETRO_APS_ID = CostantiControlStation.PARAMETRO_ID;
 	public final static String PARAMETRO_APS_MY_ID = CostantiControlStation.PARAMETRO_ID_FRUIZIONE;
@@ -211,7 +211,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_VALIDAZIONE_DOCUMENTI = "validazioneDocumenti";
 	public final static String PARAMETRO_APS_ACCORDO = "accordo";
 	public final static String PARAMETRO_APS_SERVIZIO_CORRELATO = "servcorr";
-	public final static String PARAMETRO_APS_PORT_TYPE = "port_type";
+	public final static String PARAMETRO_APS_PORT_TYPE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_PORT_TYPE;
 	public final static String PARAMETRO_APS_PORT_TYPE_OLD = "port_type_old";
 	public final static String PARAMETRO_APS_DESCRIZIONE = "descrizione";
 	public final static String PARAMETRO_APS_PRIVATO = "privato";

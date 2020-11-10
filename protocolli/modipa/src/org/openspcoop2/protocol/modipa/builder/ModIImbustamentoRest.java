@@ -80,7 +80,70 @@ public class ModIImbustamentoRest {
 		this.modiProperties = ModIProperties.getInstance();
 	}
 	
-	public void addInteractionProfile(OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio,
+	public void addSyncInteractionProfile(OpenSPCoop2Message msg, RuoloMessaggio ruoloMessaggio) throws Exception {
+	
+		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
+			
+			// nop
+			
+		}
+		else {
+			
+			// Flusso di Risposta
+			
+			String returnCode = null;
+			int returnCodeInt = -1;
+			if(msg.getTransportResponseContext()!=null) {
+				returnCode = msg.getTransportResponseContext().getCodiceTrasporto();
+				if(returnCode!=null) {
+					try {
+						returnCodeInt = Integer.valueOf(returnCode);
+					}catch(Exception e) {}
+				}
+			}
+			
+			Integer [] returnCodeAttesi = this.modiProperties.getRestBloccanteHttpStatus();
+			
+			if(returnCodeAttesi!=null) {
+				boolean found = false;
+				for (Integer integer : returnCodeAttesi) {
+					if(integer.intValue() == ModICostanti.MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE) {
+						if((returnCodeInt >= 200) && (returnCodeInt<=299) ) {
+							found = true;
+							break;
+						}
+					}
+					else if(integer.intValue() == returnCodeInt) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					StringBuilder sb = new StringBuilder();
+					for (Integer integer : returnCodeAttesi) {
+						
+						if(integer.intValue() == ModICostanti.MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE) {
+							sb = new StringBuilder();
+							sb.append("2xx");
+							break;
+						}
+						
+						if(sb.length()>0) {
+							sb.append(",");
+						}
+						sb.append(integer.intValue());
+					}
+					ProtocolException pe = new ProtocolException("HTTP Status '"+returnCodeInt+"' differente da quello atteso per il profilo bloccante (atteso: "+sb.toString()+")");
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
+			}
+			
+		}
+		
+	}
+	
+	public void addAsyncInteractionProfile(OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio,
 			String asyncInteractionType, String asyncInteractionRole,
 			String replyTo,
 			AccordoServizioParteComune apiContenenteRisorsa, String azione) throws Exception {
@@ -216,11 +279,11 @@ public class ModIImbustamentoRest {
 						}
 					}
 					
-					returnCodeAttesi = this.modiProperties.getRestSecurityTokenPushRequestHttpStatus();
+					returnCodeAttesi = this.modiProperties.getRestNonBloccantePushRequestHttpStatus();
 				}
 				else {
 					
-					returnCodeAttesi = this.modiProperties.getRestSecurityTokenPushResponseHttpStatus();
+					returnCodeAttesi = this.modiProperties.getRestNonBloccantePushResponseHttpStatus();
 					
 				}
 				
@@ -256,10 +319,10 @@ public class ModIImbustamentoRest {
 						busta.setCollaborazione(correlationIdExtracted);
 					}
 					
-					returnCodeAttesi = this.modiProperties.getRestSecurityTokenPullRequestHttpStatus();
+					returnCodeAttesi = this.modiProperties.getRestNonBloccantePullRequestHttpStatus();
 				}
 				else if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO.equals(asyncInteractionRole)) {
-					Integer [] returnCodeResourceReady = this.modiProperties.getRestSecurityTokenPullRequestStateOkHttpStatus();
+					Integer [] returnCodeResourceReady = this.modiProperties.getRestNonBloccantePullRequestStateOkHttpStatus();
 					boolean isReady = false;
 					for (Integer integer : returnCodeResourceReady) {
 						if(integer.intValue() == returnCodeInt) {
@@ -284,7 +347,7 @@ public class ModIImbustamentoRest {
 						returnCodeAttesi = returnCodeResourceReady;
 					}
 					else {
-						Integer [] returnCodeAttesi_notReady = this.modiProperties.getRestSecurityTokenPullRequestStateNotReadyHttpStatus();
+						Integer [] returnCodeAttesi_notReady = this.modiProperties.getRestNonBloccantePullRequestStateNotReadyHttpStatus();
 						returnCodeAttesi = new Integer[returnCodeResourceReady.length+returnCodeAttesi_notReady.length];
 						int i = 0;
 						for (int j=0; j < returnCodeAttesi_notReady.length; j++) {
@@ -298,7 +361,7 @@ public class ModIImbustamentoRest {
 					}
 				}
 				else {
-					returnCodeAttesi = this.modiProperties.getRestSecurityTokenPullResponseHttpStatus();
+					returnCodeAttesi = this.modiProperties.getRestNonBloccantePullResponseHttpStatus();
 				}
 				
 			}
@@ -329,7 +392,7 @@ public class ModIImbustamentoRest {
 	}
 	
 	public String addToken(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
-			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest) throws Exception {
+			Busta busta, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest) throws Exception {
 		
 		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
@@ -398,7 +461,15 @@ public class ModIImbustamentoRest {
 			if(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER.equals(claimNameCodiceEnte)) {
 				addIss = false;
 			}
-			String codiceEnte = ModIUtilities.getDynamicValue("CorniceSicurezza-CodiceEnte", securityConfig.getCorniceSicurezzaCodiceEnteRule(), dynamicMap, context);
+			String codiceEnte = null;
+			try {
+				codiceEnte = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL, 
+						securityConfig.getCorniceSicurezzaCodiceEnteRule(), dynamicMap, context);
+			}catch(Exception e) {
+				ProtocolException pe = new ProtocolException(e.getMessage());
+				pe.setInteroperabilityError(true);
+				throw pe;
+			}
 			payloadToken.put(claimNameCodiceEnte, codiceEnte);
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
 			
@@ -406,12 +477,28 @@ public class ModIImbustamentoRest {
 			if(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT.equals(claimNameUser)) {
 				addSub = false;
 			}
-			String utente = ModIUtilities.getDynamicValue("CorniceSicurezza-User", securityConfig.getCorniceSicurezzaUserRule(), dynamicMap, context);
+			String utente = null;
+			try {
+				utente = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL,
+						securityConfig.getCorniceSicurezzaUserRule(), dynamicMap, context);
+			}catch(Exception e) {
+				ProtocolException pe = new ProtocolException(e.getMessage());
+				pe.setInteroperabilityError(true);
+				throw pe;
+			}
 			payloadToken.put(claimNameUser, utente);
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, utente);
 			
 			String claimNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
-			String indirizzoIpPostazione = ModIUtilities.getDynamicValue("CorniceSicurezza-IPUser", securityConfig.getCorniceSicurezzaIpUserRule(), dynamicMap, context);
+			String indirizzoIpPostazione = null;
+			try {
+				indirizzoIpPostazione = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL,
+						securityConfig.getCorniceSicurezzaIpUserRule(), dynamicMap, context);
+			}catch(Exception e) {
+				ProtocolException pe = new ProtocolException(e.getMessage());
+				pe.setInteroperabilityError(true);
+				throw pe;
+			}
 			payloadToken.put(claimNameIpUser, indirizzoIpPostazione);
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, indirizzoIpPostazione);
 						
@@ -530,6 +617,9 @@ public class ModIImbustamentoRest {
 		secProperties.put(SecurityConstants.JOSE_KID, SecurityConstants.JOSE_KID_TRUE); // kid
 		if(securityConfig.isX5c()) {
 			secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT, SecurityConstants.JOSE_INCLUDE_CERT_TRUE);
+			if(!securityConfig.isUseSingleCertificate()) {
+				secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT_CHAIN, SecurityConstants.JOSE_INCLUDE_CERT_CHAIN_TRUE);
+			}
 		}
 		if(securityConfig.isX5t()) {
 			secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT_SHA, SecurityConstants.JOSE_INCLUDE_CERT_SHA_256);
@@ -606,7 +696,7 @@ public class ModIImbustamentoRest {
 		bout.flush();
 		bout.close();
 		
-		String securityTokenHeader = this.modiProperties.getRestSecurityTokenHeader();
+		String securityTokenHeader = headerTokenRest;
 		if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(securityTokenHeader)) {
 			msg.forceTransportHeader(securityTokenHeader, HttpConstants.AUTHORIZATION_PREFIX_BEARER+bout.toString());
 		}

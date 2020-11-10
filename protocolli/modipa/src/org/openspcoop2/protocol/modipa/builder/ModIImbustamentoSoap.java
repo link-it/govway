@@ -88,7 +88,7 @@ public class ModIImbustamentoSoap {
 		this.modiProperties = ModIProperties.getInstance();
 	}
 	
-	public void addInteractionProfile(OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio,
+	public void addAsyncInteractionProfile(OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio,
 			String asyncInteractionType, String asyncInteractionRole,
 			String replyTo,
 			AccordoServizioParteComune apiContenenteRisorsa, String azione) throws Exception {
@@ -302,26 +302,47 @@ public class ModIImbustamentoSoap {
 		}
 		
 		if(busta.getRiferimentoMessaggio()!=null) {
-			wsAddressingValue.setRelatesTo(busta.getRiferimentoMessaggio());
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_RELATES_TO, busta.getRiferimentoMessaggio());
+			
+			boolean add = true;
+			if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
+				boolean buildSecurityTokenInRequest = false;
+				Object buildSecurityTokenInRequestObject = null;
+				if(context!=null) {
+					buildSecurityTokenInRequestObject = context.getObject(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN);
+					if(buildSecurityTokenInRequestObject!=null && buildSecurityTokenInRequestObject instanceof Boolean) {
+						buildSecurityTokenInRequest = (Boolean) buildSecurityTokenInRequestObject;
+					}
+				}
+				add = buildSecurityTokenInRequest;
+			}
+			if(add) {
+				wsAddressingValue.setRelatesTo(busta.getRiferimentoMessaggio());
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_RELATES_TO, busta.getRiferimentoMessaggio());
+			}
+			
 		}
 		
 		wsAddressingValue.setReplyToAnonymouys();
 		
-		if(soapMessage.getSoapAction()!=null) {
-			String soapAction = soapMessage.getSoapAction();
-			soapAction = soapAction.trim();
-			if(soapAction.startsWith("\"")) {
-				if(soapAction.length()>1) {
-					soapAction = soapAction.substring(1);
+		if(this.modiProperties.isSoapSecurityTokenWsaToSoapAction()) {
+			if(soapMessage.getSoapAction()!=null) {
+				String soapAction = soapMessage.getSoapAction();
+				soapAction = soapAction.trim();
+				if(soapAction.startsWith("\"")) {
+					if(soapAction.length()>1) {
+						soapAction = soapAction.substring(1);
+					}
 				}
-			}
-			if(soapAction.endsWith("\"")) {
-				if(soapAction.length()>1) {
-					soapAction = soapAction.substring(0,(soapAction.length()-1));
+				if(soapAction.endsWith("\"")) {
+					if(soapAction.length()>1) {
+						soapAction = soapAction.substring(0,(soapAction.length()-1));
+					}
 				}
+				wsAddressingValue.setAction(soapAction);
 			}
-			wsAddressingValue.setAction(soapAction);
+		}
+		else if(this.modiProperties.isSoapSecurityTokenWsaToOperation()) {
+			wsAddressingValue.setAction(busta.getAzione());
 		}
 		
 		WSAddressingHeader wsAddressingHeaders = wsaddressingUtilities.build(soapMessage, 
@@ -578,13 +599,37 @@ public class ModIImbustamentoSoap {
 		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log);
 		
 		String attributeNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_codice_ente();
-		String codiceEnte = ModIUtilities.getDynamicValue("CorniceSicurezza-CodiceEnte", securityConfig.getCorniceSicurezzaCodiceEnteRule(), dynamicMap, context);
+		String codiceEnte = null;
+		try {
+			codiceEnte = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL, 
+					securityConfig.getCorniceSicurezzaCodiceEnteRule(), dynamicMap, context);
+		}catch(Exception e) {
+			ProtocolException pe = new ProtocolException(e.getMessage());
+			pe.setInteroperabilityError(true);
+			throw pe;
+		}
 			
 		String attributeNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_user();
-		String utente = ModIUtilities.getDynamicValue("CorniceSicurezza-User", securityConfig.getCorniceSicurezzaUserRule(), dynamicMap, context);
+		String utente = null;
+		try {
+			utente = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL, 
+					securityConfig.getCorniceSicurezzaUserRule(), dynamicMap, context);
+		}catch(Exception e) {
+			ProtocolException pe = new ProtocolException(e.getMessage());
+			pe.setInteroperabilityError(true);
+			throw pe;
+		}
 		
 		String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_ipuser();
-		String indirizzoIpPostazione = ModIUtilities.getDynamicValue("CorniceSicurezza-IPUser", securityConfig.getCorniceSicurezzaIpUserRule(), dynamicMap, context);
+		String indirizzoIpPostazione = null;
+		try {
+			indirizzoIpPostazione = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL, 
+					securityConfig.getCorniceSicurezzaIpUserRule(), dynamicMap, context);
+		}catch(Exception e) {
+			ProtocolException pe = new ProtocolException(e.getMessage());
+			pe.setInteroperabilityError(true);
+			throw pe;
+		}
 		
 		Properties pSaml = new Properties();
 		

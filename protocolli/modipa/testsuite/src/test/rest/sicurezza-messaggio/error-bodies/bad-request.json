@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/BadRequest.html",
+    "title": "BadRequest",
+    "status": 400,
+    "detail": "Bad request",
+    "govway_id": "#uuid"
+}

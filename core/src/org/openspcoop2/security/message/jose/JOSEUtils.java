@@ -123,7 +123,44 @@ public class JOSEUtils {
 						hdrs.setJwKey(jwkSet.getJsonWebKeys(), alias);
 					}
 					else if(keystore!=null) {
-						hdrs.addX509cert((X509Certificate)keystore.getCertificate(alias));
+						
+						boolean certChain = false;
+						if(properties.containsKey(SecurityConstants.JOSE_INCLUDE_CERT_CHAIN)) {
+							String valueChain = (String) properties.get(SecurityConstants.JOSE_INCLUDE_CERT_CHAIN);
+							if(valueChain!=null) {
+								valueChain = valueChain.trim();
+							}
+							if(SecurityConstants.JOSE_INCLUDE_CERT_CHAIN_TRUE.equalsIgnoreCase(valueChain)) {
+								certChain = true;
+							}
+						}
+						
+						/*
+						System.out.println("\n\n==============================================");
+						System.out.println("ALIAS: ["+alias+"]");
+						Certificate[] chain = keystore.getCertificateChain(alias);
+						if(chain!=null) {
+							System.out.println("CHAINS: ["+chain.length+"]");
+						}
+						for (int i = 0; i < chain.length; i++) {
+							System.out.println("CHAIN["+i+"]: ["+(((X509Certificate)chain[i]).getSubjectX500Principal().toString()+"]"));
+						}
+						System.out.println("CERT: ["+(((X509Certificate)keystore.getCertificate(alias)).getSubjectX500Principal().toString()+"]"));
+						*/
+						if(certChain) {
+							Certificate[] certificateChain = keystore.getCertificateChain(alias);
+							if(certificateChain!=null && certificateChain.length>0) {
+								for (int i = 0; i < certificateChain.length; i++) {
+									hdrs.addX509cert((X509Certificate)certificateChain[i]);
+								}
+							}
+							else {
+								hdrs.addX509cert((X509Certificate)keystore.getCertificate(alias));
+							}
+						}
+						else {
+							hdrs.addX509cert((X509Certificate)keystore.getCertificate(alias));
+						}
 						hdrs.setAddX5C(true);
 					}
 				}catch(Exception e) {

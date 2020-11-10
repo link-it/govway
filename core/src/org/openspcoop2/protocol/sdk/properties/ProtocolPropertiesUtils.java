@@ -567,22 +567,28 @@ public class ProtocolPropertiesUtils {
 	}
 	
 	
-	public static Long getRequiredNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
-		Long value = getNumberValuePropertyRegistry(list, propertyName, true);
+	public static Long getRequiredNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean greatherThanZero) throws ProtocolException{
+		Long value = getNumberValuePropertyRegistry(list, propertyName, true, greatherThanZero);
 		if(value==null){
 			throw new ProtocolException("Property ["+propertyName+"] with null value?");
 		}
 		return value;
 	}
-	public static Long getOptionalNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
-		Long value = getNumberValuePropertyRegistry(list, propertyName, false);
+	public static Long getOptionalNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean greatherThanZero) throws ProtocolException{
+		Long value = getNumberValuePropertyRegistry(list, propertyName, false, greatherThanZero);
 		return value;
 	}
-	private static Long getNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+	private static Long getNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException, boolean greatherThanZero) throws ProtocolException{
 		
 		ProtocolProperty pp = getProtocolPropertyRegistry(list, propertyName, throwNotFoundException);
 		if(pp!=null){
-			return pp.getNumberValue();
+			Long value = pp.getNumberValue();
+			if(value!=null && greatherThanZero) {
+				if(value <=0) {
+					throw new ProtocolException("Property ["+propertyName+"] must be greatherThanZero");
+				}
+			}
+			return value;
 		}
 		if(throwNotFoundException){
 			throw new ProtocolException("Property ["+propertyName+"] not found");

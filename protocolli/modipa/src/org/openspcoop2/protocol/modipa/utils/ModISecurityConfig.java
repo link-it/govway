@@ -127,7 +127,7 @@ public class ModISecurityConfig {
 		}
 		
 		if(rest) {
-			this.initSharedRest(listProtocolProperties,fruizione,request);
+			this.initSharedRest(listProtocolProperties,sa,fruizione,request);
 			
 			String httpHeaders = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST);
 			if(httpHeaders!=null && httpHeaders.length()>0) {
@@ -140,12 +140,14 @@ public class ModISecurityConfig {
 				
 		if(fruizione) {
 			if(request) {
-				this.ttl = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED).intValue();
+				boolean greatherThanZero = true;
+				this.ttl = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED, greatherThanZero).intValue();
 			}
 		}
 		else {
 			if(!request) {
-				this.ttl = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED).intValue();
+				boolean greatherThanZero = true;
+				this.ttl = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED, greatherThanZero).intValue();
 			}
 		}
 		
@@ -271,12 +273,30 @@ public class ModISecurityConfig {
 				}
 			}
 			
-			// 4. Utilizzo quello di default
+			// 4. Utilizzo quello di default associato al 'sa' se identificato
 			if(this.audience==null && sa!=null) {
 				try {
 					this.audience=NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()))+"/"+sa.getNome();
 				}catch(Exception e) {
 					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+			
+			// 5. Utilizzo audience anonimo
+			if(this.audience==null) {
+				String soggettoMittente = null;
+				if(soggettoFruitore!=null && soggettoFruitore.getNome()!=null) {
+					try {
+						this.audience=NamingUtils.getLabelSoggetto(soggettoFruitore);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+				if(rest) {
+					this.audience=modiProperties.getRestResponseSecurityTokenAudienceDefault(soggettoMittente);
+				}
+				else {
+					this.audience=modiProperties.getSoapResponseSecurityTokenAudienceDefault(soggettoMittente);
 				}
 			}
 			
@@ -337,7 +357,7 @@ public class ModISecurityConfig {
 		List<ProtocolProperty> listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, aspsParam);
 		
 		if(rest) {
-			this.initSharedRest(listProtocolProperties,fruizione,request);
+			this.initSharedRest(listProtocolProperties,null, fruizione,request);
 		}
 		else {
 			this.initSharedSoap(listProtocolProperties,fruizione,request);
@@ -420,16 +440,26 @@ public class ModISecurityConfig {
 		
 	}
 	
-	private void initSharedRest(List<ProtocolProperty> listProtocolProperties, boolean fruizione, boolean request) throws ProtocolException {
+	private void initSharedRest(List<ProtocolProperty> listProtocolProperties, ServizioApplicativo sa, boolean fruizione, boolean request) throws ProtocolException {
 		
 		if(fruizione) {
 			if(request) {
 				this.algorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_ALG);
+				try {
+					this.useSingleCertificate = !ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, true);
+				}catch(ProtocolException pNotFound) {
+					// lascio il default true 
+				}
 			}
 		}
 		else {
 			if(!request) {
 				this.algorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_ALG);
+				try{
+					this.useSingleCertificate = !ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, true);
+				}catch(ProtocolException pNotFound) {
+					// lascio il default true 
+				}
 			}
 		}
 		
@@ -459,7 +489,13 @@ public class ModISecurityConfig {
 		if(vX509.contains(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5U)) {
 			this.x5u = true;
 			if(fruizione && request) {
-				this.x5url = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_X509_VALUE_X5URL);
+				try {
+					this.x5url = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_SA_RICHIESTA_X509_VALUE_X5URL);
+				}catch(Exception e) {
+					ProtocolException pe = new ProtocolException("Applicativo '"+sa.getNome()+"' non utilizzabile con la configurazione di sicurezza (x5u) associata alla fruizione richiesta, poichè non contiene la definizione di una URL che riferisce un certificato (o certificate chain) X.509 corrispondente alla chiave firmataria del security token");
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
 			}
 			else if(!fruizione && !request) {
 				this.x5url = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL);

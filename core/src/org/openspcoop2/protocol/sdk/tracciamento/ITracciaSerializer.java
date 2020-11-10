@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.sdk.tracciamento;
 
 import java.util.List;
 
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -75,5 +76,5 @@ public interface ITracciaSerializer extends IComponentFactory {
 	public XMLRootElement getXMLRootElement() throws ProtocolException;
 	
 	public List<TracciaExtInfoDefinition> getExtInfoDefinition();
-	public List<TracciaExtInfo> extractExtInfo(Busta busta);
+	public List<TracciaExtInfo> extractExtInfo(Busta busta, ServiceBinding tipoApi);
 }

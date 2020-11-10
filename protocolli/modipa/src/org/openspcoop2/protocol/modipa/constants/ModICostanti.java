@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.modipa.constants;
 
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.constants.SignatureAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
@@ -36,7 +37,7 @@ import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
 
 public class ModICostanti {
    
-    public static final String MODIPA_PROTOCOL_NAME = "modipa";
+    public static final String MODIPA_PROTOCOL_NAME = Costanti.MODIPA_PROTOCOL_NAME;
 	
 	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
@@ -87,10 +88,11 @@ public class ModICostanti {
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP = "ProfiloSicurezzaMessaggio-CorniceSicurezza-UserIP";
         
     public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK = "AUDIENCE_CHECK";
+    public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN = "BUILD_SECURITY_REQUEST_TOKEN";
     public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST = "MODIPA_SBUSTAMENTO_REST";
     public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP = "MODIPA_SBUSTAMENTO_SOAP";
     
-    public static final String MODIPA_VALUE_UNDEFINED = "-";
+    public static final String MODIPA_VALUE_UNDEFINED = Costanti.MODIPA_VALUE_UNDEFINED;
         
     public static final String MODIPA_KEYSTORE_MODE = "modipaKeystoreMode";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE = "archive";
@@ -117,8 +119,11 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_RIDEFINISCI = "ridefinisci";
     
     public static final String MODIPA_PROFILO_INTERAZIONE = "modipaInteractionProfile";
+    public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD = "crud";
     public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE = "bloccante";
     public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE = "nonBloccante";
+    public static final String MODIPA_PROFILO_INTERAZIONE_DEFAULT_REST_VALUE = MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD;
+    public static final String MODIPA_PROFILO_INTERAZIONE_DEFAULT_SOAP_VALUE = MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE;
     
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA = "modipaInteractionAsyncProfile";
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH = "PUSH";
@@ -129,9 +134,9 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO = "RichiestaStato";
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA = "Risposta";
     
-    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA = "modipaInteractionAsyncApiRequest";
-    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA = "modipaInteractionAsyncServiceRequest";
-    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = "modipaInteractionAsyncActionRequest";
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA = Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA;
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA = Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA;
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA;
     
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE = "modipaSecurityChannelProfile";
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01 = "idac01";
@@ -146,9 +151,44 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301 = "idam0301";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302 = "idam0302";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER = "modipaSecurityMessageHeaderName";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA = "modipa";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION = "authorization";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_IDAM03_DEFAULT_VALUE = MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_NOT_IDAM03_DEFAULT_VALUE = MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION;
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL = "Informazioni Utente";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL = "Codice Ente";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL = "UserID Utente";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL = "Indirizzo IP Utente";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA = "modipaSecurityMessageCorniceSicurezza";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE = "modipaSecurityMessageProfileActionMode";
+    
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE = "modipaSecurityMessageConfig";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI = "entrambi";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA = "richiesta";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA = "risposta";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO = "custom";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_DEFAULT = MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI;
+    
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE = "modipaSecurityRequest";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO = "true";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO = "false";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DEFAULT = MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO;
+    
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID = "modipaSecurityRequestContentType";
+   
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE = "modipaSecurityResponse";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO = "true";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO = "false";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DEFAULT = MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO;
+    
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID = "modipaSecurityResponseContentType";
+
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID = "modipaSecurityResponseReturnCode";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_ALG = "modipaSecurityMessageRestRequestAlg";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_ALG = "modipaSecurityMessageRestResponseAlg";
@@ -165,11 +205,16 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5C = "x5c";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5T = "x5t";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN = "modipaSecurityMessageRestRequestX509CertUseCertificateChain";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN = "modipaSecurityMessageRestResponseX509CertUseCertificateChain";
+        
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST = "modipaSecurityMessageRestResponseX509CertAsReq";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE = "true";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_FALSE = "false";
-        
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_X509_VALUE_X5URL = "modipaSecurityMessageRestRequestX509Url";
+       
+    // Deprecato, spostato su S.A.
+    // public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_X509_VALUE_X5URL = "modipaSecurityMessageRestRequestX509Url";ù
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_SA_RICHIESTA_X509_VALUE_X5URL = "modipaSecurityMessageRestRequestX509Url";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL = "modipaSecurityMessageRestResponseX509Url";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_ALG = "modipaSecurityMessageSoapRequestAlg";
@@ -251,7 +296,15 @@ public class ModICostanti {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE = "modipaKeystoreCertMode";
 
+    public static final String MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX = "2xx";
+    public static final int MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE = -2;    
     
+    public static final String CONFIG_MODIPA_SOGGETTO_MITTENTE_KEYWORD = "#SoggettoMittente#";
+    
+    public static final String CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_SOAP_ACTION = "soapAction";
+    public static final String CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_OPERATION = "operation";
+    public static final String CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_NONE = "none";
+
 }
 
 

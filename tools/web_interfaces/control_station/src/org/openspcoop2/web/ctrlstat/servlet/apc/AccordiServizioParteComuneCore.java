@@ -58,6 +58,9 @@ import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
+import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -1221,6 +1224,93 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
+	public List<IDResource> getAllIdResource(FiltroRicercaResources filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		Connection con = null;
+		String nomeMetodo = "getAllIdResource";
+		DriverControlStationDB driver = null;
+
+		try {
+			if(this.isRegistroServiziLocale()){
+				// prendo una connessione
+				con = ControlStationCore.dbM.getConnection();
+				// istanzio il driver
+				driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+				return driver.getDriverRegistroServiziDB().getAllIdResource(filtroRicerca);
+			}
+			else{
+				return GestoreRegistroServiziRemoto.getDriverRegistroServizi(ControlStationCore.log).getAllIdResource(filtroRicerca);
+			}
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<IDPortType> getAllIdPortType(FiltroRicercaPortTypes filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		Connection con = null;
+		String nomeMetodo = "getAllIdPortType";
+		DriverControlStationDB driver = null;
+
+		try {
+			if(this.isRegistroServiziLocale()){
+				// prendo una connessione
+				con = ControlStationCore.dbM.getConnection();
+				// istanzio il driver
+				driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+				return driver.getDriverRegistroServiziDB().getAllIdPortType(filtroRicerca);
+			}
+			else{
+				return GestoreRegistroServiziRemoto.getDriverRegistroServizi(ControlStationCore.log).getAllIdPortType(filtroRicerca);
+			}
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<IDPortTypeAzione> getAllIdOperation(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		Connection con = null;
+		String nomeMetodo = "getAllIdOperation";
+		DriverControlStationDB driver = null;
+
+		try {
+			if(this.isRegistroServiziLocale()){
+				// prendo una connessione
+				con = ControlStationCore.dbM.getConnection();
+				// istanzio il driver
+				driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+				return driver.getDriverRegistroServiziDB().getAllIdAzionePortType(filtroRicerca);
+			}
+			else{
+				return GestoreRegistroServiziRemoto.getDriverRegistroServizi(ControlStationCore.log).getAllIdAzionePortType(filtroRicerca);
+			}
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public List<IDAccordo> getAllIdAccordiServizio(FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		Connection con = null;
 		String nomeMetodo = "getAllIdAccordiServizio";

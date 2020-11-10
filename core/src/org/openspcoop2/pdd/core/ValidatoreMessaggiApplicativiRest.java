@@ -814,6 +814,9 @@ public class ValidatoreMessaggiApplicativiRest {
 						}catch(Exception e) {
 							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' contiene un intervallo massimo '"+codiceMax+"' che non è un numero intero");
 						}
+						if(codiceMaxInt<=codiceMinInt) {
+							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' contiene un intervallo massimo '"+codiceMax+"' minore o uguale all'intervallo minimo '"+codiceMin+"'");
+						}
 						if( (codiceMinInt <= codiceRitornato) && (codiceRitornato <= codiceMaxInt)) {
 							match = true;
 							break;
@@ -850,7 +853,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			boolean not = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_NOT, default_not);
 			
 			List<String> contentTypes = new ArrayList<String>();
-			if(valueS.contains(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR)) {
+			if(valueS.contains(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_SEPARATOR)) {
 				String [] tmp = valueS.split(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_SEPARATOR);
 				if(tmp!=null && tmp.length>0) {
 					for (String s : tmp) {

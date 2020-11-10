@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "Token senza claim 'user_ip'",
+    "govway_id": "#uuid"
+}

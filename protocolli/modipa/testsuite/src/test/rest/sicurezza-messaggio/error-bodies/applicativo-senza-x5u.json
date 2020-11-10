@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/BadRequest.html",
+    "title": "BadRequest",
+    "status": 400,
+    "detail": "Il servizio richiede una funzionalità non supportata dal protocollo modipa: Applicativo 'ApplicativoBlockingIDA01ExampleClient2NoX5U' non utilizzabile con la configurazione di sicurezza (x5u) associata alla fruizione richiesta, poichè non contiene la definizione di una URL che riferisce un certificato (o certificate chain) X.509 corrispondente alla chiave firmataria del security token",
+    "govway_id": "#uuid"
+}

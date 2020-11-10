@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/502/InteroperabilityResponseManagementFailed.html",
+    "title": "InteroperabilityResponseManagementFailed",
+    "status": 502,
+    "detail": "HTTP Status '301' differente da quello atteso per il profilo bloccante (atteso: 2xx)",
+    "govway_id": "#uuid"
+}

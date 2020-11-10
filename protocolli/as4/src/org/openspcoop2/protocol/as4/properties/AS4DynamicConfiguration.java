@@ -662,14 +662,15 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	}
 	
 	@Override
-	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id)
+	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
+			IDResource id, String httpMethod, String path)
 					throws ProtocolException {
 		return _getDynamicConfigAzione(consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id.getIdAccordo());
 	}
 	
 	@Override
 	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException{
 		
 		StringProperty actionTypeItem = (StringProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);

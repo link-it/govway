@@ -37,10 +37,12 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReaderInUso;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
 /**
@@ -54,6 +56,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 
 	private IDriverConfigurazioneGet driverConfigurazioneGET;
 	private IDriverConfigurazioneCRUD driverConfigurazioneCRUD;
+	
+	private IConfigIntegrationReaderInUso inUsoDriver = null;
+	
 	@SuppressWarnings("unused")
 	private Logger log;
 	public ConfigIntegrationReader(IDriverConfigurazioneGet driverConfigurazione,Logger log) throws Exception{
@@ -62,6 +67,10 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			this.driverConfigurazioneCRUD = (IDriverConfigurazioneCRUD) this.driverConfigurazioneGET;
 		}
 		this.log = log;
+		
+		Loader loader = new Loader();
+		this.inUsoDriver = (IConfigIntegrationReaderInUso) loader.newInstance("org.openspcoop2.protocol.engine.registry.ConfigIntegrationReaderInUso");
+		this.inUsoDriver.init(this.driverConfigurazioneGET, log);
 	}
 	
 
@@ -184,6 +193,15 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+	@Override
+	public boolean inUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException{
+		return this.inUsoDriver.inUso(idServizioApplicativo);
+	}
+	
+	@Override
+	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException{
+		return this.inUsoDriver.getDettagliInUso(idServizioApplicativo);
+	}
 	
 	
 	

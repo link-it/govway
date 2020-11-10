@@ -263,6 +263,9 @@ public class SecurityConstants {
     public static final String JOSE_INCLUDE_CERT = "joseIncludeCert";
     public static final String JOSE_INCLUDE_CERT_TRUE = "true";
     public static final String JOSE_INCLUDE_CERT_FALSE = "false";
+    public static final String JOSE_INCLUDE_CERT_CHAIN = "joseIncludeCertChain";
+    public static final String JOSE_INCLUDE_CERT_CHAIN_TRUE = "true";
+    public static final String JOSE_INCLUDE_CERT_CHAIN_FALSE = "false";
     public static final String JOSE_INCLUDE_CERT_SHA = "joseIncludeCertSHA";
     public static final String JOSE_INCLUDE_CERT_SHA_1 = "sha1";
     public static final String JOSE_INCLUDE_CERT_SHA_256 = "sha256";

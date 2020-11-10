@@ -35,6 +35,7 @@ import org.openspcoop2.core.tracciamento.constants.TipoInoltro;
 import org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione;
 import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoTempo;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -337,7 +338,7 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 		return null;
 	}
 	@Override
-	public List<TracciaExtInfo> extractExtInfo(Busta busta){
+	public List<TracciaExtInfo> extractExtInfo(Busta busta, ServiceBinding tipoApi){
 		List<TracciaExtInfoDefinition> extInfoDefinitionList = this.getExtInfoDefinition();
 		List<TracciaExtInfo> list = null;
 		if(extInfoDefinitionList!=null && !extInfoDefinitionList.isEmpty()) {

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
@@ -37,15 +38,21 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
+import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
@@ -68,7 +75,9 @@ public class AccordiServizioParteComuneUtilities {
 		
 		AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 		
-		String newURI = IDAccordoFactory.getInstance().getUriFromAccordo(as);
+		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
+		
+		String newURI = idAccordoFactory.getUriFromAccordo(as);
 
 		// Cerco i servizi in cui devo cambiare la URI dell'accordo
 		List<AccordoServizioParteSpecifica> servizi = apsCore.serviziByAccordoFilterList(idAccordoOLD);
@@ -80,6 +89,130 @@ public class AccordiServizioParteComuneUtilities {
 			}
 		}
 		
+		if(Costanti.MODIPA_PROTOCOL_NAME.equals(idAccordoOLD.getSoggettoReferente().getTipo())) {
+			
+			String oldURI = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
+			
+			Map<String, AccordoServizioParteComune> map = new Hashtable<String, AccordoServizioParteComune>();
+			
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
+				FiltroRicercaResources filtroRicerca = new FiltroRicercaResources();
+				FiltroRicercaProtocolProperty filtroRPP = new FiltroRicercaProtocolProperty();
+				filtroRPP.setName(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA);
+				filtroRPP.setValueAsString(oldURI);
+				filtroRicerca.addProtocolPropertyResource(filtroRPP);
+				List<IDResource> list = null;
+				try {
+					list = apcCore.getAllIdResource(filtroRicerca);
+				}catch(DriverRegistroServiziNotFound notFound) {}
+				if(list!=null && !list.isEmpty()) {
+					for (IDResource idResource : list) {
+						
+						AccordoServizioParteComune aspc = null;
+						String uri = idAccordoFactory.getUriFromIDAccordo(idResource.getIdAccordo());
+						boolean forceAdd = false;
+						if(map.containsKey(uri)) {
+							aspc = map.remove(uri);
+							forceAdd = true;
+						}
+						else {
+							if(idResource.getIdAccordo().equals(idAccordoOLD)) {
+								// è quello che sto modificando
+								aspc = as;
+							}
+							else {
+								aspc = apcCore.getAccordoServizioFull(idResource.getIdAccordo());
+							}
+						}
+						boolean find = false;
+						if(aspc.sizeResourceList()>0) {
+							for (Resource res : aspc.getResourceList()) {
+								if(res.getNome().equals(idResource.getNome())) {
+									if(res.sizeProtocolPropertyList()>0) {
+										for (ProtocolProperty pp : res.getProtocolPropertyList()) {
+											if(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName())) {
+												pp.setValue(newURI);
+												find = true;
+												break;
+											}
+										}
+									}
+									break;
+								}
+							}
+						}
+						if((!idResource.getIdAccordo().equals(idAccordoOLD)) && (forceAdd || find)) {
+							map.put(uri, aspc);
+						}
+					}
+				}
+			}
+			else {
+				FiltroRicercaOperations filtroRicerca = new FiltroRicercaOperations();
+				FiltroRicercaProtocolProperty filtroRPP = new FiltroRicercaProtocolProperty();
+				filtroRPP.setName(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA);
+				filtroRPP.setValueAsString(oldURI);
+				filtroRicerca.addProtocolPropertyAzione(filtroRPP);
+				List<IDPortTypeAzione> list = null;
+				try {
+					list = apcCore.getAllIdOperation(filtroRicerca);
+				}catch(DriverRegistroServiziNotFound notFound) {}
+				if(list!=null && !list.isEmpty()) {
+					for (IDPortTypeAzione idAzione : list) {
+						
+						AccordoServizioParteComune aspc = null;
+						String uri = idAccordoFactory.getUriFromIDAccordo(idAzione.getIdPortType().getIdAccordo());
+						boolean forceAdd = false;
+						if(map.containsKey(uri)) {
+							aspc = map.remove(uri);
+							forceAdd = true;
+						}
+						else {
+							if(idAzione.getIdPortType().getIdAccordo().equals(idAccordoOLD)) {
+								// è quello che sto modificando
+								aspc = as;
+							}
+							else {
+								aspc = apcCore.getAccordoServizioFull(idAzione.getIdPortType().getIdAccordo());
+							}
+						}
+						boolean find = false;
+						if(aspc.sizePortTypeList()>0) {
+							for (PortType portType : aspc.getPortTypeList()) {
+								if(portType.getNome().contentEquals(idAzione.getIdPortType().getNome())) {
+									if(portType.sizeAzioneList()>0) {
+										for (Operation op : portType.getAzioneList()) {
+											if(op.getNome().equals(idAzione.getNome())) {
+												if(op.sizeProtocolPropertyList()>0) {
+													for (ProtocolProperty pp : op.getProtocolPropertyList()) {
+														if(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA.equals(pp.getName())) {
+															pp.setValue(newURI);
+															find = true;
+															break;
+														}
+													}
+												}
+												break;
+											}
+										}
+									}
+									break;
+								}
+							}
+						}
+						if((!idAzione.getIdPortType().getIdAccordo().equals(idAccordoOLD)) && (forceAdd || find)) {
+							map.put(uri, aspc);
+						}
+						
+					}
+				}
+			}
+			
+			if(!map.isEmpty()) {
+				listOggettiDaAggiornare.addAll( map.values() );
+			}
+			
+		}
 	}
 	
 	public static void deleteAccordoServizioParteComune(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuilder inUsoMessage, String newLine) throws Exception {

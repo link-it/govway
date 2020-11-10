@@ -641,6 +641,8 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			
 			RisultatoVerificaPolicy risultatoUtilizzato = null;
 			RisultatoVerificaPolicy risultatoUtilizzatoSimultanee = null;
+			List<RisultatoVerificaPolicy> altrePolicy = new ArrayList<RisultatoVerificaPolicy>();
+			List<RisultatoVerificaPolicy> altrePolicySimultanee = new ArrayList<RisultatoVerificaPolicy>();
 			
 			for (RisultatoVerificaPolicy risultatoVerificaPolicy : risultato) {
 				if(TipoRisorsa.NUMERO_RICHIESTE.equals(tipoRisorsa) && risultatoVerificaPolicy.isSimultanee()) {
@@ -656,15 +658,23 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						if(risultatoVerificaPolicy.getMaxValue()!=null) {
 							numeroCheck = risultatoVerificaPolicy.getMaxValue().longValue();
 						}
+						boolean switchPolicy = false;
 						if(numeroCheck>0) {
 							if(numeroRimasti>0) {
 								if(numeroCheck<numeroRimasti) {
+									altrePolicySimultanee.add(risultatoUtilizzatoSimultanee);
 									risultatoUtilizzatoSimultanee = risultatoVerificaPolicy;
+									switchPolicy = true;
 								}
 							}
 							else {
+								altrePolicySimultanee.add(risultatoUtilizzatoSimultanee);
 								risultatoUtilizzatoSimultanee = risultatoVerificaPolicy;
+								switchPolicy = true;
 							}
+						}
+						if(!switchPolicy) {
+							altrePolicySimultanee.add(risultatoVerificaPolicy);
 						}
 					}
 				}
@@ -681,15 +691,23 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						if(risultatoVerificaPolicy.getMaxValue()!=null) {
 							numeroCheck = risultatoVerificaPolicy.getMaxValue().longValue();
 						}
+						boolean switchPolicy = false;
 						if(numeroCheck>0) {
 							if(numeroRimasti>0) {
 								if(numeroCheck<numeroRimasti) {
+									altrePolicy.add(risultatoUtilizzato);
 									risultatoUtilizzato = risultatoVerificaPolicy;
+									switchPolicy = true;
 								}
 							}
 							else {
+								altrePolicy.add(risultatoUtilizzato);
 								risultatoUtilizzato = risultatoVerificaPolicy;
+								switchPolicy = true;
 							}
+						}
+						if(!switchPolicy) {
+							altrePolicy.add(risultatoVerificaPolicy);
 						}
 					}
 				}
@@ -731,36 +749,74 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 				if(risultatoUtilizzato.getMaxValue()!=null) {
 					try {
 						String [] headers = null;
+						boolean windows = false;
 						switch (tipoRisorsa) {
 						case NUMERO_RICHIESTE:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteHeaderLimitWindows();
 							break;
 						case OCCUPAZIONE_BANDA:
 							headers = op2Properties.getControlloTrafficoOccupazioneBandaHeaderLimit();
+							windows = op2Properties.getControlloTrafficoOccupazioneBandaHeaderLimitWindows();
 							break;
 						case TEMPO_MEDIO_RISPOSTA:
 							headers = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderLimit();
+							windows = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows();
 							break;
 						case TEMPO_COMPLESSIVO_RISPOSTA:
 							headers = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderLimit();
+							windows = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows();
 							break;
 						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows();
 							break;
 						case NUMERO_RICHIESTE_FALLITE:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows();
 							break;
 						case NUMERO_FAULT_APPLICATIVI:
 							headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows();
 							break;
 						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows();
 							break;
 						}
 						
 						if(headers!=null && headers.length>0) {
+							
+							StringBuilder sb = new StringBuilder("");
+							if(windows && risultatoUtilizzato.getMsWindow()!=null && risultatoUtilizzato.getMaxValue()!=null) {
+								long ms = risultatoUtilizzato.getMsWindow();
+								long sec = -1;
+								if(ms>1000) {
+									// trasformo in secondi
+									sec = ms / 1000;
+								}
+								if(sec>0) {
+									sb.append(", ").append(risultatoUtilizzato.getMaxValue().longValue()).append(";w=").append(sec);
+								}
+								if(!altrePolicy.isEmpty()) {
+									for (RisultatoVerificaPolicy r : altrePolicy) {
+										if(r.getMsWindow()!=null && r.getMaxValue()!=null) {
+											ms = r.getMsWindow();
+											sec = -1;
+											if(ms>1000) {
+												// trasformo in secondi
+												sec = ms / 1000;
+											}
+											if(sec>0) {
+												sb.append(", ").append(r.getMaxValue().longValue()).append(";w=").append(sec);
+											}
+										}
+									}
+								}
+							}
+							
 							for (String header : headers) {
-								headerTrasportoRateLimiting.put(header, risultatoUtilizzato.getMaxValue().longValue()+"");
+								headerTrasportoRateLimiting.put(header, risultatoUtilizzato.getMaxValue().longValue()+""+sb.toString());
 							}
 						}
 					}catch(Exception e) { 

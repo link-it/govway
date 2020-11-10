@@ -4,13 +4,16 @@ Scenario: Controllo traccia IDAR01
 
 
 * def profilo_sicurezza = karate.get('profilo_sicurezza', 'IDAR01')
+* def profilo_interazione = karate.get('profilo_interazione', 'bloccante')
+
 * def other_checks = karate.get('other_checks', [])
+
 
 * def get_traccia = read('classpath:utils/get_traccia.js')
 * def traccia_to_match = 
 """
 ([
-    { name: 'ProfiloInterazione', value: 'bloccante' },
+    { name: 'ProfiloInterazione', value: profilo_interazione },
     { name: 'ProfiloSicurezzaCanale', value: 'IDAC01' },
     { name: 'ProfiloSicurezzaMessaggio', value: profilo_sicurezza },
     { name: 'ProfiloSicurezzaMessaggio-IssuedAt', value: '#string' },
@@ -28,5 +31,5 @@ Scenario: Controllo traccia IDAR01
 
 * def traccia_to_match = karate.append(traccia_to_match, other_checks)
 
- * def result = get_traccia(tid,tipo) 
- * match result contains deep traccia_to_match
+* def result = get_traccia(tid,tipo) 
+* match result contains deep traccia_to_match

@@ -60,11 +60,13 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReaderInUso;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
 /**
@@ -81,6 +83,8 @@ public class RegistryReader implements IRegistryReader {
 	
 	private RegistroServizi registroServiziWithoutCache; // serve per implementare metodi di lettura delle interfacce API
 	
+	private IRegistryReaderInUso inUsoDriver = null;
+	
 	private Logger log;
 	public RegistryReader(IDriverRegistroServiziGet driverRegistroServizi, Logger log) throws Exception{
 		this.driverRegistroServiziGET = driverRegistroServizi;
@@ -89,6 +93,10 @@ public class RegistryReader implements IRegistryReader {
 		}
 		
 		this.log = log;
+		
+		Loader loader = new Loader();
+		this.inUsoDriver = (IRegistryReaderInUso) loader.newInstance("org.openspcoop2.protocol.engine.registry.RegistryReaderInUso");
+		this.inUsoDriver.init(this.driverRegistroServiziGET, log);
 	}
 	
 	private synchronized void initRegistroServiziWithoutCache() throws RegistryException {
@@ -375,6 +383,15 @@ public class RegistryReader implements IRegistryReader {
 		}
 	}
 	
+	@Override
+	public boolean inUso(IDSoggetto idSoggetto) throws RegistryException{
+		return this.inUsoDriver.inUso(idSoggetto);
+	}
+	@Override
+	public String getDettagliInUso(IDSoggetto idSoggetto) throws RegistryException{
+		return this.inUsoDriver.getDettagliInUso(idSoggetto);
+	}
+	
 	
 	// ACCORDI PARTE COMUNE
 	
@@ -474,6 +491,14 @@ public class RegistryReader implements IRegistryReader {
 		}
 	}
 	
+	@Override
+	public boolean inUso(IDAccordo idAccordo) throws RegistryException{
+		return this.inUsoDriver.inUso(idAccordo);
+	}
+	@Override
+	public String getDettagliInUso(IDAccordo idAccordo) throws RegistryException{
+		return this.inUsoDriver.getDettagliInUso(idAccordo);
+	}
 	
 	
 	
@@ -548,6 +573,15 @@ public class RegistryReader implements IRegistryReader {
 		}catch(Exception e){
 			throw new RegistryException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public boolean inUso(IDPortType id) throws RegistryException{
+		return this.inUsoDriver.inUso(id);
+	}
+	@Override
+	public String getDettagliInUso(IDPortType id) throws RegistryException{
+		return this.inUsoDriver.getDettagliInUso(id);
 	}
 	
 	@Override
@@ -630,6 +664,15 @@ public class RegistryReader implements IRegistryReader {
 		}catch(Exception e){
 			throw new RegistryException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public boolean inUso(IDPortTypeAzione id) throws RegistryException{
+		return this.inUsoDriver.inUso(id);
+	}
+	@Override
+	public String getDettagliInUso(IDPortTypeAzione id) throws RegistryException{
+		return this.inUsoDriver.getDettagliInUso(id);
 	}
 	
 	@Override
@@ -775,6 +818,14 @@ public class RegistryReader implements IRegistryReader {
 		}
 	} 
 	
+	@Override
+	public boolean inUso(IDResource id) throws RegistryException{
+		return this.inUsoDriver.inUso(id);
+	}
+	@Override
+	public String getDettagliInUso(IDResource id) throws RegistryException{
+		return this.inUsoDriver.getDettagliInUso(id);
+	}
 	
 	
 	// ACCORDI PARTE SPECIFICA

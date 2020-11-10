@@ -76,7 +76,62 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 	}
 	
 	
-	public void validateInteractionProfile(OpenSPCoop2Message msg, boolean request, String asyncInteractionType, String asyncInteractionRole, 
+	public void validateSyncInteractionProfile(OpenSPCoop2Message msg, boolean request,
+			List<Eccezione> erroriValidazione) throws Exception {
+		
+		if(!request) {
+			
+			String returnCode = null;
+			int returnCodeInt = -1;
+			if(!request && msg.getTransportResponseContext()!=null) {
+				returnCode = msg.getTransportResponseContext().getCodiceTrasporto();
+				if(returnCode!=null) {
+					try {
+						returnCodeInt = Integer.valueOf(returnCode);
+					}catch(Exception e) {}
+				}
+			}
+			
+			Integer [] returnCodeAttesi = this.modiProperties.getRestBloccanteHttpStatus();
+			if(returnCodeAttesi!=null) {
+				boolean found = false;
+				for (Integer integer : returnCodeAttesi) {
+					if(integer.intValue() == ModICostanti.MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE) {
+						if((returnCodeInt >= 200) && (returnCodeInt<=299) ) {
+							found = true;
+							break;
+						}
+					}
+					else if(integer.intValue() == returnCodeInt) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					StringBuilder sb = new StringBuilder();
+					for (Integer integer : returnCodeAttesi) {
+						
+						if(integer.intValue() == ModICostanti.MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE) {
+							sb = new StringBuilder();
+							sb.append("2xx");
+							break;
+						}
+						
+						if(sb.length()>0) {
+							sb.append(",");
+						}
+						sb.append(integer.intValue());
+					}
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE, 
+							"HTTP Status '"+returnCodeInt+"' differente da quello atteso per il profilo bloccante (atteso: "+sb.toString()+")"));
+					return;
+				}
+			}
+		}
+		
+	}
+	
+	public void validateAsyncInteractionProfile(OpenSPCoop2Message msg, boolean request, String asyncInteractionType, String asyncInteractionRole, 
 			AccordoServizioParteComune apiContenenteRisorsa, String azione,
 			Busta busta, List<Eccezione> erroriValidazione,
 			String replyTo) throws Exception {
@@ -159,7 +214,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 									"Header HTTP '"+correlationIdHeader+"' non presente"));
 							return;
 						}
-						returnCodeAttesi = this.modiProperties.getRestSecurityTokenPushRequestHttpStatus();
+						returnCodeAttesi = this.modiProperties.getRestNonBloccantePushRequestHttpStatus();
 					}
 				}
 				else {
@@ -171,7 +226,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						}
 					}
 					else {
-						returnCodeAttesi = this.modiProperties.getRestSecurityTokenPushResponseHttpStatus();
+						returnCodeAttesi = this.modiProperties.getRestNonBloccantePushResponseHttpStatus();
 					}
 				}
 			}
@@ -225,11 +280,11 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 							busta.setCollaborazione(correlationIdExtracted);
 						}
 						
-						returnCodeAttesi = this.modiProperties.getRestSecurityTokenPullRequestHttpStatus();
+						returnCodeAttesi = this.modiProperties.getRestNonBloccantePullRequestHttpStatus();
 					}
 					else if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO.equals(asyncInteractionRole)) {
 						
-						Integer [] returnCodeResourceReady = this.modiProperties.getRestSecurityTokenPullRequestStateOkHttpStatus();
+						Integer [] returnCodeResourceReady = this.modiProperties.getRestNonBloccantePullRequestStateOkHttpStatus();
 						boolean isReady = false;
 						for (Integer integer : returnCodeResourceReady) {
 							if(integer.intValue() == returnCodeInt) {
@@ -254,7 +309,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 							returnCodeAttesi = returnCodeResourceReady;
 						}
 						else {
-							Integer [] returnCodeAttesi_notReady = this.modiProperties.getRestSecurityTokenPullRequestStateNotReadyHttpStatus();
+							Integer [] returnCodeAttesi_notReady = this.modiProperties.getRestNonBloccantePullRequestStateNotReadyHttpStatus();
 							returnCodeAttesi = new Integer[returnCodeResourceReady.length+returnCodeAttesi_notReady.length];
 							int i = 0;
 							for (int j=0; j < returnCodeAttesi_notReady.length; j++) {
@@ -269,7 +324,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						
 					}
 					else {
-						returnCodeAttesi = this.modiProperties.getRestSecurityTokenPullResponseHttpStatus();
+						returnCodeAttesi = this.modiProperties.getRestNonBloccantePullResponseHttpStatus();
 					}
 				}
 			}
@@ -298,11 +353,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		}
 	}
 	
-	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, boolean includiRequestDigest, 
+	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
-			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig) throws Exception {
+			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
+			boolean buildSecurityTokenInRequest) throws Exception {
 		
-		String securityTokenHeader = this.modiProperties.getRestSecurityTokenHeader();
+		String securityTokenHeader = headerTokenRest;
 		String securityToken = null;
 		if(msg!=null) {
 			if(request && msg.getTransportRequestContext()!=null) {
@@ -536,10 +592,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, toString(aud));
 			}
 			else {
-				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
-						request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
-							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
-						"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"'"));
+				if(request || buildSecurityTokenInRequest) {
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
+								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
+							"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"'"));
+				}
 			}
 			
 			boolean jtiRequired = false;
@@ -589,6 +647,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, toString(codiceEnte));
 					}
 				}
+				else {
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
+							"Token senza claim '"+claimNameCodiceEnte+"'"));
+				}
 				
 				String claimNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_user();
 				if(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT.equals(claimNameUser)) {
@@ -600,6 +662,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, toString(user));
 					}
 				}
+				else {
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
+							"Token senza claim '"+claimNameUser+"'"));
+				}
 				
 				String claimNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
 				if(objectNode.has(claimNameIpUser)) {
@@ -607,6 +673,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					if(userIp!=null) {
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, toString(userIp));
 					}
+				}
+				else {
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
+							"Token senza claim '"+claimNameIpUser+"'"));
 				}
 			}
 			

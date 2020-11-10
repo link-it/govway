@@ -34,6 +34,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.engine.driver" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.engine.driver.repository" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.engine.mapping" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.engine.registry" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.engine.utils" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.engine.validator" />																															
 				<antcall target="compile_src_openspcoop2">

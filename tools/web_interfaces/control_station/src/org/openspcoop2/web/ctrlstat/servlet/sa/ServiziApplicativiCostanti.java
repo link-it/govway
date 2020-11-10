@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -136,7 +137,7 @@ public class ServiziApplicativiCostanti {
 //	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_FRUITORE = "ruoloFruitore";
 //	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_EROGATORE = "ruoloErogatore";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_SA = "ruoloSA";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA = "tipoSA";
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA = Costanti.CONSOLE_PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA;
 	
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI = "ruoli";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLO = "ruolo";
@@ -222,10 +223,10 @@ public class ServiziApplicativiCostanti {
 	public final static int ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
 	
 	public static String getLabelSbustamentoProtocollo(String nomeProtocollo) {
-		if("spcoop".equals(nomeProtocollo)) {
+		if(Costanti.SPCOOP_PROTOCOL_NAME.equals(nomeProtocollo)) {
 			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " SPCoop";
 		}
-		else if("modipa".equals(nomeProtocollo)) {
+		else if(Costanti.MODIPA_PROTOCOL_NAME.equals(nomeProtocollo)) {
 			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " ModI PA";
 		}
 		else {
