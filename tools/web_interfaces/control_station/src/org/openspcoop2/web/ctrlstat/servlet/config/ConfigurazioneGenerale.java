@@ -67,6 +67,7 @@ import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
@@ -560,24 +561,24 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.setDump(d);
 				}
 
-				if (newConfigurazione.getValidazioneContenutiApplicativi() != null) {
-					newConfigurazione.getValidazioneContenutiApplicativi().setStato(StatoFunzionalitaConWarning.toEnumConstant(xsd));
-					newConfigurazione.getValidazioneContenutiApplicativi().setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
-					if(applicaMTOM != null){
-						if(ServletUtils.isCheckBoxEnabled(applicaMTOM))
-							newConfigurazione.getValidazioneContenutiApplicativi().setAcceptMtomMessage(StatoFunzionalita.ABILITATO);
-						else 
-							newConfigurazione.getValidazioneContenutiApplicativi().setAcceptMtomMessage(StatoFunzionalita.DISABILITATO);
-					} else 
-						newConfigurazione.getValidazioneContenutiApplicativi().setAcceptMtomMessage(null);
-				} else {
-					ValidazioneContenutiApplicativi vca = new ValidazioneContenutiApplicativi();
-					vca.setStato(StatoFunzionalitaConWarning.toEnumConstant(xsd));
-					vca.setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
-					vca.setAcceptMtomMessage(null);
-					newConfigurazione.setValidazioneContenutiApplicativi(vca);
+				if (newConfigurazione.getValidazioneContenutiApplicativi() == null) {
+					newConfigurazione.setValidazioneContenutiApplicativi(new ValidazioneContenutiApplicativi());
 				}
-
+				
+				if(newConfigurazione.getValidazioneContenutiApplicativi().getConfigurazione() == null) {
+					newConfigurazione.getValidazioneContenutiApplicativi().setConfigurazione(new ValidazioneContenutiApplicativiStato());
+				}
+				
+				newConfigurazione.getValidazioneContenutiApplicativi().getConfigurazione().setStato(StatoFunzionalitaConWarning.toEnumConstant(xsd));
+				newConfigurazione.getValidazioneContenutiApplicativi().getConfigurazione().setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
+				if(applicaMTOM != null){
+					if(ServletUtils.isCheckBoxEnabled(applicaMTOM))
+						newConfigurazione.getValidazioneContenutiApplicativi().getConfigurazione().setAcceptMtomMessage(StatoFunzionalita.ABILITATO);
+					else 
+						newConfigurazione.getValidazioneContenutiApplicativi().getConfigurazione().setAcceptMtomMessage(StatoFunzionalita.DISABILITATO);
+				} else 
+					newConfigurazione.getValidazioneContenutiApplicativi().getConfigurazione().setAcceptMtomMessage(null);
+				
 				if(newConfigurazione.getAccessoConfigurazione()==null){
 					newConfigurazione.setAccessoConfigurazione(new AccessoConfigurazione());
 				}
@@ -1038,16 +1039,18 @@ public final class ConfigurazioneGenerale extends Action {
 				if(configurazione.getDump().getDumpBinarioPortaApplicativa()!=null)
 					dumpPA = configurazione.getDump().getDumpBinarioPortaApplicativa().toString();
 				if (configurazione.getValidazioneContenutiApplicativi() != null) {
-					if(configurazione.getValidazioneContenutiApplicativi().getStato()!=null)
-						xsd = configurazione.getValidazioneContenutiApplicativi().getStato().toString();
-					if(configurazione.getValidazioneContenutiApplicativi().getTipo()!=null)
-						tipoValidazione = configurazione.getValidazioneContenutiApplicativi().getTipo().toString();
-					if(configurazione.getValidazioneContenutiApplicativi().getAcceptMtomMessage()!=null){
-						if(StatoFunzionalita.ABILITATO.equals(configurazione.getValidazioneContenutiApplicativi().getAcceptMtomMessage())){
-							applicaMTOM = Costanti.CHECK_BOX_ENABLED_ABILITATO;
-						}
-						else{
-							applicaMTOM = Costanti.CHECK_BOX_DISABLED;
+					if(configurazione.getValidazioneContenutiApplicativi().getConfigurazione() != null) {
+						if(configurazione.getValidazioneContenutiApplicativi().getConfigurazione().getStato()!=null)
+							xsd = configurazione.getValidazioneContenutiApplicativi().getConfigurazione().getStato().toString();
+						if(configurazione.getValidazioneContenutiApplicativi().getConfigurazione().getTipo()!=null)
+							tipoValidazione = configurazione.getValidazioneContenutiApplicativi().getConfigurazione().getTipo().toString();
+						if(configurazione.getValidazioneContenutiApplicativi().getConfigurazione().getAcceptMtomMessage()!=null){
+							if(StatoFunzionalita.ABILITATO.equals(configurazione.getValidazioneContenutiApplicativi().getConfigurazione().getAcceptMtomMessage())){
+								applicaMTOM = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+							}
+							else{
+								applicaMTOM = Costanti.CHECK_BOX_DISABLED;
+							}
 						}
 					}
 				}

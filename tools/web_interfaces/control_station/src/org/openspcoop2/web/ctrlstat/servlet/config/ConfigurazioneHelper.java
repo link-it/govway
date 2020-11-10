@@ -3601,18 +3601,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(xsd) || 
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY .equals(xsd)) {
-				//String[] tipi_validazione = { "xsd", "wsdl", "openspcoop" };
+				//String[] tipi_validazione = { "interface", "openspcoop" };
 				String[] tipi_validazione = { 
-						ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_XSD,
-						ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_WSDL
+						ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_INTERFACE,
+						ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_OPENSPCOOP
+				};
+				String[] label_tipi_validazione = { 
+						ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_INTERFACE,
+						ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_OPENSPCOOP
 				};
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
 				de.setType(DataElementType.SELECT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
 				de.setValues(tipi_validazione);
+				de.setLabels(label_tipi_validazione);
 				if (tipoValidazione == null) {
-					de.setSelected(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_XSD);
+					de.setSelected(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_INTERFACE);
 				} else {
 					de.setSelected(tipoValidazione);
 				}

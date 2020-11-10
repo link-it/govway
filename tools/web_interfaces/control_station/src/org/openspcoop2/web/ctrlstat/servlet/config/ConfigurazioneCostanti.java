@@ -27,6 +27,7 @@ import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoApplicabilita;
@@ -1551,8 +1552,9 @@ public class ConfigurazioneCostanti {
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY = "warningOnly";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_REPLY = "reply";
-	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_XSD = "xsd";
-	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_WSDL = "wsdl";
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_XSD = ValidazioneContenutiApplicativiTipo.XSD.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_OPENSPCOOP = ValidazioneContenutiApplicativiTipo.OPENSPCOOP.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_INTERFACE = ValidazioneContenutiApplicativiTipo.INTERFACE.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_NEW = "new";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE = "default";
 	
@@ -1766,6 +1768,11 @@ public class ConfigurazioneCostanti {
 			ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPO_PERIODO_ORARIO,
 			ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPO_PERIODO_GIORNALIERO
 	};
+	
+	
+	public final static String LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_XSD = CostantiControlStation.LABEL_PARAMETRO_SCHEMI_XSD;
+	public final static String LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP;
+	public final static String LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_INTERFACE = CostantiControlStation.LABEL_PARAMETRO_REGISTRO_INTERFACE;
 		
 	// DEFAULT:
 	public final static TipoRisorsa RISORSA_DEFAULT = TipoRisorsa.NUMERO_RICHIESTE;

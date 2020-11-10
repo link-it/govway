@@ -1477,6 +1477,87 @@
             <forward name="porteDelegateValidazioneContenutiCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateValidazioneContenutiError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!--  Porte Delegate (Validazione Contenuti Pattern) -->
+               
+        <action path="/porteDelegateValidazioneContenutiPatternAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiPatternAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiPatternAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiPatternAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiPatternAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiPatternError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiPatternList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiPatternList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiPatternList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiPatternError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiPatternChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiPatternChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiPatternChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiPatternChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiPatternChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiPatternChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiPatternDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiPatternDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiPatternDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiPatternError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Delegate (Validazione Contenuti Richiesta) -->
+               
+        <action path="/porteDelegateValidazioneContenutiRichiestaAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiRichiestaAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiRichiestaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRichiestaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRichiestaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiRichiestaList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiRichiestaList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiRichiestaList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiRichiestaChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiRichiestaChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiRichiestaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRichiestaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRichiestaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRichiestaChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiRichiestaDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiRichiestaDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiRichiestaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Delegate (Validazione Contenuti Risposta) -->
+               
+        <action path="/porteDelegateValidazioneContenutiRispostaAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiRispostaAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiRispostaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRispostaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRispostaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiRispostaList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiRispostaList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiRispostaList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiRispostaChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiRispostaChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiRispostaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRispostaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRispostaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRispostaChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateValidazioneContenutiRispostaDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenutiRispostaDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiRispostaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiRispostaError" path="/jsplib/info.jsp"/>
+        </action>
     
        	<!--  Porte Delegate (Abilitazione) -->
 
@@ -2276,6 +2357,87 @@
             <forward name="porteApplicativeValidazioneContenutiOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeValidazioneContenutiCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeValidazioneContenutiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Validazione Contenuti Pattern) -->
+               
+        <action path="/porteApplicativeValidazioneContenutiPatternAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiPatternAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiPatternAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiPatternAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiPatternAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiPatternError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiPatternList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiPatternList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiPatternList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiPatternError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiPatternChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiPatternChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiPatternChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiPatternChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiPatternChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiPatternChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiPatternDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiPatternDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiPatternDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiPatternError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Validazione Contenuti Richiesta) -->
+               
+        <action path="/porteApplicativeValidazioneContenutiRichiestaAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiRichiestaAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiRichiestaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRichiestaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRichiestaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiRichiestaList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiRichiestaList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiRichiestaList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiRichiestaChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiRichiestaChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiRichiestaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRichiestaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRichiestaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRichiestaChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiRichiestaDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiRichiestaDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiRichiestaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Validazione Contenuti Risposta) -->
+               
+        <action path="/porteApplicativeValidazioneContenutiRispostaAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiRispostaAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiRispostaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRispostaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRispostaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiRispostaList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiRispostaList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiRispostaList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiRispostaChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiRispostaChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiRispostaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRispostaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRispostaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRispostaChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeValidazioneContenutiRispostaDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenutiRispostaDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiRispostaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiRispostaError" path="/jsplib/info.jsp"/>
         </action>
         
       	<!--  Porte Applicative (Abilitazione) -->

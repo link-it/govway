@@ -262,6 +262,10 @@ public class CostantiConfigurazione {
     public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE = ValidazioneContenutiApplicativiTipo.INTERFACE;
     /** Validazione WSDL: Accordo */
     public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP = ValidazioneContenutiApplicativiTipo.OPENSPCOOP;
+    /** Validazione: Json */
+    public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_JSON = ValidazioneContenutiApplicativiTipo.JSON;
+    /** Validazione: Pattern */
+    public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_PATTERN = ValidazioneContenutiApplicativiTipo.PATTERN;
     
     public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_PRINT_SEPARATOR = "-";
     public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_CON_MTOM = "mtom/xop";

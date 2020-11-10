@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
@@ -205,6 +206,19 @@ public final class PorteDelegateChange extends Action {
 				// ho cambiato modalita', elimino il valore
 				azione = null;
 			}
+			
+			String servletPatternList = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_PATTERN_LIST;
+			List<Parameter> paramsPatternList = new ArrayList<Parameter>();
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			paramsPatternList.add(pId);
+			paramsPatternList.add(pIdSoggetto);
+			paramsPatternList.add(pIdAsps);
+			paramsPatternList.add(pIdFruizione);
+			String servletRichiesteList = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_RICHIESTA_LIST;
+			String servletRisposteList = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_RISPOSTA_LIST;
 			
 			// Prendo nome e tipo del soggetto
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
@@ -384,25 +398,40 @@ public final class PorteDelegateChange extends Action {
 			String statoValidazione = null;
 			String tipoValidazione = null;
 			String applicaMTOM = "";
+			String soapAction = null;
+			String jsonSchema = null;
+			String patternAndS = null;
+			String patternNotS = null; 
+			
+			boolean tipoValidazioneJsonEnabled = false;
+			List<String> listaJsonSchema = new ArrayList<String>();
+			int numeroPattern = 0;
+			int numeroRichieste = 0;
+			int numeroRisposte = 0;
+			boolean visualizzaLinkPattern = false;
+			boolean visualizzaLinkRichiesta = false;
+			
 			ValidazioneContenutiApplicativi vx = pde.getValidazioneContenutiApplicativi();
-			if (vx == null) {
+			ValidazioneContenutiApplicativiStato vxStato = vx != null ? vx.getConfigurazione() : null; 
+
+			if (vxStato == null) {
 				statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 				tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE;
 			} else {
-				if(vx.getStato()!=null)
-					statoValidazione = vx.getStato().toString();
+				if(vxStato.getStato()!=null)
+					statoValidazione = vxStato.getStato().toString();
 				if ((statoValidazione == null) || "".equals(statoValidazione)) {
 					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 				}
 				
-				if(vx.getTipo()!=null)
-					tipoValidazione = vx.getTipo().toString();
+				if(vxStato.getTipo()!=null)
+					tipoValidazione = vxStato.getTipo().toString();
 				if (tipoValidazione == null || "".equals(tipoValidazione)) {
 					tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE ;
 				}
 				
-				if(vx.getAcceptMtomMessage()!=null)
-					if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
+				if(vxStato.getAcceptMtomMessage()!=null)
+					if (vxStato.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
 						applicaMTOM = Costanti.CHECK_BOX_ENABLED;
 			}
 			
@@ -988,7 +1017,9 @@ public final class PorteDelegateChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine, pde.getCanale());
+						messageEngine, pde.getCanale(),tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+						patternAndS, patternNotS, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+						numeroRichieste, servletRichiesteList, paramsPatternList, numeroRisposte, servletRisposteList, paramsPatternList);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -1152,7 +1183,9 @@ public final class PorteDelegateChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine, pde.getCanale());
+						messageEngine, pde.getCanale(),tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+						patternAndS, patternNotS, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+						numeroRichieste, servletRichiesteList, paramsPatternList, numeroRisposte, servletRisposteList, paramsPatternList);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);

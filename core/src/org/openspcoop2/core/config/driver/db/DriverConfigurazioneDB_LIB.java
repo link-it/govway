@@ -11835,6 +11835,7 @@ public class DriverConfigurazioneDB_LIB {
 			sqlQueryObject.addSelectField("validazione_contenuti_pat_not");
 			sqlQueryObject.addWhereCondition("id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, idPorta);
 
@@ -12047,11 +12048,11 @@ public class DriverConfigurazioneDB_LIB {
 						
 						configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
 						
-						String validazioneContenuti_pattern_and = rs.getString("validazione_contenuti_pat_and");
+						String validazioneContenuti_pattern_and = rs.getString("pattern_and");
 						if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
 							configurazione.getConfigurazionePattern().setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
 						
-						String validazioneContenuti_pattern_not = rs.getString("validazione_contenuti_pat_not");
+						String validazioneContenuti_pattern_not = rs.getString("pattern_not");
 						if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
 							configurazione.getConfigurazionePattern().setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
 						
@@ -12099,6 +12100,8 @@ public class DriverConfigurazioneDB_LIB {
 					}
 
 				}
+				
+				richiesta.setConfigurazione(configurazione);
 				
 				String applicabilita_azioni = rs.getString("applicabilita_azioni");
 				String applicabilita_ct = rs.getString("applicabilita_ct");
@@ -12190,9 +12193,9 @@ public class DriverConfigurazioneDB_LIB {
 					if((validazioneContenuti_acceptMtomMessage!=null && !validazioneContenuti_acceptMtomMessage.equals(""))  )
 						configurazione.setAcceptMtomMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
 					
-					String validazioneContenuti_soapAction = rs.getString("soapaction");
-					if((validazioneContenuti_soapAction!=null && !validazioneContenuti_soapAction.equals(""))  )
-						configurazione.setSoapAction(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_soapAction));
+//					String validazioneContenuti_soapAction = rs.getString("soapaction");
+//					if((validazioneContenuti_soapAction!=null && !validazioneContenuti_soapAction.equals(""))  )
+//						configurazione.setSoapAction(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_soapAction));
 					
 					String validazioneContenuti_jsonSchema = rs.getString("json");
 					if((validazioneContenuti_jsonSchema!=null && !validazioneContenuti_jsonSchema.equals(""))  )
@@ -12202,11 +12205,11 @@ public class DriverConfigurazioneDB_LIB {
 						
 						configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
 						
-						String validazioneContenuti_pattern_and = rs.getString("validazione_contenuti_pat_and");
+						String validazioneContenuti_pattern_and = rs.getString("pattern_and");
 						if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
 							configurazione.getConfigurazionePattern().setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
 						
-						String validazioneContenuti_pattern_not = rs.getString("validazione_contenuti_pat_not");
+						String validazioneContenuti_pattern_not = rs.getString("pattern_not");
 						if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
 							configurazione.getConfigurazionePattern().setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
 						
@@ -12254,6 +12257,8 @@ public class DriverConfigurazioneDB_LIB {
 					}
 
 				}
+				
+				risposta.setConfigurazione(configurazione);
 				
 				String applicabilita_azioni = rs.getString("applicabilita_azioni");
 				String applicabilita_ct = rs.getString("applicabilita_ct");
@@ -12374,8 +12379,8 @@ public class DriverConfigurazioneDB_LIB {
 				posizioni.add(regola.getPosizione());
 				regole.put(regola.getPosizione(), regola);
 			}
-			while(validazione.sizeRichiestaList()>0) {
-				validazione.removeRichiesta(0);
+			while(validazione.sizeRispostaList()>0) {
+				validazione.removeRisposta(0);
 			}
 			Collections.sort( posizioni );
 			int posNew = 1;
@@ -12521,7 +12526,7 @@ public class DriverConfigurazioneDB_LIB {
 								richiesta.getConfigurazione().getConfigurazionePattern().sizePatternList()>0) {
 							
 							int nr = 0;
-							for (ValidazioneContenutiApplicativiPatternRegola regola : validazione.getConfigurazione().getConfigurazionePattern().getPatternList()) {
+							for (ValidazioneContenutiApplicativiPatternRegola regola : richiesta.getConfigurazione().getConfigurazionePattern().getPatternList()) {
 								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 								tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
 								sqlQueryObject.addInsertTable(tableName);
@@ -12593,7 +12598,7 @@ public class DriverConfigurazioneDB_LIB {
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("stato", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getStato()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getTipo()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("mtom", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getAcceptMtomMessage()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
-						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soapaction", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getSoapAction()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
+						//listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soapaction", risposta.getConfigurazione()!=null ? DriverConfigurazioneDB_LIB.getValue(risposta.getConfigurazione().getSoapAction()) : null , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("json", risposta.getConfigurazione()!=null ? risposta.getConfigurazione().getJsonSchema() : null , InsertAndGeneratedKeyJDBCType.STRING) );
 						
 						String pattern_and = null;
@@ -12653,7 +12658,7 @@ public class DriverConfigurazioneDB_LIB {
 								risposta.getConfigurazione().getConfigurazionePattern().sizePatternList()>0) {
 							
 							int nr = 0;
-							for (ValidazioneContenutiApplicativiPatternRegola regola : validazione.getConfigurazione().getConfigurazionePattern().getPatternList()) {
+							for (ValidazioneContenutiApplicativiPatternRegola regola : risposta.getConfigurazione().getConfigurazionePattern().getPatternList()) {
 								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 								tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
 								sqlQueryObject.addInsertTable(tableName);

@@ -97,6 +97,11 @@ import org.openspcoop2.core.config.TrasformazioneSoap;
 import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiestaApplicabilita;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRispostaApplicabilita;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
@@ -272,6 +277,7 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Dialog;
@@ -6468,11 +6474,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		String statoValidazione = null;
 		
 		ValidazioneContenutiApplicativi vx = paAssociata.getValidazioneContenutiApplicativi();
-		if (vx == null) {
+		if (vx == null || vx.getConfigurazione() == null) {
 			statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 		} else {
-			if(vx.getStato()!=null)
-				statoValidazione = vx.getStato().toString();
+			if(vx.getConfigurazione().getStato()!=null)
+				statoValidazione = vx.getConfigurazione().getStato().toString();
 			if ((statoValidazione == null) || "".equals(statoValidazione)) {
 				statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 			}
@@ -6484,9 +6490,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		String tipoValidazione = null;
 		
 		ValidazioneContenutiApplicativi vx = paAssociata.getValidazioneContenutiApplicativi();
-		if (vx != null) {
-			if(vx.getTipo()!=null) {
-				tipoValidazione = vx.getTipo().getValue();
+		if (vx != null && vx.getConfigurazione() != null) {
+			if(vx.getConfigurazione().getTipo()!=null) {
+				tipoValidazione = vx.getConfigurazione().getTipo().getValue();
 			}
 		}
 		return tipoValidazione;
@@ -6764,11 +6770,11 @@ public class ConsoleHelper implements IConsoleHelper {
 	public String getStatoValidazionePortaDelegata(PortaDelegata pdAssociata) {
 		String statoValidazione = null;
 		ValidazioneContenutiApplicativi vx = pdAssociata.getValidazioneContenutiApplicativi();
-		if (vx == null) {
+		if (vx == null || vx.getConfigurazione() == null) {
 			statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 		} else {
-			if(vx.getStato()!=null)
-				statoValidazione = vx.getStato().toString();
+			if(vx.getConfigurazione().getStato()!=null)
+				statoValidazione = vx.getConfigurazione().getStato().toString();
 			if ((statoValidazione == null) || "".equals(statoValidazione)) {
 				statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 			}
@@ -7446,9 +7452,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public void setStatoValidazioneContenuti(DataElement de, ValidazioneContenutiApplicativi val, FormatoSpecifica formatoSpecifica) throws DriverControlStationException, DriverControlStationNotFound {
 		de.setType(DataElementType.CHECKBOX);
-		if(val!=null && !StatoFunzionalitaConWarning.DISABILITATO.equals(val.getStato())) {
+		if(val!=null && val.getConfigurazione() != null && !StatoFunzionalitaConWarning.DISABILITATO.equals(val.getConfigurazione().getStato())) {
 			String valore = null;
-			if(StatoFunzionalitaConWarning.ABILITATO.equals(val.getStato())) {
+			if(StatoFunzionalitaConWarning.ABILITATO.equals(val.getConfigurazione().getStato())) {
 				de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
 				valore = CostantiControlStation.DEFAULT_VALUE_ABILITATO;
 			}
@@ -7457,7 +7463,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				valore = CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY;
 			}
 			String label = null;
-			switch (val.getTipo()) {
+			switch (val.getConfigurazione().getTipo()) {
 			case INTERFACE:
 				switch (formatoSpecifica) {
 				case OPEN_API_3:
@@ -7479,6 +7485,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				break;
 			case OPENSPCOOP:
 				label=CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP;
+				break;
+			case JSON:
+				label=CostantiControlStation.LABEL_PARAMETRO_SCHEMI_JSON;
+				break;
+			case PATTERN:
+				label=CostantiControlStation.LABEL_PARAMETRO_PATTERN;
 				break;
 			}
 			de.setStatusValue(this.getUpperFirstChar(valore)+" [ "+label+" ]");
@@ -9810,12 +9822,34 @@ public class ConsoleHelper implements IConsoleHelper {
 	// Validazione contenuti
 	
 	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
-			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) throws Exception{
-		validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM, serviceBinding, formatoSpecifica);
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica, boolean tipoValidazioneJsonEnabled, String soapAction, String jsonSchema, List<String> listaJsonSchema, 
+			String patternAnd, String patternNot, int numeroPattern, String servletPatternList, List<Parameter> paramsPatternList, boolean visualizzaLinkPattern,
+			boolean visualizzaLinkRichiesta, int numeroRichieste, String servletRichiesteList, List<Parameter> paramsRichiesteList,
+			int numeroRisposte, String servletRisposteList, List<Parameter> paramsRisposteList) throws Exception{
+		this.validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM, serviceBinding, formatoSpecifica,
+				tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+				patternAnd, patternNot, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+				numeroRichieste, servletRichiesteList, paramsRichiesteList, numeroRisposte, servletRisposteList, paramsRisposteList);
 	}
 	
 	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean addSezione,boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
-			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) {
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica, boolean tipoValidazioneJsonEnabled, String soapAction, String jsonSchema, List<String> listaJsonSchema, 
+			String patternAnd, String patternNot, int numeroPattern, String servletPatternList, List<Parameter> paramsPatternList, boolean visualizzaLinkPattern,
+			boolean visualizzaLinkRichiesta, int numeroRichieste, String servletRichiesteList, List<Parameter> paramsRichiesteList,
+			int numeroRisposte, String servletRisposteList, List<Parameter> paramsRisposteList
+			) {
+		this.validazioneContenuti(tipoOperazione, dati, addSezione, isPortaDelegata,xsd,tipoValidazione,applicaMTOM, serviceBinding, formatoSpecifica,
+				tipoValidazioneJsonEnabled, true, soapAction, jsonSchema, listaJsonSchema,
+				patternAnd, patternNot, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+				numeroRichieste, servletRichiesteList, paramsRichiesteList, numeroRisposte, servletRisposteList, paramsRisposteList);
+	}
+	
+	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean addSezione,boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica, boolean tipoValidazioneJsonEnabled, boolean visualizzaSoapAction, String soapAction, String jsonSchema, List<String> listaJsonSchema, 
+			String patternAnd, String patternNot, int numeroPattern, String servletPatternList, List<Parameter> paramsPatternList, boolean visualizzaLinkPattern,
+			boolean visualizzaLinkRichiesta, int numeroRichieste, String servletRichiesteList, List<Parameter> paramsRichiesteList,
+			int numeroRisposte, String servletRisposteList, List<Parameter> paramsRisposteList
+			) {
 		DataElement de = new DataElement();
 		
 		if(addSezione) {
@@ -9849,6 +9883,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP);
 			}
 			
+			// Json (solo se presente almento un allegato)
+			if(tipoValidazioneJsonEnabled) {
+				tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_JSON);
+			}
+			
+			// Pattern
+			tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_PATTERN);
+			
 			List<String> labelTipiValidazione = new ArrayList<>();
 			switch (formatoSpecifica) {
 			case OPEN_API_3:
@@ -9869,6 +9911,15 @@ public class ConsoleHelper implements IConsoleHelper {
 				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP);
 			}
 			
+			// Json (solo se presente almento un allegato)
+			if(tipoValidazioneJsonEnabled) {
+				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_SCHEMI_JSON);
+			}
+			
+			// Pattern
+			labelTipiValidazione.add(CostantiControlStation.LABEL_PATTERN);
+			
+			
 			//String[] tipi_validazione = { "xsd", "wsdl" };
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);
@@ -9882,6 +9933,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValues(tipiValidazione);
 				de.setLabels(labelTipiValidazione);
 				de.setSelected(tipoValidazione);
+				de.setPostBack(true);
 			}
 			dati.addElement(de);
 			
@@ -9894,7 +9946,23 @@ public class ConsoleHelper implements IConsoleHelper {
 				dati.addElement(de);
 			}
 			
-			
+			// SoapAction
+			if((CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP.equals(tipoValidazione) ||
+					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_INTERFACE.equals(tipoValidazione) )&& !this.isModalitaStandard()) {
+				if(serviceBinding.equals(ServiceBinding.SOAP)) {
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_SOAP_ACTION);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_SOAP_ACTION);
+					de.setType(DataElementType.SELECT);
+					String[] soapActionValues = { CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO,
+							CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO };
+					
+					de.setValues(soapActionValues);
+					de.setSelected(soapAction != null ? soapAction : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO);
+					dati.addElement(de);
+				}
+			}
+						
 			// Applica MTOM 
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM);
@@ -9910,6 +9978,79 @@ public class ConsoleHelper implements IConsoleHelper {
 			}		 
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM);
 			dati.addElement(de);
+			
+			// Json schema
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_JSON.equals(tipoValidazione) ){
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_JSON_SCHEMA);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_JSON_SCHEMA);
+				de.setType(DataElementType.SELECT);
+				de.setValues(listaJsonSchema);
+				de.setSelected(jsonSchema != null ? jsonSchema : "");
+				dati.addElement(de);
+			}
+			
+			// link richiesta e risposta
+			if(visualizzaLinkRichiesta) {
+				// link lista richieste
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+				if (contaListeFromSession)
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA+" (" + numeroRichieste + ")");
+				else
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA);
+				de.setUrl(servletRichiesteList, paramsRichiesteList.toArray(new Parameter[paramsRichiesteList.size()]));
+				dati.addElement(de);
+				
+				// link lista risposte
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				if (contaListeFromSession)
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA+" (" + numeroRisposte + ")");
+				else
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA);
+				de.setUrl(servletRisposteList, paramsRisposteList.toArray(new Parameter[paramsRisposteList.size()]));
+				dati.addElement(de);
+			}
+			
+			// Pattern
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_PATTERN.equals(tipoValidazione) ){
+				
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PATTERN);
+				dati.addElement(de);
+				
+				// checkbox And
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_PATTERN_AND);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_PATTERN_AND);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(patternAnd != null ? ServletUtils.isCheckBoxEnabled(patternAnd) : true);
+				dati.addElement(de);
+				 
+				// checkbox OR
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_PATTERN_NOT);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_PATTERN_NOT);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(patternNot != null ? ServletUtils.isCheckBoxEnabled(patternNot) : false);
+				dati.addElement(de);
+				
+				if(visualizzaLinkPattern) {
+					// link lista pattern
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+					if (contaListeFromSession)
+						de.setValue(CostantiControlStation.LABEL_PATTERN+" (" + numeroPattern + ")");
+					else
+						de.setValue(CostantiControlStation.LABEL_PATTERN);
+					de.setUrl(servletPatternList, paramsPatternList.toArray(new Parameter[paramsPatternList.size()]));
+					dati.addElement(de);
+				}
+			}
 		}
 	}
 	
@@ -16353,5 +16494,858 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		return true;
+	}
+	
+	public Vector<Vector<DataElement>> valorizzaDatiPorteValidazioneContenutiPattern(List<ValidazioneContenutiApplicativiPatternRegola> lista,
+			String servletNamePorteValidazioneContenutiPatternChange, List<Parameter> listaParametriChange) {
+		// preparo i dati
+		Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+		if (lista != null) {
+			Iterator<ValidazioneContenutiApplicativiPatternRegola> it = lista.iterator();
+			
+			while (it.hasNext()) {
+				ValidazioneContenutiApplicativiPatternRegola regola = it.next();
+				Parameter pIdRegola = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_ID_PATTERN, regola.getId() + "");
+				
+				Vector<DataElement> e = new Vector<DataElement>();
+				
+				// Nome
+				DataElement	de = new DataElement();
+				de.setIdToRemove(regola.getId() + "");
+				de.setValue(regola.getNome());
+				de.setToolTip(regola.getNome());
+				List<Parameter> listaParametriChangeRegola = new ArrayList<Parameter>();
+				listaParametriChangeRegola.addAll(listaParametriChange);
+				listaParametriChangeRegola.add(pIdRegola);
+				de.setUrl(servletNamePorteValidazioneContenutiPatternChange, listaParametriChangeRegola.toArray(new Parameter[listaParametriChangeRegola.size()]));
+				e.addElement(de);
+				
+				// regole
+				de = new DataElement();
+				de.setValue(regola.getRegola());
+				if(regola.getRegola()!=null && regola.getRegola().length()> 200) {
+					de.setValue(regola.getRegola().substring(0,197)+ "...");
+				}
+				de.setToolTip(regola.getRegola());
+				e.addElement(de);
+				
+				// pattern and
+				de = new DataElement();
+				de.setValue(regola.getAnd() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
+				e.addElement(de);
+				
+				// pattern not
+				de = new DataElement();
+				de.setValue(regola.getNot() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
+				e.addElement(de);
+				
+				dati.addElement(e);
+			}
+		}
+		return dati;
+	}
+	
+	public void impostaLabelColonnePorteValidazioneContenutiPattern() {
+		// setto le label delle colonne
+		List<String> lstLabels = new ArrayList<>();
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_REGOLE);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_AND);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOT);
+		this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
+	}
+	
+	public Vector<DataElement> addValidazioneContenutiPatternToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, ValidazioneContenutiApplicativiPatternRegola oldPattern, 
+			String idRegolaS, String nome, String regola,
+			String patternAnd, String patternNot) throws Exception {
+
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(CostantiControlStation.LABEL_PATTERN);
+		dati.addElement(de);
+		
+		// id
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_ID_PATTERN);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_ID_PATTERN);
+		de.setValue(idRegolaS != null ? idRegolaS : "");
+		dati.addElement(de);
+		
+		// nome
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME);
+		de.setValue(nome);
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		// regola
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_REGOLE);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_REGOLE);
+		de.setValue(regola);
+		de.setRequired(true);
+		de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CONTENUTI_NOTE);
+		DataElementInfo info = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+		info.setHeaderBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+//		if(ServiceBinding.REST.equals(serviceBinding)) {
+			info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_REST_VALORI);
+//		}
+//		else {
+//			info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_SOAP_VALORI);
+//		}
+		
+		de.setInfo(info );
+		dati.addElement(de);
+		
+		// checkbox And
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_AND);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_AND);
+		de.setType(DataElementType.CHECKBOX);
+		de.setSelected(patternAnd != null ? ServletUtils.isCheckBoxEnabled(patternAnd) : true);
+		dati.addElement(de);
+		 
+		// checkbox OR
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOT);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOT);
+		de.setType(DataElementType.CHECKBOX);
+		de.setSelected(patternNot != null ? ServletUtils.isCheckBoxEnabled(patternNot) : false);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public boolean validazioneContenutiPatternCheckData(TipoOperazione tipoOperazione, ValidazioneContenutiApplicativiPatternRegola oldPattern, boolean isDelegata, long idPorta) throws Exception{
+		try {
+			
+			//String idRegolaS = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_ID_PATTERN);
+			String nome = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME);
+			String regola = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_REGOLE);
+//			String patternAndS = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_AND);
+//			String patternNotS = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOT); 
+			
+			// nome 
+			if(nome == null || "".equals(nome)) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME));
+				return false;
+			}
+			
+			if(this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME) == false) {
+				return false;
+			}
+			
+			// regola 
+			if(regola == null || "".equals(regola)) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_REGOLE));
+				return false;
+			}
+			
+			// check esistenza
+			String idParent = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_ID_RISPOSTA);
+			String tipoParent = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_PARENT);
+			
+			if(tipoParent == null) {
+				tipoParent = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_PARENT_PORTA;
+			}
+			
+			boolean exists = false;
+			if(tipoParent.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_PARENT_RICHIESTA)) {
+				exists = isDelegata ? this.porteDelegateCore.existsValidazioneContenutiPatternRichiesta(Long.parseLong(idParent), nome) : this.porteApplicativeCore.existsValidazioneContenutiPatternRichiesta(Long.parseLong(idParent), nome);
+			} else if(tipoParent.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_PARENT_RISPOSTA)) {
+				exists = isDelegata ? this.porteDelegateCore.existsValidazioneContenutiPatternRisposta(Long.parseLong(idParent), nome) : this.porteApplicativeCore.existsValidazioneContenutiPatternRisposta(Long.parseLong(idParent), nome);
+			} else {
+				exists = isDelegata ? this.porteDelegateCore.existsValidazioneContenutiPattern(idPorta, nome) : this.porteApplicativeCore.existsValidazioneContenutiPattern(idPorta, nome);
+			} 
+			
+			if(tipoOperazione.equals(TipoOperazione.ADD)) { // nuova regola nome non disponibile
+				if(exists) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_PATTERN_GIA_PRESENTE);
+					return false;
+				}
+			} else {
+				// change, se ho cambiato il nome non deve essere gia' usato
+				if(exists && !oldPattern.getNome().equals(nome)) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_PATTERN_NUOVO_NOME_GIA_PRESENTE);
+					return false;
+				}
+			}
+			
+			return true;
+		}catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void impostaLabelColonnePorteValidazioneContenutiRisposta(int numeroRisultati) {
+		// setto le label delle colonne
+		List<String> lstLabels = new ArrayList<>();
+		if(numeroRisultati > 1)
+			lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_POSIZIONE);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_NOME);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_CT);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_PATTERN);
+		this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
+	}
+	
+	public Vector<Vector<DataElement>> valorizzaDatiPorteValidazioneContenutiRisposta(List<ValidazioneContenutiApplicativiRisposta> lista,
+			String servletNamePorteValidazioneContenutiRispostaChange, String servletNamePorteValidazioneContenutiRispostaList,  List<Parameter> listaParametriChange) {
+		// preparo i dati
+		Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+		if (lista != null) {
+			Iterator<ValidazioneContenutiApplicativiRisposta> it = lista.iterator();
+			int numeroElementi = lista.size();
+			int i = 0;
+			while (it.hasNext()) {
+				ValidazioneContenutiApplicativiRisposta regola = it.next();
+				Parameter pIdRegola = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_ID_RISPOSTA, regola.getId() + "");
+				
+				List<Parameter> listaParametriChangeRegola = new ArrayList<Parameter>();
+				listaParametriChangeRegola.addAll(listaParametriChange);
+				listaParametriChangeRegola.add(pIdRegola);
+				
+				Vector<DataElement> e = new Vector<DataElement>();
+				
+				// Posizione
+				if(lista.size() > 1) {
+					DataElement de = new DataElement();
+					de.setWidthPx(48);
+					de.setType(DataElementType.IMAGE);
+					DataElementImage imageUp = new DataElementImage();
+					Parameter pDirezioneSu = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_POSIZIONE, 
+							CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU);
+					Parameter pDirezioneGiu = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_POSIZIONE, 
+							CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU);
+							
+					if(i > 0) {
+						List<Parameter> listaParametriDirezioneSuRegola = new ArrayList<Parameter>();
+						listaParametriDirezioneSuRegola.addAll(listaParametriChange);
+						listaParametriDirezioneSuRegola.add(pIdRegola);
+						listaParametriDirezioneSuRegola.add(pDirezioneSu);
+						
+						imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+						imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+						imageUp.setUrl(servletNamePorteValidazioneContenutiRispostaList, listaParametriDirezioneSuRegola.toArray(new Parameter[listaParametriDirezioneSuRegola.size()])); 
+					}
+					else {
+						imageUp.setImage(CostantiControlStation.ICONA_PLACEHOLDER);
+					}
+					de.addImage(imageUp);
+					
+					if(i < numeroElementi -1) {
+						List<Parameter> listaParametriDirezioneGiuRegola = new ArrayList<Parameter>();
+						listaParametriDirezioneGiuRegola.addAll(listaParametriChange);
+						listaParametriDirezioneGiuRegola.add(pIdRegola);
+						listaParametriDirezioneGiuRegola.add(pDirezioneGiu);
+						
+						DataElementImage imageDown = new DataElementImage();
+						imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+						imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+						imageDown.setUrl(servletNamePorteValidazioneContenutiRispostaList, listaParametriDirezioneGiuRegola.toArray(new Parameter[listaParametriDirezioneGiuRegola.size()]));
+						de.addImage(imageDown);
+					}
+					de.setValue(regola.getPosizione()+"");
+					e.addElement(de);
+				}
+				
+				// Nome
+				DataElement	de = new DataElement();
+				de.setIdToRemove(regola.getId() + "");
+				de.setValue(regola.getNome());
+				de.setToolTip(regola.getNome());
+				de.setUrl(servletNamePorteValidazioneContenutiRispostaChange, listaParametriChangeRegola.toArray(new Parameter[listaParametriChangeRegola.size()]));
+				e.addElement(de);
+				
+				// Status Code
+				de = new DataElement();
+									
+				ValidazioneContenutiApplicativiRispostaApplicabilita applicabilita = regola.getApplicabilita();
+				
+				Integer statusMin = applicabilita != null ? applicabilita.getReturnCodeMin() : null;
+				Integer statusMax = applicabilita != null ? applicabilita.getReturnCodeMax() : null;
+				
+				// se e' stato salvato il valore 0 lo tratto come null
+				if(statusMin != null && statusMin.intValue() <= 0) {
+					statusMin = null;
+				}
+				
+				if(statusMax != null && statusMax.intValue() <= 0) {
+					statusMax = null;
+				}
+				
+				String statusValue = null;
+				// Intervallo
+				if(statusMin != null && statusMax != null) {
+					if(statusMax.longValue() == statusMin.longValue()) // esatto
+						statusValue = statusMin + "";
+					else 
+						statusValue = "[" + statusMin + " - " + statusMax + "]";
+				} else if(statusMin != null && statusMax == null) { // definito solo l'estremo inferiore
+					statusValue = "&gt;" + statusMin;
+				} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
+					statusValue = "&lt;" + statusMax;
+				} else { //entrambi null 
+					statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
+				}
+				
+				de.setValue(statusValue);
+				
+				e.addElement(de);
+				
+				
+				
+				// Content-type
+				String ct = "";
+				List<String> contentTypeList = applicabilita != null ? applicabilita.getContentTypeList() : null;
+				if(contentTypeList != null && contentTypeList.size() > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String string : contentTypeList) {
+						if(sb.length() >0)
+							sb.append(", ");
+						
+						sb.append(string);
+					}
+					ct =sb.toString();
+				}
+				
+				if(StringUtils.isEmpty(ct))
+					ct = "&nbsp;";
+				
+				
+				de = new DataElement();
+				de.setValue(ct);
+				e.addElement(de);
+
+				
+				// Pattern
+				de = new DataElement();
+				String p = (applicabilita != null && applicabilita.getMatch() != null) ? applicabilita.getMatch() + "" : "&nbsp;";
+				de.setValue(p.length()>CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_MATCH_LIST_MAX_VALUE ? 
+							p.substring(0, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_MATCH_LIST_MAX_VALUE)+"..." :
+							p);
+				e.addElement(de);
+				
+				dati.addElement(e);
+				i++;
+			}
+		}
+		return dati;
+	}
+	
+	public void impostaLabelColonnePorteValidazioneContenutiRichiesta(int numeroRisultati) {
+		// setto le label delle colonne
+		List<String> lstLabels = new ArrayList<>();
+		if(numeroRisultati > 1)
+			lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_POSIZIONE);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_NOME);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_CT);
+		lstLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_PATTERN);
+		this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
+	}
+	
+	public Vector<Vector<DataElement>> valorizzaDatiPorteValidazioneContenutiRichiesta(List<ValidazioneContenutiApplicativiRichiesta> lista,
+			String servletNamePorteValidazioneContenutiRichiestaChange, String servletNamePorteValidazioneContenutiRichiestaList,  List<Parameter> listaParametriChange) {
+		// preparo i dati
+		Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+		if (lista != null) {
+			Iterator<ValidazioneContenutiApplicativiRichiesta> it = lista.iterator();
+			int numeroElementi = lista.size();
+			int i = 0;
+			while (it.hasNext()) {
+				ValidazioneContenutiApplicativiRichiesta regola = it.next();
+				Parameter pIdRegola = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_ID_RICHIESTA, regola.getId() + "");
+				
+				List<Parameter> listaParametriChangeRegola = new ArrayList<Parameter>();
+				listaParametriChangeRegola.addAll(listaParametriChange);
+				listaParametriChangeRegola.add(pIdRegola);
+				
+				Vector<DataElement> e = new Vector<DataElement>();
+				
+				// Posizione
+				if(lista.size() > 1) {
+					DataElement de = new DataElement();
+					de.setWidthPx(48);
+					de.setType(DataElementType.IMAGE);
+					DataElementImage imageUp = new DataElementImage();
+					Parameter pDirezioneSu = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_POSIZIONE, 
+							CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU);
+					Parameter pDirezioneGiu = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_POSIZIONE, 
+							CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU);
+							
+					if(i > 0) {
+						List<Parameter> listaParametriDirezioneSuRegola = new ArrayList<Parameter>();
+						listaParametriDirezioneSuRegola.addAll(listaParametriChange);
+						listaParametriDirezioneSuRegola.add(pIdRegola);
+						listaParametriDirezioneSuRegola.add(pDirezioneSu);
+						
+						imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+						imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+						imageUp.setUrl(servletNamePorteValidazioneContenutiRichiestaList, listaParametriDirezioneSuRegola.toArray(new Parameter[listaParametriDirezioneSuRegola.size()])); 
+					}
+					else {
+						imageUp.setImage(CostantiControlStation.ICONA_PLACEHOLDER);
+					}
+					de.addImage(imageUp);
+					
+					if(i < numeroElementi -1) {
+						List<Parameter> listaParametriDirezioneGiuRegola = new ArrayList<Parameter>();
+						listaParametriDirezioneGiuRegola.addAll(listaParametriChange);
+						listaParametriDirezioneGiuRegola.add(pIdRegola);
+						listaParametriDirezioneGiuRegola.add(pDirezioneGiu);
+						
+						DataElementImage imageDown = new DataElementImage();
+						imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+						imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+						imageDown.setUrl(servletNamePorteValidazioneContenutiRichiestaList, listaParametriDirezioneGiuRegola.toArray(new Parameter[listaParametriDirezioneGiuRegola.size()]));
+						de.addImage(imageDown);
+					}
+					de.setValue(regola.getPosizione()+"");
+					e.addElement(de);
+				}
+				
+				// Nome
+				DataElement	de = new DataElement();
+				de.setIdToRemove(regola.getId() + "");
+				de.setValue(regola.getNome());
+				de.setToolTip(regola.getNome());
+				de.setUrl(servletNamePorteValidazioneContenutiRichiestaChange, listaParametriChangeRegola.toArray(new Parameter[listaParametriChangeRegola.size()]));
+				e.addElement(de);
+				
+				ValidazioneContenutiApplicativiRichiestaApplicabilita applicabilita = regola.getApplicabilita(); 
+				
+				// Content-type
+				String ct = "";
+				List<String> contentTypeList = applicabilita != null ? applicabilita.getContentTypeList() : null;
+				if(contentTypeList != null && contentTypeList.size() > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String string : contentTypeList) {
+						if(sb.length() >0)
+							sb.append(", ");
+						
+						sb.append(string);
+					}
+					ct =sb.toString();
+				}
+				
+				if(StringUtils.isEmpty(ct))
+					ct = "&nbsp;";
+				
+				
+				de = new DataElement();
+				de.setValue(ct);
+				e.addElement(de);
+
+				
+				// Pattern
+				de = new DataElement();
+				String p = (applicabilita != null && applicabilita.getMatch() != null) ? applicabilita.getMatch() + "" : "&nbsp;";
+				de.setValue(p.length()>CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_MATCH_LIST_MAX_VALUE ? 
+							p.substring(0, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_MATCH_LIST_MAX_VALUE)+"..." :
+							p);
+				e.addElement(de);
+				
+				dati.addElement(e);
+				i++;
+			}
+		}
+		return dati;
+	}
+	
+	public Vector<DataElement> addValidazioneContenutiRichiestaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, 
+			String oldIdRichiestaS, String idRichiestaS, String nome, boolean isPortaDelegata, String statoValidazione, String tipoValidazione, String applicaMTOM,
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica, boolean tipoValidazioneJsonEnabled, String soapAction, String jsonSchema, List<String> listaJsonSchema, 
+			String patternAnd, String patternNot, int numeroPattern, String servletPatternList, List<Parameter> paramsPatternList, boolean visualizzaLinkPattern,
+			boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType 
+			) throws Exception {
+		return this._addValidazioneContenutiElementoToDati(dati, tipoOperazione, false, oldIdRichiestaS, idRichiestaS, nome, 
+				isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM, serviceBinding, formatoSpecifica, tipoValidazioneJsonEnabled, 
+				soapAction, jsonSchema, listaJsonSchema, patternAnd, patternNot, numeroPattern, servletPatternList, 
+				paramsPatternList, visualizzaLinkPattern, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, 
+				pattern, contentType, null, null, null, null, null);
+	}
+	
+	public Vector<DataElement> addValidazioneContenutiRispostaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, 
+			String oldIdRispostaS, String idRispostaS, String nome, boolean isPortaDelegata, String statoValidazione, String tipoValidazione, String applicaMTOM,
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica, boolean tipoValidazioneJsonEnabled, String jsonSchema, List<String> listaJsonSchema, 
+			String patternAnd, String patternNot, int numeroPattern, String servletPatternList, List<Parameter> paramsPatternList, boolean visualizzaLinkPattern,
+			boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType, 
+			String returnCode, String statusMin, String statusMax, String restProblemDetail, String restEmptyResponse) throws Exception {
+		return this._addValidazioneContenutiElementoToDati(dati, tipoOperazione, true, oldIdRispostaS, idRispostaS, nome, 
+				isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM, serviceBinding, formatoSpecifica, 
+				tipoValidazioneJsonEnabled, null, jsonSchema, listaJsonSchema, patternAnd, patternNot,
+				numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, azioniAll, azioniDisponibiliList,
+				azioniDisponibiliLabelList, azioni, pattern, contentType, returnCode, statusMin, statusMax, restProblemDetail, restEmptyResponse);
+	}
+	
+	private Vector<DataElement> _addValidazioneContenutiElementoToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean isRisposta,
+				String oldIdS, String idS, String nome, boolean isPortaDelegata, String statoValidazione, String tipoValidazione, String applicaMTOM,
+				ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica, boolean tipoValidazioneJsonEnabled, String soapAction, String jsonSchema, List<String> listaJsonSchema, 
+				String patternAnd, String patternNot, int numeroPattern, String servletPatternList, List<Parameter> paramsPatternList, boolean visualizzaLinkPattern,
+				boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType, 
+				String returnCode, String statusMin, String statusMax, String restProblemDetail, String restEmptyResponse) throws Exception {
+
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		if(isRisposta) {
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA);
+		} else {
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA);
+		}
+		dati.addElement(de);
+		
+		// id
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_ID_RISPOSTA);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_ID_RISPOSTA);
+		de.setValue(idS != null ? idS : "");
+		dati.addElement(de);
+		
+		// nome
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_NOME);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_NOME);
+		de.setValue(nome);
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		
+		// stato della risposta
+		this.validazioneContenuti(tipoOperazione, dati, false, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM, serviceBinding, formatoSpecifica,
+				tipoValidazioneJsonEnabled, !isRisposta, soapAction, jsonSchema, listaJsonSchema, patternAnd, patternNot, 
+				numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, false, 0, null, null, 0, null, null);
+		
+		// applicabilita
+		
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_APPLICABILITA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+				
+		// Azione
+		
+		de = new DataElement();
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_AZIONI_ALL);
+		de.setPostBack(true);
+		de.setValues(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_AZIONI_ALL_VALUES);
+		if(org.openspcoop2.message.constants.ServiceBinding.REST.equals(serviceBinding)) {
+			de.setLabels(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_RISORSE_ALL_VALUES);
+		}
+		else {
+			de.setLabels(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL_VALUES);
+		}
+		if(azioniAll) {
+			de.setSelected(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_AZIONI_ALL_VALUE_TRUE);
+		}
+		else {
+			de.setSelected(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_AZIONI_ALL_VALUE_FALSE);
+		}
+		if(org.openspcoop2.message.constants.ServiceBinding.REST.equals(serviceBinding)) {
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_RISORSE);
+		}
+		else {
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
+		}
+		de.setType(DataElementType.SELECT);
+		dati.addElement(de);
+		
+		if(!azioniAll) {
+			de = new DataElement();
+			de.setLabel("");
+			de.setValues(azioniDisponibiliList);
+			de.setLabels(azioniDisponibiliLabelList);
+			de.setSelezionati(azioni);
+			de.setType(DataElementType.MULTI_SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_AZIONI);
+			de.setRows(15);
+	//		de.setRequired(true); 
+			dati.addElement(de);
+		}
+		
+		// Content-type
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_CT);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_CT);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setValue(contentType);
+		de.enableTags();
+//		de.setRequired(true);
+		DataElementInfo dInfoCT = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_APPLICABILITA+" - "
+					+CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_CT);
+		dInfoCT.setHeaderBody(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_INFO_CONTENT_TYPE);
+		dInfoCT.setListBody(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
+		de.setInfo(dInfoCT);
+		dati.addElement(de);
+		
+		// Pattern
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_PATTERN);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_PATTERN);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
+		de.setSize(this.getSize());
+		de.setValue(pattern);
+//		de.setRequired(true);
+		DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_APPLICABILITA+" - "
+				+CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_PATTERN);
+		if(org.openspcoop2.message.constants.ServiceBinding.REST.equals(serviceBinding)) {
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_INFO_PATTERN_REST_RICHIESTA);
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_INFO_PATTERN_VALORI_REST);
+		}
+		else {
+			dInfoPattern.setBody(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_INFO_PATTERN_SOAP_RICHIESTA);
+		}
+		de.setInfo(dInfoPattern);
+		dati.addElement(de);
+		
+		if(isRisposta) {
+			// status code
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS);
+			de.setLabels(CostantiControlStation.SELECT_LABELS_CONFIGURAZIONE_RETURN_CODE);
+			de.setValues(CostantiControlStation.SELECT_VALUES_CONFIGURAZIONE_RETURN_CODE);
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS);
+			de.setPostBack(true);
+			de.setSelected(returnCode);
+			dati.addElement(de);
+			
+			if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI.equals(returnCode)) {
+				if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO.equals(returnCode)) {
+					de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_EMPTY, 
+							CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS_MIN, 
+							statusMin, true);
+					dati.addElement(de);
+				}
+				
+				if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO.equals(returnCode)) {
+					de = getHttpReturnCodeIntervallDataElement(CostantiControlStation.LABEL_EMPTY, 
+							CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS_MIN,
+							CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS_MAX,
+							statusMin,
+							statusMax,
+							true);
+					dati.addElement(de);
+				}
+			} 
+			
+			// problem detail
+			if(org.openspcoop2.message.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_PROBLEM_DETAIL);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_PROBLEM_DETAIL);
+				de.setType(DataElementType.SELECT);
+				String[] soapActionValues = { CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO,
+						CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO };
+				
+				de.setValues(soapActionValues);
+				de.setSelected(soapAction != null ? soapAction : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO);
+				dati.addElement(de);
+			}
+			
+			// risposta vuota
+			if(org.openspcoop2.message.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_EMPTY_RESPONSE);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_EMPTY_RESPONSE);
+				de.setType(DataElementType.SELECT);
+				String[] soapActionValues = { CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO,
+						CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO };
+				
+				de.setValues(soapActionValues);
+				de.setSelected(soapAction != null ? soapAction : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO);
+				dati.addElement(de);
+			}
+		}
+		
+		return dati;
+	}
+	
+	public boolean validazioneContenutiRispostaCheckData(TipoOperazione tipoOperazione, ValidazioneContenutiApplicativiRisposta oldRisposta, boolean isDelegata, Long idPorta) throws Exception {
+		try {
+			
+			String nome = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_NOME);
+			String [] azioni = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_AZIONI);
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_PATTERN);
+			String contentType = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_CT);
+			String returnCode = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS);
+			String statusMin = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS_MIN);
+			String statusMax = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS_MAX);
+			
+			// nome 
+			if(nome == null || "".equals(nome)) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME));
+				return false;
+			}
+			
+			if(this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME) == false) {
+				return false;
+			}
+			
+			// stato
+			if(this.validazioneContenutiCheck(tipoOperazione, isDelegata) == false) {
+				return false;		
+			}
+		
+			// applicabilita
+			
+			if(_checkReturnCode(returnCode, statusMin, statusMax, 
+					CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS, 
+					CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS_MIN, 
+					CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_APPLICABILITA_STATUS_MAX)==false) {
+				return false;
+			}
+			
+			// check esistenza
+			boolean exists = isDelegata ? this.porteDelegateCore.existsValidazioneContenutiRisposta(idPorta, nome) : this.porteApplicativeCore.existsValidazioneContenutiRisposta(idPorta, nome);
+			
+			if(tipoOperazione.equals(TipoOperazione.ADD)) { // nuova regola nome non disponibile
+				if(exists) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_RISPOSTA_GIA_PRESENTE);
+					return false;
+				}
+			} else {
+				// change, se ho cambiato il nome non deve essere gia' usato
+				if(exists && !oldRisposta.getNome().equals(nome)) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_RISPOSTA_NUOVO_NOME_GIA_PRESENTE);
+					return false;
+				}
+			}
+			
+			// check applicabilita'
+			// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso
+			Integer statusMinDBCheck = StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null;
+			Integer statusMaxDBCheck = StringUtils.isNotEmpty(statusMax) ? Integer.parseInt(statusMax) : null;
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO))
+				statusMaxDBCheck = statusMinDBCheck;
+			String azioniAsString = azioni != null ? StringUtils.join(Arrays.asList(azioni), ",") : "";
+			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
+			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
+			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
+			
+			ValidazioneContenutiApplicativiRisposta regolaDBCheck_criteri = isDelegata ? this.porteDelegateCore.getValidazioneContenutiRisposta(idPorta, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck, azioniDBCheck)
+					: this.porteApplicativeCore.getValidazioneContenutiRisposta(idPorta, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck, azioniDBCheck)
+					 ;
+			// Se tipoOp = add, controllo che la trasformazione non sia gia' stato registrata
+			if (tipoOperazione.equals(TipoOperazione.ADD)) {
+				if (regolaDBCheck_criteri != null) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_DUPLICATA);
+					return false;
+				}
+			} else {
+				// controllo che le modifiche ai parametri non coincidano con altre regole gia' presenti
+//							TrasformazioneRegola trasformazione = this.porteApplicativeCore.getTrasformazione(idPorta, azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+				if(regolaDBCheck_criteri != null && regolaDBCheck_criteri.getId().longValue() != oldRisposta.getId().longValue()) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_DUPLICATA);
+					return false;
+				}
+			}
+			
+			return true;
+		}catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean validazioneContenutiRichiestaCheckData(TipoOperazione tipoOperazione, ValidazioneContenutiApplicativiRichiesta oldRichiesta, boolean isDelegata, Long idPorta) throws Exception {
+		try {
+			
+			String nome = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_NOME);
+			String [] azioni = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_AZIONI);
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_PATTERN);
+			String contentType = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_CT);
+			
+			// nome 
+			if(nome == null || "".equals(nome)) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME));
+				return false;
+			}
+			
+			if(this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_NOME) == false) {
+				return false;
+			}
+			
+			// stato
+			if(this.validazioneContenutiCheck(tipoOperazione, isDelegata) == false) {
+				return false;		
+			}
+		
+			// applicabilita
+			
+			// check esistenza
+			boolean exists = isDelegata ? this.porteDelegateCore.existsValidazioneContenutiRisposta(idPorta, nome) : this.porteApplicativeCore.existsValidazioneContenutiRisposta(idPorta, nome);
+			
+			if(tipoOperazione.equals(TipoOperazione.ADD)) { // nuova regola nome non disponibile
+				if(exists) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_RICHIESTA_GIA_PRESENTE);
+					return false;
+				}
+			} else {
+				// change, se ho cambiato il nome non deve essere gia' usato
+				if(exists && !oldRichiesta.getNome().equals(nome)) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_RICHIESTA_NUOVO_NOME_GIA_PRESENTE);
+					return false;
+				}
+			}
+			
+			// check applicabilita'
+			// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso
+			String azioniAsString = azioni != null ? StringUtils.join(Arrays.asList(azioni), ",") : "";
+			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
+			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
+			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
+			
+			ValidazioneContenutiApplicativiRichiesta regolaDBCheck_criteri = isDelegata ? this.porteDelegateCore.getValidazioneContenutiRichiesta(idPorta, patternDBCheck, contentTypeDBCheck, azioniDBCheck)
+					: this.porteApplicativeCore.getValidazioneContenutiRichiesta(idPorta, patternDBCheck, contentTypeDBCheck, azioniDBCheck)
+					 ;
+			// Se tipoOp = add, controllo che la trasformazione non sia gia' stato registrata
+			if (tipoOperazione.equals(TipoOperazione.ADD)) {
+				if (regolaDBCheck_criteri != null) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_DUPLICATA);
+					return false;
+				}
+			} else {
+				// controllo che le modifiche ai parametri non coincidano con altre regole gia' presenti
+//							TrasformazioneRegola trasformazione = this.porteApplicativeCore.getTrasformazione(idPorta, azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+				if(regolaDBCheck_criteri != null && regolaDBCheck_criteri.getId().longValue() != oldRichiesta.getId().longValue()) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_CONTENUTI_RICHIESTA_APPLICABILITA_DUPLICATA);
+					return false;
+				}
+			}
+			
+			return true;
+		}catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public Vector<DataElement> addHiddenFieldsPatternParentToDati(TipoOperazione tipoOp, String idParent, String idTipoParent, Vector<DataElement> dati) {
+
+		DataElement de = new DataElement();
+		if(idParent!= null){
+			de.setLabel("");
+			de.setValue(idParent);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_ID_RISPOSTA);
+			dati.addElement(de);
+		}
+		if(idTipoParent != null){
+			de = new DataElement();
+			de.setLabel("");
+			de.setValue(idTipoParent);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_PARENT);
+			dati.addElement(de);
+		}
+		return dati;
 	}
 }

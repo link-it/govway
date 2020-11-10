@@ -20,8 +20,10 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,22 +34,31 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -108,6 +119,12 @@ public class PorteDelegateValidazioneContenuti extends Action {
 			if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
+			
+			String soapAction = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_SOAP_ACTION);
+			String jsonSchema = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_JSON_SCHEMA);
+			
+			String patternAndS = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_PATTERN_AND);
+			String patternNotS = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_PATTERN_NOT); 
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
@@ -119,12 +136,67 @@ public class PorteDelegateValidazioneContenuti extends Action {
 
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = portaDelegata.getNome();
+			ValidazioneContenutiApplicativi validazioneContenutiApplicativi = portaDelegata.getValidazioneContenutiApplicativi();
+			ValidazioneContenutiApplicativiStato validazioneContenutiApplicativiStato = validazioneContenutiApplicativi != null ? validazioneContenutiApplicativi.getConfigurazione() : null; 
 
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(), portaDelegata.getServizio().getNome(), 
 					portaDelegata.getSoggettoErogatore().getTipo(), portaDelegata.getSoggettoErogatore().getNome(), portaDelegata.getServizio().getVersione());
 			long idServizioLong = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
 			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(idServizioLong, false);
 			AccordoServizioParteComuneSintetico aspc = aspcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = ServiceBinding.valueOf(aspc.getServiceBinding().name());
+			
+			boolean tipoValidazioneJsonEnabled = false;
+			boolean visualizzaLinkPattern = validazioneContenutiApplicativiStato != null ? validazioneContenutiApplicativiStato.getTipo().equals(ValidazioneContenutiApplicativiTipo.PATTERN) : false;
+			
+			boolean visualizzaLinkRichiesta = validazioneContenutiApplicativiStato != null ? !validazioneContenutiApplicativiStato.getStato().equals(StatoFunzionalitaConWarning.DISABILITATO) : false;
+			String servletPatternList = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_PATTERN_LIST;
+			List<Parameter> paramsPatternList = new ArrayList<Parameter>();
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idSoggFruitore);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			paramsPatternList.add(pId);
+			paramsPatternList.add(pIdSoggetto);
+			paramsPatternList.add(pIdAsps);
+			paramsPatternList.add(pIdFruizione);
+			
+			int numeroRichieste = porteDelegateCore.numeroRichiesteValidazioneContenuti(portaDelegata);
+			String servletRichiesteList = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_RICHIESTA_LIST;
+			List<Parameter> paramsRichiesteList = new ArrayList<Parameter>();
+			paramsRichiesteList.addAll(paramsPatternList);
+			int numeroRisposte = porteDelegateCore.numeroRisposteValidazioneContenuti(portaDelegata);
+			String servletRisposteList = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_RISPOSTA_LIST;
+			List<Parameter> paramsRisposteList = new ArrayList<Parameter>();
+			paramsRisposteList.addAll(paramsPatternList);
+			
+			List<String> listaJsonSchema = new ArrayList<String>();
+			int numeroPattern = porteDelegateCore.numeroPatternValidazioneContenuti(portaDelegata);
+			
+			String postBackElementName = porteDelegateHelper.getPostBackElementName();
+			if(postBackElementName!=null) {
+				if(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE.equals(postBackElementName)) {
+					if (tipoValidazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_JSON)) { 
+						jsonSchema = null;
+					}
+					
+					if (tipoValidazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_PATTERN)) {
+						patternAndS = null;
+						patternNotS = null;
+					}
+				}
+			}
+			
+			if(serviceBinding.equals(ServiceBinding.REST)) {
+				ISearch ricerca = new Search();
+				ricerca.addFilter(Liste.ACCORDI_ALLEGATI, Filtri.FILTRO_RUOLO_DOCUMENTO, RuoliDocumento.specificaSemiformale.toString());
+				// ricaricare la lista dei json schema
+				List<Documento> accordiAllegatiList = aspcCore.accordiAllegatiList(aspc.getId(), ricerca); 
+				if(accordiAllegatiList != null && accordiAllegatiList.size() > 0) {
+					tipoValidazioneJsonEnabled = true;
+					listaJsonSchema = accordiAllegatiList.stream().map(doc -> doc.getFile()).collect(Collectors.toList());
+				}
+			}
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idSoggFruitore, idAsps, idFruizione);
 
@@ -143,39 +215,82 @@ public class PorteDelegateValidazioneContenuti extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
+			
 			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 
 				if (statoValidazione == null) {
-					ValidazioneContenutiApplicativi vx = portaDelegata.getValidazioneContenutiApplicativi();
-					if (vx == null) {
+					if (validazioneContenutiApplicativiStato == null) {
 						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 					} else {
-						if(vx.getStato()!=null)
-							statoValidazione = vx.getStato().toString();
+						if(validazioneContenutiApplicativiStato.getStato()!=null)
+							statoValidazione = validazioneContenutiApplicativiStato.getStato().toString();
 						if ((statoValidazione == null) || "".equals(statoValidazione)) {
 							statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 						}
 					}
 				}
 				if (tipoValidazione == null) {
-					ValidazioneContenutiApplicativi vx = portaDelegata.getValidazioneContenutiApplicativi();
-					if (vx == null) {
+					if (validazioneContenutiApplicativiStato == null) {
 						tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE;
 					} else {
-						if(vx.getTipo()!=null && !StatoFunzionalitaConWarning.DISABILITATO.equals(vx.getStato()))
-							tipoValidazione = vx.getTipo().toString();
+						if(validazioneContenutiApplicativiStato.getTipo()!=null && !StatoFunzionalitaConWarning.DISABILITATO.equals(validazioneContenutiApplicativiStato.getStato()))
+							tipoValidazione = validazioneContenutiApplicativiStato.getTipo().toString();
 						if (tipoValidazione == null || "".equals(tipoValidazione)) {
 							tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE ;
 						}
 					}
 				}
 				if (applicaMTOM == null) {
-					ValidazioneContenutiApplicativi vx = portaDelegata.getValidazioneContenutiApplicativi();
 					applicaMTOM = "";
-					if (vx != null) {
-						if(vx.getAcceptMtomMessage()!=null)
-							if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
+					if (validazioneContenutiApplicativiStato != null) {
+						if(validazioneContenutiApplicativiStato.getAcceptMtomMessage()!=null)
+							if (validazioneContenutiApplicativiStato.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
 								applicaMTOM = Costanti.CHECK_BOX_ENABLED;
+					}
+				}
+				
+				if(jsonSchema == null) {
+					jsonSchema = "";
+					if (validazioneContenutiApplicativiStato != null) {
+						jsonSchema = validazioneContenutiApplicativiStato.getJsonSchema();
+					}
+				}
+				
+				if(soapAction == null) {
+					if (validazioneContenutiApplicativiStato == null) {
+						soapAction = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_ABILITATO;
+					} else {
+						if(validazioneContenutiApplicativiStato.getSoapAction()!=null)
+							soapAction = validazioneContenutiApplicativiStato.getSoapAction().toString();
+						if ((soapAction == null) || "".equals(soapAction)) {
+							soapAction = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_ABILITATO;
+						}
+					}
+				}
+				
+				if(patternAndS == null) {
+					if (validazioneContenutiApplicativiStato == null) {
+						patternAndS = Costanti.CHECK_BOX_ENABLED;
+					} else {
+						ValidazioneContenutiApplicativiPattern configurazionePattern = validazioneContenutiApplicativiStato.getConfigurazionePattern();
+						if(configurazionePattern != null) {
+							patternAndS = ServletUtils.boolToCheckBoxStatus(configurazionePattern.getAnd());
+						} else {
+							patternAndS = Costanti.CHECK_BOX_ENABLED;
+						}
+					}
+				}
+				
+				if(patternNotS == null) {
+					if (validazioneContenutiApplicativiStato == null) {
+						patternNotS = Costanti.CHECK_BOX_DISABLED;
+					} else {
+						ValidazioneContenutiApplicativiPattern configurazionePattern = validazioneContenutiApplicativiStato.getConfigurazionePattern();
+						if(configurazionePattern != null) {
+							patternNotS = ServletUtils.boolToCheckBoxStatus(configurazionePattern.getNot());
+						} else {
+							patternNotS = Costanti.CHECK_BOX_DISABLED;
+						}
 					}
 				}
 
@@ -184,7 +299,9 @@ public class PorteDelegateValidazioneContenuti extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteDelegateHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+						serviceBinding, aspc.getFormatoSpecifica(),tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+						patternAndS, patternNotS, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+						numeroRichieste, servletRichiesteList, paramsRichiesteList, numeroRisposte, servletRisposteList, paramsRisposteList);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -207,7 +324,9 @@ public class PorteDelegateValidazioneContenuti extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteDelegateHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+						serviceBinding, aspc.getFormatoSpecifica(),tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+						patternAndS, patternNotS, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+						numeroRichieste, servletRichiesteList, paramsRichiesteList, numeroRisposte, servletRisposteList, paramsRisposteList);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -222,16 +341,44 @@ public class PorteDelegateValidazioneContenuti extends Action {
 			}
 
 			ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
-			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(statoValidazione));
-			vx.setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
+			ValidazioneContenutiApplicativiStato vxStato = new ValidazioneContenutiApplicativiStato();
+			
+			vxStato.setStato(StatoFunzionalitaConWarning.toEnumConstant(statoValidazione));
+			ValidazioneContenutiApplicativiTipo validazioneContenutiApplicativiTipo = ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione);
+			vxStato.setTipo(validazioneContenutiApplicativiTipo);
 			if(applicaMTOM != null){
 				if(ServletUtils.isCheckBoxEnabled(applicaMTOM))
-					vx.setAcceptMtomMessage(StatoFunzionalita.ABILITATO);
+					vxStato.setAcceptMtomMessage(StatoFunzionalita.ABILITATO);
 				else 
-					vx.setAcceptMtomMessage(StatoFunzionalita.DISABILITATO);
+					vxStato.setAcceptMtomMessage(StatoFunzionalita.DISABILITATO);
 			} else 
-				vx.setAcceptMtomMessage(null);
+				vxStato.setAcceptMtomMessage(null);
+			
+			switch (validazioneContenutiApplicativiTipo) {
+			case INTERFACE:
+			case OPENSPCOOP:
+				if(serviceBinding.equals(ServiceBinding.SOAP)) {
+					vxStato.setSoapAction(StatoFunzionalita.toEnumConstant(soapAction));
+				}
+				break;
+			case JSON:
+				if(serviceBinding.equals(ServiceBinding.REST)) {
+					vxStato.setJsonSchema(jsonSchema);
+				}
+				break;
+			case PATTERN:
+				if(vxStato.getConfigurazionePattern() == null)
+					vxStato.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+				
+				vxStato.getConfigurazionePattern().setAnd(ServletUtils.isCheckBoxEnabled(patternAndS));
+				vxStato.getConfigurazionePattern().setNot(ServletUtils.isCheckBoxEnabled(patternNotS));
+				break;
+			case XSD:
+			default:
+				break;
+			}
 
+			vx.setConfigurazione(vxStato);
 			portaDelegata.setValidazioneContenutiApplicativi(vx);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
@@ -242,43 +389,92 @@ public class PorteDelegateValidazioneContenuti extends Action {
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
+			validazioneContenutiApplicativi = portaDelegata.getValidazioneContenutiApplicativi();
+			validazioneContenutiApplicativiStato = validazioneContenutiApplicativi != null ? validazioneContenutiApplicativi.getConfigurazione() : null; 
 
 			if (statoValidazione == null) {
-				vx = portaDelegata.getValidazioneContenutiApplicativi();
-				if (vx == null) {
+				if (validazioneContenutiApplicativiStato == null) {
 					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 				} else {
-					if(vx.getStato()!=null)
-						statoValidazione = vx.getStato().toString();
+					if(validazioneContenutiApplicativiStato.getStato()!=null)
+						statoValidazione = validazioneContenutiApplicativiStato.getStato().toString();
 					if ((statoValidazione == null) || "".equals(statoValidazione)) {
 						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 					}
 				}
 			}
 			if (tipoValidazione == null) {
-				vx = portaDelegata.getValidazioneContenutiApplicativi();
-				if (vx == null) {
+				if (validazioneContenutiApplicativiStato == null) {
 					tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE;
 				} else {
-					if(vx.getTipo()!=null)
-						tipoValidazione = vx.getTipo().toString();
+					if(validazioneContenutiApplicativiStato.getTipo()!=null)
+						tipoValidazione = validazioneContenutiApplicativiStato.getTipo().toString();
 					if (tipoValidazione == null || "".equals(tipoValidazione)) {
 						tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE ;
 					}
 				}
 			}
 			if (applicaMTOM == null) {
-				vx = portaDelegata.getValidazioneContenutiApplicativi();
 				applicaMTOM = "";
-				if (vx != null) {
-					if(vx.getAcceptMtomMessage()!=null)
-						if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
+				if (validazioneContenutiApplicativiStato != null) {
+					if(validazioneContenutiApplicativiStato.getAcceptMtomMessage()!=null)
+						if (validazioneContenutiApplicativiStato.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
 							applicaMTOM = Costanti.CHECK_BOX_ENABLED;
 				}
 			}
+			
+			if(jsonSchema == null) {
+				jsonSchema = "";
+				if (validazioneContenutiApplicativiStato != null) {
+					jsonSchema = validazioneContenutiApplicativiStato.getJsonSchema();
+				}
+			}
+			
+			if(soapAction == null) {
+				if (validazioneContenutiApplicativiStato == null) {
+					soapAction = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_ABILITATO;
+				} else {
+					if(validazioneContenutiApplicativiStato.getSoapAction()!=null)
+						soapAction = validazioneContenutiApplicativiStato.getSoapAction().toString();
+					if ((soapAction == null) || "".equals(soapAction)) {
+						soapAction = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_ABILITATO;
+					}
+				}
+			}
+			
+			if(patternAndS == null) {
+				if (validazioneContenutiApplicativiStato == null) {
+					patternAndS = Costanti.CHECK_BOX_ENABLED;
+				} else {
+					ValidazioneContenutiApplicativiPattern configurazionePattern = validazioneContenutiApplicativiStato.getConfigurazionePattern();
+					if(configurazionePattern != null) {
+						patternAndS = ServletUtils.boolToCheckBoxStatus(configurazionePattern.getAnd());
+					} else {
+						patternAndS = Costanti.CHECK_BOX_ENABLED;
+					}
+				}
+			}
+			
+			if(patternNotS == null) {
+				if (validazioneContenutiApplicativiStato == null) {
+					patternNotS = Costanti.CHECK_BOX_DISABLED;
+				} else {
+					ValidazioneContenutiApplicativiPattern configurazionePattern = validazioneContenutiApplicativiStato.getConfigurazionePattern();
+					if(configurazionePattern != null) {
+						patternNotS = ServletUtils.boolToCheckBoxStatus(configurazionePattern.getNot());
+					} else {
+						patternNotS = Costanti.CHECK_BOX_DISABLED;
+					}
+				}
+			}
+			
+			visualizzaLinkRichiesta = validazioneContenutiApplicativiStato != null ? !validazioneContenutiApplicativiStato.getStato().equals(StatoFunzionalitaConWarning.DISABILITATO) : false;
+			visualizzaLinkPattern = validazioneContenutiApplicativiStato != null ? validazioneContenutiApplicativiStato.getTipo().equals(ValidazioneContenutiApplicativiTipo.PATTERN) : false;
 
 			porteDelegateHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
-					ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
+					serviceBinding, aspc.getFormatoSpecifica(),tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+					patternAndS, patternNotS, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+					numeroRichieste, servletRichiesteList, paramsRichiesteList, numeroRisposte, servletRisposteList, paramsRisposteList);
 
 			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 					idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);

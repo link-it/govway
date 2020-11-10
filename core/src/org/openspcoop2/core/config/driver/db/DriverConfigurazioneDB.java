@@ -60,10 +60,12 @@ import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.config.driver.BeanUtilities;
 import org.openspcoop2.core.config.driver.ConnettorePropertiesUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -28858,4 +28860,1063 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return config;
 	}
 	
+	public int numeroPatternValidazioneContenutiRichiesta(Long idRichiesta, boolean portaDelegata, String nome) throws DriverConfigurazioneException {
+		String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+		String tipoValidazione = CostantiConfigurazione.VALIDAZIONE_PATTERN_RICHIESTA;
+		return this._numeroPatternValidazioneContenuti(idRichiesta, portaDelegata, nome, tableName, tipoValidazione);
+	}
+	
+	public int numeroPatternValidazioneContenutiRisposta(Long idRisposta, boolean portaDelegata, String nome) throws DriverConfigurazioneException {
+		String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+		String tipoValidazione = CostantiConfigurazione.VALIDAZIONE_PATTERN_RISPOSTA;
+		return this._numeroPatternValidazioneContenuti(idRisposta, portaDelegata, nome, tableName, tipoValidazione);
+	}
+	
+	public int numeroPatternValidazioneContenutiPorta(Long idPorta, boolean portaDelegata, String nome) throws DriverConfigurazioneException {
+		String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+		String tipoValidazione = CostantiConfigurazione.VALIDAZIONE_PATTERN_QUALSIASI;
+		return this._numeroPatternValidazioneContenuti(idPorta, portaDelegata, nome, tableName, tipoValidazione);
+	}
+	
+	private int _numeroPatternValidazioneContenuti(Long idConfigurazione, boolean portaDelegata, String nome, String tableName, String tipoValidazione) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("_numeroPatternValidazioneContenuti");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::_numeroPatternValidazioneContenuti] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			// carico regole dei pattern
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition("tipo_validazione=?");
+			sqlQueryObject.addWhereCondition("id_configurazione=?");
+			if(nome != null) {
+				sqlQueryObject.addWhereCondition("nome=?");
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, tipoValidazione);
+			stm.setLong(index++, idConfigurazione);
+			if(nome != null) {
+				stm.setString(index++, nome);
+			}
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1);
+			} 
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+			
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::_numeroPatternValidazioneContenuti] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		return 0;
+	}
+	
+	public List<ValidazioneContenutiApplicativiPatternRegola> listaPatternValidazioneContenutiRichiesta(Long idRichiesta, boolean portaDelegata, ISearch filters) throws DriverConfigurazioneException {
+		String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+		String tipoValidazione = CostantiConfigurazione.VALIDAZIONE_PATTERN_RICHIESTA;
+		int idLista = portaDelegata ? Liste.PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_RICHIESTA_PATTERN : Liste.PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA_PATTERN;
+		return this._listaPatternValidazioneContenuti(idRichiesta, portaDelegata, filters, idLista, tableName, tipoValidazione);
+	}
+	
+	public List<ValidazioneContenutiApplicativiPatternRegola> listaPatternValidazioneContenutiRisposta(Long idRisposta, boolean portaDelegata, ISearch filters) throws DriverConfigurazioneException {
+		String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+		String tipoValidazione = CostantiConfigurazione.VALIDAZIONE_PATTERN_RISPOSTA;
+		int idLista = portaDelegata ? Liste.PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_RISPOSTA_PATTERN : Liste.PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA_PATTERN;
+		return this._listaPatternValidazioneContenuti(idRisposta, portaDelegata, filters, idLista, tableName, tipoValidazione);
+	}
+	
+	public List<ValidazioneContenutiApplicativiPatternRegola> listaPatternValidazioneContenutiPorta(Long idPorta, boolean portaDelegata, ISearch filters) throws DriverConfigurazioneException {
+		String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+		String tipoValidazione = CostantiConfigurazione.VALIDAZIONE_PATTERN_QUALSIASI;
+		int idLista = portaDelegata ? Liste.PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_PATTERN : Liste.PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_PATTERN;
+		return this._listaPatternValidazioneContenuti(idPorta, portaDelegata, filters, idLista, tableName, tipoValidazione);
+	}
+	
+	private List<ValidazioneContenutiApplicativiPatternRegola> _listaPatternValidazioneContenuti(Long idConfigurazione, boolean portaDelegata, ISearch filters, int idLista, String tableName, String tipoValidazione) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		int limit = filters.getPageSize(idLista);
+		int offset = filters.getIndexIniziale(idLista);
+		String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("listaPatternValidazioneContenutiPorta");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::listaPatternValidazioneContenutiPorta] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		List<ValidazioneContenutiApplicativiPatternRegola> lista = new ArrayList<ValidazioneContenutiApplicativiPatternRegola>();
+		try {
+			// carico regole dei pattern
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition("tipo_validazione=?");
+			sqlQueryObject.addWhereCondition("id_configurazione=?");
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, tipoValidazione);
+			stm.setLong(index++, idConfigurazione);
+			rs = stm.executeQuery();
+			if (rs.next())
+				filters.setNumEntries(idLista,rs.getInt(1));
+			rs.close();
+			stm.close();
+			
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectField("regola");
+			sqlQueryObject.addSelectField("pattern_and");
+			sqlQueryObject.addSelectField("pattern_not");
+			sqlQueryObject.addWhereCondition("tipo_validazione=?");
+			sqlQueryObject.addWhereCondition("id_configurazione=?");
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			sqlQueryObject.addOrderBy("nome");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			index = 1;
+			stm.setString(index++, tipoValidazione);
+			stm.setLong(index++, idConfigurazione);
+			rs = stm.executeQuery();
+			
+			
+			while(rs.next()) {
+				ValidazioneContenutiApplicativiPatternRegola pattern = new ValidazioneContenutiApplicativiPatternRegola();
+				
+				pattern.setId(rs.getLong("id"));
+				pattern.setNome(rs.getString("nome"));
+				pattern.setRegola(rs.getString("regola"));
+				
+				String validazioneContenuti_pattern_and = rs.getString("pattern_and");
+				if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
+					pattern.setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
+				
+				String validazioneContenuti_pattern_not = rs.getString("pattern_not");
+				if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
+					pattern.setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
+			
+				lista.add(pattern);
+			} 
+			
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+			
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::listaPatternValidazioneContenutiPorta] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		return lista;
+	}
+	
+	public int numeroRisposteValidazioneContenutiPorta(long idPorta, boolean isDelegata, String nome) throws DriverConfigurazioneException{
+		String tableName = isDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA;
+		return _numeroRichiesteRisposteValidazioneContenutiPorta(idPorta, isDelegata, nome, tableName);
+	}
+	
+	public int numeroRichiesteValidazioneContenutiPorta(long idPorta, boolean isDelegata, String nome) throws DriverConfigurazioneException{
+		String tableName = isDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA;
+		return _numeroRichiesteRisposteValidazioneContenutiPorta(idPorta, isDelegata, nome, tableName);
+	}
+	
+	private int _numeroRichiesteRisposteValidazioneContenutiPorta(long idPorta, boolean isDelegata, String nome, String tableName) throws DriverConfigurazioneException{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("_numeroRichiesteRisposteValidazioneContenutiPorta");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::_numeroRichiesteRisposteValidazioneContenutiPorta] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			// carico regole dei pattern
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			if(nome != null) {
+				sqlQueryObject.addWhereCondition("nome=?");
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setLong(index++, idPorta);
+			if(nome != null) {
+				stm.setString(index++, nome);
+			}
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1);
+			} 
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+			
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::_numeroRichiesteRisposteValidazioneContenutiPorta] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		return 0;
+	}
+	
+	
+	public List<ValidazioneContenutiApplicativiRichiesta> listaRichiesteValidazioneContenuti(Long idPorta, boolean isDelegata, ISearch search) throws DriverConfigurazioneException {
+		String tableName = isDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA;
+		int idLista = isDelegata ? Liste.PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_RICHIESTA : Liste.PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA;
+		return this._listaRichiesteValidazioneContenuti(idPorta, isDelegata, search, tableName, idLista);
+	}
+	
+	public List<ValidazioneContenutiApplicativiRisposta> listaRisposteValidazioneContenuti(Long idPorta, boolean isDelegata, ISearch search) throws DriverConfigurazioneException{
+		String tableName = isDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA;
+		int idLista = isDelegata ? Liste.PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_RISPOSTA : Liste.PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA;
+		return this._listaRisposteValidazioneContenuti(idPorta, isDelegata, search, tableName, idLista);
+	}
+	
+	private List<ValidazioneContenutiApplicativiRichiesta> _listaRichiesteValidazioneContenuti(long idPorta, boolean isDelegata, ISearch filters, String tableName, int idLista) throws DriverConfigurazioneException{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		int limit = filters.getPageSize(idLista);
+		int offset = filters.getIndexIniziale(idLista);
+		String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("_listaRichiesteValidazioneContenuti");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::_listaRichiesteValidazioneContenuti] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		List<ValidazioneContenutiApplicativiRichiesta> lista = new ArrayList<ValidazioneContenutiApplicativiRichiesta>();
+		try {
+			// carico regole dei pattern
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setLong(index++, idPorta);
+			rs = stm.executeQuery();
+			if (rs.next())
+				filters.setNumEntries(idLista,rs.getInt(1));
+			rs.close();
+			stm.close();
+			
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectField("posizione");
+			sqlQueryObject.addSelectField("pattern_and");
+			sqlQueryObject.addSelectField("pattern_not");
+			sqlQueryObject.addSelectField("stato");
+			sqlQueryObject.addSelectField("tipo");
+			sqlQueryObject.addSelectField("mtom");
+			sqlQueryObject.addSelectField("soapaction");
+			sqlQueryObject.addSelectField("json");
+			sqlQueryObject.addSelectField("applicabilita_azioni");
+			sqlQueryObject.addSelectField("applicabilita_ct");
+			sqlQueryObject.addSelectField("applicabilita_pattern");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			sqlQueryObject.addOrderBy("posizione");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			index = 1;
+			stm.setLong(index++, idPorta);
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				ValidazioneContenutiApplicativiRichiesta richiesta = _getValidazioneContenutiRichiesta(rs);
+				
+				lista.add(richiesta);
+			}
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::_listaRichiesteValidazioneContenuti] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		return lista;
+	}
+	
+	private ValidazioneContenutiApplicativiRichiesta _getValidazioneContenutiRichiesta(ResultSet rs) throws SQLException {
+		ValidazioneContenutiApplicativiRichiesta richiesta = new ValidazioneContenutiApplicativiRichiesta();
+		
+		richiesta.setId(rs.getLong("id"));
+		richiesta.setNome(rs.getString("nome"));
+		richiesta.setPosizione(rs.getInt("posizione"));
+		
+		ValidazioneContenutiApplicativiStato configurazione = new ValidazioneContenutiApplicativiStato();
+		String validazioneContenuti_stato = rs.getString("stato");
+		if(  (validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))) {
+			configurazione.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
+		}
+		
+		if(!StatoFunzionalitaConWarning.DISABILITATO.equals(configurazione.getStato())) {
+			
+			String validazioneContenuti_tipo = rs.getString("tipo");
+			if((validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  )
+				configurazione.setTipo(DriverConfigurazioneDB_LIB.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
+			
+			String validazioneContenuti_acceptMtomMessage = rs.getString("mtom");
+			if((validazioneContenuti_acceptMtomMessage!=null && !validazioneContenuti_acceptMtomMessage.equals(""))  )
+				configurazione.setAcceptMtomMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
+			
+			String validazioneContenuti_soapAction = rs.getString("soapaction");
+			if((validazioneContenuti_soapAction!=null && !validazioneContenuti_soapAction.equals(""))  )
+				configurazione.setSoapAction(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_soapAction));
+			
+			String validazioneContenuti_jsonSchema = rs.getString("json");
+			if((validazioneContenuti_jsonSchema!=null && !validazioneContenuti_jsonSchema.equals(""))  )
+				configurazione.setJsonSchema(validazioneContenuti_jsonSchema);
+			
+			if(ValidazioneContenutiApplicativiTipo.PATTERN.equals(configurazione.getTipo())) {
+				
+				configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+				
+				String validazioneContenuti_pattern_and = rs.getString("pattern_and");
+				if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
+					configurazione.getConfigurazionePattern().setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
+				
+				String validazioneContenuti_pattern_not = rs.getString("pattern_not");
+				if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
+					configurazione.getConfigurazionePattern().setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
+				
+					
+				// carico regole dei pattern
+//						String tableNameP = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+//						ISQLQueryObject sqlQueryObjectP = SQLObjectFactory.createSQLQueryObject(tipoDB);
+//						sqlQueryObjectP.addFromTable(tableNameP);
+//						sqlQueryObjectP.addWhereCondition("tipo_validazione=?");
+//						sqlQueryObjectP.addWhereCondition("id_configurazione=?");
+//						sqlQueryObjectP.setANDLogicOperator(true);
+//						String sqlQueryP = sqlQueryObjectP.createSQLQuery();
+//
+//						log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQueryP));
+//						stm1 = con.prepareStatement(sqlQueryP);
+//						int indexP = 1;
+//						stm1.setString(indexP++, CostantiConfigurazione.VALIDAZIONE_PATTERN_RICHIESTA);
+//						stm1.setLong(indexP++, richiesta.getId());
+//						rs1 = stm1.executeQuery();
+//						while (rs1.next()) {
+//							
+//							if(configurazione.getConfigurazionePattern()==null) {
+//								configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+//							}
+//							
+//							ValidazioneContenutiApplicativiPatternRegola pattern = new ValidazioneContenutiApplicativiPatternRegola();
+//							
+//							pattern.setId(rs1.getLong("id"));
+//							pattern.setNome(rs1.getString("nome"));
+//							pattern.setRegola(rs1.getString("regola"));
+//							
+//							String validazioneContenuti_pattern_and_p = rs1.getString("pattern_and");
+//							if((validazioneContenuti_pattern_and_p!=null && !validazioneContenuti_pattern_and_p.equals(""))  )
+//								pattern.setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and_p)));
+//							
+//							String validazioneContenuti_pattern_not_p = rs1.getString("pattern_not");
+//							if((validazioneContenuti_pattern_not_p!=null && !validazioneContenuti_pattern_not_p.equals(""))  )
+//								pattern.setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not_p)));
+//						
+//							configurazione.getConfigurazionePattern().addPattern(pattern);
+//						} 
+//						rs1.close(); rs1 = null;
+//						stm1.close(); stm1 = null;
+					
+			}
+
+		}
+		
+		richiesta.setConfigurazione(configurazione);
+		
+		String applicabilita_azioni = rs.getString("applicabilita_azioni");
+		String applicabilita_ct = rs.getString("applicabilita_ct");
+		String applicabilita_pattern = rs.getString("applicabilita_pattern");
+		if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
+				(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+				(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+				) {
+			ValidazioneContenutiApplicativiRichiestaApplicabilita applicabilita = new ValidazioneContenutiApplicativiRichiestaApplicabilita();
+			
+			if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
+				if(applicabilita_azioni.contains(",")) {
+					String [] tmp = applicabilita_azioni.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						applicabilita.addAzione(tmp[i].trim());
+					}
+				}
+				else {
+					applicabilita.addAzione(applicabilita_azioni);
+				}
+			}
+			
+			if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+				if(applicabilita_ct.contains(",")) {
+					String [] tmp = applicabilita_ct.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						applicabilita.addContentType(tmp[i].trim());
+					}
+				}
+				else {
+					applicabilita.addContentType(applicabilita_ct);
+				}
+			}
+			
+			if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+				applicabilita.setMatch(applicabilita_pattern);
+			}
+			
+			richiesta.setApplicabilita(applicabilita);
+		}
+		return richiesta;
+	}
+	
+	private List<ValidazioneContenutiApplicativiRisposta> _listaRisposteValidazioneContenuti(long idPorta, boolean isDelegata, ISearch filters, String tableName, int idLista) throws DriverConfigurazioneException{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		int limit = filters.getPageSize(idLista);
+		int offset = filters.getIndexIniziale(idLista);
+		String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("_listaRichiesteValidazioneContenuti");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::_listaRichiesteValidazioneContenuti] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		List<ValidazioneContenutiApplicativiRisposta> lista = new ArrayList<ValidazioneContenutiApplicativiRisposta>();
+		try {
+			// carico regole dei pattern
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setLong(index++, idPorta);
+			rs = stm.executeQuery();
+			if (rs.next())
+				filters.setNumEntries(idLista,rs.getInt(1));
+			rs.close();
+			stm.close();
+			
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(tableName);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectField("posizione");
+			sqlQueryObject.addSelectField("pattern_and");
+			sqlQueryObject.addSelectField("pattern_not");
+			sqlQueryObject.addSelectField("stato");
+			sqlQueryObject.addSelectField("tipo");
+			sqlQueryObject.addSelectField("mtom");
+			sqlQueryObject.addSelectField("json");
+			sqlQueryObject.addSelectField("applicabilita_azioni");
+			sqlQueryObject.addSelectField("applicabilita_ct");
+			sqlQueryObject.addSelectField("applicabilita_pattern");
+			sqlQueryObject.addSelectField("applicabilita_status_min");
+			sqlQueryObject.addSelectField("applicabilita_status_max");
+			sqlQueryObject.addSelectField("applicabilita_problem_detail");
+			sqlQueryObject.addSelectField("applicabilita_empty_response");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			sqlQueryObject.addOrderBy("posizione");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			index = 1;
+			stm.setLong(index++, idPorta);
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				ValidazioneContenutiApplicativiRisposta risposta = _getValidazioneContenutiRisposta(rs);
+				lista.add(risposta);
+			}
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::_listaRichiesteValidazioneContenuti] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		return lista;
+	}
+	public ValidazioneContenutiApplicativiRisposta getRispostaValidazioneContenuti(Long idPorta, boolean isDelegata, Integer statusMinDBCheck,
+			Integer statusMaxDBCheck, String patternDBCheck, String contentTypeDBCheck, String azioniDBCheck) throws DriverConfigurazioneException {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+		String nomeMetodo = "getRispostaValidazioneContenuti";
+		String nomeTabella = isDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RISPOSTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RISPOSTA;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		ValidazioneContenutiApplicativiRisposta regola = null;
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectField("posizione");
+			sqlQueryObject.addSelectField("pattern_and");
+			sqlQueryObject.addSelectField("pattern_not");
+			sqlQueryObject.addSelectField("stato");
+			sqlQueryObject.addSelectField("tipo");
+			sqlQueryObject.addSelectField("mtom");
+			sqlQueryObject.addSelectField("json");
+			sqlQueryObject.addSelectField("applicabilita_azioni");
+			sqlQueryObject.addSelectField("applicabilita_ct");
+			sqlQueryObject.addSelectField("applicabilita_pattern");
+			sqlQueryObject.addSelectField("applicabilita_status_min");
+			sqlQueryObject.addSelectField("applicabilita_status_max");
+			sqlQueryObject.addSelectField("applicabilita_problem_detail");
+			sqlQueryObject.addSelectField("applicabilita_empty_response");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			
+			if(azioniDBCheck != null) {
+				//sqlQueryObject.addWhereCondition("applicabilita_azioni = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_azioni", azioniDBCheck, false, false);
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_azioni");
+			}
+			
+			if(patternDBCheck != null) {
+				//sqlQueryObject.addWhereCondition("applicabilita_pattern = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_pattern", patternDBCheck, false, false);
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_pattern");
+			}
+			
+			if(contentTypeDBCheck != null) {
+				//sqlQueryObject.addWhereCondition("applicabilita_ct = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_ct", contentTypeDBCheck, false, false);
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_ct");
+			}
+			
+			if(statusMinDBCheck != null) {
+				sqlQueryObject.addWhereCondition("applicabilita_status_min = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_status_min");
+			}
+			
+			if(statusMaxDBCheck != null) {
+				sqlQueryObject.addWhereCondition("applicabilita_status_max = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_status_max");
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setLong(index++, idPorta);
+			if(statusMinDBCheck != null)
+				stm.setInt(index ++, statusMinDBCheck);
+			if(statusMaxDBCheck != null)
+				stm.setInt(index ++, statusMaxDBCheck);
+			rs = stm.executeQuery();
+			
+			if (rs.next()) {
+				regola = _getValidazioneContenutiRisposta(rs);
+			}
+			
+			
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+
+			return regola;
+
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	private ValidazioneContenutiApplicativiRisposta _getValidazioneContenutiRisposta(ResultSet rs) throws SQLException { 
+		ValidazioneContenutiApplicativiRisposta risposta = new ValidazioneContenutiApplicativiRisposta();
+		
+		risposta.setId(rs.getLong("id"));
+		risposta.setNome(rs.getString("nome"));
+		risposta.setPosizione(rs.getInt("posizione"));
+		
+		ValidazioneContenutiApplicativiStato configurazione = new ValidazioneContenutiApplicativiStato();
+		String validazioneContenuti_stato = rs.getString("stato");
+		if(  (validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))) {
+			configurazione.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
+		}
+		
+		if(!StatoFunzionalitaConWarning.DISABILITATO.equals(configurazione.getStato())) {
+			
+			String validazioneContenuti_tipo = rs.getString("tipo");
+			if((validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  )
+				configurazione.setTipo(DriverConfigurazioneDB_LIB.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
+			
+			String validazioneContenuti_acceptMtomMessage = rs.getString("mtom");
+			if((validazioneContenuti_acceptMtomMessage!=null && !validazioneContenuti_acceptMtomMessage.equals(""))  )
+				configurazione.setAcceptMtomMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
+			
+//			String validazioneContenuti_soapAction = rs.getString("soapaction");
+//			if((validazioneContenuti_soapAction!=null && !validazioneContenuti_soapAction.equals(""))  )
+//				configurazione.setSoapAction(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_soapAction));
+			
+			String validazioneContenuti_jsonSchema = rs.getString("json");
+			if((validazioneContenuti_jsonSchema!=null && !validazioneContenuti_jsonSchema.equals(""))  )
+				configurazione.setJsonSchema(validazioneContenuti_jsonSchema);
+			
+			if(ValidazioneContenutiApplicativiTipo.PATTERN.equals(configurazione.getTipo())) {
+				
+				configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+				
+				String validazioneContenuti_pattern_and = rs.getString("pattern_and");
+				if((validazioneContenuti_pattern_and!=null && !validazioneContenuti_pattern_and.equals(""))  )
+					configurazione.getConfigurazionePattern().setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and)));
+				
+				String validazioneContenuti_pattern_not = rs.getString("pattern_not");
+				if((validazioneContenuti_pattern_not!=null && !validazioneContenuti_pattern_not.equals(""))  )
+					configurazione.getConfigurazionePattern().setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not)));
+				
+					
+				// carico regole dei pattern
+//				String tableNameP = portaDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_PATTERN : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_PATTERN ;
+//				ISQLQueryObject sqlQueryObjectP = SQLObjectFactory.createSQLQueryObject(tipoDB);
+//				sqlQueryObjectP.addFromTable(tableNameP);
+//				sqlQueryObjectP.addWhereCondition("tipo_validazione=?");
+//				sqlQueryObjectP.addWhereCondition("id_configurazione=?");
+//				sqlQueryObjectP.setANDLogicOperator(true);
+//				String sqlQueryP = sqlQueryObjectP.createSQLQuery();
+//
+//				log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQueryP));
+//				stm1 = con.prepareStatement(sqlQueryP);
+//				int indexP = 1;
+//				stm1.setString(indexP++, CostantiConfigurazione.VALIDAZIONE_PATTERN_RISPOSTA);
+//				stm1.setLong(indexP++, risposta.getId());
+//				rs1 = stm1.executeQuery();
+//				while (rs1.next()) {
+//					
+//					if(configurazione.getConfigurazionePattern()==null) {
+//						configurazione.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+//					}
+//					
+//					ValidazioneContenutiApplicativiPatternRegola pattern = new ValidazioneContenutiApplicativiPatternRegola();
+//					
+//					pattern.setId(rs1.getLong("id"));
+//					pattern.setNome(rs1.getString("nome"));
+//					pattern.setRegola(rs1.getString("regola"));
+//					
+//					String validazioneContenuti_pattern_and_p = rs1.getString("pattern_and");
+//					if((validazioneContenuti_pattern_and_p!=null && !validazioneContenuti_pattern_and_p.equals(""))  )
+//						pattern.setAnd(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_and_p)));
+//					
+//					String validazioneContenuti_pattern_not_p = rs1.getString("pattern_not");
+//					if((validazioneContenuti_pattern_not_p!=null && !validazioneContenuti_pattern_not_p.equals(""))  )
+//						pattern.setNot(StatoFunzionalita.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_pattern_not_p)));
+//				
+//					configurazione.getConfigurazionePattern().addPattern(pattern);
+//				} 
+//				rs1.close(); rs1 = null;
+//				stm1.close(); stm1 = null;
+					
+			}
+
+		}
+		
+		risposta.setConfigurazione(configurazione);
+		
+		String applicabilita_azioni = rs.getString("applicabilita_azioni");
+		String applicabilita_ct = rs.getString("applicabilita_ct");
+		String applicabilita_pattern = rs.getString("applicabilita_pattern");
+		int applicabilita_status_min = rs.getInt("applicabilita_status_min");
+		int applicabilita_status_max = rs.getInt("applicabilita_status_max");
+		String applicabilita_problem_detail = rs.getString("applicabilita_problem_detail");
+		String applicabilita_empty_response = rs.getString("applicabilita_empty_response");
+		if( (applicabilita_status_min >0 || applicabilita_status_max>0) ||
+				(applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
+				(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+				(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) ||
+				(applicabilita_problem_detail!=null && !"".equals(applicabilita_problem_detail)) ||
+				(applicabilita_empty_response!=null && !"".equals(applicabilita_empty_response))
+				) {
+			ValidazioneContenutiApplicativiRispostaApplicabilita applicabilita = new ValidazioneContenutiApplicativiRispostaApplicabilita();
+			
+			if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
+				if(applicabilita_azioni.contains(",")) {
+					String [] tmp = applicabilita_azioni.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						applicabilita.addAzione(tmp[i].trim());
+					}
+				}
+				else {
+					applicabilita.addAzione(applicabilita_azioni);
+				}
+			}
+			
+			if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+				if(applicabilita_ct.contains(",")) {
+					String [] tmp = applicabilita_ct.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						applicabilita.addContentType(tmp[i].trim());
+					}
+				}
+				else {
+					applicabilita.addContentType(applicabilita_ct);
+				}
+			}
+			
+			if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+				applicabilita.setMatch(applicabilita_pattern);
+			}
+			
+			if(applicabilita_status_min>0) {
+				applicabilita.setReturnCodeMin(applicabilita_status_min);
+			}
+			if(applicabilita_status_max>0) {
+				applicabilita.setReturnCodeMax(applicabilita_status_max);
+			}
+			
+			if(applicabilita_problem_detail!=null && !"".equals(applicabilita_problem_detail)){
+				applicabilita.setRestProblemDetail(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(applicabilita_problem_detail));
+			}
+			
+			if(applicabilita_empty_response!=null && !"".equals(applicabilita_empty_response)){
+				applicabilita.setRestEmptyResponse(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(applicabilita_empty_response));
+			}
+			
+			risposta.setApplicabilita(applicabilita);
+		}
+		return risposta;
+	}
+	
+	public ValidazioneContenutiApplicativiRichiesta getRichiestaValidazioneContenuti(Long idPorta, boolean isDelegata,
+			String patternDBCheck, String contentTypeDBCheck, String azioniDBCheck) throws DriverConfigurazioneException { 
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+		String nomeMetodo = "getRichiestaValidazioneContenuti";
+		String nomeTabella = isDelegata ? CostantiDB.PORTE_DELEGATE_VALIDAZIONE_RICHIESTA : CostantiDB.PORTE_APPLICATIVE_VALIDAZIONE_RICHIESTA;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		ValidazioneContenutiApplicativiRichiesta regola = null;
+
+		try {
+			// carico regole dei pattern
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectField("posizione");
+			sqlQueryObject.addSelectField("pattern_and");
+			sqlQueryObject.addSelectField("pattern_not");
+			sqlQueryObject.addSelectField("stato");
+			sqlQueryObject.addSelectField("tipo");
+			sqlQueryObject.addSelectField("mtom");
+			sqlQueryObject.addSelectField("soapaction");
+			sqlQueryObject.addSelectField("json");
+			sqlQueryObject.addSelectField("applicabilita_azioni");
+			sqlQueryObject.addSelectField("applicabilita_ct");
+			sqlQueryObject.addSelectField("applicabilita_pattern");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			if(azioniDBCheck != null) {
+				//sqlQueryObject.addWhereCondition("applicabilita_azioni = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_azioni", azioniDBCheck, false, false);
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_azioni");
+			}
+			
+			if(patternDBCheck != null) {
+				//sqlQueryObject.addWhereCondition("applicabilita_pattern = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_pattern", patternDBCheck, false, false);
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_pattern");
+			}
+			
+			if(contentTypeDBCheck != null) {
+				//sqlQueryObject.addWhereCondition("applicabilita_ct = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_ct", contentTypeDBCheck, false, false);
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_ct");
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+
+			this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			stm = con.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setLong(index++, idPorta);
+			rs = stm.executeQuery();
+			
+			if (rs.next()) {
+				regola = _getValidazioneContenutiRichiesta(rs);
+			}
+			
+			
+			rs.close(); rs = null;
+			stm.close(); stm = null;
+
+			return regola;
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getRichiestaValidazioneContenuti] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 }

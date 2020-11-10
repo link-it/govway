@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +40,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
@@ -53,6 +56,8 @@ import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPattern;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiStato;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
@@ -66,7 +71,9 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
@@ -205,6 +212,13 @@ public final class PorteApplicativeAdd extends Action {
 			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			
 			BinaryParameter allegatoXacmlPolicy = porteApplicativeHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+			
+			String soapAction = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_SOAP_ACTION);
+			String jsonSchema = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_JSON_SCHEMA);
+			
+			String patternAndS = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_PATTERN_AND);
+			String patternNotS = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_PATTERN_NOT); 
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -213,6 +227,18 @@ public final class PorteApplicativeAdd extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
+			
+			boolean tipoValidazioneJsonEnabled = false;
+			List<String> listaJsonSchema = new ArrayList<String>();
+			int numeroPattern = 0;
+			int numeroRichieste = 0;
+			int numeroRisposte = 0;
+			String servletPatternList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_PATTERN_LIST;
+			String servletRichiesteList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA_LIST;
+			String servletRisposteList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA_LIST;
+			List<Parameter> paramsPatternList = new ArrayList<Parameter>();
+			boolean visualizzaLinkPattern = false;
+			boolean visualizzaLinkRichiesta = false;
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoNomeSoggettoProprietario = null;
@@ -246,6 +272,16 @@ public final class PorteApplicativeAdd extends Action {
 				} else if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO)) {
 					serviceBinding = null;
 				} 
+				if(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE.equals(postBackElementName)) {
+					if (tipoValidazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_JSON)) {
+						jsonSchema = null;
+					}
+					
+					if (tipoValidazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_PATTERN)) {
+						patternAndS = null;
+						patternNotS = null;
+					}
+				}
 			}
 			
 			List<String> tipiServizioCompatibiliAccordo = new ArrayList<String>();
@@ -445,6 +481,17 @@ public final class PorteApplicativeAdd extends Action {
 				policyValues[(i+1)] = genericProperties.getNome();
 			}
 			
+			if(serviceBinding.equals(ServiceBinding.REST)) {
+				ISearch ricerca = new Search();
+				ricerca.addFilter(Liste.ACCORDI_ALLEGATI, Filtri.FILTRO_RUOLO_DOCUMENTO, RuoliDocumento.specificaSemiformale.toString());
+				// ricaricare la lista dei json schema
+				List<Documento> accordiAllegatiList = apcCore.accordiAllegatiList(as.getId(), ricerca); 
+				if(accordiAllegatiList != null && accordiAllegatiList.size() > 0) {
+					tipoValidazioneJsonEnabled = true;
+					listaJsonSchema = accordiAllegatiList.stream().map(doc -> doc.getFile()).collect(Collectors.toList());
+				}
+			}
+			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
@@ -466,12 +513,12 @@ public final class PorteApplicativeAdd extends Action {
 				if (statoValidazione == null) {
 					if(porteApplicativeCore.isSinglePdD()){
 						Configurazione config = porteApplicativeCore.getConfigurazioneGenerale();
-						if(config.getValidazioneContenutiApplicativi()!=null){
-							if(config.getValidazioneContenutiApplicativi().getStato()!=null)
-								statoValidazione = config.getValidazioneContenutiApplicativi().getStato().toString();
-							if(config.getValidazioneContenutiApplicativi().getTipo()!=null)
-								tipoValidazione = config.getValidazioneContenutiApplicativi().getTipo().toString();
-							if(StatoFunzionalita.ABILITATO.equals(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage())){
+						if(config.getValidazioneContenutiApplicativi()!=null && config.getValidazioneContenutiApplicativi().getConfigurazione() != null){
+							if(config.getValidazioneContenutiApplicativi().getConfigurazione().getStato()!=null)
+								statoValidazione = config.getValidazioneContenutiApplicativi().getConfigurazione().getStato().toString();
+							if(config.getValidazioneContenutiApplicativi().getConfigurazione().getTipo()!=null)
+								tipoValidazione = config.getValidazioneContenutiApplicativi().getConfigurazione().getTipo().toString();
+							if(StatoFunzionalita.ABILITATO.equals(config.getValidazioneContenutiApplicativi().getConfigurazione().getAcceptMtomMessage())){
 								applicaMTOM = Costanti.CHECK_BOX_ENABLED_ABILITATO;
 							}
 						}
@@ -486,6 +533,18 @@ public final class PorteApplicativeAdd extends Action {
 				}
 				if (applicaMTOM == null) {
 					applicaMTOM = "";
+				}
+				if(jsonSchema == null) {
+					jsonSchema = "";
+				}
+				if(soapAction == null) {
+					soapAction = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_ABILITATO;
+				}
+				if(patternAndS == null) {
+					patternAndS = Costanti.CHECK_BOX_ENABLED;
+				}
+				if(patternNotS == null) {
+					patternNotS = Costanti.CHECK_BOX_DISABLED;
 				}
 				if (stateless == null) {
 					stateless = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT;
@@ -555,7 +614,9 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						null,null); 
+						null,null, tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+						patternAndS, patternNotS, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+						numeroRichieste, servletRichiesteList, paramsPatternList, numeroRisposte, servletRisposteList, paramsPatternList); 
 
 				pd.setDati(dati);
 
@@ -603,7 +664,9 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						null,null);
+						null,null, tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+						patternAndS, patternNotS, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+						numeroRichieste, servletRichiesteList, paramsPatternList, numeroRisposte, servletRisposteList, paramsPatternList);
 
 				pd.setDati(dati);
 
@@ -832,17 +895,43 @@ public final class PorteApplicativeAdd extends Action {
 			pa.setIdSoggetto(Long.valueOf(soggInt));
 
 			ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
-			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(statoValidazione));
-			vx.setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
-			
+			ValidazioneContenutiApplicativiStato vxStato = new ValidazioneContenutiApplicativiStato();
+			vxStato.setStato(StatoFunzionalitaConWarning.toEnumConstant(statoValidazione));
+			ValidazioneContenutiApplicativiTipo validazioneContenutiApplicativiTipo = ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione);
+			vxStato.setTipo(validazioneContenutiApplicativiTipo);
 			if(applicaMTOM != null){
 				if(ServletUtils.isCheckBoxEnabled(applicaMTOM))
-					vx.setAcceptMtomMessage(StatoFunzionalita.ABILITATO);
+					vxStato.setAcceptMtomMessage(StatoFunzionalita.ABILITATO);
 				else 
-					vx.setAcceptMtomMessage(StatoFunzionalita.DISABILITATO);
+					vxStato.setAcceptMtomMessage(StatoFunzionalita.DISABILITATO);
 			} else 
-				vx.setAcceptMtomMessage(null);
+				vxStato.setAcceptMtomMessage(null);
 			
+			switch (validazioneContenutiApplicativiTipo) {
+			case INTERFACE:
+			case OPENSPCOOP:
+				if(serviceBinding.equals(ServiceBinding.SOAP)) {
+					vxStato.setSoapAction(StatoFunzionalita.toEnumConstant(soapAction));
+				}
+				break;
+			case JSON:
+				if(serviceBinding.equals(ServiceBinding.REST)) {
+					vxStato.setJsonSchema(jsonSchema);
+				}
+				break;
+			case PATTERN:
+				if(vxStato.getConfigurazionePattern() == null)
+					vxStato.setConfigurazionePattern(new ValidazioneContenutiApplicativiPattern());
+				
+				vxStato.getConfigurazionePattern().setAnd(ServletUtils.isCheckBoxEnabled(patternAndS));
+				vxStato.getConfigurazionePattern().setNot(ServletUtils.isCheckBoxEnabled(patternNotS));
+				break;
+			case XSD:
+			default:
+				break;
+			}
+
+			vx.setConfigurazione(vxStato);
 			pa.setValidazioneContenutiApplicativi(vx);
 
 			if(!porteApplicativeCore.isConnettoriMultipliEnabled()) {

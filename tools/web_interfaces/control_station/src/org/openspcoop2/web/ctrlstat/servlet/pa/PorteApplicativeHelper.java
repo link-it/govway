@@ -63,6 +63,9 @@ import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
@@ -150,7 +153,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		super(request, pd,  session);
 	}
 	public PorteApplicativeHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
-			HttpSession session) throws Exception {
+			HttpSession session) throws Exception { 
 		super(core, request, pd,  session);
 	}
 
@@ -1039,7 +1042,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
-			String messageEngine,String canalePorta) throws Exception {
+			String messageEngine,String canalePorta, boolean tipoValidazioneJsonEnabled, String soapAction, String jsonSchema, List<String> listaJsonSchema, 
+			String patternAnd, String patternNot, int numeroPattern, String servletPatternList, List<Parameter> paramsPatternList, boolean visualizzaLinkPattern,
+			boolean visualizzaLinkRichiesta, int numeroRichieste, String servletRichiesteList, List<Parameter> paramsRichiesteList,
+			int numeroRisposte, String servletRisposteList, List<Parameter> paramsRisposteList) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1755,7 +1761,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}else {
 			// 	Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteApplicativeValidazione, in ADD devo mostrare comunque la form.
 			this.validazioneContenuti(tipoOp, dati, true, false, statoValidazione, tipoValidazione, applicaMTOM,
-					serviceBinding, aspc.getFormatoSpecifica());
+					serviceBinding, aspc.getFormatoSpecifica(),
+					tipoValidazioneJsonEnabled,	soapAction, jsonSchema, listaJsonSchema,
+					patternAnd, patternNot, numeroPattern, servletPatternList, paramsPatternList, visualizzaLinkPattern, visualizzaLinkRichiesta,
+					numeroRichieste, servletRichiesteList, paramsRichiesteList, numeroRisposte, servletRisposteList, paramsRisposteList);
 		}
 		
 		// *************** Integrazione *********************
@@ -10624,5 +10633,271 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			throw new Exception(e);
 		}
 		return true;
+	}
+	
+	public void preparePorteAppValidazioneContenutiPatternList(Search ricerca, List<ValidazioneContenutiApplicativiPatternRegola> lista, String idParent, String tipoParent) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+			
+			if(idParent == null)
+				idParent = "";
+			
+			if(tipoParent == null) {
+				tipoParent = "";
+			}
+			
+
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+			Parameter pIdParent = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTA_ID_RISPOSTA, idParent);
+			Parameter pIdPatternParent = new Parameter(CostantiControlStation.PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_PARENT, tipoParent);
+			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_PATTERN,	pIdPorta, pIdSoggetto, pIdAsps, pIdParent, pIdPatternParent);
+			
+			int idLista = Liste.PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_PATTERN;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			String idporta = myPA.getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI,
+						myPA);
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSoggetto, pIdPorta, pIdAsps));
+			
+			if(!"".equals(tipoParent)) {
+				if(tipoParent.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_PARENT_RICHIESTA)) {
+					lstParam.add(new Parameter(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTE, 
+							PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA_LIST, pIdSoggetto, pIdPorta, pIdAsps));
+					
+					ValidazioneContenutiApplicativiRichiesta oldRichiesta = null;
+					for (int j = 0; j < myPA.getValidazioneContenutiApplicativi().sizeRichiestaList(); j++) {
+						ValidazioneContenutiApplicativiRichiesta richiesta = myPA.getValidazioneContenutiApplicativi().getRichiesta(j);
+						if (richiesta.getId().longValue() == Long.parseLong(idParent)) {
+							oldRichiesta = richiesta;
+							break;
+						}
+					}
+					
+					lstParam.add(new Parameter(oldRichiesta.getNome(), PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA_CHANGE,
+							pIdSoggetto, pIdPorta, pIdAsps, pIdParent));
+					
+				} else if(tipoParent.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_PATTERN_PARENT_RISPOSTA)) {
+					lstParam.add(new Parameter(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTE,  
+							PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA_LIST, pIdSoggetto, pIdPorta, pIdAsps));
+					
+					ValidazioneContenutiApplicativiRisposta oldRisposta = null;
+					for (int j = 0; j < myPA.getValidazioneContenutiApplicativi().sizeRispostaList(); j++) {
+						ValidazioneContenutiApplicativiRisposta risposta = myPA.getValidazioneContenutiApplicativi().getRisposta(j);
+						if (risposta.getId().longValue() == Long.parseLong(idParent)) {
+							oldRisposta = risposta;
+							break;
+						}
+					}
+					
+					lstParam.add(new Parameter(oldRisposta.getNome(), PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA_CHANGE,
+							pIdSoggetto, pIdPorta, pIdAsps, pIdParent));
+				}
+			}
+			
+			
+			
+			lstParam.add(new Parameter(CostantiControlStation.LABEL_PATTERN,  null));
+
+			String servletNamePorteValidazioneContenutiPatternChange = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_PATTERN_CHANGE;
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			listaParametriChange.add(pIdPorta);
+			listaParametriChange.add(pIdSoggetto);
+			listaParametriChange.add(pIdAsps);
+			listaParametriChange.add(pIdParent);
+			listaParametriChange.add(pIdPatternParent);
+			
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			this.impostaLabelColonnePorteValidazioneContenutiPattern();
+
+			Vector<Vector<DataElement>> dati = valorizzaDatiPorteValidazioneContenutiPattern(lista, servletNamePorteValidazioneContenutiPatternChange,	listaParametriChange);
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void preparePorteAppValidazioneContenutiRispostaList(Search ricerca, List<ValidazioneContenutiApplicativiRisposta> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA,	pIdPorta, pIdSoggetto, pIdAsps);
+			
+			int idLista = Liste.PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			String idporta = myPA.getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI,
+						myPA);
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSoggetto, pIdPorta, pIdAsps));
+			lstParam.add(new Parameter(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RISPOSTE,  null));
+
+			String servletNamePorteValidazioneContenutiRispostaChange = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA_CHANGE;
+			String servletNamePorteValidazioneContenutiRispostaList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RISPOSTA_LIST;
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			listaParametriChange.add(pIdPorta);
+			listaParametriChange.add(pIdSoggetto);
+			listaParametriChange.add(pIdAsps);
+			
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			int numeroRisultati = lista != null ? lista.size() : 0;
+			this.impostaLabelColonnePorteValidazioneContenutiRisposta(numeroRisultati);
+
+			Vector<Vector<DataElement>> dati = this.valorizzaDatiPorteValidazioneContenutiRisposta(lista, servletNamePorteValidazioneContenutiRispostaChange, 
+					servletNamePorteValidazioneContenutiRispostaList,	listaParametriChange);
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		
+	}
+	public void preparePorteAppValidazioneContenutiRichiestaList(Search ricerca, List<ValidazioneContenutiApplicativiRichiesta> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA,	pIdPorta, pIdSoggetto, pIdAsps);
+			
+			int idLista = Liste.PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			String idporta = myPA.getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI,
+						myPA);
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSoggetto, pIdPorta, pIdAsps));
+			lstParam.add(new Parameter(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_RICHIESTE,  null));
+
+			String servletNamePorteValidazioneContenutiRichiestaChange = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA_CHANGE;
+			String servletNamePorteValidazioneContenutiRichiestaList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_RICHIESTA_LIST;
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			listaParametriChange.add(pIdPorta);
+			listaParametriChange.add(pIdSoggetto);
+			listaParametriChange.add(pIdAsps);
+			
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			int numeroRisultati = lista != null ? lista.size() : 0;
+			this.impostaLabelColonnePorteValidazioneContenutiRisposta(numeroRisultati);
+
+			Vector<Vector<DataElement>> dati = this.valorizzaDatiPorteValidazioneContenutiRichiesta(lista, servletNamePorteValidazioneContenutiRichiestaChange, 
+					servletNamePorteValidazioneContenutiRichiestaList,	listaParametriChange);
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
 	}
 }

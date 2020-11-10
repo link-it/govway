@@ -46,6 +46,9 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiPatternRegola;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRichiesta;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativiRisposta;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -1584,6 +1587,364 @@ public class PorteDelegateCore extends ControlStationCore {
 
 			return driver.getDriverConfigurazioneDB().porteDelegateAutorizzazioneContenutoCustomPropList(idPortaDelegata, ricerca); 
 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int numeroPatternValidazioneContenuti(PortaDelegata portaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroPatternValidazioneContenuti";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroPatternValidazioneContenutiPorta(portaDelegata.getId(), true, null); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ValidazioneContenutiApplicativiPatternRegola> listaPatternValidazioneContenuti(Long idPorta, ISearch search) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "listaPatternValidazioneContenuti";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().listaPatternValidazioneContenutiPorta(idPorta, true, search); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsValidazioneContenutiPattern(long idPorta, String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsValidazioneContenutiPattern";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroPatternValidazioneContenutiPorta(idPorta, true, nome) > 0; 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int numeroPatternValidazioneContenutiRichiesta(Long idRichiesta) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroPatternValidazioneContenutiRichiesta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroPatternValidazioneContenutiRichiesta(idRichiesta, true, null); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ValidazioneContenutiApplicativiPatternRegola> listaPatternValidazioneContenutiRichiesta(Long idRichiesta, ISearch search) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "listaPatternValidazioneContenutiRichiesta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().listaPatternValidazioneContenutiRichiesta(idRichiesta, true, search); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsValidazioneContenutiPatternRichiesta(long idRichiesta, String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsValidazioneContenutiPatternRichiesta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroPatternValidazioneContenutiRichiesta(idRichiesta, true, nome) > 0; 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int numeroPatternValidazioneContenutiRisposta(Long idRisposta) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroPatternValidazioneContenutiRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroPatternValidazioneContenutiRisposta(idRisposta, true, null); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ValidazioneContenutiApplicativiPatternRegola> listaPatternValidazioneContenutiRisposta(Long idRisposta, ISearch search) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "listaPatternValidazioneContenutiRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().listaPatternValidazioneContenutiRisposta(idRisposta, true, search); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsValidazioneContenutiPatternRisposta(long idRisposta, String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsValidazioneContenutiPatternRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroPatternValidazioneContenutiRisposta(idRisposta, true, nome) > 0; 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	
+	public int numeroRichiesteValidazioneContenuti(PortaDelegata portaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroRichiesteValidazioneContenuti";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroRichiesteValidazioneContenutiPorta(portaDelegata.getId(), true, null); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ValidazioneContenutiApplicativiRichiesta> listaRichiesteValidazioneContenuti(Long idPorta, ISearch search) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "listaRichiesteValidazioneContenuti";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().listaRichiesteValidazioneContenuti(idPorta, true, search); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsValidazioneContenutiRichiesta(long idPorta, String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsValidazioneContenutiRichiesta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroRichiesteValidazioneContenutiPorta(idPorta, true, nome) > 0; 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int numeroRisposteValidazioneContenuti(PortaDelegata portaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroRisposteValidazioneContenuti";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroRisposteValidazioneContenutiPorta(portaDelegata.getId(), true, null); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ValidazioneContenutiApplicativiRisposta> listaRisposteValidazioneContenuti(Long idPorta, ISearch search) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "listaRichiesteValidazioneContenuti";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().listaRisposteValidazioneContenuti(idPorta, true, search); 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsValidazioneContenutiRisposta(long idPorta, String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsValidazioneContenutiRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().numeroRisposteValidazioneContenutiPorta(idPorta, true, nome) > 0; 
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+
+	public ValidazioneContenutiApplicativiRisposta getValidazioneContenutiRisposta(Long idPorta, Integer statusMinDBCheck, Integer statusMaxDBCheck,
+			String patternDBCheck, String contentTypeDBCheck, String azioniDBCheck) throws DriverConfigurazioneException { 
+		Connection con = null;
+		String nomeMetodo = "getValidazioneContenutiRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getRispostaValidazioneContenuti(idPorta, true, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck, azioniDBCheck); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public ValidazioneContenutiApplicativiRichiesta getValidazioneContenutiRichiesta(Long idPorta, 
+			String patternDBCheck, String contentTypeDBCheck, String azioniDBCheck) throws DriverConfigurazioneException { 
+		Connection con = null;
+		String nomeMetodo = "getValidazioneContenutiRichiesta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getRichiestaValidazioneContenuti(idPorta, true, patternDBCheck, contentTypeDBCheck, azioniDBCheck); 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

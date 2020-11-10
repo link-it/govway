@@ -20639,6 +20639,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		ricerca.getSearchString(idLista);
+		
+		String ruoloDocumento = ricerca.getFilter(idLista, Filtri.FILTRO_RUOLO_DOCUMENTO);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -20667,6 +20669,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_proprietario = ?");
 				sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+				if(ruoloDocumento !=null) {
+					sqlQueryObject.addWhereCondition("ruolo = ?");
+				}
 				sqlQueryObject.addWhereCondition(false, 
 						//sqlQueryObject.getWhereLikeCondition("ruolo",search,true,true),
 						sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
@@ -20678,6 +20683,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_proprietario = ?");
 				sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+				if(ruoloDocumento !=null) {
+					sqlQueryObject.addWhereCondition("ruolo = ?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -20685,6 +20693,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt = con.prepareStatement(queryString);
 			stmt.setLong(1,idAccordo);
 			stmt.setString(2, ProprietariDocumento.accordoServizio.toString());
+			if(ruoloDocumento !=null) {
+				stmt.setString(3, ruoloDocumento);
+			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
@@ -20701,6 +20712,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			//where
 			sqlQueryObject.addWhereCondition("id_proprietario = ?");
 			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+			if(ruoloDocumento !=null) {
+				sqlQueryObject.addWhereCondition("ruolo = ?");
+			}
 
 			// ricavo le entries
 			if (limit == 0) // con limit
@@ -20722,6 +20736,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt = con.prepareStatement(queryString);
 			stmt.setLong(1, idAccordo);
 			stmt.setString(2, ProprietariDocumento.accordoServizio.toString());
+			if(ruoloDocumento !=null) {
+				stmt.setString(3, ruoloDocumento);
+			}
 			risultato = stmt.executeQuery();
 
 			while(risultato.next()){
