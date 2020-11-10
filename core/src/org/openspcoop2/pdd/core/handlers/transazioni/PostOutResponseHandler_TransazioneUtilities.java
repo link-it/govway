@@ -177,13 +177,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			Transazione transactionDTO = new Transazione();
 
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.logger, context.getProtocolFactory().getProtocol());
+						
 			// ** Consegna Multipla **
 			// NOTA: l'esito deve essere compreso solo dopo aver capito se le notifiche devono essere consegna o meno poichè le notifiche stesse si basano sullo stato di come è terminata la transazione sincrona
 			int connettoriMultipli = getNumeroConnettoriMultipli(context);
 			boolean consegnaMultipla = isConsegnaMultipla(connettoriMultipli);
 			
 			ConfigurazioneMultiDeliver configurazione_consegnaMultipla_profiloSincrono = null;
-			EsitiProperties esitiProperties = null;
 			if(consegnaMultipla) {
 				Object oConnettoreSync = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONA );
 				if (oConnettoreSync!=null && oConnettoreSync instanceof Boolean){
@@ -199,8 +200,6 @@ public class PostOutResponseHandler_TransazioneUtilities {
 						configurazione_consegnaMultipla_profiloSincrono = (ConfigurazioneMultiDeliver) oConnettoreSyncConfig;
 					}
 				}
-				
-				esitiProperties = EsitiProperties.getInstance(this.logger, context.getProtocolFactory().getProtocol());
 			}
 
 			if(consegnaMultipla_profiloSincrono) {
@@ -681,7 +680,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 						List<String> gruppi = new ArrayList<String>();
 						int count = 0;
-						int maxLengthCredenziali = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();
+						int maxLengthCredenziali = op2Properties.getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();
 						for (int i=0; i<aspc.getGruppi().sizeGruppoList(); i++) {
 							GruppoAccordo gruppoAccordo = aspc.getGruppi().getGruppo(i);
 							String dbValue = AbstractCredenzialeList.getDBValue(gruppoAccordo.getNome());
@@ -1049,7 +1048,44 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// ** eventi di gestione **
 			List<String> eventiGestione = new ArrayList<String>();
 			int count = 0;
-			int maxLengthCredenziali = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();
+			int maxLengthCredenziali = op2Properties.getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();
+			
+			if(op2Properties.isTransazioniHttpStatusAsEvent_outResponseCode() && transactionDTO.getCodiceRispostaUscita()!=null && 
+					!"".equals(transactionDTO.getCodiceRispostaUscita())) {
+				String evento = CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT+transactionDTO.getCodiceRispostaUscita();
+				String dbValue = AbstractCredenzialeList.getDBValue(evento);
+				if(count+dbValue.length()<maxLengthCredenziali) {
+					eventiGestione.add( evento );
+					count = count+dbValue.length();
+				}
+				else {
+					// tronco gli eventi ai primi trovati. Sono troppi eventi successi sulla transazione.
+				}
+			}
+			if(op2Properties.isTransazioniHttpStatusAsEvent_inResponseCode() && transactionDTO.getCodiceRispostaIngresso()!=null && 
+					!"".equals(transactionDTO.getCodiceRispostaIngresso())) {
+				String evento = CostantiPdD.PREFIX_HTTP_STATUS_CODE_IN+transactionDTO.getCodiceRispostaIngresso();
+				String dbValue = AbstractCredenzialeList.getDBValue(evento);
+				if(count+dbValue.length()<maxLengthCredenziali) {
+					eventiGestione.add( evento );
+					count = count+dbValue.length();
+				}
+				else {
+					// tronco gli eventi ai primi trovati. Sono troppi eventi successi sulla transazione.
+				}
+			}
+			if(op2Properties.isTransazioniTipoApiAsEvent() && transactionDTO.getTipoApi()>0) {
+				String evento = CostantiPdD.PREFIX_API+transactionDTO.getTipoApi();
+				String dbValue = AbstractCredenzialeList.getDBValue(evento);
+				if(count+dbValue.length()<maxLengthCredenziali) {
+					eventiGestione.add( evento );
+					count = count+dbValue.length();
+				}
+				else {
+					// tronco gli eventi ai primi trovati. Sono troppi eventi successi sulla transazione.
+				}
+			}
+			
 			if(transaction.getEventiGestione()!=null && transaction.getEventiGestione().size()>0){
 				for (int i=0; i<transaction.getEventiGestione().size(); i++) {
 					String dbValue = AbstractCredenzialeList.getDBValue(transaction.getEventiGestione().get(i));

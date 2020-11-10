@@ -40,6 +40,7 @@ import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.info.DatiEsitoTransazione;
 import org.openspcoop2.pdd.logger.info.DatiMittente;
@@ -217,11 +218,29 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public java.lang.String getEsitoLabelSyntetic() {
-		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo());
+		Integer httpStatus = null;
+		if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
+			try {
+				httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
+			}catch(Throwable t) {}
+		}
+		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo(), httpStatus, this.getTipoApi());
 	}
 	
 	public java.lang.String getEsitoLabelDescription() {
-		return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo());
+		Integer httpStatus = null;
+		if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
+			try {
+				httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
+			}catch(Throwable t) {}
+		}
+		Integer httpInStatus = null;
+		if(this.getCodiceRispostaIngresso()!=null && !"".equals(this.getCodiceRispostaIngresso())) {
+			try {
+				httpInStatus = Integer.valueOf(this.getCodiceRispostaIngresso());
+			}catch(Throwable t) {}
+		}
+		return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo(), httpStatus, httpInStatus, this.getTipoApi());
 	}
 	
 	public boolean isShowContesto(){
@@ -441,6 +460,81 @@ public class TransazioneBean extends Transazione{
 		else{
 			return null;
 		}
+	}
+	
+	public List<String> getEventiGestioneAsList(){
+		String tmp = this.getEventiGestione();
+		List<String> l = new ArrayList<String>();
+		if(tmp!=null){
+			tmp = tmp.trim();
+			if(tmp.contains(",")){
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0){
+					for (int i = 0; i < split.length; i++) {
+						l.add(split[i].trim());
+					}
+				}
+				else{
+					l.add(tmp);
+				}
+			}
+			else{
+				l.add(tmp);
+			}
+		}
+		return l;
+	}
+	
+	public Integer getInResponseCodeFromEventiGestione(){
+		List<String> l = getEventiGestioneAsList();
+		if(!l.isEmpty()) {
+			for (String evento : l) {
+				if(evento!=null && evento.startsWith(CostantiPdD.PREFIX_HTTP_STATUS_CODE_IN) && evento.length()>CostantiPdD.PREFIX_HTTP_STATUS_CODE_IN.length()) {
+					try {
+						String sub = evento.substring(CostantiPdD.PREFIX_HTTP_STATUS_CODE_IN.length());
+						int httpStatus = Integer.valueOf(sub);
+						if(httpStatus>0) {
+							return httpStatus;
+						}
+					}catch(Throwable t) {}
+				}
+			}
+		}
+		return null;
+	}
+	public Integer getOutResponseCodeFromEventiGestione(){
+		List<String> l = getEventiGestioneAsList();
+		if(!l.isEmpty()) {
+			for (String evento : l) {
+				if(evento!=null && evento.startsWith(CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT) && evento.length()>CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT.length()) {
+					try {
+						String sub = evento.substring(CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT.length());
+						int httpStatus = Integer.valueOf(sub);
+						if(httpStatus>0) {
+							return httpStatus;
+						}
+					}catch(Throwable t) {}
+				}
+			}
+		}
+		return null;
+	}
+	public Integer getTipoApiFromEventiGestione(){
+		List<String> l = getEventiGestioneAsList();
+		if(!l.isEmpty()) {
+			for (String evento : l) {
+				if(evento!=null && evento.startsWith(CostantiPdD.PREFIX_API) && evento.length()>CostantiPdD.PREFIX_API.length()) {
+					try {
+						String sub = evento.substring(CostantiPdD.PREFIX_API.length());
+						int tipoApi = Integer.valueOf(sub);
+						if(tipoApi>0) {
+							return tipoApi;
+						}
+					}catch(Throwable t) {}
+				}
+			}
+		}
+		return null;
 	}
 	
 	public java.lang.String getEventiLabel() {

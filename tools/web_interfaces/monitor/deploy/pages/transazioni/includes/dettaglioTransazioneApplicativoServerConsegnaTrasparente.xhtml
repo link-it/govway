@@ -31,7 +31,7 @@
  				<h:outputLabel value="Esito" styleClass="outputFieldLabel v-align-middle"  />
 			</h:panelGroup>
  			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.esitoDescription}" 
- 				rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 0}" />
+ 				rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 0}" escape="false" />
 			
 			<h:outputLabel styleClass="outputFieldLabel" value="Numero Tentativi" rendered="#{true}" />
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi}" rendered="#{true}" />

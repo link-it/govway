@@ -266,6 +266,11 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
    -  **ID Cluster**: Permette di filtrare le transazioni in base al
       nodo del cluster che le ha gestite.
 
+   -  **Codice Risposta HTTP**: Seleziona le sole transazioni terminate con il codice HTTP indicato.
+
+      .. note::
+        GovWay agisce da proxy, per cui i codici http in gioco sono duplicati rispetto ad una normale interazione applicativa: il codice indicato verrà confrontato sia con il codice di risposta ritornato dall'API invocata che con il codice restituito al client. Il codice visualizzato nell'esito rappresenta l'http status ritornato al client.
+
    -  **Evento**: Seleziona le sole transazioni associate ad un
       determinato evento.
 

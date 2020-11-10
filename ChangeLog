@@ -1,3 +1,10 @@
+2020-11-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità OP-1093
+	È adesso possibile effettuare ricerche per codice http. 
+	Le transazioni visualizzate nello storico, dalla console di monitoraggio, riportano adesso anche il codice http.
+
 2020-11-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

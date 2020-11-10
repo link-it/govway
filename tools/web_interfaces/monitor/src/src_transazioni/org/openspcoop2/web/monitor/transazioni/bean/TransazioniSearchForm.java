@@ -98,6 +98,7 @@ Context, Cloneable {
 	private String nomeRisorsa;
 	private String valoreRisorsa;
 	private String evento;
+	private String codiceRisposta;
 	
 	private TipoMatch ricercaLiberaMatchingType = TipoMatch.LIKE;
 	private CaseSensitiveMatch ricercaLiberaCaseSensitiveType = CaseSensitiveMatch.INSENSITIVE;
@@ -739,6 +740,7 @@ Context, Cloneable {
 		this.valoreRisorsa = null;
 		this.nomeStato = null;
 		this.evento = null;
+		this.codiceRisposta = null;
 		this.clusterId = null;
 		this.canale = null;
 	}
@@ -755,6 +757,7 @@ Context, Cloneable {
 		this.nomeRisorsa = null;
 		this.valoreRisorsa = null;
 		this.evento = null;
+		this.codiceRisposta = null;
 		
 		if(!this.isLive()){
 			this.updateRiconoscimentoByModalitaRicercaStorico();
@@ -1262,6 +1265,14 @@ Context, Cloneable {
 
 	public void setEvento(String evento) {
 		this.evento = evento;
+	}
+	
+	public String getCodiceRisposta() {
+		return this.codiceRisposta;
+	}
+
+	public void setCodiceRisposta(String codiceRisposta) {
+		this.codiceRisposta = codiceRisposta;
 	}
 
 	@Override

@@ -42,6 +42,7 @@ import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
@@ -98,6 +99,7 @@ import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -514,6 +516,9 @@ public class TransazioniService implements ITransazioniService {
 					
 					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
 					
+					boolean normalizeHttpReturnCode = true;
+					this.normalizeInfoTransazioniFromCredenzialiMittenteEventi(bean, transazione, normalizeHttpReturnCode);
+					
 					listaBean.add(bean);
 				}
 		} catch (Exception e) {
@@ -565,6 +570,9 @@ public class TransazioniService implements ITransazioniService {
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
 					
 					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
+					
+					boolean normalizeHttpReturnCode = true;
+					this.normalizeInfoTransazioniFromCredenzialiMittenteEventi(bean, transazione, normalizeHttpReturnCode);
 					
 					listaBean.add(bean);
 				}
@@ -678,6 +686,9 @@ public class TransazioniService implements ITransazioniService {
 					
 					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
 					
+					boolean normalizeHttpReturnCode = true;
+					this.normalizeInfoTransazioniFromCredenzialiMittenteEventi(bean, transazione, normalizeHttpReturnCode);
+					
 					listaBean.add(bean);
 				}
 		} catch (Exception e) {
@@ -747,6 +758,9 @@ public class TransazioniService implements ITransazioniService {
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
 					
 					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
+					
+					boolean normalizeHttpReturnCode = true;
+					this.normalizeInfoTransazioniFromCredenzialiMittenteEventi(bean, transazione, normalizeHttpReturnCode);
 					
 					listaBean.add(bean);
 				}
@@ -893,7 +907,8 @@ public class TransazioniService implements ITransazioniService {
 		
 		normalizeInfoTransazioniFromCredenzialiMittenteToken(transazioneBean, t);
 		
-		normalizeInfoTransazioniFromCredenzialiMittenteEventi(transazioneBean, t);
+		boolean normalizeHttpReturnCode = true;
+		normalizeInfoTransazioniFromCredenzialiMittenteEventi(transazioneBean, t, normalizeHttpReturnCode);
 		
 		normalizeInfoTransazioniFromCredenzialiMittenteGruppi(transazioneBean, t);
 	}
@@ -1057,7 +1072,7 @@ public class TransazioniService implements ITransazioniService {
 		
 	}
 	
-	public void normalizeInfoTransazioniFromCredenzialiMittenteEventi(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+	public void normalizeInfoTransazioniFromCredenzialiMittenteEventi(TransazioneBean transazioneBean, Transazione t, boolean normalizeHttpReturnCode) throws ServiceException, MultipleResultException, NotImplementedException {
 				
 		// Eventi
 		String eventi = t instanceof TransazioneBean ? ((TransazioneBean)t).getEventiGestioneRawValue() : t.getEventiGestione();
@@ -1066,7 +1081,29 @@ public class TransazioniService implements ITransazioniService {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(eventi));
 				String valore = credenzialeMittente.getCredenziale();
-				transazioneBean.setEventiLabel(AbstractCredenzialeList.normalize(valore)); 
+				transazioneBean.setEventiLabel(AbstractCredenzialeList.normalize(valore));
+				
+				if(normalizeHttpReturnCode) {
+					if(transazioneBean.getCodiceRispostaIngresso()==null || "".equals(transazioneBean.getCodiceRispostaIngresso())) {
+						Integer code = transazioneBean.getInResponseCodeFromEventiGestione();
+						if(code!=null) {
+							transazioneBean.setCodiceRispostaIngresso(code.intValue()+"");
+						}
+					}
+					if(transazioneBean.getCodiceRispostaUscita()==null || "".equals(transazioneBean.getCodiceRispostaUscita())) {
+						Integer code = transazioneBean.getOutResponseCodeFromEventiGestione();
+						if(code!=null) {
+							transazioneBean.setCodiceRispostaUscita(code.intValue()+"");
+						}
+					}
+					if(transazioneBean.getTipoApi()<=0) {
+						Integer code = transazioneBean.getTipoApiFromEventiGestione();
+						if(code!=null) {
+							transazioneBean.setTipoApi(code.intValue());
+						}
+					}
+				}
+				
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setEventiLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -3066,11 +3103,74 @@ public class TransazioniService implements ITransazioniService {
 			filter.and().equals(Transazione.model().PROTOCOLLO,	this.searchForm.getProtocollo());
 		}
 
-		if (StringUtils.isNotEmpty(this.searchForm.getEvento())) {
+		if (StringUtils.isNotEmpty(this.searchForm.getEvento()) || StringUtils.isNotEmpty(this.searchForm.getCodiceRisposta())) {
 			
 			CredenzialeSearchEvento searchEventi = new CredenzialeSearchEvento();
-			IPaginatedExpression pagExpr = searchEventi.createExpression(this.credenzialiMittenteDAO, this.searchForm.getEvento(), false, false);
-			List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+			List<CredenzialeMittente> listaCredenzialiMittente = new ArrayList<CredenzialeMittente>();
+			
+			if (StringUtils.isNotEmpty(this.searchForm.getEvento())) {
+				
+				String evento = this.searchForm.getEvento();
+				if(evento!=null) {
+					// permetto di usare api=rest invece di api=1
+					evento = evento.trim();
+					if(evento.toLowerCase().startsWith(CostantiPdD.PREFIX_API.toLowerCase()) && evento.length()>CostantiPdD.PREFIX_API.length()) {
+						try {
+							String sub = evento.substring(CostantiPdD.PREFIX_API.length());
+							if("rest".equalsIgnoreCase(sub)) {
+								evento = CostantiPdD.PREFIX_API+TipoAPI.REST.getValoreAsInt();
+							}
+							else if("soap".equalsIgnoreCase(sub)) {
+								evento = CostantiPdD.PREFIX_API+TipoAPI.SOAP.getValoreAsInt();
+							}
+						}catch(Throwable t) {}
+					}
+				}
+				
+				IPaginatedExpression pagExpr = searchEventi.createExpression(this.credenzialiMittenteDAO, evento, false, false);
+				List<CredenzialeMittente> listaCredenzialiMittenteEvento = this.credenzialiMittenteDAO.findAll(pagExpr);
+				if(listaCredenzialiMittenteEvento!=null && !listaCredenzialiMittenteEvento.isEmpty()) {
+					listaCredenzialiMittente.addAll(listaCredenzialiMittenteEvento);
+				}
+			}
+			
+			if (StringUtils.isNotEmpty(this.searchForm.getCodiceRisposta())) {
+				
+				List<String> l = new ArrayList<String>();
+				if(this.searchForm.getCodiceRisposta().contains(",")) {
+					String [] tmp = this.searchForm.getCodiceRisposta().split(",");
+					if(tmp!=null && tmp.length>0) {
+						for (String v : tmp) {
+							l.add(v.trim());
+						}
+					}
+					else {
+						l.add(this.searchForm.getCodiceRisposta());
+					}
+				}
+				else {
+					l.add(this.searchForm.getCodiceRisposta());
+				}
+				if(!l.isEmpty()) {
+					for (String codice : l) {
+						for (int i = 0; i < 2; i++) {
+						
+							String prefix = (i==0) ? CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT : CostantiPdD.PREFIX_HTTP_STATUS_CODE_IN;
+							
+							String searchCodice = prefix+codice;
+							IPaginatedExpression pagExpr = searchEventi.createExpression(this.credenzialiMittenteDAO, searchCodice, false, false);
+							List<CredenzialeMittente> listaCredenzialiMittenteCodice = this.credenzialiMittenteDAO.findAll(pagExpr);
+							if(listaCredenzialiMittenteCodice!=null && !listaCredenzialiMittenteCodice.isEmpty()) {
+								listaCredenzialiMittente.addAll(listaCredenzialiMittenteCodice);
+							}
+							
+						}
+					}
+				}
+				
+
+			}
+			
 			addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
 
 		}

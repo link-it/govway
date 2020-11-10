@@ -182,7 +182,7 @@
 									<i class="material-icons md-24">warning</i>
 								</a4j:outputPanel>
 								<rich:toolTip for="entryInfoEsitoTransazioneTitolo">
-										<h:outputText value="#{item.esitoLabelDescription}" />
+										<h:outputText value="#{item.esitoLabelDescription}" escape="false" />
 									</rich:toolTip>
 							</a4j:outputPanel>
 						</a4j:outputPanel>
@@ -236,7 +236,9 @@
 								</rich:toolTip>
 							</a4j:outputPanel>
 							<a4j:outputPanel layout="block" id="sottotitoloDx" styleClass="">
-								<h:outputText id="outAzione1" value=",&#160;&#160;&#160;Operazione: " />
+								<h:outputText id="outAzione1" value=",&#160;&#160;&#160;Operazione: " rendered="#{item.tipoApiLabel!='Rest' and item.tipoApiLabel!='Soap'}" />
+								<h:outputText id="outAzione1rest" value=",&#160;&#160;&#160;Risorsa API Rest: " rendered="#{item.tipoApiLabel=='Rest'}" />
+								<h:outputText id="outAzione1soap" value=",&#160;&#160;&#160;Operazione API Soap: " rendered="#{item.tipoApiLabel=='Soap'}" />
 								<h:outputText id="outAzione2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 								<rich:toolTip for="sottotitoloDx" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 								<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
@@ -260,7 +262,7 @@
 								<a4j:outputPanel layout="block" id="sottotitoloInfoEsitoTransazione" styleClass="metadatiEntry">
 									<h:outputText id="outEsito2" value="#{item.esitoLabelSyntetic}" />
 									<rich:toolTip for="entryInfoEsitoTransazioneSottotitolo">
-										<h:outputText value="#{item.esitoLabelDescription}" />
+										<h:outputText value="#{item.esitoLabelDescription}" escape="false" />
 									</rich:toolTip>
 								</a4j:outputPanel>
 							</a4j:outputPanel>

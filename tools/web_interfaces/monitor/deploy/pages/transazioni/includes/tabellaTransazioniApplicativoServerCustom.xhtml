@@ -138,7 +138,7 @@
 									<i class="material-icons md-32">#{item.iconaColonnaEsito}</i>
 								</a4j:outputPanel>	
 								<rich:toolTip for="entryInfoEsitoTransazioneTitolo">
-										<h:outputText value="#{item.esitoDescription}" />
+										<h:outputText value="#{item.esitoDescription}" escape="false" />
 									</rich:toolTip>
 							</a4j:outputPanel>
 						</a4j:outputPanel>
@@ -243,7 +243,7 @@
 								<a4j:outputPanel layout="block" id="sottotitoloInfoEsitoTransazione" styleClass="metadatiEntry">
 									<h:outputText id="outEsito2" value="#{item.esitoSyntetic}" />
 									<rich:toolTip for="entryInfoEsitoTransazioneSottotitolo">
-										<h:outputText value="#{item.esitoDescription}" />
+										<h:outputText value="#{item.esitoDescription}" escape="false" />
 									</rich:toolTip>
 								</a4j:outputPanel>
 							</a4j:outputPanel>

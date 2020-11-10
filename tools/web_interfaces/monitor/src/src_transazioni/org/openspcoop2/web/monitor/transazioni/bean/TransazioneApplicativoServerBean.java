@@ -93,6 +93,8 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 	
 	private int lunghezzaErrore = 200; // TODO da properties
 
+	private int tipoApi = -1; // TODO leggere da transazione se possibile
+	
 	public TransazioneApplicativoServerBean() {
 		super();
 	}
@@ -478,15 +480,33 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 	}
 
 	public java.lang.String getEsitoLabelSyntetic() {
-		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.dettaglioEsito, this.getProtocollo());
+		Integer httpStatus = null;
+		if(this.codiceRisposta!=null && !"".equals(this.codiceRisposta)) {
+			try {
+				httpStatus = Integer.valueOf(this.codiceRisposta);
+			}catch(Throwable t) {}
+		}
+		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.dettaglioEsito, this.getProtocollo(), httpStatus, this.tipoApi);
 	}
 
 	public java.lang.String getEsitoLabelDescription() {
-		return TransazioniEsitiUtils.getEsitoLabelDescription(this.dettaglioEsito, this.getProtocollo());
+		Integer httpStatus = null;
+		if(this.codiceRisposta!=null && !"".equals(this.codiceRisposta)) {
+			try {
+				httpStatus = Integer.valueOf(this.codiceRisposta);
+			}catch(Throwable t) {}
+		}
+		return TransazioniEsitiUtils.getEsitoLabelDescription(this.dettaglioEsito, this.getProtocollo(), httpStatus, null, this.tipoApi);
 	}
 	
 	public java.lang.String getEsitoUltimoErroreLabelDescription() {
-		return TransazioniEsitiUtils.getEsitoLabelDescription(this.dettaglioEsitoUltimoErrore, this.getProtocollo());
+		Integer httpStatus = null;
+		if(this.codiceRispostaUltimoErrore!=null && !"".equals(this.codiceRispostaUltimoErrore)) {
+			try {
+				httpStatus = Integer.valueOf(this.codiceRispostaUltimoErrore);
+			}catch(Throwable t) {}
+		}
+		return TransazioniEsitiUtils.getEsitoLabelDescription(this.dettaglioEsitoUltimoErrore, this.getProtocollo(), httpStatus, null, this.tipoApi);
 	}
 	
 	public String getIconaUltimoErroreConsegna() {

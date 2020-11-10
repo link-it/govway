@@ -168,7 +168,7 @@
 				</f:facet>
 				<h:outputText id="outEsito2" value="#{item.esitoSyntetic}" />
 				<rich:toolTip for="outEsito2">
-					<h:outputText value="#{item.esitoDescription}" />
+					<h:outputText value="#{item.esitoDescription}" escape="false" />
 				</rich:toolTip>
 			</rich:column>
 	</link:dataTable>

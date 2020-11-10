@@ -1906,6 +1906,10 @@ public class OpenSPCoop2Properties {
 				this._getTransazioniRegistrazioneDiagnosticiManager(className, loaderOpenSPCoop);
 				this.isTransazioniRegistrazioneDumpHeadersCompactEnabled();
 				
+				this.isTransazioniHttpStatusAsEvent_inResponseCode();
+				this.isTransazioniHttpStatusAsEvent_outResponseCode();
+				this.isTransazioniTipoApiAsEvent();
+
 				if(this.isTransazioniFileTraceEnabled()) {
 					this.isTransazioniFileTraceDumpBinarioPDEnabled();
 					this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
@@ -19620,6 +19624,71 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isTransazioniFaultPrettyPrint;
+	}
+	
+	private static Boolean isTransazioniHttpStatusAsEvent_inResponseCode = null;
+	public boolean isTransazioniHttpStatusAsEvent_inResponseCode() {	
+		if(OpenSPCoop2Properties.isTransazioniHttpStatusAsEvent_inResponseCode==null){
+			String pName = "org.openspcoop2.pdd.transazioni.httpStatusAsEvent.inResponseCode";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniHttpStatusAsEvent_inResponseCode = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniHttpStatusAsEvent_inResponseCode = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniHttpStatusAsEvent_inResponseCode;
+	}
+	private static Boolean isTransazioniHttpStatusAsEvent_outResponseCode = null;
+	public boolean isTransazioniHttpStatusAsEvent_outResponseCode() {	
+		if(OpenSPCoop2Properties.isTransazioniHttpStatusAsEvent_outResponseCode==null){
+			String pName = "org.openspcoop2.pdd.transazioni.httpStatusAsEvent.outResponseCode";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniHttpStatusAsEvent_outResponseCode = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniHttpStatusAsEvent_outResponseCode = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniHttpStatusAsEvent_outResponseCode;
+	}
+	
+	private static Boolean isTransazioniTipoApiAsEvent = null;
+	public boolean isTransazioniTipoApiAsEvent() {	
+		if(OpenSPCoop2Properties.isTransazioniTipoApiAsEvent==null){
+			String pName = "org.openspcoop2.pdd.transazioni.tipoApiAsEvent";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniTipoApiAsEvent = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniTipoApiAsEvent = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniTipoApiAsEvent;
 	}
 	
 	// FiltroDuplicati
