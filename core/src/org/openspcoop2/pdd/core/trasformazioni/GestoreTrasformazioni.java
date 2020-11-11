@@ -176,6 +176,21 @@ public class GestoreTrasformazioni {
 			this.log.debug("Non esistono regole di trasformazione");
 			return message;
 		}
+		boolean existsRuleEnabled = false;
+		for (int i = 0; i < this.trasformazioni.sizeRegolaList(); i++) {
+			TrasformazioneRegola check = this.trasformazioni.getRegola(i);
+			if(check.getStato()!=null // per backward compatibility 
+					&& StatoFunzionalita.DISABILITATO.equals(check.getStato())) {
+				continue;
+			}
+			existsRuleEnabled = true;
+			break;
+		}
+		if(!existsRuleEnabled) {
+			this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaDisabilitato");
+			this.log.debug("Non esistono regole di trasformazione abilitate");
+			return message;
+		}
 				
 		
 		

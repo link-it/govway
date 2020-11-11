@@ -45,9 +45,9 @@ public class TransazioneDettaglioRichiesta extends TransazioneDettaglioMessaggio
   
   @Schema(description = "")
   private DateTime dataConsegna = null;
-  @XmlElement(name="tipo", required = true)
+  @XmlElement(name="tipo")
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private HttpMethodEnum tipo = null;
   @XmlElement(name="url_invocazione")
   
@@ -101,7 +101,6 @@ public class TransazioneDettaglioRichiesta extends TransazioneDettaglioMessaggio
    * @return tipo
   **/
   @JsonProperty("tipo")
-  @NotNull
   @Valid
   public HttpMethodEnum getTipo() {
     return this.tipo;

@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -879,6 +880,13 @@ public class ServletTestService extends HttpServlet {
 				saveMessageDir = saveMessageDir.trim();
 			}
 			
+			boolean consumeRequest = false;
+			String consumeRequestTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "consumeRequest");
+			if(consumeRequestTmp!=null){
+				consumeRequestTmp = consumeRequestTmp.trim();
+				consumeRequest = Boolean.valueOf(consumeRequest);
+			}
+			
 			
 			byte[] contenuto = null;
 			if(logMessage || saveMessageDir!=null){
@@ -888,6 +896,17 @@ public class ServletTestService extends HttpServlet {
 				while( (read = sin.read()) != -1)
 					outStr.write(read);
 				contenuto = outStr.toByteArray();
+			}
+			else if(consumeRequest) {
+				// serve per avere funzionalità di sleep sicuramente dopo aver ricevuto tutta la richiesta
+				ServletInputStream sin = req.getInputStream();
+				int read;
+				NullOutputStream outStr = new NullOutputStream();
+				while( (read = sin.read()) != -1) {
+					outStr.write(read);
+				}
+				outStr.flush();
+				outStr.close();
 			}
 			
 			String contentTypeRichiesta = req.getContentType();
@@ -932,6 +951,28 @@ public class ServletTestService extends HttpServlet {
 			
 			
 
+			
+			
+			// opzioni throttling
+			Integer throttlingBytes = null;
+			Integer throttlingMs = null;
+			String throttlingTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingBytes");
+			if(throttlingTmp!=null){
+				throttlingTmp = throttlingTmp.trim();
+				throttlingBytes = Integer.valueOf(throttlingTmp);
+			}
+			throttlingTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingMs");
+			if(throttlingTmp!=null){
+				throttlingTmp = throttlingTmp.trim();
+				throttlingMs = Integer.valueOf(throttlingTmp);
+			}
+			boolean sendThrottling = false;
+			if(throttlingBytes!=null && throttlingBytes>0 && 
+					throttlingMs!=null && throttlingMs>0) {
+				sendThrottling = true;
+			}
+			
+			
 			
 			
 			// sleep
@@ -1155,6 +1196,7 @@ public class ServletTestService extends HttpServlet {
 				// modalita'
 				if(chunked){
 					res.setHeader("Transfer-Encoding","chunked");
+					this.log.info("Response send with Transfer-Encoding: chunked");
 				}
 				else{
 					if(boutStaticFile!=null){
@@ -1195,22 +1237,64 @@ public class ServletTestService extends HttpServlet {
 				res.setStatus(returnCode);
 				
 				// contenuto
-				if(boutStaticFile!=null){
-					res.getOutputStream().write(boutStaticFile.toByteArray());
-				}else if (contenuto!=null){
-					if(replaceMap!=null && replaceMap.size()>0){
-						res.getOutputStream().write(this.replace(contenuto, replaceMap));
+				if(sendThrottling) {
+					this.log.info("Throttling bytes:"+throttlingBytes+" every "+throttlingMs+"ms ...");
+					
+					byte[] contenutoInteroDaSpedire = null;
+					if(boutStaticFile!=null){
+						contenutoInteroDaSpedire = boutStaticFile.toByteArray();
+					}else if (contenuto!=null){
+						if(replaceMap!=null && replaceMap.size()>0){
+							contenutoInteroDaSpedire = this.replace(contenuto, replaceMap);
+						}
+						else{
+							contenutoInteroDaSpedire = contenuto;
+						}
+					}else{
+						if(replaceMap!=null && replaceMap.size()>0){
+							byte[] contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
+							contenutoInteroDaSpedire = this.replace(contenutoRequest, replaceMap);
+						}
+						else{
+							byte[] contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
+							contenutoInteroDaSpedire = contenutoRequest;
+						}
 					}
-					else{
-						res.getOutputStream().write(contenuto);
+					if(contenutoInteroDaSpedire!=null && contenutoInteroDaSpedire.length>0) {
+						int lengthSendContent = contenutoInteroDaSpedire.length;
+						for (int i = 0; i < lengthSendContent; ) {
+							int length = throttlingBytes;
+							int remaining = lengthSendContent-i;
+							if(remaining<length) {
+								length = remaining;
+							}
+							res.getOutputStream().write(contenutoInteroDaSpedire,i,length);
+							i = i+length;
+							res.getOutputStream().flush();
+							this.log.info("send "+length+" bytes");
+							Utilities.sleep(throttlingMs);
+						}
 					}
-				}else{
-					if(replaceMap!=null && replaceMap.size()>0){
-						byte[] contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
-						res.getOutputStream().write(this.replace(contenutoRequest, replaceMap));
-					}
-					else{
-						FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+					this.log.info("Throttling bytes:"+throttlingBytes+" every "+throttlingMs+"ms finished");
+				}
+				else {
+					if(boutStaticFile!=null){
+						res.getOutputStream().write(boutStaticFile.toByteArray());
+					}else if (contenuto!=null){
+						if(replaceMap!=null && replaceMap.size()>0){
+							res.getOutputStream().write(this.replace(contenuto, replaceMap));
+						}
+						else{
+							res.getOutputStream().write(contenuto);
+						}
+					}else{
+						if(replaceMap!=null && replaceMap.size()>0){
+							byte[] contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
+							res.getOutputStream().write(this.replace(contenutoRequest, replaceMap));
+						}
+						else{
+							FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+						}
 					}
 				}
 					

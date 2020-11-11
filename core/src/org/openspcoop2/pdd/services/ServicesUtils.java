@@ -131,6 +131,26 @@ public class ServicesUtils {
 		return false;
 	}
 	
+	public static boolean isConnessioneServerReadTimeout(Throwable t){
+		
+		try {
+			java.net.SocketTimeoutException e = null;
+			if(t instanceof java.net.SocketTimeoutException){
+				e = (java.net.SocketTimeoutException) t;
+			}
+			else if(Utilities.existsInnerException(t, java.net.SocketTimeoutException.class)){
+				e = (java.net.SocketTimeoutException) Utilities.getInnerInstanceException(t, java.net.SocketTimeoutException.class, true);
+			}
+			
+			if(e.getMessage()!=null && OpenSPCoop2Properties.getInstance().isServiceUnavailable_ReadTimedOut(e.getMessage())){
+				return true;
+			}
+			
+		}catch(Throwable tIgnore) {}
+		
+		return false;
+	}
+	
 	public static InformazioniErroriInfrastrutturali readInformazioniErroriInfrastrutturali(PdDContext pddContext){
 		
 		InformazioniErroriInfrastrutturali informazioniErrori = new InformazioniErroriInfrastrutturali();

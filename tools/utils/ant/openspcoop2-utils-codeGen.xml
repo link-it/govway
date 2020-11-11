@@ -70,6 +70,20 @@
 			<param name="swaggerCodeGen.refSchemaDir" value="${src_utils}/org/openspcoop2/utils/service/schemi"/>
 		</antcall>
 
+		<move file="${src_utils}/org/openspcoop2/utils/service/beans/ProblemTeamDigitale.java" tofile="${src_utils}/org/openspcoop2/utils/service/beans/Problem.java"/>
+		<replace file="${src_utils}/org/openspcoop2/utils/service/beans/Problem.java"
+			token="ProblemTeamDigitale" value="Problem"/>
+		<replace file="${src_utils}/org/openspcoop2/utils/service/beans/Problem.java">
+			<replacetoken><![CDATA[import com.fasterxml.jackson.annotation.JsonProperty;]]></replacetoken>
+			<replacevalue><![CDATA[import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;]]></replacevalue>
+		</replace>
+		<replace file="${src_utils}/org/openspcoop2/utils/service/beans/Problem.java">
+			<replacetoken><![CDATA[public class Problem]]></replacetoken>
+			<replacevalue><![CDATA[@JsonIgnoreProperties(ignoreUnknown = true)
+public class Problem]]></replacevalue>
+		</replace>
+
 		<delete>
 			<fileset dir="${src_utils}/org/openspcoop2/utils/service/beans">
 
@@ -83,6 +97,12 @@
 				<include name="Person.java"/>
 				<include name="Money.java"/>
 				<include name="TaxCode.java"/>
+				<include name="ProblemId.java"/>
+				<include name="ProblemType.java"/>
+				<include name="ProblemTitle.java"/>
+				<include name="ProblemStatus.java"/>
+				<include name="ProblemDetails.java"/>
+				<include name="AnyOfProblemId.java"/>
 
 				<!-- core -->
 				<include name="BaseOggettoWithNCName.java"/>

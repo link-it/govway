@@ -58,6 +58,10 @@ public class HttpRequest extends AbstractHttp {
 	
 	private boolean hostnameVerifier = false; // nelle versioni precedenti era configurato disabilitato direttamente in HttpUtilities
 	
+	// throttling send bytes every ms
+	private Integer throttlingSendMs;
+	private Integer throttlingSendByte;
+	
 	public Boolean getFollowRedirects() {
 		return this.followRedirects;
 	}
@@ -192,5 +196,21 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setHostnameVerifier(boolean hostnameVerifier) {
 		this.hostnameVerifier = hostnameVerifier;
+	}
+	
+	public Integer getThrottlingSendMs() {
+		return this.throttlingSendMs;
+	}
+
+	public void setThrottlingSendMs(Integer throttlingSendMs) {
+		this.throttlingSendMs = throttlingSendMs;
+	}
+
+	public Integer getThrottlingSendByte() {
+		return this.throttlingSendByte;
+	}
+
+	public void setThrottlingSendByte(Integer throttlingSendByte) {
+		this.throttlingSendByte = throttlingSendByte;
 	}
 }

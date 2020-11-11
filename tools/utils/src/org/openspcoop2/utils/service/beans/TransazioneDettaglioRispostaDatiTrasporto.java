@@ -53,9 +53,9 @@ public class TransazioneDettaglioRispostaDatiTrasporto  {
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
   **/
   private String esitoRicezione = null;
-  @XmlElement(name="esito_consegna", required = true)
+  @XmlElement(name="esito_consegna")
   
-  @Schema(example = "200", required = true, description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
+  @Schema(example = "200", description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
  /**
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
   **/
@@ -123,7 +123,6 @@ public class TransazioneDettaglioRispostaDatiTrasporto  {
    * @return esitoConsegna
   **/
   @JsonProperty("esito_consegna")
-  @NotNull
   @Valid
   public String getEsitoConsegna() {
     return this.esitoConsegna;

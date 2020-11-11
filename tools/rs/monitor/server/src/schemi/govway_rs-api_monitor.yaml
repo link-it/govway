@@ -14,7 +14,7 @@ info:
   x-summary: Servizi per il monitoraggio di GovWay
   description: Servizi per il monitoraggio di GovWay
   termsOfService: https://govway.org/documentazione/api/index.html
-  version: "3.3.2"
+  version: "3.3.3"
   contact:
     email: info@link.it
   license:
@@ -30,7 +30,10 @@ tags:
     description: >-
       Fornisce operazioni che consentono di recuperare i report statistici
       riguardanti le transazioni gestite su GovWay
-      
+  - name: Status
+    description: >-
+      Ritorna lo stato dell'applicazione   
+
 paths:
   
   # Transazioni
@@ -1362,6 +1365,20 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /status:
+    get:
+      tags:
+        - Status
+      summary: Ritorna lo stato dell'applicazione
+      operationId: getStatus
+      description: >-
+        Ritorna lo stato dell'applicazione in formato problem+json
+      responses:
+        "200":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/200Status'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
         
 components:
 
@@ -1471,7 +1488,7 @@ components:
       description: Identificativo dell'API implementata
       required: false
       schema:
-        $ref: 'govway_core.yaml#/components/schemas/UriApi'
+        $ref: '#/components/schemas/UriApi'
         
     distingui_api_implementata:
       in: query
@@ -1612,6 +1629,13 @@ components:
 
  
   schemas:
+
+    # Id
+
+    UriApi:
+      type: string
+      pattern: ^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\-\._A-Za-z0-9]*:\d$|^[_A-Za-z][\-\._A-Za-z0-9]*:\d$
+      description: Indica l'uri di una Api 
 
     # Transazioni
 

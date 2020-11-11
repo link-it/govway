@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.xml.soap.SOAPBody;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
@@ -1020,6 +1021,10 @@ public class RicezioneBusteService  {
 			erroreConsegnaRisposta = e;
 			
 			erroreConnessioneClient = ServicesUtils.isConnessioneClientNonDisponibile(e);
+			if(!erroreConnessioneClient && ServicesUtils.isConnessioneServerReadTimeout(e)) {
+				erroreConnessioneClient = true; // non e' stato possibile consegnare tutta la risposta. Il client ha ricevuto 200 ma non ha ricevuto la risposta per intero
+				erroreConsegnaRisposta = new CoreException("Connessione con il backend dell'API non più disponibile: "+e.getMessage(),e);
+			}
 			
 			// Genero risposta con errore
 			try{
@@ -1059,6 +1064,7 @@ public class RicezioneBusteService  {
     			if(responseMessageError!=null && responseMessageError.getForcedResponseCode()!=null) {
 					try{
 						statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
+						res.setStatus(statoServletResponse);
 					}catch(Exception eStatus){}
 				}
 				if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){

@@ -115,7 +115,7 @@
 		class="org.openspcoop2.core.config.rs.server.api.impl.fruizioni.gruppi.FruizioniGruppiApiServiceImpl"/>
 	<b:bean id="fruizioniConfigurazioneApiImpl" 
 		class="org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione.FruizioniConfigurazioneApiServiceImpl"/>
-	
+	<b:bean id="statusApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.StatusApiServiceImpl"/>	
 
 
 
@@ -149,6 +149,7 @@
 			<ref bean="fruizioniGruppiApiImpl" />
 			<ref bean="erogazioniConfigurazioneApiImpl" />
 			<ref bean="fruizioniConfigurazioneApiImpl" />
+			<ref bean="statusApiImpl" />
 		</jaxrs:serviceBeans>  
 		<jaxrs:providers>
 			<ref bean="parameterConverter" />

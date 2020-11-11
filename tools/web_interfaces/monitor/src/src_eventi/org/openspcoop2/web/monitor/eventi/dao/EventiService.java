@@ -242,6 +242,15 @@ public class EventiService implements IEventiService{
 
 	@Override
 	public EventoBean findById(Long key) {
+		EventoBean bean = null;
+		try {
+			bean = this.findById(key, false);
+		}catch(NotFoundException notFound){
+			// il parametro false assicura che l'eccezione non sia mai lanciata
+		}
+		return bean;
+	}
+	public EventoBean findById(Long key, boolean throwNotFound) throws NotFoundException {
 		EventiService.log.debug("Metodo FindById: [" + key + "]");
 
 		try {
@@ -253,7 +262,12 @@ public class EventiService implements IEventiService{
 		} catch (ServiceException e) {
 			EventiService.log.error(e.getMessage(), e);
 		} catch (NotFoundException e) {
-			EventiService.log.error(e.getMessage(), e);
+			if(throwNotFound) {
+				throw e;
+			}
+			else {
+				EventiService.log.error(e.getMessage(), e);
+			}
 		} catch (MultipleResultException e) {
 			EventiService.log.error(e.getMessage(), e);
 		} catch (NotImplementedException e) {

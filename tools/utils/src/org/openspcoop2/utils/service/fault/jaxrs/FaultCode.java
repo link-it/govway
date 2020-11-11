@@ -47,7 +47,7 @@ public class FaultCode {
 			"Richiesta non processabile");
 	public static final FaultCode ERRORE_INTERNO = new FaultCode(500,"ERRORE INTERNO","Errore interno");
 	
-
+	public static final FaultCode STATUS_OK = new FaultCode(200,"STATUS OK","Il servizio funziona correttamente");
 
 
 	private final String name;

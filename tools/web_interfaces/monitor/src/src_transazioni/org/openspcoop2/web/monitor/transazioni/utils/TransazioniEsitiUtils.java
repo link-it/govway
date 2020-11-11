@@ -102,6 +102,10 @@ public class TransazioniEsitiUtils {
 						esitoLabel = esitoLabel+" "+httpStatusCode.intValue();
 					}
 				}
+				else if(esitiProperties.convertoToCode(EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE) == esito.intValue()) {
+					// esitoLabel = esitoLabel+" "+httpStatusCode.intValue();
+					// non ha senso aggiungere un codice http, la connessione client è stata interrotta
+				}
 				else {
 					esitoLabel = esitoLabel+" "+httpStatusCode.intValue();
 				}

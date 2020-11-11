@@ -95,6 +95,7 @@
 	<!-- JAX-RS Service Impl -->
 	<b:bean id="monitoraggioApiImpl" class="org.openspcoop2.core.monitor.rs.server.api.impl.MonitoraggioApiServiceImpl"/>
 	<b:bean id="reportisticaApiImpl" class="org.openspcoop2.core.monitor.rs.server.api.impl.ReportisticaApiServiceImpl"/>
+	<b:bean id="statusApiImpl" class="org.openspcoop2.core.monitor.rs.server.api.impl.StatusApiServiceImpl"/>
 
 
 	<!-- CXF Configuration -->
@@ -118,6 +119,7 @@
 		<jaxrs:serviceBeans>
 			<ref bean="monitoraggioApiImpl" />
 			<ref bean="reportisticaApiImpl" />
+			<ref bean="statusApiImpl" />
 		</jaxrs:serviceBeans>  
 		<jaxrs:providers>
 			<ref bean="parameterConverter" />

@@ -79,6 +79,13 @@
 				<include name="Person.java"/>
 				<include name="Money.java"/>
 				<include name="TaxCode.java"/>
+				<include name="ProblemTeamDigitale.java"/>
+				<include name="ProblemId.java"/>
+				<include name="ProblemType.java"/>
+				<include name="ProblemTitle.java"/>
+				<include name="ProblemStatus.java"/>
+				<include name="ProblemDetails.java"/>
+				<include name="AnyOfProblemId.java"/>
 
 				<!-- core -->
 				<include name="HttpStatusCode.java"/>
@@ -138,6 +145,17 @@
 			token="^[_A-Za-z][\-\._A-Za-z0-9]*$" value="^[_A-Za-z][\\-\\._A-Za-z0-9]*$" includes="*.java"/>
 		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model"
 			token="^[^\s]+$" value="^[^\\s]+$" includes="*.java"/>
+
+		<replace file="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/api/StatusApi.java"
+			token="ProblemTeamDigitale" value="Problem"/>
+		<replace file="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/api/impl/StatusApiServiceImpl.java"
+			token="ProblemTeamDigitale" value="Problem"/>
+		<replace file="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model/Problem.java">
+			<replacetoken><![CDATA[import org.openspcoop2.core.config.rs.server.model.ProblemDetails;
+import org.openspcoop2.core.config.rs.server.model.ProblemId;
+]]></replacetoken>
+			<replacevalue><![CDATA[]]></replacevalue>
+		</replace>
 
 	</target>
 

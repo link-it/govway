@@ -205,11 +205,7 @@ components:
       type: string
       pattern: ^[a-z]{2,20}$
       maxLength: 20
-      description: Indica un tipo assegnato ad un soggetto o ad un servizio
-    UriApi:
-      type: string
-      pattern: ^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\-\._A-Za-z0-9]*:\d$|^[_A-Za-z][\-\._A-Za-z0-9]*:\d$
-      description: Indica un tipo assegnato ad un soggetto o ad un servizio    
+      description: Indica un tipo assegnato ad un soggetto o ad un servizio   
 
          
     # Base: Modalita e Soggetto del Dominio

@@ -14,7 +14,7 @@ info:
   x-summary: Servizi per la configurazione di GovWay
   description: Servizi per la configurazione di GovWay
   termsOfService: https://govway.org/documentazione/api/index.html
-  version: "3.3.2"
+  version: "3.3.3"
   contact:
     email: info@link.it
   license:
@@ -44,7 +44,10 @@ tags:
     description: ruoli associabili agli applicativi ed ai soggetti
   - name: scope
     description: scope
-    
+  - name: Status
+    description: >-
+      Ritorna lo stato dell'applicazione
+          
 paths:
   
    # ** API **
@@ -6769,6 +6772,19 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default' 
 
+  /status:
+    get:
+      tags:
+        - Status
+      summary: Ritorna lo stato dell'applicazione
+      operationId: getStatus
+      description: >-
+        Ritorna lo stato dell'applicazione in formato problem+json
+      responses:
+        "200":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/200Status'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
    
 components:
 

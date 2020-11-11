@@ -1074,8 +1074,17 @@ public class HttpUtilities {
 				}
 			}
 			
+			boolean sendThrottling = false;
+			if(request.getThrottlingSendByte()!=null && request.getThrottlingSendByte()>0 && 
+					request.getThrottlingSendMs()!=null && request.getThrottlingSendMs()>0) {
+				sendThrottling = true;
+			}
+			
 			if(request.getMethod()==null){
 				throw new UtilsException("HttpMethod required");
+			}
+			if(sendThrottling) {
+				httpConn.setChunkedStreamingMode(0);
 			}
 			setStream(httpConn, request.getMethod(), request.getContentType());
 
@@ -1083,7 +1092,25 @@ public class HttpUtilities {
 			// Spedizione byte
 			if(httpContent.isDoOutput() && request.getContent() != null){
 				OutputStream out = httpConn.getOutputStream();
-				out.write(request.getContent());
+				//System.out.println("Classe '"+out.getClass().getName()+"'");
+				if(sendThrottling) {
+					int lengthSendContent = request.getContent().length;
+					for (int i = 0; i < lengthSendContent; ) {
+						int length = request.getThrottlingSendByte();
+						int remaining = lengthSendContent-i;
+						if(remaining<length) {
+							length = remaining;
+						}
+						out.write(request.getContent(),i,length);
+						i = i+length;
+						out.flush();
+						//System.out.println("Spediti "+length+" bytes");
+						Utilities.sleep(request.getThrottlingSendMs());
+					}
+				}
+				else {
+					out.write(request.getContent());
+				}
 				out.flush();
 				out.close();
 			}
@@ -1115,9 +1142,10 @@ public class HttpUtilities {
 			if(response.getHeaders()!=null && response.getHeaders().size()>0){
 				response.setContentType(response.getHeader(HttpConstants.CONTENT_TYPE));
 			}
-			
+
 			// Ricezione Result HTTP Code
 			int resultHTTPOperation = httpConn.getResponseCode();
+
 			response.setResultHTTPOperation(resultHTTPOperation);
 			
 			// Ricezione Risposta

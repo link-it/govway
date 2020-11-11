@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- govway version -->
-		<govway.version>3.3.2</govway.version>
+		<govway.version>3.3.3</govway.version>
 
 		<!-- compile config -->
 		<compile>compile</compile> <!-- compile phase, use 'none' for disable -->

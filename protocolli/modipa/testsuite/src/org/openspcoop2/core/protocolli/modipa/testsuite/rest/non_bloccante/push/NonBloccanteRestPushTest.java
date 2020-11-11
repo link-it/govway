@@ -38,6 +38,7 @@ import com.intuit.karate.netty.FeatureServer;
  * NonBloccanteRestPushTest
  *
  * @author Francesco Scarlato (scarlato@link.it)
+ * @author $Author$
  * @version $Rev$, $Date$
  */
 

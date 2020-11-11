@@ -1,3 +1,9 @@
+2020-11-11  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1095
+	Introdotta l'operazione 'status' nelle API di configurazione e monitoraggio come richiesto dal requisito RAC_REST_NAME_010 e RAC_SOAP_004 del documento 04_Raccomandazioni\ di\ implementazione.pdf
+
 2020-11-10  Francesco Scarlato <scarlato@link.it>
 
 	* [GovWayCore, ProtocolloModIPA, TestsuiteProtocolloModIPA]
