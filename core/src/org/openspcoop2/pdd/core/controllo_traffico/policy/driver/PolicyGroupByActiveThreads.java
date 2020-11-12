@@ -82,29 +82,36 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException{
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException{
 				
 		DatiCollezionati datiCollezionatiReaded = null;
+		//System.out.println("<"+idTransazione+">registerStartRequest ...");
 		synchronized (this.semaphore) {		
+			//System.out.println("<"+idTransazione+">registerStartRequest entrato");
+			
 			DatiCollezionati datiCollezionati = null;
 			if(this.mapActiveThreads.containsKey(datiGroupBy)){
-				//System.out.println("CHECK CONTAINS ["+datiGroupBy+"]=true");
+				//System.out.println("<"+idTransazione+">registerStartRequest CHECK CONTAINS ["+datiGroupBy+"]=true");
 				datiCollezionati = this.mapActiveThreads.get(datiGroupBy);	
 			}
 			else{
-				//System.out.println("CHECK CONTAINS ["+datiGroupBy+"]=false");
+				//System.out.println("<"+idTransazione+">registerStartRequest CHECK CONTAINS ["+datiGroupBy+"]=false");
 				datiCollezionati = new DatiCollezionati();
-				//System.out.println("PUT COUNTER["+counter+"] in ["+datiRichiesta+"]");
+				//System.out.println("<"+idTransazione+">registerStartRequest PUT");
 				this.mapActiveThreads.put(datiGroupBy, datiCollezionati); // registro nuova immagine
 			}
 			
 			// incremento il numero di thread
+			//System.out.println("<"+idTransazione+">registerStartRequest in datiCollezionati ...");
 			datiCollezionati.registerStartRequest(log, this.activePolicy);
+			//System.out.println("<"+idTransazione+">registerStartRequest in datiCollezionati ok");
 									
 			// mi salvo fuori dal synchronized l'attuale stato
 			datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
-			
+		
+			//System.out.println("<"+idTransazione+">registerStartRequest esco");
 		}
+		
 		
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
 		// Inoltre e' stato re-inserito nella map come oggetto nuovo, quindi il valore dentro il metodo non subira' trasformazioni (essendo stato fatto il clone)
@@ -115,13 +122,16 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
-	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException,PolicyNotFoundException{
+	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException,PolicyNotFoundException{
 		
 		DatiCollezionati datiCollezionatiReaded = null;
-		synchronized (this.semaphore) {		
+		//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile ...");
+		synchronized (this.semaphore) {	
+			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile entrato");
+			
 			DatiCollezionati datiCollezionati = null;
 			if(this.mapActiveThreads.containsKey(datiGroupBy)==false){
-				//System.out.println("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiRichiesta.toString()+"]");
+				//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 				throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 			}
 			else{
@@ -129,11 +139,14 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			}
 			
 			// incremento il numero dei contatori
+			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile updateDatiStartRequestApplicabile ...");
 			datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy);
+			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile updateDatiStartRequestApplicabile ok");
 									
 			// mi salvo fuori dal synchronized l'attuale stato
 			datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
 			
+			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile esco");
 		}
 		
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
@@ -145,16 +158,23 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile) throws PolicyException,PolicyNotFoundException{
+	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile) throws PolicyException,PolicyNotFoundException{
+		//System.out.println("<"+idTransazione+">registerStopRequest ...");
 		synchronized (this.semaphore) {			
+			//System.out.println("<"+idTransazione+">registerStopRequest entro");
+			
 			if(this.mapActiveThreads.containsKey(datiGroupBy)==false){
-				//System.out.println("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiRichiesta.toString()+"]");
+				//System.out.println("<"+idTransazione+">registerStopRequest Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 				throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 			}
 			else{
+				//System.out.println("<"+idTransazione+">registerStopRequest get ...");
 				DatiCollezionati datiCollezionati = this.mapActiveThreads.get(datiGroupBy);	
+				//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ...");
 				datiCollezionati.registerEndRequest(log, this.activePolicy, dati);
+				//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ok");
 				if(isApplicabile){
+					//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ...");
 					List<Integer> esitiCodeOk = null;
 					List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 					List<Integer> esitiCodeFaultApplicativo = null;
@@ -167,8 +187,11 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 					}
 					datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, dati,
 							esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo);
+					//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ok");
 				}
 			}
+			
+			//System.out.println("<"+idTransazione+">registerStopRequest esco");
 		}		
 	}
 

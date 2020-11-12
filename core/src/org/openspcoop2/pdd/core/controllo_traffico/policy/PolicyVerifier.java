@@ -78,7 +78,7 @@ public class PolicyVerifier {
 			ActivePolicy activePolicy,
 			IDUnivocoGroupByPolicy datiGroupBy, PdDContext pddContext,
 			MsgDiagnostico msgDiag, 
-			Transaction tr, 
+			Transaction tr,
 			DatiTransazione datiTransazione, boolean isPddCongestionata, DatiTempiRisposta tempiRisposta,
 			List<Boolean> pddContext_policyApplicabile) throws Exception{
 				
@@ -93,7 +93,7 @@ public class PolicyVerifier {
 		
 		// Registro Threads (NOTA: non i contatori, quelli vegono aggiornati )
 		DatiCollezionati datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).
-				registerStartRequest(logCC,datiGroupBy);
+				registerStartRequest(logCC,datiTransazione.getIdTransazione(),datiGroupBy);
 		
 	
 		// Configuro Risultato
@@ -279,7 +279,7 @@ public class PolicyVerifier {
 			// aggiorno contatori
 			if(isApplicabile || !activePolicy.getConfigurazioneControlloTraffico().isElaborazioneRealtime_incrementaSoloPolicyApplicabile()){
 			
-				datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).updateDatiStartRequestApplicabile(logCC, datiGroupBy);
+				datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy);
 				now = datiCollezionatiReaded.getCloneDate(); // Data in cui sono stati prelevati gli intervalli.
 				
 				pddContext_policyApplicabile.add(true);

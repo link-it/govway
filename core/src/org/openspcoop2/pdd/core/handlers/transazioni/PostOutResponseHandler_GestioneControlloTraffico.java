@@ -110,7 +110,7 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 									try{
 										uniqueIdMap = uniqueIdsPolicies.get(i);
 										GestorePolicyAttive.getInstance().getActiveThreadsPolicy(uniqueIdMap).
-											registerStopRequest(logControlloTraffico, groupByPolicies.get(i), misurazioniTransazione, incrementCounter.get(i));
+											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i), misurazioniTransazione, incrementCounter.get(i));
 									}catch(PolicyNotFoundException notFound){
 										logControlloTraffico.debug("NotFoundException durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+")",notFound);
 									}catch(PolicyShutdownException shutdown){

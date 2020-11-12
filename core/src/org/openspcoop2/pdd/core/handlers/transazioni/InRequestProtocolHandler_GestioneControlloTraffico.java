@@ -875,6 +875,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						// trasformo in secondi
 						sec = ms / 1000;
 					}
+					else if(ms>0) {
+						// genero comunque l'header approssimando l'intervallo al secondo
+						sec=1;
+					}
 					
 					if(sec>0) {
 						try {
