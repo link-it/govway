@@ -780,6 +780,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		boolean httpEmptyResponse = false;
 		long lengthOutResponse = -1;
 		boolean erroreConnessioneClient = false;
+		boolean sendInvoked = false;
 		try{
 			if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && (responseMessage.getForcedResponse()==null)){
 					
@@ -857,6 +858,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					
 					// contenuto
 					if(risposta!=null){
+						sendInvoked = true;
 						res.sendResponse(risposta);
 					}
 				}
@@ -905,6 +907,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 					// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
 					// e cambiare quindi il content length effettivo.
+					sendInvoked = true;
 					if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi())){
 						res.sendResponse(responseMessage, false);
 					} else {
@@ -971,6 +974,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						(pddContext!=null ? pddContext.getContext() : null));
 				
 				if(response!=null) {
+					sendInvoked = true;
 					res.sendResponse(response);
 				}
 				
@@ -1008,67 +1012,70 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			// Genero risposta con errore
 			try{
-				byte [] rispostaErrore = null;
-				List<Integer> returnCode = new ArrayList<Integer>();
-				InformazioniErroriInfrastrutturali informazioniErrori_error = null;
-				if( (responseMessage!=null && responseMessage.getParseException() != null) ||
-						(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
-					ParseException parseException = null;
-					if( responseMessage!=null && responseMessage.getParseException() != null ){
-						parseException = responseMessage.getParseException();
-					}
+				if(sendInvoked==false) {
+					// nel caso sia già stato inoltrata una risposta non e' più possibile modificarlo cosi come tutti gli header etc...	
+					byte [] rispostaErrore = null;
+					List<Integer> returnCode = new ArrayList<Integer>();
+					InformazioniErroriInfrastrutturali informazioniErrori_error = null;
+					if( (responseMessage!=null && responseMessage.getParseException() != null) ||
+							(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+						ParseException parseException = null;
+						if( responseMessage!=null && responseMessage.getParseException() != null ){
+							parseException = responseMessage.getParseException();
+						}
+						else{
+							parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+						}
+						String msgErrore = parseException.getParseException().getMessage();
+						if(msgErrore==null){
+							msgErrore = parseException.getParseException().toString();
+						}
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+						logCore.error("parsingExceptionRisposta",parseException.getSourceException());
+						msgDiag.logPersonalizzato("parsingExceptionRisposta");
+											
+						rispostaErrore = this.generatoreErrore.buildAsByteArray(pddContext, IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
+								ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
+								getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
+								returnCode);
+						
+						informazioniErrori_error = new InformazioniErroriInfrastrutturali();
+						informazioniErrori_error.setContenutoRispostaNonRiconosciuto(true);
+					} 
 					else{
-						parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+						rispostaErrore = this.generatoreErrore.buildAsByteArray(pddContext, IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
+								ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.
+								getErrore426_ServletError(false, e),
+								returnCode);
 					}
-					String msgErrore = parseException.getParseException().getMessage();
-					if(msgErrore==null){
-						msgErrore = parseException.getParseException().toString();
-					}
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-					logCore.error("parsingExceptionRisposta",parseException.getSourceException());
-					msgDiag.logPersonalizzato("parsingExceptionRisposta");
-										
-					rispostaErrore = this.generatoreErrore.buildAsByteArray(pddContext, IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
-							ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
-							getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
-							returnCode);
 					
-					informazioniErrori_error = new InformazioniErroriInfrastrutturali();
-					informazioniErrori_error.setContenutoRispostaNonRiconosciuto(true);
-				} 
-				else{
-					rispostaErrore = this.generatoreErrore.buildAsByteArray(pddContext, IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
-							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.
-							getErrore426_ServletError(false, e),
-							returnCode);
+					// transfer length
+					lengthOutResponse = rispostaErrore.length;
+					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
+							req, res, Long.valueOf(rispostaErrore.length));
+					
+					// httpstatus
+					//statoServletResponse = 500; // Nella servlet con sbustamento non devo ritornare 500
+					statoServletResponse = 200;
+					if(returnCode!=null && returnCode.size()>0){
+						statoServletResponse = returnCode.get(0);
+					}
+					res.setStatus(statoServletResponse);
+					
+					// esito calcolato prima del sendResponse, per non consumare il messaggio
+					if(informazioniErrori_error!=null) {
+						esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),
+								statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+								null, context.getProprietaErroreAppl(), informazioniErrori_error,
+								(pddContext!=null ? pddContext.getContext() : null));
+					}
+					
+					// content type
+					res.setContentType("text/xml");
+					
+					// contenuto
+					res.sendResponse(rispostaErrore);
 				}
-				
-				// transfer length
-				lengthOutResponse = rispostaErrore.length;
-				ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-						req, res, Long.valueOf(rispostaErrore.length));
-				
-				// httpstatus
-				//statoServletResponse = 500; // Nella servlet con sbustamento non devo ritornare 500
-				statoServletResponse = 200;
-				if(returnCode!=null && returnCode.size()>0){
-					statoServletResponse = returnCode.get(0);
-				}
-				res.setStatus(statoServletResponse);
-				
-				// esito calcolato prima del sendResponse, per non consumare il messaggio
-				if(informazioniErrori_error!=null) {
-					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),
-							statoServletResponse, requestInfo.getIntegrationServiceBinding(),
-							null, context.getProprietaErroreAppl(), informazioniErrori_error,
-							(pddContext!=null ? pddContext.getContext() : null));
-				}
-				
-				// content type
-				res.setContentType("text/xml");
-				
-				// contenuto
-				res.sendResponse(rispostaErrore);
 						
 			}catch(Throwable error){
 				
@@ -1095,8 +1102,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 		}
 		finally{
-						
-			statoServletResponse = res.getResponseStatus(); // puo' essere "trasformato" da api engine
+			if(sendInvoked==false) {
+				// nel caso sia già stato inoltrata una risposta non e' più possibile modificarlo cosi come tutti gli header etc...			
+				statoServletResponse = res.getResponseStatus(); // puo' essere "trasformato" da api engine
+			}
 			msgDiag.addKeyword(CostantiPdD.KEY_CODICE_CONSEGNA, ""+statoServletResponse);
 			msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, descrizioneSoapFault);
 			

@@ -2,7 +2,18 @@ Feature: Server proxy per il testing sicurezza messaggio
 
 Background: 
 
-    * def isTest = function(id) { return karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id } 
+    * def getRequestHeader = read('classpath:utils/get-request-header.js')
+    * def setRequestHeader = read('classpath:utils/set-request-header.js')
+
+    * def isTest =
+    """
+    function(id) {
+        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
+               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
+               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+    }
+    """
+
     * def checkToken = read('check-token.feature')
     * def decodeToken = read('classpath:utils/decode-token.js')
 
@@ -722,7 +733,7 @@ Scenario: isTest('riutilizzo-token')
 
 Scenario: isTest('riutilizzo-token-risposta')
 
-    * def responseHeaders =  ({ 'Authorization': requestHeaders['GovWay-TestSuite-Server-Token'][0] })
+    * def responseHeaders =  ({ 'Authorization': getRequestHeader("GovWay-TestSuite-Server-Token") })
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -876,7 +887,7 @@ Scenario: isTest('manomissione-payload-risposta')
 
 Scenario: isTest('manomissione-header-http-firmati-richiesta')
 
-    * set requestHeaders['IDAR03TestHeader'][0] = 'tampered_content'
+    * setRequestHeader("IDAR03TestHeader","tampered_content")
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-header-http-firmati-richiesta.json')
@@ -1086,7 +1097,7 @@ Scenario: isTest('request-without-payload-idar03-tampered-header')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1'
 
-    * set requestHeaders['IDAR03TestHeader'][0] = 'tampered_header'
+    * setRequestHeader("IDAR03TestHeader","tampered_header")
     * karate.proceed(url_invocazione_erogazione)
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-header-http-firmati-richiesta.json')
@@ -1872,7 +1883,7 @@ Scenario: isTest('manomissione-payload-risposta-idar0302')
 
 Scenario: isTest('manomissione-header-http-firmati-richiesta-idar0302')
 
-    * set requestHeaders['IDAR03TestHeader'][0] = 'tampered_content'
+    * setRequestHeader("IDAR03TestHeader","tampered_content")
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-header-http-firmati-richiesta.json')
@@ -1916,7 +1927,7 @@ Scenario: isTest('riutilizzo-token-idar0302')
 
 Scenario: isTest('riutilizzo-token-risposta-idar0302')
 
-    * def responseHeaders =  ({ 'Agid-JWT-Signature': requestHeaders['GovWay-TestSuite-Server-Token'][0], 'Digest': requestHeaders['GovWay-TestSuite-Digest'][0] })
+    * def responseHeaders =  ({ 'Agid-JWT-Signature': getRequestHeader("GovWay-TestSuite-Server-Token"), 'Digest': getRequestHeader("GovWay-TestSuite-Digest") })
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 

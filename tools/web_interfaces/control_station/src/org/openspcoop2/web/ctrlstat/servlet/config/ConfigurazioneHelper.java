@@ -2373,7 +2373,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 			} else {
-				boolean oldEnabled = (gestioneCanali != null && gestioneCanali.getStato().equals(StatoFunzionalita.ABILITATO) ) ? true: false;
+				boolean oldEnabled = (gestioneCanali != null && StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato()) ) ? true: false;
 				
 				StringBuilder inUsoMessage = new StringBuilder();
 				

@@ -541,7 +541,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// configurazione dei canali
 			CanaliConfigurazione gestioneCanali = this.confCore.getCanaliConfigurazione(false);
-			boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			CanaleConfigurazione canaleConfigurazioneDefault = gestioneCanaliEnabled ? canaleList.stream().filter((c) -> c.isCanaleDefault()).findFirst().get(): null;
 
@@ -1700,7 +1700,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// Canale
 			CanaliConfigurazione gestioneCanali = this.confCore.getCanaliConfigurazione(false);
-			boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			if(gestioneCanaliEnabled) {
 				List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 				de = new DataElement();
@@ -1908,7 +1908,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// Canale
 			CanaliConfigurazione gestioneCanali = this.confCore.getCanaliConfigurazione(false);
-			boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			if(gestioneCanaliEnabled) {
 				List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 				de = new DataElement();

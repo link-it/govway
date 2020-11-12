@@ -1,7 +1,16 @@
 Feature: Server mock per il testing della sicurezza messaggio
 
 Background:
-    * def isTest = function(id) { return karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id } 
+
+    * def isTest =
+    """
+    function(id) {
+        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
+               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
+               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+    }
+    """
+
     * def check_signature = read('check-signature.feature')
 
     * def confHeaders = 

@@ -13,7 +13,14 @@ Background:
 
     * def task_id = "fb382380-cf98-4f75-95eb-2a65ba45309e"
 
-    * def isTest = function(id) { return headerContains('GovWay-TestSuite-Test-Id', id) } 
+    * def isTest =
+    """
+    function(id) {
+        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
+               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
+               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+    }
+    """
 
 # GIRO OK
 #

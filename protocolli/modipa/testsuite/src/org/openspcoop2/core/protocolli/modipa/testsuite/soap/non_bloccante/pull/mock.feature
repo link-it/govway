@@ -4,6 +4,15 @@ Background:
 
     * configure responseHeaders = { 'Content-type': "application/soap+xml" }
 
+    * def isTest =
+    """
+    function(id) {
+        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
+               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
+               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+    }
+    """
+
 
 # Scenario giro ok, richiesta stato non pronta
 Scenario: methodIs('post') && bodyPath('/Envelope/Body/MProcessingStatus') != null && bodyPath('/Envelope/Header/X-Correlation-ID') == 'd2f49459-1624-4710-b80c-15e33d64b608_NOT_READY'
@@ -27,21 +36,21 @@ Scenario: methodIs('post') && bodyPath('/Envelope/Body/MResponse') != null && bo
 * def responseStatus = 200
 
 
-Scenario: methodIs('post') && headerContains('GovWay-TestSuite-Test-Id', 'no-correlation-in-request-erogazione-validazione')
+Scenario: methodIs('post') && isTest("no-correlation-in-request-erogazione-validazione")
 
 * def response = read('classpath:src/test/soap/non-bloccante/pull/richiesta-applicativa-no-correlation-response.xml')
 * def responseHeaders = ({ 'GovWay-TestSuite-GovWay-Transaction-ID': requestHeaders['GovWay-Transaction-ID'][0] })
 * def responseStatus = 200
 
 
-Scenario: methodIs('post') && headerContains('GovWay-TestSuite-Test-Id', 'no-correlation-in-request-erogazione')
+Scenario: methodIs('post') && isTest("no-correlation-in-request-erogazione")
 
 * def response = read('classpath:src/test/soap/non-bloccante/pull/richiesta-applicativa-no-correlation-response.xml')
 * def responseHeaders = ({ 'GovWay-TestSuite-GovWay-Transaction-ID': requestHeaders['GovWay-Transaction-ID'][0] })
 
 * def responseStatus = 200
 
-Scenario: headerContains('GovWay-TestSuite-Test-Id', 'generazione-header-correlazione')
+Scenario: isTest("generazione-header-correlazione")
 
 * def response = read('classpath:src/test/soap/non-bloccante/pull/richiesta-applicativa-no-correlation-response.xml')
 * def responseHeaders = ({ 'GovWay-TestSuite-GovWay-Transaction-ID': requestHeaders['GovWay-Transaction-ID'][0] })

@@ -237,7 +237,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			// carico i canali
 			CanaliConfigurazione gestioneCanali = confCore.getCanaliConfigurazione(false);
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
-			boolean gestioneCanaliEnabled = gestioneCanali != null && gestioneCanali.getStato().equals(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 
 			// Flag per controllare il mapping automatico di porttype e operation 
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();

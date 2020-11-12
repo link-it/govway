@@ -1,7 +1,17 @@
 Feature: Server mock per il testing della sicurezza messaggio
 
 Background:
-    * def isTest = function(id) { return karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id } 
+
+    * def getRequestHeader = read('classpath:utils/get-request-header.js')
+
+    * def isTest =
+    """
+    function(id) {
+        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
+               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
+               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+    }
+    """
 
     * def confHeaders = 
     """
@@ -49,7 +59,8 @@ Scenario: isTest('connettivita-base-no-sbustamento')
     })
     """
     * def checkToken = read('check-token.feature')
-    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_match })
+
+    * call checkToken ({token: getRequestHeader("Authorization"), match_to: client_token_match })
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')

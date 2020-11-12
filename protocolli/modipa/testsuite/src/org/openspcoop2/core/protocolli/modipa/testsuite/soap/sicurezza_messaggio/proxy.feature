@@ -2,7 +2,15 @@ Feature: Server proxy per il testing sicurezza messaggio
 
 Background: 
 
-    * def isTest = function(id) { return karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id } 
+    * def isTest =
+    """
+    function(id) {
+        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
+               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
+               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+    }
+    """
+
     * def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
     * def check_signature = read('check-signature.feature')
     * def check_client_token = read('check-client-token.feature')

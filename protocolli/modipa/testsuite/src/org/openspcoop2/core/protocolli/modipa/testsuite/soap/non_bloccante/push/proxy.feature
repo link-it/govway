@@ -13,7 +13,14 @@ Background:
 * def url_erogazione_client_helper_collaborazione = govway_base_path + "/soap/in/DemoSoggettoFruitore/SoapNonBlockingPushClientHelperCollaborazione/v1"
 * def url_erogazione_client_helper_riferimento = govway_base_path + "/soap/in/DemoSoggettoFruitore/SoapNonBlockingPushClientHelperRiferimento/v1"
 
-* def isTest = function(id) { return headerContains('GovWay-TestSuite-Test-Id', id) } 
+    * def isTest =
+    """
+    function(id) {
+        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
+               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
+               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+    }
+    """
 
 * def task_id = "8695a025-0931-4af4-9c76-26421374c7f2"
 

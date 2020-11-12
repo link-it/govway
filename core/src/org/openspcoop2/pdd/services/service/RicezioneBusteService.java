@@ -854,6 +854,7 @@ public class RicezioneBusteService  {
 		Throwable erroreConsegnaRisposta = null; 	
 		boolean httpEmptyResponse = false;
 		boolean erroreConnessioneClient = false;
+		boolean sendInvoked = false;
 		try{
 
 			// Invio la risposta
@@ -933,6 +934,7 @@ public class RicezioneBusteService  {
 				// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 				// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
 				// e cambiare quindi il content length effettivo.
+				sendInvoked = true;
 				if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneBuste())){
 					res.sendResponse(responseMessage, false);
 				} else {
@@ -993,6 +995,7 @@ public class RicezioneBusteService  {
 						(pddContext!=null ? pddContext.getContext() : null));
 				
 				if(response!=null) {
+					sendInvoked = true;
 					res.sendResponse(response);
 				}
 				
@@ -1028,68 +1031,72 @@ public class RicezioneBusteService  {
 			
 			// Genero risposta con errore
 			try{
-				InformazioniErroriInfrastrutturali informazioniErrori_error = new InformazioniErroriInfrastrutturali();
-				if( (responseMessage!=null && responseMessage.getParseException() != null) ||
-						(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
-					informazioniErrori_error.setContenutoRispostaNonRiconosciuto(true);
-					ParseException parseException = null;
-					if( responseMessage!=null && responseMessage.getParseException() != null ){
-						parseException = responseMessage.getParseException();
-					}
-					else{
-						parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
-					}
-					String msgErrore = parseException.getParseException().getMessage();
-					if(msgErrore==null){
-						msgErrore = parseException.getParseException().toString();
-					}
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-					logCore.error("parsingExceptionRisposta",parseException.getSourceException());
-					msgDiag.logPersonalizzato("parsingExceptionRisposta");
-					responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
-							ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
-							getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
-				} else {
-					responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
-							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(false, e));
-				}
-				// transfer length
-				ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneBuste(), 
-						req, res, responseMessageError);
-								
-				// content type
-    			ServicesUtils.setContentType(responseMessageError, res);
+				if(sendInvoked==false) {
+					// nel caso sia già stato inoltrata una risposta non e' più possibile modificarlo cosi come tutti gli header etc...	
 				
-				// http status
-    			if(responseMessageError!=null && responseMessageError.getForcedResponseCode()!=null) {
-					try{
-						statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
-						res.setStatus(statoServletResponse);
-					}catch(Exception eStatus){}
-				}
-				if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
-					SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
-					if(body!=null && body.hasFault()){
-						statoServletResponse = 500;
-						res.setStatus(statoServletResponse);
-						descrizioneSoapFault = " ("+SoapUtils.toString(responseMessageError.getFactory(), body.getFault(), false)+")";
+					InformazioniErroriInfrastrutturali informazioniErrori_error = new InformazioniErroriInfrastrutturali();
+					if( (responseMessage!=null && responseMessage.getParseException() != null) ||
+							(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+						informazioniErrori_error.setContenutoRispostaNonRiconosciuto(true);
+						ParseException parseException = null;
+						if( responseMessage!=null && responseMessage.getParseException() != null ){
+							parseException = responseMessage.getParseException();
+						}
+						else{
+							parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+						}
+						String msgErrore = parseException.getParseException().getMessage();
+						if(msgErrore==null){
+							msgErrore = parseException.getParseException().toString();
+						}
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+						logCore.error("parsingExceptionRisposta",parseException.getSourceException());
+						msgDiag.logPersonalizzato("parsingExceptionRisposta");
+						responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
+								ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
+								getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
+					} else {
+						responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
+								ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(false, e));
 					}
-				}
-				
-				// esito calcolato prima del sendResponse, per non consumare il messaggio
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
-						statoServletResponse, requestInfo.getProtocolServiceBinding(),
-						responseMessageError, proprietaErroreAppl, informazioniErrori_error,
-						(pddContext!=null ? pddContext.getContext() : null));
-				
-				// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
-				// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
-				// e cambiare quindi il content length effettivo.
-				if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneBuste())){
-					res.sendResponse(responseMessageError, false);
-				} else {
-					//res.sendResponse(responseMessageError, true);
-					res.sendResponse(responseMessageError, false); // può essere usato nel post out response handler
+					// transfer length
+					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneBuste(), 
+							req, res, responseMessageError);
+									
+					// content type
+	    			ServicesUtils.setContentType(responseMessageError, res);
+					
+					// http status
+	    			if(responseMessageError!=null && responseMessageError.getForcedResponseCode()!=null) {
+						try{
+							statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
+							res.setStatus(statoServletResponse);
+						}catch(Exception eStatus){}
+					}
+					if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
+						SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
+						if(body!=null && body.hasFault()){
+							statoServletResponse = 500;
+							res.setStatus(statoServletResponse);
+							descrizioneSoapFault = " ("+SoapUtils.toString(responseMessageError.getFactory(), body.getFault(), false)+")";
+						}
+					}
+					
+					// esito calcolato prima del sendResponse, per non consumare il messaggio
+					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+							statoServletResponse, requestInfo.getProtocolServiceBinding(),
+							responseMessageError, proprietaErroreAppl, informazioniErrori_error,
+							(pddContext!=null ? pddContext.getContext() : null));
+					
+					// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
+					// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
+					// e cambiare quindi il content length effettivo.
+					if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneBuste())){
+						res.sendResponse(responseMessageError, false);
+					} else {
+						//res.sendResponse(responseMessageError, true);
+						res.sendResponse(responseMessageError, false); // può essere usato nel post out response handler
+					}
 				}
 							
 			}catch(Throwable error){
@@ -1139,7 +1146,10 @@ public class RicezioneBusteService  {
 		}
 		finally{
 			
-			statoServletResponse = res.getResponseStatus(); // puo' essere "trasformato" da api engine
+			if(sendInvoked==false) {
+				// nel caso sia già stato inoltrata una risposta non e' più possibile modificarlo cosi come tutti gli header etc...	
+				statoServletResponse = res.getResponseStatus(); // puo' essere "trasformato" da api engine
+			}
 			msgDiag.addKeyword(CostantiPdD.KEY_CODICE_CONSEGNA, ""+statoServletResponse);
 			msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, descrizioneSoapFault);
 			

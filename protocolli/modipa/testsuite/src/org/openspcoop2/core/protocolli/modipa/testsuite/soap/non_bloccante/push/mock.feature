@@ -2,7 +2,14 @@ Feature: Server di mock contattato dalla erogazione, svolge il ruolo del TestSer
 
 Background: 
 
-    * def isTest = function(id) { return headerContains('GovWay-TestSuite-Test-Id', id) } 
+    * def isTest =
+    """
+    function(id) {
+        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
+               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
+               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+    }
+    """
 
     * def confHeaders = 
     """
