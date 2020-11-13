@@ -225,7 +225,8 @@ public class ArchiviCore extends ControlStationCore {
 	}
 	
 	
-	public String deleteArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista) throws Exception,ImportInformationMissingException{
+	public String deleteArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista,
+			 boolean deletePolicyConfig) throws Exception,ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -242,7 +243,8 @@ public class ArchiviCore extends ControlStationCore {
 					this, smista, userLogin);
 			
 			DeleterArchiveUtils deleterArchiveUtils = 
-					new DeleterArchiveUtils(importerEngine, log, userLogin);
+					new DeleterArchiveUtils(importerEngine, log, userLogin,
+							deletePolicyConfig);
 			
 			ArchiveEsitoDelete esito = deleterArchiveUtils.deleteArchive(archive, userLogin);
 			

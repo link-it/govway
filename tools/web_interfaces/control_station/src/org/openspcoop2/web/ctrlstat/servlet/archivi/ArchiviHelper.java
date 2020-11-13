@@ -706,7 +706,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 	public void addImportToDati(Vector<DataElement> dati,
 			boolean validazioneDocumenti,boolean updateEnabled,
-			boolean importPolicyConfig, boolean importConfig,
+			boolean importDeletePolicyConfig, boolean importConfig,
 			boolean showProtocols, List<String> protocolliSelectList,String protocollo,
 			List<ImportMode> importModes,String importMode,
 			List<ArchiveModeType> importTypes,String importType,
@@ -825,21 +825,21 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_LEFT);
-		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT);
-		de.setValue(""+importPolicyConfig);
+		de.setLabel(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_LEFT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_LEFT);
+		de.setLabelRight(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_RIGHT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT);
+		de.setValue(""+importDeletePolicyConfig);
 		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-		if(deleter){
-			de.setType(DataElementType.HIDDEN);
-		}else{
+//		if(deleter){
+//			de.setType(DataElementType.HIDDEN);
+//		}else{
 			de.setType(DataElementType.CHECKBOX);
-			de.setSelected(importPolicyConfig);
-		}
+			de.setSelected(importDeletePolicyConfig);
+//		}
 		//}
 		//else{
 		//	de.setType("hidden");
 		//}
-		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_ENABLED);
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		
@@ -1405,7 +1405,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 	public void addImportInformationMissingToDati(Vector<DataElement> dati,ImporterUtils importerUtils, FormFile ff,
 			String protocolloSelect,String inputMode,String protocolloEffettivo,String inputType,
 			boolean validazioneDocumenti,boolean updateEnabled,
-			boolean importPolicyConfig, boolean importConfig,
+			boolean importDeletePolicyConfig, boolean importConfig,
 			ImportInformationMissingCollection importInformationMissingCollection,
 			ImportInformationMissingException importInformationMissingException,
 			String modalitaAcquisizioneInformazioniProtocollo,List<PortType> portTypesOpenSPCoop,
@@ -1541,9 +1541,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setValue(""+importPolicyConfig);
+		de.setValue(""+importDeletePolicyConfig);
 		de.setType(DataElementType.HIDDEN);
-		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_ENABLED);
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		

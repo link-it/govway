@@ -93,7 +93,7 @@ public final class Importer extends Action {
 	
 	private boolean validazioneDocumenti = true;
 	private boolean updateEnabled = false;
-	private boolean importPolicyConfig = false;
+	private boolean importDeletePolicyConfig = false;
 	private boolean importConfig = false;
 
 	private int step = 0;
@@ -281,17 +281,17 @@ public final class Importer extends Action {
 			}
 			
 			// importPolicyConfig
-			String tmpImportPolicyConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_ENABLED);
-			if(archiviHelper.isEditModeInProgress() && tmpImportPolicyConfig==null){
+			String tmpImportDeletePolicyConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED);
+			if(archiviHelper.isEditModeInProgress() && tmpImportDeletePolicyConfig==null){
 				// primo accesso alla servlet
-				this.importPolicyConfig = false;
+				this.importDeletePolicyConfig = false;
 			}
 			else{
-				if(ServletUtils.isCheckBoxEnabled(tmpImportPolicyConfig)){
-					this.importPolicyConfig = true;
+				if(ServletUtils.isCheckBoxEnabled(tmpImportDeletePolicyConfig)){
+					this.importDeletePolicyConfig = true;
 				}
 				else{
-					this.importPolicyConfig = false;
+					this.importDeletePolicyConfig = false;
 				}
 			}
 			
@@ -374,7 +374,7 @@ public final class Importer extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
-						this.importPolicyConfig, this.importConfig,
+						this.importDeletePolicyConfig, this.importConfig,
 						showProtocols, protocolli, this.protocollo, 
 						importModes, this.importMode, 
 						importTypes, this.importType,
@@ -621,7 +621,7 @@ public final class Importer extends Action {
 					archiviHelper.addImportInformationMissingToDati(dati, importerUtils, ff, 
 							this.protocollo, this.importMode, protocolloEffettivo, this.importType, 
 							this.validazioneDocumenti, this.updateEnabled,
-							this.importPolicyConfig, this.importConfig,
+							this.importDeletePolicyConfig, this.importConfig,
 							importInformationMissingCollection, importInformationMissingException, 
 							this.importInformationMissing_modalitaAcquisizioneInformazioniProtocollo,this.importInformationMissing_portTypes,
 							protocolliForModes,readedDatiConnettori,
@@ -632,7 +632,7 @@ public final class Importer extends Action {
 				}
 				else{
 					archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
-							this.importPolicyConfig, this.importConfig,
+							this.importDeletePolicyConfig, this.importConfig,
 							showProtocols, protocolli, this.protocollo, 
 							importModes, this.importMode, 
 							importTypes, this.importType,
@@ -684,11 +684,12 @@ public final class Importer extends Action {
 			String esito = null;
 			if(deleter){
 				esito = archiviCore.deleteArchive(archive, archiveMode, protocolloEffettivo, 
-						userLogin, archiviHelper.smista());
+						userLogin, archiviHelper.smista(),
+						this.importDeletePolicyConfig);
 			}else{
 				esito = archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
 						userLogin, archiviHelper.smista(), 
-						this.updateEnabled, this.importPolicyConfig, this.importConfig, nomePddOperativa,
+						this.updateEnabled, this.importDeletePolicyConfig, this.importConfig, nomePddOperativa,
 						archiviHelper);
 			}
 									

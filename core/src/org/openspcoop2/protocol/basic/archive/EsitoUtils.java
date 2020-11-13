@@ -665,6 +665,7 @@ public class EsitoUtils {
 		return bfEsito.toString();
 	}
 	public final static String LABEL_IMPORT_POLICY = "Policy di Configurazione";
+	public final static String LABEL_DELETE_POLICY =  LABEL_IMPORT_POLICY;
 	public final static String LABEL_IMPORT_CONFIGURAZIONE = "Configurazione di GovWay";
 	public void serializeStato(ArchiveEsitoImportDetail detail,StringBuilder bfEsito, boolean importOperation){
 		String stateDetail = "";
@@ -698,6 +699,9 @@ public class EsitoUtils {
 			break;
 		case UPDATED:
 			bfEsito.append("già presente, aggiornato correttamente").append(stateDetail);
+			break;
+		case DELETED_POLICY_CONFIG_NOT_ENABLED:
+			bfEsito.append("non eliminto: opzione '"+LABEL_DELETE_POLICY+"' non abilitata").append(stateDetail);
 			break;
 		case DELETED_NOT_EXISTS:
 			bfEsito.append("non esistente").append(stateDetail);
@@ -736,6 +740,9 @@ public class EsitoUtils {
 			break;
 		case UPDATED:
 			bfEsito.append("aggiornata correttamente").append(stateDetail);
+			break;
+		case DELETED_POLICY_CONFIG_NOT_ENABLED:
+			bfEsito.append("non eliminto: opzione '"+LABEL_DELETE_POLICY+"' non abilitata").append(stateDetail);
 			break;
 		case DELETED_NOT_EXISTS:
 			// Stato mai usato per questo oggetto

@@ -90,12 +90,15 @@ public class DeleterArchiveUtils {
 	private AbstractArchiveEngine importerEngine;
 	private Logger log;
 	private String userLogin;
+	private boolean deletePolicyConfigurazione;
 	
 	public DeleterArchiveUtils(AbstractArchiveEngine importerEngine,Logger log,
-			String userLogin) throws Exception{
+			String userLogin,
+			boolean deletePolicyConfigurazione) throws Exception{
 		this.importerEngine = importerEngine;
 		this.log = log;
 		this.userLogin = userLogin;
+		this.deletePolicyConfigurazione = deletePolicyConfigurazione;
 	}
 	
 	private static String NEW_LINE = "\n\t\t";
@@ -578,6 +581,13 @@ public class DeleterArchiveUtils {
 		String nomePolicy = archivePolicy.getNomePolicy();
 		try{
 			
+			// --- check abilitazione ---
+			if(this.deletePolicyConfigurazione==false){
+				detail.setState(ArchiveStatoImport.DELETED_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			
 			// --- check esistenza ---
 			if(this.importerEngine.existsControlloTraffico_configurationPolicy(nomePolicy)==false){
 				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
@@ -616,6 +626,15 @@ public class DeleterArchiveUtils {
 		
 		String nomePolicy = archivePolicy.getNomePolicy();
 		try{
+			
+			boolean policyGlobale = archivePolicy.getPolicy().getFiltro()==null || archivePolicy.getPolicy().getFiltro().getNomePorta()==null || "".equals(archivePolicy.getPolicy().getFiltro().getNomePorta());
+			
+			// --- check abilitazione ---
+			if(policyGlobale && this.deletePolicyConfigurazione==false){ // se non e' globale la policy di attivazione va eliminata sempre poiche' associata all'erogazione o alla fruizione
+				detail.setState(ArchiveStatoImport.DELETED_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
 			
 			// --- check esistenza ---
 			if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)==false){
@@ -656,6 +675,13 @@ public class DeleterArchiveUtils {
 		String nomePolicy = archivePolicy.getNomePolicy();
 		String tipologiaPolicy = archivePolicy.getTipologiaPolicy();
 		try{
+			
+			// --- check abilitazione ---
+			if(this.deletePolicyConfigurazione==false){
+				detail.setState(ArchiveStatoImport.DELETED_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
 			
 			// --- check esistenza ---
 			if(this.importerEngine.existsGenericProperties(tipologiaPolicy, nomePolicy)==false){

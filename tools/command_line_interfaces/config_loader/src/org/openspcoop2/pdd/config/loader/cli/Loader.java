@@ -116,7 +116,7 @@ public class Loader {
 			String import_nomePddOperativa = loaderProperties.getNomePddOperativa();
 			String import_tipoPddArchivi = loaderProperties.getTipoPddArchivio();
 			String userLogin = loaderProperties.getUtente();
-			boolean importPolicyConfig = loaderProperties.isPolicy_enable();
+			boolean importDeletePolicyConfig = loaderProperties.isPolicy_enable();
 			boolean importConfig = loaderProperties.isConfigurazioneGenerare_enable();
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
 			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
@@ -323,7 +323,8 @@ public class Loader {
 				logCore.info("Eliminazione in corso ...");
 				
 				DeleterArchiveUtils deleterArchiveUtils = 
-						new DeleterArchiveUtils(importerEngine, logCore, userLogin);
+						new DeleterArchiveUtils(importerEngine, logCore, userLogin,
+								importDeletePolicyConfig);
 				
 				ArchiveEsitoDelete esitoDelete = deleterArchiveUtils.deleteArchive(archive, userLogin);
 				
@@ -338,7 +339,7 @@ public class Loader {
 				ImporterArchiveUtils importerArchiveUtils = 
 						new ImporterArchiveUtils(importerEngine, logCore, userLogin, import_nomePddOperativa, import_tipoPddArchivi, 
 								isShowGestioneWorkflowStatoDocumenti, updateAbilitato,
-								importPolicyConfig, importConfig);
+								importDeletePolicyConfig, importConfig);
 				
 				ArchiveEsitoImport esitoImport = importerArchiveUtils.importArchive(archive, userLogin, 
 						isShowAccordiColonnaAzioni,

@@ -154,7 +154,7 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME = "fileName";
 	public final static String PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI = "validazioneDocumenti";
 	public final static String PARAMETRO_ARCHIVI_UPDATE_ENABLED = "updateEnabled";
-	public final static String PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_ENABLED = "policyConfigEnabled";
+	public final static String PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED = "policyConfigEnabled";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED = "configEnabled";
 	public final static String PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO = "tipologiaArchivio";
 	
@@ -212,7 +212,9 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_LEFT = "Aggiornamento";
 	public final static String LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_RIGHT = "Gli elementi già esistenti verranno aggiornati";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_POLICY;
+	public final static String LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_DELETE_POLICY;
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting) presenti nell'archivio verranno importate";
+	public final static String LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting) presenti nell'archivio verranno eliminate";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_CONFIGURAZIONE;
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_RIGHT = "Una eventuale configurazione presente nell'archivio verrà importata";
 	public final static String LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO = "Tipologia archivio";
