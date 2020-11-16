@@ -11,7 +11,7 @@ In questa sezione vengono descritti i passi di configurazione
 necessari a registrare una API SOAP implementata da un applicativo
 interno al proprio dominio di gestione. 
 Nello scenario si
-suppone che il servizio *Credit Card Verification*, disponibile on line all'indirizzo http://ws.cdyne.com/creditcardverify/luhnchecker.asmx , sia erogato all'interno del dominio di gestione.
+suppone che il servizio *Credit Card Verification*, disponibile on line all'indirizzo https://ws.cdyne.com/creditcardverify/luhnchecker.asmx , sia erogato all'interno del dominio di gestione.
 
 L'API, per questo esempio, viene registrata in modo che sia accessibile
 in forma anonima da qualunque client invocando l'url esposta da GovWay.

@@ -22,8 +22,8 @@ L'ambiente di esecuzione è composto da:
 
 	Gli scenari configurati sull'ambiente docker devono poter accedere ai seguenti servizi su internet:
 
-	- Petstore: http://petstore.swagger.io/
-	- Credit Card Verification: http://ws.cdyne.com/creditcardverify/luhnchecker.asmx
+	- Petstore: https://petstore.swagger.io/
+	- Credit Card Verification: https://ws.cdyne.com/creditcardverify/luhnchecker.asmx
 
 Avvio Ambiente
 ---------------

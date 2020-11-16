@@ -38,7 +38,7 @@ L'esecuzione dello scenario si basa sui seguenti elementi:
 - una API "PetStore", basata su REST, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02" e "INTEGRITY_REST_01 con ID_AUTH_REST_02".
 - un'istanza Govway per la gestione del profilo ModI PA nel dominio dell'erogatore.
 - un client del dominio esterno che invoca la "POST /pet" diretto all'erogazione esposta da Govway.
-- il server PetStore di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'http://petstore.swagger.io/'.
+- il server PetStore di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'https://petstore.swagger.io/'.
 
 Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "5. Erogazione ModI PA", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
 
@@ -53,7 +53,7 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
 
     Sicurezza canale "ID_AUTH_CHANNEL_02"
 
-2. Dal dettaglio della richiesta si può visualizzare il messaggio che è stato inviato dal fruitore, come in :numref:`modipa_erogazione_messaggio_richiesta_fig`. Come si nota, al payload JSON è associato un insieme di header HTTP tra i quali "Authorization", che contiene il token di sicurezza, e "Digest" che contiene il valore per la verifica dell'integrità del payload.
+2. Dal dettaglio della richiesta si può visualizzare il messaggio che è stato inviato dal fruitore, come in :numref:`modipa_erogazione_messaggio_richiesta_fig`. Come si nota, al payload JSON è associato un insieme di header HTTP tra i quali "Agit-JWT-Signature", che contiene il token di sicurezza, e "Digest" che contiene il valore per la verifica dell'integrità del payload.
 
    .. figure:: ../_figure_scenari/modipa_erogazione_messaggio_richiesta.png
     :scale: 80%

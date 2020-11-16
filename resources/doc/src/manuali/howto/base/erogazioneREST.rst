@@ -11,7 +11,7 @@ In questa sezione vengono descritti i passi di configurazione
 necessari a registrare una API REST implementata da un applicativo
 interno al proprio dominio di gestione. 
 Nello scenario si
-suppone che il servizio *PetStore*, disponibile on line all'indirizzo http://petstore.swagger.io/ , sia erogato all'interno del dominio di gestione.
+suppone che il servizio *PetStore*, disponibile on line all'indirizzo https://petstore.swagger.io/ , sia erogato all'interno del dominio di gestione.
 
 L'API, per questo primo esempio di utilizzo del Gateway, viene
 registrata in modo che sia accessibile in forma anonima da qualunque

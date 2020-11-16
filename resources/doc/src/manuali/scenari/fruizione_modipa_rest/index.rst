@@ -70,7 +70,7 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
     :align: center
     :name: modipa_traccia_risposta_fig
 
-    Traccia della richiesta elaborata dall'erogatore
+    Traccia della risposta
 
 
 Conformità ai requisiti ModI PA

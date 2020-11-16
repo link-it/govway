@@ -25,8 +25,8 @@ Le caratteristiche principali di questo scenario sono:
 
 1. Un applicativo eroga un servizio SOAP, rivolto a fruitori di domini esterni, in conformità al Modello di Interoperabilità AGID
 2. La comunicazione con i domini esterni avviene su un canale gestito con sicurezza canale di profilo "ID_AUTH_CHANNEL_02"
-3. La confidenzialità e autenticità della comunicazione tra il servizio erogato e ciascun fruitore è garantita tramite sicurezza a livello messaggio con profilo IDAS02
-4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo IDAS03
+3. La confidenzialità e autenticità della comunicazione tra il servizio erogato e ciascun fruitore è garantita tramite sicurezza a livello messaggio con profilo "ID_AUTH_SOAP_02"
+4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo "INTEGRITY_SOAP_01"
 5. Ciascun fruitore riceve conferma di ricezione del messaggio da parte dell'erogatore
 6. Garanzia di opponibilità ai terzi e non ripudio delle trasmissioni con persistenza delle prove di trasmissione
 
@@ -34,10 +34,10 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02", IDAS02 e IDAS03.
+- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02", "ID_AUTH_SOAP_02" e "INTEGRITY_SOAP_01".
 - un'istanza Govway per la gestione del profilo ModI PA nel dominio dell'erogatore.
 - un client del dominio esterno che invoca l'azione di esempio "CheckCC".
-- il server 'Credit Card Verification' di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'http://ws.cdyne.com/creditcardverify/luhnchecker.asmx'.
+- il server 'Credit Card Verification' di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'https://ws.cdyne.com/creditcardverify/luhnchecker.asmx'.
 
 Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "7. Erogazione SOAP ModI PA", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
 
@@ -80,7 +80,7 @@ Registrazione API
 In fase di registrazione della relativa API, tenere presente che saranno selezionati i profili:
 
 - "ID_AUTH_CHANNEL_02" per la sicurezza canale
-- IDAS03 (IDAS02) per la sicurezza messaggio
+- "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_02" per la sicurezza messaggio
 
 
 Erogazione

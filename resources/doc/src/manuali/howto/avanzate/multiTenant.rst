@@ -92,7 +92,7 @@ dominio gestito dal soggetto *Ente2*.
       l'API nel dominio interno. Per il nostro esempio utilizzare sempre
       la url:
 
-      -  *http://petstore.swagger.io/v2*
+      -  *https://petstore.swagger.io/v2*
 
    Effettuato il salvataggio, l'API erogata sarà consultabile
    all'interno dell'elenco delle erogazioni. Accedendo al dettaglio si

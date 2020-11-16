@@ -25,8 +25,8 @@ Le caratteristiche principali di questo scenario sono:
 
 1. Un applicativo fruitore che dialoga con il servizio SOAP erogato in modalità ModI PA in accordo ad una API condivisa
 2. La comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con sicurezza canale di profilo "ID_AUTH_CHANNEL_02"
-3. La confidenzialità e autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con profilo IDAS02
-4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo IDAS03
+3. La confidenzialità e autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con profilo "ID_AUTH_SOAP_02"
+4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo "INTEGRITY_SOAP_01"
 5. L'applicativo fruitore ottiene e conserva la conferma di ricezione del messaggio da parte dell'erogatore
 6. Garanzia di opponibilità ai terzi e non ripudio delle trasmissioni
 
@@ -34,7 +34,7 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02", IDAS02 e IDAS03.
+- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02", "ID_AUTH_SOAP_02" e "INTEGRITY_SOAP_01".
 - un'istanza Govway per la gestione del profilo ModI PA nel dominio del fruitore.
 - un client del dominio gestito che invoca l'azione di esempio "CheckCC" tramite Govway.
 
@@ -66,7 +66,7 @@ Registrazione API
 In fase di registrazione della relativa API, tenere presente che saranno selezionati i profili:
 
 - "ID_AUTH_CHANNEL_02" per la sicurezza canale
-- IDAS03 (IDAS02) per la sicurezza messaggio
+- "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_02" per la sicurezza messaggio
 
 Fruizione
 ~~~~~~~~~
