@@ -69,7 +69,7 @@ del servizio di Token Introspection:
     :align: center
     :name: tokenIntrospectionCustom
 
-Configurazione personalizzata del servizio di Token Instrospection
+    Configurazione personalizzata del servizio di Token Instrospection
 
 I dati da fornire sono:
 

@@ -45,7 +45,7 @@
 			<elseif>
 				<matches string="${as}" pattern="wildfly.*"/>
 				<then>
-					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 8.x (wildfly8), 9.x (wildfly9), 10.x (wildfly10), 11.x (wildfly11), 12.x (wildfly12), 13.x (wildfly13), 14.x (wildfly14), 15.x (wildfly15), 16.x (wildfly16), 17.x (wildfly17), 18.x (wildfly18), 19.x (wildfly19) e 20.x (wildfly20)"/>
+					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 8.x (wildfly8), 9.x (wildfly9), 10.x (wildfly10), 11.x (wildfly11), 12.x (wildfly12), 13.x (wildfly13), 14.x (wildfly14), 15.x (wildfly15), 16.x (wildfly16), 17.x (wildfly17), 18.x (wildfly18), 19.x (wildfly19), 20.x (wildfly20) e 21.x (wildfly21)"/>
 					<if>
 						<equals arg1="${as}" arg2="wildfly"/>
 						<then>
@@ -68,6 +68,7 @@
 								<equals arg1="${as}" arg2="wildfly18"/>
 								<equals arg1="${as}" arg2="wildfly19"/>
 								<equals arg1="${as}" arg2="wildfly20"/>
+								<equals arg1="${as}" arg2="wildfly21"/>
 							</or>
 						</not>
 						<then>

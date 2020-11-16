@@ -539,7 +539,8 @@ public class SemaphoreEngine {
 						
 						if(this.config.isEmitEvent()) {
 							semaphoreEvent.setDetails(statoLock.toString()+"\n"+msgErrore);
-							semaphoreEvent.setSeverity(SemaphoreEventSeverity.ERROR);
+							//semaphoreEvent.setSeverity(SemaphoreEventSeverity.ERROR);
+							semaphoreEvent.setSeverity(SemaphoreEventSeverity.WARN);
 							semaphoreEvent.setLock(operazioneConclusaConSuccesso);
 							emitSemaphoreEvent = true;
 						}

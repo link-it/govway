@@ -394,15 +394,35 @@ public class DynamicStringReplace {
 			throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] read parameter error; "+e.getMessage(),e);
 		}
 		Method m = null;
+		boolean withoutParams = false;
 		try{
 			if(parametersClass!=null && !parametersClass.isEmpty()) {
 				m = o.getClass().getMethod(getMethod, parametersClass.toArray(new Class[1]));
 			}
 			else {
+				withoutParams = true;
 				m = o.getClass().getMethod(getMethod);
 			}
 		}catch(Throwable e){
-			throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] not found; "+e.getMessage(),e);
+			
+			UtilsException utilsException = new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] not found; "+e.getMessage(),e);
+			
+			// Fix per metodi boolean 'is'
+			if(e instanceof java.lang.NoSuchMethodException && withoutParams) {
+				try{
+					String isMethod = getMethod.replaceFirst("get", "is");
+					m = o.getClass().getMethod(isMethod);
+					if(m!=null) {
+						utilsException = null;
+					}
+				}catch(Throwable eIgnore){ 
+					// rilancio eccezione originale
+				}
+			}
+			
+			if(utilsException!=null) {
+				throw utilsException;
+			}
 		}
 		Object ret = null;
 		try{

@@ -64,3 +64,5 @@ La registrazione o la modifica di un nodo richiede (:numref:`registrazioneNuovoN
  :scale: 100%
  :align: center
  :name: registrazioneNuovoNodo
+
+ Registrazione di un nodo

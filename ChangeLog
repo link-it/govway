@@ -1,3 +1,9 @@
+2020-11-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1097
+	Aggiunto supporto per wildfly 21.
+
 2020-11-13  Andrea Poli <apoli@link.it>
 	
 	* [GovWayConsole]

@@ -37,10 +37,10 @@ import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 
 /**
- * GovWay Monitor API
+ * StatusApiServiceImpl
  *
- * <p>Servizi per il monitoraggio di GovWay
- *
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class StatusApiServiceImpl extends BaseImpl implements StatusApi {
 

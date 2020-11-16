@@ -200,6 +200,69 @@ public class Info {
 	
 	// esito
 	
+	public String getResultClass() {
+		return getResultClass(null);
+	}
+	public String getResultClass(String defaultValue) {
+		try {
+			if(InfoEsitoTransazioneFormatUtils.isEsitoOk(this.log, this.transazione.getEsito(), this.esitiProperties)) {
+				return correctValue(ResultClass.OK.name(),defaultValue);	
+			}
+			else if(InfoEsitoTransazioneFormatUtils.isEsitoFaultApplicativo(this.log, this.transazione.getEsito(), this.esitiProperties)) {
+				return correctValue(ResultClass.FAULT.name(),defaultValue);
+			}
+			else if(InfoEsitoTransazioneFormatUtils.isEsitoKo(this.log, this.transazione.getEsito(), this.esitiProperties)) {
+				return correctValue(ResultClass.KO.name(),defaultValue);
+			}
+			else {
+				return correctValue(ResultClass.KO.name(),defaultValue);
+			}
+		}catch(Throwable e) {
+			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+			return correctValue(null, defaultValue);
+		}
+	}
+	
+	public boolean isResultClassOk() {
+		try {
+			if(InfoEsitoTransazioneFormatUtils.isEsitoOk(this.log, this.transazione.getEsito(), this.esitiProperties)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}catch(Throwable e) {
+			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+			return false;
+		}
+	}
+	public boolean isResultClassFault() {
+		try {
+			if(InfoEsitoTransazioneFormatUtils.isEsitoFaultApplicativo(this.log, this.transazione.getEsito(), this.esitiProperties)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}catch(Throwable e) {
+			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+			return false;
+		}
+	}
+	public boolean isResultClassKo() {
+		try {
+			if(InfoEsitoTransazioneFormatUtils.isEsitoKo(this.log, this.transazione.getEsito(), this.esitiProperties)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}catch(Throwable e) {
+			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+			return false;
+		}
+	}
+	
 	public int getResultAsInt() {
 		return this.transazione.getEsito();
 	}

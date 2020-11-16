@@ -66,6 +66,14 @@ Di seguito vengono indicati tutti gli identificativi delle informazioni disponib
 
 - outHttpReason: http reason associato al codice di risposta ritornato al client;
 
+- resultClass: classe a cui appartiene l'esito della transazione tra OK, KO e FAULT;
+
+- resultClassOk: indicazione se l'esito della transazione appartiene alla classe OK (true/false);
+
+- resultClassKo: indicazione se l'esito della transazione appartiene alla classe KO (true/false);
+
+- resultClassFault: indicazione se l'esito della transazione appartiene alla classe FAULT (true/false);
+
 - result: esito della transazione (codifica GovWay);
 
 - errorDetail: dettaglio dell'errore avvenuto durante la gestione della transazione;

@@ -45,10 +45,28 @@ import org.slf4j.Logger;
  */
 public class InfoEsitoTransazioneFormatUtils {
 
-	public static boolean isEsitoOk(Logger log, Integer esito, String protocollo){	
+	public static boolean isEsitoOk(Logger log, Integer esito, String protocollo){
+		EsitiProperties esitiProperties = null;
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(log,protocollo);
-			boolean res = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo().contains(esito);
+			esitiProperties = EsitiProperties.getInstance(log,protocollo);
+		}catch(Exception e){
+			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
+			return false;
+		}
+		return isEsitoOk(log, esito, esitiProperties);
+	}
+	public static boolean isEsitoOk(Logger log, Integer esito, EsitiProperties esitiProperties){	
+		try{
+			List<Integer> list = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+			boolean res = false;
+			if(list!=null && !list.isEmpty()) {
+				for (Integer esitoCheck : list) {
+					if(esitoCheck.intValue() == esito.intValue()) {
+						res = true;
+						break;
+					}
+				}
+			}
 			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+esito+")");
 			return res;
 		}catch(Exception e){
@@ -56,10 +74,29 @@ public class InfoEsitoTransazioneFormatUtils {
 			return false;
 		}
 	}
-	public static boolean isEsitoFaultApplicativo(Logger log, Integer esito, String protocollo){	
+	
+	public static boolean isEsitoFaultApplicativo(Logger log, Integer esito, String protocollo){
+		EsitiProperties esitiProperties = null;
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(log,protocollo);
-			boolean res = esitiProperties.getEsitiCodeFaultApplicativo().contains(esito);
+			esitiProperties = EsitiProperties.getInstance(log,protocollo);
+		}catch(Exception e){
+			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
+			return false;
+		}
+		return isEsitoFaultApplicativo(log, esito, esitiProperties);
+	}
+	public static boolean isEsitoFaultApplicativo(Logger log, Integer esito, EsitiProperties esitiProperties){	
+		try{
+			List<Integer> list = esitiProperties.getEsitiCodeFaultApplicativo();
+			boolean res = false;
+			if(list!=null && !list.isEmpty()) {
+				for (Integer esitoCheck : list) {
+					if(esitoCheck.intValue() == esito.intValue()) {
+						res = true;
+						break;
+					}
+				}
+			}
 			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+esito+")");
 			return res;
 		}catch(Exception e){
@@ -67,10 +104,29 @@ public class InfoEsitoTransazioneFormatUtils {
 			return false;
 		}
 	}
-	public static boolean isEsitoKo(Logger log, Integer esito, String protocollo){	
+	
+	public static boolean isEsitoKo(Logger log, Integer esito, String protocollo){
+		EsitiProperties esitiProperties = null;
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(log,protocollo);
-			boolean res = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo().contains(esito);
+			esitiProperties = EsitiProperties.getInstance(log,protocollo);
+		}catch(Exception e){
+			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
+			return false;
+		}
+		return isEsitoKo(log, esito, esitiProperties);
+	}
+	public static boolean isEsitoKo(Logger log, Integer esito, EsitiProperties esitiProperties){	
+		try{
+			List<Integer> list = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+			boolean res = false;
+			if(list!=null && !list.isEmpty()) {
+				for (Integer esitoCheck : list) {
+					if(esitoCheck.intValue() == esito.intValue()) {
+						res = true;
+						break;
+					}
+				}
+			}
 			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+esito+")");
 			return res;
 		}catch(Exception e){

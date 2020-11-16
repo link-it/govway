@@ -522,6 +522,7 @@
 				<matches string="${as}" pattern="wildfly18"/>
 				<matches string="${as}" pattern="wildfly19"/>
 				<matches string="${as}" pattern="wildfly20"/>
+				<matches string="${as}" pattern="wildfly21"/>
 			</or>
 			<then>
 				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build}/tmp/mailapi"/>

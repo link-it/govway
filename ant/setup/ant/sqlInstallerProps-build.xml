@@ -152,7 +152,15 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 
 		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-008:Directory Batch:antinstaller_batch_dir', '@VALORE@');
 </concat>
-		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_batch_dir}"/>
+		<if>
+			<equals arg1="${antinstaller_batch_dir}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_batch_dir}"/>
+			</else>
+		</if>
 
 		<!-- Informazioni DataSource: 004 -->
 

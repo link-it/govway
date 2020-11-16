@@ -39,11 +39,12 @@ import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 import org.openspcoop2.web.monitor.eventi.dao.EventiService;
+
 /**
- * GovWay Monitor API
+ * StatusApiServiceImpl
  *
- * <p>Servizi per il monitoraggio di GovWay
- *
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class StatusApiServiceImpl extends BaseImpl implements StatusApi {
 
