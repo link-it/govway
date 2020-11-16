@@ -24,7 +24,7 @@ La figura seguente descrive graficamente questo scenario.
 Le caratteristiche principali di questo scenario sono:
 
 1. Un applicativo eroga un servizio SOAP, rivolto a fruitori di domini esterni, in conformità al Modello di Interoperabilità AGID
-2. La comunicazione con i domini esterni avviene su un canale gestito con sicurezza canale di profilo IDAC02
+2. La comunicazione con i domini esterni avviene su un canale gestito con sicurezza canale di profilo "ID_AUTH_CHANNEL_02"
 3. La confidenzialità e autenticità della comunicazione tra il servizio erogato e ciascun fruitore è garantita tramite sicurezza a livello messaggio con profilo IDAS02
 4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo IDAS03
 5. Ciascun fruitore riceve conferma di ricezione del messaggio da parte dell'erogatore
@@ -34,7 +34,7 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza IDAC02, IDAS02 e IDAS03.
+- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02", IDAS02 e IDAS03.
 - un'istanza Govway per la gestione del profilo ModI PA nel dominio dell'erogatore.
 - un client del dominio esterno che invoca l'azione di esempio "CheckCC".
 - il server 'Credit Card Verification' di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'http://ws.cdyne.com/creditcardverify/luhnchecker.asmx'.
@@ -43,7 +43,7 @@ Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a c
 
 Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è possibile andare a verificare cosa è accaduto, nel corso dell'elaborazione della richiesta, andando a consultare la console govwayMonitor.
 
-1. Per verificare l'utilizzo del canale SSL, in accordo al profilo IDAC02, si procede come già illustrato per :ref:`scenari_erogazione_rest_modipa`
+1. Per verificare l'utilizzo del canale SSL, in accordo al profilo "ID_AUTH_CHANNEL_02", si procede come già illustrato per :ref:`scenari_erogazione_rest_modipa`
 
 2. Dal dettaglio della richiesta si può visualizzare il messaggio che è stato inviato dal fruitore, come in :numref:`modipa_erogazione_messaggio_richiesta_soap_fig`. Come si nota, il messaggio SOAP contiene nell'header WS-Security, sia il token di sicurezza (elemento "BinarySecurityToken"), sia il digest del payload (elemento "DigestValue"), prodotti dal fruitore con la relativa firma digitale (elemento "SignatureValue").
 
@@ -79,7 +79,7 @@ Registrazione API
 ~~~~~~~~~~~~~~~~~
 In fase di registrazione della relativa API, tenere presente che saranno selezionati i profili:
 
-- IDAC02 per la sicurezza canale
+- "ID_AUTH_CHANNEL_02" per la sicurezza canale
 - IDAS03 (IDAS02) per la sicurezza messaggio
 
 

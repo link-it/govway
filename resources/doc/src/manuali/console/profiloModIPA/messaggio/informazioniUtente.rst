@@ -3,10 +3,10 @@
 Informazioni Utente
 ~~~~~~~~~~~~~~~~~~~
 
-Questa funzionalità consente di estendere IDAR03 aggiungendo all'interno del token di sicurezza le informazioni sull'utente che ha effettuato la richiesta.
+Questa funzionalità consente di estendere "INTEGRITY_REST_01" aggiungendo all'interno del token di sicurezza le informazioni sull'utente che ha effettuato la richiesta.
 
 .. note::
-    La sigla che identifica il profilo di sicurezza messaggio varia a seconda se l'API sia di tipo REST, per cui la sigla corrisponde a *IDAR03*, o SOAP dove viene utilizzata la sigla *IDAS03*.
+    La sigla che identifica il profilo di sicurezza messaggio varia a seconda se l'API sia di tipo REST, per cui la sigla corrisponde a *INTEGRITY_REST_01*, o SOAP dove viene utilizzata la sigla *INTEGRITY_SOAP_01*.
 
 L'attivazione di questo profilo avviene a livello della relativa API, nella sezione "ModIPA", elemento "Profilo Sicurezza Messaggio", selezionando la voce "Informazioni Utente" (:numref:`api_modipaInfoUtente_fig`).
 
@@ -15,10 +15,13 @@ L'attivazione di questo profilo avviene a livello della relativa API, nella sezi
     :align: center
     :name: api_modipaInfoUtente_fig
 
-    Profilo di sicurezza messaggio IDAR03 + Informazioni Utente
+    Profilo di sicurezza messaggio "INTEGRITY_REST_01" + Informazioni Utente
 
 .. note::
-    Poichè la funzionalità è una estensione di IDAR03, la voce 'Informazioni Utente' compare solamente se è stato selezionato il profilo "IDAR03 (IDAR01)" o "IDAR03 (IDAR02)"
+    Poichè la funzionalità è una estensione di "INTEGRITY_REST_01", la voce 'Informazioni Utente' compare solamente se è stato selezionato il profilo "INTEGRITY_REST_01 con ID_AUTH_REST_01" o "INTEGRITY_REST_01 con ID_AUTH_REST_02"
+
+.. note::
+    Nel caso venga disabilitata la generazione della sicurezza messaggio sulla richiesta, la funzionalità 'Informazioni Utente' non sarà più attivabile.
 
 Le informazioni aggiuntive presenti all'interno del token riguardano:
 
@@ -35,7 +38,7 @@ Nella figura :numref:`api_modipaInfoUtente_exampleRest_fig` viene riportato un e
     :align: center
     :name: api_modipaInfoUtente_exampleRest_fig
 
-    Payload del Token di Sicurezza REST con profilo IDAR03 + Informazioni Utente
+    Payload del Token di Sicurezza REST con profilo "INTEGRITY_REST_01" + Informazioni Utente
 
 Nella figura :numref:`api_modipaInfoUtente_exampleSoap_fig` viene riportato un esempio relativo al token di sicurezza ModI PA per una API SOAP. Le informazioni aggiuntive sull'utente che ha effettuato la richiesta sono incluse in una Asserziona SAML.
 
@@ -44,7 +47,7 @@ Nella figura :numref:`api_modipaInfoUtente_exampleSoap_fig` viene riportato un e
     :align: center
     :name: api_modipaInfoUtente_exampleSoap_fig
 
-    Payload del Token di Sicurezza SOAP con profilo IDAS03 + Informazioni Utente
+    Payload del Token di Sicurezza SOAP con profilo "INTEGRITY_SOAP_01" + Informazioni Utente
 
 In una fruizione, le informazioni aggiuntive che vengono aggiunte nel token, sono per default attese nella richiesta pervenuta a GovWay sotto forma di header http o parametro della url:
 

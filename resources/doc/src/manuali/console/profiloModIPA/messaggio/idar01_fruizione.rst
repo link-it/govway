@@ -29,9 +29,10 @@ I dati da inserire sono:
     + *Password*: la password per l'accesso al keystore
     + *Alias Chiave Privata*: l'alias con cui è riferita la chiave privata nel keystore
     + *Password Chiave Privata*: la password della chiave privata
-    + *Reply Audience/WSA-To*: identificativo dell'applicativo, utilizzato come clientId in uscita, e verificato con il valore "Audience" eventualmente presente nelle risposte.
+    + *Reply Audience/WSA-To*: identificativo dell’applicativo utilizzato per valorizzare nel token di sicurezza di una richiesta il claim 'client_id' per API REST e l'header 'wsa:From' per API SOAP. Se è abilitata la funzionalità 'Verifica Audience / WSAddressing To' nella configurazione della sicurezza della risposta verrà inoltre verificato che nel token di sicurezza della risposta ricevuto vi sia un claim 'aud' per API REST o un header 'wsa:To' per API SOAP che possiede un valore identico all'identificato fornito.
+    + *URL (x5u)*: URL che riferisce un certificato (o certificate chain) X.509 corrispondente alla chiave firmataria del security token. Deve essere obbligatoriamente definito se l'applicativo fruisce di API REST configurate per generare un token di sicurezza tramite il claim 'x5u'
 
-L'interfaccia per la creazione della fruizione, basata su una API con profilo IDAR01 (o IDAS01), presenta le sezioni "ModI PA - Richiesta" e "ModI PA - Risposta":
+L'interfaccia per la creazione della fruizione, basata su una API con profilo "ID_AUTH_REST_01" (o "ID_AUTH_SOAP_01"), presenta le sezioni "ModI PA - Richiesta" e "ModI PA - Risposta":
 
 - ModI PA - Richiesta (:numref:`fruizione_richiesta_fig`): la maschera relativa alla richiesta prevede la configurazione del meccanismo di firma digitale del messaggio, ad opera dell'applicativo mittente, e la produzione del relativo token di sicurezza:
 

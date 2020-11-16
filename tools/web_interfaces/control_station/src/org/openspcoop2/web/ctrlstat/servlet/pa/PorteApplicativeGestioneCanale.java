@@ -201,7 +201,7 @@ public class PorteApplicativeGestioneCanale extends Action {
 			
 			
 			// canale
-			if(canaleStato.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO)) {
+			if(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				pa.setCanale(canale);
 			} else {
 				pa.setCanale(null);

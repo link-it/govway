@@ -8,7 +8,7 @@ Il profilo 'ModI PA' consente in maniera del tutto trasparente alle
 applicazioni interne al dominio, la conformità delle API (sia in
 fruzione che in erogazione) alle nuove *Linee Guida AGID di
 Interoperabilità*
-(https://docs.italia.it/italia/piano-triennale-ict/lg-modellointeroperabilita-docs/it/bozza/).
+(https://trasparenza.agid.gov.it/archivio19_regolamenti_0_5386.html).
 
 La struttura complessiva del processo di monitoraggio si mantiene analoga a quanto già descritto per il profilo API Gateway. Le differenze, rispetto al profilo API Gateway, presentate in questa sezione, riguardano informazioni aggiuntive presenti nelle tracce di Richiesta o Risposta di una transazione.
 
@@ -23,9 +23,9 @@ All'interno di una traccia vengono fornite le informazioni riguardanti i profili
 
     ModI PA: informazioni aggiuntive sulla Traccia riguardanti il Profilo di Interazione.
 
-- *Sicurezza Canale*: definisce la sicurezza inerente il canale di comunicazione tra i domini fruitore ed erogatore. Nella traccia viene riportato il tipo 'IDAC01' o 'IDAC02' utilizzato dall'API.
+- *Sicurezza Canale*: definisce la sicurezza inerente il canale di comunicazione tra i domini fruitore ed erogatore. Nella traccia viene riportato il tipo 'ID_AUTH_CHANNEL_01' o 'ID_AUTH_CHANNEL_02' utilizzato dall'API.
 
-- *Sicurezza Messaggio*: definisce la sicurezza adottata a livello messaggio. Nella traccia viene indicato il profilo utilizzato e tutti i dettagli relativi agli elementi di sicurezza quali il certificato X509 utilizzato, l'audience, le date di validità del token di sicurezza etc. Nella figura :numref:`ModIPA-DettaglioTracciaSicurezza` viene riportato un esempio di traccia relativa ad un'API REST che implementa il profilo di sicurezza 'IDAR03'.
+- *Sicurezza Messaggio*: definisce la sicurezza adottata a livello messaggio. Nella traccia viene indicato il profilo utilizzato e tutti i dettagli relativi agli elementi di sicurezza quali il certificato X509 utilizzato, l'audience, le date di validità del token di sicurezza etc. Nella figura :numref:`ModIPA-DettaglioTracciaSicurezza` viene riportato un esempio di traccia relativa ad un'API REST che implementa il profilo di sicurezza 'INTEGRITY_REST_01'.
 
    .. figure:: ../_figure_monitoraggio/ModIPA-DettaglioTracciaSicurezza.jpg
     :scale: 100%

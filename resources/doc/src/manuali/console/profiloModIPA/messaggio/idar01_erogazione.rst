@@ -12,7 +12,7 @@ Nelle erogazioni, le richieste provengono da amministrazioni esterne al dominio 
 
     Erogazione con Profilo di Interoperabilità 'ModI PA'
 
-Per la configurazione di erogazioni basate su una API con profilo IDAR01 (o IDAS01), nella relativa maschera della govwayConsole saranno presenti le sezioni "ModI PA - Richiesta" e "ModI PA - Risposta":
+Per la configurazione di erogazioni basate su una API con profilo "ID_AUTH_REST_01" (o "ID_AUTH_SOAP_01"), nella relativa maschera della govwayConsole saranno presenti le sezioni "ModI PA - Richiesta" e "ModI PA - Risposta":
 
 - ModI PA - Richiesta (:numref:`erogazione_richiesta_fig`): la maschera relativa alla richiesta prevede la configurazione del meccanismo di validazione del token ricevuto sul messaggio di richiesta:
 

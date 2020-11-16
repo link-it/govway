@@ -1,21 +1,34 @@
 .. _modipa_idar03:
 
-[IDAS03 / IDAR03] Integrità payload del messaggio
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[INTEGRITY_SOAP_01 / INTEGRITY_REST_01] Integrità payload del messaggio
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note::
-    La sigla che identifica il profilo di sicurezza messaggio varia a seconda se l'API sia di tipo REST, per cui la sigla corrisponde a *IDAR03*, o SOAP dove viene utilizzata la sigla *IDAS03*.
+    La sigla che identifica il profilo di sicurezza messaggio varia a seconda se l'API sia di tipo REST, per cui la sigla corrisponde a *INTEGRITY_REST_01*, o SOAP dove viene utilizzata la sigla *INTEGRITY_SOAP_01*.
 
-Questo profilo di sicurezza consente di estendere IDAR01 e IDAR02 aggiungendo un meccanismo che garantisce l'integrità del messaggio scambiato grazie all'invio, nel token di sicurezza, della firma digitale del payload.
+Questo profilo di sicurezza consente di estendere "ID_AUTH_REST_01" o "ID_AUTH_REST_02" aggiungendo un meccanismo che garantisce l'integrità del messaggio scambiato grazie all'invio, nel token di sicurezza, della firma digitale del payload.
 
-L'attivazione di questo profilo avviene a livello della relativa API, nella sezione "ModIPA", elemento "Profilo Sicurezza Messaggio", selezionando il profilo "IDAR03 (IDAR01)" nel caso si voglia estendere IDAR01, oppure il profilo "IDAR03 (IDAR02)" nel caso si voglia estendere IDAR02 con il meccanismo di garanzia dell'integrità del payload (:numref:`api_messaggio3_fig`).
+L'attivazione di questo profilo avviene a livello della relativa API, nella sezione "ModIPA", elemento "Profilo Sicurezza Messaggio", selezionando il profilo "INTEGRITY_REST_01 con ID_AUTH_REST_01" nel caso si voglia estendere "ID_AUTH_REST_01", oppure il profilo "INTEGRITY_REST_01 con ID_AUTH_REST_02" nel caso si voglia estendere "ID_AUTH_REST_02" con il meccanismo di garanzia dell'integrità del payload (:numref:`api_messaggio3_fig`).
 
   .. figure:: ../../_figure_console/modipa_api_messaggio3.png
     :scale: 50%
     :align: center
     :name: api_messaggio3_fig
 
-    Profilo di sicurezza messaggio IDAR03 per l'API
+    Profilo di sicurezza messaggio "INTEGRITY_REST_01" per l'API
+
+  .. figure:: ../../_figure_console/modipa_api_messaggio3_soap.png
+    :scale: 50%
+    :align: center
+    :name: api_messaggio3_soap_fig
+
+    Profilo di sicurezza messaggio "INTEGRITY_SOAP_01" per l'API
+
+Le voci 'Header HTTP del Token' (presente solamente su API di tipo REST) e 'Applicabilità' consentono di personalizzare l'header HTTP utilizzato e di indicare se il profilo di sicurezza verrà attuato sia sulla richiesta che sulla risposta. Maggiori informazioni vengono fornite nella sezione ':ref:`modipa_sicurezza_avanzate`'.
+
+La voce 'Informazioni Utente' consente di abilitare la funzionalità, descritta nella sezione ':ref:`modipa_infoUtente`', che consente di aggiungere all'interno del token di sicurezza le informazioni sull'utente che ha effettuato la richiesta.
+
+La voce 'Digest Richiesta' consente di abilitare la funzionalità, descritta nella sezione ':ref:`modipa_requestDigest`', che consente di implementare la soluzione per la non ripudiabilità della trasmissione.
 
 Per le configurazioni successive procedere come già descritto in precedenza per il profilo :ref:`modipa_idar01`.
 
@@ -28,7 +41,7 @@ Occorre solo tenere presente che per questo profilo di sicurezza sono presenti l
     :align: center
     :name: fruizione_richiesta_headers_fig
 
-    Fruizione IDAR03 - Configurazione richiesta con indicazione HTTP Headers da firmare
+    Fruizione "INTEGRITY_REST_01" - Configurazione richiesta con indicazione HTTP Headers da firmare
 
 - Nel contesto della configurazione di una erogazione, relativamente alla sezione "ModI PA - Risposta", oltre ai dati da fornire per la produzione della firma digitale deve essere aggiunta anche l'indicazione degli eventuali Header HTTP da firmare. Tale indicazione viene fornita con il campo "HTTP Headers da firmare" (:numref:`erogazione_risposta_headers_fig`).
 
@@ -37,4 +50,4 @@ Occorre solo tenere presente che per questo profilo di sicurezza sono presenti l
     :align: center
     :name: erogazione_risposta_headers_fig
 
-    Erogazione IDAR03 - Configurazione risposta con indicazione HTTP Headers da firmare
+    Erogazione "INTEGRITY_REST_01" - Configurazione risposta con indicazione HTTP Headers da firmare

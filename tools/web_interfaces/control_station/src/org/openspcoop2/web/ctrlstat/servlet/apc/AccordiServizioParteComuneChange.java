@@ -1006,7 +1006,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		
 		// canale
 		if(gestioneCanaliEnabled) {
-			if(this.canaleStato.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO)) {
+			if(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO.equals(this.canaleStato)) {
 				as.setCanale(this.canale);
 			} else {
 				as.setCanale(null);

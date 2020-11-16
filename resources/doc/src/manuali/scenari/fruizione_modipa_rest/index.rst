@@ -24,9 +24,9 @@ La figura seguente descrive graficamente questo scenario.
 Le caratteristiche principali di questo scenario sono:
 
 1. Un applicativo fruitore che dialoga con il servizio erogato in modalità ModI PA in accordo ad una API condivisa
-2. La comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con sicurezza canale di profilo IDAC02
-3. La confidenzialità e autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con profilo IDAR02
-4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo IDAR03
+2. La comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con sicurezza canale di profilo "ID_AUTH_CHANNEL_02"
+3. La confidenzialità e autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con profilo "ID_AUTH_REST_02"
+4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo "INTEGRITY_REST_01"
 5. L'applicativo fruitore ottiene e conserva la conferma di ricezione del messaggio da parte dell'erogatore
 6. Garanzia di opponibilità ai terzi e non ripudio delle trasmissioni
 
@@ -35,7 +35,7 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API "PetStore", basata su REST, profilo di interazione Bloccante e profili di sicurezza IDAC02, IDAR02 e IDAR03.
+- una API "PetStore", basata su REST, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02" e "INTEGRITY_REST_01 con ID_AUTH_REST_02".
 - Un'istanza Govway per la gestione del profilo ModI PA nel dominio del fruitore.
 - un client che invoca la "POST /pet" con un messaggio di esempio diretto al Govway.
 
@@ -54,14 +54,14 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
 
 2. Col processo di validazione del token di sicurezza, Govway estrae le informazioni in esso contenute. L'header e il payload del token sono identici a quelli visualizzati nello scenario di erogazione REST, relativamente al messaggio in uscita (:numref:`modipa_jwtio_header_fig` e :numref:`modipa_jwtio_payload_fig`).
 
-3. Lo scambio del messaggio con il dominio erogatore (comunicazione interdominio) avviene in accordo al profilo IDAC02 e quindi con protocollo SSL e autenticazione client. Dal dettaglio della transazione si possono consultare i messaggi diagnostici dove è visibile la fase di apertura della connessione SSL (:numref:`modipa_ssl_auth_fruitore_fig`).
+3. Lo scambio del messaggio con il dominio erogatore (comunicazione interdominio) avviene in accordo al profilo "ID_AUTH_CHANNEL_02" e quindi con protocollo SSL e autenticazione client. Dal dettaglio della transazione si possono consultare i messaggi diagnostici dove è visibile la fase di apertura della connessione SSL (:numref:`modipa_ssl_auth_fruitore_fig`).
 
    .. figure:: ../_figure_scenari/modipa_ssl_auth_fruitore.png
     :scale: 80%
     :align: center
     :name: modipa_ssl_auth_fruitore_fig
 
-    Sicurezza canale IDAC02 sulla fruizione
+    Sicurezza canale "ID_AUTH_CHANNEL_02" sulla fruizione
 
 4. Govway riceve la risposta dell'erogatore, dalla quale estrae il token di sicurezza al fine di effettuare i relativi controlli di validità e conservare la traccia come conferma di ricezione da parte dell'erogatore. Consultando la traccia relativa alla trasmissione della risposta (:numref:`modipa_traccia_risposta_fig`), sono visibili i dati di autenticazione dell'erogatore, i riferimenti temporali e l'identificativo del messaggio, nonché il digest del payload per la verifica di integrità.
 
@@ -77,9 +77,9 @@ Conformità ai requisiti ModI PA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI PA, sono verificati dalle seguenti evidenze:
 
-1. La trasmissione è basata sul profilo IDAC02, riguardo la sicurezza canale, come evidenziato nei messaggi diangostici dalla presenza degli elementi dell'handshake SSL e relativi dati dei certificati scambiati (:numref:`modipa_ssl_auth_fruitore_fig`).
+1. La trasmissione è basata sul profilo "ID_AUTH_CHANNEL_02", riguardo la sicurezza canale, come evidenziato nei messaggi diangostici dalla presenza degli elementi dell'handshake SSL e relativi dati dei certificati scambiati (:numref:`modipa_ssl_auth_fruitore_fig`).
 
-2. La sicurezza messaggio applicata è quella dei profili IDAR02 e IDAR03, come ampiamente mostrato nelle tracce dei messaggi di richiesta e risposta, dove sono presenti i certificati degli applicativi e le firme dei payload (e le relative validazioni).
+2. La sicurezza messaggio applicata è quella dei profili "ID_AUTH_REST_02" e "INTEGRITY_REST_01", come ampiamente mostrato nelle tracce dei messaggi di richiesta e risposta, dove sono presenti i certificati degli applicativi e le firme dei payload (e le relative validazioni).
 
 3. La conferma di ricezione da parte dell'erogatore è costituita dalla risposta ottenuta dal fruitore, sul profilo di interazione bloccante, con il token di sicurezza e la firma del payload applicati sul messaggio di risposta.
 
@@ -107,7 +107,7 @@ Si procede quindi con i passi di configurazione del servizio.
 
 Registrazione API
 ~~~~~~~~~~~~~~~~~
-Si registra l'API "PetStore", fornendo il relativo descrittore OpenAPI 3, selezionando i profili IDAC02 (sicurezza canale) e IDAR02/IDAR03 (sicurezza messaggio) nella sezione "ModI PA" (vedi :ref:`modipa_api_profili`).
+Si registra l'API "PetStore", fornendo il relativo descrittore OpenAPI 3, selezionando i profili "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_REST_01 con ID_AUTH_REST_02" (sicurezza messaggio) nella sezione "ModI PA" (vedi :ref:`modipa_api_profili`).
 
 
 Applicativo

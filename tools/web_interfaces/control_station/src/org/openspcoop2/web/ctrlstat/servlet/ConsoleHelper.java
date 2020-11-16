@@ -16303,7 +16303,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setPostBack(true);
 			dati.addElement(de);
 			
-			if(canaleStato.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO)) {
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				de = new DataElement();
 				de.setLabel(""); //(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
 				List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
@@ -16345,7 +16345,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean canaleCheckData(String canaleStato, String canale, boolean gestioneCanaliEnabled) throws Exception {
 		// validazione canale
 		if(gestioneCanaliEnabled) {
-			if(canaleStato.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO)) {
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				if(this.checkNCName(canale, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE)==false){
 					return false;
 				}

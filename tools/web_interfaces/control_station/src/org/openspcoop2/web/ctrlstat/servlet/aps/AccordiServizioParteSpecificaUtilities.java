@@ -423,7 +423,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		// canali
 		if(gestioneCanaliEnabled) {
-			if(canaleStato.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO)) {
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				portaApplicativa.setCanale(canale);
 			} else {
 				portaApplicativa.setCanale(null);
@@ -483,7 +483,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		// canali
 		if(gestioneCanaliEnabled) {
-			if(canaleStato.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO)) {
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 				portaDelegata.setCanale(canale);
 			} else {
 				portaDelegata.setCanale(null);

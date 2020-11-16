@@ -24,7 +24,7 @@ La figura seguente descrive graficamente questo scenario.
 Le caratteristiche principali di questo scenario sono:
 
 1. Un applicativo fruitore che dialoga con il servizio SOAP erogato in modalità ModI PA in accordo ad una API condivisa
-2. La comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con sicurezza canale di profilo IDAC02
+2. La comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con sicurezza canale di profilo "ID_AUTH_CHANNEL_02"
 3. La confidenzialità e autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con profilo IDAS02
 4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo IDAS03
 5. L'applicativo fruitore ottiene e conserva la conferma di ricezione del messaggio da parte dell'erogatore
@@ -34,7 +34,7 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza IDAC02, IDAS02 e IDAS03.
+- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02", IDAS02 e IDAS03.
 - un'istanza Govway per la gestione del profilo ModI PA nel dominio del fruitore.
 - un client del dominio gestito che invoca l'azione di esempio "CheckCC" tramite Govway.
 
@@ -44,7 +44,7 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
 
 1. Il messaggio di richiesta inviato dal fruitore viene elaborato da Govway che, tramite la configurazione della firma digitale associata all'applicativo mittente, è in grado di produrre l'header WS-Security da inserire nella richiesta inviata all'erogatore. Da govwayMonitor si può visualizzare il messaggio di richiesta in uscita, analogo a quanto già visto in :numref:`modipa_erogazione_messaggio_richiesta_soap_fig`.
 
-2. Per verificare l'utilizzo del canale SSL, in accordo al profilo IDAC02, si procede come già illustrato per :ref:`scenari_erogazione_rest_modipa`.
+2. Per verificare l'utilizzo del canale SSL, in accordo al profilo "ID_AUTH_CHANNEL_02", si procede come già illustrato per :ref:`scenari_erogazione_rest_modipa`.
 
 3. Govway riceve la risposta dell'erogatore, dalla quale estrae l'header WS-Security al fine di effettuare i relativi controlli di validità e conservare la traccia come conferma di ricezione da parte dell'erogatore. Consultando la traccia relativa alla trasmissione della risposta (:numref:`modipa_traccia_risposta_soap_fig`), sono visibili i dati di autenticazione dell'erogatore, i riferimenti temporali e l'identificativo del messaggio, nonché il digest del payload per la verifica di integrità.
 
@@ -65,7 +65,7 @@ Registrazione API
 ~~~~~~~~~~~~~~~~~
 In fase di registrazione della relativa API, tenere presente che saranno selezionati i profili:
 
-- IDAC02 per la sicurezza canale
+- "ID_AUTH_CHANNEL_02" per la sicurezza canale
 - IDAS03 (IDAS02) per la sicurezza messaggio
 
 Fruizione
