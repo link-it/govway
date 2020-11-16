@@ -244,30 +244,45 @@ public class JsonPathExpressionEngine {
 	}
 	private void _parseStringMatchPatternResult(Object o, List<String> l) throws Exception {
 		if(o!=null) {
-			if(o instanceof List) {
+			if(o instanceof Map<?, ?>) {
+				// Lasciare questo if per formattare correttamente i nomi degli elementi tramite le utility (vedi test org.openspcoop2.pdd.core.trasformazioni.Test)
+				throw new Exception("Unexpected type '"+o.getClass().getName()+"' (is instanceof Map)");
+			}
+			else if(o instanceof List) {
 				List<?> lO = (List<?>) o;
 				if(!lO.isEmpty()) {
+					int position = 0;
 					for (Object object : lO) {
 						if(object!=null) {
 							if(object instanceof String) {
 								l.add((String)object);
 							}
-							else{
+							else if(object instanceof Number) {
 								l.add(object.toString());
 							}
+							else if(object instanceof Boolean) {
+								l.add(object.toString());
+							}
+							else{
+								throw new Exception("Unexpected type '"+object.getClass().getName()+"' at position "+position);
+							}
 						}
+						position++;
 					}
 				}
 			}
 			else if(o instanceof String) {
 				l.add((String)o);
 			}
-			else if(o instanceof String) {
+			else if(o instanceof Number) {
 				l.add(o.toString());
 			}
-//			else {
-//				throw new Exception("Unexpected type '"+o.getClass().getName()+"'");
-//			}
+			else if(o instanceof Boolean) {
+				l.add(o.toString());
+			}
+			else {
+				throw new Exception("Unexpected type '"+o.getClass().getName()+"'");
+			}
 		}
 	}
 	

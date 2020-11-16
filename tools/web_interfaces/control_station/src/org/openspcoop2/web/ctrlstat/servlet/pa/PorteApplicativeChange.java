@@ -592,8 +592,8 @@ public final class PorteApplicativeChange extends Action {
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA));
 			boolean datiAltroApi = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API));
+			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 						
-			
 			String nomeBreadCrumb = oldNomePA;
 			if(parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) {
 //				List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList = apsCore.mappingServiziPorteAppList(idServizioCheck, idAspsLong, null);
@@ -611,7 +611,6 @@ public final class PorteApplicativeChange extends Action {
 //					nomeBreadCrumb = mappingErogazionePortaApplicativa.getNome(); 
 //				}
 				
-				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 				if(datiInvocazione) {
 					lstParm.remove(lstParm.size()-1);
 					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
@@ -1338,14 +1337,16 @@ public final class PorteApplicativeChange extends Action {
 					pa.setBehaviour(null);
 			}
 
-			if(servizioApplicativo!=null && !"".equals(servizioApplicativo)){
-				// Se il servizioApplicativo e' valorizzato deve esistere un solo SA nella porta applicativa
-				if(pa.sizeServizioApplicativoList()>0)
-					pa.removeServizioApplicativo(0);
-				if(!"-".equals(servizioApplicativo)){
-					PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
-					sa.setNome(servizioApplicativo);
-					pa.addServizioApplicativo(sa);
+			if(!datiInvocazione && !datiAltroApi && !datiAltroPorta) {
+				if(servizioApplicativo!=null && !"".equals(servizioApplicativo)){
+					// Se il servizioApplicativo e' valorizzato deve esistere un solo SA nella porta applicativa
+					if(pa.sizeServizioApplicativoList()>0)
+						pa.removeServizioApplicativo(0);
+					if(!"-".equals(servizioApplicativo)){
+						PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
+						sa.setNome(servizioApplicativo);
+						pa.addServizioApplicativo(sa);
+					}
 				}
 			}
 			
@@ -1364,9 +1365,9 @@ public final class PorteApplicativeChange extends Action {
 			switch (parentPA) {
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
 				
-				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+				boolean datiInvocazioneCheck = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 				boolean datiAltroApiCheck = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API));
-				if(datiInvocazione || datiAltroApiCheck) {
+				if(datiInvocazioneCheck || datiAltroApiCheck) {
 					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, null);

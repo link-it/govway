@@ -75,6 +75,8 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - L'aggiornamento del nome di una erogazione, che presentava connettori multipli, non veniva riportato sugli applicativi aggiuntivi a quello di default.
 
+- L'aggiornamento dell'url di invocazione o delle 'Opzioni Avanzate' di una erogazione, che presentava connettori multipli, comportava una perdita dei dati associati ai connettori.
+
 - Corretti i seguenti problemi presenti in uno scenario con profilo di interoperabilità ModI:
 
 	- se si modificava la configurazione del profilo in una fruizione, alcuni parametri del connettore quale l'eventuale abilitazione del debug e l'autenticazione http o token venivano erroneamente disabilitate;
