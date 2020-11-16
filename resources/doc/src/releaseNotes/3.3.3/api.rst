@@ -3,7 +3,7 @@ Miglioramenti alle API di Gestione e Monitoraggio
 
 Sono stati apportati i seguenti miglioramenti alle API di monitoraggio:
 
-- È adesso possibile ricercare transazioni o ottenere report statistici filtrando per API implementata. La funzionalità è utile in presenza di molteplici erogazioni o fruizioni che implementano la medesima API, per ottenere un report che non distingua per la singola erogazione o fruizione ma li raggruppi per la medesima API implementata.
+- È adesso possibile ricercare transazioni o ottenere report statistici filtrando per API implementata. La funzionalità è utile in presenza di molteplici erogazioni o fruizioni che implementano la stessa API, per ottenere un report che non distingua per la singola erogazione o fruizione ma li raggruppi per API implementata.
 
 Sono stati apportati i seguenti miglioramenti alle API di gestione:
 

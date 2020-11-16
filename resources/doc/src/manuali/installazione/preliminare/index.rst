@@ -48,6 +48,6 @@ sulla seguente piattaforma di riferimento:
 
 -  *Openjdk 11 (version: 11.0.2+9)*
 
--  *PostgreSQL 9 (version: 9.5.10)*
+-  *PostgreSQL 9 (version: 9.5.10)* e *PostgreSQL 11 (version: 11.3)*
 
 -  *WildFly 18 (version: 18.0.1.Final)*, *WildFly 21 (version: 21.0.0.Final)* e *Tomcat 9 (version: 9.0.31)*

@@ -21,5 +21,6 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	api
 	canali
 	fatturazioneElettronica
+	installer
 	bug
 

@@ -5,7 +5,7 @@ Sono stati risolti i seguenti bug:
 
 - Sono stati corretti i seguenti problemi presenti sulla validazione tramite OpenAPI 3:
 
-	- Un oggetto di tipo 'string', definito con la restrizione basata su pattern (es. '^\d{6}$'), non veniva correttamente validato se il valore presente nel messaggio json possedeva dei caratteri speciali come '\r\n' o '\n' o '\t'. La validazione OpenAPI terminava con successo non rilevando i caratteri non ammessi dal pattern indicato.
+	- Un oggetto di tipo 'string', definito con la restrizione basata su pattern (es. '^\d{6}$'), non veniva correttamente validato se il valore presente nel messaggio json possedeva dei caratteri speciali come '\\r\\n' o '\\n' o '\\t'. La validazione OpenAPI terminava con successo non rilevando i caratteri non ammessi dal pattern indicato.
 
 	- Sulla validazione della risposta, per operazioni che non prevedevano una risposta applicativa, la validazione non rilevava un contenuto non ammesso se era compatibile con la risposta definita per il codice http 'default'.
 
@@ -67,7 +67,7 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - La selezione di un 'Servizio' in una erogazione o fruizione di API SOAP è adesso obbligatoria anche utilizzando la console in modalità avanzata. 
 
-- Corretta una errata visualizzazione delle informazioni presenti nella maschera di creazione di una fruizione, utilizzando la console in modalità avanzata: la scelta dell'erogatore risiedeva tra i dati dell'API e venivano quindi visualizzati due campi consecutivi con la medesima denominazione 'Nome'.
+- Corretta una errata visualizzazione delle informazioni presenti nella maschera di creazione di una fruizione, utilizzando la console in modalità avanzata: la scelta dell'erogatore risiedeva tra i dati dell'API e venivano quindi visualizzati due campi consecutivi con la stessa denominazione 'Nome'.
 
 - Risolto problema che provocava uno stallo sulla console quando si selezionava ripetutamente da una select list il valore già scelto in precedenza.
 
@@ -111,23 +111,12 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 
 - Il cookie generato dalla console di monitoraggio è stato ridenominato in 'JSESSIONID_GW_MONITOR'.
 
-
-Solo stati risolti i seguenti bug presenti nell'Installer:
-
-- Le patch SQL che modificano il tipo di una colonna da VARCHAR a CLOB, tramite il comando ALTER, sono state riviste al fine di utilizzare una versione più efficente per i tipi di database che lo consentono (https://github.com/link-it/govway/issues/58).
-
-- Modificato tipo della colonna 'value' della tabella 'tracce_ext_protocol_info' al fine di poter creare un indice su tale colonna. L'indice consente di migliorare le performance come descritto nell'issue https://github.com/link-it/govway/issues/60.
-
-- Lo script SQL generato per MySQL, possedeva un vincolo 'unique' non instanziabile su mysql: "ERROR 1071 (42000): Specified key was too long; max key length is 3072" (https://github.com/link-it/govway/issues/66).
+Nell'utilizzo dell'Installer in modalità avanzata sono stati risolti i seguenti bug:
 
 - L'indice 'full INDEX_TR_SEARCH', generato dall'installer in modalità avanzata per i database di tipo postgresql e oracle, non venivano utilizzati dal db per soddisfare le query prodotte tramite la console di monitoraggio durante la ricerca nello storico a causa dei seguenti problemi:
 
 	- la colonna 'versione_servizio' non era presente nell'indice ma veniva utilizzata sia per la ricerca di una API Implementata che per la visualizzazione delle informazioni relative ad una singola transazione
 	- nel comando SELECT venivano aggiunte ulteriori colonne non presenti nell'indice che non avevano però alcuna utilità durante la presentazione dei risultati in lista. 
-
-- L'installer genera adesso un archivio govway.ear contenente nel file application.xml i 'resource-ref' necessari all'A.S. per effettuare un shutdown corretto dei datasource.
-
-I seguenti bug sono stati invece risolti utilizzando l'Installer in modalità avanzata:
 
 - Il file 'consolePassword.properties' non veniva generato per l'ambiente runtime in caso di disaccoppiamento tra runtime e manager.
 
