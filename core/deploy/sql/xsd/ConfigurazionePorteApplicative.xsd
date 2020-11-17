@@ -1310,7 +1310,6 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PA_SA_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
@@ -1338,7 +1337,6 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PA_BEHAVIOUR_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
@@ -1370,7 +1368,6 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                     <linkit:sql-table-unique>
                         <linkit:sql-table-unique-field name="id_porta"/>
                         <linkit:sql-table-unique-field name="nome"/>
-                        <linkit:sql-table-unique-field name="valore"/>
                     </linkit:sql-table-unique>
                     <linkit:sql-table-index name="INDEX_PA_AUTH_PROP">
                         <linkit:sql-table-index-field name="id_porta"/>
@@ -1399,7 +1396,6 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PA_AUTHZ_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
@@ -1428,7 +1424,6 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PA_AUTHZC_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
@@ -1458,7 +1453,6 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PA_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>

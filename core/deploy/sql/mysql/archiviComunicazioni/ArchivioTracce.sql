@@ -181,7 +181,7 @@ CREATE TABLE tracce_ext_protocol_info
 (
 	idtraccia BIGINT NOT NULL,
 	name VARCHAR(255) NOT NULL,
-	value VARCHAR(4000),
+	value VARCHAR(2800),
 	ext_value TEXT,
 	-- Data di registrazione
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'

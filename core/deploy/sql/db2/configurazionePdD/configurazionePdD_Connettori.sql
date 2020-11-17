@@ -71,7 +71,7 @@ CREATE TABLE connettori_custom
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints
-	CONSTRAINT unique_connettori_custom_1 UNIQUE (id_connettore,name,value),
+	CONSTRAINT unique_connettori_custom_1 UNIQUE (id_connettore,name),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_connettori_custom_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
 	CONSTRAINT pk_connettori_custom PRIMARY KEY (id)

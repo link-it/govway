@@ -17,7 +17,7 @@ CREATE TABLE credenziale_mittente
 
 -- index
 CREATE UNIQUE INDEX index_credenziale_mittente_1 ON credenziale_mittente (tipo,credenziale);
-CREATE INDEX index_credenziale_mittente_2 ON credenziale_mittente (ora_registrazione);
+CREATE INDEX CREDENZIALE_ORAREG ON credenziale_mittente (ora_registrazione);
 
 ALTER TABLE credenziale_mittente ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
 

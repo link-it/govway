@@ -1,3 +1,37 @@
+2020-11-17  Andrea Poli <apoli@link.it>
+
+	Modificati vincoli di univocità sulle tabelle contenenti proprietà
+
+	ALTER TABLE pa_sa_properties DROP CONSTRAINT uniq_pa_sa_props_1;
+	ALTER TABLE pa_sa_properties ADD CONSTRAINT uniq_pa_sa_props_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pa_behaviour_props DROP CONSTRAINT uniq_pa_behaviour_props_1;
+	ALTER TABLE pa_behaviour_props ADD CONSTRAINT uniq_pa_behaviour_props_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pa_auth_properties DROP CONSTRAINT uniq_pa_auth_props_1;
+	ALTER TABLE pa_auth_properties ADD CONSTRAINT uniq_pa_auth_props_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pa_authz_properties DROP CONSTRAINT uniq_pa_authz_props_1;
+	ALTER TABLE pa_authz_properties ADD CONSTRAINT uniq_pa_authz_props_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pa_authzc_properties DROP CONSTRAINT uniq_pa_authzc_props_1;
+	ALTER TABLE pa_authzc_properties ADD CONSTRAINT uniq_pa_authzc_props_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pa_properties DROP CONSTRAINT uniq_pa_properties_1;
+	ALTER TABLE pa_properties ADD CONSTRAINT uniq_pa_properties_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pd_auth_properties DROP CONSTRAINT uniq_pd_auth_props_1;
+	ALTER TABLE pd_auth_properties ADD CONSTRAINT uniq_pd_auth_props_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pd_authz_properties DROP CONSTRAINT uniq_pd_authz_props_1;
+	ALTER TABLE pd_authz_properties ADD CONSTRAINT uniq_pd_authz_props_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pd_authzc_properties DROP CONSTRAINT uniq_pd_authzc_props_1;
+	ALTER TABLE pd_authzc_properties ADD CONSTRAINT uniq_pd_authzc_props_1 UNIQUE (id_porta,nome);
+
+	ALTER TABLE pd_properties DROP CONSTRAINT uniq_pd_properties_1;
+	ALTER TABLE pd_properties ADD CONSTRAINT uniq_pd_properties_1 UNIQUE (id_porta,nome);
+
 2020-10-27  Andrea Poli <apoli@link.it>
 
 	Estesa lunghezza massima di una url a 4000 caratteri.
@@ -35,7 +69,7 @@
 	Aggiunta informazione sull'API implementata tra i criteri di ricerca delle transazione e di generazione delle statistiche.
 	Adeguati indici per supportare la nuova funzionalità.
 
-	CREATE INDEX index_credenziale_mittente_1 ON credenziale_mittente (ora_registrazione);
+	CREATE INDEX CREDENZIALE_ORAREG ON credenziale_mittente (ora_registrazione);
 	ALTER TABLE transazioni ALTER COLUMN uri_accordo_servizio TYPE VARCHAR(1000);
 	ALTER TABLE transazioni ADD COLUMN uri_api VARCHAR(20);
 
@@ -115,7 +149,7 @@
 	Modificato tipo della colonna 'value' della tabella 'tracce_ext_protocol_info' al fine di poter creare un indice su tale colonna;
 	indice richiesto per migliorare le performance come descritto nell'issue https://github.com/link-it/govway/issues/60
 	
-	ALTER TABLE tracce_ext_protocol_info ALTER COLUMN value TYPE VARCHAR(4000);
+	ALTER TABLE tracce_ext_protocol_info ALTER COLUMN value TYPE VARCHAR(2800);
 	ALTER TABLE tracce_ext_protocol_info ADD COLUMN ext_value TEXT;
 	CREATE INDEX TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value);
 

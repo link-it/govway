@@ -1,5 +1,5 @@
--- ALTER TABLE tracce_ext_protocol_info ALTER COLUMN value SET DATA TYPE VARCHAR(4000);
-ALTER TABLE tracce_ext_protocol_info ADD temp VARCHAR(4000); 
+-- ALTER TABLE tracce_ext_protocol_info ALTER COLUMN value SET DATA TYPE VARCHAR(2800);
+ALTER TABLE tracce_ext_protocol_info ADD temp VARCHAR(2800); 
 UPDATE tracce_ext_protocol_info SET temp=value; 
 ALTER TABLE tracce_ext_protocol_info DROP COLUMN value ;
 CALL SYSPROC.ADMIN_CMD ('REORG TABLE tracce_ext_protocol_info') ;

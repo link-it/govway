@@ -212,7 +212,7 @@ CREATE TABLE pa_sa_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pa_sa_props_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pa_sa_props_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_sa_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative_sa(id),
 	CONSTRAINT pk_pa_sa_properties PRIMARY KEY (id)
@@ -244,7 +244,7 @@ CREATE TABLE pa_behaviour_props
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pa_behaviour_props_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pa_behaviour_props_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_behaviour_props_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_behaviour_props PRIMARY KEY (id)
@@ -276,7 +276,7 @@ CREATE TABLE pa_auth_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pa_auth_props_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pa_auth_props_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_auth_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_auth_properties PRIMARY KEY (id)
@@ -308,7 +308,7 @@ CREATE TABLE pa_authz_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pa_authz_props_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pa_authz_props_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_authz_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_authz_properties PRIMARY KEY (id)
@@ -340,7 +340,7 @@ CREATE TABLE pa_authzc_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pa_authzc_props_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pa_authzc_props_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_authzc_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_authzc_properties PRIMARY KEY (id)
@@ -372,7 +372,7 @@ CREATE TABLE pa_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pa_properties_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pa_properties_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_properties PRIMARY KEY (id)

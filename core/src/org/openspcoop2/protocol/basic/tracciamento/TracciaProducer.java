@@ -400,7 +400,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 				}
 				for (int i = 0; i < propertiesNames.length; i++) {
 	
-					int limit = 4000;
+					int limit = 2800; // TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value) la somma di name e value deve essere minore di 3072 bytes per mysql
 					
 					String v = busta.getProperty(propertiesNames[i]);
 					String columnExtV = "";

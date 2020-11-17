@@ -1200,8 +1200,8 @@ Il valore presente in questo campo contiene la rappresentazione nel formato prop
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="value" varchar="4000" />
-                                <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="value" varchar="2800" />
+                                <linkit:sql-ddl-column-comment>Valore della proprietà (TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value) la somma di name e value deve essere minore di 3072 bytes per mysql)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1212,7 +1212,7 @@ Il valore presente in questo campo contiene la rappresentazione nel formato prop
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ext_value" text="true" />
-                                <linkit:sql-ddl-column-comment>Colonna valorizza se la proprietà ha un valore maggiore di 4000</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Colonna valorizza se la proprietà ha un valore maggiore di 2800</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

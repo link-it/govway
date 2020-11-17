@@ -21,7 +21,7 @@
 -- DROP INDEX INDEX_TR_FULL;
 -- DROP INDEX INDEX_TR_MEDIUM;
 -- DROP INDEX INDEX_TR_ENTRY;
--- DROP INDEX index_credenziale_mittente_1;
+-- DROP INDEX CREDENZIALE_ORAREG;
 DROP TABLE dump_contenuti;
 DROP TABLE dump_header_allegato;
 DROP TABLE dump_allegati;

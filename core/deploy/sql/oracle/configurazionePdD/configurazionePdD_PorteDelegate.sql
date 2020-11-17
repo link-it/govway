@@ -206,7 +206,7 @@ CREATE TABLE pd_auth_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pd_auth_props_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pd_auth_props_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_auth_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_auth_properties PRIMARY KEY (id)
@@ -238,7 +238,7 @@ CREATE TABLE pd_authz_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pd_authz_props_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pd_authz_props_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_authz_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_authz_properties PRIMARY KEY (id)
@@ -270,7 +270,7 @@ CREATE TABLE pd_authzc_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pd_authzc_props_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pd_authzc_props_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_authzc_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_authzc_properties PRIMARY KEY (id)
@@ -302,7 +302,7 @@ CREATE TABLE pd_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT uniq_pd_properties_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pd_properties_1 UNIQUE (id_porta,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_properties PRIMARY KEY (id)

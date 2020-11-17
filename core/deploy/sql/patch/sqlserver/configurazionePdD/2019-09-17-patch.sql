@@ -1,4 +1,4 @@
--- DROP INDEX index_config_protocolli_1;
+-- DROP INDEX index_config_protocolli_1 ON config_protocolli;
 -- DROP TABLE config_protocolli;
 
 

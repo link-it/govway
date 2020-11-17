@@ -1,4 +1,4 @@
-CREATE INDEX index_credenziale_mittente_1 ON credenziale_mittente (ora_registrazione);
+CREATE INDEX CREDENZIALE_ORAREG ON credenziale_mittente (ora_registrazione);
 ALTER TABLE transazioni ALTER COLUMN uri_accordo_servizio VARCHAR(1000);
 ALTER TABLE transazioni ADD COLUMN uri_api VARCHAR(20);
 

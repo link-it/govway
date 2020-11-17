@@ -1232,7 +1232,6 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PD_AUTH_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
@@ -1264,7 +1263,6 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PD_AUTHZ_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
@@ -1293,7 +1291,6 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PD_AUTHZC_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
@@ -1323,7 +1320,6 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="id_porta"/>
                             <linkit:sql-table-unique-field name="nome"/>
-                            <linkit:sql-table-unique-field name="valore"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PD_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>

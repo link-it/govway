@@ -74,7 +74,7 @@
 							<linkit:sql-table-unique-field name="tipo"/>
 							<linkit:sql-table-unique-field name="credenziale"/>
 						</linkit:sql-table-unique>
-						<linkit:sql-table-index >
+						<linkit:sql-table-index name="CREDENZIALE_ORAREG">
 							<linkit:sql-table-index-field name="ora-registrazione" ignoreTypeCompatibility="true"/>
 						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>

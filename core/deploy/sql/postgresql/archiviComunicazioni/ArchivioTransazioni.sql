@@ -16,7 +16,7 @@ CREATE TABLE credenziale_mittente
 );
 
 -- index
-CREATE INDEX index_credenziale_mittente_1 ON credenziale_mittente (ora_registrazione);
+CREATE INDEX CREDENZIALE_ORAREG ON credenziale_mittente (ora_registrazione);
 
 
 
