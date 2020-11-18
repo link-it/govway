@@ -58,7 +58,8 @@ public class CostantiControlloTraffico {
 		"   </body>\n" + 
 		"</html>";
 	
-	public final static String HTML_429_ERROR =  HTML_ERROR.replace(HTML_ERROR_TITLE_TEMPLATE, "Too Many Requests");
+	public final static String HTML_429_TOO_MANY_REQUESTS_ERROR =  HTML_ERROR.replace(HTML_ERROR_TITLE_TEMPLATE, "Too Many Requests");
+	public final static String HTML_429_LIMIT_EXCEEDED_ERROR =  HTML_ERROR.replace(HTML_ERROR_TITLE_TEMPLATE, "Limit Exceeded");
 	public final static String HTML_503_ERROR =  HTML_ERROR.replace(HTML_ERROR_TITLE_TEMPLATE, "Service Unavailable");
 	public final static String HTML_500_ERROR =  HTML_ERROR.replace(HTML_ERROR_TITLE_TEMPLATE, "Internal Server Error");
 }

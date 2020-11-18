@@ -26,8 +26,12 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
+import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 
 /**     
  * GeneratoreMessaggiErrore
@@ -384,7 +388,7 @@ public class GeneratoreMessaggiErrore {
 		return bf.toString();
 	}
 	
-	public static void configureHandlerExceptionByTipoErrore(ServiceBinding serviceBinding, HandlerException he, TipoErrore tipoErroreParam,boolean includiDescrizioneErrore) {
+	public static void configureHandlerExceptionByTipoErrore(ServiceBinding serviceBinding, HandlerException he, TipoErrore tipoErroreParam,boolean includiDescrizioneErrore,Logger log) throws ProtocolException {
 
 		TipoErrore tipoErrore = tipoErroreParam;
 		if(ServiceBinding.REST.equals(serviceBinding)) {
@@ -395,8 +399,47 @@ public class GeneratoreMessaggiErrore {
 		case HTTP_429:
 			if(includiDescrizioneErrore) {
 				he.setResponseContentType(HttpConstants.CONTENT_TYPE_HTML);
-				String html = CostantiControlloTraffico.HTML_429_ERROR
-						.replace(CostantiControlloTraffico.HTML_ERROR_MESSAGE_TEMPLATE, he.getMessage());
+				
+				String tipo = CostantiControlloTraffico.HTML_429_TOO_MANY_REQUESTS_ERROR;
+				if(he!=null && he.getIntegrationFunctionError()!=null) {
+					switch (he.getIntegrationFunctionError()) {
+					case LIMIT_EXCEEDED:
+					case LIMIT_EXCEEDED_CONDITIONAL_CONGESTION:
+					case LIMIT_EXCEEDED_CONDITIONAL_DETERIORATION_PERFORMANCE:
+						tipo = CostantiControlloTraffico.HTML_429_LIMIT_EXCEEDED_ERROR;
+						break;
+					case TOO_MANY_REQUESTS:
+					case TOO_MANY_REQUESTS_CONDITIONAL_CONGESTION:
+					case TOO_MANY_REQUESTS_CONDITIONAL_DETERIORATION_PERFORMANCE:
+						tipo = CostantiControlloTraffico.HTML_429_TOO_MANY_REQUESTS_ERROR;
+						break;
+					default:
+						break;
+					}
+				}
+				
+				String msgErrore = null;
+				ErroriProperties erroriProperties = ErroriProperties.getInstance(log);
+				boolean genericDetails = true;
+				IntegrationFunctionError functionError = IntegrationFunctionError.TOO_MANY_REQUESTS;
+				if(he!=null && he.getIntegrationFunctionError()!=null) {
+					functionError = he.getIntegrationFunctionError();
+				}
+				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+					genericDetails = true;
+				}
+				if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+					genericDetails = false;
+				}
+				if(!genericDetails && he!=null) {
+					msgErrore = he.getMessage();
+				}
+				else {
+					msgErrore = erroriProperties.getGenericDetails(functionError);
+				}
+				
+				String html = tipo
+						.replace(CostantiControlloTraffico.HTML_ERROR_MESSAGE_TEMPLATE, msgErrore);
 				he.setResponse(html.getBytes());
 			}
 			else {

@@ -1,3 +1,9 @@
+2020-11-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Riviste le pagine html generate insieme al codice HTTP 429 su API SOAP, in seguito a errori 'Too Many Requests' e 'Limit Exceeded'.
+	È inoltre stato aggiunto l'header http 'GovWay-Transaction-ErrorType' mancante.
+
 2020-11-17  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.3

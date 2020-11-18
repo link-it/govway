@@ -135,7 +135,7 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 				}
 			
 				// registro nuovo in thread in ingresso
-				gestore.addThread(serviceBinding, maxThreads,threshold,maxThreadsWarningOnly,context.getPddContext(),msgDiag,tipoErrore,includiDescrizioneErrore);
+				gestore.addThread(serviceBinding, maxThreads,threshold,maxThreadsWarningOnly,context.getPddContext(),msgDiag,tipoErrore,includiDescrizioneErrore,logControlloTraffico);
 			
 				// se il metodo precedente non ha sollevato una eccezione registro nel contesto che è stato registrato il thread
 				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO, true);	

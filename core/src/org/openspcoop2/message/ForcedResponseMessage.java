@@ -35,6 +35,13 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 
 public class ForcedResponseMessage {
 	
+	public ForcedResponseMessage() {}
+	public ForcedResponseMessage(AbstractBaseOpenSPCoop2Message msg) {
+		if(msg.forceTransportHeaders!=null && !msg.forceTransportHeaders.isEmpty()) {
+			this.headers = msg.forceTransportHeaders;
+		}
+	}
+	
 	private byte[] content;
 	private String contentType = HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM;
 	private Map<String, String> headers;

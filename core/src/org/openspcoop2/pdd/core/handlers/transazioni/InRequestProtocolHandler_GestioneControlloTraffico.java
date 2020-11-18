@@ -598,7 +598,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						HandlerException he = GeneratoreMessaggiErrore.getControlloTrafficoPolicyViolated(policyBloccanti,
 								ConfigurazioneControlloTraffico.isErroreGenerico(), context.getPddContext());
 						he.setEmettiDiagnostico(false);
-						GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(serviceBinding, he, tipoErrore, includiDescrizioneErrore);
+						GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(serviceBinding, he, tipoErrore, includiDescrizioneErrore,log);
 						throw he;
 					}
 					else if(policyViolateWarningOnly>0){

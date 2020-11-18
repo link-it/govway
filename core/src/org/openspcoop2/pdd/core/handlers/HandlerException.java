@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.handlers;
 
+import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
@@ -147,7 +148,13 @@ public class HandlerException extends Exception {
 			responseMessage.forceEmptyResponse();
 		}
 		else if(this.getResponse()!=null) {
-			ForcedResponseMessage force = new ForcedResponseMessage();
+			ForcedResponseMessage force = null;
+			if(responseMessage instanceof AbstractBaseOpenSPCoop2Message) {
+				force = new ForcedResponseMessage((AbstractBaseOpenSPCoop2Message)responseMessage);
+			}
+			else {
+				force = new ForcedResponseMessage();
+			}
 			force.setContent(this.getResponse());
 			if(this.getResponseContentType()!=null) {
 				force.setContentType(this.getResponseContentType());
