@@ -213,6 +213,11 @@ public class LoginBean extends AbstractLoginBean {
 
 	@Override
 	public String logout() {
+		
+		try {
+			ApplicationBean.getInstance().resetAllCache();
+		}catch(Throwable t) {}
+		
 		try{
 			FacesContext fc = FacesContext.getCurrentInstance();
 			fc.getExternalContext().getSessionMap().put(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
@@ -237,6 +242,7 @@ public class LoginBean extends AbstractLoginBean {
 			}
 			return null;
 		}
+		
 	}
 
 
