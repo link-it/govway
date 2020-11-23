@@ -6327,14 +6327,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					parametriChangeRisorsa.add(new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+""));
 					parametriChangeRisorsa.add(AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 					
-					
+					String nomeRisorsa = risorsa.getNome();
+										
 					//HTTP Method
 					String detailURL = new Parameter("", AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, parametriChangeRisorsa.toArray(new Parameter[parametriChangeRisorsa.size()])).getValue(); 
 					DataElement de = getDataElementHTTPMethodResource(risorsa, labelParametroApcResourcesHttpMethodQualsiasi, detailURL);
+					de.setToolTip(nomeRisorsa);
 					e.addElement(de);
 					
 					de = new DataElement();
-					String nomeRisorsa = risorsa.getNome();
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, parametriChangeRisorsa.toArray(new Parameter[parametriChangeRisorsa.size()]));
 					
 					if(risorsa.getPath()==null || "".equals(risorsa.getPath())) {

@@ -1418,9 +1418,11 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				datiConnettore.setDescrizione(descrizioneConnettore);
 
 			if(visualizzaSezioneFiltri) {
+				
+				datiConnettore.getFiltroList().clear();
+				
 				if(StringUtils.isNotEmpty(filtriConnettore)) {
-					datiConnettore.getFiltroList().clear();
-
+					
 					List<String> filtri = Arrays.asList(filtriConnettore.split(","));
 
 					for (String filtro : filtri) {

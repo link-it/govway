@@ -1,5 +1,13 @@
 2020-11-23  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1105
+	Una volta impostato un filtro su un connettore multiplo, era possibile solamente modificarne il valore ma non eliminarlo.
+	La problematica è stata risolta.
+	È stato inoltre aggiunto il tooltip dell'identificativo di una risorsa anche sul metodo HTTP oltre che sul path nella lista delle risorse di una API.
+
+2020-11-23  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloModIPA, Documentazione]
 	Aggiunta funzionalità OP-1103
 	Ridenominato profilo 'ModI PA' in 'ModI'.
