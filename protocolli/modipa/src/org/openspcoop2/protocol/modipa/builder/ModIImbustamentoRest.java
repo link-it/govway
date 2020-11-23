@@ -104,7 +104,10 @@ public class ModIImbustamentoRest {
 			
 			Integer [] returnCodeAttesi = this.modiProperties.getRestBloccanteHttpStatus();
 			
-			if(returnCodeAttesi!=null) {
+			// Fix: il controllo deve essere fatto solo per i codici che non rientrano in 4xx e 5xx
+			boolean is_4xx_5xx = (returnCodeInt>=400) && (returnCodeInt<=599);
+			
+			if(!is_4xx_5xx && returnCodeAttesi!=null) {				
 				boolean found = false;
 				for (Integer integer : returnCodeAttesi) {
 					if(integer.intValue() == ModICostanti.MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE) {
@@ -251,87 +254,66 @@ public class ModIImbustamentoRest {
 				}
 			}
 			
+			// Fix: il controllo deve essere fatto solo per i codici che non rientrano in 4xx e 5xx
+			boolean is_4xx_5xx = (returnCodeInt>=400) && (returnCodeInt<=599);
+			
 			Integer [] returnCodeAttesi = null;
 			
-			if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(asyncInteractionType)) {
-				
-				if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
-				
-					String headerCorrelationId = this.modiProperties.getRestCorrelationIdHeader();
+			if(!is_4xx_5xx) {
+				if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(asyncInteractionType)) {
 					
-					String correlationIdFound = msg.getTransportResponseContext().getParameterTrasporto(headerCorrelationId);
-					if(correlationIdFound!=null && !"".equals(correlationIdFound) && 
-							!ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE_AGGIUNTO_PER_CONSENTIRE_VALIDAZIONE_CONTENUTI.equals(correlationIdFound)) {
-						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, correlationIdFound);
-						busta.setCollaborazione(correlationIdFound);
-					}
-					else {
-						if(this.modiProperties.isRestSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists()) {
-							String idTransazione = msg.getTransactionId();
-							msg.forceTransportHeader(headerCorrelationId, idTransazione);
-							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, idTransazione);
-							busta.setCollaborazione(idTransazione);
+					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
+					
+						String headerCorrelationId = this.modiProperties.getRestCorrelationIdHeader();
+						
+						String correlationIdFound = msg.getTransportResponseContext().getParameterTrasporto(headerCorrelationId);
+						if(correlationIdFound!=null && !"".equals(correlationIdFound) && 
+								!ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE_AGGIUNTO_PER_CONSENTIRE_VALIDAZIONE_CONTENUTI.equals(correlationIdFound)) {
+							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, correlationIdFound);
+							busta.setCollaborazione(correlationIdFound);
 						}
 						else {
-							ProtocolException pe = new ProtocolException("Header http '"+headerCorrelationId+"', richiesto dal profilo non bloccante PUSH, non trovato");
-							pe.setInteroperabilityError(true);
-							throw pe;
+							if(this.modiProperties.isRestSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists()) {
+								String idTransazione = msg.getTransactionId();
+								msg.forceTransportHeader(headerCorrelationId, idTransazione);
+								busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, idTransazione);
+								busta.setCollaborazione(idTransazione);
+							}
+							else {
+								ProtocolException pe = new ProtocolException("Header http '"+headerCorrelationId+"', richiesto dal profilo non bloccante PUSH, non trovato");
+								pe.setInteroperabilityError(true);
+								throw pe;
+							}
 						}
+						
+						returnCodeAttesi = this.modiProperties.getRestNonBloccantePushRequestHttpStatus();
+					}
+					else {
+						
+						returnCodeAttesi = this.modiProperties.getRestNonBloccantePushResponseHttpStatus();
+						
 					}
 					
-					returnCodeAttesi = this.modiProperties.getRestNonBloccantePushRequestHttpStatus();
 				}
 				else {
 					
-					returnCodeAttesi = this.modiProperties.getRestNonBloccantePushResponseHttpStatus();
+					// pull
 					
-				}
-				
-			}
-			else {
-				
-				// pull
-				
-				String location = null;
-				String locationHeader = null;
-				
-				if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole) ||
-						ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO.equals(asyncInteractionRole)) {
+					String location = null;
+					String locationHeader = null;
 					
-					locationHeader = this.modiProperties.getRestLocationHeader();
-					if(msg!=null) {
-						if(msg.getTransportResponseContext()!=null) {
-							location = msg.getTransportResponseContext().getParameterTrasporto(locationHeader);
-						}
-					}
-				}
-				
-				if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
-					if(location==null || "".equals(location)) {
-						ProtocolException pe = new ProtocolException("Header http '"+locationHeader+"', richiesto dal profilo non bloccante PULL, non trovato");
-						pe.setInteroperabilityError(true);
-						throw pe;
-					}
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_LOCATION, location);
-					
-					String correlationIdExtracted = ModIUtilities.extractCorrelationId(location, apiContenenteRisorsa, azione, asyncInteractionRole, this.log);
-					if(correlationIdExtracted!=null && correlationIdExtracted.length()<=255) {
-						busta.setCollaborazione(correlationIdExtracted);
-					}
-					
-					returnCodeAttesi = this.modiProperties.getRestNonBloccantePullRequestHttpStatus();
-				}
-				else if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO.equals(asyncInteractionRole)) {
-					Integer [] returnCodeResourceReady = this.modiProperties.getRestNonBloccantePullRequestStateOkHttpStatus();
-					boolean isReady = false;
-					for (Integer integer : returnCodeResourceReady) {
-						if(integer.intValue() == returnCodeInt) {
-							isReady = true;
-							break;
+					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole) ||
+							ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO.equals(asyncInteractionRole)) {
+						
+						locationHeader = this.modiProperties.getRestLocationHeader();
+						if(msg!=null) {
+							if(msg.getTransportResponseContext()!=null) {
+								location = msg.getTransportResponseContext().getParameterTrasporto(locationHeader);
+							}
 						}
 					}
 					
-					if(isReady) {
+					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
 						if(location==null || "".equals(location)) {
 							ProtocolException pe = new ProtocolException("Header http '"+locationHeader+"', richiesto dal profilo non bloccante PULL, non trovato");
 							pe.setInteroperabilityError(true);
@@ -344,26 +326,52 @@ public class ModIImbustamentoRest {
 							busta.setCollaborazione(correlationIdExtracted);
 						}
 						
-						returnCodeAttesi = returnCodeResourceReady;
+						returnCodeAttesi = this.modiProperties.getRestNonBloccantePullRequestHttpStatus();
+					}
+					else if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO.equals(asyncInteractionRole)) {
+						Integer [] returnCodeResourceReady = this.modiProperties.getRestNonBloccantePullRequestStateOkHttpStatus();
+						boolean isReady = false;
+						for (Integer integer : returnCodeResourceReady) {
+							if(integer.intValue() == returnCodeInt) {
+								isReady = true;
+								break;
+							}
+						}
+						
+						if(isReady) {
+							if(location==null || "".equals(location)) {
+								ProtocolException pe = new ProtocolException("Header http '"+locationHeader+"', richiesto dal profilo non bloccante PULL, non trovato");
+								pe.setInteroperabilityError(true);
+								throw pe;
+							}
+							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_LOCATION, location);
+							
+							String correlationIdExtracted = ModIUtilities.extractCorrelationId(location, apiContenenteRisorsa, azione, asyncInteractionRole, this.log);
+							if(correlationIdExtracted!=null && correlationIdExtracted.length()<=255) {
+								busta.setCollaborazione(correlationIdExtracted);
+							}
+							
+							returnCodeAttesi = returnCodeResourceReady;
+						}
+						else {
+							Integer [] returnCodeAttesi_notReady = this.modiProperties.getRestNonBloccantePullRequestStateNotReadyHttpStatus();
+							returnCodeAttesi = new Integer[returnCodeResourceReady.length+returnCodeAttesi_notReady.length];
+							int i = 0;
+							for (int j=0; j < returnCodeAttesi_notReady.length; j++) {
+								returnCodeAttesi[i] = returnCodeAttesi_notReady[j];
+								i++;
+							}
+							for (int j=0; j < returnCodeResourceReady.length; j++) {
+								returnCodeAttesi[i] = returnCodeResourceReady[j];
+								i++;
+							}
+						}
 					}
 					else {
-						Integer [] returnCodeAttesi_notReady = this.modiProperties.getRestNonBloccantePullRequestStateNotReadyHttpStatus();
-						returnCodeAttesi = new Integer[returnCodeResourceReady.length+returnCodeAttesi_notReady.length];
-						int i = 0;
-						for (int j=0; j < returnCodeAttesi_notReady.length; j++) {
-							returnCodeAttesi[i] = returnCodeAttesi_notReady[j];
-							i++;
-						}
-						for (int j=0; j < returnCodeResourceReady.length; j++) {
-							returnCodeAttesi[i] = returnCodeResourceReady[j];
-							i++;
-						}
+						returnCodeAttesi = this.modiProperties.getRestNonBloccantePullResponseHttpStatus();
 					}
+					
 				}
-				else {
-					returnCodeAttesi = this.modiProperties.getRestNonBloccantePullResponseHttpStatus();
-				}
-				
 			}
 			
 			if(returnCodeAttesi!=null) {

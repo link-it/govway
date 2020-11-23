@@ -639,7 +639,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 								
 								) {
 							isOk = false;
-							pd.setMessage("Per abilitare l'autorizzazione deve essere registrato almeno un applicativo con configurazione 'ModI PA' per la sicurezza del messaggio");
+							pd.setMessage("Per abilitare l'autorizzazione deve essere registrato almeno un applicativo con configurazione '"+org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_LABEL+"' per la sicurezza del messaggio");
 						}
 					}
 					

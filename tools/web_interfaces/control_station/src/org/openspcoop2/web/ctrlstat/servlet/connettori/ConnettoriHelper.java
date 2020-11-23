@@ -1990,7 +1990,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if(forceHttps) {
 			if(!this.isProfiloModIPA(protocollo)) {
 				// la scelta se usare il tipo https o la configurazione jvm per https deve rimanere.
-				// viene forzata solamente l'autenticazione client nel caso si scelga un connettore https per il profilo ModI PA
+				// viene forzata solamente l'autenticazione client nel caso si scelga un connettore https per il profilo ModI
 				endpointtype = TipiConnettore.HTTPS.toString();
 			}
 			else {

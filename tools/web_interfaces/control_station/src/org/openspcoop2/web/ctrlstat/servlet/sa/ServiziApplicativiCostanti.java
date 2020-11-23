@@ -224,10 +224,10 @@ public class ServiziApplicativiCostanti {
 	
 	public static String getLabelSbustamentoProtocollo(String nomeProtocollo) {
 		if(Costanti.SPCOOP_PROTOCOL_NAME.equals(nomeProtocollo)) {
-			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " SPCoop";
+			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " "+ Costanti.SPCOOP_PROTOCOL_LABEL;
 		}
 		else if(Costanti.MODIPA_PROTOCOL_NAME.equals(nomeProtocollo)) {
-			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " ModI PA";
+			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " "+ Costanti.MODIPA_PROTOCOL_LABEL;
 		}
 		else {
 			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " " +nomeProtocollo.toUpperCase();

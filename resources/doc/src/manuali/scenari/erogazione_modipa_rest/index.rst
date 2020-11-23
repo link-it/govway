@@ -1,6 +1,6 @@
 .. _scenari_erogazione_rest_modipa:
 
-Erogazione REST ModI PA
+Erogazione REST ModI
 =======================
 
 Obiettivo
@@ -19,14 +19,14 @@ La figura seguente descrive graficamente questo scenario.
     :align: center
     :name: erogazione_modipa_fig
 
-    Erogazione ModI PA
+    Erogazione ModI
 
 Le caratteristiche principali di questo scenario sono:
 
 1. Un applicativo eroga un servizio, rivolto a fruitori di domini esterni, in conformità al Modello di Interoperabilità AGID
-2. La comunicazione con i domini esterni avviene su un canale gestito con sicurezza canale di profilo "ID_AUTH_CHANNEL_02"
-3. La confidenzialità e autenticità della comunicazione tra il servizio erogato e ciascun fruitore è garantita tramite sicurezza a livello messaggio con profilo "ID_AUTH_REST_02"
-4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo "INTEGRITY_REST_01"
+2. La comunicazione con i domini esterni avviene su un canale gestito con pattern di sicurezza canale "ID_AUTH_CHANNEL_02"
+3. La confidenzialità e autenticità della comunicazione tra il servizio erogato e ciascun fruitore è garantita tramite sicurezza a livello messaggio con pattern "ID_AUTH_REST_02"
+4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva previsto nel pattern "INTEGRITY_REST_01"
 5. Ciascun fruitore riceve conferma di ricezione del messaggio da parte dell'erogatore
 6. Garanzia di opponibilità ai terzi e non ripudio delle trasmissioni con persistenza delle prove di trasmissione
 
@@ -35,16 +35,16 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API "PetStore", basata su REST, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02" e "INTEGRITY_REST_01 con ID_AUTH_REST_02".
-- un'istanza Govway per la gestione del profilo ModI PA nel dominio dell'erogatore.
+- una API "PetStore", basata su REST, pattern di interazione Bloccante e pattern di sicurezza "ID_AUTH_CHANNEL_02" e "INTEGRITY_REST_01 con ID_AUTH_REST_02".
+- un'istanza Govway per la gestione del profilo ModI nel dominio dell'erogatore.
 - un client del dominio esterno che invoca la "POST /pet" diretto all'erogazione esposta da Govway.
 - il server PetStore di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'https://petstore.swagger.io/'.
 
-Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "5. Erogazione ModI PA", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
+Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "5. Erogazione ModI", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
 
 Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è possibile andare a verificare cosa è accaduto, nel corso dell'elaborazione della richiesta, andando a consultare la console govwayMonitor:
 
-1. Lo scambio del messaggio con il dominio fruitore (comunicazione interdominio) avviene in accordo al profilo "ID_AUTH_CHANNEL_02" e quindi con protocollo SSL e autenticazione client. Dal dettaglio della transazione si possono consultare i messaggi diagnostici dove è visibile la fase di autenticazione del client con i dati di validazione del certificato ricevuto (:numref:`modipa_ssl_auth_fig`).
+1. Lo scambio del messaggio con il dominio fruitore (comunicazione interdominio) avviene in accordo al pattern "ID_AUTH_CHANNEL_02" e quindi con protocollo SSL e autenticazione client. Dal dettaglio della transazione si possono consultare i messaggi diagnostici dove è visibile la fase di autenticazione del client con i dati di validazione del certificato ricevuto (:numref:`modipa_ssl_auth_fig`).
 
    .. figure:: ../_figure_scenari/modipa_ssl_auth.png
     :scale: 80%
@@ -78,7 +78,7 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
 
     Sezione "Payload" del Token di sicurezza
 
-4. Il messaggio ricevuto dal Govway viene quindi validato, sulla base dei profili di sicurezza previsti nello scambio, verificando in questo caso l'identità del fruitore, la validità temporale, la corrispondenza del digest relativo al payload. Solo in caso di superamento dell'intero processo di validazione, il messaggio viene inoltrato al servizio erogatore.
+4. Il messaggio ricevuto dal Govway viene quindi validato, sulla base dei pattern di sicurezza previsti nello scambio, verificando in questo caso l'identità del fruitore, la validità temporale, la corrispondenza del digest relativo al payload. Solo in caso di superamento dell'intero processo di validazione, il messaggio viene inoltrato al servizio erogatore.
 Le evidenze del processo di validazione sono visibili sulla govwayMonitor, andando a consultare la traccia del messaggio di richiesta (:numref:`modipa_traccia_richiesta_fig`). Nella sezione "Sicurezza Messaggio" sono riportate le informazioni estratte dal token di sicurezza presente nel messaggio.
 
    .. figure:: ../_figure_scenari/modipa_traccia_richiesta.png
@@ -92,15 +92,15 @@ Le evidenze del processo di validazione sono visibili sulla govwayMonitor, andan
 
 .. _modipa_conformita:
 
-Conformità ai requisiti ModI PA
+Conformità ai requisiti ModI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI PA, sono verificati dalle seguenti evidenze:
+I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI, sono verificati dalle seguenti evidenze:
 
-1. La trasmissione è basata sul profilo "ID_AUTH_CHANNEL_02", riguardo la sicurezza canale, come evidenziato nei messaggi diagnostici dalla presenza degli elementi dell'handshake SSL e relativi dati dei certificati scambiati (:numref:`modipa_ssl_auth_fig`).
+1. La trasmissione è basata sul pattern "ID_AUTH_CHANNEL_02", riguardo la sicurezza canale, come evidenziato nei messaggi diagnostici dalla presenza degli elementi dell'handshake SSL e relativi dati dei certificati scambiati (:numref:`modipa_ssl_auth_fig`).
 
-2. La sicurezza messaggio applicata è quella dei profili "ID_AUTH_REST_02" e "INTEGRITY_REST_01", come ampiamente mostrato nelle tracce dei messaggi di richiesta e risposta, dove sono presenti i certificati degli applicativi e le firme dei payload (e le relative validazioni).
+2. La sicurezza messaggio applicata è quella dei pattern "ID_AUTH_REST_02" e "INTEGRITY_REST_01", come ampiamente mostrato nelle tracce dei messaggi di richiesta e risposta, dove sono presenti i certificati degli applicativi e le firme dei payload (e le relative validazioni).
 
-3. La conferma di ricezione da parte dell'erogatore è costituita dalla risposta ottenuta dal fruitore, sul profilo di interazione bloccante, con il token di sicurezza e la firma del payload applicati sul messaggio di risposta.
+3. La conferma di ricezione da parte dell'erogatore è costituita dalla risposta ottenuta dal fruitore, sul pattern di interazione bloccante, con il token di sicurezza e la firma del payload applicati sul messaggio di risposta.
 
 4. Il non ripudio della trasmissione da parte del fruitore è garantito tramite la conservazione del messaggio ottenuto, comprensivo di riferimenti temporali, digest del payload, identità del mittente, il tutto garantito dalla firma digitale.
 
@@ -109,14 +109,14 @@ I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI PA, 
 
 Configurazione
 --------------
-Per la configurazione dello scenario descritto è necessario intervenire sulla govwayConsole (lato fruitore ed erogatore in base all'ambito di propria competenza). Per operare con la govwayConsole in modo conforme a quanto previsto dalla specifica del Modello di Interoperabilità 2018 si deve attivare, nella testata dell'interfaccia, il Profilo di Interoperabilità "ModI PA" (:numref:`modipa_profilo_fig`).
+Per la configurazione dello scenario descritto è necessario intervenire sulla govwayConsole (lato fruitore ed erogatore in base all'ambito di propria competenza). Per operare con la govwayConsole in modo conforme a quanto previsto dalla specifica del Modello di Interoperabilità si deve attivare, nella testata dell'interfaccia, il Profilo di Interoperabilità 'ModI' (:numref:`modipa_profilo_fig`).
 
    .. figure:: ../_figure_scenari/modipa_profilo.png
     :scale: 80%
     :align: center
     :name: modipa_profilo_fig
 
-    Profilo ModI PA della govwayConsole
+    Profilo ModI della govwayConsole
 
 .. _modipa_config_tracciamento:
 
@@ -145,14 +145,14 @@ Si procede quindi con i passi di configurazione del servizio.
 
 Registrazione API
 ~~~~~~~~~~~~~~~~~
-Si registra l'API "PetStore", fornendo il relativo descrittore OpenAPI 3, selezionando i profili "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_REST_01 con ID_AUTH_REST_02" (sicurezza messaggio) nella sezione "ModI PA" (:numref:`modipa_profili_api_fig`).
+Si registra l'API "PetStore", fornendo il relativo descrittore OpenAPI 3, selezionando i pattern "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_REST_01 con ID_AUTH_REST_02" (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_fig`).
 
    .. figure:: ../_figure_scenari/modipa_profili_api.png
     :scale: 80%
     :align: center
     :name: modipa_profili_api_fig
 
-    Profilo ModI PA della govwayConsole
+    Configurazione Profilo ModI sulla API
 
 
 Applicativo Esterno
@@ -172,7 +172,7 @@ Applicativo Esterno
 
 Erogazione
 ~~~~~~~~~~
-Si registra l'erogazione "PetStore", relativa all'API precedentemente inserita, indicando i dati specifci nella sezione "ModI PA Richiesta" (:numref:`modipa_erogazione_richiesta_fig`). In questo contesto vengono inseriti i dati necessari per validare le richieste in ingresso.
+Si registra l'erogazione "PetStore", relativa all'API precedentemente inserita, indicando i dati specifci nella sezione "ModI Richiesta" (:numref:`modipa_erogazione_richiesta_fig`). In questo contesto vengono inseriti i dati necessari per validare le richieste in ingresso.
 
    .. figure:: ../_figure_scenari/modipa_erogazione_richiesta.png
     :scale: 80%
@@ -181,7 +181,7 @@ Si registra l'erogazione "PetStore", relativa all'API precedentemente inserita, 
 
     Configurazione richiesta dell'erogazione
 
-La sezione "ModI PA Risposta" si utilizza per indicare i parametri per la produzione del token di sicurezza da inserire nel messaggio di risposta (:numref:`modipa_erogazione_risposta_fig`).
+La sezione "ModI Risposta" si utilizza per indicare i parametri per la produzione del token di sicurezza da inserire nel messaggio di risposta (:numref:`modipa_erogazione_risposta_fig`).
 
    .. figure:: ../_figure_scenari/modipa_erogazione_risposta.png
     :scale: 80%

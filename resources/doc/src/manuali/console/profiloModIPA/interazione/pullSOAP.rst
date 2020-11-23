@@ -1,18 +1,18 @@
 .. _modipa_pullSOAP:
 
-Profilo di Interazione PULL per API SOAP
+Pattern di Interazione PULL per API SOAP
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Il profilo di interazione, denominato PULL, prevede che il fruitore non fornisca un indirizzo di callback, mentre l’erogatore fornisce un indirizzo interrogabile per verificare lo stato di processamento di una richiesta e, al fine dell’elaborazione della stessa, il risultato (:numref:`modipa_flusso_PULL_SOAP`).
+Il pattern di interazione, denominato PULL, prevede che il fruitore non fornisca un indirizzo di callback, mentre l’erogatore fornisce un indirizzo interrogabile per verificare lo stato di processamento di una richiesta e, al fine dell’elaborazione della stessa, il risultato (:numref:`modipa_flusso_PULL_SOAP`).
 
    .. figure:: ../../_figure_console/modipa_flusso_PULL_SOAP.png
     :scale: 50%
     :align: center
     :name: modipa_flusso_PULL_SOAP
 
-    Flusso previsto in un Profilo di Interazione PULL per API SOAP
+    Flusso previsto in un Pattern di Interazione PULL per API SOAP
 
-Come riportato dalle Linee Guida di Interoperabilità ModI PA:
+Come riportato dalle Linee Guida di Interoperabilità ModI:
 
 - L’interfaccia di servizio dell’erogatore fornisce tre metodi differenti al fine di inoltrare una richiesta, controllarne lo stato ed ottenerne il risultato
 - Al passo (1), il fruitore effettua una richiesta;
@@ -29,7 +29,7 @@ Per attuare la configurazione su GovWay si deve procedere con la registrazione d
 
 - Richiesta
 
-Effettuata la registrazione delle API, accedere al dettaglio dell'azione corrispondente alla richiesta ed impostare nella sezione 'ModI PA' un profilo di interazione non bloccante 'PULL' con ruolo 'Richiesta' come mostrato nella figura :numref:`modipa_flusso_PULL_richiesta_SOAP`:
+Effettuata la registrazione delle API, accedere al dettaglio dell'azione corrispondente alla richiesta ed impostare nella sezione 'ModI' un pattern di interazione non bloccante 'PULL' con ruolo 'Richiesta' come mostrato nella figura :numref:`modipa_flusso_PULL_richiesta_SOAP`:
 
    .. figure:: ../../_figure_console/modipa_flusso_PULL_richiesta_SOAP.png
     :scale: 40%
@@ -40,7 +40,7 @@ Effettuata la registrazione delle API, accedere al dettaglio dell'azione corrisp
 
 - Richiesta Stato
 
-Successivamente, accedere al dettaglio dell'azione che consente di richiedere lo stato di processamento ed impostare nella sezione 'ModI PA' un profilo di interazione non bloccante 'PULL' con ruolo 'Richiesta Stato'. Definire anche la correlazione verso l'azione relativa alla richiesta come mostrato nella figura :numref:`modipa_flusso_PULL_richiestaStato_SOAP`:
+Successivamente, accedere al dettaglio dell'azione che consente di richiedere lo stato di processamento ed impostare nella sezione 'ModI' un pattern di interazione non bloccante 'PULL' con ruolo 'Richiesta Stato'. Definire anche la correlazione verso l'azione relativa alla richiesta come mostrato nella figura :numref:`modipa_flusso_PULL_richiestaStato_SOAP`:
 
    .. figure:: ../../_figure_console/modipa_flusso_PULL_richiestaStato_SOAP.png
     :scale: 40%
@@ -51,7 +51,7 @@ Successivamente, accedere al dettaglio dell'azione che consente di richiedere lo
 
 - Risposta
 
-Accedere al dettaglio dell'azione corrispondente alla risposta ed impostare nella sezione 'ModI PA' un profilo di interazione non bloccante 'PULL' con ruolo 'Risposta'. Definire anche la correlazione verso l'azione relativa alla richiesta come mostrato nella figura :numref:`modipa_flusso_PULL_risposta_SOAP`:
+Accedere al dettaglio dell'azione corrispondente alla risposta ed impostare nella sezione 'ModI' un pattern di interazione non bloccante 'PULL' con ruolo 'Risposta'. Definire anche la correlazione verso l'azione relativa alla richiesta come mostrato nella figura :numref:`modipa_flusso_PULL_risposta_SOAP`:
 
    .. figure:: ../../_figure_console/modipa_flusso_PULL_risposta_SOAP.png
     :scale: 40%
@@ -78,7 +78,7 @@ Ricevuto il messaggio di acknowledgement GovWay verifica la presenza dell’head
 
 - Richiesta Stato di Processamento
 
-Le richieste che richiedono uno stato del processamento vengono validate da GovWay verificando la presenza dell'header soap 'X-Correlation-ID' come previsto dal profilo 'ModI PA'. Effettuata la validazione del messaggio di richiesta, eventualmente gestendo anche gli aspetti di sicurezza descritti nella sezione :ref:`modipa_sicurezzaMessaggio`, GovWay inoltra il messaggio al backend e rimane in attesa dell'acknowledgement. L'informazione sull'id di correlazione è inoltrato al backend, oltre che tramite l'header soap 'X-Correlation-ID', anche tramite gli header di integrazione descritti nella sezione :ref:`headerIntegrazione_richiestaInoltrata` e :ref:`headerIntegrazione_other` (per default tramite l'header http 'GovWay-Conversation-ID').
+Le richieste che richiedono uno stato del processamento vengono validate da GovWay verificando la presenza dell'header soap 'X-Correlation-ID' come previsto dal profilo 'ModI'. Effettuata la validazione del messaggio di richiesta, eventualmente gestendo anche gli aspetti di sicurezza descritti nella sezione :ref:`modipa_sicurezzaMessaggio`, GovWay inoltra il messaggio al backend e rimane in attesa dell'acknowledgement. L'informazione sull'id di correlazione è inoltrato al backend, oltre che tramite l'header soap 'X-Correlation-ID', anche tramite gli header di integrazione descritti nella sezione :ref:`headerIntegrazione_richiestaInoltrata` e :ref:`headerIntegrazione_other` (per default tramite l'header http 'GovWay-Conversation-ID').
 
 - Risposta
 
@@ -93,11 +93,11 @@ Sul dominio del fruitore deve essere definita una fruizione dell'API.
 
 Le richieste devono essere inoltrate dall'applicativo mittente utilizzando la fruizione dell'API configurata su GovWay. 
 
-Il messaggio di acknowledgement ricevuto viene validato al fine di verificare la presenza dell'header soap 'X-Correlation-ID' come previsto dalla specifica 'ModI PA'. L'informazione sull'id di correlazione è ottenibile dall'applicativo mittente sulla risposta, oltre che tramite l'header soap 'X-Correlation-ID', anche tramite gli header di integrazione descritti nella sezione :ref:`headerIntegrazione_richiestaInoltrata` e :ref:`headerIntegrazione_other` (per default tramite l'header http 'GovWay-Conversation-ID').
+Il messaggio di acknowledgement ricevuto viene validato al fine di verificare la presenza dell'header soap 'X-Correlation-ID' come previsto dalla specifica 'ModI'. L'informazione sull'id di correlazione è ottenibile dall'applicativo mittente sulla risposta, oltre che tramite l'header soap 'X-Correlation-ID', anche tramite gli header di integrazione descritti nella sezione :ref:`headerIntegrazione_richiestaInoltrata` e :ref:`headerIntegrazione_other` (per default tramite l'header http 'GovWay-Conversation-ID').
 
 - Richiesta Stato di Processamento
 
-Le richieste che richiedono uno stato del processamento devono essere inoltrate dall'applicativo mittente utilizzando la fruizione dell'API configurata su GovWay. Le richieste vengono validate da GovWay verificando la presenza dell'header soap 'X-Correlation-ID'. GovWay permette di fornire l'informazione sull'identificativo di correlazione anche tramite modalità alternative all'header soap per poi generarlo come previsto dalla specifica 'ModI PA' valorizzato con il valore fornito. Le modalità alternative sono le seguenti:
+Le richieste che richiedono uno stato del processamento devono essere inoltrate dall'applicativo mittente utilizzando la fruizione dell'API configurata su GovWay. Le richieste vengono validate da GovWay verificando la presenza dell'header soap 'X-Correlation-ID'. GovWay permette di fornire l'informazione sull'identificativo di correlazione anche tramite modalità alternative all'header soap per poi generarlo come previsto dalla specifica 'ModI' valorizzato con il valore fornito. Le modalità alternative sono le seguenti:
 
     - Header HTTP 'X-Correlation-ID'
     - Header HTTP 'GovWay-Conversation-ID' o parametro della url 'govway_conversation_id' previsto per la correlazione tramite identificativo di collaborazione descritta nella sezione :ref:`correlazioneTransazioniDifferenti`. Questa modalità richiede che sia abilitata l'indicazione dell'identificativo di collaborazione nell'API o sulla singola azione come mostrato nella figura :numref:`abilitazioneIdCollaborazioneSOAP2`:

@@ -150,8 +150,10 @@ public class Costanti {
     public final static String REQUISITI_INPUT_RACCOLTI = "[[InformationMissingRequisiti]]";
     
     public static final String SPCOOP_PROTOCOL_NAME = "spcoop";
+    public static final String SPCOOP_PROTOCOL_LABEL = "SPCoop";
     
     public static final String MODIPA_PROTOCOL_NAME = "modipa";
+    public static final String MODIPA_PROTOCOL_LABEL = "ModI";
     
     public static final String MODIPA_VALUE_UNDEFINED = "-";
     

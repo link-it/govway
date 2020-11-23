@@ -15543,7 +15543,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	// ****** PROFILO MODI PA ******
+	// ****** PROFILO MODI ******
 	
 	public boolean isProfiloModIPA(String protocollo) {
 		return this.core.isProfiloModIPA(protocollo);

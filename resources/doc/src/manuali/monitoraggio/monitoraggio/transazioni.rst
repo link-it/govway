@@ -193,8 +193,8 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
          errore dovuto al fallimento del processo di autorizzazione del
          chiamante;
 
-      -  *Errore ModI PA/SPCoop/SDI/eDelivery*: Errore specifico per ciascun profilo di interoperabilità che indica le transazioni che hanno generato
-         errori a livello del protocollo (es. ModI PA) specifico della
+      -  *Errore ModI/SPCoop/SDI/eDelivery*: Errore specifico per ciascun profilo di interoperabilità che indica le transazioni che hanno generato
+         errori a livello del protocollo (es. ModI) specifico della
          comunicazione con il dominio esterno;
 
       -  *API Sospesa*: Errore dovuto al fatto che l'API invocata risulta sospesa in configurazione;

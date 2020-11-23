@@ -93,7 +93,11 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			}
 			
 			Integer [] returnCodeAttesi = this.modiProperties.getRestBloccanteHttpStatus();
-			if(returnCodeAttesi!=null) {
+			
+			// Fix: il controllo deve essere fatto solo per i codici che non rientrano in 4xx e 5xx
+			boolean is_4xx_5xx = (returnCodeInt>=400) && (returnCodeInt<=599);
+			
+			if(!is_4xx_5xx && returnCodeAttesi!=null) {
 				boolean found = false;
 				for (Integer integer : returnCodeAttesi) {
 					if(integer.intValue() == ModICostanti.MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE) {
@@ -190,9 +194,15 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			}
 		}
 		
+		// Fix: il controllo deve essere fatto solo per i codici che non rientrano in 4xx e 5xx
+		boolean is_4xx_5xx = false;
+		if(!request) {
+			is_4xx_5xx = (returnCodeInt>=400) && (returnCodeInt<=599);
+		}
+		
 		Integer [] returnCodeAttesi = null;
 		
-		if(asyncInteractionType!=null) {
+		if(!is_4xx_5xx && asyncInteractionType!=null) {
 			if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(asyncInteractionType)) {
 				if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
 					if(request) {

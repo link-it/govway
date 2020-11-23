@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciaExtInfo;
 import org.openspcoop2.utils.MapEntry;
 import org.openspcoop2.utils.beans.BlackListElement;
@@ -204,16 +205,25 @@ public class BustaBean extends Busta {
 	
 		Hashtable<String,Map<String, String>> map = new Hashtable<>();
 		try {
-			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this, this.tipoApi);
-			if(extInfoList==null || extInfoList.isEmpty() || extInfoList.size()<=1) {
-				Map<String, String> mapDefault = this.getProperties();
-				if(mapDefault!=null && !mapDefault.isEmpty()) {
-					map.put("", mapDefault);
+			ITracciaSerializer tracciaSerializer = this.protocolFactory.createTracciaSerializer();
+			if(tracciaSerializer.isSupportedExtInfo()) {
+				List<TracciaExtInfo> extInfoList = tracciaSerializer.extractExtInfo(this, this.tipoApi);
+				if(extInfoList==null || extInfoList.isEmpty()) {
+					Map<String, String> mapDefault = this.getProperties();
+					if(mapDefault!=null && !mapDefault.isEmpty()) {
+						map.put("", mapDefault);
+					}
+				}
+				else {
+					for (TracciaExtInfo tracciaExtInfo : extInfoList) {
+						map.put(tracciaExtInfo.getLabel()!=null ? tracciaExtInfo.getLabel() : "", tracciaExtInfo.getProprietaAsMap());		
+					}
 				}
 			}
 			else {
-				for (TracciaExtInfo tracciaExtInfo : extInfoList) {
-					map.put(tracciaExtInfo.getLabel()!=null ? tracciaExtInfo.getLabel() : "", tracciaExtInfo.getProprietaAsMap());		
+				Map<String, String> mapDefault = this.getProperties();
+				if(mapDefault!=null && !mapDefault.isEmpty()) {
+					map.put("", mapDefault);
 				}
 			}
 		}catch(Exception e) {
@@ -230,24 +240,31 @@ public class BustaBean extends Busta {
 		List<Map.Entry<String, List<Map.Entry<String, String>>>> toRet = new ArrayList<>();
 		
 		try {
-			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this, this.tipoApi);
-			if(extInfoList==null || extInfoList.isEmpty() || extInfoList.size()<=1) {
-				
-				Map.Entry<String, List<Map.Entry<String, String>>> entry = this.getMapEntryExtInfoDefault();
-				toRet.add(entry);
-				
+			ITracciaSerializer tracciaSerializer = this.protocolFactory.createTracciaSerializer();
+			if(tracciaSerializer.isSupportedExtInfo()) {
+				List<TracciaExtInfo> extInfoList = tracciaSerializer.extractExtInfo(this, this.tipoApi);
+				if(extInfoList==null || extInfoList.isEmpty()) {
+					
+					Map.Entry<String, List<Map.Entry<String, String>>> entry = this.getMapEntryExtInfoDefault();
+					toRet.add(entry);
+					
+				}
+				else {
+					
+					for (TracciaExtInfo tracciaExtInfo : extInfoList) {
+					
+						Map.Entry<String, List<Map.Entry<String, String>>> entry = 
+								new MapEntry<String, List<Map.Entry<String, String>>>(tracciaExtInfo.getLabel()!=null ? tracciaExtInfo.getLabel() : "",
+										tracciaExtInfo.getProprietaAsMapEntry());
+						toRet.add(entry);	
+					
+					}
+					
+				}
 			}
 			else {
-				
-				for (TracciaExtInfo tracciaExtInfo : extInfoList) {
-				
-					Map.Entry<String, List<Map.Entry<String, String>>> entry = 
-							new MapEntry<String, List<Map.Entry<String, String>>>(tracciaExtInfo.getLabel()!=null ? tracciaExtInfo.getLabel() : "",
-									tracciaExtInfo.getProprietaAsMapEntry());
-					toRet.add(entry);	
-				
-				}
-				
+				Map.Entry<String, List<Map.Entry<String, String>>> entry = this.getMapEntryExtInfoDefault();
+				toRet.add(entry);
 			}
 		}catch(Exception e) {
 			log.error("Conversione extInfo properties fallita: "+e.getMessage(),e);

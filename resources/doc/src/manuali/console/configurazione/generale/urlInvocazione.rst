@@ -73,7 +73,7 @@ Nei campi 'Base URL' e 'Contesto' è possibile utilizzare le seguenti informazio
 
 *Esempio 1*
 
-Tutte le API REST erogate dal Soggetto 'ENTE' tramite il profilo 'ModI PA' possiedono nell'installazione di default la seguente URL di Invocazione:
+Tutte le API REST erogate dal Soggetto 'ENTE' tramite il profilo 'ModI' possiedono nell'installazione di default la seguente URL di Invocazione:
 
 - http://localhost:8080/rest/in/ENTE/NomeAPI/v1
 
@@ -83,7 +83,7 @@ Criteri di Applicabilità:
 
 - Espressione Regolare: true
 - Regola: .+/in/(.+)/(.+)/v(.+)
-- Profilo: ModI PA
+- Profilo: ModI
 - Soggetto: ENTE
 - Ruolo: Erogazione
 - Tipo API: REST
@@ -100,7 +100,7 @@ L'url di invocazione prodotta sarà:
 
 *Esempio 2*
 
-Supponiamo di voler modificare l'url di invocazione dell'API 'PetStore' versione 1 erogata dal soggetto 'ENTE' tramite il profilo di interoperabilità 'ModI PA'. Nell'installazione di default viene fornita la seguente URL di Invocazione:
+Supponiamo di voler modificare l'url di invocazione dell'API 'PetStore' versione 1 erogata dal soggetto 'ENTE' tramite il profilo di interoperabilità 'ModI'. Nell'installazione di default viene fornita la seguente URL di Invocazione:
 
 - http://localhost:8080/rest/in/ENTE/PetStore/v1
 
@@ -110,7 +110,7 @@ Criteri di Applicabilità:
 
 - Espressione Regolare: false
 - Regola: /rest/in/ENTE/PetStore/v1
-- Profilo: ModI PA
+- Profilo: ModI
 - Soggetto: Qualsiasi
 - Ruolo: Qualsiasi
 - Tipo API: Qualsiasi

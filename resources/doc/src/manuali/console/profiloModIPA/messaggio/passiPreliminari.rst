@@ -3,7 +3,7 @@
 Passi preliminari di configurazione
 -----------------------------------
 
-In questa sezione viene indicato come effettuare una configurazione iniziale dei seguenti aspetti di gestione dei certificati X509 utilizzati all'interno dei token di sicurezza 'ModI PA'.
+In questa sezione viene indicato come effettuare una configurazione iniziale dei seguenti aspetti di gestione dei certificati X509 utilizzati all'interno dei token di sicurezza 'ModI'.
 
 **TrustStore per la validazione dei Certificati**
 
@@ -21,7 +21,7 @@ La configurazione sopra indicata rappresenta la configurazione di default che ve
 
 	**TrustStore delle comunicazioni HTTPS**
 
-	Nei profili di sicurezza per API REST, dove il riferimento al certificato utilizzato viaggia tramite il claim 'x5u', è possibile che GovWay debba effettuare il download del certificato tramite url https che espongono certificati server non validabili tramite le CA note. In tale contesto è possibile configurare un trustStore personalizzato agendo sulle proprietà presenti nel file “/etc/govway/modipa_local.properties” in maniera simile al trustStore dei certificati. Tali proprietà possiedono il prefisso 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.'.
+	Nei pattern di sicurezza per API REST, dove il riferimento al certificato utilizzato viaggia tramite il claim 'x5u', è possibile che GovWay debba effettuare il download del certificato tramite url https che espongono certificati server non validabili tramite le CA note. In tale contesto è possibile configurare un trustStore personalizzato agendo sulle proprietà presenti nel file “/etc/govway/modipa_local.properties” in maniera simile al trustStore dei certificati. Tali proprietà possiedono il prefisso 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.'.
 
 
 **KeyStore per la firma della Risposte**

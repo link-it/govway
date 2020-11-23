@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.modipa.constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -37,9 +38,9 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 
 public class ModIConsoleCostanti {
    
-	public static final String MODIPA_TITLE_LABEL = "ModI PA"; // utilizzata tramite reflection in govwayConsole
+	public static final String MODIPA_TITLE_LABEL = Costanti.MODIPA_PROTOCOL_LABEL; // utilizzata tramite reflection in govwayConsole
 	@SuppressWarnings("unused")
-	private static final String MODIPA_PREFIX_TITLE_LABEL = "ModI PA - ";
+	private static final String MODIPA_PREFIX_TITLE_LABEL = Costanti.MODIPA_PROTOCOL_LABEL+" - ";
 	
 	public static final String MODIPA_VALUE_UNDEFINED = ModICostanti.MODIPA_VALUE_UNDEFINED;
     public static final String MODIPA_LABEL_UNDEFINED = "-";
@@ -130,10 +131,10 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_LABEL = MODIPA_TITLE_LABEL;
 	public static final String MODIPA_API_ID = "modipaAPITitleId";
 		
-	public static final String MODIPA_API_PROFILO_CANALE_LABEL = "Profilo Sicurezza Canale";
+	public static final String MODIPA_API_PROFILO_CANALE_LABEL = "Sicurezza Canale";
 	public static final String MODIPA_API_PROFILO_CANALE_ID = "modipaAPIProfiloSicurezzaSubTitleId";
         
-    public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL = "Profilo";
+    public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL = "Pattern";
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE;
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01 = ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01;
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_NEW = "ID_AUTH_CHANNEL_01";
@@ -153,10 +154,10 @@ public class ModIConsoleCostanti {
  	public static final String MODIPA_AZIONE_ID = "modipaAzioneTitleId";
     
      
-	public static final String MODIPA_API_PROFILO_INTERAZIONE_LABEL = "Profilo Interazione";
+	public static final String MODIPA_API_PROFILO_INTERAZIONE_LABEL = "Interazione";
 	public static final String MODIPA_API_PROFILO_INTERAZIONE_ID = "modipaAzioneProfiloInterazioneSubTitleId";
 	
-	public static final String MODIPA_PROFILO_INTERAZIONE_LABEL = "Profilo";
+	public static final String MODIPA_PROFILO_INTERAZIONE_LABEL = "Pattern";
 	public static final String MODIPA_PROFILO_INTERAZIONE_ID = ModICostanti.MODIPA_PROFILO_INTERAZIONE;
 	public static final String MODIPA_PROFILO_INTERAZIONE_ID_INUSE_READONLY = ModICostanti.MODIPA_PROFILO_INTERAZIONE+"__LABEL";
 	public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD = ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD;
@@ -168,7 +169,7 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_PROFILO_INTERAZIONE_DEFAULT_REST_VALUE = ModICostanti.MODIPA_PROFILO_INTERAZIONE_DEFAULT_REST_VALUE;
     public static final String MODIPA_PROFILO_INTERAZIONE_DEFAULT_SOAP_VALUE = ModICostanti.MODIPA_PROFILO_INTERAZIONE_DEFAULT_SOAP_VALUE;
 	
-	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_LABEL = "Interazione";
+	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_LABEL = "Tipo";
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_ID = ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA;
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_ID_INUSE_READONLY = ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA+"__LABEL";
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH = ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH;
@@ -197,10 +198,10 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_CORRELATA_A_AZIONE_LABEL = "Azione";
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_CORRELATA_A_RISORSA_LABEL = "Risorsa";
     
-	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Profilo Sicurezza Messaggio";
+	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Sicurezza Messaggio";
 	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_ID = "modipaProfiloSicurezzaSubTitleId";
     	
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Profilo";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Pattern";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_UNDEFINED = MODIPA_LABEL_UNDEFINED;
@@ -248,10 +249,10 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL_RIGHT = "Non ripudiabilità della trasmissione";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST;
 	public static final boolean MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_DEFAULT = false;
-	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_REST_INFO_HEADER = "Questa funzionalità consente di estendere il profilo aggiungendo all’interno del token di sicurezza della risposta il digest della richiesta.<BR/>"+
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_REST_INFO_HEADER = "Questa funzionalità consente di estendere il pattern aggiungendo all’interno del token di sicurezza della risposta il digest della richiesta.<BR/>"+
 			"La funzionalità consente di implementare la soluzione per la non ripudiabilità della trasmissione come suggerito nelle linee guida di interoperabilità<BR/>"+
 			"Il digest della richiesta viene aggiunto nel token della risposta all'interno del claim 'request_digest'.";
-	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_SOAP_INFO_HEADER = "Questa funzionalità consente di estendere il profilo aggiungendo all’interno dell'header di sicurezza tutti i digest della richiesta.<BR/>"+
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_SOAP_INFO_HEADER = "Questa funzionalità consente di estendere il pattern aggiungendo all’interno dell'header di sicurezza tutti i digest della richiesta.<BR/>"+
 			"La funzionalità consente di implementare la soluzione per la non ripudiabilità della trasmissione come suggerito nelle linee guida di interoperabilità<BR/>"+
 			"I digest della richiesta sono inseriti in un header 'X-RequestDigest' firmato.";
     
@@ -259,14 +260,14 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL_RIGHT = "Dati dell'utente che effettua la richiesta";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA;
     public static final boolean MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_DEFAULT_VALUE = false;
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_HEADER = "Questa funzionalità consente di estendere il profilo aggiungendo all’interno del token di sicurezza le informazioni sull’utente che ha effettuato la richiesta. Le informazioni sono veicolate nei seguenti claims:";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_HEADER = "Questa funzionalità consente di estendere il pattern aggiungendo all’interno del token di sicurezza le informazioni sull’utente che ha effettuato la richiesta. Le informazioni sono veicolate nei seguenti claims:";
     public final static List<String> MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI = new ArrayList<>();
 	static {
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI.add("<b>iss</b>: dominio di appartenenza dell’utente");
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI.add("<b>sub</b>: identificativo univoco dell’utente all’interno del dominio indicato nel claim 'iss'");
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI.add("<b>user_ip</b>: postazione da cui l’utente ha effettuato la richiesta");
 	}
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_HEADER = "Questa funzionalità consente di estendere il profilo aggiungendo all’interno dell'header di sicurezza un'asserzione SAML firmata contenente le informazioni sull’utente che ha effettuato la richiesta. Le informazioni sono presenti, all'interno dell'asserzione, nelle seguenti posizioni:";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_HEADER = "Questa funzionalità consente di estendere il pattern aggiungendo all’interno dell'header di sicurezza un'asserzione SAML firmata contenente le informazioni sull’utente che ha effettuato la richiesta. Le informazioni sono presenti, all'interno dell'asserzione, nelle seguenti posizioni:";
     public final static List<String> MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_VALORI = new ArrayList<>();
 	static {
 		MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SOAP_INFO_VALORI.add("<b>saml2:Subject/NameID</b>: dominio di appartenenza dell’utente");
@@ -276,7 +277,7 @@ public class ModIConsoleCostanti {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE_DEFAULT_VALUE = ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_DEFAULT;
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE_LABEL_DEFAULT = "Usa profilo API";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE_LABEL_DEFAULT = "Usa pattern API";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE_LABEL_RIDEFINISCI = "Ridefinito";
     
     public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_LABEL = "Applicabilità";
@@ -337,13 +338,13 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_RISPOSTA_LABEL = MODIPA_TITLE_LABEL+" - Risposta";
 	public static final String MODIPA_API_IMPL_RISPOSTA_ID = "modipaAPIImplResponseTitleId";
 	
-	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_LABEL = "Profilo Sicurezza Messaggio";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_LABEL = "Sicurezza Messaggio";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_ID = "modipaAPIImplProfiloSicurezzaRequestSubTitleId";
 	
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_RICHIESTA_LABEL = MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_RICHIESTA_ID = "modipaAPIImplProfiloCorniceSicurezzaRequestSubTitleId";
 	
-	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_LABEL = "Profilo Sicurezza Messaggio";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_LABEL = "Sicurezza Messaggio";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_ID = "modipaAPIImplProfiloSicurezzaResponseSubTitleId";
 	
 	
@@ -484,6 +485,8 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_DEFAULT;
 	
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_DEFAULT_INFO_INTESTAZIONE = "Per default questa informazione assume il valore del soggetto registrato su GovWay, di dominio interno, per il quale si sta effettuando la richiesta di fruizione dell'API.";
+		
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_LABEL = "";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE;
 		
@@ -491,16 +494,24 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_DEFAULT;
 	
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_INFO_INTESTAZIONE = "L'identificativo dell'utente deve essere indicato nella richiesta di fruizione tramite una delle seguenti modalità:";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_INFO_HTTP = "Header http 'GovWay-CS-User'";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_INFO_URL = "Parametro della url 'govway_cs_user'";
+	
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_LABEL = "";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER;
-	
+		
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_DEFAULT;
 	
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_INFO_INTESTAZIONE = "La postazione dell’utente deve essere indicata nella richiesta di fruizione tramite una delle seguenti modalità:";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_INFO_HTTP = "Header http 'GovWay-CS-IPUser'";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_INFO_URL = "Parametro della url 'govway_cs_ipuser'";
+	
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_LABEL = "";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER;
-	
+		
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_LABEL = "TrustStore Certificati";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_DEFAULT;

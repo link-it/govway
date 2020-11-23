@@ -1,3 +1,13 @@
+2020-11-23  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA, Documentazione]
+	Aggiunta funzionalità OP-1103
+	Ridenominato profilo 'ModI PA' in 'ModI'.
+	Adeguata terminologia da 'profilo' a 'pattern' per i pattern di Interazione, di Sicurezza Canale e di Sicurezza Messaggio.
+	Nell'intervento è stato risolto anche il problema di validazione dei codici http su API REST bloccanti e non bloccanti in caso di codici 4xx e 5xx. 
+	Il controllo dei codici di risposta previsti dalle linee guida riguarda adesso esclusivamente codici di risposta che rientrano nelle casistiche 2xx o 3xx.
+	Sono inoltre state aggiornate le url delle specifiche del Profilo di Fatturazione Elettronica e SPCoop.
+
 2020-11-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

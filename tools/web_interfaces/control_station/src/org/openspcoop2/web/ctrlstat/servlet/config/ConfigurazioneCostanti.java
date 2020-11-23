@@ -1476,7 +1476,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_POLICY_INFORMAZIONI_SOGLIA = "Valori di Soglia";
 	public final static String LABEL_POLICY_INFORMAZIONI_SOGLIA_NUMERO = "Soglia";
 	public final static String LABEL_POLICY_INFORMAZIONI_SOGLIA_BANDA = "Soglia (kb)";
-	public final static String LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI = "Soglia (ms)";
+	public final static String LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI_MS = "Soglia (ms)";
+	public final static String LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI_SECONDI = "Soglia (secondi)";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO = "Tipo";

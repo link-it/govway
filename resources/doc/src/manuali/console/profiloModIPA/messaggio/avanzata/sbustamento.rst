@@ -9,7 +9,7 @@ I Token di sicurezza, dopo essere stati validati da GovWay, vengono eliminati da
 Per farlo si deve utilizzare la govwayConsole in modalità avanzata (vedi sezione :ref:`modalitaAvanzata`).
 
 
-Per quanto concerne le richieste inoltrate ad un backend, durante la gestione di una erogazione, è possibile disabilitare l'eliminazione del token di sicurezza intervenendo sul connettore dell'erogazione e disabilitando la voce 'Sbustamento ModI PA' all'interno della sezione 'Trattamento Messaggio
+Per quanto concerne le richieste inoltrate ad un backend, durante la gestione di una erogazione, è possibile disabilitare l'eliminazione del token di sicurezza intervenendo sul connettore dell'erogazione e disabilitando la voce 'Sbustamento ModI' all'interno della sezione 'Trattamento Messaggio
 ' come mostrato nella figura :numref:`modipa_sbustamento_richiesta`.
 
    .. figure:: ../../../_figure_console/modipa_sbustamento_richiesta.png
@@ -17,10 +17,10 @@ Per quanto concerne le richieste inoltrate ad un backend, durante la gestione di
     :align: center
     :name: modipa_sbustamento_richiesta
 
-    Funzionalità 'Sbustamento ModI PA' disabilitata per la Richiesta
+    Funzionalità 'Sbustamento ModI' disabilitata per la Richiesta
 
 
-Sulle risposte ritornate all'applicativo mittente, durante la gestione di una fruizione, è possibile disabilitare l'eliminazione del token di sicurezza intervenendo sull'applicativo e disabilitando la voce 'Sbustamento ModI PA' all'interno della sezione 'Trattamento Messaggio
+Sulle risposte ritornate all'applicativo mittente, durante la gestione di una fruizione, è possibile disabilitare l'eliminazione del token di sicurezza intervenendo sull'applicativo e disabilitando la voce 'Sbustamento ModI' all'interno della sezione 'Trattamento Messaggio
 ' come mostrato nella figura :numref:`modipa_sbustamento_risposta`.
 
    .. figure:: ../../../_figure_console/modipa_sbustamento_risposta.png
@@ -28,4 +28,4 @@ Sulle risposte ritornate all'applicativo mittente, durante la gestione di una fr
     :align: center
     :name: modipa_sbustamento_risposta
 
-    Funzionalità 'Sbustamento ModI PA' disabilitata per la Risposta
+    Funzionalità 'Sbustamento ModI' disabilitata per la Risposta

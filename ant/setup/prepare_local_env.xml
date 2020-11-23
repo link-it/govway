@@ -117,7 +117,7 @@
 	<property name="jms_lib_as4" value="${as4}/deploy/lib_jms" />
 	<import file="${as4}/build.xml" />
 
-	<!-- ModI PA -->
+	<!-- ModI -->
 	<property name="modipa" value="${rootDir}/protocolli/modipa"/>
 	<property name="src_modipa" value="${modipa}/src" />
 	<import file="${modipa}/build.xml" />

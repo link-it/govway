@@ -47,7 +47,10 @@ Per creare una tag version:
 
 15. Sistemare migratore delle configurazioni da OpenSPCoop
 
-16. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
+16. Verificare che gli indirizzi dei webSite principali dei protocolli siano ancora attivi.
+    find protocolli/ -name openspcoop2-manifest.xml | xargs grep webSite
+
+17. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
    Per farlo, ad esempio se stiamo rilasciando la versione 3.3.1:
    - fare il clone di govway-docker
    - generare una versione dell'installer semi-definitiva (con master build version) e copiarla dentro la directory compose_bin/ di govway-docker
@@ -97,6 +100,6 @@ Per creare una tag version:
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 
-17. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
+18. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
-18. Creazione versione tag
+19. Creazione versione tag

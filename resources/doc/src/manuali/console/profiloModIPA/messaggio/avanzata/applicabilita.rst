@@ -3,7 +3,7 @@
 Attivazione della sicurezza messaggio su richiesta/risposta
 ---------------------------------------------------------------
 
-Insieme all'attivazione di un profilo di sicurezza messaggio è possibile configurarne l'attivazione solamente sulla richiesta o sulla risposta (:numref:`modipa_sicurezza_applicabilita`).
+Insieme all'attivazione di un pattern di sicurezza messaggio è possibile configurarne l'attivazione solamente sulla richiesta o sulla risposta (:numref:`modipa_sicurezza_applicabilita`).
 
    .. figure:: ../../../_figure_console/modipa_sicurezza_applicabilita.png
     :scale: 50%

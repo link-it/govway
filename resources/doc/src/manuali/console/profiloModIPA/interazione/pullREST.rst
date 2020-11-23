@@ -1,18 +1,18 @@
 .. _modipa_pullREST:
 
-Profilo di Interazione PULL per API REST
+Pattern di Interazione PULL per API REST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Il profilo di interazione, denominato PULL, prevede che il fruitore non fornisca un indirizzo di callback, mentre l’erogatore fornisce un indirizzo interrogabile per verificare lo stato di processamento di una richiesta e, al fine dell’elaborazione della stessa, il risultato (:numref:`modipa_flusso_PULL_REST`).
+Il pattern di interazione, denominato PULL, prevede che il fruitore non fornisca un indirizzo di callback, mentre l’erogatore fornisce un indirizzo interrogabile per verificare lo stato di processamento di una richiesta e, al fine dell’elaborazione della stessa, il risultato (:numref:`modipa_flusso_PULL_REST`).
 
    .. figure:: ../../_figure_console/modipa_flusso_PULL_REST.png
     :scale: 50%
     :align: center
     :name: modipa_flusso_PULL_REST
 
-    Flusso previsto in un Profilo di Interazione PULL per API REST
+    Flusso previsto in un Pattern di Interazione PULL per API REST
 
-Come riportato dalle Linee Guida di Interoperabilità ModI PA:
+Come riportato dalle Linee Guida di Interoperabilità ModI:
 
 - L’interfaccia di servizio dell’erogatore fornisce tre metodi differenti al fine di inoltrare una richiesta, controllarne lo stato ed ottenerne il risultato
 - Al passo (1), il fruitore DEVE utilizzare il verbo HTTP POST;
@@ -29,7 +29,7 @@ Per attuare la configurazione su GovWay si deve procedere con la registrazione d
 
 - Richiesta
 
-Effettuata la registrazione delle API, accedere al dettaglio della risorsa corrispondente alla richiesta ed impostare nella sezione 'ModI PA' un profilo di interazione non bloccante 'PULL' con ruolo 'Richiesta' come mostrato nella figura :numref:`modipa_flusso_PULL_richiesta_REST`:
+Effettuata la registrazione delle API, accedere al dettaglio della risorsa corrispondente alla richiesta ed impostare nella sezione 'ModI' un pattern di interazione non bloccante 'PULL' con ruolo 'Richiesta' come mostrato nella figura :numref:`modipa_flusso_PULL_richiesta_REST`:
 
    .. figure:: ../../_figure_console/modipa_flusso_PULL_richiesta_REST.png
     :scale: 40%
@@ -40,7 +40,7 @@ Effettuata la registrazione delle API, accedere al dettaglio della risorsa corri
 
 - Richiesta Stato
 
-Successivamente, accedere al dettaglio dell'azione che consente di richiedere lo stato di processamento ed impostare nella sezione 'ModI PA' un profilo di interazione non bloccante 'PULL' con ruolo 'Richiesta Stato'. Definire anche la correlazione verso la risorsa relativa alla richiesta come mostrato nella figura :numref:`modipa_flusso_PULL_richiestaStato_REST`:
+Successivamente, accedere al dettaglio dell'azione che consente di richiedere lo stato di processamento ed impostare nella sezione 'ModI' un pattern di interazione non bloccante 'PULL' con ruolo 'Richiesta Stato'. Definire anche la correlazione verso la risorsa relativa alla richiesta come mostrato nella figura :numref:`modipa_flusso_PULL_richiestaStato_REST`:
 
    .. figure:: ../../_figure_console/modipa_flusso_PULL_richiestaStato_REST.png
     :scale: 40%
@@ -51,7 +51,7 @@ Successivamente, accedere al dettaglio dell'azione che consente di richiedere lo
 
 - Risposta
 
-Accedere al dettaglio dell'azione corrispondente alla risposta ed impostare nella sezione 'ModI PA' un profilo di interazione non bloccante 'PULL' con ruolo 'Risposta'. Definire anche la correlazione verso la risorsa relativa alla richiesta come mostrato nella figura :numref:`modipa_flusso_PULL_risposta_REST`:
+Accedere al dettaglio dell'azione corrispondente alla risposta ed impostare nella sezione 'ModI' un pattern di interazione non bloccante 'PULL' con ruolo 'Risposta'. Definire anche la correlazione verso la risorsa relativa alla richiesta come mostrato nella figura :numref:`modipa_flusso_PULL_risposta_REST`:
 
    .. figure:: ../../_figure_console/modipa_flusso_PULL_risposta_REST.png
     :scale: 40%
@@ -96,7 +96,7 @@ Sul dominio del fruitore deve essere definita una fruizione dell'API.
 
 Le richieste devono essere inoltrate dall'applicativo mittente utilizzando la fruizione dell'API configurata su GovWay. 
 
-Il messaggio di acknowledgement ricevuto viene validato al fine di verificare la presenza dell'header http 'Location' come previsto dalla specifica 'ModI PA'. L'informazione sull'id di correlazione è ottenibile dall'applicativo mittente sulla risposta tramite gli header di integrazione descritti nella sezione :ref:`headerIntegrazione_richiestaInoltrata` e :ref:`headerIntegrazione_other` (per default tramite l'header http 'GovWay-Conversation-ID').
+Il messaggio di acknowledgement ricevuto viene validato al fine di verificare la presenza dell'header http 'Location' come previsto dalla specifica 'ModI'. L'informazione sull'id di correlazione è ottenibile dall'applicativo mittente sulla risposta tramite gli header di integrazione descritti nella sezione :ref:`headerIntegrazione_richiestaInoltrata` e :ref:`headerIntegrazione_other` (per default tramite l'header http 'GovWay-Conversation-ID').
 
 - Richiesta Stato di Processamento e Risposta
 

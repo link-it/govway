@@ -53,6 +53,11 @@ public class ModITracciaSerializer extends TracciaSerializer {
 	}
 
 	@Override
+	public boolean isSupportedExtInfo() {
+		return true;
+	} 
+	
+	@Override
 	public List<TracciaExtInfoDefinition> getExtInfoDefinition(){
 		List<TracciaExtInfoDefinition> list = new ArrayList<TracciaExtInfoDefinition>();
 		
@@ -86,6 +91,7 @@ public class ModITracciaSerializer extends TracciaSerializer {
 					for (Proprieta p : proprieta) {
 						//System.out.println("["+p.getNome()+"]=["+p.getValore()+"]");
 						if(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE.equals(p.getNome())) {
+							p.setNome(ModIConsoleCostanti.MODIPA_API_PROFILO_INTERAZIONE_LABEL);
 							if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD.equalsIgnoreCase(p.getValore())) {
 								p.setValore(ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_LABEL_CRUD);
 							}
@@ -97,6 +103,7 @@ public class ModITracciaSerializer extends TracciaSerializer {
 							}
 						}
 						else if(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE.equals(p.getNome())) {
+							p.setNome(ModIConsoleCostanti.MODIPA_API_PROFILO_CANALE_LABEL);
 							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01.equalsIgnoreCase(p.getValore())) {
 								p.setValore(terminologiaBozza ? ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_OLD : ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_NEW);
 							}
@@ -105,6 +112,7 @@ public class ModITracciaSerializer extends TracciaSerializer {
 							}
 						}
 						else if(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO.equals(p.getNome())) {
+							p.setNome(ModIConsoleCostanti.MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL);
 							if(tipoApi!=null && ServiceBinding.REST.equals(tipoApi)) {
 								if(ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01,true).equalsIgnoreCase(p.getValore())) {
 									p.setValore(terminologiaBozza ? ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST_OLD : ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST_NEW);

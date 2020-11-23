@@ -152,7 +152,7 @@
 			"response": []
 		},
 		{
-			"name": "5a. Erogazione REST ModI PA",
+			"name": "5a. Erogazione REST ModI",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -201,7 +201,7 @@
 			"response": []
 		},
 		{
-			"name": "5b. Erogazione REST ModI PA Error",
+			"name": "5b. Erogazione REST ModI Error",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -250,7 +250,7 @@
 			"response": []
 		},
 		{
-			"name": "6. Fruizione REST ModI PA",
+			"name": "6. Fruizione REST ModI",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -299,7 +299,7 @@
 			"response": []
 		},
 		{
-			"name": "7. Erogazione SOAP ModI PA",
+			"name": "7. Erogazione SOAP ModI",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -353,7 +353,7 @@
 			"response": []
 		},
 		{
-			"name": "8. Fruizione SOAP ModI PA",
+			"name": "8. Fruizione SOAP ModI",
 			"request": {
 				"auth": {
 					"type": "basic",

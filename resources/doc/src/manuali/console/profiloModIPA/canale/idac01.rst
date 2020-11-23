@@ -3,21 +3,21 @@
 [ID_AUTH_CHANNEL_01] Direct Trust Transport-Level Security
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Questo profilo di sicurezza prevede l'utilizzo del canale HTTPS, per le comunicazioni sul confine tra i due domini, con validazione del certificato dell'ente destinatario della comunicazione.
+Questo pattern di sicurezza prevede l'utilizzo del canale HTTPS, per le comunicazioni sul confine tra i due domini, con validazione del certificato dell'ente destinatario della comunicazione.
 
 Descriviamo di seguito i passi di configurazione da effettuare:
 
-- La creazione della relativa API prevede che nella sezione "ModI PA", elemento "Profilo Sicurezza Canale", venga selezionato il profilo "ID_AUTH_CHANNEL_01" come indicato in :numref:`api_canale1_fig`.
+- La creazione della relativa API prevede che nella sezione "ModI", elemento "Sicurezza Canale", venga selezionato il pattern "ID_AUTH_CHANNEL_01" come indicato in :numref:`api_canale1_fig`.
 
    .. figure:: ../../_figure_console/modipa_api_canale1.png
     :scale: 50%
     :name: api_canale1_fig
 
-    Selezione del profilo "ID_AUTH_CHANNEL_01" per l'API
+    Selezione del pattern "ID_AUTH_CHANNEL_01" per l'API
 
-- Nel caso si voglia configurare una fruizione, le maschere di configurazione terranno conto degli aspetti di sicurezza sul canale garantendo che l'endpoint specificato nel connettore di uscita sia di tipo HTTPS, indipendentemente dal profilo adottato nella API (TLS sempre obbligatorio). L'autenticazione HTTPS può essere gestita opzionalmente da GovWay o, in alternativa, delegata alla configurazione della JVM sull'application server. Per la gestione in GovWay sono disponibili i campi per la configurazione HTTPS, lasciando opzionalmente la possibilità di impostare l'autenticazione client (vedi sez. :ref:`avanzate_connettori_https`).
+- Nel caso si voglia configurare una fruizione, le maschere di configurazione terranno conto degli aspetti di sicurezza sul canale garantendo che l'endpoint specificato nel connettore di uscita sia di tipo HTTPS, indipendentemente dal pattern adottato nella API (TLS sempre obbligatorio). L'autenticazione HTTPS può essere gestita opzionalmente da GovWay o, in alternativa, delegata alla configurazione della JVM sull'application server. Per la gestione in GovWay sono disponibili i campi per la configurazione HTTPS, lasciando opzionalmente la possibilità di impostare l'autenticazione client (vedi sez. :ref:`avanzate_connettori_https`).
 
-- Nel caso si voglia configurare una erogazione, il profilo di sicurezza "ID_AUTH_CHANNEL_01" impatta sulla configurazione del Controllo Accessi, previsto nella configurazione specifica dell'erogazione:
+- Nel caso si voglia configurare una erogazione, il pattern di sicurezza "ID_AUTH_CHANNEL_01" impatta sulla configurazione del Controllo Accessi, previsto nella configurazione specifica dell'erogazione:
 
     + La sezione "Autenticazione Canale" è impostata a "HTTPS" ammettendo il flag "Opzionale" (:numref:`erogazione_authTrasportoOpzionale_fig`).
 

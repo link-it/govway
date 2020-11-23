@@ -2,11 +2,11 @@
 <project name="prepare-setup-modipa" basedir=".">
 	
 	<description>
-        	PREPARE SETUP ModI PA
+        	PREPARE SETUP ModI
 	</description>
 
 	
-	<!-- Protocollo ModI PA -->
+	<!-- Protocollo ModI -->
 	<target name="prepare_modipa_setup">
 		
 		<if>

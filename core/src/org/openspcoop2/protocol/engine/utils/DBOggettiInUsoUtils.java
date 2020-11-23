@@ -2196,7 +2196,7 @@ public class DBOggettiInUsoUtils  {
 			
 			
 			
-			// Controllo che qualche azione o risorsa non sia stata correlata da un'altra azione tramite Modi PA
+			// Controllo che qualche azione o risorsa non sia stata correlata da un'altra azione tramite ModI
 			if(Costanti.MODIPA_PROTOCOL_NAME.equals(idAccordo.getSoggettoReferente().getTipo())) {
 			
 				// Recupero tipo REST/SOAP
@@ -2706,7 +2706,7 @@ public class DBOggettiInUsoUtils  {
 			
 			
 			
-			// Controllo che l'azione non sia stata correlata da un'altra azione tramite Modi PA
+			// Controllo che l'azione non sia stata correlata da un'altra azione tramite ModI
 			if(Costanti.MODIPA_PROTOCOL_NAME.equals(idRisorsa.getIdAccordo().getSoggettoReferente().getTipo())) {
 			
 				ISQLQueryObject sqlQueryObjectApiExists = SQLObjectFactory.createSQLQueryObject(tipoDB);
@@ -3475,7 +3475,7 @@ public class DBOggettiInUsoUtils  {
 			
 			
 			
-			// Controllo che l'azione non sia stata correlata da un'altra azione tramite Modi PA
+			// Controllo che l'azione non sia stata correlata da un'altra azione tramite ModI
 			if(Costanti.MODIPA_PROTOCOL_NAME.equals(idPT.getIdAccordo().getSoggettoReferente().getTipo())) {
 			
 				ISQLQueryObject sqlQueryObjectApiExists = SQLObjectFactory.createSQLQueryObject(tipoDB);
@@ -3957,7 +3957,7 @@ public class DBOggettiInUsoUtils  {
 			
 			
 			
-			// Controllo che l'azione non sia stata correlata da un'altra azione tramite Modi PA
+			// Controllo che l'azione non sia stata correlata da un'altra azione tramite ModI
 			if(Costanti.MODIPA_PROTOCOL_NAME.equals(idOperazione.getIdPortType().getIdAccordo().getSoggettoReferente().getTipo())) {
 			
 				ISQLQueryObject sqlQueryObjectApiExists = SQLObjectFactory.createSQLQueryObject(tipoDB);

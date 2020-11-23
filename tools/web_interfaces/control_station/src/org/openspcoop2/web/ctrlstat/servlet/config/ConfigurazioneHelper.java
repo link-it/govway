@@ -8136,11 +8136,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
 					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_MS_LABEL;
-					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI;
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI_MS;
 					break;
 				case TEMPO_COMPLESSIVO_RISPOSTA:
 					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_MS_LABEL;
-					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI;
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI_SECONDI;
 					break;
 				}
 			}

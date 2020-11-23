@@ -389,7 +389,7 @@
 			</then>
 		</if>
 
-		<!-- Impostazione ModI PA -->
+		<!-- Impostazione ModI -->
 		<if>
 			<istrue value="${antinstaller_protocollo_modipa}" />
 			<then>
@@ -438,7 +438,7 @@
 				</antcall>
 			</then>
 		</if>
-		<!-- Impostazione ModI PA -->
+		<!-- Impostazione ModI -->
 		<if>
 			<istrue value="${antinstaller_protocollo_modipa}" />
 			<then>

@@ -14,7 +14,7 @@ interoperabilità su rete Internet basato sull'accesso al servizio
 basato su SOAP, che veicola messaggi (fatture, archivi, notifiche e
 metadati) secondo la codifica dettata dalle specifiche tecniche (Per
 dettagli in merito si faccia riferimento alle Specifiche Tecniche
-SdI (http://www.fatturapa.gov.it/export/fatturazione/sdi/Specifiche_tecniche_SdI_v1.6.pdf).
+SdI (https://www.fatturapa.gov.it/it/norme-e-regole/DocumentazioneSDI/).
 
 Il profilo "Fatturazione Elettronica" consente, ai sistemi di gestione delle
 fatture di un ente, di non occuparsi della gestione del formato di

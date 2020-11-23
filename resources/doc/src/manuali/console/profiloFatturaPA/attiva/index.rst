@@ -95,9 +95,7 @@ passi da eseguire sono i seguenti:
        vuole configurare un servizio di test è necessario cambiare tale
        valore ed impostare il riferimento all'ambiente di test SDI. I
        certificati, sia per l'ambiente di test che di produzione, devono
-       essere stati inseriti nel truststore di GovWay dopo averli
-       prelevati all'indirizzo
-       http://www.fatturapa.gov.it/export/fatturazione/it/normativa/f-3.htm
+       essere stati inseriti nel truststore di GovWay.
 
 5. *Credenziali per accesso URL RiceviFile*: al terzo step viene
    richiesto di fornire il criterio di autenticazione utilizzato

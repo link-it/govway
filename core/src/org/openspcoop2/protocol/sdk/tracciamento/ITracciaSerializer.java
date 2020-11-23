@@ -77,4 +77,7 @@ public interface ITracciaSerializer extends IComponentFactory {
 	
 	public List<TracciaExtInfoDefinition> getExtInfoDefinition();
 	public List<TracciaExtInfo> extractExtInfo(Busta busta, ServiceBinding tipoApi);
+	public default boolean isSupportedExtInfo() {
+		return false;
+	} 
 }

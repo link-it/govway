@@ -1,6 +1,6 @@
 .. _scenari_fruizione_rest_modipa:
 
-Fruizione REST ModI PA
+Fruizione REST ModI
 ======================
 
 Obiettivo
@@ -19,14 +19,14 @@ La figura seguente descrive graficamente questo scenario.
     :align: center
     :name: fruizione_modipa_fig
 
-    Fruizione ModI PA
+    Fruizione ModI
 
 Le caratteristiche principali di questo scenario sono:
 
-1. Un applicativo fruitore che dialoga con il servizio erogato in modalità ModI PA in accordo ad una API condivisa
-2. La comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con sicurezza canale di profilo "ID_AUTH_CHANNEL_02"
-3. La confidenzialità e autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con profilo "ID_AUTH_REST_02"
-4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva di profilo "INTEGRITY_REST_01"
+1. Un applicativo fruitore che dialoga con il servizio erogato in modalità ModI in accordo ad una API condivisa
+2. La comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con il pattern di sicurezza canale "ID_AUTH_CHANNEL_02"
+3. La confidenzialità e autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con pattern "ID_AUTH_REST_02"
+4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva previsto nel pattern "INTEGRITY_REST_01"
 5. L'applicativo fruitore ottiene e conserva la conferma di ricezione del messaggio da parte dell'erogatore
 6. Garanzia di opponibilità ai terzi e non ripudio delle trasmissioni
 
@@ -35,11 +35,11 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API "PetStore", basata su REST, profilo di interazione Bloccante e profili di sicurezza "ID_AUTH_CHANNEL_02" e "INTEGRITY_REST_01 con ID_AUTH_REST_02".
-- Un'istanza Govway per la gestione del profilo ModI PA nel dominio del fruitore.
+- una API "PetStore", basata su REST, pattern di interazione Bloccante e pattern di sicurezza "ID_AUTH_CHANNEL_02" e "INTEGRITY_REST_01 con ID_AUTH_REST_02".
+- Un'istanza Govway per la gestione del profilo ModI nel dominio del fruitore.
 - un client che invoca la "POST /pet" con un messaggio di esempio diretto al Govway.
 
-Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "6. Fruizione ModI PA", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
+Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "6. Fruizione ModI", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
 
 Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è possibile andare a verificare cosa è accaduto nelle diverse fasi dell'esecuzione andando a consultare le console govwayMonitor:
 
@@ -54,7 +54,7 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
 
 2. Col processo di validazione del token di sicurezza, Govway estrae le informazioni in esso contenute. L'header e il payload del token sono identici a quelli visualizzati nello scenario di erogazione REST, relativamente al messaggio in uscita (:numref:`modipa_jwtio_header_fig` e :numref:`modipa_jwtio_payload_fig`).
 
-3. Lo scambio del messaggio con il dominio erogatore (comunicazione interdominio) avviene in accordo al profilo "ID_AUTH_CHANNEL_02" e quindi con protocollo SSL e autenticazione client. Dal dettaglio della transazione si possono consultare i messaggi diagnostici dove è visibile la fase di apertura della connessione SSL (:numref:`modipa_ssl_auth_fruitore_fig`).
+3. Lo scambio del messaggio con il dominio erogatore (comunicazione interdominio) avviene in accordo al pattern "ID_AUTH_CHANNEL_02" e quindi con protocollo SSL e autenticazione client. Dal dettaglio della transazione si possono consultare i messaggi diagnostici dove è visibile la fase di apertura della connessione SSL (:numref:`modipa_ssl_auth_fruitore_fig`).
 
    .. figure:: ../_figure_scenari/modipa_ssl_auth_fruitore.png
     :scale: 80%
@@ -73,15 +73,15 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
     Traccia della risposta
 
 
-Conformità ai requisiti ModI PA
+Conformità ai requisiti ModI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI PA, sono verificati dalle seguenti evidenze:
+I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI, sono verificati dalle seguenti evidenze:
 
-1. La trasmissione è basata sul profilo "ID_AUTH_CHANNEL_02", riguardo la sicurezza canale, come evidenziato nei messaggi diangostici dalla presenza degli elementi dell'handshake SSL e relativi dati dei certificati scambiati (:numref:`modipa_ssl_auth_fruitore_fig`).
+1. La trasmissione è basata sul pattern "ID_AUTH_CHANNEL_02", riguardo la sicurezza canale, come evidenziato nei messaggi diangostici dalla presenza degli elementi dell'handshake SSL e relativi dati dei certificati scambiati (:numref:`modipa_ssl_auth_fruitore_fig`).
 
-2. La sicurezza messaggio applicata è quella dei profili "ID_AUTH_REST_02" e "INTEGRITY_REST_01", come ampiamente mostrato nelle tracce dei messaggi di richiesta e risposta, dove sono presenti i certificati degli applicativi e le firme dei payload (e le relative validazioni).
+2. La sicurezza messaggio applicata è quella dei pattern "ID_AUTH_REST_02" e "INTEGRITY_REST_01", come ampiamente mostrato nelle tracce dei messaggi di richiesta e risposta, dove sono presenti i certificati degli applicativi e le firme dei payload (e le relative validazioni).
 
-3. La conferma di ricezione da parte dell'erogatore è costituita dalla risposta ottenuta dal fruitore, sul profilo di interazione bloccante, con il token di sicurezza e la firma del payload applicati sul messaggio di risposta.
+3. La conferma di ricezione da parte dell'erogatore è costituita dalla risposta ottenuta dal fruitore, sul pattern di interazione bloccante, con il token di sicurezza e la firma del payload applicati sul messaggio di risposta.
 
 4. Il non ripudio della trasmissione da parte del fruitore è garantito tramite la conservazione del messaggio ottenuto, comprensivo di riferimenti temporali, digest del payload, identità del mittente, il tutto garantito dalla firma digitale.
 
@@ -90,14 +90,14 @@ I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI PA, 
 
 Configurazione
 --------------
-Per la configurazione dello scenario descritto è necessario intervenire sulla govwayConsole (lato fruitore ed erogatore in base all'ambito di propria competenza). Per operare con la govwayConsole in modo conforme a quanto previsto dalla specifica del Modello di Interoperabilità 2018 si deve attivare, nella testata dell'interfaccia, il Profilo di Interoperabilità "ModI PA" (:numref:`modipa_profilo_f_fig`).
+Per la configurazione dello scenario descritto è necessario intervenire sulla govwayConsole (lato fruitore ed erogatore in base all'ambito di propria competenza). Per operare con la govwayConsole in modo conforme a quanto previsto dalla specifica del Modello di Interoperabilità si deve attivare, nella testata dell'interfaccia, il Profilo di Interoperabilità "ModI" (:numref:`modipa_profilo_f_fig`).
 
    .. figure:: ../_figure_scenari/modipa_profilo.png
     :scale: 80%
     :align: center
     :name: modipa_profilo_f_fig
 
-    Profilo ModI PA della govwayConsole
+    Profilo ModI della govwayConsole
 
 Salvataggio Messaggi
 ~~~~~~~~~~~~~~~~~~~~
@@ -107,12 +107,12 @@ Si procede quindi con i passi di configurazione del servizio.
 
 Registrazione API
 ~~~~~~~~~~~~~~~~~
-Si registra l'API "PetStore", fornendo il relativo descrittore OpenAPI 3, selezionando i profili "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_REST_01 con ID_AUTH_REST_02" (sicurezza messaggio) nella sezione "ModI PA" (vedi :ref:`modipa_api_profili`).
+Si registra l'API "PetStore", fornendo il relativo descrittore OpenAPI 3, selezionando i pattern "ID_AUTH_CHANNEL_02" (sicurezza canale) e "INTEGRITY_REST_01 con ID_AUTH_REST_02" (sicurezza messaggio) nella sezione "ModI" (vedi :ref:`modipa_api_profili`).
 
 
 Applicativo
 ~~~~~~~~~~~
-Si configura l'applicativo mittente indicando, nella sezione ModI PA, i parametri del keystore necessari affinché Govway possa produrre il token di sicurezza firmando per conto dell'applicativo (:numref:`modipa_applicativo_fruitore_fig`).
+Si configura l'applicativo mittente indicando, nella sezione ModI, i parametri del keystore necessari affinché Govway possa produrre il token di sicurezza firmando per conto dell'applicativo (:numref:`modipa_applicativo_fruitore_fig`).
 
    .. figure:: ../_figure_scenari/modipa_applicativo_fruitore.png
     :scale: 80%
@@ -124,7 +124,7 @@ Si configura l'applicativo mittente indicando, nella sezione ModI PA, i parametr
 
 Fruizione
 ~~~~~~~~~
-Si registra la fruizione "PetStore", relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI PA Richiesta" (:numref:`modipa_fruizione_richiesta_fig`). In particolare è possibile specificare quali header HTTP si vuole firmare, oltre al payload, e quale scadenza per il token impostare.
+Si registra la fruizione "PetStore", relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_fig`). In particolare è possibile specificare quali header HTTP si vuole firmare, oltre al payload, e quale scadenza per il token impostare.
 
    .. figure:: ../_figure_scenari/modipa_fruizione_richiesta.png
     :scale: 80%
@@ -133,7 +133,7 @@ Si registra la fruizione "PetStore", relativa all'API precedentemente inserita, 
 
     Configurazione richiesta della fruizione
 
-La sezione "ModI PA Risposta" definisce i criteri per la validazione dei messaggi di risposta, come la posizione del token di sicurezza e il truststore per l'autenticazione dell'erogatore (:numref:`modipa_fruizione_risposta_fig`).
+La sezione "ModI Risposta" definisce i criteri per la validazione dei messaggi di risposta, come la posizione del token di sicurezza e il truststore per l'autenticazione dell'erogatore (:numref:`modipa_fruizione_risposta_fig`).
 
    .. figure:: ../_figure_scenari/modipa_fruizione_risposta.png
     :scale: 80%

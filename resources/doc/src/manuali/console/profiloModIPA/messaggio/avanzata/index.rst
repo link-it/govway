@@ -4,7 +4,7 @@ Funzionalità Avanzate
 -----------------------
 
 
-La gestione dei profili di sicurezza messaggio possono essere personalizzati su diversi aspetti:
+La gestione dei pattern di sicurezza messaggio possono essere personalizzati su diversi aspetti:
 
 - :ref:`modipa_sicurezza_avanzate_applicabilita`: è possibile attivare la sicurezza messaggio puntualmente solamente sulla richiesta o sulla risposta di una operazione. Per API REST è possibile anche definire dei criteri di applicabilità della sicurezza messaggio in base a Content-Type o codici di risposta HTTP.
 

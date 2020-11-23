@@ -863,7 +863,7 @@ public class ControlStationCore {
 		return this.consegnaNotificaConfigurazionePriorita.get(nome);
 	}
 	
-	/** ModI PA */
+	/** ModI */
 	private boolean isModipaFruizioniConnettoreCheckHttps;
 	public boolean isModipaFruizioniConnettoreCheckHttps() {
 		return this.isModipaFruizioniConnettoreCheckHttps;
@@ -2322,7 +2322,7 @@ public class ControlStationCore {
 		this.consegnaNotificaPriorita = core.consegnaNotificaPriorita;
 		this.consegnaNotificaConfigurazionePriorita = core.consegnaNotificaConfigurazionePriorita;
 		
-		/** ModI PA */
+		/** ModI */
 		this.isModipaFruizioniConnettoreCheckHttps = core.isModipaFruizioniConnettoreCheckHttps;
 		
 		/** Parametri pdd */
