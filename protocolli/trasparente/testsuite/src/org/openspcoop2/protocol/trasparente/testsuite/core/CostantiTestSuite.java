@@ -276,6 +276,10 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_INCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaIncludeSOAPFault12";
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_EXCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaExcludeSOAPFault12";
 	
+	/** Porte Delegate per il test Integrazione */
+	public static final String PORTA_DELEGATA_AUTH_BASIC_NO_INTEGRAZIONE_SOAP = "AuthenticationBasic_NoIntegrazioneSoap";
+	
+	
 	
 	/** Porte Delegate per il test JOSE Signature */
 	public static final String PORTA_DELEGATA_JOSE_PREFIX = "JOSE/";
@@ -447,7 +451,7 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_REST_CORS_TRASPARENTE="APIMinisteroErogatore/gwCORSviaRESTtrasparente";
 	public static final String PORTA_APPLICATIVA_SOAP_CORS_TRASPARENTE="APIMinisteroErogatore/gwCORSviaSOAPtrasparente";
 	
-	/** Porte Delegate per il test Response Caching */
+	/** Porte Applicative per il test Response Caching */
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING = "ResponseCaching";
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_TIMEOUT_SECONDS = "ResponseCachingTimeoutSeconds";
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_DIGEST_CON_HEADERS = "ResponseCachingDigestConHeaders";
@@ -465,6 +469,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_INCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaIncludeSOAPFault12";
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_EXCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaExcludeSOAPFault12";
 
+	/** Porte Applicative per il test Integrazione */
+	public static final String PORTA_APPLICATIVA_AUTH_BASIC_NO_INTEGRAZIONE_SOAP = "AuthenticationBasic_NoIntegrazioneSoap";
 	
 		
 	/** Tipo Soggetto */
@@ -1095,4 +1101,11 @@ public class CostantiTestSuite {
 	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_REALM="TestGovWayToken";
 	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_ERROR_DESCRIPTION_NOTFOUND="TestGovWayToken The request is missing a required principal credentials";
 	public static final String TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_ERROR_DESCRIPTION_INVALID="TestGovWayToken Invalid principal credentials";
+	
+	
+	public static final String ID_GRUPPO_INTEGRAZIONE = "Integrazione";
+	
+	public static final String ERROR_TYPE = "GovWay-Transaction-ErrorType";
+	public static final String ERROR_TYPE_BAD_REQUEST = "BadRequest";
+	public static final String ERROR_TYPE_INVALID_RESPONSE = "InvalidResponse";
 }

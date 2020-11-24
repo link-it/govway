@@ -1,3 +1,10 @@
+2020-11-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1107
+	Le richieste contenenti Content-Type strutturalmente non corretti non venivano registrate nello storico delle transazioni e ai client veniva restituito una pagina html su codice di risposta 404.
+	La problematica è stata risolta: tutte le richieste vengono adesso registrate e ai client viene ritornato un errore 'Bad Request' conforme alla specifica REST o SOAP dell'API invocata.
+
 2020-11-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

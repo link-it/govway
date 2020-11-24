@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
@@ -145,14 +146,25 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 				this.bout = null;
 			}
 			this.bout = new ByteArrayOutputStream();
+			
+			boolean hasContent = false;
+			
 			// il save e' necessario con i connettori in caso di errori di validazione
 			if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				hasContent = true;
 				OpenSPCoop2SoapMessage soap = message.castAsSoap();
 				if(soap.getSOAPBody()!=null && soap.getSOAPBody().hasFault()){
 					soap.saveChanges();
 				}
 			} 
-			message.writeTo(this.bout, consume);
+			if(message!=null && ServiceBinding.REST.equals(message.getServiceBinding())){
+				OpenSPCoop2RestMessage<?> rest = message.castAsRest();
+				hasContent = rest.hasContent();
+			}
+			
+			if(hasContent) {
+				message.writeTo(this.bout, consume);
+			}
 		}catch(Throwable t){
 			this.bout = null;
 			if(message.getParseException()!=null){
@@ -193,7 +205,9 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 				this.bout = null;
 			}
 			this.bout = new ByteArrayOutputStream();
-			this.bout.write(message);
+			if(message!=null && message.length>0) {
+				this.bout.write(message);
+			}
 		}catch(Throwable t){
 			try{
 				this.bout = new ByteArrayOutputStream();

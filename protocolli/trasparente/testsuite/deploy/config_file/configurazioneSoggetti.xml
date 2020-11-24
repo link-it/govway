@@ -3951,7 +3951,14 @@
 		</porta-delegata>
 
 
+		<!-- Integrazione -->
 
+		<porta-delegata nome="AuthenticationBasic_NoIntegrazioneSoap" autenticazione="basic" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoBasic"/>
+		</porta-delegata>
 
 
 		<!-- Authentication -->
@@ -8658,6 +8665,16 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 						   required="true"/>
 				</response-flow>
 		      </mtom-processor>
+		</porta-applicativa>
+
+
+		<!-- Integrazione -->
+
+		<porta-applicativa nome="AuthenticationBasic_NoIntegrazioneSoap" autenticazione="basic" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoBasic"/>
+		    <servizio-applicativo nome="echoNotForwardAuthorizationHeader"/>
 		</porta-applicativa>
 	
 

@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.services.connector;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import javax.mail.internet.ContentType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -82,8 +83,19 @@ public class ConnectorUtils {
 			pa = true;
 		}
 		
+		String ct = null;
+		try {
+			ct = protocolContext.getContentType();
+			if(ct!=null && !"".equals(ct)) {
+				(new ContentType(ct)).getBaseType();
+			}
+		}catch(Throwable e) {
+			// valido content type ricevuto; eventuale tipo non correto verrà segnalato in seguito
+			ct = null;
+		}
+		
 		MessageType requestMessageType = bindingConfig.getRequestMessageType(serviceBindingDaUtilizzare, 
-				protocolContext, protocolContext.getContentType());
+				protocolContext, ct);
 		
 		RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setProtocolContext(protocolContext);

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.mail.internet.ContentType;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -314,6 +315,33 @@ public class RicezioneBusteServiceUtils {
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Lettura Configurazione Servizio fallita"),
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+				}
+				return null;
+			}
+			
+			// Verifico correttezza Content-Type
+			String ct = null;
+			try {
+				ct = protocolContext.getContentType();
+				if(ct!=null && !"".equals(ct)) {
+					new ContentType(ct).getBaseType();
+				}
+			}catch(Exception error){
+				if(res!=null) {
+					logCore.error("Lettura ContentType fallita: "+error.getMessage(),error);
+					msgDiag.addKeywordErroreProcessamento(error);
+					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " Content-Type '"+ct+"' presente nella richiesta non valido;");
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"richiestaNonValida");
+					ConnectorDispatcherInfo cdiError = ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
+							ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(error),
+							IntegrationFunctionError.BAD_REQUEST, error, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+					try {
+						cdiError.setEsitoTransazione(pf.createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO));
+						if(pddContextNullable!=null) {
+							pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+						}
+					}catch(Throwable t) {}
+					return cdiError;
 				}
 				return null;
 			}

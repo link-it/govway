@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -48,7 +49,7 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 
 	protected HttpServletResponse res;
-	protected OutputStream out;
+	protected OutputStream outNullable;
 	protected IProtocolFactory<?> protocolFactory;
 	protected String idModulo;
 	protected IDService idModuloAsIDService;
@@ -59,7 +60,6 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
 			this.res = res;
-			this.out = this.res.getOutputStream();
 			this.protocolFactory = protocolFactory;
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
@@ -94,14 +94,25 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			// Propago eventuali header http
 			this._sendHeaders(msg);
 			
+			boolean hasContent = false;
+			
 			// il save e' necessario con i connettori directVM in caso di errori di validazione
 			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+				hasContent = true;
 				OpenSPCoop2SoapMessage soap = msg.castAsSoap();
 				if(soap.getSOAPBody()!=null && soap.getSOAPBody().hasFault()){
 					soap.saveChanges();
 				}
-			}  
-			msg.writeTo(this.out,consume);		
+			}
+			if(msg!=null && ServiceBinding.REST.equals(msg.getServiceBinding())){
+				OpenSPCoop2RestMessage<?> rest = msg.castAsRest();
+				hasContent = rest.hasContent();
+			}
+			
+			if(hasContent) {
+				this.outNullable = this.res.getOutputStream();
+				msg.writeTo(this.outNullable,consume);
+			}
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -110,7 +121,10 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void sendResponse(byte[] message) throws ConnectorException{
 		try{
-			this.out.write(message);	
+			if(message!=null && message.length>0) {
+				this.outNullable = this.res.getOutputStream();
+				this.outNullable.write(message);
+			}
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -245,9 +259,9 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 					}
 				}
 			}
-			if(this.out!=null){
+			if(this.outNullable!=null){
 				try{
-					this.out.flush();
+					this.outNullable.flush();
 				}catch(Exception e){
 					if(throwException){
 						throw e;
@@ -262,10 +276,10 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void close(boolean throwException) throws ConnectorException{
 		try{
-			if(this.out!=null){
+			if(this.outNullable!=null){
 				try{
-					this.out.close();
-					this.out = null;
+					this.outNullable.close();
+					this.outNullable = null;
 				}catch(Exception e){
 					if(throwException){
 						throw e;

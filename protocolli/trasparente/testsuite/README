@@ -181,6 +181,23 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 - 'REST.[PD/PA].METHOD_OVERRIDE': test che riguardano la verifica dell'inoltro dell'header http 'X-HTTP-Method-Override' durante una POST
 
 
+** Integrazione **
+
+Vengono verificate le richieste che contengono particolarità:
+- ContentType con altri parametri
+- ContentType strutturalmente errati
+
+(NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
+(NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
+
+Tutti i test sono avviabili con il gruppo 'Integrazione'.
+In alternativa sono eseguibili singolarmente con i seguenti gruppi:
+- RESTIntegrazionePortaDelegata
+- RESTIntegrazionePortaApplicativa
+- SOAPIntegrazionePortaDelegata
+- SOAPIntegrazionePortaApplicativa
+
+
 ** Autenticazione e Autorizzazione **
 
 !! Pre-requisiti!!

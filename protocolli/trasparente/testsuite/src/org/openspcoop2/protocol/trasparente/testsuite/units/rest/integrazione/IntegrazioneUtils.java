@@ -1,0 +1,55 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package org.openspcoop2.protocol.trasparente.testsuite.units.rest.integrazione;
+
+/**
+ * IntegrazioneUtils
+ * 
+ * @author Andrea Poli (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
+public class IntegrazioneUtils {
+
+
+	public static Object[][] getContentTypesOk(){
+		return new Object[][]{
+			{"application/json"},
+			{"text/json; charset=UTF-8"},
+			{"text/problem+json;charset=UTF-8"},
+			{"text/xml; altro=AAA; charset=UTF-8"},
+			{"text/json;charset=\"UTF-8\""},
+		};	
+	}
+	
+	public static Object[][] getContentTypesKo(){
+		return new Object[][]{
+			{"application","In Content-Type string <application>, expected '/', got null"},
+			{"/","In Content-Type string </>, expected MIME type, got /"},
+			{"application/","In Content-Type string <application/>, expected MIME subtype, got null"},
+			{"/json","In Content-Type string </json>, expected MIME type, got /"},
+			{"text/json, charset=UTF-8","In parameter list <, charset=UTF-8>, expected ';', got \",\""},
+			{"text/problem+json;charsetUTF-8","In parameter list <;charsetUTF-8>, expected '=', got \"null\""}
+		};	
+	}
+	
+
+}
