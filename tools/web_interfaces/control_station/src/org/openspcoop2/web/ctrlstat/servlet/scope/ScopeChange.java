@@ -33,6 +33,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
@@ -190,6 +191,10 @@ public final class ScopeChange extends Action {
 			
 			scopeCore.performUpdateOperation(userLogin, scopeHelper.smista(), listOggettiDaAggiornare.toArray());
 
+			if(scope.getNome().equals(nome)==false){
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SCOPE);
+			}
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

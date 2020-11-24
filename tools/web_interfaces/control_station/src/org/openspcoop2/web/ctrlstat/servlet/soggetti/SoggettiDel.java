@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -100,6 +101,7 @@ public final class SoggettiDel extends Action {
 			StringBuilder inUsoMessage = new StringBuilder();
 
 			boolean deleteOperativo = false;
+			boolean deleteAlmostOne = false;
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
@@ -112,10 +114,20 @@ public final class SoggettiDel extends Action {
 					soggettoConfig = soggettiCore.getSoggetto(Long.parseLong(idsToRemove.get(i)));
 				}
 				
-				deleteOperativo = SoggettiUtilities.deleteSoggetto(soggettoRegistro, soggettoConfig, userLogin, soggettiCore, soggettiHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				SoggettiDelStatus delStatus = SoggettiUtilities.deleteSoggetto(soggettoRegistro, soggettoConfig, userLogin, soggettiCore, soggettiHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				if(delStatus.isDeletedOperativo()) {
+					deleteOperativo = true;
+				}
+				if(delStatus.isDeleted()) {
+					deleteAlmostOne = true;
+				}
 				
 			}// chiudo for
 
+			if(deleteAlmostOne) {
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SOGGETTI);
+			}
+			
 			if (inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());
 			}

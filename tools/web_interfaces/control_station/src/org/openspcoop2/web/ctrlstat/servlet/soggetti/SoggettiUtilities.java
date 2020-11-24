@@ -94,13 +94,14 @@ public class SoggettiUtilities {
 		return soggettoUpdateUtilities.getOggettiDaAggiornare();
 	}
 	
-	public static boolean deleteSoggetto(Soggetto soggettoRegistro, org.openspcoop2.core.config.Soggetto soggettoConfig, String userLogin, 
+	public static SoggettiDelStatus deleteSoggetto(Soggetto soggettoRegistro, org.openspcoop2.core.config.Soggetto soggettoConfig, String userLogin, 
 			SoggettiCore soggettiCore, SoggettiHelper soggettiHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		
 		PddCore pddCore = new PddCore(soggettiCore);
 		UtentiCore utentiCore = new UtentiCore(soggettiCore);
 		
 		boolean deleteOperativo = false;
+		boolean delete = false;
 		
 		IDSoggetto idSoggetto = null;
 		if(soggettiCore.isRegistroServiziLocale()){
@@ -135,6 +136,8 @@ public class SoggettiUtilities {
 		else {
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
 			soggettiCore.performDeleteOperation(userLogin, soggettiHelper.smista(), sog);
+			delete = true;
+			
 			if(soggettoRegistro!=null && !pddCore.isPddEsterna(soggettoRegistro.getPortaDominio())) {
 				
 				// sistemo utenze dopo l'aggiornamento
@@ -145,7 +148,10 @@ public class SoggettiUtilities {
 			}
 		}
 		
-		return deleteOperativo;
+		SoggettiDelStatus delStatus = new SoggettiDelStatus();
+		delStatus.setDeletedOperativo(deleteOperativo);
+		delStatus.setDeleted(delete);
+		return delStatus;
 		
 	}
 	

@@ -75,7 +75,7 @@ public class ServiziApplicativiUtilities {
 	}
 	
 	
-	public static void deleteServizioApplicativo(ServizioApplicativo sa, String userLogin, ServiziApplicativiCore saCore, ServiziApplicativiHelper saHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
+	public static boolean deleteServizioApplicativo(ServizioApplicativo sa, String userLogin, ServiziApplicativiCore saCore, ServiziApplicativiHelper saHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		
 		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 		idServizioApplicativo.setNome(sa.getNome());
@@ -95,7 +95,11 @@ public class ServiziApplicativiUtilities {
 
 			// Elimino il sil
 			saCore.performDeleteOperation(userLogin, saHelper.smista(), sa);
+			
+			return true;
 		}
+		
+		return false;
 		
 	}
 	

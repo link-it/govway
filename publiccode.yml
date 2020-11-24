@@ -21,7 +21,7 @@ description:
     features:
       - >-
         Conformità alle nuove linee guida AGID per l'interoperabilità (profilo
-        Modi PA)
+        ModI)
       - >-
         Conformità agli standard di mercato SOAP, REST, HTTP (profilo API
         Gateway)
@@ -75,7 +75,7 @@ description:
       semplici dati binari su Http.
 
       - Conformità alle specifiche italiane per l'interoperabilità: supporto
-      delle nuove linee guida per l'interoperabilità di AGID (ModI PA).
+      delle nuove linee guida per l'interoperabilità di AGID (ModI).
 
       - Conformità alle specifiche dell'interoperabilità europea: supporto
       del protocollo AS4, tramite integrazione con il Building Block

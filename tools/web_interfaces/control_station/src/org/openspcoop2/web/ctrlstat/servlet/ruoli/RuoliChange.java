@@ -33,6 +33,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
@@ -188,10 +189,13 @@ public final class RuoliChange extends Action {
 				RuoliUtilities.findOggettiDaAggiornare(oldIdRuolo, ruoloNEW, ruoliCore, listOggettiDaAggiornare);
 				
 			}
-			
-			
+					
 			ruoliCore.performUpdateOperation(userLogin, ruoliHelper.smista(), listOggettiDaAggiornare.toArray());
 
+			if(ruolo.getNome().equals(nome)==false){
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.RUOLI);
+			}
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

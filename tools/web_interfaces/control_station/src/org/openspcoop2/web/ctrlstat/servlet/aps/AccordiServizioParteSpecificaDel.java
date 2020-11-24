@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -141,6 +142,8 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 
 			StringBuilder inUsoMessage = new StringBuilder();
 			
+			boolean deleteAlmostOneApi = false;
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				
@@ -156,11 +159,18 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uri);
 				AccordoServizioParteSpecifica asps = apsCore.getServizio(idServizio);
 				
-				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecifica(asps, gestioneFruitori, gestioneErogatori,
+				boolean deleted = AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecifica(asps, gestioneFruitori, gestioneErogatori,
 						idSoggettoFruitore, idServizio, extendedServlet, superUser, apsCore, apsHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				if(deleted) {
+					deleteAlmostOneApi = true;
+				}
 				
 			}// chiudo for
 
+			if(deleteAlmostOneApi) {
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
+			}
+			
 			// se ci sono messaggio di errore li presento
 			if (inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());

@@ -107,13 +107,28 @@ public final class ServiziApplicativiDel extends Action {
 			
 			StringBuilder inUsoMessage = new StringBuilder();
 
+			boolean deleteAlmostOneApplicativo = false;
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// Prendo il nome del servizio applicativo
 				ServizioApplicativo sa = saCore.getServizioApplicativo(Long.parseLong(idsToRemove.get(i)));
 				
-				ServiziApplicativiUtilities.deleteServizioApplicativo(sa, userLogin, saCore, saHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-				
+				boolean deleted = ServiziApplicativiUtilities.deleteServizioApplicativo(sa, userLogin, saCore, saHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				if(deleted) {
+					deleteAlmostOneApplicativo = true;
+				}
+			}
+			
+			int idLista = -1;
+			if(!useIdSogg){
+				idLista = Liste.SERVIZIO_APPLICATIVO;
+			}
+			else {
+				idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
+			}
+			if(deleteAlmostOneApplicativo) {
+				ServletUtils.removeRisultatiRicercaFromSession(session, idLista);
 			}
 
 			if (inUsoMessage.length()>0) {
@@ -129,7 +144,6 @@ public final class ServiziApplicativiDel extends Action {
 			List<ServizioApplicativo> lista = null;
 			
 			if(!useIdSogg){
-				int idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 				
 				boolean filtroSoggetto = false;
@@ -150,8 +164,6 @@ public final class ServiziApplicativiDel extends Action {
 					lista = saCore.soggettiServizioApplicativoList(userLogin, ricerca);
 				}
 			}else {
-				int idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
-
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 				
 				lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);

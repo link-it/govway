@@ -142,7 +142,7 @@ public class RuoliUtilities {
 	}
 	
 	
-	public static void deleteRuolo(Ruolo ruolo, String userLogin, RuoliCore ruoliCore, RuoliHelper ruoliHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
+	public static boolean deleteRuolo(Ruolo ruolo, String userLogin, RuoliCore ruoliCore, RuoliHelper ruoliHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = !ruoliHelper.isModalitaCompleta();
 		boolean ruoloInUso = ruoliCore.isRuoloInUso(ruolo.getNome(),whereIsInUso,normalizeObjectIds);
@@ -153,6 +153,9 @@ public class RuoliUtilities {
 
 		} else {
 			ruoliCore.performDeleteOperation(userLogin, ruoliHelper.smista(), ruolo);
+			return true;
 		}
+		
+		return false;
 	}
 }

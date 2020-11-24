@@ -1035,7 +1035,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		return oggettiDaAggiornare;
 	}
 
-	public static void deleteAccordoServizioParteSpecifica(AccordoServizioParteSpecifica asps, 
+	public static boolean deleteAccordoServizioParteSpecifica(AccordoServizioParteSpecifica asps, 
 			boolean gestioneFruitori, boolean gestioneErogatori,
 			IDSoggetto idSoggettoFruitore, IDServizio idServizio,
 			IExtendedListServlet extendedServlet,
@@ -1330,9 +1330,11 @@ public class AccordiServizioParteSpecificaUtilities {
 			if(updateAPS) {
 				apsCore.performUpdateOperation(superUser, apsHelper.smista(), asps);
 			}
+			return true;
 
 		}
 		
+		return false;
 	}
 
 	public static void deleteAccordoServizioParteSpecificaPorteApplicative(IDPortaApplicativa idPortaApplicativa, IDServizio idServizio,

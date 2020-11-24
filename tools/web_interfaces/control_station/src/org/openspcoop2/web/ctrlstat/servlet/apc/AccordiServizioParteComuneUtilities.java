@@ -215,7 +215,7 @@ public class AccordiServizioParteComuneUtilities {
 		}
 	}
 	
-	public static void deleteAccordoServizioParteComune(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
+	public static boolean deleteAccordoServizioParteComune(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		
@@ -227,8 +227,10 @@ public class AccordiServizioParteComuneUtilities {
 			inUsoMessage.append(newLine);
 		} else {// accordo non in uso
 			apcCore.performDeleteOperation(userLogin, apcHelper.smista(), as);
+			return true;
 		}
 		
+		return false;
 	}
 	
 	public static boolean deleteResource(AccordoServizioParteComune as, IDResource idResource, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuilder inUsoMessage, String newLine) throws Exception {

@@ -6,7 +6,7 @@
 
 Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle normative della Pubblica Amministrazione:
 - Conformità agli standard di mercato: gestione protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http.
-- Conformità alle specifiche italiane per l'interoperabilità: supporto delle nuove linee guida per l'interoperabilità di AGID (ModI PA). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA. 
+- Conformità alle specifiche italiane per l'interoperabilità: supporto delle nuove linee guida per l'interoperabilità di AGID (ModI). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA. 
 - Conformità alle specifiche dell'interoperabilità europea: supporto supporto del protocollo AS4, tramite integrazione con il Building Block eDelivery del progetto europeo CEF (Connecting European Facilities).
 - Conformità alle specifiche per la fatturazione elettronica sul canale SdiCoop.
 
@@ -56,7 +56,7 @@ Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce t
 ## Standard di Mercato
 Supporto API conformi ai protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http. L'integrazione avviene sempre tramite le API applicative native, indipendentemente dai profili di interoperabilità adottati, gestiti in maniera trasparente dal gateway.
 ## Conformità alle specifiche di interoperabilità italiane ed europee
-Supporto delle nuove linee guida per l'interoperabilità di AGID (ModI PA) e del "building block" eDelivery del progetto europeo CEF (Connecting European Facilities). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA.
+Supporto delle nuove linee guida per l'interoperabilità di AGID (ModI) e del "building block" eDelivery del progetto europeo CEF (Connecting European Facilities). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA.
 ## Registro delle API
 La registrazione delle API può avvenire manualmente o tramite caricamento dei descrittori delle interfacce (OpenAPI 3.0, Swagger e WADL per i servizi REST, WSDL per i servizi SOAP, Accordi di Servizio per i servizi SPCoop).
 ## Gestione Govlet

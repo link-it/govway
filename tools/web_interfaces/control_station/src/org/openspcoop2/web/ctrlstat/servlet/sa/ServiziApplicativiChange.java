@@ -1842,6 +1842,17 @@ public final class ServiziApplicativiChange extends Action {
 
 			saHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 		
+			int idLista = -1;
+			if(!useIdSogg){
+				idLista = Liste.SERVIZIO_APPLICATIVO;
+			}
+			else {
+				idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
+			}
+			if(!sa.getNome().equals(oldIdServizioApplicativo.getNome())) {
+				ServletUtils.removeRisultatiRicercaFromSession(session, idLista);
+			}
+			
 			// Messaggio 'Please Copy'
 			if(secret) {
 				saHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, tipoauthSA, OggettoDialogEnum.APPLICATIVO, sa.getNome());
@@ -1855,7 +1866,6 @@ public final class ServiziApplicativiChange extends Action {
 			List<ServizioApplicativo> lista = null;
 
 			if(!useIdSogg){
-				int idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 
 				boolean filtroSoggetto = false;
@@ -1876,8 +1886,6 @@ public final class ServiziApplicativiChange extends Action {
 					lista = saCore.soggettiServizioApplicativoList(userLogin, ricerca);
 				}
 			}else {
-				int idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
-
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 				
 				lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);

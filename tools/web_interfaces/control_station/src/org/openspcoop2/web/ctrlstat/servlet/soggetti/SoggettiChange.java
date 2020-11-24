@@ -1198,6 +1198,10 @@ public final class SoggettiChange extends Action {
 			
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 			
+			if (!oldnomeprov.equals(this.nomeprov) || !oldtipoprov.equals(this.tipoprov)) {
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SOGGETTI);
+			}
+			
 			// Messaggio 'Please Copy'
 			if(secret) {
 				soggettiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, this.tipoauthSoggetto, OggettoDialogEnum.SOGGETTO, sog.getNome());

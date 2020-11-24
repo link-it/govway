@@ -90,7 +90,7 @@ public class ScopeUtilities {
 		
 	}
 	
-	public static void deleteScope(Scope scope, String userLogin, ScopeCore scopeCore, ScopeHelper scopeHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
+	public static boolean deleteScope(Scope scope, String userLogin, ScopeCore scopeCore, ScopeHelper scopeHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = !scopeHelper.isModalitaCompleta();
 		boolean scopeInUso = scopeCore.isScopeInUso(scope.getNome(),whereIsInUso,normalizeObjectIds);
@@ -101,7 +101,11 @@ public class ScopeUtilities {
 
 		} else {
 			scopeCore.performDeleteOperation(userLogin, scopeHelper.smista(), scope);
+			
+			return true;
 		}
+		
+		return false;
 	}
 	
 }

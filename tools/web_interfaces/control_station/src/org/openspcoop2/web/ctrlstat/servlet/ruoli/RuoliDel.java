@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -82,14 +83,23 @@ public final class RuoliDel extends Action {
 
 			StringBuilder inUsoMessage = new StringBuilder();
 			
+			boolean deleteAlmostOneRole = false;
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				Ruolo ruolo = ruoliCore.getRuolo(idsToRemove.get(i));
 				
-				RuoliUtilities.deleteRuolo(ruolo, userLogin, ruoliCore, ruoliHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				boolean deleted = RuoliUtilities.deleteRuolo(ruolo, userLogin, ruoliCore, ruoliHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				if(deleted) {
+					deleteAlmostOneRole = true;
+				}
 				
 			}// chiudo for
 
+			if(deleteAlmostOneRole) {
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.RUOLI);
+			}
+			
 			if (inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());
 			}

@@ -1,5 +1,19 @@
 2020-11-24  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1109
+	L'eliminazione di un'entità del registro rimaneva nella cache interna dell'applicazione e in alcune circostanze veniva ripresentato erroneamente.
+	Il problema era presente per le API, le Erogazioni, le Fruizioni, i Soggetti, gli Applicativi, gli Scope e i Ruoli.
+	Per riprodurlo ad esempio sulle API era necessario:
+	- accedere alla lista delle API;
+	- eliminare una API;
+	- entrare nel dettaglio di un'altra API;
+	- dalla breadcrumb "API > NomeApi .." tornare su API;
+	- veniva ripresentata erroneamente l'API che era stata eliminata.
+	Un problema simile era presente quando si modificava il nome di un Soggetto, di un Applicativo, di uno Scope o di un Ruolo.
+
+2020-11-24  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug OP-1107
 	Le richieste contenenti Content-Type strutturalmente non corretti non venivano registrate nello storico delle transazioni e ai client veniva restituito una pagina html su codice di risposta 404.
