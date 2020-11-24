@@ -164,6 +164,13 @@ public class RESTIntegrazionePortaApplicativa {
 		DatabaseMsgDiagnosticiComponent dataMsg = null;
 		try{
 			dataMsg = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
+			
+			String version_jbossas = org.openspcoop2.protocol.trasparente.testsuite.core.Utilities.readApplicationServerVersion();
+			if((version_jbossas.startsWith("tomcat")) && "text/problem+json;charsetUTF-8".equals(contentType)) {
+				contentType = "text/problem+json; charsetutf-8=";
+				erroreAtteso = "In parameter list <; charsetutf-8=>, expected parameter value, got \"null\"";
+			}
+			
 			String diag = "Il contenuto applicativo della risposta ricevuta non è processabile: Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: "+contentType+"): "+erroreAtteso;
 			Reporter.log("Cerco diagnostico "+diag+" nei log ...");
 			Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, diag));		
