@@ -365,6 +365,21 @@ public class PolicyVerifier {
 						if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
 							if(datiCollezionatiReaded.getPolicyRequestCounter()!=null){
 								valoreAttuale = datiCollezionatiReaded.getPolicyRequestCounter().longValue();
+								switch (activePolicy.getTipoRisorsaPolicy()) {
+								case NUMERO_RICHIESTE:
+									break;
+								case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+								case NUMERO_RICHIESTE_FALLITE:
+								case NUMERO_FAULT_APPLICATIVI:
+								case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+									// se sono in uno tra questi 4 casi il contatore delle richieste in essere viene incrementato solo dopo aver consegnato la risposta (check esito).
+									// poichè però il controllo sotto è con <= devo considerare la richiesta in essere con '+1'
+									// altrimenti se ad es. il limite è 3, e sono già passate in passato 3 richieste, la 4 passa.
+									valoreAttuale = valoreAttuale +1;
+									break;
+								default:
+									break;
+								}
 							}
 						}
 						else{

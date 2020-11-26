@@ -1,5 +1,10 @@
 2020-11-26  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Le politiche di RateLimiting con metrica 'Numero Richieste Completate con Successo', 'Numero Richieste Fallite' e 'Numero Fault Applicativi' consentivano erroneamente il transito della N+1 richiesta, quando il limite era N.
+
+2020-11-26  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto Bug OP-1111
 	Di seguito tutte le anomalie corrette:
@@ -10,6 +15,7 @@
 	- l'aggiornamento del nome di un soggetto, di un ruolo, o di una erogazione/fruizione (compresa la versione) non veniva propagata sulle policy di RateLimiting, sia attivate globalmente che puntualmente su una erogazione o fruizione (i filtri che contenevano l'oggetto di modifica risultavano erroneamente disabiliti);
 	- la modifica del tipo di credenziali di un soggetto da nessuna a basic o api-key non visualizzava il dialog informativo che indica di copiare e custodire attentamente le credenziali generate;
 	- in una erogazione o fruizione, durante la creazione di un nuovo gruppo, se si sceglieva di ereditare la configurazione da un precedente gruppo, non venivano riportate le politiche di rate limiting esistenti sul vecchio.
+	- se una erogazione conteneva nel gruppo 'predefinito' un connettore multiplo non era possibile ridefinire il connettore su eventuali altri gruppi
 
 2020-11-24  Andrea Poli <apoli@link.it>
 
