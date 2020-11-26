@@ -91,6 +91,12 @@ public class SoggettiUtilities {
 		// Fruitori nei servizi 
 		soggettoUpdateUtilities.checkFruitori();
 		
+		// Check Policy Globali
+		soggettoUpdateUtilities.checkPolicyGlobali();
+		
+		// Check Regole di Proxy Pass
+		soggettoUpdateUtilities.checkConfigurazione();
+		
 		return soggettoUpdateUtilities.getOggettiDaAggiornare();
 	}
 	

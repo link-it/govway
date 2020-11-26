@@ -28,6 +28,7 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.ImplementationUtils;
@@ -38,6 +39,7 @@ import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.Implementation;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 
 /**
  * ImplementationConfiguration
@@ -172,14 +174,14 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		return list;
 	}
 	
-	public Implementation createImplementation(IDServizio idServizio,
+	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException {
-		return createImplementation(idServizio, 
+		return createImplementation(configIntegrationReader, idServizio, 
 				portaApplicativaDefault, null, 
 				ruleName, description, azione);
 	}
-	public Implementation createImplementation(IDServizio idServizio,
+	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaClonare,
 			String ruleName, String description, String ... azione ) throws ProtocolException {
 		
@@ -211,6 +213,43 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			portaApplicativa.setId(null);// annullo il table id
 			portaApplicativa.setGestioneCors(null); // annulla la gestione Cors poiche' gestito solo nella porta di default
 			portaApplicativa.setCanale(null); // annullo il canale poiche' gestito solo nella porta di default
+			
+			// riporto Rate Limiting
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(portaApplicativaDaClonare.getNome());
+			List<AttivazionePolicy> listAP = null;
+			try {
+				listAP = configIntegrationReader.getRateLimitingPolicy(idPA);
+			}catch(Exception e) {}
+			List<String> idPolicyCreate = new ArrayList<String>();
+			if(listAP!=null && !listAP.isEmpty()) {
+				for (AttivazionePolicy attivazionePolicy : listAP) {
+					
+					AttivazionePolicy apCloned = (AttivazionePolicy) attivazionePolicy.clone();
+					if(apCloned.getIdPolicy()!=null && apCloned.getFiltro()!=null && portaApplicativaDaClonare.getNome().equals(apCloned.getFiltro().getNomePorta())){
+						try {
+							apCloned.getFiltro().setNomePorta(nomeNuovaPortaApplicativa);
+							int counter = configIntegrationReader.getFreeCounterForGlobalPolicy(apCloned.getIdPolicy());
+							String idActive = apCloned.getIdPolicy()+":"+counter;
+							int limit = 0;
+							while(idPolicyCreate.contains(idActive) && limit<1000) { // provo 1000 volte
+								limit++;
+								counter++;
+								idActive = apCloned.getIdPolicy()+":"+counter;
+							}
+							idPolicyCreate.add(idActive);
+							apCloned.setIdActivePolicy(idActive);
+							
+							if(implementation.getRateLimitingPolicies()==null) {
+								implementation.setRateLimitingPolicies(new ArrayList<AttivazionePolicy>());
+							}
+							implementation.getRateLimitingPolicies().add(apCloned);
+							
+						}catch(Exception e) {}
+					}
+				}
+			}
+			
 			portaClonata = true;
 		
 		} else {

@@ -22,7 +22,9 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -84,6 +86,7 @@ import org.openspcoop2.protocol.sdk.config.Subscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -505,13 +508,15 @@ public class AccordiServizioParteSpecificaUtilities {
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
+		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
 		
 		// Se sono cambiati il tipo o il nome allora devo aggiornare
 		// anche le porte delegate e porte applicative
 		List<PortaDelegata> listaPD = new ArrayList<PortaDelegata>();
 		List<PortaApplicativa> listaPA = new ArrayList<PortaApplicativa>();
 		List<ServizioApplicativo> listaPA_SA = new ArrayList<ServizioApplicativo>();
-
+		Hashtable<String, AttivazionePolicy> listaPolicyPA = new Hashtable<String, AttivazionePolicy>();
+		
 		// check dati modificati
 		String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 		String oldUri = IDServizioFactory.getInstance().getUriFromIDServizio(asps.getOldIDServizioForUpdate());
@@ -538,13 +543,17 @@ public class AccordiServizioParteSpecificaUtilities {
 				String locationSuffix_oldWithoutV = tmpLocationSuffix +
 						"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
 
-				String newLocationSuffix = "/" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+				String newLocationSuffix = "/" + asps.getTipoSoggettoErogatore() + "_" + asps.getNomeSoggettoErogatore() + 
 						"/" + asps.getTipo() + "_" + asps.getNome() +
 						"/v" + asps.getVersione().intValue();
 
 				for (IDPortaDelegata idPortaDelegata : listIdsPorteDelegate) {
 					PortaDelegata tmpPorta = porteDelegateCore.getPortaDelegata(idPortaDelegata);	
 
+					// aggiorno dati erogatore
+					tmpPorta.getSoggettoErogatore().setTipo(asps.getTipoSoggettoErogatore());
+					tmpPorta.getSoggettoErogatore().setNome(asps.getNomeSoggettoErogatore());
+					
 					// aggiorno dati servizio
 					tmpPorta.getServizio().setTipo(asps.getTipo());
 					tmpPorta.getServizio().setNome(asps.getNome());
@@ -589,23 +598,27 @@ public class AccordiServizioParteSpecificaUtilities {
 
 							// Caso 1: subscription default
 							// Subscription from gw/ENTE for service gw/ErogatoreEsterno:gw/EsempioREST:1
-							String match_caso = ":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+							String soggettoOldCaso1 = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"/"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
+							String soggettoNewCaso1 = asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore();
+							String match_caso = soggettoOldCaso1+":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
 							if(descrizionePD.endsWith(match_caso)) {
-								String replace_caso = ":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
+								String replace_caso = soggettoNewCaso1+":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
 								descrizionePD = descrizionePD.replace(match_caso, replace_caso);
 							}
 
 							// Caso 2: altra subscription
 							// Internal Subscription 'Specific1' for gw_ENTE/gw_ErogatoreEsterno/gw_EsempioREST/1
-							String tmpMatchCaso2 = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+							String soggettoOldCaso2 = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"_"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
+							String soggettoNewCaso2 = asps.getTipoSoggettoErogatore()+"_"+asps.getNomeSoggettoErogatore();
+							String tmpMatchCaso2 = soggettoOldCaso2+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
 							String match_caso2 = tmpMatchCaso2 +"v"+ asps.getOldIDServizioForUpdate().getVersione().intValue();
 							String match_caso2_oldWithoutV = tmpMatchCaso2 + asps.getOldIDServizioForUpdate().getVersione().intValue();
 							if(descrizionePD.contains(match_caso2)) {
-								String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+								String replace_caso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
 								descrizionePD = descrizionePD.replace(match_caso2, replace_caso2);
 							}
 							else if(descrizionePD.contains(match_caso2_oldWithoutV)) {
-								String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+								String replace_caso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
 								descrizionePD = descrizionePD.replace(match_caso2_oldWithoutV, replace_caso2);
 							}
 
@@ -628,7 +641,7 @@ public class AccordiServizioParteSpecificaUtilities {
 								int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
 								String tmpPat = patterAzione.substring(startidx, endidx);
 								// a questo punto ottengo una stringa del tipo
-								// (fruitore)/(erogatore)/(servizio)
+								// (fruitore)/(erogatore)/(servizio)/(versioneServizio)
 								// se rispetta la regex allora vuol dire che il
 								// pattern azione e' quello di default
 								// e devo effettuare i cambiamenti
@@ -646,16 +659,24 @@ public class AccordiServizioParteSpecificaUtilities {
 									}	
 
 									boolean matchURL = false;
-									String partOld = "(?:"+asps.getOldIDServizioForUpdate().getTipo()+"_)?"+asps.getOldIDServizioForUpdate().getNome()+"";
-									String partNew = "(?:"+asps.getTipo()+"_)?"+asps.getNome()+"";
-
-									// vedo se matcha il fruitore
-									if (partServizio.equals(partOld)) {
-										partServizio = partNew;
+									
+									// vedo se matcha l'erogatore
+									String partErogatoreOld = "(?:"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"_)?"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome()+"";
+									String partErogatoreNew = "(?:"+asps.getTipoSoggettoErogatore()+"_)?"+asps.getNomeSoggettoErogatore()+"";
+									if (partErogatore.equals(partErogatoreOld)) {
+										partErogatore = partErogatoreNew;
+										matchURL = true;
+									}
+									
+									// vedo se matcha il servizio
+									String partServizioOld = "(?:"+asps.getOldIDServizioForUpdate().getTipo()+"_)?"+asps.getOldIDServizioForUpdate().getNome()+"";
+									String partServizioNew = "(?:"+asps.getTipo()+"_)?"+asps.getNome()+"";
+									if (partServizio.equals(partServizioOld)) {
+										partServizio = partServizioNew;
 										matchURL = true;
 									}
 
-									// vedo se matcha anche erogatore (loopback)
+									// vedo se matcha verione
 									String versioneOld = "v"+(asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
 									String versioneOld_oldWithoutV = (asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
 									if (partVersione.equals(versioneOld) || partVersione.equals(versioneOld_oldWithoutV)) {
@@ -690,8 +711,29 @@ public class AccordiServizioParteSpecificaUtilities {
 								tmpPorta.getAzione().setNomePortaDelegante(nuovoNomeDelegate);
 							}
 						}// fine controllo DelegatedBy
+					
+						// Controllo policy di Rate Limiting
+						if(tmpPorta.getOldIDPortaDelegataForUpdate()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome()!=null) {
+							Search ricercaPolicies = new Search(true);
+							List<AttivazionePolicy> listaPolicies = null;
+							try {
+								listaPolicies = confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, tmpPorta.getOldIDPortaDelegataForUpdate().getNome());
+							}catch(Exception e) {}
+							if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+								for (AttivazionePolicy ap : listaPolicies) {
+									if(ap.getFiltro()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome().equals(ap.getFiltro().getNomePorta())) {
+										
+										// aggiorno nome porta
+										ap.getFiltro().setNomePorta(tmpPorta.getNome());
+																		
+										listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+									}
+								}
+							}
+						}
+						// fine Controllo policy di Rate Limiting
 					}
-
+					
 					listaPD.add(tmpPorta); // la porta la aggiungo cmq per modificare i dati
 				}
 			}
@@ -720,13 +762,17 @@ public class AccordiServizioParteSpecificaUtilities {
 				String locationSuffix_oldWithoutV = tmpLocationSuffix +
 						"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
 
-				String newLocationSuffix = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+				String newLocationSuffix = asps.getTipoSoggettoErogatore() + "_" + asps.getNomeSoggettoErogatore() + 
 						"/" + asps.getTipo() + "_" + asps.getNome() +
 						"/v" + asps.getVersione().intValue();
 
 				for (IDPortaApplicativa idPortaApplicativa : listIdsPorteApplicative) {
 					PortaApplicativa tmpPorta = porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);	
 
+					// aggiorno dati erogatore
+					tmpPorta.setTipoSoggettoProprietario(asps.getTipoSoggettoErogatore());
+					tmpPorta.setNomeSoggettoProprietario(asps.getNomeSoggettoErogatore());
+					
 					// aggiorno dati servizio
 					tmpPorta.getServizio().setTipo(asps.getTipo());
 					tmpPorta.getServizio().setNome(asps.getNome());
@@ -769,25 +815,29 @@ public class AccordiServizioParteSpecificaUtilities {
 						String descrizionePA = tmpPorta.getDescrizione();
 						if (descrizionePA != null && !descrizionePA.equals("")) {
 
-							// Caso 1: subscription default
+							// Caso 1: implementation default
 							// Service implementation gw/ENTE:gw/TEST:1
-							String match_caso = ":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+							String soggettoOldCaso1 = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"/"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
+							String soggettoNewCaso1 = asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore();
+							String match_caso = soggettoOldCaso1+":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
 							if(descrizionePA.endsWith(match_caso)) {
-								String replace_caso = ":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
+								String replace_caso = soggettoNewCaso1+":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
 								descrizionePA = descrizionePA.replace(match_caso, replace_caso);
 							}
 
-							// Caso 2: altra subscription
+							// Caso 2: altra i
 							// Internal Implementation 'Specific1' for gw_ENTE/gw_TEST/1
-							String tmpMatch_caso2 = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+							String soggettoOldCaso2 = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"_"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
+							String soggettoNewCaso2 = asps.getTipoSoggettoErogatore()+"_"+asps.getNomeSoggettoErogatore();
+							String tmpMatch_caso2 = soggettoOldCaso2+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
 							String match_caso2 = tmpMatch_caso2+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
 							String match_caso2_oldWithoutV = tmpMatch_caso2+asps.getOldIDServizioForUpdate().getVersione().intValue();
 							if(descrizionePA.contains(match_caso2)) {
-								String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+								String replace_caso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
 								descrizionePA = descrizionePA.replace(match_caso2, replace_caso2);
 							}
 							else if(descrizionePA.contains(match_caso2_oldWithoutV)) {
-								String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+								String replace_caso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
 								descrizionePA = descrizionePA.replace(match_caso2_oldWithoutV, replace_caso2);
 							}
 
@@ -827,16 +877,24 @@ public class AccordiServizioParteSpecificaUtilities {
 									}	
 
 									boolean matchURL = false;
-									String partOld = "(?:"+asps.getOldIDServizioForUpdate().getTipo()+"_)?"+asps.getOldIDServizioForUpdate().getNome()+"";
-									String partNew = "(?:"+asps.getTipo()+"_)?"+asps.getNome()+"";
-
-									// vedo se matcha il fruitore
-									if (partServizio.equals(partOld)) {
-										partServizio = partNew;
+									
+									// vedo se matcha l'erogatore
+									String partErogatoreOld = "(?:"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"_)?"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome()+"";
+									String partErogatoreNew = "(?:"+asps.getTipoSoggettoErogatore()+"_)?"+asps.getNomeSoggettoErogatore()+"";
+									if (partErogatore.equals(partErogatoreOld)) {
+										partErogatore = partErogatoreNew;
+										matchURL = true;
+									}
+									
+									// vedo se matcha il servizio
+									String partOldServizio = "(?:"+asps.getOldIDServizioForUpdate().getTipo()+"_)?"+asps.getOldIDServizioForUpdate().getNome()+"";
+									String partNewServizio = "(?:"+asps.getTipo()+"_)?"+asps.getNome()+"";
+									if (partServizio.equals(partOldServizio)) {
+										partServizio = partNewServizio;
 										matchURL = true;
 									}
 
-									// vedo se matcha anche erogatore (loopback)
+									// vedo se matcha versione
 									String versioneOld = "v"+(asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
 									String versioneOld_oldWithoutV = (asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
 									if (partVersione.equals(versioneOld) || partVersione.equals(versioneOld_oldWithoutV)) {
@@ -872,6 +930,27 @@ public class AccordiServizioParteSpecificaUtilities {
 								tmpPorta.getAzione().setNomePortaDelegante(nuovoNomeDelegate);
 							}
 						}// fine controllo DelegatedBy
+						
+						// Controllo policy di Rate Limiting
+						if(tmpPorta.getOldIDPortaApplicativaForUpdate()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome()!=null) {
+							Search ricercaPolicies = new Search(true);
+							List<AttivazionePolicy> listaPolicies = null;
+							try {
+								listaPolicies = confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.APPLICATIVA, tmpPorta.getOldIDPortaApplicativaForUpdate().getNome());
+							}catch(Exception e) {}
+							if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+								for (AttivazionePolicy ap : listaPolicies) {
+									if(ap.getFiltro()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome().equals(ap.getFiltro().getNomePorta())) {
+										
+										// aggiorno nome porta
+										ap.getFiltro().setNomePorta(tmpPorta.getNome());
+																		
+										listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+									}
+								}
+							}
+						}
+						// fine Controllo policy di Rate Limiting
 					}
 
 					listaPA.add(tmpPorta); // la porta la aggiungo cmq per modificare i dati
@@ -911,15 +990,16 @@ public class AccordiServizioParteSpecificaUtilities {
 								// devo aggiornare il nome del SA
 								IDServizioApplicativo idSA = new IDServizioApplicativo();
 								idSA.setNome(portaApplicativaSA.getNome());
-								idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPorta.getTipoSoggettoProprietario(), tmpPorta.getNomeSoggettoProprietario()));
+								//idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPorta.getTipoSoggettoProprietario(), tmpPorta.getNomeSoggettoProprietario()));
+								idSA.setIdSoggettoProprietario(new IDSoggetto(asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo(),asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome()));
 								ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
 
 								IDServizioApplicativo oldIDServizioApplicativoForUpdate = new IDServizioApplicativo();
 								oldIDServizioApplicativoForUpdate.setNome(sa.getNome());
 								oldIDServizioApplicativoForUpdate.setIdSoggettoProprietario(idSA.getIdSoggettoProprietario());
 								sa.setOldIDServizioApplicativoForUpdate(oldIDServizioApplicativoForUpdate);
-								sa.setTipoSoggettoProprietario(tmpPorta.getTipoSoggettoProprietario());
-								sa.setNomeSoggettoProprietario(tmpPorta.getNomeSoggettoProprietario());
+								sa.setTipoSoggettoProprietario(asps.getTipoSoggettoErogatore());
+								sa.setNomeSoggettoProprietario(asps.getNomeSoggettoErogatore());
 
 								if(equalsName) {
 									// __gw_ENTE/gw_TEST/1__Specific2
@@ -1030,6 +1110,58 @@ public class AccordiServizioParteSpecificaUtilities {
 					//System.out.println("As SERVIZIO COMPONENTE ["+IDAccordo.getUriFromAccordo(accordoServizioComposto)+"]");
 				}
 			}
+		}
+		
+		// Se ho cambiato i dati significativi del servizio devo effettuare anche l'update delle policy di Rate Limiting globali
+		// che includono questi servizi come servizi componenti.
+		if (!newUri.equals(oldUri)) {
+
+			IDServizio idServizioOLD =  asps.getOldIDServizioForUpdate();
+			
+			Search ricercaPolicies = new Search(true);
+			List<AttivazionePolicy> listaPolicies = null;
+			try {
+				listaPolicies = confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
+						null, null, null,
+						null, null,
+						idServizioOLD, null);
+			}catch(Exception e) {}
+			if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+				for (AttivazionePolicy ap : listaPolicies) {
+					if(ap.getFiltro()!=null) {
+						
+						if(idServizioOLD.getSoggettoErogatore().getTipo().equals(ap.getFiltro().getTipoErogatore())) {
+							ap.getFiltro().setTipoErogatore(asps.getTipoSoggettoErogatore());
+						}
+						
+						if(idServizioOLD.getSoggettoErogatore().getNome().equals(ap.getFiltro().getNomeErogatore())) {
+							ap.getFiltro().setNomeErogatore(asps.getNomeSoggettoErogatore());
+						}
+						
+						if(idServizioOLD.getTipo().equals(ap.getFiltro().getTipoServizio())) {
+							ap.getFiltro().setTipoServizio(asps.getTipo());
+						}
+						
+						if(idServizioOLD.getNome().equals(ap.getFiltro().getNomeServizio())) {
+							ap.getFiltro().setNomeServizio(asps.getNome());
+						}
+						
+						if(ap.getFiltro().getVersioneServizio()!=null && (idServizioOLD.getVersione().intValue() == ap.getFiltro().getVersioneServizio().intValue())) {
+							ap.getFiltro().setVersioneServizio(asps.getVersione());
+						}
+														
+						listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+					}
+				}
+			}
+		}
+		// fine Controllo policy di Rate Limiting
+		
+		// aggiorno le policy di rate limiting
+		Enumeration<AttivazionePolicy> enPolicy = listaPolicyPA.elements();
+		while (enPolicy.hasMoreElements()) {
+			AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
+			oggettiDaAggiornare.add(ap);
 		}
 		
 		return oggettiDaAggiornare;
@@ -1650,19 +1782,22 @@ public class AccordiServizioParteSpecificaUtilities {
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		Implementation implementation = null;
 		
+		IConfigIntegrationReader configIntegrationReader = apsCore.getConfigIntegrationReader(protocolFactory);
+		
 		PortaApplicativa portaApplicativaDaCopiare = null;
 		if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
 			portaApplicativaDaCopiare = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-			implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
+			implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(configIntegrationReader, serviceBinding, idServizio2, 
 					portaApplicativaDefault, portaApplicativaDaCopiare, nome, nomeGruppo, azioni);
 		}
 		else {
-			implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
+			implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(configIntegrationReader, serviceBinding, idServizio2, 
 					portaApplicativaDefault, nome, nomeGruppo, azioni);
 		}
 		
 		PortaApplicativa portaApplicativa = implementation.getPortaApplicativa();
 		MappingErogazionePortaApplicativa mappingErogazione = implementation.getMapping();
+		List<AttivazionePolicy> rateLimitingPolicies = implementation.getRateLimitingPolicies();
 		long soggInt = soggettiCore.getIdSoggetto(idServizio2.getSoggettoErogatore().getNome(), idServizio2.getSoggettoErogatore().getTipo());
 		portaApplicativa.setIdSoggetto((long) soggInt);
 		
@@ -1971,6 +2106,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		listaOggettiDaCreare.add(portaApplicativa);
 		listaOggettiDaCreare.add(mappingErogazione);
+		if(rateLimitingPolicies!=null && !rateLimitingPolicies.isEmpty()) {
+			for (AttivazionePolicy attivazionePolicy : rateLimitingPolicies) {
+				listaOggettiDaCreare.add(attivazionePolicy);
+			}
+		}
 		
 
 		porteApplicativeCore.performCreateOperation(userLogin, apsHelper.smista(), listaOggettiDaCreare.toArray());
@@ -2172,15 +2312,17 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 		
 		
+		IConfigIntegrationReader configIntegrationReader = apsCore.getConfigIntegrationReader(protocolFactory);
+		
 		Subscription subscription = null;
 		PortaDelegata portaDelegataDaCopiare = null;
 		if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
-			subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
+			subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(configIntegrationReader, serviceBinding, idSoggettoFruitore, idServizio2, 
 					portaDelegataDefault, portaDelegataDaCopiare, nome, nomeGruppo, azioni);
 		}
 		else {
-			subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
+			subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(configIntegrationReader, serviceBinding, idSoggettoFruitore, idServizio2, 
 					portaDelegataDefault, nome, nomeGruppo, azioni);
 			
 		}
@@ -2246,6 +2388,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		PortaDelegata portaDelegata = subscription.getPortaDelegata();
 		MappingFruizionePortaDelegata mappingFruizione = subscription.getMapping();
+		List<AttivazionePolicy> rateLimitingPolicies = subscription.getRateLimitingPolicies();
 		long idSoggFru = soggettiCore.getIdSoggetto(nomeSoggettoFruitore, tipoSoggettoFruitore);
 		portaDelegata.setIdSoggetto((long) idSoggFru);
 
@@ -2267,6 +2410,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		listaOggettiDaCreare.add(portaDelegata);
 		listaOggettiDaCreare.add(mappingFruizione);
+		if(rateLimitingPolicies!=null && !rateLimitingPolicies.isEmpty()) {
+			for (AttivazionePolicy attivazionePolicy : rateLimitingPolicies) {
+				listaOggettiDaCreare.add(attivazionePolicy);
+			}
+		}
 
 		porteDelegateCore.performCreateOperation(userLogin, apsHelper.smista(), listaOggettiDaCreare.toArray());
 

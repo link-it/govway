@@ -20,8 +20,10 @@
 
 package org.openspcoop2.protocol.basic.registry;
 
+import java.sql.Connection;
 import java.util.List;
 
+import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -29,6 +31,10 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -256,6 +262,37 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
+	
+	@Override
+	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getRateLimitingPolicy(portaDelegata)");
+				
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				return ControlloTrafficoDriverUtils.configurazioneControlloTrafficoAttivazionePolicyList(search, RuoloPolicy.DELEGATA, idPortaDelegata.getNome(),
+						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
 		
 	
 	
@@ -313,6 +350,39 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+	
+	@Override
+	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getRateLimitingPolicy(portaApplicativa)");
+				
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				return ControlloTrafficoDriverUtils.configurazioneControlloTrafficoAttivazionePolicyList(search, RuoloPolicy.APPLICATIVA, idPortaApplicativa.getNome(),
+						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	
+	
 
 	// CONFIGURAZIONE
 	
@@ -327,4 +397,65 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+	@Override
+	public List<AttivazionePolicy> getRateLimitingPolicyGlobali() throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getRateLimitingPolicyGlobali");
+				
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				return ControlloTrafficoDriverUtils.configurazioneControlloTrafficoAttivazionePolicyList(search, null, null,
+						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	
+	@Override
+	public Integer getFreeCounterForGlobalPolicy(String policyId) throws RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getRateLimitingPolicyGlobali");
+				
+				return ControlloTrafficoDriverUtils.getFreeCounterForGlobalPolicy(policyId,
+						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+
 }

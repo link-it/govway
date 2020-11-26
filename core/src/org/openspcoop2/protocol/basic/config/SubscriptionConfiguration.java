@@ -28,6 +28,7 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -39,6 +40,7 @@ import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.Subscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 
 /**
  * SubscriptionConfiguration
@@ -171,14 +173,14 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		return list;
 	}
 	
-	public Subscription createSubscription(IDSoggetto idFruitore, IDServizio idServizio,
+	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException {
-		return createSubscription(idFruitore, idServizio, 
+		return createSubscription(configIntegrationReader, idFruitore, idServizio, 
 				portaDelegataDefault, null, 
 				ruleName, description, azione);
 	}
-	public Subscription createSubscription(IDSoggetto idFruitore, IDServizio idServizio,
+	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaClonare,
 			String ruleName, String description, String ... azione ) throws ProtocolException {
 		
@@ -210,6 +212,43 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 			portaDelegata.setId(null);// annullo il table id
 			portaDelegata.setGestioneCors(null); // annulla la gestione Cors poiche' gestito solo nella porta di default
 			portaDelegata.setCanale(null); // annullo il canale poiche' gestito solo nella porta di default
+			
+			// riporto Rate Limiting
+			IDPortaDelegata idPD = new IDPortaDelegata();
+			idPD.setNome(portaDelegataDaClonare.getNome());
+			List<AttivazionePolicy> listAP = null;
+			try {
+				listAP = configIntegrationReader.getRateLimitingPolicy(idPD);
+			}catch(Exception e) {}
+			List<String> idPolicyCreate = new ArrayList<String>();
+			if(listAP!=null && !listAP.isEmpty()) {
+				for (AttivazionePolicy attivazionePolicy : listAP) {
+					
+					AttivazionePolicy apCloned = (AttivazionePolicy) attivazionePolicy.clone();
+					if(apCloned.getIdPolicy()!=null && apCloned.getFiltro()!=null && portaDelegataDaClonare.getNome().equals(apCloned.getFiltro().getNomePorta())){
+						try {
+							apCloned.getFiltro().setNomePorta(nomeNuovaPortaDelegata);
+							int counter = configIntegrationReader.getFreeCounterForGlobalPolicy(apCloned.getIdPolicy());
+							String idActive = apCloned.getIdPolicy()+":"+counter;
+							int limit = 0;
+							while(idPolicyCreate.contains(idActive) && limit<1000) { // provo 1000 volte
+								limit++;
+								counter++;
+								idActive = apCloned.getIdPolicy()+":"+counter;
+							}
+							idPolicyCreate.add(idActive);
+							apCloned.setIdActivePolicy(idActive);
+							
+							if(subscription.getRateLimitingPolicies()==null) {
+								subscription.setRateLimitingPolicies(new ArrayList<AttivazionePolicy>());
+							}
+							subscription.getRateLimitingPolicies().add(apCloned);
+							
+						}catch(Exception e) {}
+					}
+				}
+			}
+			
 			portaClonata = true;
 			
 		} else {

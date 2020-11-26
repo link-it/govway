@@ -28,6 +28,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -248,6 +249,11 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+	@Override
+	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
 	
 	// PORTA APPLICATIVA
 	
@@ -296,6 +302,11 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+	@Override
+	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaApplicativa idPortaDelegata) throws RegistryNotFound,RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
 	
 	// CONFIGURAZIONE
 	
@@ -308,6 +319,16 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		}catch(Exception e){
 			throw new RegistryException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public List<AttivazionePolicy> getRateLimitingPolicyGlobali() throws RegistryNotFound,RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
+	@Override
+	public Integer getFreeCounterForGlobalPolicy(String policyId) throws RegistryException{
+		throw new RegistryException("Not Implemented");
 	}
 }
 

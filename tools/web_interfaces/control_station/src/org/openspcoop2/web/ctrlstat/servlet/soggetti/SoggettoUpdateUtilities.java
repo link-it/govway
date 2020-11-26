@@ -25,6 +25,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
@@ -34,6 +36,9 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -41,6 +46,8 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -65,6 +72,7 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -86,6 +94,7 @@ public class SoggettoUpdateUtilities {
 	private PorteDelegateCore porteDelegateCore;
 	private PorteApplicativeCore porteApplicativeCore;
 	private AccordiCooperazioneCore acCore;
+	private ConfigurazioneCore confCore;
 	private SoggettoCtrlStat sog;
 	private String oldnomeprov;
 	private String nomeprov;
@@ -106,6 +115,7 @@ public class SoggettoUpdateUtilities {
 		this.porteDelegateCore = new PorteDelegateCore(this.soggettiCore);
 		this.porteApplicativeCore = new PorteApplicativeCore(this.soggettiCore);
 		this.acCore = new AccordiCooperazioneCore(this.soggettiCore);
+		this.confCore = new ConfigurazioneCore(this.soggettiCore);
 		this.oldnomeprov = oldnomeprov;
 		this.nomeprov = nomeprov;
 		this.oldtipoprov = oldtipoprov;
@@ -374,6 +384,8 @@ public class SoggettoUpdateUtilities {
 		
 		if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 
+			// ** Verifica per soggetto proprietario o soggetto erogatore ** // 
+			
 			// Vanno modificate tutte le Porte Delegate (appartenenti al soggetto modificato oppure che possiedono come soggetto erogatore il soggetto modificato) 
 			// che presentano la seguente situazione:
 			// - pattern (fruitore)/(erogatore)/....
@@ -610,6 +622,8 @@ public class SoggettoUpdateUtilities {
 					}
 				}
 			}
+			
+			// ** Verifica per soggetto proprietario o soggetto erogatore ** // 
 
 
 			// PORTE DELEGATE
@@ -887,13 +901,135 @@ public class SoggettoUpdateUtilities {
 
 
 		// aggiorno le porte delegate
+		
+		Hashtable<String, AttivazionePolicy> listaPolicyPA = new Hashtable<String, AttivazionePolicy>();
+		
 		Enumeration<PortaDelegata> en = listaPD.elements();
 		while (en.hasMoreElements()) {
 			PortaDelegata portaDelegata = en.nextElement();
+			
+			_updateSoggettoInliste(portaDelegata);
+			
 			this.oggettiDaAggiornare.add(portaDelegata);
+			
+			// verifico rate limiting per ogni porta delegata trovata
+			
+			// Controllo policy di Rate Limiting
+			Search ricercaPolicies = new Search(true);
+			List<AttivazionePolicy> listaPolicies = null;
+			String oldNomePorta = portaDelegata.getNome();
+			try {
+				if(portaDelegata.getOldIDPortaDelegataForUpdate()!=null && portaDelegata.getOldIDPortaDelegataForUpdate().getNome()!=null) {
+					oldNomePorta = portaDelegata.getOldIDPortaDelegataForUpdate().getNome();
+				}
+				listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, oldNomePorta);
+			}catch(Exception e) {}
+			if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+				for (AttivazionePolicy ap : listaPolicies) {
+					if(ap.getFiltro()!=null && oldNomePorta.equals(ap.getFiltro().getNomePorta())) {
+						
+						// aggiorno nome porta
+						ap.getFiltro().setNomePorta(portaDelegata.getNome());
+						
+						_updateFiltroSoggetto(ap);
+														
+						listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+					}
+				}
+			}
+			// fine Controllo policy di Rate Limiting
+			
+		}
+		
+		
+		
+		// Controllo policy di Rate Limiting di altre porte delegate che utilizzano il soggetto solamente nel filtro.
+		
+		List<AttivazionePolicy> listPolicyDaVerificare = new ArrayList<AttivazionePolicy>();
+		
+		IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+		Search ricercaPolicies = new Search(true);
+		List<AttivazionePolicy> listaPolicies = null;
+		try {
+			listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.DELEGATA, null,
+					filtroSoggettoFruitore, null, null,
+					null, null,
+					null, null);
+		}catch(Exception e) {}
+		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+			for (AttivazionePolicy ap : listaPolicies) {
+				if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+					continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+				}
+				listPolicyDaVerificare.add(ap);
+			}
+		}
+		
+		IDSoggetto filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+		ricercaPolicies = new Search(true);
+		listaPolicies = null;
+		try {
+			listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.DELEGATA, null,
+					null, null, null,
+					filtroSoggettoErogatore, null,
+					null, null);
+		}catch(Exception e) {}
+		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+			for (AttivazionePolicy ap : listaPolicies) {
+				if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+					continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+				}
+				listPolicyDaVerificare.add(ap);
+			}
+		}
+		
+		if(listPolicyDaVerificare!=null && !listPolicyDaVerificare.isEmpty()) {
+			for (AttivazionePolicy ap : listPolicyDaVerificare) {
+				
+				if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+					continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+				}
+			
+				if(ap.getFiltro()!=null) {
+					
+					_updateFiltroSoggetto(ap);
+													
+					listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+				}
+			}
+		}
+		// fine Controllo policy di Rate Limiting
+		
+		
+		// aggiorno le policy di rate limiting associate alle porte applicative
+		Enumeration<AttivazionePolicy> enPolicy = listaPolicyPA.elements();
+		while (enPolicy.hasMoreElements()) {
+			AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
+			this.oggettiDaAggiornare.add(ap);
 		}
 	}
 
+	private void _updateSoggettoInliste(PortaDelegata portaDelegata) {
+				
+		// controlloServiziApplicativi riferiti nelle Trasformazioni
+		
+		if(portaDelegata.getTrasformazioni()!=null && portaDelegata.getTrasformazioni().sizeRegolaList()>0) {
+			for (TrasformazioneRegola trRegola : portaDelegata.getTrasformazioni().getRegolaList()) {
+				if(trRegola.getApplicabilita()!=null && trRegola.getApplicabilita().sizeServizioApplicativoList()>0) {
+					for (TrasformazioneRegolaApplicabilitaServizioApplicativo trSA : trRegola.getApplicabilita().getServizioApplicativoList()) {
+						if (this.oldtipoprov.equals(trSA.getTipoSoggettoProprietario()) && 
+								this.oldnomeprov.equals(trSA.getNomeSoggettoProprietario())) {
+							trSA.setTipoSoggettoProprietario(this.tipoprov);
+							trSA.setNomeSoggettoProprietario(this.nomeprov);
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		// fine controlloSoggetti riferiti nelle Trasformazioni
+	}
 
 	public void checkPorteApplicative() throws DriverConfigurazioneException{
 		if(this.soggettiCore.isRegistroServiziLocale()){
@@ -902,32 +1038,28 @@ public class SoggettoUpdateUtilities {
 			// poiche il cambio si riflette all'interno delle informazioni delle porte applicative
 			Hashtable<String, PortaApplicativa> listaPA = new Hashtable<String, PortaApplicativa>();
 			Hashtable<String, ServizioApplicativo> listaPA_SA = new Hashtable<String, ServizioApplicativo>();
+			Hashtable<String, AttivazionePolicy> listaPolicyPA = new Hashtable<String, AttivazionePolicy>();
 
+			
 			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 
-				// SoggettoVirtuale
-				List<PortaApplicativa> tmpList = this.porteApplicativeCore.getPorteApplicativeBySoggettoVirtuale(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
-				for (PortaApplicativa portaApplicativa : tmpList) {
-					portaApplicativa.getSoggettoVirtuale().setTipo(this.tipoprov);
-					portaApplicativa.getSoggettoVirtuale().setNome(this.nomeprov);
-					listaPA.put(portaApplicativa.getNome(), portaApplicativa);
-				}
-				
+				// ** Verifica per soggetto proprietario ** // 
 				
 				// NomePorta
 				// Tutte le porte applicativa di questo soggetto con nome "di default"
 				// devono essere cambiate
 				// Nome della Porta: 
-				tmpList = this.porteApplicativeCore.porteAppList(this.sog.getId().intValue(), new Search());
+				List<PortaApplicativa> tmpList = this.porteApplicativeCore.porteAppList(this.sog.getId().intValue(), new Search());
 				for (PortaApplicativa portaApplicativa : tmpList) {
 					
 					IDPortaApplicativa oldIDPortaApplicativaForUpdate = null;
-					String nome = portaApplicativa.getNome();
+					String nomeAttuale = portaApplicativa.getNome();
 					// se il nome e' quello di default cioe' (erogatore)/(servizio)/(versioneServizio) o (erogatore)/(servizio)/(versioneServizio)/azione
 					String regex = "(.*)\\/(.*)\\/(.*)";
-					if (nome.matches(regex)) {
+					String newNome = null;
+					if (nomeAttuale.matches(regex)) {
 
-						String[] val = nome.split("\\/");
+						String[] val = nomeAttuale.split("\\/");
 						String patErogatore = val[0];
 						String patServizio = val[1];
 						String patVersioneServizio = val[2];
@@ -950,14 +1082,14 @@ public class SoggettoUpdateUtilities {
 							patErogatore = "__"+this.tipoprov+ "_" +this.nomeprov;
 						}
 
-						String newNome = patErogatore + "/" + patServizio + "/" + patVersioneServizio ;
+						newNome = patErogatore + "/" + patServizio + "/" + patVersioneServizio ;
 						if(patAzione!=null){
 							newNome = newNome + "/" + patAzione;
 						}
 						
 						portaApplicativa.setNome(newNome);
 						oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
-						oldIDPortaApplicativaForUpdate.setNome(nome);
+						oldIDPortaApplicativaForUpdate.setNome(nomeAttuale);
 						portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 
 						// modifica della descrizione
@@ -1072,45 +1204,29 @@ public class SoggettoUpdateUtilities {
 							}
 							
 						}// fine controllo DelegatedBy
-						
-						
+												
 					}// fine controllo nome
 					
-					// controlloSoggetti Autorizzati
-					if(portaApplicativa.getSoggetti()!=null && portaApplicativa.getSoggetti().sizeSoggettoList()>0) {
-						for (PortaApplicativaAutorizzazioneSoggetto portaApplicativaAuthSoggetto : portaApplicativa.getSoggetti().getSoggettoList()) {
-							if (this.oldtipoprov.equals(portaApplicativaAuthSoggetto.getTipo()) && 
-									this.oldnomeprov.equals(portaApplicativaAuthSoggetto.getNome())) {
-								portaApplicativaAuthSoggetto.setTipo(this.tipoprov);
-								portaApplicativaAuthSoggetto.setNome(this.nomeprov);
-							}
-						}
-					}
-					// fine controlloSoggetti Autorizzati	
-					
-					// controlloServiziApplicativi Autorizzati
-					if(portaApplicativa.getServiziApplicativiAutorizzati()!=null && portaApplicativa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-						for (PortaApplicativaAutorizzazioneServizioApplicativo portaApplicativaAuthSa : portaApplicativa.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
-							if (this.oldtipoprov.equals(portaApplicativaAuthSa.getTipoSoggettoProprietario()) && 
-									this.oldnomeprov.equals(portaApplicativaAuthSa.getNomeSoggettoProprietario())) {
-								portaApplicativaAuthSa.setTipoSoggettoProprietario(this.tipoprov);
-								portaApplicativaAuthSa.setNomeSoggettoProprietario(this.nomeprov);
-							}
-						}
-					}
-					// fine controlloSoggetti Autorizzati
+					_updateSoggettoInliste(portaApplicativa);
 										
 					portaApplicativa.setTipoSoggettoProprietario(this.tipoprov);
 					portaApplicativa.setNomeSoggettoProprietario(this.nomeprov);
-					listaPA.put(portaApplicativa.getNome(), portaApplicativa);
+					listaPA.put(nomeAttuale, portaApplicativa);
 					
 					// modifica nome Servizi Applicativi che riflette il nome della PA
 					if(oldIDPortaApplicativaForUpdate!=null && portaApplicativa.sizeServizioApplicativoList()>0) {
 						for (PortaApplicativaServizioApplicativo portaApplicativaSA : portaApplicativa.getServizioApplicativoList()) {
-							if(portaApplicativaSA.getNome().equals(oldIDPortaApplicativaForUpdate.getNome())) {
+							
+							boolean nameEquals = portaApplicativaSA.getNome().equals(oldIDPortaApplicativaForUpdate.getNome());
+							
+							// __gw_ENTE/gw_TEST/v1__Specific2__SA3
+							boolean nameConnettoreMultiplo = portaApplicativaSA.getNome().startsWith(oldIDPortaApplicativaForUpdate.getNome()+"__SA");
+																
+							if(nameEquals || nameConnettoreMultiplo) {
 								// devo aggiornare il nome del SA
 								IDServizioApplicativo idSA = new IDServizioApplicativo();
-								idSA.setNome(oldIDPortaApplicativaForUpdate.getNome());
+								//idSA.setNome(oldIDPortaApplicativaForUpdate.getNome());
+								idSA.setNome(portaApplicativaSA.getNome());
 								idSA.setIdSoggettoProprietario(new IDSoggetto(this.oldtipoprov, this.oldnomeprov));
 								ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSA);
 								
@@ -1121,22 +1237,82 @@ public class SoggettoUpdateUtilities {
 								sa.setTipoSoggettoProprietario(this.tipoprov);
 								sa.setNomeSoggettoProprietario(this.nomeprov);
 								
-								// __gw_ENTE/gw_TEST/1__Specific2
-								// gw_ENTE/gw_TEST/1
-								if(sa.getNome().startsWith(this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
-									sa.setNome(sa.getNome().replace(this.oldtipoprov+"_"+this.oldnomeprov+"/", this.tipoprov+"_"+this.nomeprov+"/"));
+								if(nameEquals) {
+									// gw_ENTE/gw_TEST/1
+									if(sa.getNome().startsWith(this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
+										sa.setNome(sa.getNome().replace(this.oldtipoprov+"_"+this.oldnomeprov+"/", this.tipoprov+"_"+this.nomeprov+"/"));
+									}
+									// __gw_ENTE/gw_TEST/1__Specific2
+									else if(sa.getNome().startsWith("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
+										sa.setNome(sa.getNome().replace("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/", "__"+this.tipoprov+"_"+this.nomeprov+"/"));
+									}
 								}
-								else if(sa.getNome().startsWith("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
-									sa.setNome(sa.getNome().replace("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/", "__"+this.tipoprov+"_"+this.nomeprov+"/"));
+								else if(nameConnettoreMultiplo){
+									// gw_ENTE/gw_TEST/v1__SA2
+									if(sa.getNome().startsWith(this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
+										sa.setNome(sa.getNome().replace(this.oldtipoprov+"_"+this.oldnomeprov+"/", this.tipoprov+"_"+this.nomeprov+"/"));
+									}
+									// __gw_ENTE/gw_TEST/v1__Specific2__SA2
+									else if(sa.getNome().startsWith("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
+										sa.setNome(sa.getNome().replace("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/", "__"+this.tipoprov+"_"+this.nomeprov+"/"));
+									}
 								}
+								
+								//NON SERVE, sono riferiti tramite id e prima modifico le porte applicative!! portaApplicativaSA.setNome(sa.getNome());
+								
 								listaPA_SA.put(sa.getNome(), sa);
-								break;
+								// ?? nei connettori multipli, salta break;
 							}
 						}
 					}
 					// modifica nome Servizi Applicativi che riflette il nome della PA
+					
+					// Controllo policy di Rate Limiting
+					Search ricercaPolicies = new Search(true);
+					List<AttivazionePolicy> listaPolicies = null;
+					try {
+						listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.APPLICATIVA, nomeAttuale);
+					}catch(Exception e) {}
+					if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+						for (AttivazionePolicy ap : listaPolicies) {
+							if(ap.getFiltro()!=null && nomeAttuale.equals(ap.getFiltro().getNomePorta())) {
+								
+								// aggiorno nome porta
+								if(newNome!=null) {
+									ap.getFiltro().setNomePorta(newNome);
+								}
+								
+								_updateFiltroSoggetto(ap);
+																
+								listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+							}
+						}
+					}
+					// fine Controllo policy di Rate Limiting
 				}
 
+				// ** Fine Verifica per soggetto proprietario ** // 
+				
+				
+				// ** Verifica per soggetto proprietario differente da quello modificato ** // 
+				
+				// effettuo controlli per le porte applicative che hanno un proprietario differente
+				
+				List<IDPortaApplicativa> listDaVerificare = new ArrayList<IDPortaApplicativa>();
+				
+				// controllo SoggettoVirtuale
+				List<PortaApplicativa> tmpListSoggettiVirtuali = this.porteApplicativeCore.getPorteApplicativeBySoggettoVirtuale(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
+				if(tmpListSoggettiVirtuali!=null && !tmpListSoggettiVirtuali.isEmpty()) {
+					for (PortaApplicativa portaApplicativa : tmpListSoggettiVirtuali) {
+						if(listaPA.containsKey(portaApplicativa.getNome())) {
+							continue; // modifica gia' effettuata
+						}
+						IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+						idPortaApplicativa.setNome(portaApplicativa.getNome());
+						listDaVerificare.add(idPortaApplicativa);
+					}
+				}
+				// Fine controllo SoggettoVirtuale
 				
 				// controlloSoggetti Autorizzati per le porte applicative che hanno un proprietario differente
 				FiltroRicercaPorteApplicative filtroRicercaPAConAuthSoggetti = new FiltroRicercaPorteApplicative();
@@ -1147,25 +1323,119 @@ public class SoggettoUpdateUtilities {
 						if(listaPA.containsKey(idPortaApplicativa.getNome())) {
 							continue; // modifica gia' effettuata
 						}
-						PortaApplicativa pa = null;
-						try {
-							pa = this.porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
-						}catch(DriverConfigurazioneNotFound notFound) {}
-						if(pa!=null && pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
-							for (PortaApplicativaAutorizzazioneSoggetto portaApplicativaAuthSoggetto : pa.getSoggetti().getSoggettoList()) {
-								if (this.oldtipoprov.equals(portaApplicativaAuthSoggetto.getTipo()) && 
-										this.oldnomeprov.equals(portaApplicativaAuthSoggetto.getNome())) {
-									portaApplicativaAuthSoggetto.setTipo(this.tipoprov);
-									portaApplicativaAuthSoggetto.setNome(this.nomeprov);
-									listaPA.put(pa.getNome(), pa);
-									break;
-								}
-							}
-						}
+						listDaVerificare.add(idPortaApplicativa);
 					}
 				}
 				// fine controlloSoggetti Autorizzati per le porte applicative che hanno un proprietario differente
 				
+				// controlloServiziApplicativi Autorizzati per le porte applicative che hanno un proprietario differente
+				// non serve, sono tramite id. Serve solo l'update interno delle Porte applicative se trovato con altri metodi
+				// fine controlloServiziApplicativi Autorizzati per le porte applicative che hanno un proprietario differente
+				
+				// controlloSoggetti riferiti nelle trasformazioni per le porte applicative che hanno un proprietario differente
+				FiltroRicercaPorteApplicative filtroRicercaPAConTrasformazioneSoggetti = new FiltroRicercaPorteApplicative();
+				filtroRicercaPAConTrasformazioneSoggetti.setIdSoggettoRiferitoApplicabilitaTrasformazione(new IDSoggetto(this.oldtipoprov, this.oldnomeprov));
+				list = this.porteApplicativeCore.getAllIdPorteApplicative(filtroRicercaPAConTrasformazioneSoggetti);
+				if(list!=null && !list.isEmpty()) {
+					for (IDPortaApplicativa idPortaApplicativa : list) {
+						if(listaPA.containsKey(idPortaApplicativa.getNome())) {
+							continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+						}
+						listDaVerificare.add(idPortaApplicativa);
+					}
+				}
+				// fine controlloSoggetti riferiti nelle trasformazioni per le porte applicative che hanno un proprietario differente
+				
+				// controlloServiziApplicativi riferiti nelle trasformazioni per le porte applicative che hanno un proprietario differente
+				// non serve, sono tramite id. Serve solo l'update interno delle Porte applicative se trovato con altri metodi
+				// fine controlloServiziApplicativi riferiti nelle trasformazioni per le porte applicative che hanno un proprietario differente
+				
+				if(listDaVerificare!=null && !listDaVerificare.isEmpty()) {
+					for (IDPortaApplicativa idPortaApplicativa : listDaVerificare) {
+						
+						if(listaPA.containsKey(idPortaApplicativa.getNome())) {
+							continue; // modifica gia' effettuata
+						}
+						
+						PortaApplicativa pa = null;
+						try {
+							pa = this.porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
+						}catch(DriverConfigurazioneNotFound notFound) {}
+						if(pa!=null) {
+							
+							// soggetti virtuali
+							if(pa.getSoggettoVirtuale()!=null && 
+									this.oldtipoprov.equals(pa.getSoggettoVirtuale().getTipo()) &&
+									this.oldnomeprov.equals(pa.getSoggettoVirtuale().getNome())) {
+								pa.getSoggettoVirtuale().setTipo(this.tipoprov);
+								pa.getSoggettoVirtuale().setNome(this.nomeprov);
+							}
+							
+							_updateSoggettoInliste(pa);
+														
+							listaPA.put(pa.getNome(), pa);
+						}
+					}
+				}
+				
+				// Controllo policy di Rate Limiting
+				
+				List<AttivazionePolicy> listPolicyDaVerificare = new ArrayList<AttivazionePolicy>();
+				
+				IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+				Search ricercaPolicies = new Search(true);
+				List<AttivazionePolicy> listaPolicies = null;
+				try {
+					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.APPLICATIVA, null,
+							filtroSoggettoFruitore, null, null,
+							null, null,
+							null, null);
+				}catch(Exception e) {}
+				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+					for (AttivazionePolicy ap : listaPolicies) {
+						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+							continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+						}
+						listPolicyDaVerificare.add(ap);
+					}
+				}
+				
+				IDSoggetto filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+				ricercaPolicies = new Search(true);
+				listaPolicies = null;
+				try {
+					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.APPLICATIVA, null,
+							null, null, null,
+							filtroSoggettoErogatore, null,
+							null, null);
+				}catch(Exception e) {}
+				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+					for (AttivazionePolicy ap : listaPolicies) {
+						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+							continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+						}
+						listPolicyDaVerificare.add(ap);
+					}
+				}
+				
+				if(listPolicyDaVerificare!=null && !listPolicyDaVerificare.isEmpty()) {
+					for (AttivazionePolicy ap : listPolicyDaVerificare) {
+						
+						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+							continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+						}
+					
+						if(ap.getFiltro()!=null) {
+							
+							_updateFiltroSoggetto(ap);
+															
+							listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+						}
+					}
+				}
+				// fine Controllo policy di Rate Limiting
+				
+				// ** Fine Verifica per soggetto proprietario differente da quello modificato ** // 
 			}			
 
 			// aggiorno le porte applicative
@@ -1174,48 +1444,241 @@ public class SoggettoUpdateUtilities {
 				PortaApplicativa portaApplicativa = (PortaApplicativa) enPA.nextElement();
 				this.oggettiDaAggiornare.add(portaApplicativa);
 			}
-			// aggiorno i servizi applicativi associati alle porte applicative
+			// aggiorno i servizi applicativi associati alle porte applicative (vanno aggiornati dopo le PA poiche sono riferiti con i vecchi nomi dentro le pa)
 			Enumeration<ServizioApplicativo> enSA = listaPA_SA.elements();
 			while (enSA.hasMoreElements()) {
 				ServizioApplicativo sa = (ServizioApplicativo) enSA.nextElement();
 				this.oggettiDaAggiornare.add(sa);
 			}
-		}
-	}
-
-
-	public void checkFruitori() throws DriverRegistroServiziException{
-		// Fruitori nei servizi 
-		if(this.soggettiCore.isRegistroServiziLocale()){
-			List<AccordoServizioParteSpecifica> sfruitori = this.apsCore.servizioWithSoggettoFruitore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
-			for(int i=0; i<sfruitori.size(); i++){
-				AccordoServizioParteSpecifica asps = sfruitori.get(i);
-				if(asps.getTipoSoggettoErogatore().equals(this.oldtipoprov) &&
-						asps.getNomeSoggettoErogatore().equals(this.oldnomeprov)){
-					asps.setTipoSoggettoErogatore(this.tipoprov);
-					asps.setNomeSoggettoErogatore(this.nomeprov);
-				}
-				// Check accordo di Servizio
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				if(idAccordo.getSoggettoReferente()!=null && 
-						idAccordo.getSoggettoReferente().getTipo().equals(this.oldtipoprov) &&
-						idAccordo.getSoggettoReferente().getNome().equals(this.oldnomeprov)){
-					idAccordo.getSoggettoReferente().setTipo(this.tipoprov);
-					idAccordo.getSoggettoReferente().setNome(this.nomeprov);
-					asps.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
-				}	
-				// Fruitori
-				for(int j=0; j<asps.sizeFruitoreList(); j++){
-					if(asps.getFruitore(j).getTipo().equals(this.oldtipoprov) && 
-							asps.getFruitore(j).getNome().equals(this.oldnomeprov)){
-						asps.getFruitore(j).setTipo(this.tipoprov);
-						asps.getFruitore(j).setNome(this.nomeprov);
-					}
-				}			
-				this.oggettiDaAggiornare.add(asps);
+			// aggiorno le policy di rate limiting associate alle porte applicative
+			Enumeration<AttivazionePolicy> enPolicy = listaPolicyPA.elements();
+			while (enPolicy.hasMoreElements()) {
+				AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
+				this.oggettiDaAggiornare.add(ap);
 			}
 		}
 	}
 
+	private void _updateSoggettoInliste(PortaApplicativa portaApplicativa) {
+		
+		// controlloSoggetti Autorizzati
+		if(portaApplicativa.getSoggetti()!=null && portaApplicativa.getSoggetti().sizeSoggettoList()>0) {
+			for (PortaApplicativaAutorizzazioneSoggetto portaApplicativaAuthSoggetto : portaApplicativa.getSoggetti().getSoggettoList()) {
+				if (this.oldtipoprov.equals(portaApplicativaAuthSoggetto.getTipo()) && 
+						this.oldnomeprov.equals(portaApplicativaAuthSoggetto.getNome())) {
+					portaApplicativaAuthSoggetto.setTipo(this.tipoprov);
+					portaApplicativaAuthSoggetto.setNome(this.nomeprov);
+					break;
+				}
+			}
+		}
+		// fine controlloSoggetti Autorizzati	
+		
+		// controlloServiziApplicativi Autorizzati
+		
+		if(portaApplicativa.getServiziApplicativiAutorizzati()!=null && portaApplicativa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+			for (PortaApplicativaAutorizzazioneServizioApplicativo portaApplicativaAuthSa : portaApplicativa.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
+				if (this.oldtipoprov.equals(portaApplicativaAuthSa.getTipoSoggettoProprietario()) && 
+						this.oldnomeprov.equals(portaApplicativaAuthSa.getNomeSoggettoProprietario())) {
+					portaApplicativaAuthSa.setTipoSoggettoProprietario(this.tipoprov);
+					portaApplicativaAuthSa.setNomeSoggettoProprietario(this.nomeprov);
+					break;
+				}
+			}
+		}
+		
+		// fine controlloServiziApplicativi Autorizzati
+		
+		// controlloSoggetti riferiti nelle Trasformazioni
+		if(portaApplicativa.getTrasformazioni()!=null && portaApplicativa.getTrasformazioni().sizeRegolaList()>0) {
+			for (TrasformazioneRegola trRegola : portaApplicativa.getTrasformazioni().getRegolaList()) {
+				if(trRegola.getApplicabilita()!=null && trRegola.getApplicabilita().sizeSoggettoList()>0) {
+					for (TrasformazioneRegolaApplicabilitaSoggetto trSoggetto : trRegola.getApplicabilita().getSoggettoList()) {
+						if (this.oldtipoprov.equals(trSoggetto.getTipo()) && 
+								this.oldnomeprov.equals(trSoggetto.getNome())) {
+							trSoggetto.setTipo(this.tipoprov);
+							trSoggetto.setNome(this.nomeprov);
+							break;
+						}
+					}
+				}		
+			}
+		}
+		// fine controlloSoggetti riferiti nelle Trasformazioni	
+		
+		// controlloServiziApplicativi riferiti nelle Trasformazioni
+		
+		if(portaApplicativa.getTrasformazioni()!=null && portaApplicativa.getTrasformazioni().sizeRegolaList()>0) {
+			for (TrasformazioneRegola trRegola : portaApplicativa.getTrasformazioni().getRegolaList()) {
+				if(trRegola.getApplicabilita()!=null && trRegola.getApplicabilita().sizeServizioApplicativoList()>0) {
+					for (TrasformazioneRegolaApplicabilitaServizioApplicativo trSA : trRegola.getApplicabilita().getServizioApplicativoList()) {
+						if (this.oldtipoprov.equals(trSA.getTipoSoggettoProprietario()) && 
+								this.oldnomeprov.equals(trSA.getNomeSoggettoProprietario())) {
+							trSA.setTipoSoggettoProprietario(this.tipoprov);
+							trSA.setNomeSoggettoProprietario(this.nomeprov);
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		// fine controlloSoggetti riferiti nelle Trasformazioni
+	}
 	
+	private void _updateFiltroSoggetto(AttivazionePolicy ap) {
+		if(ap.getFiltro()!=null) {
+			
+			// aggiorno soggetto fruitore
+			if(ap.getFiltro().getTipoFruitore()!=null && ap.getFiltro().getNomeFruitore()!=null) {
+				if (this.oldtipoprov.equals(ap.getFiltro().getTipoFruitore()) && 
+						this.oldnomeprov.equals(ap.getFiltro().getNomeFruitore())) {
+					ap.getFiltro().setTipoFruitore(this.tipoprov);
+					ap.getFiltro().setNomeFruitore(this.nomeprov);
+				}
+			}
+			
+			// aggiorno soggetto erogatore
+			if(ap.getFiltro().getTipoErogatore()!=null && ap.getFiltro().getNomeErogatore()!=null) {
+				if (this.oldtipoprov.equals(ap.getFiltro().getTipoErogatore()) && 
+						this.oldnomeprov.equals(ap.getFiltro().getNomeErogatore())) {
+					ap.getFiltro().setTipoErogatore(this.tipoprov);
+					ap.getFiltro().setNomeErogatore(this.nomeprov);
+				}
+			}
+			
+		}
+	}
+
+	public void checkFruitori() throws DriverRegistroServiziException{
+		// Fruitori nei servizi 
+		if(this.soggettiCore.isRegistroServiziLocale()){
+			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
+			
+				List<AccordoServizioParteSpecifica> sfruitori = this.apsCore.servizioWithSoggettoFruitore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
+				for(int i=0; i<sfruitori.size(); i++){
+					AccordoServizioParteSpecifica asps = sfruitori.get(i);
+					if(asps.getTipoSoggettoErogatore().equals(this.oldtipoprov) &&
+							asps.getNomeSoggettoErogatore().equals(this.oldnomeprov)){
+						asps.setTipoSoggettoErogatore(this.tipoprov);
+						asps.setNomeSoggettoErogatore(this.nomeprov);
+					}
+					// Check accordo di Servizio
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+					if(idAccordo.getSoggettoReferente()!=null && 
+							idAccordo.getSoggettoReferente().getTipo().equals(this.oldtipoprov) &&
+							idAccordo.getSoggettoReferente().getNome().equals(this.oldnomeprov)){
+						idAccordo.getSoggettoReferente().setTipo(this.tipoprov);
+						idAccordo.getSoggettoReferente().setNome(this.nomeprov);
+						asps.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
+					}	
+					// Fruitori
+					for(int j=0; j<asps.sizeFruitoreList(); j++){
+						if(asps.getFruitore(j).getTipo().equals(this.oldtipoprov) && 
+								asps.getFruitore(j).getNome().equals(this.oldnomeprov)){
+							asps.getFruitore(j).setTipo(this.tipoprov);
+							asps.getFruitore(j).setNome(this.nomeprov);
+						}
+					}			
+					this.oggettiDaAggiornare.add(asps);
+				}
+				
+			}
+		}
+	}
+
+	public void checkPolicyGlobali() throws DriverConfigurazioneException{
+		if(this.soggettiCore.isRegistroServiziLocale()){
+			
+			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
+			
+				Hashtable<String, AttivazionePolicy> listaPolicyPA = new Hashtable<String, AttivazionePolicy>();
+				
+				
+				IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+				Search ricercaPolicies = new Search(true);
+				List<AttivazionePolicy> listaPolicies = null;
+				try {
+					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
+							filtroSoggettoFruitore, null, null,
+							null, null,
+							null, null);
+				}catch(Exception e) {}
+				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+					for (AttivazionePolicy ap : listaPolicies) {
+						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+							continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+						}
+												
+						if(ap.getFiltro()!=null) {
+							
+							_updateFiltroSoggetto(ap);
+															
+							listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+						}
+					}
+				}
+				
+				IDSoggetto filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+				ricercaPolicies = new Search(true);
+				listaPolicies = null;
+				try {
+					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
+							null, null, null,
+							filtroSoggettoErogatore, null,
+							null, null);
+				}catch(Exception e) {}
+				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+					for (AttivazionePolicy ap : listaPolicies) {
+						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+							continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+						}
+						
+						if(ap.getFiltro()!=null) {
+							
+							_updateFiltroSoggetto(ap);
+															
+							listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+						}
+					}
+				}
+				
+				// fine Controllo policy di Rate Limiting
+				
+				// aggiorno le policy di rate limiting globali
+				Enumeration<AttivazionePolicy> enPolicy = listaPolicyPA.elements();
+				while (enPolicy.hasMoreElements()) {
+					AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
+					this.oggettiDaAggiornare.add(ap);
+				}
+			}
+		}
+	}
+	
+	public void checkConfigurazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		if(this.soggettiCore.isRegistroServiziLocale()){
+			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
+				
+				Configurazione configurazioneGenerale = this.confCore.getConfigurazioneGenerale();
+				boolean updated = false;
+				if(configurazioneGenerale!=null && configurazioneGenerale.getUrlInvocazione()!=null && configurazioneGenerale.getUrlInvocazione().sizeRegolaList()>0) {
+					for (ConfigurazioneUrlInvocazioneRegola regola : configurazioneGenerale.getUrlInvocazione().getRegolaList()) {
+						if(regola.getSoggetto()!=null && 
+								this.oldtipoprov.equals(regola.getSoggetto().getTipo()) && 
+								this.oldnomeprov.equals(regola.getSoggetto().getNome())
+								) {
+							regola.getSoggetto().setTipo(this.tipoprov);
+							regola.getSoggetto().setNome(this.nomeprov);
+							updated = true;
+						}
+					}
+				}
+				
+				if(updated) {
+					this.oggettiDaAggiornare.add(configurazioneGenerale);
+				}
+			}
+		}
+	}
+		
 }

@@ -30,6 +30,8 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -39,6 +41,8 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -139,8 +143,71 @@ public class RuoliUtilities {
 			}
 		}
 		
+		
+		
+		// Cerco Rate Limiting policy
+		ConfigurazioneCore confCore = new ConfigurazioneCore(ruoliCore);
+		
+		// Nelle erogazioni
+		Search ricercaPolicies = new Search(true);
+		List<AttivazionePolicy> listaPolicies = null;
+		try {
+			listaPolicies = confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.APPLICATIVA, null,
+					null, null, null,
+					null, null,
+					null, oldIdRuolo.getNome());
+		}catch(Exception e) {}
+		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+			for (AttivazionePolicy attivazionePolicy : listaPolicies) {
+				_updateAttivazionePolicy(attivazionePolicy, oldIdRuolo.getNome(), ruoloNEW.getNome());
+				listOggettiDaAggiornare.add(attivazionePolicy);
+			}
+		}
+		
+		// Nelle fruizioni
+		ricercaPolicies = new Search(true);
+		listaPolicies = null;
+		try {
+			listaPolicies = confCore.attivazionePolicyListByFilter(ricercaPolicies, RuoloPolicy.DELEGATA, null,
+					null, null, null,
+					null, null,
+					null, oldIdRuolo.getNome());
+		}catch(Exception e) {}
+		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+			for (AttivazionePolicy attivazionePolicy : listaPolicies) {
+				_updateAttivazionePolicy(attivazionePolicy, oldIdRuolo.getNome(), ruoloNEW.getNome());
+				listOggettiDaAggiornare.add(attivazionePolicy);
+			}
+		}
+		
+		// Globali
+		ricercaPolicies = new Search(true);
+		listaPolicies = null;
+		try {
+			listaPolicies = confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
+					null, null, null,
+					null, null,
+					null, oldIdRuolo.getNome());
+		}catch(Exception e) {}
+		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+			for (AttivazionePolicy attivazionePolicy : listaPolicies) {
+				_updateAttivazionePolicy(attivazionePolicy, oldIdRuolo.getNome(), ruoloNEW.getNome());
+				listOggettiDaAggiornare.add(attivazionePolicy);
+			}
+		}
+		
 	}
 	
+	private static void _updateAttivazionePolicy(AttivazionePolicy policy, String oldNomeRuolo, String nuovoNomeRuolo) {
+		if(policy.getFiltro()!=null) {
+			if(oldNomeRuolo.equals(policy.getFiltro().getRuoloFruitore())) {
+				policy.getFiltro().setRuoloFruitore(nuovoNomeRuolo);
+			}
+			if(oldNomeRuolo.equals(policy.getFiltro().getRuoloErogatore())) {
+				policy.getFiltro().setRuoloErogatore(nuovoNomeRuolo);
+			}
+		}
+	}
 	
 	public static boolean deleteRuolo(Ruolo ruolo, String userLogin, RuoliCore ruoliCore, RuoliHelper ruoliHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();

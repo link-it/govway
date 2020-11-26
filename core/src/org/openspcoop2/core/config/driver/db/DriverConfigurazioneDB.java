@@ -25976,6 +25976,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			else
 				con = this.globalConnection;
 
+			String alias_SERVIZI_APPLICATIVI_autorizzati = "saauthz";
+			String alias_SERVIZI_APPLICATIVI_traformazioni = "satrasf";
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			if(filtroRicerca!=null && (filtroRicerca.getTipoSoggetto()!=null || filtroRicerca.getNomeSoggetto()!=null) ){
@@ -26000,9 +26003,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getNomeServizioApplicativo()!=null){
 					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SA);
-					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI, alias_SERVIZI_APPLICATIVI_autorizzati);
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SA+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
-					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SA+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SA+".id_servizio_applicativo = "+alias_SERVIZI_APPLICATIVI_autorizzati+".id");
+				}
+			}
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SA);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI,alias_SERVIZI_APPLICATIVI_traformazioni);
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA+".id_trasformazione = "+CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA+".id_servizio_applicativo = "+alias_SERVIZI_APPLICATIVI_traformazioni+".id");
 				}
 			}
 			boolean porteDelegatePerAzioni = false;
@@ -26043,7 +26057,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filtroRicerca.getIdScope()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SCOPE+".scope = ?");
 				if(filtroRicerca.getNomeServizioApplicativo()!=null)
-					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome = ?");			
+					sqlQueryObject.addWhereCondition(alias_SERVIZI_APPLICATIVI_autorizzati+".nome = ?");		
+				if(filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null)
+					sqlQueryObject.addWhereCondition(alias_SERVIZI_APPLICATIVI_traformazioni+".nome = ?");		
 				if(filtroRicerca.getStato()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".stato = ?");
 				if(porteDelegatePerAzioni) {
@@ -26125,8 +26141,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					indexStmt++;
 				}
 				if(filtroRicerca.getNomeServizioApplicativo()!=null){
-					this.log.debug("servizioApplicativo stmt.setString("+filtroRicerca.getNomeServizioApplicativo()+")");
+					this.log.debug("servizioApplicativoAuthz stmt.setString("+filtroRicerca.getNomeServizioApplicativo()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomeServizioApplicativo());
+					indexStmt++;
+				}
+				if(filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null){
+					this.log.debug("servizioApplicativoTrasformazioni stmt.setString("+filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione()+")");
+					stm.setString(indexStmt, filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione());
 					indexStmt++;
 				}
 				if(filtroRicerca.getStato()!=null){
@@ -26259,6 +26280,29 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA_AUTORIZZATI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
 				}
 			}
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione()!=null &&
+						(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo()!=null || 
+						filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome()!=null)){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI+".id_trasformazione = "+CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id");
+				}
+			}
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null &&
+						filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome()!=null &&
+						filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario()!=null &&
+						filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo()!=null &&
+						filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome()!=null
+						){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA+".id_trasformazione = "+CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id");
+				}
+			}
 			boolean porteDelegatePerAzioni = false;
 			if(filtroRicerca!=null && filtroRicerca.getNomePortaDelegante()!=null) {
 				porteDelegatePerAzioni = true;
@@ -26314,6 +26358,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario().getNome()!=null
 							){
 						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA_AUTORIZZATI+".id_servizio_applicativo = ?");
+					}
+				}
+				if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione()!=null &&
+						(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo()!=null || 
+						filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome()!=null)){
+					if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo()!=null) {
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI+".tipo_soggetto= ?");
+					}
+					if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome()!=null) {
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI+".nome_soggetto= ?");
+					}
+				}
+				if(filtroRicerca!=null){
+					if(filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome()!=null
+							){
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA+".id_servizio_applicativo = ?");
 					}
 				}
 				if(filtroRicerca.getStato()!=null)
@@ -26423,6 +26487,37 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 								+") (getIdBy Nome["+filtroRicerca.getIdServizioApplicativoAutorizzato().getNome()
 								+"] tipoSoggetto["+filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario().getTipo()+
 								"] nomeSoggetto["+filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario().getNome()+"])");
+						stm.setLong(indexStmt, idSA);
+						indexStmt++;
+					}
+				}
+				if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione()!=null &&
+						(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo()!=null || 
+						filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome()!=null)){
+					if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo()!=null) {
+						this.log.debug("idSoggettoTrasformazioni.tipo stmt.setString("+filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo()+")");
+						stm.setString(indexStmt, filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo());
+						indexStmt++;
+					}
+					if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome()!=null) {
+						this.log.debug("idSoggettoTrasformazioni.nome stmt.setString("+filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome()+")");
+						stm.setString(indexStmt, filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome());
+						indexStmt++;
+					}
+				}
+				if(filtroRicerca!=null){
+					if(filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome()!=null
+							){
+						long idSA = DBUtils.getIdServizioApplicativo(filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome(), 
+								filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo(), filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome(), con, this.tipoDB);
+						this.log.debug("idServizioApplicativoTrasformazioni stmt.setLong("+idSA
+								+") (getIdBy Nome["+filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome()
+								+"] tipoSoggetto["+filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo()+
+								"] nomeSoggetto["+filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome()+"])");
 						stm.setLong(indexStmt, idSA);
 						indexStmt++;
 					}

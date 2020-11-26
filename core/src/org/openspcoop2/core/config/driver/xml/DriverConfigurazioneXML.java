@@ -55,6 +55,9 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -844,7 +847,31 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						if(!contains){
 							continue;
 						}
-					}						
+					}	
+					// Filtro By Applicabilita Trasformazione Servizio Applicativo
+					if(filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null) {
+						if(pd.getTrasformazioni()==null || pd.getTrasformazioni().sizeRegolaList()<=0){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pd.getTrasformazioni().sizeRegolaList(); z++) {
+							TrasformazioneRegola regola = pd.getTrasformazioni().getRegola(z);
+							if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeServizioApplicativoList()>0) {
+								for (TrasformazioneRegolaApplicabilitaServizioApplicativo tSA : regola.getApplicabilita().getServizioApplicativoList()) {
+									if(filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione().equals(tSA.getNome())){
+										contains = true;
+										break;
+									}
+								}
+								if(contains){
+									break;
+								}
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}	
 					// Filtro By Stato
 					if(filtroRicerca.getStato()!=null){
 						if(pd.getStato()==null){
@@ -1320,8 +1347,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 					if(filtroRicerca.getIdServizioApplicativoAutorizzato()!=null &&
 							filtroRicerca.getIdServizioApplicativoAutorizzato().getNome()!=null &&
 							filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario()!=null &&
-							filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null &&
-							filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null
+							filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario().getTipo()!=null &&
+							filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario().getNome()!=null
 							){
 						if(pa.getServiziApplicativiAutorizzati()==null || pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()<=0) {
 							continue;
@@ -1339,6 +1366,74 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							}
 							contains = true;
 							break;
+						}
+						if(!contains){
+							continue;
+						}
+					}
+					// Filtro By SoggettoAutorizzato
+					if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione()!=null &&
+							(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo()!=null || 
+							filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome()!=null)){
+						if(pa.getTrasformazioni()==null || pa.getTrasformazioni().sizeRegolaList()<=0){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pa.getTrasformazioni().sizeRegolaList(); z++) {
+							TrasformazioneRegola regola = pa.getTrasformazioni().getRegola(z);
+							if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeSoggettoList()>0) {
+								for (TrasformazioneRegolaApplicabilitaSoggetto tSoggetto : regola.getApplicabilita().getSoggettoList()) {
+									if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo()!=null &&
+											!filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getTipo().equals(tSoggetto.getTipo())){
+										continue;
+									}
+									if(filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome()!=null &&
+											!filtroRicerca.getIdSoggettoRiferitoApplicabilitaTrasformazione().getNome().equals(tSoggetto.getNome())){
+										continue;
+									}
+									contains = true;
+									break;
+								}
+								if(contains){
+									break;
+								}
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}
+					// Filtro By Applicabilita Trasformazione Servizio Applicativo
+					if(filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo()!=null &&
+							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome()!=null
+							){
+						if(pa.getTrasformazioni()==null || pa.getTrasformazioni().sizeRegolaList()<=0){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pa.getTrasformazioni().sizeRegolaList(); z++) {
+							TrasformazioneRegola regola = pa.getTrasformazioni().getRegola(z);
+							if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeServizioApplicativoList()>0) {
+								for (TrasformazioneRegolaApplicabilitaServizioApplicativo tSA : regola.getApplicabilita().getServizioApplicativoList()) {
+									if(!filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome().equals(tSA.getNome())){
+										continue;
+									}
+									if(!filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo().equals(tSA.getTipoSoggettoProprietario())){
+										continue;
+									}	
+									if(!filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome().equals(tSA.getNomeSoggettoProprietario())){
+										continue;
+									}
+									contains = true;
+									break;
+								}
+								if(contains){
+									break;
+								}
+							}
 						}
 						if(!contains){
 							continue;

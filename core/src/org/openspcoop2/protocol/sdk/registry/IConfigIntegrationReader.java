@@ -25,6 +25,7 @@ import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -69,6 +70,8 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	
 	public List<IDPortaDelegata> findIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException;
 	
+	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException;
+	
 	// PORTA APPLICATIVA
 	
 	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException;
@@ -77,9 +80,13 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	
 	public List<IDPortaApplicativa> findIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException;
 	
+	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaApplicativa idPortaDelegata) throws RegistryNotFound,RegistryException;
+	
 	// CONFIGURAZIONE
 	
 	public CanaliConfigurazione getCanaliConfigurazione() throws RegistryNotFound,RegistryException;
 	
+	public List<AttivazionePolicy> getRateLimitingPolicyGlobali() throws RegistryNotFound,RegistryException;
 	
+	public Integer getFreeCounterForGlobalPolicy(String policyId) throws RegistryException;
 }

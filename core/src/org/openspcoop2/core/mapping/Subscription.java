@@ -22,7 +22,10 @@
 
 package org.openspcoop2.core.mapping;
 
+import java.util.List;
+
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 
 /**
  * Subscription
@@ -42,7 +45,14 @@ public class Subscription implements java.io.Serializable {
 	
 	private PortaDelegata portaDelegata;
 	private MappingFruizionePortaDelegata mapping;
-		
+	private List<AttivazionePolicy> rateLimitingPolicies;
+	
+	public List<AttivazionePolicy> getRateLimitingPolicies() {
+		return this.rateLimitingPolicies;
+	}
+	public void setRateLimitingPolicies(List<AttivazionePolicy> rateLimitingPolicies) {
+		this.rateLimitingPolicies = rateLimitingPolicies;
+	}
 	public PortaDelegata getPortaDelegata() {
 		return this.portaDelegata;
 	}

@@ -1,3 +1,16 @@
+2020-11-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1111
+	Di seguito tutte le anomalie corrette:
+	- le policy di RateLimiting associate ad una erogazione si perdevano se si effettuava la modifica del nome del soggetto erogatore;
+	- le policy di RateLimiting associate ad una fruizione si perdevano se si effettuava la modifica del nome del soggetto erogatore o fruitore;
+	- l'aggiornamento del nome di un soggetto andava in errore se esistevano erogazioni o fruizioni interessate dal soggetto modificato contenenti trasformazioni configurate con applicativi o soggetti nei criteri di applicabilità; 	   - l'aggiornamento del nome di un soggetto non aggiornava correttamente le liste dei soggetti presenti tra i criteri di applicabilità delle trasformazioni attivate su erogazioni o fruizioni;
+	- l'aggiornamento del nome di un soggetto non veniva propagato correttamente verso le regole di proxy pass che lo contenevano come criterio di applicabilità;
+	- l'aggiornamento del nome di un soggetto, di un ruolo, o di una erogazione/fruizione (compresa la versione) non veniva propagata sulle policy di RateLimiting, sia attivate globalmente che puntualmente su una erogazione o fruizione (i filtri che contenevano l'oggetto di modifica risultavano erroneamente disabiliti);
+	- la modifica del tipo di credenziali di un soggetto da nessuna a basic o api-key non visualizzava il dialog informativo che indica di copiare e custodire attentamente le credenziali generate;
+	- in una erogazione o fruizione, durante la creazione di un nuovo gruppo, se si sceglieva di ereditare la configurazione da un precedente gruppo, non venivano riportate le politiche di rate limiting esistenti sul vecchio.
+
 2020-11-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

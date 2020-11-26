@@ -85,6 +85,8 @@ public final class Filtri
 	public final static String FILTRO_RUOLO = "filtroRuolo";
 	
 	public final static String FILTRO_TIPO_POLICY = "filtroTipoPolicy";
+	public final static String FILTRO_TIPO_POLICY_BUILT_IN = "built-in";
+	public final static String FILTRO_TIPO_POLICY_UTENTE = "utente";
 	
 	public final static String FILTRO_TIPO_RISORSA_POLICY = "filtroTipoRisorsaPolicy";
 	

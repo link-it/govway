@@ -32,6 +32,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 
 /**
  * Interfaccia di Configurazione dei componenti di integration, valori prelevati dal file openspcoop2-manifest
@@ -47,10 +48,10 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 	
 	public Subscription createDefaultSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio) throws ProtocolException;
 	
-	public Subscription createSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
+	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException;
-	public Subscription createSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
+	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaCopiare,
 			String ruleName, String description, String ... azione ) throws ProtocolException;
 	
@@ -63,10 +64,10 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 	
 	public Implementation createDefaultImplementation(ServiceBinding serviceBinding, IDServizio idServizio) throws ProtocolException;
 	
-	public Implementation createImplementation(ServiceBinding serviceBinding, IDServizio idServizio,
+	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException;
-	public Implementation createImplementation(ServiceBinding serviceBinding, IDServizio idServizio,
+	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaCopiare,
 			String ruleName, String description, String ... azione ) throws ProtocolException;
 	

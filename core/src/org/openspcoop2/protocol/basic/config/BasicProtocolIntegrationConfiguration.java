@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.Implementation;
 import org.openspcoop2.protocol.sdk.config.Subscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 
 /**
  * Classe che implementa, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolConfiguration} 
@@ -85,15 +86,15 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 	}
 	
 	@Override
-	public Subscription createSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
+	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException{
-		return this.createSubscription(serviceBinding, idFruitore, idServizio, 
+		return this.createSubscription(configIntegrationReader, serviceBinding, idFruitore, idServizio, 
 				portaDelegataDefault, null, 
 				ruleName, description, azione);
 	}
 	@Override
-	public Subscription createSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
+	public Subscription createSubscription(IConfigIntegrationReader confiIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaCopiare,
 			String ruleName, String description, String ... azione ) throws ProtocolException{
 		if(serviceBinding==null){
@@ -104,12 +105,12 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 			if(this.subscriptionConfigurationRest==null) {
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
-			return this.subscriptionConfigurationRest.createSubscription(idFruitore, idServizio, portaDelegataDefault, portaDelegataDaCopiare, ruleName, description, azione);
+			return this.subscriptionConfigurationRest.createSubscription(confiIntegrationReader, idFruitore, idServizio, portaDelegataDefault, portaDelegataDaCopiare, ruleName, description, azione);
 		case SOAP:
 			if(this.subscriptionConfigurationSoap==null) {
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
-			return this.subscriptionConfigurationSoap.createSubscription(idFruitore, idServizio, portaDelegataDefault, portaDelegataDaCopiare, ruleName, description, azione);
+			return this.subscriptionConfigurationSoap.createSubscription(confiIntegrationReader,idFruitore, idServizio, portaDelegataDefault, portaDelegataDaCopiare, ruleName, description, azione);
 		}
 		throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 	}
@@ -175,15 +176,15 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 	}
 	
 	@Override
-	public Implementation createImplementation(ServiceBinding serviceBinding, IDServizio idServizio,
+	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader,ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException{
-		return this.createImplementation(serviceBinding, idServizio, 
+		return this.createImplementation(configIntegrationReader,serviceBinding, idServizio, 
 				portaApplicativaDefault, null, 
 				ruleName, description, azione);
 	}
 	@Override
-	public Implementation createImplementation(ServiceBinding serviceBinding, IDServizio idServizio,
+	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader,ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaCopiare,
 			String ruleName, String description, String ... azione ) throws ProtocolException{
 		if(serviceBinding==null){
@@ -194,12 +195,12 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 			if(this.implementationConfigurationRest==null) {
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
-			return this.implementationConfigurationRest.createImplementation(idServizio, portaApplicativaDefault, portaApplicativaDaCopiare, ruleName, description, azione);
+			return this.implementationConfigurationRest.createImplementation(configIntegrationReader,idServizio, portaApplicativaDefault, portaApplicativaDaCopiare, ruleName, description, azione);
 		case SOAP:
 			if(this.implementationConfigurationSoap==null) {
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
-			return this.implementationConfigurationSoap.createImplementation(idServizio, portaApplicativaDefault, portaApplicativaDaCopiare, ruleName, description, azione);
+			return this.implementationConfigurationSoap.createImplementation(configIntegrationReader,idServizio, portaApplicativaDefault, portaApplicativaDaCopiare, ruleName, description, azione);
 		}
 		throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 	}

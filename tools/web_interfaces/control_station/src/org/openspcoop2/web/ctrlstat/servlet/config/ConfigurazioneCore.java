@@ -611,6 +611,32 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+
+	public List<AttivazionePolicy> attivazionePolicyListByFilter(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta,
+			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
+			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
+			IDServizio filtroServizioAzione, String filtroRuolo)  throws DriverControlStationException{
+		String nomeMetodo = "attivazionePolicyListByFilter";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			return driver.configurazioneControlloTrafficoAttivazionePolicyListByFilter(ricerca, ruoloPorta, nomePorta,
+					filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
+					filtroSoggettoErogatore, filtroRuoloErogatore,
+					filtroServizioAzione, filtroRuolo);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 	
 	public AttivazionePolicy getAttivazionePolicy(String alias, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException, DriverControlStationNotFound{
 		String nomeMetodo = "getAttivazionePolicy";

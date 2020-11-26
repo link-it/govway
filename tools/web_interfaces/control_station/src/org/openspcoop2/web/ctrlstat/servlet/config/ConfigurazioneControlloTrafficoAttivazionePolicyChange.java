@@ -32,15 +32,18 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -83,6 +86,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
+			PorteDelegateCore pdCore = new PorteDelegateCore(confCore);
 			
 			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
 			
@@ -213,6 +217,21 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			}
 
 			// insert sul db
+			
+			if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
+				String tipoSoggettoProprietario = null;
+				String nomeSoggettoProprietario = null;
+				if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(nomePorta);
+					PortaDelegata porta = pdCore.getPortaDelegata(idPD);
+					// il tipo e nome serve per l'applicativo fruitore
+					tipoSoggettoProprietario = porta.getTipoSoggettoProprietario();
+					nomeSoggettoProprietario = porta.getNomeSoggettoProprietario();
+				}
+				policy.getFiltro().setTipoFruitore(tipoSoggettoProprietario);
+				policy.getFiltro().setNomeFruitore(nomeSoggettoProprietario);
+			}
 			
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), policy);
 			

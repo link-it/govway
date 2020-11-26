@@ -701,6 +701,11 @@ public final class SoggettiChange extends Action {
 					modificataTipoAutenticazione = true;
 				}
 			}
+			else {
+				if(this.tipoauthSoggetto!=null && !"".equals(this.tipoauthSoggetto) && !ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)) {
+					modificataTipoAutenticazione = true;
+				}
+			}
 			
 			// Se nomehid = null, devo visualizzare la pagina per la modifica dati
 			if(ServletUtils.isEditModeInProgress(this.editMode) || checkWizard){

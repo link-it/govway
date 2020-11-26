@@ -79,6 +79,9 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 	/** Autorizzazione ServizioApplicativo */
 	private String nomeServizioApplicativo;
 	
+	/** Trasformazioni Applicabilita Servizio Applicativo */
+	private String nomeServizioApplicativoRiferitoApplicabilitaTrasformazione;
+	
 	/** Stato */
 	private StatoFunzionalita stato;
 	
@@ -113,6 +116,8 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 			bf.append(" [scope:"+this.idScope+"]");
 		if(this.nomeServizioApplicativo!=null)
 			bf.append(" [nomeServizioApplicativo:"+this.nomeServizioApplicativo+"]");
+		if(this.nomeServizioApplicativoRiferitoApplicabilitaTrasformazione!=null)
+			bf.append(" [nomeServizioApplicativoRiferitoApplicabilitaTrasformazione:"+this.nomeServizioApplicativoRiferitoApplicabilitaTrasformazione+"]");
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
@@ -238,4 +243,14 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 	public void setNomeServizioApplicativo(String nomeServizioApplicativo) {
 		this.nomeServizioApplicativo = nomeServizioApplicativo;
 	}
+	
+	public String getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione() {
+		return this.nomeServizioApplicativoRiferitoApplicabilitaTrasformazione;
+	}
+
+	public void setNomeServizioApplicativoRiferitoApplicabilitaTrasformazione(
+			String nomeServizioApplicativoRiferitoApplicabilitaTrasformazione) {
+		this.nomeServizioApplicativoRiferitoApplicabilitaTrasformazione = nomeServizioApplicativoRiferitoApplicabilitaTrasformazione;
+	}
+
 }

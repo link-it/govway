@@ -84,6 +84,12 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 	/** Autorizzazione Servizio Applicativo */
 	private IDServizioApplicativo idServizioApplicativoAutorizzato;
 	
+	/** Trasformazioni Applicabilita Soggetto */
+	private IDSoggetto idSoggettoRiferitoApplicabilitaTrasformazione;
+	
+	/** Trasformazioni Applicabilita Servizio Applicativo */
+	private IDServizioApplicativo idServizioApplicativoRiferitoApplicabilitaTrasformazione;
+	
 	/** Stato */
 	private StatoFunzionalita stato;
 	
@@ -114,11 +120,15 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 		if(this.idRuolo!=null)
 			bf.append(" [ruolo:"+this.idRuolo+"]");
 		if(this.idScope!=null)
-			bf.append(" [ruolo:"+this.idScope+"]");
+			bf.append(" [scope:"+this.idScope+"]");
 		if(this.idSoggettoAutorizzato!=null)
-			bf.append(" [ruolo:"+this.idSoggettoAutorizzato+"]");
+			bf.append(" [soggettoAutorizzato:"+this.idSoggettoAutorizzato+"]");
 		if(this.idServizioApplicativoAutorizzato!=null)
-			bf.append(" [ruolo:"+this.idServizioApplicativoAutorizzato+"]");
+			bf.append(" [servizioApplicativoAutorizzato:"+this.idServizioApplicativoAutorizzato+"]");
+		if(this.idSoggettoRiferitoApplicabilitaTrasformazione!=null)
+			bf.append(" [soggettoRiferitoApplicabilitaTrasformazione:"+this.idSoggettoRiferitoApplicabilitaTrasformazione+"]");
+		if(this.idServizioApplicativoRiferitoApplicabilitaTrasformazione!=null)
+			bf.append(" [servizioApplicativoRiferitoApplicabilitaTrasformazione:"+this.idServizioApplicativoRiferitoApplicabilitaTrasformazione+"]");
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
@@ -248,5 +258,22 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 
 	public void setIdServizioApplicativoAutorizzato(IDServizioApplicativo idServizioApplicativoAutorizzato) {
 		this.idServizioApplicativoAutorizzato = idServizioApplicativoAutorizzato;
+	}
+	
+	public IDSoggetto getIdSoggettoRiferitoApplicabilitaTrasformazione() {
+		return this.idSoggettoRiferitoApplicabilitaTrasformazione;
+	}
+
+	public void setIdSoggettoRiferitoApplicabilitaTrasformazione(IDSoggetto idSoggettoRiferitoApplicabilitaTrasformazione) {
+		this.idSoggettoRiferitoApplicabilitaTrasformazione = idSoggettoRiferitoApplicabilitaTrasformazione;
+	}
+
+	public IDServizioApplicativo getIdServizioApplicativoRiferitoApplicabilitaTrasformazione() {
+		return this.idServizioApplicativoRiferitoApplicabilitaTrasformazione;
+	}
+
+	public void setIdServizioApplicativoRiferitoApplicabilitaTrasformazione(
+			IDServizioApplicativo idServizioApplicativoRiferitoApplicabilitaTrasformazione) {
+		this.idServizioApplicativoRiferitoApplicabilitaTrasformazione = idServizioApplicativoRiferitoApplicabilitaTrasformazione;
 	}
 }

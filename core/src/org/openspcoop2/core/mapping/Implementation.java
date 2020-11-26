@@ -22,7 +22,10 @@
 
 package org.openspcoop2.core.mapping;
 
+import java.util.List;
+
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 
 /**
  * Implementation
@@ -42,7 +45,14 @@ public class Implementation implements java.io.Serializable {
 	
 	private PortaApplicativa portaApplicativa;
 	private MappingErogazionePortaApplicativa mapping;
+	private List<AttivazionePolicy> rateLimitingPolicies;
 		
+	public List<AttivazionePolicy> getRateLimitingPolicies() {
+		return this.rateLimitingPolicies;
+	}
+	public void setRateLimitingPolicies(List<AttivazionePolicy> rateLimitingPolicies) {
+		this.rateLimitingPolicies = rateLimitingPolicies;
+	}
 	public PortaApplicativa getPortaApplicativa() {
 		return this.portaApplicativa;
 	}
