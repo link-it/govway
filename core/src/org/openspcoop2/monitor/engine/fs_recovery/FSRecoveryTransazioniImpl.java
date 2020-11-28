@@ -62,11 +62,15 @@ public class FSRecoveryTransazioniImpl extends AbstractFSRecovery {
 		Transazione transazione = deserializer.readTransazione(file);
 		
 		// aggiungo evento transazione
-		if(transazione.getEventiGestione()==null || "".equals(transazione.getEventiGestione())){
-			transazione.setEventiGestione(Costanti.EVENTO_FILE_SYSTEM_RECOVERY);
-		}
-		else{
-			transazione.setEventiGestione(transazione.getEventiGestione()+","+Costanti.EVENTO_FILE_SYSTEM_RECOVERY);
+		// Non e' più possibile aggiungerlo da quando abbiamo trasformato la colonna in 'eventi'.
+		boolean enrichEventi = false;
+		if(enrichEventi) {
+			if(transazione.getEventiGestione()==null || "".equals(transazione.getEventiGestione())){
+				transazione.setEventiGestione(Costanti.EVENTO_FILE_SYSTEM_RECOVERY);
+			}
+			else{
+				transazione.setEventiGestione(transazione.getEventiGestione()+","+Costanti.EVENTO_FILE_SYSTEM_RECOVERY);
+			}
 		}
 		
 		String id = this.transazioniSM.getTransazioneService().convertToId(transazione);
