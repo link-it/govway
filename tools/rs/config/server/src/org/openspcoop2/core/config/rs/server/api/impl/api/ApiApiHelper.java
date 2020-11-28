@@ -583,12 +583,18 @@ public class ApiApiHelper {
 					stato = StatoApiEnum.ERROR;
 					descrizioneStato = ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI_TOOLTIP;
 				}
-				else if(numeroTotaleServizi==1 && numeroServiziAbilitati==0) {
+				else if(numeroServiziAbilitati==0) {
 					stato = StatoApiEnum.ERROR;
-					descrizioneStato = ApiCostanti.APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP;
+					if(numeroTotaleServizi==1) {
+						descrizioneStato = ApiCostanti.APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP;
+					}
+					else {
+						descrizioneStato = ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_SENZA_AZIONE_TOOLTIP;
+					}
 				} else if(numeroServiziAbilitati == numeroTotaleServizi) {
 					stato = StatoApiEnum.OK;
-				} else {
+				} 
+				else {
 					stato = StatoApiEnum.WARN;
 					descrizioneStato = ApiCostanti.APC_API_ICONA_STATO_SERVIZI_PARZIALMENTE_ABILITATI_TOOLTIP;
 				}

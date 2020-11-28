@@ -1522,7 +1522,9 @@ public class DriverConfigurazioneDB_LIB {
 		PortaDelegataSoggettoErogatore soggErogatore = aPD.getSoggettoErogatore();
 		long idSoggettoErogatore = ((soggErogatore != null && soggErogatore.getId() != null) ? soggErogatore.getId() : -1);
 		//System.out.println("PRIMA PD SOGGETTO: "+idSoggettoErogatore);
-		if(idSoggettoErogatore<=0 && soggErogatore!=null && soggErogatore.getTipo()!=null && soggErogatore.getNome()!=null) {
+		// SEMPRE, VA AGGIORNATO ANCHE IN UPDATE if(idSoggettoErogatore<=0 &&
+		if(
+				soggErogatore!=null && soggErogatore.getTipo()!=null && soggErogatore.getNome()!=null) {
 			try {
 				idSoggettoErogatore = DBUtils.getIdSoggetto(soggErogatore.getNome(), soggErogatore.getTipo(), con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
 				//System.out.println("DOPO PD SOGGETTO: "+idSoggettoErogatore);
@@ -1534,7 +1536,9 @@ public class DriverConfigurazioneDB_LIB {
 		PortaDelegataServizio servizio = aPD.getServizio();
 		long idServizioPD = ((servizio != null && servizio.getId() != null) ? servizio.getId() : -1);
 		//System.out.println("PRIMA PD: "+idServizioPD);
-		if(idServizioPD<=0 && idSoggettoErogatore>0 && servizio!=null && servizio.getTipo()!=null && servizio.getNome()!=null && servizio.getVersione()!=null && servizio.getVersione()>0) {
+		// SEMPRE, VA AGGIORNATO ANCHE IN UPDATE if(idServizioPD<=0 &&
+		if(
+				idSoggettoErogatore>0 && servizio!=null && servizio.getTipo()!=null && servizio.getNome()!=null && servizio.getVersione()!=null && servizio.getVersione()>0) {
 			try {
 				idServizioPD = DBUtils.getIdServizio(servizio.getNome(), servizio.getTipo(), servizio.getVersione(), idSoggettoErogatore, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
 				//System.out.println("DOPO PD: "+idServizioPD);
@@ -4564,7 +4568,9 @@ public class DriverConfigurazioneDB_LIB {
 		PortaApplicativaServizio servizio = aPA.getServizio();
 		long idServizio = ((servizio != null && servizio.getId() != null) ? servizio.getId() : -1);
 		//System.out.println("PRIMA PA: "+idServizio);
-		if(idServizio<=0 && servizio!=null && servizio.getTipo()!=null && servizio.getNome()!=null && servizio.getVersione()!=null && servizio.getVersione()>0) {
+		// SEMPRE, VA AGGIORNATO ANCHE IN UPDATE if(idServizio<=0 &&
+		if(
+				servizio!=null && servizio.getTipo()!=null && servizio.getNome()!=null && servizio.getVersione()!=null && servizio.getVersione()>0) {
 			try {
 				idServizio = DBUtils.getIdServizio(servizio.getNome(), servizio.getTipo(), servizio.getVersione(), nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
 				//System.out.println("DOPO PA: "+idServizio);

@@ -73,6 +73,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -1220,7 +1221,7 @@ public class SoggettoUpdateUtilities {
 							boolean nameEquals = portaApplicativaSA.getNome().equals(oldIDPortaApplicativaForUpdate.getNome());
 							
 							// __gw_ENTE/gw_TEST/v1__Specific2__SA3
-							boolean nameConnettoreMultiplo = portaApplicativaSA.getNome().startsWith(oldIDPortaApplicativaForUpdate.getNome()+"__SA");
+							boolean nameConnettoreMultiplo = portaApplicativaSA.getNome().startsWith(oldIDPortaApplicativaForUpdate.getNome()+ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX);
 																
 							if(nameEquals || nameConnettoreMultiplo) {
 								// devo aggiornare il nome del SA
@@ -1259,6 +1260,7 @@ public class SoggettoUpdateUtilities {
 								}
 								
 								//NON SERVE, sono riferiti tramite id e prima modifico le porte applicative!! portaApplicativaSA.setNome(sa.getNome());
+								// Inoltre anche se cambio il nome del soggetto, l'id del soggetto rimane lo stesso
 								
 								listaPA_SA.put(sa.getNome(), sa);
 								// ?? nei connettori multipli, salta break;

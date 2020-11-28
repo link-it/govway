@@ -1,3 +1,24 @@
+2020-11-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1113
+	(https://github.com/link-it/govway/issues/63 e https://github.com/link-it/govway/issues/64)
+	Aggiunta la possibilità di modificare il soggetto erogatore nelle fruizioni e nelle erogazioni.
+	Nell'intervento sono stati risolti anche le seguenti anomalie:
+	- Cambio di versione di una API: venivano erroneamente proposte anche le versioni di API incomplete o che non contenevano lo stesso port-type nel caso di API SOAP.
+	  Inoltre non veniva verificato che la nuova versione possedesse tutte le operazioni riferite puntualmente in gruppi, nei criteri di applicabilità delle trasformazioni o nei filtri di policy di RateLimiting.
+	- Durante la creazione di un nuovo gruppo, non veniva verificato se l'azione associata al gruppo fosse già riferita puntualmente nei criteri di applicabilità delle trasformazioni del grupppo Predefinito.
+	- La seguente combinazione di configurazioni portava ad un errore inatteso della console:
+          . Creazione di un gruppo specifico per l'erogazione
+	  . Tramite l'interfaccia in modalità avanzata ridefinire il connettore per il nuovo gruppo associando al connettore un applicativo di tipo server.
+	  . Si ripristina il connettore del nuovo gruppo ripristinando il connettore del gruppo Predefinito.
+	  . Provando nuovamente a ridefinire il connettore per il gruppo la console terminava con un errore inatteso poichè la precedente operazione non aveva eliminato su database l'applicativo interno.
+
+2020-11-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug sul Timer 'FileSystem Recovery' che tentava di ripristinare le transazioni aggiungendo un evento che causava l'errore: "il valore è troppo lungo per il tipo character varying(20)"
+
 2020-11-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

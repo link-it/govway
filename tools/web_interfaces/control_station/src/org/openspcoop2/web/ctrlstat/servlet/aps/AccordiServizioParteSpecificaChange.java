@@ -39,6 +39,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
@@ -103,6 +104,7 @@ import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -313,6 +315,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			boolean cambiaAPI = false;
 			if(tmpCambiaAPI!=null) {
 				cambiaAPI = "true".equals(tmpCambiaAPI);
+			}
+			
+			String tmpCambiaSoggettoErogatore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE);
+			boolean cambiaErogatore = false;
+			if(tmpCambiaSoggettoErogatore!=null) {
+				cambiaErogatore = "true".equals(tmpCambiaSoggettoErogatore);
 			}
 			
 			boolean addPropertiesHidden = false;
@@ -579,6 +587,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							(tmpModificaAPI!=null && !"".equals(tmpModificaAPI))
 							||
 							cambiaAPI
+							||
+							cambiaErogatore
 					)
 				) {
 			
@@ -607,19 +617,110 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			// calcolo soggetti compatibili con accordi
 			List<Soggetto> list = null;
-			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				list = soggettiCore.soggettiRegistroList(null, new Search(true));
-			}else{
-				list = soggettiCore.soggettiRegistroList(userLogin, new Search(true));
+			String nuovoTipoSoggettoErogatore = null;
+			String nuovoNomeSoggettoErogatore = null;
+			if(cambiaErogatore) {
+				
+				provider = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_CAMBIO_EROGATORE);
+				
+				Search searchSoggetti = new Search(true);
+				searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
+				boolean gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = false;
+				if(gestioneFruitori) {
+					boolean filtraSoloEsterni = true;
+					if(apsCore.isMultitenant() && apsCore.getMultitenantSoggettiFruizioni()!=null) {
+						switch (apsCore.getMultitenantSoggettiFruizioni()) {
+						case SOLO_SOGGETTI_ESTERNI:
+							filtraSoloEsterni = true;
+							break;
+						case ESCLUDI_SOGGETTO_FRUITORE:
+							filtraSoloEsterni = false;
+							gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = true;
+							break;
+						case TUTTI:
+							filtraSoloEsterni = false;
+							break;
+						}
+					}
+					if(filtraSoloEsterni) {
+						searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
+					}
+				}
+				if(gestioneErogatori) {
+					searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
+				}
+				
+				if(apsCore.isVisioneOggettiGlobale(userLogin)){
+					list = soggettiCore.soggettiRegistroList(null, searchSoggetti);
+				}else{
+					list = soggettiCore.soggettiRegistroList(userLogin, searchSoggetti);
+				}
+				
+				if(gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore && list!=null && !list.isEmpty()) {
+					for (int i = 0; i < list.size(); i++) {
+						Soggetto soggettoCheck = list.get(i);
+						if(soggettoCheck.getTipo().equals(tipoSoggettoFruitore) && soggettoCheck.getNome().equals(nomeSoggettoFruitore)) {
+							list.remove(i);
+							break;
+						}
+					}
+				}
+				if(list!=null && !list.isEmpty()) {
+					long idErogatore = asps.getIdSoggetto();
+					for (int i = 0; i < list.size(); i++) {
+						Soggetto soggettoCheck = list.get(i);
+						if(idErogatore == soggettoCheck.getId().longValue()) {
+							list.remove(i);
+							break;
+						}
+					}
+				}
+				if(list == null || list.size()<=0) {
+					if(gestioneFruitori) {
+						pd.setMessage("Non risultano registrati altri soggetti che possano erogare API", Costanti.MESSAGE_TYPE_INFO);
+					}
+					else {
+						pd.setMessage("Non risultano registrati altri soggetti", Costanti.MESSAGE_TYPE_INFO);
+					}
+					
+					pd.disableEditMode();
+
+					Vector<DataElement> dati = new Vector<DataElement>();
+
+					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+					pd.setDati(dati);
+
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
+							ForwardParams.CHANGE());
+				}
+			}
+			else {
+				if(apsCore.isVisioneOggettiGlobale(userLogin)){
+					list = soggettiCore.soggettiRegistroList(null, new Search(true));
+				}else{
+					list = soggettiCore.soggettiRegistroList(userLogin, new Search(true));
+				}
 			}
 			
-			if (list.size() > 0) {
+			if (list!=null && list.size() > 0) {
 				List<String> soggettiListTmp = new ArrayList<String>();
 				List<String> soggettiListLabelTmp = new ArrayList<String>();
+				if(cambiaErogatore) {
+					soggettiListTmp.add("");
+					soggettiListLabelTmp.add("-");
+				}
 				for (Soggetto soggetto : list) {
 					if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
-						soggettiListTmp.add(soggetto.getId().toString());
-						soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+						String idS = soggetto.getId().toString(); 
+						soggettiListTmp.add(idS);
+						soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
+						if(cambiaErogatore && provider!=null && !"".equals(provider) && idS.equals(provider)) {
+							nuovoTipoSoggettoErogatore = soggetto.getTipo();
+							nuovoNomeSoggettoErogatore = soggetto.getNome();
+						}
 					}
 				}
 				soggettiList = soggettiListTmp.toArray(new String[1]);
@@ -638,6 +739,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
 			tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
+			if(cambiaErogatore && nuovoNomeSoggettoErogatore!=null && nuovoTipoSoggettoErogatore!=null) {
+				nomeSoggettoErogatore = nuovoNomeSoggettoErogatore;
+				tipoSoggettoErogatore = nuovoTipoSoggettoErogatore;
+			}
 
 			if(asps.getVersione()!=null)
 				oldversioneaccordo = asps.getVersione()+"";
@@ -719,7 +824,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			// Lista dei servizi applicativi per la creazione automatica
 			List<IDServizioApplicativoDB> listaIdSA = null;
-			if (gestioneErogatori && (provider != null) && !provider.equals("")) {
+			if (gestioneErogatori && (provider != null) && !provider.equals("") && !cambiaErogatore) {
 				long idErogatore = Long.valueOf(provider);
 				
 				// I servizi applicativi da visualizzare sono quelli che hanno
@@ -749,11 +854,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
-			IDServizio idAps = apsHelper.getIDServizioFromValues(oldtiposervizio, oldnomeservizio, oldtiposoggetto,oldnomesoggetto, oldversioneaccordo);
-			idAps.setUriAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
-			idAps.setPortType((portType != null && !"".equals(portType) ? portType : asps.getPortType()));
+			IDServizio oldIdAps = apsHelper.getIDServizioFromValues(oldtiposervizio, oldnomeservizio, oldtiposoggetto,oldnomesoggetto, oldversioneaccordo);
+			oldIdAps.setUriAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
+			oldIdAps.setPortType((portType != null && !"".equals(portType) ? portType : asps.getPortType()));
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
-					this.registryReader, this.configRegistryReader, idAps );
+					this.registryReader, this.configRegistryReader, oldIdAps );
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			oldProtocolPropertyList = asps.getProtocolPropertyList(); 
@@ -814,9 +919,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
-
-				nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
-				tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
+				if(nomeSoggettoErogatore==null) {
+					nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
+				}
+				if(tipoSoggettoErogatore==null) {
+					tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
+				}
 				if (servcorr == null) {
 					if(TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()))
 						servcorr = Costanti.CHECK_BOX_ENABLED;
@@ -1162,7 +1270,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// update della configurazione 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-							this.registryReader, this.configRegistryReader, idAps);
+							this.registryReader, this.configRegistryReader, oldIdAps);
 					
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -1314,7 +1422,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// updateDynamic
 			if(isOk) {
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-						this.registryReader, this.configRegistryReader, idAps);
+						this.registryReader, this.configRegistryReader, oldIdAps);
 			}
 			
 			// Validazione base dei parametri custom 
@@ -1333,7 +1441,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				try{
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idAps);
+							this.registryReader, this.configRegistryReader, oldIdAps);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1357,7 +1465,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-						this.registryReader, this.configRegistryReader, idAps);
+						this.registryReader, this.configRegistryReader, oldIdAps);
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -1477,7 +1585,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// update della configurazione 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-							this.registryReader, this.configRegistryReader, idAps);
+							this.registryReader, this.configRegistryReader, oldIdAps);
 					
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -1599,7 +1707,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						msg = "&Egrave; stato richiesto di ripristinare lo stato dell''accordo [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
 					}
 					else if(backToConfermaModificaDatiServizio != null) {
-						msg = "La modifica dei dati dell&#39;API impatta su altre configurazioni, oltre a quella selezionata.";
+						msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_MULTI_API_INFLUENZATE_MODIFICA;
 						msg+="<BR/>Di seguito vengono elencate tutte le configurazioni coinvolte dalla modifica. Vuoi procedere?";
 						msg+="<BR/>";
 						if(listMappingPD.size()>0) {
@@ -1698,14 +1806,30 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 
 			// Modifico i dati del servizio nel db
-
+			
+			boolean cambioAccordoAlreadyExists = false;
+			if((gestioneFruitori || gestioneErogatori)) {
+				
+				// Per adesso non gestito, vedi spiegazione nella costante
+				if(AccordiServizioParteSpecificaCostanti.MODIFICA_DATI_IDENTIFICATIVI_VERSO_APS_ESISTENTE) {
+					IDServizio nuovoIdAps = apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, tipoSoggettoErogatore, nomeSoggettoErogatore, versione);
+					String nuovoURI = IDServizioFactory.getInstance().getUriFromIDServizio(nuovoIdAps);
+					String oldURI = IDServizioFactory.getInstance().getUriFromIDServizio(oldIdAps);
+					if(!nuovoURI.equals(oldURI)) {
+						cambioAccordoAlreadyExists = apsCore.existsAccordoServizioParteSpecifica(nuovoIdAps);
+					}
+				}
+				
+			}			
+			
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
-
-			// idErogatoreServizio
-			@SuppressWarnings("unused")
-			Soggetto soggettoErogatore = soggettiCore.getSoggettoRegistro(new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()));
+			
 			
 			// nuovi valori
+			
+			asps.setTipoSoggettoErogatore(tipoSoggettoErogatore);
+			asps.setNomeSoggettoErogatore(nomeSoggettoErogatore);
+			
 			asps.setNome(nomeservizio);
 			asps.setTipo(tiposervizio);
 			asps.setDescrizione(descrizione);
@@ -1793,7 +1917,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 
 			// Check stato
-			if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
+			if(apsHelper.isShowGestioneWorkflowStatoDocumenti() && !cambioAccordoAlreadyExists){
 
 				try{
 					boolean gestioneWsdlImplementativo = apcCore.showPortiAccesso(tipoProtocollo, serviceBinding, formatoSpecifica);
@@ -1816,7 +1940,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// update della configurazione 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
-							this.registryReader, this.configRegistryReader, idAps);
+							this.registryReader, this.configRegistryReader, oldIdAps);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 

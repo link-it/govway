@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -71,6 +73,10 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.AzioneSintetica;
+import org.openspcoop2.core.registry.beans.OperationSintetica;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
+import org.openspcoop2.core.registry.beans.ResourceSintetica;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -88,6 +94,7 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
@@ -192,7 +199,505 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return true;
 	}
 
+	private boolean existsOperazione(AccordoServizioParteComuneSintetico aspc, ServiceBinding serviceBinding, String portType, String azione) {
+		if(ServiceBinding.REST.equals(serviceBinding)) {
+			if(aspc.getResource()!=null && !aspc.getResource().isEmpty()) {
+				for (ResourceSintetica resource : aspc.getResource()) {
+					if(resource.getNome().equals(azione)) {
+						return true;
+					}
+				}
+			}
+		}
+		else {
+			if(portType!=null && !"".equals(portType)) {
+				if(aspc.getPortType()!=null && !aspc.getPortType().isEmpty()) {
+					for (PortTypeSintetico pt : aspc.getPortType()) {
+						if(portType.equals(pt.getNome())) {
+							if(pt.getAzione()!=null && !pt.getAzione().isEmpty()) {
+								for (OperationSintetica az : pt.getAzione()) {
+									if(az.getNome().equals(azione)) {
+										return true;
+									}
+								}
+							}
+							break;
+						}
+					}
+				}
+			}
+			else {
+				if(aspc.getAzione()!=null && !aspc.getAzione().isEmpty()) {
+					for (AzioneSintetica az : aspc.getAzione()) {
+						if(az.getNome().equals(azione)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	private boolean checkModificaVersioneApi(AccordoServizioParteSpecifica servizio, 
+			long idAccordo, ServiceBinding serviceBinding, String portType,
+			boolean gestioneFruitori, boolean gestioneErogatori) throws Exception {
+		List<String> erogazione_listTrasformazioniPredefinito = null;
+		List<String> erogazione_listRateLimitingPredefinito = null;
+		HashMap<String, List<String>> erogazione_mapGruppi = new HashMap<String, List<String>>();
+		
+		HashMap<String, List<String>> fruizione_listTrasformazioniPredefinito = null;
+		HashMap<String, List<String>> fruizione_listRateLimitingPredefinito = null;
+		HashMap<String,HashMap<String, List<String>>> fruizione_mapGruppi = new HashMap<String,HashMap<String, List<String>>>();
+		
+		
+		IDServizio idService = this.idServizioFactory.getIDServizioFromAccordo(servizio);
+		
+		List<MappingErogazionePortaApplicativa> listaMappingErogazione = null;
+		try{
+			listaMappingErogazione = this.apsCore.mappingServiziPorteAppList(idService,servizio.getId(), null);
+		}catch(Exception e) {}
+		if(listaMappingErogazione!=null && !listaMappingErogazione.isEmpty()) {
+			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : listaMappingErogazione) {
+				PortaApplicativa pa = null;
+				try {
+					pa = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+				}catch(Exception e) {}
+				if(pa!=null) {
+					if(mappingErogazionePortaApplicativa.isDefault()) {
+						if(pa.getTrasformazioni()!=null && pa.getTrasformazioni().sizeRegolaList()>0) {
+							for (TrasformazioneRegola regola :  pa.getTrasformazioni().getRegolaList()) {
+								if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeAzioneList()>0) {
+									if(erogazione_listTrasformazioniPredefinito==null) {
+										erogazione_listTrasformazioniPredefinito = regola.getApplicabilita().getAzioneList();
+									}
+									else {
+										for (String az : regola.getApplicabilita().getAzioneList()) {
+											if(!erogazione_listTrasformazioniPredefinito.contains(az)) {
+												erogazione_listTrasformazioniPredefinito.add(az);
+											}
+										}
+									}
+								}
+							}
+						}
+						List<AttivazionePolicy> listaPolicies = null;
+						try {
+							Search ricercaPolicies = new Search(true);
+							listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.APPLICATIVA, pa.getNome());
+						}catch(Exception e) {}
+						if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+							for (AttivazionePolicy ap : listaPolicies) {
+								if(ap.getFiltro()!=null && ap.getFiltro().getAzione()!=null) {
+									String [] tmp = ap.getFiltro().getAzione().split(",");
+									if(tmp!=null && tmp.length>0) {
+										if(erogazione_listRateLimitingPredefinito==null) {
+											erogazione_listRateLimitingPredefinito = new ArrayList<String>();
+										}
+										for (String az : tmp) {
+											if(!erogazione_listRateLimitingPredefinito.contains(az)) {
+												erogazione_listRateLimitingPredefinito.add(az);
+											}	
+										}
+									}
+								}
+							}
+						}
+					}
+					else {
+						if(pa.getAzione()!=null && pa.getAzione().sizeAzioneDelegataList()>0) {
+							List<String> l = new ArrayList<String>();
+							for (String az : pa.getAzione().getAzioneDelegataList()) {
+								l.add(az);
+							}
+							erogazione_mapGruppi.put(mappingErogazionePortaApplicativa.getDescrizione(), l);
+						}
+					}
+				}
+			}
+		}
+		
+		if(servizio.sizeFruitoreList()>0) {
+			for (Fruitore fruitore : servizio.getFruitoreList()) {
+				IDSoggetto idFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+				String labelFruitore = ConsoleHelper._getLabelNomeSoggetto(idFruitore);
+				
+				List<MappingFruizionePortaDelegata> listaMappingFruizione = null;
+				try{
+					listaMappingFruizione = this.apsCore.serviziFruitoriMappingList(idFruitore, idService, null);
+				}catch(Exception e) {}
+				if(listaMappingFruizione!=null && !listaMappingFruizione.isEmpty()) {
+					for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : listaMappingFruizione) {
+						PortaDelegata pd = null;
+						try {
+							pd = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+						}catch(Exception e) {}
+						if(pd!=null) {
+							if(mappingFruizionePortaDelegata.isDefault()) {
+								if(pd.getTrasformazioni()!=null && pd.getTrasformazioni().sizeRegolaList()>0) {
+									List<String> list = null;
+									for (TrasformazioneRegola regola :  pd.getTrasformazioni().getRegolaList()) {
+										if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeAzioneList()>0) {
+											if(list==null) {
+												list = regola.getApplicabilita().getAzioneList();
+											}
+											else {
+												for (String az : regola.getApplicabilita().getAzioneList()) {
+													if(!list.contains(az)) {
+														list.add(az);
+													}
+												}
+											}
+										}
+									}
+									if(list!=null) {
+										if(fruizione_listTrasformazioniPredefinito==null) {
+											fruizione_listTrasformazioniPredefinito = new HashMap<String, List<String>>();
+										}
+										fruizione_listTrasformazioniPredefinito.put(labelFruitore, list);
+									}
+								}
+								List<AttivazionePolicy> listaPolicies = null;
+								try {
+									Search ricercaPolicies = new Search(true);
+									listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, pd.getNome());
+								}catch(Exception e) {}
+								if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+									List<String> list = null;
+									for (AttivazionePolicy ap : listaPolicies) {
+										if(ap.getFiltro()!=null && ap.getFiltro().getAzione()!=null) {
+											String [] tmp = ap.getFiltro().getAzione().split(",");
+											if(tmp!=null && tmp.length>0) {
+												if(list==null) {
+													list = new ArrayList<String>();
+												}
+												for (String az : tmp) {
+													if(!list.contains(az)) {
+														list.add(az);
+													}	
+												}
+											}
+										}
+									}
+									if(list!=null) {
+										if(fruizione_listRateLimitingPredefinito==null) {
+											fruizione_listRateLimitingPredefinito = new HashMap<String, List<String>>();
+										}
+										fruizione_listRateLimitingPredefinito.put(labelFruitore, list);
+									}
+								}
+							}
+							else {
+								if(pd.getAzione()!=null && pd.getAzione().sizeAzioneDelegataList()>0) {
+									List<String> l = new ArrayList<String>();
+									for (String az : pd.getAzione().getAzioneDelegataList()) {
+										l.add(az);
+									}
+									HashMap<String, List<String>> m = new HashMap<String, List<String>>();
+									m.put(mappingFruizionePortaDelegata.getDescrizione(), l);
+									fruizione_mapGruppi.put(labelFruitore, m);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		StringBuilder sbError = new StringBuilder();
+		
+		AccordoServizioParteComuneSintetico asSintetico = null;
+		boolean azioniInErogazione = !erogazione_mapGruppi.isEmpty() || erogazione_listRateLimitingPredefinito!=null || erogazione_listTrasformazioniPredefinito!=null;
+		boolean azioniInFruizione = !fruizione_mapGruppi.isEmpty() || fruizione_listRateLimitingPredefinito!=null || fruizione_listTrasformazioniPredefinito!=null;
+		if( azioniInErogazione
+				||
+				azioniInFruizione )
+			 {
+			asSintetico = this.apcCore.getAccordoServizioSintetico(idAccordo);
+			
+			if(!erogazione_mapGruppi.isEmpty() ) {
+				for (String gruppo : erogazione_mapGruppi.keySet()) {
+					List<String> azioni = erogazione_mapGruppi.get(gruppo);
+					List<String> azioniNonTrovate = new ArrayList<String>();
+					if(azioni!=null && !azioni.isEmpty()) {
+						for (String az : azioni) {
+							if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
+								azioniNonTrovate.add(az);
+							}
+						}
+					}
+					if(!azioniNonTrovate.isEmpty()) {
+						if(sbError.length()>0) {
+							sbError.append("<BR/>");
+						}
+						sbError.append("Gruppo '"+gruppo+"' (Erogazione): "+azioniNonTrovate);
+					}
+				}
+			}
+			
+			if(erogazione_listTrasformazioniPredefinito!=null && !erogazione_listTrasformazioniPredefinito.isEmpty()) {
+				List<String> azioniNonTrovate = new ArrayList<String>();
+				for (String az : erogazione_listTrasformazioniPredefinito) {
+					if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
+						azioniNonTrovate.add(az);
+					}
+				}
+				if(!azioniNonTrovate.isEmpty()) {
+					if(sbError.length()>0) {
+						sbError.append("<BR/>");
+					}
+					sbError.append("Criteri di Applicabilità nelle Trasformazioni del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Erogazione): "+azioniNonTrovate);
+				}
+			}
+			
+			if(erogazione_listRateLimitingPredefinito!=null && !erogazione_listRateLimitingPredefinito.isEmpty()) {
+				List<String> azioniNonTrovate = new ArrayList<String>();
+				for (String az : erogazione_listRateLimitingPredefinito) {
+					if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
+						azioniNonTrovate.add(az);
+					}
+				}
+				if(!azioniNonTrovate.isEmpty()) {
+					if(sbError.length()>0) {
+						sbError.append("<BR/>");
+					}
+					sbError.append("Policy di RateLimiting del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Erogazione): "+azioniNonTrovate);
+				}
+			}
+			
+			if(azioniInFruizione) {
+				if(sbError.length()>0) {
+					sbError.append("<BR/>");
+				}
+			}
+			
+			if(!fruizione_mapGruppi.isEmpty() ) {
+				for (String labelFruitore : fruizione_mapGruppi.keySet()) {
+					HashMap<String, List<String>> m = fruizione_mapGruppi.get(labelFruitore);
+					for (String gruppo : m.keySet()) {
+						List<String> azioni = m.get(gruppo);
+						List<String> azioniNonTrovate = new ArrayList<String>();
+						if(azioni!=null && !azioni.isEmpty()) {
+							for (String az : azioni) {
+								if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
+									azioniNonTrovate.add(az);
+								}
+							}
+						}
+						if(!azioniNonTrovate.isEmpty()) {
+							if(sbError.length()>0) {
+								sbError.append("<BR/>");
+							}
+							sbError.append("Gruppo '"+gruppo+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
+						}
+					}
+				}
+			}
+			
+			if(fruizione_listTrasformazioniPredefinito!=null && !fruizione_listTrasformazioniPredefinito.isEmpty()) {
+				for (String labelFruitore : fruizione_listTrasformazioniPredefinito.keySet()) {
+					List<String> l = fruizione_listTrasformazioniPredefinito.get(labelFruitore);
+					List<String> azioniNonTrovate = new ArrayList<String>();
+					for (String az : l) {
+						if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
+							azioniNonTrovate.add(az);
+						}
+					}
+					if(!azioniNonTrovate.isEmpty()) {
+						if(sbError.length()>0) {
+							sbError.append("<BR/>");
+						}
+						sbError.append("Criteri di Applicabilità nelle Trasformazioni del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
+					}
+				}
+			}
+			
+			if(fruizione_listRateLimitingPredefinito!=null && !fruizione_listRateLimitingPredefinito.isEmpty()) {
+				for (String labelFruitore : fruizione_listRateLimitingPredefinito.keySet()) {
+					List<String> l = fruizione_listRateLimitingPredefinito.get(labelFruitore);
+					List<String> azioniNonTrovate = new ArrayList<String>();
+					for (String az : l) {
+						if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
+							azioniNonTrovate.add(az);
+						}
+					}
+					if(!azioniNonTrovate.isEmpty()) {
+						if(sbError.length()>0) {
+							sbError.append("<BR/>");
+						}
+						sbError.append("Policy di RateLimiting del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
+					}
+				}
+			}
+		}
+		
+		if(sbError.length()>0) {
+			String prefix = "";
+			if( 
+					(azioniInErogazione	&& azioniInFruizione) 
+					||
+					(gestioneFruitori && azioniInErogazione)
+					||
+					(gestioneErogatori && azioniInFruizione)
+				) {
+				prefix = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA_VERSIONE;
+			}
+			this.pd.setMessage(prefix+MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_CAMBIO_VERSIONE_ACCORDO,sbError.toString()));
+			return false;
+		}
+		
+		return true;
+	}
 
+	private boolean checkCambioErogatore(AccordoServizioParteSpecifica servizio, boolean gestioneFruitori, boolean gestioneErogatori,
+			String idSoggErogatore, String protocollo) throws Exception {
+		
+		// Verifico che non esistano erogazioni riguardanti la modifica (anche se la modifica parte da una fruizione) contenente applicativi server.
+		List<String> nomiApplicativiServer = new ArrayList<String>();
+		IDServizio idService = this.idServizioFactory.getIDServizioFromAccordo(servizio);
+		List<MappingErogazionePortaApplicativa> listaMappingErogazione = null;
+		try{
+			listaMappingErogazione = this.apsCore.mappingServiziPorteAppList(idService,servizio.getId(), null);
+		}catch(Exception e) {}
+		if(listaMappingErogazione!=null && !listaMappingErogazione.isEmpty()) {
+			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : listaMappingErogazione) {
+				PortaApplicativa pa = null;
+				try {
+					pa = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+				}catch(Exception e) {}
+				if(pa!=null && pa.sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaServizioApplicativo pasa: pa.getServizioApplicativoList()) {
+						ServizioApplicativo sa = null;
+						try {
+							sa = this.saCore.getServizioApplicativo(pasa.getIdServizioApplicativo());
+						}catch(Exception e) {}
+						if(sa!=null && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+							if(!nomiApplicativiServer.contains(sa.getNome())) {
+								nomiApplicativiServer.add(sa.getNome());
+							}
+						}
+					}
+				}
+			}
+		}
+		if(!nomiApplicativiServer.isEmpty()) {
+			StringBuilder elenco = new StringBuilder();
+			for (String server : nomiApplicativiServer) {
+				if(elenco.length()>0) {
+					elenco.append(", ");
+				}
+				elenco.append(server);
+			}
+			if(gestioneFruitori) {
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_CAMBIO_EROGATORE_FRUIZIONE_CON_APPLICATIVO_SERVER,
+						getLabelIdServizioSenzaErogatore(idService),
+						elenco.toString()));
+			}
+			else {
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_CAMBIO_EROGATORE_CON_APPLICATIVO_SERVER,elenco.toString()));
+			}
+			return false;
+		}
+		
+		
+		// Verifico che il soggetto selezionato sia compatibile con una eventuale fruizione (se modifico da erogazione) o vicersa.
+		if(idSoggErogatore!=null && !"".equals(idSoggErogatore)) {
+			long idSoggettoErogatoreLong = Long.parseLong(idSoggErogatore);
+			Soggetto soggettoErogatoreSelezionato = this.soggettiCore.getSoggettoRegistro(idSoggettoErogatoreLong);
+			
+			// verifico che se esiste una erogazione, il soggetto selezionato nella fruizione sia compatibile
+			// se e' stato selezionato dall'erogazione lo sarà sicuramente
+			if(listaMappingErogazione!=null && !listaMappingErogazione.isEmpty()) {
+				// esiste erogazione
+			
+				Search searchSoggetti = new Search(true);
+				searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo);
+				searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
+				
+				List<Soggetto> list = this.soggettiCore.soggettiRegistroList(null, searchSoggetti);
+				boolean find = false;
+				if(list!=null && !list.isEmpty()) {
+					for (Soggetto soggetto : list) {
+						if(soggettoErogatoreSelezionato.getTipo().equals(soggetto.getTipo()) &&
+								soggettoErogatoreSelezionato.getNome().equals(soggetto.getNome())) {
+							find = true;
+						}
+					}
+				}
+				if(!find) {
+					this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_CON_EROGAZIONE,
+							getLabelIdServizioSenzaErogatore(idService)));
+					return false;
+				}
+			}
+			
+			// verifico che se esiste una fruizione, il soggetto selezionato nella erogazione sia compatibile
+			// se e' stato selezionato dalla fruizione lo sarà sicuramente
+			if(servizio.sizeFruitoreList()>0) {
+				for (Fruitore fruitore : servizio.getFruitoreList()) {
+					IDSoggetto idFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+					List<MappingFruizionePortaDelegata> listaMappingFruizione = null;
+					try{
+						listaMappingFruizione = this.apsCore.serviziFruitoriMappingList(idFruitore, idService, null);
+					}catch(Exception e) {}
+					if(listaMappingFruizione!=null && !listaMappingFruizione.isEmpty()) {
+						// esiste fruizione
+						
+						Search searchSoggetti = new Search(true);
+						searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo);
+						boolean gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = false;
+						boolean filtraSoloEsterni = true;
+						if(this.apsCore.isMultitenant() && this.apsCore.getMultitenantSoggettiFruizioni()!=null) {
+							switch (this.apsCore.getMultitenantSoggettiFruizioni()) {
+							case SOLO_SOGGETTI_ESTERNI:
+								filtraSoloEsterni = true;
+								break;
+							case ESCLUDI_SOGGETTO_FRUITORE:
+								filtraSoloEsterni = false;
+								gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore = true;
+								break;
+							case TUTTI:
+								filtraSoloEsterni = false;
+								break;
+							}
+						}
+						if(filtraSoloEsterni) {
+							searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
+						}
+						List<Soggetto> list = this.soggettiCore.soggettiRegistroList(null, searchSoggetti);									
+						if(gestioneFruitori_soggettiErogatori_escludiSoggettoFruitore && list!=null && !list.isEmpty()) {
+							for (int i = 0; i < list.size(); i++) {
+								Soggetto soggettoCheck = list.get(i);
+								if(soggettoCheck.getTipo().equals(fruitore.getTipo()) && soggettoCheck.getNome().equals(fruitore.getNome())) {
+									list.remove(i);
+									break;
+								}
+							}
+						}
+						boolean find = false;
+						if(list!=null && !list.isEmpty()) {
+							for (Soggetto soggetto : list) {
+								if(soggettoErogatoreSelezionato.getTipo().equals(soggetto.getTipo()) &&
+										soggettoErogatoreSelezionato.getNome().equals(soggetto.getNome())) {
+									find = true;
+								}
+							}
+						}
+						if(!find) {
+							String labelFruizione = null;
+							String labelFruitore = this.getLabelNomeSoggetto(protocollo, idFruitore);
+							labelFruizione = labelFruitore + " -> " + getLabelIdServizioSenzaErogatore(idService);
+							this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_CON_FRUIZIONE,
+									labelFruizione));
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	// Controlla i dati dei Servizi
 	public boolean serviziCheckData(TipoOperazione tipoOp, String[] soggettiList,
 			String[] accordiList, String oldNomeservizio,
@@ -314,19 +819,60 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				versione = "1";
 				versioneInt = 1;
 			}
+			
+			String oldTipoSoggettoErogatore = null;
+			String oldNomeSoggettoErogatore = null;
+			boolean cambiaErogatore = false;
+			boolean modificaVersioneApi = false;
+			
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 
-				@SuppressWarnings("unused")
-				IDServizio idService = this.idServizioFactory.getIDServizioFromValues(tiposervizio, nomeservizio, 
-						tipoErogatore, nomeErogatore, versioneInt);
-
-				try {
-					AccordoServizioParteSpecifica servizio = this.apsCore.getAccordoServizioParteSpecifica(idInt);
-					idSoggErogatore = servizio.getIdSoggetto().toString();
-				} catch (DriverRegistroServiziNotFound e) {
-				} catch (DriverRegistroServiziException e) {
+				String tmpModificaVersioneApi = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API);
+				if(tmpModificaVersioneApi!=null) {
+					modificaVersioneApi = "true".equals(tmpModificaVersioneApi);
 				}
-
+				
+				String tmpCambiaSoggettoErogatore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE);
+				if(tmpCambiaSoggettoErogatore!=null) {
+					cambiaErogatore = "true".equals(tmpCambiaSoggettoErogatore);
+				}
+				
+				if(modificaVersioneApi) {
+					
+					AccordoServizioParteSpecifica servizio = this.apsCore.getAccordoServizioParteSpecifica(idInt);
+					long idAccordoLong = Long.valueOf(idAccordo);
+					boolean isOk = checkModificaVersioneApi(servizio, 
+							idAccordoLong, serviceBinding, portType,
+							gestioneFruitori, gestioneErogatori);
+					if(!isOk) {
+						return false; // messaggio scritto nel metodo
+					}
+					idSoggErogatore = servizio.getIdSoggetto().toString();
+				}
+				else if(cambiaErogatore) {
+					AccordoServizioParteSpecifica servizio = this.apsCore.getAccordoServizioParteSpecifica(idInt);
+					oldTipoSoggettoErogatore = servizio.getTipoSoggettoErogatore();
+					oldNomeSoggettoErogatore = servizio.getNomeSoggettoErogatore();
+					
+					boolean isOk =  checkCambioErogatore(servizio, gestioneFruitori, gestioneErogatori,
+							idSoggErogatore, protocollo);
+					if(!isOk) {
+						return false; // messaggio scritto nel metodo
+					}
+				}
+				else {
+					@SuppressWarnings("unused")
+					IDServizio idService = this.idServizioFactory.getIDServizioFromValues(tiposervizio, nomeservizio, 
+							tipoErogatore, nomeErogatore, versioneInt);
+	
+					try {
+						AccordoServizioParteSpecifica servizio = this.apsCore.getAccordoServizioParteSpecifica(idInt);
+						idSoggErogatore = servizio.getIdSoggetto().toString();
+					} catch (DriverRegistroServiziNotFound e) {
+					} catch (DriverRegistroServiziException e) {
+					}
+				}
+				
 			}
 
 			// Campi obbligatori
@@ -560,6 +1106,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Dati Servizio 
 			long idSoggettoErogatoreLong = Long.parseLong(idSoggErogatore);
 			Soggetto soggettoErogatore = this.soggettiCore.getSoggettoRegistro(idSoggettoErogatoreLong);
+			tipoErogatore = soggettoErogatore.getTipo();
+			nomeErogatore = soggettoErogatore.getNome();
 			long idAccordoServizioParteComuneLong = Long.parseLong(idAccordo);
 			AccordoServizioParteComuneSintetico accordoServizioParteComune = this.apcCore.getAccordoServizioSintetico(idAccordoServizioParteComuneLong);
 			String uriAccordoServizioParteComune = this.idAccordoFactory.getUriFromAccordo(accordoServizioParteComune);
@@ -583,6 +1131,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								(!oldNomeservizio.equals(nomeservizio)) 
 									|| 
 								(oldVersioneServizio!=versioneInt)
+									|| 
+								(cambiaErogatore 
+									&&
+									(
+										(!oldTipoSoggettoErogatore.equals(tipoErogatore)) 
+											|| 
+										(!oldNomeSoggettoErogatore.equals(nomeErogatore))
+									)
+								)
 							) 
 					)
 				){
@@ -639,15 +1196,32 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}else{
 				// change
+				
 				try{
 					AccordoServizioParteSpecifica servizio =  this.apsCore.getServizio(idAccordoServizioParteSpecifica);
 					if(servizio!=null){
 						if (idInt != servizio.getId()) {
-							if(this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo))
-								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
-							else
-								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
-							return false;
+							if(!gestioneFruitori && !gestioneErogatori) {
+								if(this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo))
+									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
+								else
+									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
+								return false;
+							}
+							else {
+								// Per adesso non gestito, vedi spiegazione nella costante
+								if(!AccordiServizioParteSpecificaCostanti.MODIFICA_DATI_IDENTIFICATIVI_VERSO_APS_ESISTENTE) {
+									if(gestioneFruitori) {
+										this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_ESISTE_EROGAZIONE,
+												this.getLabelIdServizio(servizio)));
+									}
+									else {
+										this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_ESISTE_FRUIZIONE,
+												this.getLabelIdServizio(servizio)));
+									}
+									return false;
+								}
+							}
 						}
 					}
 				}catch(DriverRegistroServiziNotFound dNotFound){}
@@ -3606,6 +4180,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							paCurrent.getServizioApplicativoDefault() == null 
 							|| 
 							!paDefault.getServizioApplicativoDefault().equals(paCurrent.getServizioApplicativoDefault())
+							||
+							paDefault.sizeServizioApplicativoList()!=paCurrent.sizeServizioApplicativoList()
+							||
+							(paDefault.sizeServizioApplicativoList()==1 && paCurrent.sizeServizioApplicativoList()==1 && !paDefault.getServizioApplicativo(0).getNome().equals(paCurrent.getServizioApplicativo(0).getNome()))
 						)
 					//!paSADefault.getNome().equals(paSACurrent.getNome()))
 				)
@@ -5329,6 +5907,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
+		String tmpCambiaErogatore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE);
+		boolean cambiaErogatore = false;
+		if(tmpCambiaErogatore!=null) {
+			cambiaErogatore = "true".equals(tmpCambiaErogatore);
+			
+			DataElement de = new DataElement();
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE);
+			de.setValue(tmpCambiaErogatore);
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		}
+		
 		String tmpModificaProfilo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
 		boolean modificaProfilo = false;
 		if(tmpModificaProfilo!=null) {
@@ -5351,6 +5941,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				showModificaAPIErogazioniFruizioniView = false; // forzo il false
 			}
 			else if(cambiaAPI) {
+				showInformazioniGeneraliErogazioniFruizioniView = false;
+				showModificaAPIErogazioniFruizioniView = false; // forzo il false
+			}
+			else if(cambiaErogatore) {
 				showInformazioniGeneraliErogazioniFruizioniView = false;
 				showModificaAPIErogazioniFruizioniView = false; // forzo il false
 			}
@@ -5431,7 +6025,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		else {
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_INFO_GENERALI);
 		}
-		if(modificaProfilo) {
+		if(modificaProfilo || cambiaErogatore) {
 			de.setType(DataElementType.HIDDEN);
 		}
 		else {
@@ -6278,6 +6872,48 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, tipoSoggetto, nomeSoggetto));
 					dati.addElement(de);
 				}
+			}
+		}
+		
+		if(cambiaErogatore) {
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_EROGATORE);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_CAMBIO_EROGATORE);
+			if(confirmInProgress) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(provider);
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(soggettiList);
+				de.setLabels(soggettiListLabel);
+				de.setSelected(provider);
+				de.setRequired(true);
+			}
+			dati.addElement(de);
+			
+			if(confirmInProgress) {
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_EROGATORE);
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_CAMBIO_EROGATORE+"__LABEL");
+				de.setType(DataElementType.TEXT);
+				de.setValue("-");
+				if(soggettiList!=null && soggettiList.length>0) {
+					for (int i = 0; i < soggettiList.length; i++) {
+						String prov = soggettiList[i];
+						if(prov.equals(provider)) {
+							de.setValue(soggettiListLabel[i]);
+							break;
+						}
+					}
+				}
+				dati.addElement(de);
 			}
 		}
 		
@@ -8781,6 +9417,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String paramModificaProfilo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
 			String paramModificaAPI = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API);
 			String paramCambiaAPI = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_API);
+			String paramCambiaErogatore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE);
 			
 			User user = ServletUtils.getUserFromSession(this.session);
 			Boolean isAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
@@ -8798,6 +9435,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			if("true".equals(paramModificaAPI) || "true".equals(paramCambiaAPI)) {
 				labelApsChange = asLabel;
+			}
+			else if("true".equals(paramCambiaErogatore)) {
+				labelApsChange = AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE;
 			}
 			else if("true".equals(paramModificaProfilo)) {
 				labelApsChange = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO;

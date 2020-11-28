@@ -84,6 +84,7 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	
 	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_ABILITATI_TOOLTIP = "API correttamente configurata";
 	public final static String APC_API_ICONA_STATO_SERVIZI_PARZIALMENTE_ABILITATI_TOOLTIP = "Per alcuni servizi dell'API non sono state configurate azioni";
+	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_SENZA_AZIONE_TOOLTIP = "Tutti i servizi dell'API non possiedono azioni";
 	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI_TOOLTIP = "Nessun servizio configurato sull'API";
 	public final static String APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP = "Nessun'azione configurata sul servizio dell'API";
 	

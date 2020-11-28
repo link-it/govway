@@ -1325,6 +1325,17 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de.setValue(this.getLabelNomeSoggetto(protocollo,asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore()));
 			de.setType(DataElementType.TEXT);
 			dati.addElement(de);
+			
+			listParametersServizio.remove(listParametersServizio.size()-1);
+			listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE, "true"));
+			
+			DataElementImage image = new DataElementImage();
+			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,	listParametersServizio.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CAMBIA_API_TOOLTIP_CON_PARAMETRO, 
+					AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			image.setTarget(TargetType.SELF);
+			de.addImage(image);
 		}
 
 		// API
@@ -1374,8 +1385,54 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// Lista di Accordi Compatibili
 		List<AccordoServizioParteComune> asParteComuneCompatibili = null;
 		try{
-			asParteComuneCompatibili = this.apsCore.findAccordiParteComuneBySoggettoAndNome(as.getNome(), 
+			boolean soloAccordiConsistentiRest = false;
+			boolean soloAccordiConsistentiSoap = false;
+			if(!this.isModalitaCompleta()) {
+				// filtro accordi senza risorse o senza pt/operation
+				soloAccordiConsistentiRest = true;
+				soloAccordiConsistentiSoap = true;
+			}
+			
+			List<AccordoServizioParteComune> asParteComuneCompatibiliTmp = this.apsCore.findAccordiParteComuneBySoggettoAndNome(as.getNome(), 
 					new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome()));
+			if(asParteComuneCompatibiliTmp!=null && asParteComuneCompatibiliTmp.size()>0) {
+				for (AccordoServizioParteComune accordoServizioParteComune : asParteComuneCompatibiliTmp) {
+					boolean isValid = false;
+					
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(accordoServizioParteComune.getServiceBinding())) {
+						if(soloAccordiConsistentiRest) {
+							isValid = accordoServizioParteComune.sizeResourceList()>0;
+						}
+					}
+					else {
+						if(soloAccordiConsistentiSoap) {
+							if(asps!=null && asps.getPortType()!=null) {
+								for (int i = 0; i < accordoServizioParteComune.sizePortTypeList(); i++) {
+									if(accordoServizioParteComune.getPortType(i).getNome().equals(asps.getPortType())) {
+										if(accordoServizioParteComune.getPortType(i).sizeAzioneList()>0) {
+											isValid = true;
+											break;
+										}
+									}
+								}
+							}
+							else {
+								isValid = accordoServizioParteComune.sizeAzioneList()>0;
+							}
+						}
+					}
+					
+					if(isValid) {
+						if(asParteComuneCompatibili==null) {
+							asParteComuneCompatibili = new ArrayList<AccordoServizioParteComune>();
+						}
+						asParteComuneCompatibili.add(accordoServizioParteComune);
+					}
+					
+				}
+			}			
+			
+			
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la ricerca degli accordi parte comune compatibili", e);
 		}

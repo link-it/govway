@@ -292,10 +292,15 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 						de.setStatusType(CheckboxStatusType.DISABILITATO);
 						de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI_TOOLTIP);
 					}
-					else if(numeroTotaleServizi==1 && numeroServiziAbilitati==0) {
+					else if(numeroServiziAbilitati==0) {
 						de.setStatusType(CheckboxStatusType.DISABILITATO);
-						de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP);
-					} 
+						if(numeroTotaleServizi==1) {
+							de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP);
+						}
+						else {
+							de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_SENZA_AZIONE_TOOLTIP);
+						}
+					}
 					else if(numeroServiziAbilitati == numeroTotaleServizi) {
 						de.setStatusType(CheckboxStatusType.ABILITATO);
 						de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_ABILITATI_TOOLTIP);
@@ -496,10 +501,15 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				de.setStatusType(CheckboxStatusType.DISABILITATO);
 				de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI_TOOLTIP);
 			}
-			else if(numeroTotaleServizi==1 && numeroServiziAbilitati==0) {
+			else if(numeroServiziAbilitati==0) {
 				de.setStatusType(CheckboxStatusType.DISABILITATO);
-				de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP);
-			} 
+				if(numeroTotaleServizi==1) {
+					de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP);
+				}
+				else {
+					de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_SENZA_AZIONE_TOOLTIP);
+				}
+			}
 			else if(numeroServiziAbilitati == numeroTotaleServizi) {
 				de.setStatusType(CheckboxStatusType.ABILITATO);
 				de.setStatusToolTip(ApiCostanti.APC_API_ICONA_STATO_SERVIZI_TUTTI_ABILITATI_TOOLTIP);

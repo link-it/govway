@@ -15349,7 +15349,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : list) {
 				IDPortaApplicativa idPA = mappingErogazionePortaApplicativa.getIdPortaApplicativa();
 				List<AttivazionePolicy> listPolicies = this.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, idPA.getNome());
-				if(this._checkAzioniUtilizzateRateLimiting(listPolicies, azioni, 
+				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
+				if(this._checkAzioniUtilizzateRateLimiting(listPolicies, pa.getTrasformazioni(), azioni, 
 						mappingErogazionePortaApplicativa.getDescrizione(), list.size())==false) {
 					return false;
 				}
@@ -15371,7 +15372,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : list) {
 				IDPortaDelegata idPD = mappingFruizionePortaDelegata.getIdPortaDelegata();
 				List<AttivazionePolicy> listPolicies = this.confCore.attivazionePolicyList(null, RuoloPolicy.DELEGATA, idPD.getNome());
-				if(this._checkAzioniUtilizzateRateLimiting(listPolicies, azioni, 
+				PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
+				if(this._checkAzioniUtilizzateRateLimiting(listPolicies, pd.getTrasformazioni(), azioni, 
 						mappingFruizionePortaDelegata.getDescrizione(), list.size())==false) {
 					return false;
 				}
@@ -15381,7 +15383,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	private boolean _checkAzioniUtilizzateRateLimiting(List<AttivazionePolicy> listPolicies, String [] azioni, String descrizioneGruppo, int sizeGruppi) {
+	private boolean _checkAzioniUtilizzateRateLimiting(List<AttivazionePolicy> listPolicies, Trasformazioni trasformazioni, String [] azioni, String descrizioneGruppo, int sizeGruppi) {
 		if(listPolicies!=null && !listPolicies.isEmpty()) {
 			for (AttivazionePolicy policy : listPolicies) {
 				if(policy.getFiltro()!=null && policy.getFiltro().getAzione()!=null) {
@@ -15398,6 +15400,31 @@ public class ConsoleHelper implements IConsoleHelper {
 							else {
 								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE, 
 										azioneTmp, nomePolicy, descrizioneGruppo));
+							}
+							return false;	
+						}
+					}
+				}
+			}
+		}
+		List<TrasformazioneRegola> trasformazione = null;
+		if(trasformazioni!=null) {
+			trasformazione = trasformazioni.getRegolaList();
+		}
+		if(trasformazione!=null && !trasformazione.isEmpty()) {
+			for (TrasformazioneRegola regola : trasformazione) {
+				if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeAzioneList()>0) {
+					List<String> azioniTrasf = regola.getApplicabilita().getAzioneList();
+					for (String azioneTmp : azioni) {
+						if(azioniTrasf.contains(azioneTmp)) {
+							String nomeRegola = regola.getNome();
+							if(sizeGruppi>1) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE_GRUPPO, 
+										azioneTmp, nomeRegola, descrizioneGruppo));
+							}
+							else {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE, 
+										azioneTmp, nomeRegola, descrizioneGruppo));
 							}
 							return false;	
 						}

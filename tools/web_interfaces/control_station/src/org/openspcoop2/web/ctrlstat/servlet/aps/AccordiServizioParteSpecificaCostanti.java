@@ -230,6 +230,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_ACCORDO_LABEL = "accordoLabel";
 	public final static String PARAMETRO_APS_PORT_TYPE_LABEL =  "port_type_label";
 	public final static String PARAMETRO_APS_PROVIDER_EROGATORE =  "providerErogatore";
+	public final static String PARAMETRO_APS_PROVIDER_CAMBIO_EROGATORE =  "providerCambioErogatore";
 	public final static String PARAMETRO_APS_PROVIDER_FRUITORE =  "providerFruitore";
 	public final static String PARAMETRO_APS_PROVIDER_FRUITORE_AS_TEXT =  "providerFruitoreAsText";
 	public final static String PARAMETRO_APS_PROVIDER_TEXT =  "providerText";
@@ -265,6 +266,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_MODIFICA_API = "modificaAPI";
 	public final static String PARAMETRO_APS_MODIFICA_PROFILO = "modificaProfilo";
 	public final static String PARAMETRO_APS_CAMBIA_API = "cambiaAPI";
+	public final static String PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE = "cambiaErogatore";
 	public final static String PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO = "backToConfermaModificaDatiServizio";
 	public final static String PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER;
 	public final static String PARAMETRO_APS_ID_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ID_APPLICATIVO_SERVER;
@@ -388,4 +390,29 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_EROGAZIONE = "Non è possibile eliminare il gruppo '"+Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"'";
 	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_FRUIZIONE = "Non è possibile eliminare il gruppo '"+Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"'";
 	public static final String MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE = "Per poter abilitare l'autorizzazione per richiedente, devi abilitare l'autenticazione";
+	public static final String MESSAGGIO_ERRORE_MULTI_API_INFLUENZATE_MODIFICA = "La modifica dei dati dell&#39;API impatta su altre configurazioni, oltre a quella selezionata.";
+	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA = "Non è possibile cambiare l''erogatore poichè la modifica impatta su altre configurazioni, oltre a quella selezionata.<BR/><BR/>";
+	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_CON_APPLICATIVO_SERVER = "Non è possibile cambiare l''erogatore poichè nell''erogazione sono stati associati i seguenti applicativi di tipo server: {0}";
+	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_FRUIZIONE_CON_APPLICATIVO_SERVER = MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA+"Nell''erogazione {0} non è possibile cambiare l''erogatore poichè sono stati associati i seguenti applicativi di tipo server: {1}";
+	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_CON_EROGAZIONE = MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA+"Nell''erogazione {0} non è possibile assegnare il soggetto selezionato come erogatore dell'API.";
+	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_CON_FRUIZIONE = MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA+"Nella fruizione {0} non è possibile assegnare il soggetto selezionato come erogatore dell'API fruita.";
+	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA_VERSIONE = "La modifica richiesta impatta su altre configurazioni, oltre a quella selezionata.<BR/><BR/>";
+	public static final String MESSAGGIO_ERRORE_CAMBIO_VERSIONE_ACCORDO = "La nuova versione dell''API indicata non è utilizzabile poichè l''attuale configurazione riferisce operazioni non presenti nella nuova versione. Le operazioni non individuate nella nuova versione dell''API sono riferite: <BR/><BR/>{0}";
+
+	// Il cambio verso un accordo già esistente succede quando si modifica il nome, la versione o il soggetto erogatore in una erogazione o fruizione e la modifica di questi parametri
+	// identificano un accordo di servizio parte specifica già esistente e usato in una fruizione o erogazione (check incrociato).
+	//
+	// La gestione di una modifica che impatta su un accordo di servizio parte specifica usato già da una erogazione e fruizione entrambe già create, è già stata realizzata.
+	// Questo caso può esistere poichè la creazione di una erogazione e una fruizione gestisce correttamente la possibilità che l'accordo parte specifica già esista e va in aggiunta (del singolo fruitore e dei mapping corretti).
+	// In questo caso viene segnalato tramite un warning, che si sta andando a modificare sia l'erogazione che la fruizione, ma la funzionalità gestisce correttamente l'aggiornamento.
+	//					
+	// La funzionalità che ancora non è supportata è il caso in cui si sta aggiornando i dati di una fruizione nella quale l'accordo parte specifica è usato SOLAMENTE per la fruizione stessa e i nuovi dati indirizzando un accordo di servizio parte specifica già esistente utilizzato in una erogazione.
+	// Lo stesso vale nel caso in cui si sta aggiornando i dati di una erogazione nella quale l'accordo parte specifica è usato SOLAMENTE per l'erogazione stessa e i nuovi dati indirizzando un accordo di servizio parte specifica già esistente utilizzato in una fruizione.
+	//
+	// Se si vuole gestire questa funzionalità si dovrà aggiornare i mapping delle fruizioni o erogazioni esistenti aggiornando gli id verso il nuovo accordo di servizio parte specifica
+	// e si dovrà eliminare il vecchio accordo parte specifica o il vecchio fruitore se rimane inutilizzato in seguito all'aggiornamento.
+	public static final boolean MODIFICA_DATI_IDENTIFICATIVI_VERSO_APS_ESISTENTE = false;
+	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_ESISTE_FRUIZIONE = "I dati identificativi forniti indirizzano una API {0} per la quale esiste già una fruizione; attualmente non è supportato questo tipo di aggiornamento.";
+	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_ESISTE_EROGAZIONE = "I dati identificativi forniti indirizzano una API {0} per la quale esiste già una erogazione; attualmente non è supportato questo tipo di aggiornamento.";
+
 }
