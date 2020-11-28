@@ -22,6 +22,7 @@ package org.openspcoop2.core.controllo_traffico.beans;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -1186,7 +1187,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					}
 					else {
 						// NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI
-						esitiAppartenentiGruppo = esitiCodeKo_senzaFaultApplicativo;
+						esitiAppartenentiGruppo = new ArrayList<Integer>();
+						esitiAppartenentiGruppo.addAll(esitiCodeKo_senzaFaultApplicativo);
 						esitiAppartenentiGruppo.addAll(esitiCodeFaultApplicativo);
 					}
 				}catch(Exception e) {

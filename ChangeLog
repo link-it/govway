@@ -1,6 +1,13 @@
 2020-11-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolte le seguenti anomalie presenti sul Rate Limiting:
+	- con la metrica 'Numero Richieste Fallite o Fault Applicativi' non veniva generato l'header HTTP '*-Limit' che segnala il numero massimo di richieste effettuabili;
+	- con la metrica 'Numero Richieste Completate con successo' venivano erroneamente conteggiate anche le richieste terminate con esito 'Fault Applicativo'.
+
+2020-11-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Invocazioni GET che richiedevano un wsdl tramite il parametro '?wsdl' potevano causare un OutOfMemory sul Gateway.
 	L'anomalia risiedeva nel fatto che tutte le richieste venivano registrate in memoria ma mai rilasciate e continuavano a crescere nel tempo.
 	Si poteva individuare l'anomalia tramite la console di gestione, accedendo alla sezione 'Runtime - Transazioni Attive', dove veniva riportata una crescita costante del numero di transazioni.
