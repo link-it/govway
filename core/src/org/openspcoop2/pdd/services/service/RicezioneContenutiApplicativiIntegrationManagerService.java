@@ -215,7 +215,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
 			String idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			if(openSPCoopProperties.isTransazioniEnabled()) {
-				TransactionContext.createTransaction(idTransazione);
+				TransactionContext.createTransaction(idTransazione, "RicezioneContenutiApplicativiIM.1");
 			}
 			requestInfo.setIdTransazione(idTransazione);
 		}catch(Throwable e) {
@@ -318,7 +318,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		try{
 			if(openSPCoopProperties.isTransazioniEnabled()) {
 				// NOTA: se gia' esiste con l'id di transazione, non viene ricreata
-				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE),"RicezioneContenutiApplicativiIM.2");
 			}
 		}catch(Exception e){
 			logCore.error("Errore durante la creazione della transazione",e);

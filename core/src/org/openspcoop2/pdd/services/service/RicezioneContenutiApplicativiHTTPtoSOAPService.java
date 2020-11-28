@@ -242,7 +242,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			protocolFactory = req.getProtocolFactory();
 			String idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			if(openSPCoopProperties.isTransazioniEnabled()) {
-				TransactionContext.createTransaction(idTransazione);
+				TransactionContext.createTransaction(idTransazione,"RicezioneContenutiApplicativiHTTPtoSOAP.1");
 			}
 			requestInfo.setIdTransazione(idTransazione);
 		}catch(Throwable e) {
@@ -325,7 +325,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			try{
 				if(openSPCoopProperties.isTransazioniEnabled()) {
 					// NOTA: se gia' esiste con l'id di transazione, non viene ricreata
-					TransactionContext.createTransaction((String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+					TransactionContext.createTransaction((String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE),"RicezioneContenutiApplicativiHTTPtoSOAP.2");
 				}
 			}catch(Exception e){
 				logCore.error("Errore durante la creazione della transazione",e);

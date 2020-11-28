@@ -126,4 +126,47 @@ public class RequestInfo implements java.io.Serializable {
 	public void setIdServizio(IDServizio idServizio) {
 		this.idServizio = idServizio;
 	}
+	
+	@Override
+	public String toString() {
+		return this.toString("");
+	}
+	public String toString(String prefix) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(prefix).append("idTransazione: ").append(this.idTransazione);
+		if(this.messageFactory!=null) {
+			sb.append("\n").append(prefix).append("messageFactory: ").append(this.messageFactory);
+		}
+		if(this.protocolFactory!=null) {
+			sb.append("\n").append(prefix).append("protocolFactory: ").append(this.protocolFactory.getProtocol());
+		}
+		if(this.identitaPdD!=null) {
+			sb.append("\n").append(prefix).append("identitaPdD: ").append(this.identitaPdD);
+		}
+		if(this.fruitore!=null) {
+			sb.append("\n").append(prefix).append("fruitore: ").append(this.fruitore);
+		}
+		if(this.protocolContext!=null) {
+			sb.append("\n").append(prefix).append(this.protocolContext.toString("protocolContext."));
+		}
+		if(this.idServizio!=null) {
+			sb.append("\n").append(prefix).append("idServizio: ").append(this.idServizio);
+		}
+		if(this.protocolRequestMessageType!=null) {
+			sb.append("\n").append(prefix).append("protocolRequestMessageType: ").append(this.protocolRequestMessageType);
+		}
+		if(this.protocolServiceBinding!=null) {
+			sb.append("\n").append(prefix).append("protocolServiceBinding: ").append(this.protocolServiceBinding);
+		}
+		if(this.integrationRequestMessageType!=null) {
+			sb.append("\n").append(prefix).append("integrationRequestMessageType: ").append(this.integrationRequestMessageType);
+		}
+		if(this.integrationServiceBinding!=null) {
+			sb.append("\n").append(prefix).append("integrationServiceBinding: ").append(this.integrationServiceBinding);
+		}
+		if(this.bindingConfig!=null) {
+			sb.append("\n").append(prefix).append("bindingConfig.default: ").append(this.bindingConfig.getDefaultBinding());
+		}
+		return sb.toString();
+	}
 }

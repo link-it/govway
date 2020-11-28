@@ -237,7 +237,7 @@ public class RicezioneBusteService  {
 			protocolFactory = req.getProtocolFactory();
 			String idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			if(openSPCoopProperties.isTransazioniEnabled()) {
-				TransactionContext.createTransaction(idTransazione);
+				TransactionContext.createTransaction(idTransazione, "RicezioneBuste.1");
 			}
 			requestInfo.setIdTransazione(idTransazione);
 			this.generatoreErrore.getImbustamentoErrore().setIdTransazione(idTransazione);
@@ -287,6 +287,12 @@ public class RicezioneBusteService  {
 								IntegrationFunctionError.INTERNAL_REQUEST_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 						// nel caso di wsdl request non emetto la transazione
 						//RicezioneBusteServiceUtils.emitTransaction(context,logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+					}finally {
+						// FIX devo però rilasciare dalla memoria la transazione:
+						if(openSPCoopProperties.isTransazioniEnabled()) {
+							String idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+							TransactionContext.removeTransaction(idTransazione);
+						}
 					}
 					return;
 				}
@@ -364,7 +370,7 @@ public class RicezioneBusteService  {
 			try{
 				if(openSPCoopProperties.isTransazioniEnabled()) {
 					// NOTA: se gia' esiste con l'id di transazione, non viene ricreata
-					TransactionContext.createTransaction((String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+					TransactionContext.createTransaction((String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE), "RicezioneBuste.2");
 				}
 			}catch(Exception e){
 				logCore.error("Errore durante la creazione della transazione",e);

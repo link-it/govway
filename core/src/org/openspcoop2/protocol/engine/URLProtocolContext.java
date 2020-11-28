@@ -407,4 +407,16 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return this.toString("");
+	}
+	@Override
+	public String toString(String prefix) {
+		StringBuilder sb = new StringBuilder(super.toString(prefix));
+		if(this.idServiceCustom!=null) {
+			sb.append("\n").append(prefix).append("idServiceCustom: ").append(this.idServiceCustom);
+		}
+		return sb.toString();
+	}
 }

@@ -35,6 +35,7 @@ import java.util.Vector;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 
 /**     
@@ -47,7 +48,11 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
 public class Transaction {
 
 	private boolean gestioneStateful = false;
-	public Transaction(boolean gestioneStateful){
+	private String id = null;
+	private String originator = null;
+	public Transaction(String id, String originator, boolean gestioneStateful){
+		this.id = id;
+		this.originator = originator;
 		this.gestioneStateful = gestioneStateful;
 	}
 	
@@ -666,5 +671,233 @@ public class Transaction {
 		this.transactionServiceLibrary = transactionServiceLibrary;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("idTransazione: ").append(this.id);
+		sb.append("\n").append("originator: ").append(this.originator);
+		sb.append("\n").append("gestioneStateful: ").append(this.gestioneStateful);
+		sb.append("\n").append("deleted: ").append(this.deleted);
+		
+		if(this.dataAccettazioneRichiesta!=null) {
+			sb.append("\n").append("dataAccettazioneRichiesta: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataAccettazioneRichiesta));
+		}
+		if(this.dataIngressoRichiesta!=null) {
+			sb.append("\n").append("dataIngressoRichiesta: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataIngressoRichiesta));
+		}
+		if(this.dataUscitaRichiesta!=null) {
+			sb.append("\n").append("dataUscitaRichiesta: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataUscitaRichiesta));
+		}
+		if(this.dataAccettazioneRisposta!=null) {
+			sb.append("\n").append("dataAccettazioneRisposta: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataAccettazioneRisposta));
+		}
+		if(this.dataIngressoRisposta!=null) {
+			sb.append("\n").append("dataIngressoRisposta: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataIngressoRisposta));
+		}
+		if(this.dataUscitaRisposta!=null) {
+			sb.append("\n").append("dataUscitaRisposta: ").append(DateUtils.getSimpleDateFormatMs().format(this.dataUscitaRisposta));
+		}
+		
+		if(this.urlInvocazione!=null) {
+			sb.append("\n").append("urlInvocazione: ").append(this.urlInvocazione);
+		}
+		if(this.requestInfo!=null) {
+			sb.append("\n").append(this.requestInfo.toString("requestInfo."));
+		}
+		
+		if(this.tracciaRichiesta!=null) {
+			sb.append("\n").append("tracciaRichiesta: presente");
+			if(this.tracciaRichiesta.getBusta()!=null) {
+				sb.append("\n").append("tracciaRichiesta.busta.ID: ").append(this.tracciaRichiesta.getBusta().getID());
+			}
+			if(this.tracciaRichiesta.getBusta().getCollaborazione()!=null) {
+				sb.append("\n").append("tracciaRichiesta.busta.collaborazione: ").append(this.tracciaRichiesta.getBusta().getCollaborazione());
+			}
+			if(this.tracciaRichiesta.getBusta().getRiferimentoMessaggio()!=null) {
+				sb.append("\n").append("tracciaRichiesta.busta.riferimentoMessaggio: ").append(this.tracciaRichiesta.getBusta().getRiferimentoMessaggio());
+			}
+			if(this.tracciaRichiesta.getCorrelazioneApplicativa()!=null) {
+				sb.append("\n").append("tracciaRichiesta.correlazioneApplicativa: ").append(this.tracciaRichiesta.getCorrelazioneApplicativa());
+			}
+			if(this.tracciaRichiesta.getCorrelazioneApplicativaRisposta()!=null) {
+				sb.append("\n").append("tracciaRichiesta.correlazioneApplicativaRisposta: ").append(this.tracciaRichiesta.getCorrelazioneApplicativaRisposta());
+			}
+			if(this.tracciaRichiesta.getEsitoElaborazioneMessaggioTracciato()!=null) {
+				sb.append("\n").append("tracciaRichiesta.esitoElaborazione: ").append(this.tracciaRichiesta.getEsitoElaborazioneMessaggioTracciato());
+			}
+		}
+		if(this.tracciaRisposta!=null) {
+			sb.append("\n").append("tracciaRisposta: presente");
+			if(this.tracciaRisposta.getBusta()!=null) {
+				sb.append("\n").append("tracciaRisposta.busta.ID: ").append(this.tracciaRisposta.getBusta().getID());
+			}
+			if(this.tracciaRisposta.getBusta().getCollaborazione()!=null) {
+				sb.append("\n").append("tracciaRisposta.busta.collaborazione: ").append(this.tracciaRisposta.getBusta().getCollaborazione());
+			}
+			if(this.tracciaRisposta.getBusta().getRiferimentoMessaggio()!=null) {
+				sb.append("\n").append("tracciaRisposta.busta.riferimentoMessaggio: ").append(this.tracciaRisposta.getBusta().getRiferimentoMessaggio());
+			}
+			if(this.tracciaRisposta.getCorrelazioneApplicativa()!=null) {
+				sb.append("\n").append("tracciaRisposta.correlazioneApplicativa: ").append(this.tracciaRisposta.getCorrelazioneApplicativa());
+			}
+			if(this.tracciaRisposta.getCorrelazioneApplicativaRisposta()!=null) {
+				sb.append("\n").append("tracciaRisposta.correlazioneApplicativaRisposta: ").append(this.tracciaRisposta.getCorrelazioneApplicativaRisposta());
+			}
+			if(this.tracciaRisposta.getEsitoElaborazioneMessaggioTracciato()!=null) {
+				sb.append("\n").append("tracciaRisposta.esitoElaborazione: ").append(this.tracciaRisposta.getEsitoElaborazioneMessaggioTracciato());
+			}
+		}
+		
+		if(this.msgDiagnostici!=null && !this.msgDiagnostici.isEmpty()) {
+			for (int i = 0; i < this.msgDiagnostici.size(); i++) {
+				MsgDiagnostico msgDiag = this.msgDiagnostici.get(i);
+				StringBuilder sbDiagnostico = new StringBuilder();
+				if(msgDiag.getGdo()!=null) {
+					sbDiagnostico.append("<").append(DateUtils.getSimpleDateFormatMs().format(msgDiag.getGdo())).append("> ");
+				}
+				if(msgDiag.getIdFunzione()!=null) {
+					sbDiagnostico.append("(").append(msgDiag.getIdFunzione()).append(") ");
+				}
+				if(msgDiag.getCodice()!=null) {
+					sbDiagnostico.append("codice:").append(msgDiag.getCodice()).append(" ");
+				}
+				sbDiagnostico.append("severita:").append(msgDiag.getSeverita()).append(" ");
+				sbDiagnostico.append("messaggio: ").append(msgDiag.getMessaggio());
+				sb.append("\n").append("diagnostico[").append(i).append("]: ").append(sbDiagnostico.toString());
+			}
+		}
+		
+		if(this.messaggi!=null && !this.messaggi.isEmpty()) {
+			sb.append("\n").append("messaggi: ").append(this.messaggi.size());
+		}
+		if(this.messaggi_onlyLogFileTrace!=null && !this.messaggi_onlyLogFileTrace.isEmpty()) {
+			sb.append("\n").append("messaggi_onlyLogFileTrace: ").append(this.messaggi_onlyLogFileTrace.size());
+		}
+		
+		if(this.scenarioCooperazione!=null) {
+			sb.append("\n").append("scenarioCooperazione: ").append(this.scenarioCooperazione);
+		}
+		if(this.codiceTrasportoRichiesta!=null) {
+			sb.append("\n").append("codiceTrasportoRichiesta: ").append(this.codiceTrasportoRichiesta);
+		}
+		if(this.location!=null) {
+			sb.append("\n").append("location: ").append(this.location);
+		}
+		if(this.tipoConnettore!=null) {
+			sb.append("\n").append("tipoConnettore: ").append(this.tipoConnettore);
+		}
+		if(this.credenziali!=null) {
+			sb.append("\n").append("credenziali: ").append(this.credenziali);
+		}
+				
+		if(this.formatoFaultIntegrazione!=null) {
+			sb.append("\n").append("formatoFaultIntegrazione: ").append(this.formatoFaultIntegrazione);
+		}
+		if(this.faultIntegrazione!=null) {
+			sb.append("\n").append("faultIntegrazione: ").append(this.faultIntegrazione);
+		}
+		if(this.formatoFaultCooperazione!=null) {
+			sb.append("\n").append("formatoFaultCooperazione: ").append(this.formatoFaultCooperazione);
+		}
+		if(this.faultCooperazione!=null) {
+			sb.append("\n").append("faultCooperazione: ").append(this.faultCooperazione);
+		}
+		
+		if(this.correlazioneApplicativaRisposta!=null) {
+			sb.append("\n").append("correlazioneApplicativaRisposta: ").append(this.correlazioneApplicativaRisposta);
+		}
+		
+		if(this.serviziApplicativiErogatore!=null) {
+			sb.append("\n").append("serviziApplicativiErogatore: ").append(this.serviziApplicativiErogatore);
+		}
+		
+		if(this.idProtocolloDuplicati!=null && !this.idProtocolloDuplicati.isEmpty()) {
+			StringBuilder sbDuplicati = new StringBuilder();
+			for (String id : this.idProtocolloDuplicati) {
+				if(sbDuplicati.length()>0) {
+					sbDuplicati.append(", ");
+				}
+				sbDuplicati.append(id);
+			}
+			sb.append("\n").append("idProtocolloDuplicati: ").append(sbDuplicati.toString());
+		}
+		
+		if(this.stato!=null) {
+			sb.append("\n").append("stato: ").append(this.stato);
+		}
+		
+		if(this.risorse!=null && !this.risorse.isEmpty()) {
+			sb.append("\n").append("risorse: ").append(this.risorse.size());
+		}
+		
+		if(this.eventiGestione!=null && !this.eventiGestione.isEmpty()) {
+			StringBuilder sbEventi = new StringBuilder();
+			for (String id : this.eventiGestione) {
+				if(sbEventi.length()>0) {
+					sbEventi.append(", ");
+				}
+				sbEventi.append(id);
+			}
+			sb.append("\n").append("eventiGestione: ").append(sbEventi.toString());
+		}
+		
+
+		if(this.informazioniToken!=null) {
+			sb.append("\n").append("informazioniToken: presente");
+			if(this.informazioniToken.getClientId()!=null) {
+				sb.append("\n").append("informazioniToken.clientId: ").append(this.informazioniToken.getClientId());
+			}
+			if(this.informazioniToken.getUsername()!=null) {
+				sb.append("\n").append("informazioniToken.username: ").append(this.informazioniToken.getUsername());
+			}
+			if(this.informazioniToken.getSub()!=null) {
+				sb.append("\n").append("informazioniToken.sub: ").append(this.informazioniToken.getSub());
+			}
+			if(this.informazioniToken.getIss()!=null) {
+				sb.append("\n").append("informazioniToken.iss: ").append(this.informazioniToken.getIss());
+			}
+		}
+		
+		if(this.credenzialiMittente!=null) {
+			sb.append("\n").append("credenzialiMittente: presente");
+			if(this.credenzialiMittente.getTrasporto()!=null) {
+				sb.append("\n").append("credenzialiMittente.trasporto (id:"+this.credenzialiMittente.getTrasporto().getId()+
+						") (tipo:"+this.credenzialiMittente.getTrasporto().getTipo()+
+						"): ").append(this.credenzialiMittente.getTrasporto().getCredenziale());
+			}
+			if(this.credenzialiMittente.getToken_issuer()!=null) {
+				sb.append("\n").append("credenzialiMittente.issuer (id:"+this.credenzialiMittente.getToken_issuer().getId()+
+						") (tipo:"+this.credenzialiMittente.getToken_issuer().getTipo()+
+						"): ").append(this.credenzialiMittente.getToken_issuer().getCredenziale());
+			}
+			if(this.credenzialiMittente.getToken_subject()!=null) {
+				sb.append("\n").append("credenzialiMittente.subject (id:"+this.credenzialiMittente.getToken_subject().getId()+
+						") (tipo:"+this.credenzialiMittente.getToken_subject().getTipo()+
+						"): ").append(this.credenzialiMittente.getToken_subject().getCredenziale());
+			}
+			if(this.credenzialiMittente.getToken_clientId()!=null) {
+				sb.append("\n").append("credenzialiMittente.clientId (id:"+this.credenzialiMittente.getToken_clientId().getId()+
+						") (tipo:"+this.credenzialiMittente.getToken_clientId().getTipo()+
+						"): ").append(this.credenzialiMittente.getToken_clientId().getCredenziale());
+			}
+			if(this.credenzialiMittente.getToken_username()!=null) {
+				sb.append("\n").append("credenzialiMittente.username (id:"+this.credenzialiMittente.getToken_username().getId()+
+						") (tipo:"+this.credenzialiMittente.getToken_username().getTipo()+
+						"): ").append(this.credenzialiMittente.getToken_username().getCredenziale());
+			}
+			if(this.credenzialiMittente.getToken_eMail()!=null) {
+				sb.append("\n").append("credenzialiMittente.eMail (id:"+this.credenzialiMittente.getToken_eMail().getId()+
+						") (tipo:"+this.credenzialiMittente.getToken_eMail().getTipo()+
+						"): ").append(this.credenzialiMittente.getToken_eMail().getCredenziale());
+			}
+		}
+		
+		if(this.tempiElaborazione!=null) {
+			sb.append("\n").append("tempiElaborazione: presente");
+		}
+		
+		
+		return sb.toString();
+	}
 
 }

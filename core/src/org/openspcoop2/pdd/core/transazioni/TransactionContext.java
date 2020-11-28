@@ -65,7 +65,7 @@ public class TransactionContext {
 		return keys;
 	}
 			
-	public static void createTransaction(String id) throws TransactionNotExistsException{
+	public static void createTransaction(String id, String originator) throws TransactionNotExistsException{
 		if(transactionContext.containsKey(id)==false) {
 			try{
 				if(gestioneStateful==null){
@@ -74,15 +74,15 @@ public class TransactionContext {
 			}catch(Exception e){
 				throw new TransactionNotExistsException("Indicazione sulla gestione stateful errata: "+e.getMessage(),e);
 			}
-			Transaction transaction = new Transaction(gestioneStateful);
+			Transaction transaction = new Transaction(id, originator, gestioneStateful);
 			transactionContext.put(id, transaction);
 		}
 	}
 	
 	public static Transaction getTransaction(String id) throws TransactionNotExistsException{
-		return getTransaction(id, false);
+		return getTransaction(id, null, false);
 	}
-	private static Transaction getTransaction(String id,boolean createIfNotExists) throws TransactionNotExistsException{
+	private static Transaction getTransaction(String id,String originator, boolean createIfNotExists) throws TransactionNotExistsException{
 		//if(transactionContext==null){
 		//	System.out.println("TX IS NULL??");
 		//}
@@ -91,7 +91,7 @@ public class TransactionContext {
 		//System.out.println("TX get ("+id+") query fatta");
 		if(transaction==null){
 			if(createIfNotExists){
-				createTransaction(id);
+				createTransaction(id, originator);
 			}
 			else{
 				throw new TransactionNotExistsException("Transaction con id ["+id+"] non esiste"); 

@@ -37,6 +37,7 @@ import javax.management.MBeanConstructorInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
@@ -48,7 +49,9 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -93,13 +96,22 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	
 	/** Nomi metodi */
 	public final static String GET_STATO_RISORSE_DI_SISTEMA = "getStatoRisorseSistema";
+	public final static String GET_STATO_RISORSE_DI_SISTEMA_METHOD2 = "listStatoRisorseSistema"; // per farlo comparire in jmx-console
 	public final static String GET_STATO_CACHES = "getStatoCache";
+	public final static String GET_STATO_CACHES_METHOD2 = "getStatoCache"; // per farlo comparire in jmx-console
 	public final static String CONNESSIONI_ALLOCATE_DB_MANAGER = "getUsedDBConnections";
+	public final static String CONNESSIONI_ALLOCATE_DB_MANAGER_METHOD2 = "listUsedDBConnections"; // per farlo comparire in jmx-console
 	public final static String CONNESSIONI_ALLOCATE_QUEUE_MANAGER = "getUsedQueueConnections";
+	public final static String CONNESSIONI_ALLOCATE_QUEUE_MANAGER_METHOD2 = "listUsedQueueConnections"; // per farlo comparire in jmx-console
 	public final static String TRANSAZIONI_ATTIVE_ID = "getActiveTransactions";
+	public final static String TRANSAZIONI_ATTIVE_ID_METHOD2 = "listActiveTransactions"; // per farlo comparire in jmx-console
 	public final static String TRANSAZIONI_ATTIVE_ID_PROTOCOLLO = "getActiveProtocolIds";
+	public final static String TRANSAZIONI_ATTIVE_ID_PROTOCOLLO_METHOD2 = "listActiveProtocolIds"; // per farlo comparire in jmx-console
+	public final static String GET_DETTAGLIO_TRANSAZIONE_ATTIVA = "getActiveTransactionDetails";
 	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PD = "getActivePDConnections";
+	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PD_METHOD2 = "listActivePDConnections"; // per farlo comparire in jmx-console
 	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PA = "getActivePAConnections";
+	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PA_METHOD2 = "listActivePAConnections"; // per farlo comparire in jmx-console
 	
 	
 	
@@ -298,36 +310,49 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		if( (actionName==null) || (actionName.equals("")) )
 			throw new IllegalArgumentException("Nessuna operazione definita");
 		
-		if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER)){
+		if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER) || actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER_METHOD2)){
 			return this.getUsedDBConnections();
 		}
 		
-		else if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER)){
+		else if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER) || actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER_METHOD2)){
 			return this.getUsedQueueConnections();
 		}
 		
-		else if(actionName.equals(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID)){
+		else if(actionName.equals(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID) || actionName.equals(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_METHOD2)){
 			return this.getTransazioniAttiveId();
 		}
 		
-		else if(actionName.equals(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_PROTOCOLLO)){
+		else if(actionName.equals(MonitoraggioRisorse.GET_DETTAGLIO_TRANSAZIONE_ATTIVA)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+MonitoraggioRisorse.GET_DETTAGLIO_TRANSAZIONE_ATTIVA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.getDettaglioTransazioneAttivaId(param1);
+		}
+		
+		else if(actionName.equals(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_PROTOCOLLO) || actionName.equals(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_PROTOCOLLO_METHOD2)){
 			return this.getTransazioniAttiveIdProtocollo();
 		}
 		
-		else if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD)){
+		else if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD) || actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD_METHOD2)){
 			return this.getActivePDConnections();
 		}
 		
-		else if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PA)){
+		else if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PA) || actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PA_METHOD2)){
 			return this.getActivePAConnections();
 		}
 		
-		else if(actionName.equals(MonitoraggioRisorse.GET_STATO_RISORSE_DI_SISTEMA)){
+		else if(actionName.equals(MonitoraggioRisorse.GET_STATO_RISORSE_DI_SISTEMA) || actionName.equals(MonitoraggioRisorse.GET_STATO_RISORSE_DI_SISTEMA_METHOD2)){
 			this.refreshDatiMonitoraggioPdD();
 			return this.risorseDiSistema;
 		}
 		
-		else if(actionName.equals(MonitoraggioRisorse.GET_STATO_CACHES)){
+		else if(actionName.equals(MonitoraggioRisorse.GET_STATO_CACHES) || actionName.equals(MonitoraggioRisorse.GET_STATO_CACHES_METHOD2)){
 			return this.getStatoCaches();
 		}
 		
@@ -453,6 +478,13 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					MBeanOperationInfo.ACTION);
 		
 		// MetaData per l'operazione 
+		MBeanOperationInfo getConnessioneAllocateDBManagerOP_method2
+			= new MBeanOperationInfo(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER_METHOD2,"Moduli funzionali che dispongono di una connessione verso il database dei messaggi",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
 		MBeanOperationInfo getConnessioneAllocateQueueManagerOP 
 			= new MBeanOperationInfo(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER,"Moduli funzionali che dispongono di una connessione verso il Broker JMS",
 					null,
@@ -460,11 +492,34 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					MBeanOperationInfo.ACTION);
 		
 		// MetaData per l'operazione 
-		MBeanOperationInfo getTransazioniAttiveOP 
-			= new MBeanOperationInfo(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID,"Transazioni attive sulla Porta",
+		MBeanOperationInfo getConnessioneAllocateQueueManagerOP_method2 
+			= new MBeanOperationInfo(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER_METHOD2,"Moduli funzionali che dispongono di una connessione verso il Broker JMS",
 					null,
 					String.class.getName(),
 					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
+		MBeanOperationInfo getTransazioniAttiveOP 
+		= new MBeanOperationInfo(TRANSAZIONI_ATTIVE_ID,"Transazioni attive",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
+		MBeanOperationInfo getTransazioniAttiveOP_method2 
+		= new MBeanOperationInfo(TRANSAZIONI_ATTIVE_ID_METHOD2,"Transazioni attive",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
+		MBeanOperationInfo getDettaglioTransazioneAttiva 
+		= new MBeanOperationInfo(GET_DETTAGLIO_TRANSAZIONE_ATTIVA,"Recupera i dettagli della transazione con id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idTransazione",String.class.getName(),"Identificativo della transazione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
 		
 		// MetaData per l'operazione 
 		MBeanOperationInfo getTransazioniIdProtocolloAttiviOP 
@@ -474,8 +529,22 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					MBeanOperationInfo.ACTION);
 		
 		// MetaData per l'operazione 
+		MBeanOperationInfo getTransazioniIdProtocolloAttiviOP_method2  
+			= new MBeanOperationInfo(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_PROTOCOLLO_METHOD2,"Identificativi di Protocollo attivi sulla Porta",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+				
+		// MetaData per l'operazione 
 		MBeanOperationInfo getActiveConnectionsPD_OP 
 			= new MBeanOperationInfo(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD,"Connessioni attive su cui e' in corso un inoltro di busta (PortaDelegata)",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
+		MBeanOperationInfo getActiveConnectionsPD_OP_method2   
+			= new MBeanOperationInfo(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD_METHOD2,"Connessioni attive su cui e' in corso un inoltro di busta (PortaDelegata)",
 					null,
 					String.class.getName(),
 					MBeanOperationInfo.ACTION);
@@ -488,6 +557,13 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					MBeanOperationInfo.ACTION);
 		
 		// MetaData per l'operazione 
+		MBeanOperationInfo getActiveConnectionsPA_OP_method2    
+			= new MBeanOperationInfo(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PA_METHOD2,"Connessioni attive su cui e' in corso una consegna di contenuti applicativi (PortaApplicativa)",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
 		MBeanOperationInfo getRisorseSistema_OP 
 			= new MBeanOperationInfo(MonitoraggioRisorse.GET_STATO_RISORSE_DI_SISTEMA,"Ritorna lo stato delle risorse di sistema",
 					null,
@@ -495,8 +571,22 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					MBeanOperationInfo.ACTION);
 		
 		// MetaData per l'operazione 
+		MBeanOperationInfo getRisorseSistema_OP_method2   
+			= new MBeanOperationInfo(MonitoraggioRisorse.GET_STATO_RISORSE_DI_SISTEMA_METHOD2,"Ritorna lo stato delle risorse di sistema",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
 		MBeanOperationInfo getRisorseCache_OP 
 			= new MBeanOperationInfo(MonitoraggioRisorse.GET_STATO_CACHES,"Ritorna lo stato delle cache utilizzate dalla Porta",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
+		MBeanOperationInfo getRisorseCache_OP_method2  
+			= new MBeanOperationInfo(MonitoraggioRisorse.GET_STATO_CACHES_METHOD2,"Ritorna lo stato delle cache utilizzate dalla Porta",
 					null,
 					String.class.getName(),
 					MBeanOperationInfo.ACTION);
@@ -515,10 +605,10 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 		
 		// Lista operazioni
-		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{getRisorseSistema_OP,getRisorseCache_OP,
-				getConnessioneAllocateDBManagerOP,getConnessioneAllocateQueueManagerOP,
-				getTransazioniAttiveOP, getTransazioniIdProtocolloAttiviOP,
-				getActiveConnectionsPD_OP,getActiveConnectionsPA_OP};
+		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{getRisorseSistema_OP,getRisorseSistema_OP_method2,getRisorseCache_OP,getRisorseCache_OP_method2,
+				getConnessioneAllocateDBManagerOP,getConnessioneAllocateDBManagerOP_method2,getConnessioneAllocateQueueManagerOP,getConnessioneAllocateQueueManagerOP_method2,
+				getTransazioniAttiveOP,getTransazioniAttiveOP_method2, getDettaglioTransazioneAttiva, getTransazioniIdProtocolloAttiviOP,getTransazioniIdProtocolloAttiviOP_method2,
+				getActiveConnectionsPD_OP,getActiveConnectionsPD_OP_method2,getActiveConnectionsPA_OP,getActiveConnectionsPA_OP_method2};
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -715,6 +805,25 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			bf.append(risorse.get(i)+"\n");
 		}
 		return bf.toString();
+	}
+	
+	public String getDettaglioTransazioneAttivaId(String idTransazione) {
+		
+		try{
+			Transaction tr = TransactionContext.getTransaction(idTransazione);
+			if(tr!=null) {
+				return tr.toString();
+			}
+			throw new TransactionNotExistsException();
+		}
+		catch(TransactionNotExistsException notFound) {
+			return "Transazione non esistente";
+		}
+		catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+		
 	}
 	
 	public String getTransazioniAttiveIdProtocollo() {

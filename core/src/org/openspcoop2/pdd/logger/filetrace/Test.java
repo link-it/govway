@@ -290,7 +290,7 @@ public class Test {
 		
 		boolean erogazioni = TipoPdD.APPLICATIVA.equals(tipoPdD);
 		boolean onlyLogFileTrace = TipoPdD.APPLICATIVA.equals(tipoPdD);
-		Transaction transaction = new Transaction(false);
+		Transaction transaction = new Transaction("UUIDXX", "FileTraceTest", false);
 		transaction.setCredenzialiMittente(credenzialiMittente);
 		transaction.setTracciaRichiesta(tracciaRichiesta);
 		transaction.addMessaggio(richiestaIngresso, onlyLogFileTrace);

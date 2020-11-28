@@ -22,6 +22,7 @@ package org.openspcoop2.utils.transport;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -243,4 +244,67 @@ public class TransportRequestContext implements java.io.Serializable {
 	public void setInterfaceName(String interfaceName) {
 		this.interfaceName = interfaceName;
 	}
+	
+	
+	@Override
+	public String toString() {
+		return this.toString("");
+	}
+	public String toString(String prefix) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(prefix).append("DatiRichiesta");
+		if(this.webContext!=null) {
+			sb.append("\n").append(prefix).append("webContext: ").append(this.webContext);
+		}
+		if(this.requestURI!=null) {
+			sb.append("\n").append(prefix).append("requestURI: ").append(this.requestURI);
+		}
+		if(this.requestType!=null) {
+			sb.append("\n").append(prefix).append("requestType: ").append(this.requestType);
+		}
+		if(this.source!=null) {
+			sb.append("\n").append(prefix).append("source: ").append(this.source);
+		}
+		if(this.protocolName!=null) {
+			sb.append("\n").append(prefix).append("protocolName: ").append(this.protocolName);
+		}
+		if(this.protocolWebContext!=null) {
+			sb.append("\n").append(prefix).append("protocolWebContext: ").append(this.protocolWebContext);
+		}
+		if(this.function!=null) {
+			sb.append("\n").append(prefix).append("function: ").append(this.function);
+		}
+		if(this.functionParameters!=null) {
+			sb.append("\n").append(prefix).append("functionParameters: ").append(this.functionParameters);
+		}
+		if(this.interfaceName!=null) {
+			sb.append("\n").append(prefix).append("interfaceName: ").append(this.interfaceName);
+		}
+		if(this.credential!=null) {
+			sb.append("\n").append(prefix).append("credential: ").append(this.credential);
+		}
+		if(this.parametersFormBased!=null && !this.parametersFormBased.isEmpty()) {
+			sb.append("\n").append(prefix).append("parametersFormBased: ").append(this.convertWithStream(this.parametersFormBased));
+		}
+		if(this.parametersTrasporto!=null && !this.parametersTrasporto.isEmpty()) {
+			sb.append("\n").append(prefix).append("parametersTrasporto: ").append(this.convertWithStream(this.parametersTrasporto));
+		}
+		if(this.cookiesValue!=null && !this.cookiesValue.isEmpty()) {
+			sb.append("\n").append(prefix).append("cookiesValue: ").append(this.convertWithStream(this.cookiesValue));
+		}
+		if(this.cookiesMaxAge!=null && !this.cookiesMaxAge.isEmpty()) {
+			sb.append("\n").append(prefix).append("cookiesMaxAge: ").append(this.convertWithStream(this.cookiesMaxAge));
+		}
+		return sb.toString();
+	}
+	
+	private String convertWithStream(Map<?, ?> map) {
+	    String mapAsString = map.keySet().stream()
+	      .map(key -> key + "=" + map.get(key))
+	      .collect(Collectors.joining(", ", "{", "}"));
+	    return mapAsString;
+	}
+	
+	
+
 }

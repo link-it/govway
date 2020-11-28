@@ -1,5 +1,14 @@
 2020-11-28  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Invocazioni GET che richiedevano un wsdl tramite il parametro '?wsdl' potevano causare un OutOfMemory sul Gateway.
+	L'anomalia risiedeva nel fatto che tutte le richieste venivano registrate in memoria ma mai rilasciate e continuavano a crescere nel tempo.
+	Si poteva individuare l'anomalia tramite la console di gestione, accedendo alla sezione 'Runtime - Transazioni Attive', dove veniva riportata una crescita costante del numero di transazioni.
+	Il problema è stato risolto.
+	Nel bean jmx 'org.openspcoop2.pdd > type=MonitoraggioRisorse' è stato aggiunto il metodo 'getActiveTransactionDetails' che consente di ottenere il dettaglio di una transazione in gestione sul gateway.
+
+2020-11-28  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Aggiunta funzionalità OP-1113
 	(https://github.com/link-it/govway/issues/63 e https://github.com/link-it/govway/issues/64)

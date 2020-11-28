@@ -515,7 +515,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 
 			if(OpenSPCoop2Properties.getInstance().isTransazioniEnabled()) {
 				// NOTA: se gia' esiste con l'id di transazione, non viene ricreata
-				TransactionContext.createTransaction((String)postOutResponseContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+				TransactionContext.createTransaction((String)postOutResponseContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE), "RicezioneContenutiApplicativi.3");
 			}
 			
 			postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
