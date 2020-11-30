@@ -320,10 +320,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
 				wsdlbyte = as.getByteWsdlLogicoErogatore();
 				if(isModalitaAvanzata){
-					if(isSupportoProfiloAsincrono)
+					if(isSupportoProfiloAsincrono) {
 						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE;
-					else 
+					}else { 
 						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO;
+						facilityUnicoWSDL_interfacciaStandard = true;
+					}
 				} else {
 					label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL;
 					facilityUnicoWSDL_interfacciaStandard = true;
