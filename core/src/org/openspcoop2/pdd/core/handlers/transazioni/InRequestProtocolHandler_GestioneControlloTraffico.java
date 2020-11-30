@@ -535,9 +535,18 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 								}
 							}
 						}
-						if(ms>1000) {
+						if(ms>0) {
 							// trasformo in secondi
-							long sec = ms / 1000;
+							long sec = -1;
+							if(ms>1000) {
+								// trasformo in secondi
+								sec = ms / 1000;
+							}
+							else if(ms>0) {
+								// genero comunque l'header approssimando l'intervallo al secondo + backoff
+								sec=1;
+							}
+
 							// aggiungo backoff
 							if(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()!=null && op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()>0) {
 								sec = sec + new Random().nextInt(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff());
