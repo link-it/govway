@@ -1,5 +1,9 @@
 2020-11-30  Andrea Poli <apoli@link.it>
 
+	* Rilasciata versione 3.3.3.p1
+
+2020-11-30  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
 	Aggiunta funzionalità OP-1117
 	Il parametro 'Access-Control-Max-Age', per le richieste Preflight CORS, è adesso configurabile dalla console senza dover accedere alla modalità avanzata.

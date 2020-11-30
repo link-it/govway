@@ -1,10 +1,10 @@
 Per creare una tag version:
 
-1. Inserire la corretta versione in tools/utils/src/org/openspcoop2/utils/Costanti.java
+1. (PVersion) Inserire la corretta versione in tools/utils/src/org/openspcoop2/utils/Costanti.java
 
-2. Inserire la versione del rilascio in ChangeLog
+2. (PVersion) Inserire la versione del rilascio in ChangeLog
 
-3. Inserire la versione corretta in ant/setup/antinstall-config.xml:
+3. (PVersion) Inserire la versione corretta in ant/setup/antinstall-config.xml:
    - 4 occorrenze della versione (2 display, proprietà 'antinstaller_versione_attuale_con_p_level' e proprietà 'antinstaller_versione_attuale')
      NOTA: per le due versioni display e per la proprietà 'antinstaller_versione_attuale_con_p_level' 
            usare anche i suffissi 'rc' o 'beta' nel caso di rilasci di versioni non finali.
@@ -12,7 +12,7 @@ Per creare una tag version:
    - Sistemare versioni precedenti nella maschera 'aggiornamentoSceltaVersione' (NOTA: in questo caso utilizzare solamente versioni stabili)
    - Se sono state introdotte nuove variabili nel setup, gestirle all'interno del file ant/setup/ant/sqlInstallerProps-build.xml nel task '_sql_settings_installer_properties'
 
-4. Inserire la versione corretta nel pom.xml presente nella root, all'interno della proprietà '<govway.version>XXX/govway.version>'
+4. (PVersion) Inserire la versione corretta nel pom.xml presente nella root, all'interno della proprietà '<govway.version>XXX/govway.version>'
    NOTA: usare eventuale patch level
 
 5. Verificare di avere l'ultima versione presente nella directory resources/sql_upgrade (con almeno il file info-patch.sql)
@@ -22,9 +22,9 @@ Per creare una tag version:
 
 7. Inserire la corretta versione (con suffisso rc o beta se serve) nei files doc resources/doc/src/manuali/conf.py e resources/doc/src/releaseNotes/conf.py
 
-8. Eseguire i test di verifica JavaDoc, GPL, XSD e StringBuffer.
+8. (PVersion) Eseguire i test di verifica JavaDoc, GPL, XSD e StringBuffer.
 
-9. Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
+9. (PVersion) Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
 
 10. Sistemare la documentazione e soprattutto il documento di ReleaseNotes
       Inoltre aggiungere la corretta versione. 
@@ -102,4 +102,4 @@ Per creare una tag version:
 
 18. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
-19. Creazione versione tag
+19. (PVersion) Creazione versione tag
