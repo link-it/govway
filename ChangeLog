@@ -1,5 +1,13 @@
 2020-11-30  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1117
+	Il parametro 'Access-Control-Max-Age', per le richieste Preflight CORS, è adesso configurabile dalla console senza dover accedere alla modalità avanzata.
+	È stata inoltre aggiunta la possibilità di configurare il parametro tramite le API di configurazione.
+	Infine è stato modificata la configurazione di default, su nuove installazioni, per generare un header 'Access-Control-Max-Age' valorizzato con '28800' (8 ore).
+
+2020-11-30  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug OP-1115
 	È stato corretto il seguente problema presente sulla validazione tramite OpenAPI 3:

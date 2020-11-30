@@ -7,9 +7,8 @@
         "all_allow_headers": true,
         "all_allow_methods": true,
         "allow_credentials": false,
-        "expose_headers": [ "Authorization", "Content-Type" ]
-        
-        
+        "max_age": true,  
+        "max_age_seconds": -1  
     }
     
 }

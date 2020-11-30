@@ -75,6 +75,8 @@ UPDATE configurazione set cors_tipo='gateway';
 UPDATE configurazione set cors_all_allow_origins='abilitato';
 UPDATE configurazione set cors_allow_headers='Authorization,Content-Type,SOAPAction,Cache-Control';
 UPDATE configurazione set cors_allow_methods='GET,PUT,POST,DELETE,PATCH';
+UPDATE configurazione set cors_allow_max_age=1;
+UPDATE configurazione set cors_allow_max_age_seconds=28800;
 
 -- Configurazione Cache Response
 UPDATE configurazione set response_cache_stato='disabilitato';

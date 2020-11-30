@@ -1282,7 +1282,13 @@ components:
           type: array
           items:
             type: string
-            maxLength: 255 
+            maxLength: 255
+        max_age:
+          type: boolean
+          default: false
+        max_age_seconds:
+          type: integer
+          format: int32 
     GestioneCors:
       type: object
       required:

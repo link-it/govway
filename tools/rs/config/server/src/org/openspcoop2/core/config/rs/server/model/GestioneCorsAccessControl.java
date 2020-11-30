@@ -51,6 +51,12 @@ public class GestioneCorsAccessControl  {
   
   @Schema(description = "")
   private List<String> exposeHeaders = null;
+  
+  @Schema(description = "")
+  private Boolean maxAge = false;
+  
+  @Schema(description = "")
+  private Integer maxAgeSeconds = null;
  /**
    * Get allAllowOrigins
    * @return allAllowOrigins
@@ -224,6 +230,44 @@ public class GestioneCorsAccessControl  {
     return this;
   }
 
+ /**
+   * Get maxAge
+   * @return maxAge
+  **/
+  @JsonProperty("max_age")
+  @Valid
+  public Boolean isMaxAge() {
+    return this.maxAge;
+  }
+
+  public void setMaxAge(Boolean maxAge) {
+    this.maxAge = maxAge;
+  }
+
+  public GestioneCorsAccessControl maxAge(Boolean maxAge) {
+    this.maxAge = maxAge;
+    return this;
+  }
+
+ /**
+   * Get maxAgeSeconds
+   * @return maxAgeSeconds
+  **/
+  @JsonProperty("max_age_seconds")
+  @Valid
+  public Integer getMaxAgeSeconds() {
+    return this.maxAgeSeconds;
+  }
+
+  public void setMaxAgeSeconds(Integer maxAgeSeconds) {
+    this.maxAgeSeconds = maxAgeSeconds;
+  }
+
+  public GestioneCorsAccessControl maxAgeSeconds(Integer maxAgeSeconds) {
+    this.maxAgeSeconds = maxAgeSeconds;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -238,6 +282,8 @@ public class GestioneCorsAccessControl  {
     sb.append("    allowMethods: ").append(GestioneCorsAccessControl.toIndentedString(this.allowMethods)).append("\n");
     sb.append("    allowCredentials: ").append(GestioneCorsAccessControl.toIndentedString(this.allowCredentials)).append("\n");
     sb.append("    exposeHeaders: ").append(GestioneCorsAccessControl.toIndentedString(this.exposeHeaders)).append("\n");
+    sb.append("    maxAge: ").append(GestioneCorsAccessControl.toIndentedString(this.maxAge)).append("\n");
+    sb.append("    maxAgeSeconds: ").append(GestioneCorsAccessControl.toIndentedString(this.maxAgeSeconds)).append("\n");
     sb.append("}");
     return sb.toString();
   }

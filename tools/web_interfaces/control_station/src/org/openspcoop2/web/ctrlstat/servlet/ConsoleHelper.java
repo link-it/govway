@@ -11888,7 +11888,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
-				if(allHidden || this.isModalitaStandard()) {
+				//if(allHidden || this.isModalitaStandard()) {
+				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
 				}else {
 					de.setType(DataElementType.CHECKBOX);
@@ -11903,7 +11904,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
 					de.setValue(corsMaxAgeSeconds+"");
-					if(allHidden || this.isModalitaStandard()) {
+					//if(allHidden || this.isModalitaStandard()) {
+					if(allHidden) {
 						de.setType(DataElementType.HIDDEN);
 					}else {
 						de.setType(DataElementType.NUMBER);

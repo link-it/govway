@@ -3134,6 +3134,10 @@ public class ErogazioniApiHelper {
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS, ServletUtils.boolToCheckBoxStatus(c.isAllAllowMethods()) );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS, allowMethods );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS, exposeHeaders );
+		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE, ServletUtils.boolToCheckBoxStatus(c.isMaxAge()) );
+		if(c.isMaxAge()!=null && c.isMaxAge() && c.getMaxAgeSeconds()!=null) {
+			env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS, c.getMaxAgeSeconds() );
+		}
 	
 		if ( !env.paHelper.checkDataConfigurazioneCorsPorta(TipoOperazione.OTHER, true, statoCorsPorta) ) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
@@ -3151,8 +3155,8 @@ public class ErogazioniApiHelper {
 				allowMethods, 
 				c.isAllowCredentials(),
 				exposeHeaders,
-				BaseHelper.evalorElse( () -> oldConf.getAccessControlMaxAge() != null, false),
-				BaseHelper.evalorElse( () -> oldConf.getAccessControlMaxAge(), -1 )
+				c.isMaxAge()!=null ? c.isMaxAge() : false,
+				c.getMaxAgeSeconds()!=null ? c.getMaxAgeSeconds() : -1
 			);
 	}
 	
@@ -4135,6 +4139,10 @@ public class ErogazioniApiHelper {
 						));
 				opts.setAllowOrigins( evalnull( () -> paConf.getAccessControlAllowOrigins().getOriginList()));	
 				opts.setExposeHeaders( evalnull( () -> paConf.getAccessControlExposeHeaders().getHeaderList()) );
+				if(paConf.getAccessControlMaxAge()!=null) {
+					opts.setMaxAge( true );
+					opts.setMaxAgeSeconds(paConf.getAccessControlMaxAge());
+				}
 				
 				ret.setAccessControl(opts);
 			}

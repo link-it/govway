@@ -8,9 +8,8 @@
 	"all_allow_methods": false,
         "allow_methods": [ "POST", "GET", "PUT", "UNLINK"],
         "allow_credentials": true,
-        "expose_headers": [ "Authorization", "Content-Type" ]
-        
-        
+        "expose_headers": [ "Authorization", "Content-Type" ],
+        "max_age": false
     }
     
 }

@@ -42,6 +42,23 @@ Scenario: Update Gestione CORS (configurazione 2)
     Then status 200
     And match response == gestione_cors2
 
+    * eval gestione_cors2.access_control.max_age_seconds = 60
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'gestione-cors'
+    And header Authorization = govwayConfAuth
+    And request gestione_cors2
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'gestione-cors'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response == gestione_cors2
 
 @Get200
 Scenario: Get Gestione CORS

@@ -8707,6 +8707,12 @@ components:
           items:
             maxLength: 255
             type: "string"
+        max_age:
+          type: "boolean"
+          default: false
+        max_age_seconds:
+          type: "integer"
+          format: "int32"
     GestioneCors:
       required:
       - "ridefinito"
