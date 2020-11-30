@@ -1,3 +1,12 @@
+2020-11-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1115
+	È stato corretto il seguente problema presente sulla validazione tramite OpenAPI 3:
+	- se il Content-Type di una risposta veniva definito tramite placeholders */*, la validazione terminava con un errore "Content-Type non supportato".
+          Il problema è stato risolto e la validazione adesso rispetta quanto descritto nella specifica 'https://swagger.io/docs/specification/media-types/':
+	  "To define the same format for multiple media types, you can also use placeholders like */*, application/*, image/* .."
+
 2020-11-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

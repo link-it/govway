@@ -146,6 +146,7 @@ public class HttpConstants {
 	public final static String CONTENT_TYPE_SOAP_1_2 = MimeTypeConstants.MEDIA_TYPE_SOAP_1_2;
 	public final static String CONTENT_TYPE_APPLICATION_OCTET_STREAM = MimeTypeConstants.MEDIA_TYPE_APPLICATION_OCTET_STREAM;
 	public final static String CONTENT_TYPE_ZIP = MimeTypeConstants.MEDIA_TYPE_ZIP;
+	public final static String CONTENT_TYPE_PDF = MimeTypeConstants.MEDIA_TYPE_PDF;
 	public final static String CONTENT_TYPE_APPLICATION_XOP_XML = MimeTypeConstants.MEDIA_TYPE_APPLICATION_XOP_XML;
 	public final static String CONTENT_TYPE_HTML = MimeTypeConstants.MEDIA_TYPE_HTML;
 	public final static String CONTENT_TYPE_PLAIN = MimeTypeConstants.MEDIA_TYPE_PLAIN;

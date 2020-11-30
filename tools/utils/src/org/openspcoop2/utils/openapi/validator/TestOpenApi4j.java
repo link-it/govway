@@ -39,10 +39,17 @@ import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
+import org.openspcoop2.utils.rest.entity.BinaryHttpResponseEntity;
+import org.openspcoop2.utils.rest.entity.DocumentHttpResponseEntity;
+import org.openspcoop2.utils.rest.entity.ElementHttpResponseEntity;
+import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpResponseEntity;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.xml.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Test (Estende i test già effettuati in TestOpenApi3
@@ -86,6 +93,12 @@ public class TestOpenApi4j {
 		configNo.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
 		configNo.getOpenApi4JConfig().setUseOpenApi4J(false);
 		apiValidatorNoOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiNoOpenApi4j, configNo);
+		
+		byte [] pdf = Utilities.getAsByteArray(TestOpenApi4j.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		
+		String xml = "<prova>Hello World</prova>";
+		Document docXml = XMLUtils.getInstance().newDocument(xml.getBytes());
+		Element elementXml = docXml.getDocumentElement();
 		
 		
 		
@@ -233,17 +246,123 @@ public class TestOpenApi4j {
 		httpEntityGET.setUrl(testUrl5);	
 		apiValidatorOpenApi4j.validate(httpEntityGET);	
 		
-		TextHttpResponseEntity httpEntityResponse = new TextHttpResponseEntity();
-		httpEntityResponse.setStatus(200);
-		httpEntityResponse.setMethod(HttpRequestMethod.GET);
-		httpEntityResponse.setUrl(testUrl5);	
-		Map<String, String> parametersTrasportoRisposta = new HashMap<>();
-		parametersTrasportoRisposta.put("api_key", "aaa");
-		parametersTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-		httpEntityResponse.setParametersTrasporto(parametersTrasportoRisposta);
-		httpEntityResponse.setContentType(HttpConstants.CONTENT_TYPE_JSON);
-		httpEntityResponse.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
-		apiValidatorOpenApi4j.validate(httpEntityResponse);	
+		List<String> contentTypes_test5 = new ArrayList<String>();
+		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_JSON);
+		contentTypes_test5.add("jsonUncorrect");
+		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_PLAIN);
+		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_XML);
+		contentTypes_test5.add("xmlUncorrect");
+		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_PDF);
+		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_ZIP);
+		
+		for (String ct : contentTypes_test5) {
+		
+			HttpBaseResponseEntity<?> httpEntityResponse = null;
+			if(ct.contains("json") || ct.contains("plain") || ct.contains("Uncorrect")) {
+				httpEntityResponse = new TextHttpResponseEntity();
+			}
+			else if(ct.contains("xml")) {
+				if(HttpConstants.CONTENT_TYPE_XML.equals(ct)) {
+					httpEntityResponse = new DocumentHttpResponseEntity();
+				}
+				else {
+					httpEntityResponse = new ElementHttpResponseEntity();
+				}
+			}
+			else {
+				httpEntityResponse = new BinaryHttpResponseEntity();
+			}
+			httpEntityResponse.setStatus(200);
+			httpEntityResponse.setMethod(HttpRequestMethod.GET);
+			httpEntityResponse.setUrl(testUrl5);	
+			Map<String, String> parametersTrasportoRisposta = new HashMap<>();
+			parametersTrasportoRisposta.put("api_key", "aaa");
+			parametersTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, ct);
+			httpEntityResponse.setParametersTrasporto(parametersTrasportoRisposta);
+			httpEntityResponse.setContentType(ct);
+			if(ct.contains("json") || ct.contains("plain")) {
+				if(ct.contains("Uncorrect")) {
+					((TextHttpResponseEntity)httpEntityResponse).setContent("{ a }");
+					parametersTrasportoRisposta.remove(HttpConstants.CONTENT_TYPE);
+					parametersTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+					httpEntityResponse.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+				}
+				else if(ct.contains("plain")) {
+					((TextHttpResponseEntity)httpEntityResponse).setContent("Hello World!");
+				}
+				else {
+					((TextHttpResponseEntity)httpEntityResponse).setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!		
+				}
+			}
+			else if(ct.contains("xml")) {
+				if(ct.contains("Uncorrect")) {
+					((TextHttpResponseEntity)httpEntityResponse).setContent("<prova>aaaprova>");
+					parametersTrasportoRisposta.remove(HttpConstants.CONTENT_TYPE);
+					parametersTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_XML);
+					httpEntityResponse.setContentType(HttpConstants.CONTENT_TYPE_XML);
+				}
+				else if(HttpConstants.CONTENT_TYPE_XML.equals(ct)) {
+					((DocumentHttpResponseEntity)httpEntityResponse).setContent(docXml);
+				}
+				else {
+					((ElementHttpResponseEntity)httpEntityResponse).setContent(elementXml);
+				}
+			}
+			else {
+				((BinaryHttpResponseEntity)httpEntityResponse).setContent(pdf);
+			}
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = "ContentType:"+ct+" ";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+						
+				try {
+					System.out.println("\t "+tipoTest+" validate response ...");
+					apiValidator.validate(httpEntityResponse);	
+					System.out.println("\t "+tipoTest+" validate response ok");
+					
+					if(openapi4j && ct.contains("Uncorrect")) {
+						throw new Exception("Attesa eccezione");
+					}
+					
+				} catch(Throwable e) {
+					String error = e.getMessage();
+					if(error.length()>500) {
+						error = error.substring(0, 498)+" ...";
+					}
+					if(ct.contains("Uncorrect")) {
+						String erroreAtteso = null;
+						if(ct.contains("json")) {
+							erroreAtteso = "Unexpected character ('a' (code 97))";
+						}
+						else {
+							erroreAtteso = "Unclosed tag prova at 16 [character 17 line 1]";
+						}
+						if(!e.getMessage().contains(erroreAtteso)) {
+							System.out.println("\t "+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+error);
+							throw new Exception(""+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+e.getMessage(),e);
+						}
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+				}
+			}
+		}
+		
 		System.out.println("Test #6 completato\n\n");
 		
 		
@@ -2310,6 +2429,144 @@ public class TestOpenApi4j {
 		}
 		
 		System.out.println("Test #17 completato\n\n");
+		
+		
+		
+		System.out.println("Test #18 (Risposta GET con parametro dinamico /documenti/XYZ)");
+		String testUrl18 = baseUri+"/documenti/qualsiasi/"+UUID.randomUUID().toString();
+		
+		List<Integer> valori_test18 = new ArrayList<Integer>();
+		valori_test18.add(200);
+		valori_test18.add(201);
+		valori_test18.add(202); // default
+		valori_test18.add(203); // defaut
+		valori_test18.add(204);
+		valori_test18.add(400);
+		valori_test18.add(401);
+		valori_test18.add(500);
+		valori_test18.add(501); // default
+		
+		List<String> contentTypes_test18 = new ArrayList<String>();
+		contentTypes_test18.add(HttpConstants.CONTENT_TYPE_JSON);
+		contentTypes_test18.add("jsonUncorrect");
+		contentTypes_test18.add(HttpConstants.CONTENT_TYPE_PLAIN);
+		contentTypes_test18.add(HttpConstants.CONTENT_TYPE_ZIP);
+		
+		for (int i = 0; i < valori_test18.size(); i++) {
+			Integer code = valori_test18.get(i);
+		
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = "Code:"+code+" ";
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+						
+				TextHttpRequestEntity httpEntityGET_test18 = new TextHttpRequestEntity();
+				httpEntityGET_test18.setMethod(HttpRequestMethod.GET);
+				httpEntityGET_test18.setUrl(testUrl18);	
+				
+				try {
+					System.out.println("\t "+tipoTest+" validate request ...");
+					apiValidator.validate(httpEntityGET_test18);	
+					System.out.println("\t "+tipoTest+" validate request ok");
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>500) {
+						error = error.substring(0, 498)+" ...";
+					}
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String oldTipoTest = tipoTest;
+				
+				for (String ct : contentTypes_test18) {
+					
+					tipoTest = oldTipoTest + " Content-Type:"+ct;
+					
+					HttpBaseResponseEntity<?> httpEntityResponse_test18 = null;
+					if(ct.contains("json") || ct.contains("plain") || ct.contains("Uncorrect")) {
+						httpEntityResponse_test18 = new TextHttpResponseEntity();
+					}
+					else {
+						httpEntityResponse_test18 = new BinaryHttpResponseEntity();
+					}
+					
+					httpEntityResponse_test18.setStatus(code);
+					httpEntityResponse_test18.setMethod(HttpRequestMethod.GET);
+					httpEntityResponse_test18.setUrl(testUrl18);	
+					Map<String, String> parametersTrasportoRisposta_test18 = new HashMap<>();
+					parametersTrasportoRisposta_test18.put("api_key", "aaa");
+					parametersTrasportoRisposta_test18.put(HttpConstants.CONTENT_TYPE, ct);
+					httpEntityResponse_test18.setParametersTrasporto(parametersTrasportoRisposta_test18);
+					httpEntityResponse_test18.setContentType(ct);
+					
+					if(ct.contains("json") || ct.contains("plain")) {
+						if(ct.contains("Uncorrect")) {
+							((TextHttpResponseEntity)httpEntityResponse_test18).setContent("{ a }");
+							parametersTrasportoRisposta_test18.remove(HttpConstants.CONTENT_TYPE);
+							parametersTrasportoRisposta_test18.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+							httpEntityResponse_test18.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+						}
+						else if(ct.contains("plain")) {
+							((TextHttpResponseEntity)httpEntityResponse_test18).setContent("Hello World!");
+						}
+						else {
+							((TextHttpResponseEntity)httpEntityResponse_test18).setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!		
+						}
+					}
+					else {
+						((BinaryHttpResponseEntity)httpEntityResponse_test18).setContent(pdf);
+					}
+					
+					try {
+						System.out.println("\t "+tipoTest+" validate response ...");
+						apiValidator.validate(httpEntityResponse_test18);	
+						System.out.println("\t "+tipoTest+" validate response ok");
+						
+						if(openapi4j && (ct.contains("Uncorrect") || !ct.contains("json"))) {
+							throw new Exception("Attesa eccezione");
+						}
+						
+					} catch(ValidatorException e) {
+						String error = e.getMessage();
+						if(error.length()>500) {
+							error = error.substring(0, 498)+" ...";
+						}
+						String erroreAtteso = null;
+						if(ct.contains("Uncorrect")) {
+							erroreAtteso = "Unexpected character ('a' (code 97))";
+						}
+						else if(!ct.contains("json")) {
+							erroreAtteso = "body: Type expected 'object', found 'string'. (code: 1027)";
+						}
+						if(erroreAtteso!=null) {
+							if(!e.getMessage().contains(erroreAtteso)) {
+								System.out.println("\t "+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+error);
+								throw new Exception(""+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+e.getMessage(),e);
+							}
+							else {
+								System.out.println("\t "+tipoTest+" rilevato errore di validazione atteso: "+error);
+							}
+						}
+						else {
+							System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+							throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+						}
+					}
+					
+				}
+			}
+		}
+		System.out.println("Test #18 completato\n\n");
 	}
 
 }

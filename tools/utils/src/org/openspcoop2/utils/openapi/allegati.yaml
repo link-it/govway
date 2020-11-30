@@ -716,6 +716,58 @@ paths:
            application/json:
              schema:
                $ref: '#/components/schemas/MResponseType'
+
+  /documenti/qualsiasi/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    get:
+      tags:
+        - document-retrieve
+      description: Consente di recuperare un documento, per il quale si è ricevuto un riferimento
+      operationId: DownloadDocument
+      parameters:
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+      responses:
+        "200":
+          description: |-
+            Il documento richiesto
+          content:
+            '*/*':
+              schema:
+                type: object
+        "201":
+          description: |-
+            Il documento richiesto
+          content:
+            '*/*':
+              schema:
+                type: object
+        "204":
+          description: |-
+            Il documento richiesto
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: object
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: object
           
 components:
 

@@ -91,7 +91,10 @@ import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -1207,6 +1210,13 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	    		else if(content instanceof InputStream) {
 	    			is = (InputStream) content;
 	    		}
+	    		else if(content instanceof Document) {
+	    			b=XMLUtils.getInstance().toByteArray(((Document)content));
+	    		}
+	    		else if(content instanceof Element) {
+	    			b=XMLUtils.getInstance().toByteArray(((Element)content));
+	    		}
+	    		
 	    		if(s!=null) {
 	    			builder.body(Body.from(s));
 	    		}

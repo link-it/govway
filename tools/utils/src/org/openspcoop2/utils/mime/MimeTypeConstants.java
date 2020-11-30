@@ -35,6 +35,7 @@ public class MimeTypeConstants {
 	public final static String MEDIA_TYPE_SOAP_1_2 = "application/soap+xml";
 	public final static String MEDIA_TYPE_APPLICATION_OCTET_STREAM = "application/octet-stream";
 	public final static String MEDIA_TYPE_ZIP = "application/zip";
+	public final static String MEDIA_TYPE_PDF = "application/pdf";
 	public final static String MEDIA_TYPE_APPLICATION_XOP_XML = "application/xop+xml";
 	public final static String MEDIA_TYPE_HTML = "text/html";
 	public final static String MEDIA_TYPE_PLAIN = "text/plain";	
