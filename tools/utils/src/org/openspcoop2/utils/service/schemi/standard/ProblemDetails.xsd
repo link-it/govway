@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:problem="urn:ietf:rfc:7807" xmlns:tns="urn:ietf:rfc:7807" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:ietf:rfc:7807">
+         <xs:element name="problem" type="tns:problem"/>
+         <xs:complexType name="problem">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="type" type="xs:string"/>
+               <xs:element minOccurs="0" name="title" type="xs:string"/>
+               <xs:element minOccurs="0" name="status" type="xs:int"/>
+	       <xs:element minOccurs="0" name="detail" type="xs:string"/>
+	       <xs:element minOccurs="0" name="instance" type="xs:string"/>
+	       <xs:element minOccurs="0" name="govway_id" type="xs:string"/>
+            </xs:sequence>
+         </xs:complexType>
+      </xs:schema>
