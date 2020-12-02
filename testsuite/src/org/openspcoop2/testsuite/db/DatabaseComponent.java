@@ -61,6 +61,9 @@ public class DatabaseComponent {
 	private VerificatoreTracciaRichiesta verificatoreTracciaRichiesta;
 	private VerificatoreTracciaRisposta verificatoreTracciaRisposta;
 	private VerificatoreMessaggi verificatoreMessaggi;
+	private VerificatoreTransazioni verificatoreTransazioni;
+
+
 	@SuppressWarnings("unused")
 	private String protocollo;
 
@@ -96,6 +99,7 @@ public class DatabaseComponent {
 		this.verificatoreTracciaRichiesta = new VerificatoreTracciaRichiesta(this.connectionTracciamento, protocollo);
 		this.verificatoreTracciaRisposta = new VerificatoreTracciaRisposta(this.connectionTracciamento, protocollo);
 		this.verificatoreMessaggi = new VerificatoreMessaggi(this.connectionPdD, protocollo);
+		this.verificatoreTransazioni = new VerificatoreTransazioni(this.connectionTracciamento, protocollo);
 		this.protocollo = protocollo;
 	}
 	
@@ -193,6 +197,9 @@ public class DatabaseComponent {
 		return this.verificatoreMessaggi;
 	}
 	
+	public VerificatoreTransazioni getVerificatoreTransazioni() {
+		return this.verificatoreTransazioni;
+	}
 
 }
 

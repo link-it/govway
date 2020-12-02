@@ -283,6 +283,23 @@ public class CostantiTestSuite {
 	
 	/** Porte Delegate per il test JOSE Signature */
 	public static final String PORTA_DELEGATA_JOSE_PREFIX = "JOSE/";
+	
+	/** Porte Delegate per il test della correlazione applicativa */
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE="EsempioCorrelazioneApplicativaPuntuale";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_CASE_INSENSITIVE="EsempioCorrelazioneApplicativaPuntualeCaseInsensitive";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_RISPOSTA="EsempioCorrelazioneApplicativaPuntualeRisposta";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_RISPOSTA_CASE_INSENSITIVE="EsempioCorrelazioneApplicativaPuntualeRispostaCaseInsensitive";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_QUALSIASI_METODO="EsempioCorrelazioneApplicativaQualsiasiMetodo";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_QUALSIASI_METODO_RISPOSTA="EsempioCorrelazioneApplicativaQualsiasiMetodoRisposta";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET="EsempioCorrelazioneApplicativaGet";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_STAR="EsempioCorrelazioneApplicativaGetStar";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_RISPOSTA="EsempioCorrelazioneApplicativaGetRisposta";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_STAR_RISPOSTA="EsempioCorrelazioneApplicativaGetStarRisposta";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI="EsempioCorrelazioneApplicativaGetStarParzialeCaseInsensitive";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_STAR="EsempioCorrelazioneApplicativaGetStarPath";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_RISPOSTA="EsempioCorrelazioneApplicativaGetStarParzialeCaseInsensitiveRisposta";
+	public static final String PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_STAR_RISPOSTA="EsempioCorrelazioneApplicativaGetStarPathRisposta";
+	
 
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay */
 	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateful";
@@ -471,6 +488,22 @@ public class CostantiTestSuite {
 
 	/** Porte Applicative per il test Integrazione */
 	public static final String PORTA_APPLICATIVA_AUTH_BASIC_NO_INTEGRAZIONE_SOAP = "AuthenticationBasic_NoIntegrazioneSoap";
+	
+	/** Porte Applicative per il test della correlazione applicativa */
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE="EsempioCorrelazioneApplicativaPuntuale";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_CASE_INSENSITIVE="EsempioCorrelazioneApplicativaPuntualeCaseInsensitive";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_RISPOSTA="EsempioCorrelazioneApplicativaPuntualeRisposta";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_RISPOSTA_CASE_INSENSITIVE="EsempioCorrelazioneApplicativaPuntualeRispostaCaseInsensitive";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_QUALSIASI_METODO="EsempioCorrelazioneApplicativaQualsiasiMetodo";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_QUALSIASI_METODO_RISPOSTA="EsempioCorrelazioneApplicativaQualsiasiMetodoRisposta";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_GET="EsempioCorrelazioneApplicativaGet";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_GET_STAR="EsempioCorrelazioneApplicativaGetStar";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_GET_RISPOSTA="EsempioCorrelazioneApplicativaGetRisposta";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_GET_STAR_RISPOSTA="EsempioCorrelazioneApplicativaGetStarRisposta";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI="EsempioCorrelazioneApplicativaGetStarParzialeCaseInsensitive";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_STAR="EsempioCorrelazioneApplicativaGetStarPath";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_RISPOSTA="EsempioCorrelazioneApplicativaGetStarParzialeCaseInsensitiveRisposta";
+	public static final String PORTA_APPLICATIVA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_STAR_RISPOSTA="EsempioCorrelazioneApplicativaGetStarPathRisposta";
 	
 		
 	/** Tipo Soggetto */
@@ -1108,4 +1141,7 @@ public class CostantiTestSuite {
 	public static final String ERROR_TYPE = "GovWay-Transaction-ErrorType";
 	public static final String ERROR_TYPE_BAD_REQUEST = "BadRequest";
 	public static final String ERROR_TYPE_INVALID_RESPONSE = "InvalidResponse";
+	public static final String ERROR_TYPE_APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED = "ApplicationCorrelationIdentificationRequestFailed";
+
+	public static final String ID_CORRELAZIONE_MESSAGGI_JSON = "223242424_32323_ABDKD_233";
 }

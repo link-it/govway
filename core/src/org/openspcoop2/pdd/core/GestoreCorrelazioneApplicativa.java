@@ -36,8 +36,13 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
@@ -49,6 +54,7 @@ import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -59,8 +65,10 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
@@ -106,6 +114,8 @@ public class GestoreCorrelazioneApplicativa {
 	private IDSoggetto soggettoFruitore;
 	/** Servizio */
 	private IDServizio idServizio;
+	/** Resource REST */
+	private Resource restResource;
 	/** Servizio Applicativo */
 	private String servizioApplicativo;
 	/** Scadenza correlazione applicativa */
@@ -348,15 +358,17 @@ public class GestoreCorrelazioneApplicativa {
 			for(int i=0; i<c.size(); i++){
 				
 				CorrelazioneApplicativaElemento elemento = c.get(i);
-				
+								
 				boolean bloccaIdentificazioneNonRiuscita = true;
 				if(CostantiConfigurazione.ACCETTA.equals(elemento.getIdentificazioneFallita()))
 					bloccaIdentificazioneNonRiuscita = false;
 				
 				// Il nome dell'elemento di una correlazione applicativa puo' essere:
-				// non definito: significa per qualsiasi XML
-				// nome: nome dell'elemento radice dell'xml
-				// xpath expression: per identificare il nome dell'elemento radice XML
+				// non definito: significa per qualsiasi richiesta
+				// nome: il nome può rappresentare:
+				// - nome dell'identificativo dell'azione
+				// - nome dell'elemento radice dell'xml
+				// xpath o json expression: per identificare il nome dell'elemento radice XML
 				boolean matchNodePerCorrelazioneApplicativa = false;
 				String nomeElemento = null;
 				if( (elemento.getNome()==null) || "".equals(elemento.getNome()) ){
@@ -381,33 +393,46 @@ public class GestoreCorrelazioneApplicativa {
 					nomeElemento = elemento.getNome();
 				}
 				else{
-					// Ricerco elemento con una espressione
-					try{
-						if(element==null && elementJson==null){
-							throw new Exception("Contenuto non disponibile su cui effettuare un match");
-						}
-						if(element!=null) {
-							nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
-						}
-						else {
-							nomeElemento = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
-						}
-						if(nomeElemento!=null) {
-							matchNodePerCorrelazioneApplicativa = true;
-						}
-					}catch(Exception e){
-						this.log.info("Calcolo (contentBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+					
+					// se siamo in REST provo a cercare per metodo e path
+					boolean isResourceRest = false;
+					if(ServiceBinding.REST.equals(message.getServiceBinding())){
+						isResourceRest = isMatchResourceRest(elemento.getNome());
 					}
-					// Ricerco tramuite espressione regolare sulla url
-					if(!matchNodePerCorrelazioneApplicativa) {
+					if(isResourceRest) {
+						matchNodePerCorrelazioneApplicativa = true;
+						nomeElemento = elemento.getNome();
+					}
+					else {
+						
+						// Ricerco elemento con una espressione
 						try{
-							nomeElemento = RegularExpressionEngine.getStringMatchPattern(urlProtocolContext.getUrlInvocazione_formBased(), 
-									elemento.getNome());
+							if(element==null && elementJson==null){
+								throw new Exception("Contenuto non disponibile su cui effettuare un match");
+							}
+							if(element!=null) {
+								nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
+							}
+							else {
+								nomeElemento = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
+							}
 							if(nomeElemento!=null) {
 								matchNodePerCorrelazioneApplicativa = true;
 							}
 						}catch(Exception e){
-							this.log.info("Calcolo (urlBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+							this.log.info("Calcolo (contentBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+						}
+						// Ricerco tramuite espressione regolare sulla url
+						if(!matchNodePerCorrelazioneApplicativa) {
+							try{
+								nomeElemento = RegularExpressionEngine.getStringMatchPattern(urlProtocolContext.getUrlInvocazione_formBased(), 
+										elemento.getNome());
+								if(nomeElemento!=null) {
+									matchNodePerCorrelazioneApplicativa = true;
+								}
+							}catch(Exception e){
+								this.log.info("Calcolo (urlBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+							}
 						}
 					}
 				}
@@ -615,7 +640,6 @@ public class GestoreCorrelazioneApplicativa {
 
 	}
 
-	
 
 	
 	
@@ -844,25 +868,39 @@ public class GestoreCorrelazioneApplicativa {
 					nomeElemento = elemento.getNome();
 				}
 				else{
-					// Ricerco elemento con una espressione che potrebbe essere riferita a tutta l'envelope
-					try{
-						if(element==null && elementJson==null){
-							throw new Exception("Contenuto non disponibile su cui effettuare un match");
-						}
-						if(element!=null) {
-							nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
-						}
-						else {
-							nomeElemento = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
-						}
-						if(nomeElemento!=null) {
-							matchNodePerCorrelazioneApplicativa = true;
-						}
-					}catch(Exception e){
-						this.log.info("Calcolo non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+					
+					// se siamo in REST provo a cercare per metodo e path
+					boolean isResourceRest = false;
+					if(ServiceBinding.REST.equals(message.getServiceBinding())){
+						isResourceRest = isMatchResourceRest(elemento.getNome());
 					}
-					// Ricerco tramuite espressione regolare sulla url
-					// Non possibile sulla risposta
+					if(isResourceRest) {
+						matchNodePerCorrelazioneApplicativa = true;
+						nomeElemento = elemento.getNome();
+					}
+					else {
+					
+						// Ricerco elemento con una espressione che potrebbe essere riferita a tutta l'envelope
+						try{
+							if(element==null && elementJson==null){
+								throw new Exception("Contenuto non disponibile su cui effettuare un match");
+							}
+							if(element!=null) {
+								nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
+							}
+							else {
+								nomeElemento = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
+							}
+							if(nomeElemento!=null) {
+								matchNodePerCorrelazioneApplicativa = true;
+							}
+						}catch(Exception e){
+							this.log.info("Calcolo non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+						}
+						// Ricerco tramuite espressione regolare sulla url
+						// Non possibile sulla risposta
+						
+					}
 				}
 
 
@@ -976,6 +1014,102 @@ public class GestoreCorrelazioneApplicativa {
 			this.idCorrelazione = idCorrelazioneApplicativa;
 		}
 
+	}
+	
+	
+	
+	
+	
+	/* *********** INDIVIDUAZIONE RISORSA REST ************ */
+	
+	private final static String SPECIAL = "*";
+	
+	private String [] parseResourceRest(String element) {
+		
+		String check = element.toLowerCase();
+		
+		String checkMethod = SPECIAL+" ";
+		if(check.startsWith(checkMethod) && check.length()>checkMethod.length()) {
+			String [] tmp = new String[2];
+			tmp[0] = SPECIAL;
+			tmp[1] = check.substring(checkMethod.length());
+			return tmp;
+		}
+		
+		HttpRequestMethod [] methods = HttpRequestMethod.values();
+		if(methods!=null && methods.length>0) {
+			for (HttpRequestMethod httpRequestMethod : methods) {
+				checkMethod = httpRequestMethod.name().toLowerCase()+" ";
+				if(check.startsWith(checkMethod) && check.length()>checkMethod.length()) {
+					String [] tmp = new String[2];
+					tmp[0] = httpRequestMethod.name();
+					tmp[1] = check.substring(checkMethod.length());
+					return tmp;
+				}
+			}
+		}
+		
+		return null;
+		
+	}
+
+	private boolean isMatchResourceRest(String elemento) {
+		boolean isResourceRest = false;
+		if(elemento!=null && !"".equals(elemento)) {
+			String [] parseResourceRest = parseResourceRest(elemento);
+			if(parseResourceRest!=null) {
+				this.initRestResource();
+				if(this.restResource!=null) {
+					String metodo = parseResourceRest[0];
+					String path = parseResourceRest[1];
+					if(SPECIAL.equals(metodo) || (this.restResource.getMethod()!=null && metodo.toLowerCase().equals(this.restResource.getMethod().name().toLowerCase()))) {
+						if(path.equals(SPECIAL)) {
+							isResourceRest = true;
+						}
+						else if(this.restResource.getPath()!=null){
+							String resourcePathNormalized = ApiOperation.normalizePath(this.restResource.getPath());
+							resourcePathNormalized = resourcePathNormalized.trim().toLowerCase();
+							path = ApiOperation.normalizePath(path);
+							path = path.trim().toLowerCase();
+							if(path.endsWith(SPECIAL)) {
+								String prefix = path.substring(0, path.length()-1);
+								if(resourcePathNormalized.startsWith(prefix)) {
+									isResourceRest = true;
+								}
+							}
+							else if(path.equals(resourcePathNormalized)) {
+								isResourceRest = true;
+							}
+						}					
+					}
+				}
+			}
+		}
+		return isResourceRest;
+	}
+	
+	private void initRestResource() {
+		if(this.restResource!=null) {
+			return;
+		}
+		if(this.idServizio!=null && this.idServizio.getAzione()!=null && !"".equals(this.idServizio.getAzione())) {
+			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(this.state);
+			try {
+				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(this.idServizio, null, false);
+				if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune())) {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+					AccordoServizioParteComune as = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+					for (Resource resourceCheck : as.getResourceList()) {
+						if(resourceCheck.getNome().equals(this.idServizio.getAzione())){
+							this.restResource = resourceCheck;
+							break;
+						}
+					}
+				}
+			}catch(Throwable e) {
+				this.log.error(e.getMessage(),e);
+			}
+		}
 	}
 	
 	

@@ -56,6 +56,13 @@ public class FileCache {
 			jsonFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getJSONFileNameRispostaKo());
 			cache.put("json", jsonFileEntry);
 			
+			TestFileEntry jsonNoPrefixFileEntry = new TestFileEntry();
+			jsonNoPrefixFileEntry.setExtRichiesta("jsonNoPrefix");
+			jsonNoPrefixFileEntry.setFilenameRichiesta(Utilities.testSuiteProperties.getJSONNoPrefixFileName());
+			jsonNoPrefixFileEntry.setExtRispostaKo("jsonNoPrefix");
+			jsonNoPrefixFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getJSONNoPrefixFileNameRispostaKo());
+			cache.put("jsonNoPrefix", jsonNoPrefixFileEntry);
+			
 			TestFileEntry pdfFileEntry = new TestFileEntry();
 			pdfFileEntry.setExtRichiesta("pdf");
 			pdfFileEntry.setFilenameRichiesta(Utilities.testSuiteProperties.getPDFFileName());

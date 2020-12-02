@@ -207,6 +207,18 @@
 
         </accordo-servizio-parte-comune>
 
+        <accordo-servizio-parte-comune nome="EsempioCorrelazioneApplicativa" profilo-collaborazione="sincrono" 
+		utilizzo-senza-azione="true" versione="1" service-binding="rest">
+                <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
+		<resource nome="POST_service_echo" method="POST" path="/service/echo" />
+		<resource nome="GET_service_echo" method="GET" path="/service/echo/{id}" />
+		<resource nome="GET_service_echo_altroSubPath" method="GET" path="/service/echo/{id}/details" />
+		<resource nome="GET_service_ping" method="GET" path="/service/ping/{id}" />
+		<resource nome="HEAD_service_ping" method="HEAD" path="/service/ping" />
+		<resource nome="DELETE_service_echo" method="DELETE" path="/service/echo" />
+		<resource nome="PUT_service_echo" method="PUT" path="/service/echo" />
+        </accordo-servizio-parte-comune>
+
 
 
 	<!-- **** Configurazione SOAP **** -->
@@ -655,6 +667,15 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ2d0TnorbTk
 		        <configurazione-servizio>
 		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_REST/API">
 		                        <property nome="location" valore="http://localhost:8080/govway/JOSE"/>
+		                </connettore>
+		        </configurazione-servizio>
+                </accordo-servizio-parte-specifica>
+
+		<accordo-servizio-parte-specifica tipo="gw" nome="EsempioCorrelazioneApplicativa" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioCorrelazioneApplicativa:1">
+		        <configurazione-servizio>
+		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_gw/EsempioCorrelazioneApplicativa">
+		                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente"/>
 		                </connettore>
 		        </configurazione-servizio>
                 </accordo-servizio-parte-specifica>

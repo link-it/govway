@@ -178,4 +178,197 @@ public class RESTIntegrazionePortaDelegata {
 			dataMsg.close();
 		}
 	}
+	
+	
+	
+	
+	// match solo risorsa POST /service/echo
+	
+	@DataProvider (name="testCorrelazioneApplicativaPuntuale")
+	public Object[][] testCorrelazioneApplicativaPuntuale(){
+		return new Object[][]{
+			{"POST","/service/echo",true},
+			{"PUT","/service/echo",false},
+			{"DELETE","/service/echo",false},
+		};	
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaPuntuale"},dataProvider="testCorrelazioneApplicativaPuntuale")
+	public void testCorrelazioneApplicativaPuntuale(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRichiesta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaPuntualeCaseInsensitive"},dataProvider="testCorrelazioneApplicativaPuntuale")
+	public void testCorrelazioneApplicativaPuntualeCaseInsensitive(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRichiesta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_CASE_INSENSITIVE, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaPuntualeRisposta"},dataProvider="testCorrelazioneApplicativaPuntuale")
+	public void testCorrelazioneApplicativaPuntualeRisposta(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRisposta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_RISPOSTA, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaPuntualeRispostaCaseInsensitive"},dataProvider="testCorrelazioneApplicativaPuntuale")
+	public void testCorrelazioneApplicativaPuntualeRispostaCaseInsensitive(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRisposta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_PUNTUALE_RISPOSTA_CASE_INSENSITIVE, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	
+	
+	// match solo risorsa POST /service/echo, PUT /service/echo e DELETE /service/echo
+	
+	@DataProvider (name="testCorrelazioneApplicativaQualsiasiMetodo")
+	public Object[][] testCorrelazioneApplicativaQualsiasiMetodo(){
+		return new Object[][]{
+			{"POST","/service/echo",true},
+			{"PUT","/service/echo",true},
+			{"DELETE","/service/echo",true}, 
+			{"GET","/service/echo/23", false},
+			{"HEAD","/service/ping",false},
+		};	
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaQualsiasiMetodo"},dataProvider="testCorrelazioneApplicativaQualsiasiMetodo")
+	public void testCorrelazioneApplicativaQualsiasiMetodo(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		boolean invocaCasoOk = true;
+		if("DELETE".equals(metodo)) {
+			// non potrà andare a buon fine essendo la regola di correlazione sul contenuto e la DELETE non prevede un payload nella richiesta
+			// La semplice verifica che la correlazione applicativa (fallita) è stata applicata è sufficente per il test
+			invocaCasoOk = false;
+			
+			Reporter.log("Force invocaCasoOk=false");
+		}
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRichiesta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_QUALSIASI_METODO, metodo, path, expectedIdCorrelazione, invocaCasoOk);
+		
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaQualsiasiMetodoRisposta"},dataProvider="testCorrelazioneApplicativaQualsiasiMetodo")
+	public void testCorrelazioneApplicativaQualsiasiMetodoRisposta(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRisposta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_QUALSIASI_METODO_RISPOSTA, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	
+	
+	
+	// match solo risorsa GET /service/echo/{id}
+	
+	@DataProvider (name="testCorrelazioneApplicativaGet")
+	public Object[][] testCorrelazioneApplicativaGet(){
+		return new Object[][]{
+			{"GET","/service/echo/23",true},
+			{"GET","/service/echo/67altroId",true},
+			{"GET","/service/echo/23/details",false},
+			{"POST","/service/echo",false},
+			{"PUT","/service/echo",false},
+			{"DELETE","/service/echo",false},
+		};	
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaGet"},dataProvider="testCorrelazioneApplicativaGet")
+	public void testCorrelazioneApplicativaGet(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRichiesta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaGetStar"},dataProvider="testCorrelazioneApplicativaGet")
+	public void testCorrelazioneApplicativaGetStar(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+				
+		if(!expectedIdCorrelazione && path.endsWith("details")){
+			expectedIdCorrelazione=true; // La porta delegate in questione possiede un path * che matcha anche con ulteriori sotto path
+		
+			Reporter.log("Force expectedIdCorrelazione");
+		}
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRichiesta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_STAR, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaGetRisposta"},dataProvider="testCorrelazioneApplicativaGet")
+	public void testCorrelazioneApplicativaGetRisposta(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRisposta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_RISPOSTA, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaGetStarRisposta"},dataProvider="testCorrelazioneApplicativaGet")
+	public void testCorrelazioneApplicativaGetStarRisposta(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+				
+		if(!expectedIdCorrelazione && path.endsWith("details")){
+			expectedIdCorrelazione=true; // La porta delegate in questione possiede un path * che matcha anche con ulteriori sotto path
+		
+			Reporter.log("Force expectedIdCorrelazione");
+		}
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRisposta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_STAR_RISPOSTA, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	
+	
+	// match solo risorsa GET /service/echo/{id} e GET /service/ping/{id}
+	
+	
+	@DataProvider (name="testCorrelazioneApplicativaGetQualsiasi")
+	public Object[][] testCorrelazioneApplicativaGetQualsiasi(){
+		return new Object[][]{
+			{"GET","/service/echo/23",true},
+			{"GET","/service/echo/67altroId",true},
+			{"GET","/service/echo/23/details",true},
+			{"GET","/service/ping/23",true},
+			{"GET","/service/ping/82",true},
+			{"POST","/service/echo",false},
+			{"PUT","/service/echo",false},
+			{"DELETE","/service/echo",false},
+		};	
+	}
+
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaGetQualsiasi"},dataProvider="testCorrelazioneApplicativaGetQualsiasi")
+	public void testCorrelazioneApplicativaGetQualsiasi(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRichiesta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaGetQualsiasiStar"},dataProvider="testCorrelazioneApplicativaGetQualsiasi")
+	public void testCorrelazioneApplicativaGetQualsiasiStar(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRichiesta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_STAR, metodo, path, expectedIdCorrelazione, true);
+		
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaGetQualsiasiRisposta"},dataProvider="testCorrelazioneApplicativaGetQualsiasi")
+	public void testCorrelazioneApplicativaGetQualsiasiRisposta(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		boolean invocaCasoOk = true;
+		if("GET".equals(metodo) && path.contains("/ping/")) {
+			// non potrà andare a buon fine essendo la regola di correlazione sul contenuto e l'operazione ping non prevede un payload nella risposta
+			// La semplice verifica che la correlazione applicativa (fallita) è stata applicata è sufficente per il test
+			invocaCasoOk = false;
+			
+			Reporter.log("Force invocaCasoOk=false");
+		}
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRisposta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_RISPOSTA, metodo, path, expectedIdCorrelazione, invocaCasoOk);
+		
+	}
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, RESTIntegrazionePortaDelegata.ID_GRUPPO,RESTIntegrazionePortaDelegata.ID_GRUPPO+".testCorrelazioneApplicativaGetQualsiasiStarRisposta"},dataProvider="testCorrelazioneApplicativaGetQualsiasi")
+	public void testCorrelazioneApplicativaGetQualsiasiStarRisposta(String metodo,String path,boolean expectedIdCorrelazione) throws TestSuiteException, Exception{
+		
+		boolean invocaCasoOk = true;
+		if("GET".equals(metodo) && path.contains("/ping/")) {
+			// non potrà andare a buon fine essendo la regola di correlazione sul contenuto e l'operazione ping non prevede un payload nella risposta
+			// La semplice verifica che la correlazione applicativa (fallita) è stata applicata è sufficente per il test
+			invocaCasoOk = false;
+			
+			Reporter.log("Force invocaCasoOk=false");
+		}
+		
+		IntegrazioneUtils.testCorrelazioneApplicativaRisposta(RUOLO.PORTA_DELEGATA, CostantiTestSuite.PORTA_DELEGATA_REST_CORRELAZIONE_APPLICATIVA_GET_QUALSIASI_STAR_RISPOSTA, metodo, path, expectedIdCorrelazione, invocaCasoOk);
+		
+	}
 }

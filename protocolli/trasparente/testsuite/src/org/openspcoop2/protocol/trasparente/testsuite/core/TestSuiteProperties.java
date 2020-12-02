@@ -439,6 +439,26 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	public String getJSONNoPrefixFileName(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.jsonNoPrefix").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.jsonNoPrefix':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	public String getJSONNoPrefixFileNameRispostaKo(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.jsonNoPrefix.rispostaKO").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.jsonNoPrefix.rispostaKO':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	
 	/**
 	 * Ritorna il Numero di Worker per Test

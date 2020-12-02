@@ -444,6 +444,15 @@ public class RESTCore {
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType, boolean authorizationError, boolean authenticationError,
 			HashMap<String, String> headersRequest, HashMap<String, String> propertiesRequest) throws TestSuiteException, Exception{
+		return invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				isHttpMethodOverride, contentType, authorizationError, authenticationError,
+				headersRequest, propertiesRequest,
+				null);
+	}
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			boolean isHttpMethodOverride, String contentType, boolean authorizationError, boolean authenticationError,
+			HashMap<String, String> headersRequest, HashMap<String, String> propertiesRequest,
+			String restContext) throws TestSuiteException, Exception{
 		
 		TestFileEntry fileEntry = null;
 		if(!"preflight".equals(tipoTest)) {
@@ -582,7 +591,12 @@ public class RESTCore {
 			bf.append(this.servizioRichiesto);
 			bf.append(this.portaApplicativaDelegata);
 			if(!"soap11".equals(tipoTest) && !"soap12".equals(tipoTest)) {
-				bf.append("/service/").append(action);
+				if(restContext!=null) {
+					bf.append(restContext);
+				}
+				else {
+					bf.append("/service/").append(action);
+				}
 			}
 			Map<String,String> propertiesURLBased = new HashMap<String,String>();
 			if(propertiesRequest!=null && !propertiesRequest.isEmpty()) {

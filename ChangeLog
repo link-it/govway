@@ -1,3 +1,15 @@
+2020-12-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1119
+	È adesso possibile definire regole di correlazione applicativa che contengono nel campo 'Elemento' il metodo http e il path di una risorsa, nel caso di API REST.
+	In questo modo l'applicazione della regola avverrà solamente sulla risorsa dell'API che possiede il metodo e il path indicato.
+	È possibile indicare qualsiasi metodo o qualsiasi path con il carattere speciale '*'. Alcuni esempi:
+	- 'POST /resource'
+	- '* /resource'
+	- 'POST *'
+	- '* /resource/*'
+
 2020-11-30  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.3.p1

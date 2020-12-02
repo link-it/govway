@@ -976,7 +976,7 @@ public class JsonPathExpressionEngine {
 			if(risultato!=null && risultato.startsWith("[") && risultato.endsWith("]")) {
 				risultato = risultato.substring(1, risultato.length()-1);
 			}
-			if(risultato!=null) {
+			if(risultato!=null && !"".equals(risultato)) {
 				lReturn.add(risultato);
 			}
 			

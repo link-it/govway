@@ -39,13 +39,20 @@ indicare i seguenti dati:
    -  *Nome Azione o Risorsa*: il nome esatto dell'azione o della
       risorsa su cui verrà applicativa la regola
 
-   -  *LocalName dell'elemento xml*: in caso il messaggio sia un xml
-      (soap o rest), è possibile indicare il local name del root element
-      xml su cui verrà applicativa la regola
+   - *HttpMethod e Path* (utilizzabile solo su API REST): metodo http e path di una risorsa dell'API; è possibile indicare qualsiasi metodo o qualsiasi path con il carattere speciale '\*'. È inoltre possibile definire solamente la parte iniziale di un path attraverso lo '\*'. Alcuni esempi:
+
+	- 'POST /resource'
+	- '\* /resource'
+	- 'POST \*'
+	- '\* /resource/\*'
 
    -  *XPath o JSONPath*: Espressione che può rappresentare un XPath o
       JSONPath. Se l'espressione ha un match con il contenuto la regola
       verrà applicata
+
+   -  *LocalName dell'elemento xml*: in caso il messaggio sia un xml
+      (soap o rest), è possibile indicare il local name del root element
+      xml su cui verrà applicativa la regola
 
 -  *Modalità Identificazione*: rappresenta la modalità di acquisizione
    dell'identificatore applicativo. Può assumere i seguenti valori:

@@ -1,0 +1,11 @@
+{
+  "exampleoperation": {
+    "examplenominativo": [
+      "Rossi Mario, attivazione in corso",
+      "Andrea Verdi, disattivato"
+    ],
+    "exampleidApplicativo": "223242424_32323_ABDKD_233",
+    "elementoInt": 34,
+    "elementoBoolean": true
+  }
+}

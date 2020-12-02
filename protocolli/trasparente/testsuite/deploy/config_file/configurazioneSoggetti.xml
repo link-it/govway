@@ -3236,6 +3236,144 @@
 
 
 
+		<!-- CorrelazioneApplicativa -->
+
+		<!-- match solo risorsa POST /service/echo -->
+                <porta-delegata nome="EsempioCorrelazioneApplicativaPuntuale" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa>
+				<elemento nome="POST /service/echo" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaPuntualeCaseInsensitive" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa>
+				<elemento nome="POST /Service/ECHO/" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaPuntualeRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa-risposta>
+				<elemento nome="POST /service/echo" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaPuntualeRispostaCaseInsensitive" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa-risposta>
+				<elemento nome="POST /Service/ECHO/" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-delegata>
+
+		<!-- match solo risorsa POST /service/echo, PUT /service/echo e DELETE /service/echo  -->
+                <porta-delegata nome="EsempioCorrelazioneApplicativaQualsiasiMetodo" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa>
+				<elemento nome="* /service/echo" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaQualsiasiMetodoRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa-risposta>
+				<elemento nome="* /service/echo" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-delegata>
+
+		<!-- match solo risorsa GET /service/echo/{id} -->
+                <porta-delegata nome="EsempioCorrelazioneApplicativaGet" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa>
+				<elemento nome="GET /service/echo/{id}" identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaGetStar" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa>
+				<elemento nome="GET /service/echo/*" identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaGetRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa-risposta>
+				<elemento nome="GET /service/echo/{id}" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaGetStarRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa-risposta>
+				<elemento nome="GET /service/echo/*" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-delegata>
+
+		<!-- match solo risorsa GET /service/echo/{id} e GET /service/ping/{id} -->
+                <porta-delegata nome="EsempioCorrelazioneApplicativaGetStarParzialeCaseInsensitive" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa>
+				<elemento nome="GET /ServiCe/*" identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaGetStarPath" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa>
+				<elemento nome="GET *" identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaGetStarParzialeCaseInsensitiveRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa-risposta>
+				<elemento nome="GET /ServiCe/*" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" />
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-delegata>
+                <porta-delegata nome="EsempioCorrelazioneApplicativaGetStarPathRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			    <correlazione-applicativa-risposta>
+				<elemento nome="GET *" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" />
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-delegata>
+
+
+
 
 
 		<!-- **** Configurazione SOAP **** -->
@@ -7760,6 +7898,148 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <servizio tipo="gw" nome="JOSE" versione="2"/>
 		    <azione identificazione="static" nome="jweJsonAsymmetricJWTHeadersOnlySenderRequest"/>
 		    <servizio-applicativo nome="api"/>
+		</porta-applicativa>
+
+
+
+
+
+
+
+		<!-- CorrelazioneApplicativa -->
+
+		<!-- match solo risorsa POST /service/echo -->
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaPuntuale" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa>
+				<elemento nome="POST /service/echo" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaPuntualeCaseInsensitive" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa>
+				<elemento nome="POST /Service/ECHO/" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaPuntualeRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa-risposta>
+				<elemento nome="POST /service/echo" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaPuntualeRispostaCaseInsensitive" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa-risposta>
+				<elemento nome="POST /Service/ECHO/" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-applicativa>
+
+		<!-- match solo risorsa POST /service/echo, PUT /service/echo e DELETE /service/echo  -->
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaQualsiasiMetodo" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa>
+				<elemento nome="* /service/echo" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaQualsiasiMetodoRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa-risposta>
+				<elemento nome="* /service/echo" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-applicativa>
+
+		<!-- match solo risorsa GET /service/echo/{id} -->
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaGet" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa>
+				<elemento nome="GET /service/echo/{id}" identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaGetStar" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa>
+				<elemento nome="GET /service/echo/*" identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaGetRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa-risposta>
+				<elemento nome="GET /service/echo/{id}" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaGetStarRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa-risposta>
+				<elemento nome="GET /service/echo/*" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-applicativa>
+
+		<!-- match solo risorsa GET /service/echo/{id} e GET /service/ping/{id} -->
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaGetStarParzialeCaseInsensitive" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa>
+				<elemento nome="GET /ServiCe/*" identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaGetStarPath" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa>
+				<elemento nome="GET *" identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca" riuso-identificativo="disabilitato"/>
+			    </correlazione-applicativa>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaGetStarParzialeCaseInsensitiveRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa-risposta>
+				<elemento nome="GET /ServiCe/*" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" />
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
+		</porta-applicativa>
+                <porta-applicativa nome="EsempioCorrelazioneApplicativaGetStarPathRisposta" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="EsempioCorrelazioneApplicativa"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>	    
+			    <correlazione-applicativa-risposta>
+				<elemento nome="GET *" identificazione="contentBased" pattern="$..example:idApplicativo" identificazione-fallita="blocca" />
+				<elemento identificazione="disabilitato" identificazione-fallita="blocca"/>
+			    </correlazione-applicativa-risposta>
 		</porta-applicativa>
 
 

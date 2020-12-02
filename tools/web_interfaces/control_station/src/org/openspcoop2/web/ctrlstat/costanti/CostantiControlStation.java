@@ -1355,11 +1355,13 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_JSONPATH = "<b>JSONPath</b>: espressione JsonPath utilizzabile con messaggi JSON";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_SOAP = "<b>Azione</b>: identificativo di un azione dell'API";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST = "<b>Risorsa</b>: identificativo di una risorsa dell'API";
+	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST_METHOD_PATH = "<b>HttpMethod Path</b>: metodo http e path di una risorsa dell'API; è possibile indicare qualsiasi metodo o qualsiasi path con il carattere speciale '*'. È inoltre possibile definire solamente la parte iniziale di un path attraverso lo '*'. Alcuni esempi: <BR/>- 'POST /resource'<BR/>- '* /resource'<BR/>- 'POST *'<BR/>- '* /resource/*'";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_LOCAL_NAME_REST = "<b>LocalName</b>: localName (senza prefisso e namespace) dell'elemento radice di un messaggio XML";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_LOCAL_NAME_SOAP = "<b>LocalName</b>: localName (senza prefisso e namespace) del primo elemento interno al SOAPBody ";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_EMPTY = "<b>Campo vuoto</b>: indica qualsiasi elemento; la regola verrà utilizzata se non ne esiste una più specifica";
 	public final static List<String> LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_REST = new ArrayList<>();
 	static {
+		LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_REST.add(LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST_METHOD_PATH);
 		LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_REST.add(LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST);
 		LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_REST.add(LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_XPATH);
 		LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_REST.add(LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_JSONPATH);
