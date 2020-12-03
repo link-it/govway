@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -121,6 +122,8 @@ public class IntegrazioneUtils {
 					data = DatabaseProperties.getDatabaseComponentErogatore();
 				}
 				
+				expectedTrace(data, idTransazione);
+				
 				boolean isTrace = data.getVerificatoreTransazioni().isTraced(idTransazione);
 				int intEsito = esitiProperties.convertoToCode(expectedIdCorrelazioneRichiesta ? 
 						EsitoTransazioneName.ERRORE_CORRELAZIONE_APPLICATIVA_RICHIESTA :
@@ -161,6 +164,8 @@ public class IntegrazioneUtils {
 					data = DatabaseProperties.getDatabaseComponentErogatore();
 				}
 				
+				expectedTrace(data, idTransazione);
+				
 				boolean isTrace = data.getVerificatoreTransazioni().isTraced(idTransazione);
 				int intEsito = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
 				boolean isTraceEsito = data.getVerificatoreTransazioni().isTracedEsito(idTransazione, intEsito);
@@ -199,5 +204,17 @@ public class IntegrazioneUtils {
 			}
 		}
 
+	}
+	
+	private static void expectedTrace(DatabaseComponent data, String idTransazione) {
+		int limit = 5000; 
+		int offset = 0;
+		boolean isTrace = data.getVerificatoreTransazioni().isTraced(idTransazione);
+		while(!isTrace && offset<limit) {
+			int sleep = 100;
+			Utilities.sleep(sleep);
+			offset=offset+sleep;
+			isTrace = data.getVerificatoreTransazioni().isTraced(idTransazione);
+		}
 	}
 }
