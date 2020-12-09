@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +49,8 @@ import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.pdd.config.DBStatisticheManager;
+import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -90,6 +93,8 @@ public class DatiStatisticiDAOManager  {
     private Logger daoFactoryLogger = null;
 	private ServiceManagerProperties daoFactoryServiceManagerPropertiesStatistiche = null;
 	
+	private DBStatisticheManager dbStatisticheManager = null;
+	
 	private Logger log;
 	
 	private DatiStatisticiDAOManager(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
@@ -115,6 +120,8 @@ public class DatiStatisticiDAOManager  {
 			this.daoFactoryServiceManagerPropertiesStatistiche.setShowSql(this.debug);	
 			this.daoFactoryServiceManagerPropertiesStatistiche.setDatabaseType(this.tipoDatabase);
 			
+			this.dbStatisticheManager = DBStatisticheManager.getInstance();
+			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(this.debug);
 			
 		}catch(Exception e){
@@ -134,11 +141,20 @@ public class DatiStatisticiDAOManager  {
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 	
+    	Resource r = null;
+    	IDSoggetto dominio = datiTransazione.getDominio();
+    	String idModulo = datiTransazione.getModulo()+".statistiche.readNumeroRichieste";
+    	String idTransazione = datiTransazione.getIdTransazione();
     	try{
-
+    		r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
+			if(r==null){
+				throw new Exception("Risorsa al database non disponibile");
+			}
+			Connection con = (Connection) r.getResource();
+    		
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
-							this.daoFactoryServiceManagerPropertiesStatistiche, this.daoFactoryLogger);
+							con, this.daoFactoryServiceManagerPropertiesStatistiche, this.daoFactoryLogger);
 				
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
@@ -204,6 +220,11 @@ public class DatiStatisticiDAOManager  {
 		}catch(Exception e){
 			this.log.error("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
 			throw e;
+		}finally {
+			try{
+				if(r!=null)
+					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+			}catch(Exception eClose){}
 		}
     	
 	}
@@ -239,11 +260,20 @@ public class DatiStatisticiDAOManager  {
     		TipoBanda tipoBanda,
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 	
+    	Resource r = null;
+    	IDSoggetto dominio = datiTransazione.getDominio();
+    	String idModulo = datiTransazione.getModulo()+".statistiche.readOccupazioneBanda";
+    	String idTransazione = datiTransazione.getIdTransazione();
     	try{
+    		r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
+			if(r==null){
+				throw new Exception("Risorsa al database non disponibile");
+			}
+			Connection con = (Connection) r.getResource();
 
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
-							this.daoFactoryServiceManagerPropertiesStatistiche, this.daoFactoryLogger);
+							con, this.daoFactoryServiceManagerPropertiesStatistiche, this.daoFactoryLogger);
 				
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
@@ -321,6 +351,11 @@ public class DatiStatisticiDAOManager  {
 		}catch(Exception e){
 			this.log.error("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
 			throw e;
+		}finally {
+			try{
+				if(r!=null)
+					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+			}catch(Exception eClose){}
 		}
     	
 	}
@@ -361,11 +396,20 @@ public class DatiStatisticiDAOManager  {
     		TipoLatenza tipoLatenza,
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 	
+    	Resource r = null;
+    	IDSoggetto dominio = datiTransazione.getDominio();
+    	String idModulo = datiTransazione.getModulo()+".statistiche.readLatenza";
+    	String idTransazione = datiTransazione.getIdTransazione();
     	try{
+    		r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
+			if(r==null){
+				throw new Exception("Risorsa al database non disponibile");
+			}
+			Connection con = (Connection) r.getResource();
 
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
-							this.daoFactoryServiceManagerPropertiesStatistiche, this.daoFactoryLogger);
+							con, this.daoFactoryServiceManagerPropertiesStatistiche, this.daoFactoryLogger);
 				
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
@@ -443,6 +487,11 @@ public class DatiStatisticiDAOManager  {
 		}catch(Exception e){
 			this.log.error("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
 			throw e;
+		}finally {
+			try{
+				if(r!=null)
+					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+			}catch(Exception eClose){}
 		}
     	
 	}

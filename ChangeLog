@@ -1,3 +1,9 @@
+2020-12-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug che causava una anomalia durante la valutazione di una Policy di Rate Limiting configurata per essere applicata solamente in presenza di degrado prestazionale.
+	L'errore era dovuto ad un accesso non riuscito alla base dati statistica a causa di una inizializzazione errata.
+
 2020-12-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

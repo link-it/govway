@@ -919,7 +919,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			// GestoreStatistiche
 			try {
-				if(propertiesReader.isStatisticheGenerazioneEnabled()){
+				if(propertiesReader.isStatisticheGenerazioneEnabled() || propertiesReader.isControlloTrafficoEnabled()){
 					if(propertiesReader.isStatisticheUsePddRuntimeDatasource()) {
 						DBStatisticheManager.init(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
 					}
