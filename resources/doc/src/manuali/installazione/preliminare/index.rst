@@ -41,7 +41,7 @@ mancanti.
 
    -  *HyperSQL 2.0 o superiore*
 
-   -  *MS SQL Server 2017 o superiore*
+   -  *MS SQL Server 2019 o superiore*
 
 La distribuzione GovWay è stata estesamente testata prima del rilascio
 sulla seguente piattaforma di riferimento:
