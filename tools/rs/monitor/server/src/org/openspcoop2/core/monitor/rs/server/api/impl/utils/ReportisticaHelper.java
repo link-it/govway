@@ -1256,6 +1256,15 @@ public class ReportisticaHelper {
 		//  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione
 		String tipoSoggetto = env.tipoSoggetto;
 		String nomeSoggetto = filtroApiImplementata.getReferente()!=null ? filtroApiImplementata.getReferente() : env.nomeSoggettoLocale;
+		if(nomeSoggetto==null || "".equals(nomeSoggetto)) {
+			if(!env.supportatoSoggettoReferenteAPI) {
+				// Recupero Soggetto Default per l'API
+				if(env.soggettoReferenteAPIDefault!=null) {
+					nomeSoggetto = env.soggettoReferenteAPIDefault.getNome();
+				}
+				
+			}
+		}
 		return IDAccordoFactory.getInstance().getUriFromValues(filtroApiImplementata.getNome(), tipoSoggetto, nomeSoggetto, filtroApiImplementata.getVersione());
 	}
 	

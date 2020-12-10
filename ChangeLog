@@ -1,3 +1,11 @@
+2020-12-10  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio]
+	Risolto bug problema presente in una configurazione multitenant, con opzione 'multitenant.forzaSoggettoDefault' disabilitata (comportamento di default).
+	La generazione di report statistici con filtro contenente il field 'api_implementata', senza la definizione del soggetto referente (richiesta comune per il Profilo 'API Gateway'),
+	produceva il seguente errore: Parametro 'api' fornito possiede un valore 'NomeAPI:1' che non rispetta il formato atteso '^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$'
+	Il problema è stato risolto.
+
 2020-12-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
