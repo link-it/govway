@@ -196,7 +196,7 @@
 							          non consente la creazione degli indici 'INDEX_TR_MEDIUM', 'INDEX_TR_FULL:','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'. 
 							          Errore: ERROR 1070 (42000): Too many key parts specified; max 16 parts allowed
 							- hsql: consente qualsiasi indice
-							- sqlserver: consente qualsiasi indice (verificato su sqlserver 2017)
+							- sqlserver: consente qualsiasi indice (verificato su sqlserver 2019)
 						-->	
 				    	<linkit:sql-table-index name="INDEX_TR_ENTRY">
 				    		<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
