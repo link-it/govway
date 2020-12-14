@@ -1,3 +1,23 @@
+2020-12-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Corretti i seguenti errori:
+	- Possibile deadlock nell'utilizzo delle connessioni se in una API veniva definita una Policy di Rate Limiting configurata per essere applicata solamente in presenza di degrado prestazionale.
+	- Segnalazione ERROR nel log govway_core.log quando si invocava una API senza specifica di interfaccia. Corretto livello di severità in WARN.
+		  ERROR <14-12-2020 12:41:31.169> org.openspcoop2.protocol.registry.RegistroServizi.getAccordoServizioRestEngine(3187): Costruisco API tramite il registro (Step1) error: L'API non contiene una specifica 
+ 			org.openspcoop2.core.registry.driver.DriverRegistroServiziException: L'API non contiene una specifica
+			at org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.buildApiFromSpecific(AccordoServizioWrapperUtilities.java:167) ~[openspcoop2_core-3.3.3.jar:?]
+			...
+	- Errore durante la comprensione dell'esito in presenza di richieste parallele ricevute non appena veniva avviato il gateway:
+		ERROR <14-12-2020 10:03:17.261> org.openspcoop2.pdd.services.service.RicezioneBusteService.process(1029): ErroreGenerale 
+ 			org.openspcoop2.protocol.sdk.ProtocolException: Comprensione stato non riuscita: null
+		        at org.openspcoop2.protocol.basic.builder.EsitoBuilder.getEsito(EsitoBuilder.java:473) ~[openspcoop2_protocol-api-3.3.3.jar:?]
+			...
+		Caused by: java.util.ConcurrentModificationException
+		        at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1042) ~[?:?]
+        		at java.util.ArrayList$Itr.next(ArrayList.java:996) ~[?:?]
+		        at org.openspcoop2.protocol.basic.builder.EsitoBuilder.getEsito(EsitoBuilder.java:253)
+
 2020-12-10  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]

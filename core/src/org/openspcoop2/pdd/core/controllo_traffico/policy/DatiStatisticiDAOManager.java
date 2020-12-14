@@ -50,10 +50,13 @@ import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -94,6 +97,7 @@ public class DatiStatisticiDAOManager  {
 	private ServiceManagerProperties daoFactoryServiceManagerPropertiesStatistiche = null;
 	
 	private DBStatisticheManager dbStatisticheManager = null;
+	private boolean checkState = false;
 	
 	private Logger log;
 	
@@ -121,6 +125,14 @@ public class DatiStatisticiDAOManager  {
 			this.daoFactoryServiceManagerPropertiesStatistiche.setDatabaseType(this.tipoDatabase);
 			
 			this.dbStatisticheManager = DBStatisticheManager.getInstance();
+			if(this.dbStatisticheManager.useRuntimePdD()) {
+				this.checkState = true;
+    		}
+			else if(this.dbStatisticheManager.useTransazioni()) {
+				if(DBTransazioniManager.getInstance().useRuntimePdD()) {
+					this.checkState = true;
+				}
+    		}
 			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(this.debug);
 			
@@ -139,18 +151,37 @@ public class DatiStatisticiDAOManager  {
 	
     public RisultatoStatistico readNumeroRichieste(String key,TipoRisorsa tipoRisorsa,
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
-    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
+    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy,
+    		IState state) throws Exception{
 	
     	Resource r = null;
-    	IDSoggetto dominio = datiTransazione.getDominio();
+    	boolean useConnectionRuntime = false;
+		IDSoggetto dominio = datiTransazione.getDominio();
     	String idModulo = datiTransazione.getModulo()+".statistiche.readNumeroRichieste";
     	String idTransazione = datiTransazione.getIdTransazione();
     	try{
-    		r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
-			if(r==null){
-				throw new Exception("Risorsa al database non disponibile");
+			
+    		Connection con = null;
+			if(this.checkState) {
+				if(state!=null) {
+					if(state instanceof StateMessage) {
+						StateMessage s = (StateMessage) state;
+						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+							con = s.getConnectionDB();
+							useConnectionRuntime = true;
+						}
+					}
+				}
 			}
-			Connection con = (Connection) r.getResource();
+			if(useConnectionRuntime==false){
+				r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
+				if(r==null){
+					throw new Exception("Risorsa al database non disponibile");
+				}
+				con = (Connection) r.getResource();
+			}
+			if(con == null)
+				throw new Exception("Connessione non disponibile");	
     		
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
@@ -222,8 +253,11 @@ public class DatiStatisticiDAOManager  {
 			throw e;
 		}finally {
 			try{
-				if(r!=null)
-					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+				if(useConnectionRuntime==false) {
+					if(r!=null) {
+						this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+					}
+				}
 			}catch(Exception eClose){}
 		}
     	
@@ -258,18 +292,36 @@ public class DatiStatisticiDAOManager  {
     public RisultatoStatistico readOccupazioneBanda(String key,TipoRisorsa tipoRisorsa,
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
     		TipoBanda tipoBanda,
-    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
+    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy,
+    		IState state) throws Exception{
 	
     	Resource r = null;
-    	IDSoggetto dominio = datiTransazione.getDominio();
+    	boolean useConnectionRuntime = false;
+		IDSoggetto dominio = datiTransazione.getDominio();
     	String idModulo = datiTransazione.getModulo()+".statistiche.readOccupazioneBanda";
     	String idTransazione = datiTransazione.getIdTransazione();
     	try{
-    		r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
-			if(r==null){
-				throw new Exception("Risorsa al database non disponibile");
+    		Connection con = null;
+			if(this.checkState) {
+				if(state!=null) {
+					if(state instanceof StateMessage) {
+						StateMessage s = (StateMessage) state;
+						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+							con = s.getConnectionDB();
+							useConnectionRuntime = true;
+						}
+					}
+				}
 			}
-			Connection con = (Connection) r.getResource();
+			if(useConnectionRuntime==false){
+				r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
+				if(r==null){
+					throw new Exception("Risorsa al database non disponibile");
+				}
+				con = (Connection) r.getResource();
+			}
+			if(con == null)
+				throw new Exception("Connessione non disponibile");	
 
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
@@ -353,8 +405,11 @@ public class DatiStatisticiDAOManager  {
 			throw e;
 		}finally {
 			try{
-				if(r!=null)
-					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+				if(useConnectionRuntime==false) {
+					if(r!=null) {
+						this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+					}
+				}
 			}catch(Exception eClose){}
 		}
     	
@@ -394,18 +449,36 @@ public class DatiStatisticiDAOManager  {
     public RisultatoStatistico readLatenza(String key,TipoRisorsa tipoRisorsa, 
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
     		TipoLatenza tipoLatenza,
-    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
+    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy,
+    		IState state) throws Exception{
 	
     	Resource r = null;
-    	IDSoggetto dominio = datiTransazione.getDominio();
+    	boolean useConnectionRuntime = false;
+		IDSoggetto dominio = datiTransazione.getDominio();
     	String idModulo = datiTransazione.getModulo()+".statistiche.readLatenza";
     	String idTransazione = datiTransazione.getIdTransazione();
     	try{
-    		r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
-			if(r==null){
-				throw new Exception("Risorsa al database non disponibile");
+    		Connection con = null;
+			if(this.checkState) {
+				if(state!=null) {
+					if(state instanceof StateMessage) {
+						StateMessage s = (StateMessage) state;
+						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+							con = s.getConnectionDB();
+							useConnectionRuntime = true;
+						}
+					}
+				}
 			}
-			Connection con = (Connection) r.getResource();
+			if(useConnectionRuntime==false){
+				r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
+				if(r==null){
+					throw new Exception("Risorsa al database non disponibile");
+				}
+				con = (Connection) r.getResource();
+			}
+			if(con == null)
+				throw new Exception("Connessione non disponibile");	
 
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
@@ -489,8 +562,11 @@ public class DatiStatisticiDAOManager  {
 			throw e;
 		}finally {
 			try{
-				if(r!=null)
-					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+				if(useConnectionRuntime==false) {
+					if(r!=null) {
+						this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+					}
+				}
 			}catch(Exception eClose){}
 		}
     	

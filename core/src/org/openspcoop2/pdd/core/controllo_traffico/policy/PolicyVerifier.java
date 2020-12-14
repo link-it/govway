@@ -58,6 +58,7 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -80,7 +81,8 @@ public class PolicyVerifier {
 			MsgDiagnostico msgDiag, 
 			Transaction tr,
 			DatiTransazione datiTransazione, boolean isPddCongestionata, DatiTempiRisposta tempiRisposta,
-			List<Boolean> pddContext_policyApplicabile) throws Exception{
+			List<Boolean> pddContext_policyApplicabile,
+			IState state) throws Exception{
 				
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
 		// Inoltre e' stato re-inserito nella map come oggetto nuovo, quindi il valore dentro il metodo non subira' trasformazioni (essendo stato fatto il clone)
@@ -200,7 +202,8 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getDegradoAvgTimeFinestraOsservazione(),
 							activePolicy.getConfigurazionePolicy().getDegradoAvgTimeTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getDegradoAvgTimeTipoLatenza(),
-							datiTransazione, datiGroupBy);
+							datiTransazione, datiGroupBy,
+							state);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
 				}
@@ -394,7 +397,8 @@ public class PolicyVerifier {
 								leftDate,rightDate,
 								activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
 								activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
-								datiTransazione, datiGroupBy);
+								datiTransazione, datiGroupBy,
+								state);
 						valoreAttuale = risultatoStatistico.getRisultato();
 						checkDate = risultatoStatistico.getDateCheck();
 					}
@@ -495,7 +499,8 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
 							activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getValoreTipoBanda(),
-							datiTransazione, datiGroupBy);
+							datiTransazione, datiGroupBy,
+							state);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
 				}
@@ -650,7 +655,8 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
 							activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getValoreTipoLatenza(),
-							datiTransazione, datiGroupBy);
+							datiTransazione, datiGroupBy,
+							state);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
 				}

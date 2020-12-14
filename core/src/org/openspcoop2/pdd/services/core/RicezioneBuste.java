@@ -4438,6 +4438,9 @@ public class RicezioneBuste {
 		// ------------- in-protocol-handler -----------------------------
 		try{
 			InRequestProtocolContext inRequestProtocolContext = new InRequestProtocolContext(inRequestContext);
+			if(inRequestProtocolContext.getStato()==null) {
+				inRequestProtocolContext.setStato(openspcoopstate.getStatoRichiesta());
+			}
 			if(inRequestProtocolContext.getConnettore()!=null){
 				inRequestProtocolContext.getConnettore().setCredenziali(credenziali);
 			}
