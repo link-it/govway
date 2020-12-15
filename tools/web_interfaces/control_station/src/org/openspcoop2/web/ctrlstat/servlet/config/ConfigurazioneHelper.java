@@ -13765,6 +13765,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			filtroEnabled = filtroAbilitatoAPI;
 		}
 		
+		if(!filtroEnabled && ruoloPorta!=null) {
+			// Protocollo
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
+			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		}
+		
 		if(filtroEnabled){
 		
 			// Ruolo PdD
