@@ -1,3 +1,17 @@
+2020-12-17  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto problema sui criteri di generazione di un report statistico. 
+	Quando veniva selezionata un'implementazione di API non era più possibile modificare il tipo delle informazioni visualizzate nel report (numero transazioni, dimensione e latenza).
+	La visualizzazione della ComboBox per la selezione dell'operazione era controllata dalla seguente condizione:
+		<c:if test="#{sf_showAzioni and !empty sf_servizio}">
+	È stata sostituita con:
+	    <a4j:outputPanel id="filtriRicercaServizioAzione" layout="block" rendered="#{sf_showAzioni and !empty sf_servizio}">
+	poichÈ la selezione di un servizio, faceva apparire correttamente la combo, ma provocava un errore nella gestione dei campi della sezione 'Report'.
+	Lo stato interno dell'applicazione veniva modificato erroneamente "sganciando" la sezione 'Report' poichè gli identificativi dinamici 
+	per la gestione delle chiamate asincrone della sezione non venivano aggiornati correttamente.
+	Questo errore portava l'applicazione ad "ignorare" ogni input dell'utente per la sezione 'Report'. 
+
 2020-12-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
