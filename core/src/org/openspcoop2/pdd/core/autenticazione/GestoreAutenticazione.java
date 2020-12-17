@@ -1104,12 +1104,39 @@ public class GestoreAutenticazione {
 			}
 		}
 		if(list==null || list.size()<=0) {
+
 			// not exists
 			CredenzialeMittente credenzialeMittente = new CredenzialeMittente();
 			credenzialeMittente.setTipo(credential.getTipo());
 			credenzialeMittente.setOraRegistrazione(DateManager.getDate());
 			credenzialeMittente.setCredenziale(credential.getCredenziale());
-			credenzialeMittentiService.create(credenzialeMittente);
+			try{
+				credenzialeMittentiService.create(credenzialeMittente);
+			}catch(Throwable t){
+				// L'errore potrebbe essere dovuto al fatto che un thread su un altro nodo (dove non può agire la sincronizzazione del metodo) ha già creata la stessa entry
+				// Si avrebbe un errore simile al seguente: "org.openspcoop2.generic_project.exception.ServiceException: Create not completed: insertAndReturnGeneratedKey failed: ORA-00001: unique constraint (GOVWAY_ENTERPRISE.UNIQUE_CREDENZIALE_MITTENTE_1) violated"
+				// Provo a vedere se adesso le credenziali esistono
+				
+				list = credenzialeMittentiService.findAll(pagEpression);
+				if(list!=null && !list.isEmpty() && credential instanceof CredenzialeTrasporto) {
+					CredenzialeTrasporto cTrasporto = (CredenzialeTrasporto) credential;
+					if(cTrasporto.isSsl()) {
+						list = CredenzialeSearchTrasporto.filterList(list, credential.getCredenziale(), log);
+					}
+				}
+
+				if(list==null || list.size()<=0) {
+					// not exists, rilancio eccezione originale
+					throw new Exception(t.getMessage(),t);
+				}
+				else if(list.size()>1) {
+					throw new Exception("Trovata più di un'occorrenza di credenziale di tipo '"+searchCredential.getTipo()+"'; credenziale: ["+credential.getCredenziale()+"]");
+				}
+				else {
+					CredenzialeMittente credenziale = list.get(0);
+					return credenziale; // appena creata dall'altro nodo.
+				}
+			}
 			return credenzialeMittente;
 		}
 		else if(list.size()>1) {

@@ -1,3 +1,14 @@
+2020-12-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1121
+	Su una installazione con più nodi in load balancer si verificava l'errore riportato di seguito, se arrivavano nel medesimo istante, ma su due nodi differente, 
+	due richieste che presentano la stessa credenziale fino ad ora mai ricevuta sul gateway:
+	ERROR org.openspcoop2.generic_project.exception.ServiceException: 
+		Create not completed: insertAndReturnGeneratedKey failed: ORA-00001: violata restrizione di unicità (GOVWAY_TRAC.UNIQUE_CREDENZIALE_MITTENTE_1)
+		    at org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteService.create(JDBCCredenzialeMittenteService.java:132) 
+    			at org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteService.create(JDBCCredenzialeMittenteService.java:67)
+
 2020-12-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor]
@@ -6,12 +17,12 @@
 	- Segnalazione ERROR nel log govway_core.log quando si invocava una API senza specifica di interfaccia. Corretto livello di severità in WARN.
 		  ERROR <14-12-2020 12:41:31.169> org.openspcoop2.protocol.registry.RegistroServizi.getAccordoServizioRestEngine(3187): Costruisco API tramite il registro (Step1) error: L'API non contiene una specifica 
  			org.openspcoop2.core.registry.driver.DriverRegistroServiziException: L'API non contiene una specifica
-			at org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.buildApiFromSpecific(AccordoServizioWrapperUtilities.java:167) ~[openspcoop2_core-3.3.3.jar:?]
+			at org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.buildApiFromSpecific(AccordoServizioWrapperUtilities.java:167) 
 			...
 	- Errore durante la comprensione dell'esito in presenza di richieste parallele ricevute non appena veniva avviato il gateway:
 		ERROR <14-12-2020 10:03:17.261> org.openspcoop2.pdd.services.service.RicezioneBusteService.process(1029): ErroreGenerale 
  			org.openspcoop2.protocol.sdk.ProtocolException: Comprensione stato non riuscita: null
-		        at org.openspcoop2.protocol.basic.builder.EsitoBuilder.getEsito(EsitoBuilder.java:473) ~[openspcoop2_protocol-api-3.3.3.jar:?]
+		        at org.openspcoop2.protocol.basic.builder.EsitoBuilder.getEsito(EsitoBuilder.java:473) 
 			...
 		Caused by: java.util.ConcurrentModificationException
 		        at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1042) ~[?:?]
