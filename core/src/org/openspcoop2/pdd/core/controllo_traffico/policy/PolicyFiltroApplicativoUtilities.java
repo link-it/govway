@@ -21,7 +21,6 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
 import java.util.Map;
 
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
@@ -65,21 +64,29 @@ public class PolicyFiltroApplicativoUtilities {
 			}
 			else{
 				if(MessageType.XML.equals(context.getMessaggio().getMessageType())){
-					element = context.getMessaggio().castAsRestXml().getContent();
+					if(context.getMessaggio().castAsRestXml().hasContent()) {
+						element = context.getMessaggio().castAsRestXml().getContent();
+					}
 				}
 				else if(MessageType.JSON.equals(context.getMessaggio().getMessageType())){
-					elementJson = context.getMessaggio().castAsRestJson().getContent();
+					if(context.getMessaggio().castAsRestJson().hasContent()) {
+						elementJson = context.getMessaggio().castAsRestJson().getContent();
+					}
 				}
 				else{
-					throw new DriverConfigurazioneNotFound("Filtro '"+tipoFiltro.getValue()+"' non supportato per il message-type '"+context.getMessaggio().getMessageType()+"'");
+					//throw new org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound("Filtro '"+tipoFiltro.getValue()+"' non supportato per il message-type '"+context.getMessaggio().getMessageType()+"'");
+					return null; // semplicemente non deve matchare il filtro
 				}
 			}
 			if(element!=null) {
 				xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(context.getMessaggio().getFactory());
 				return AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, nome,  log);
 			}
-			else {
+			else if(elementJson!=null) {
 				return JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, nome, log);
+			}
+			else {
+				return null; // semplicemente non deve matchare il filtro
 			}
 			
 		case URLBASED:

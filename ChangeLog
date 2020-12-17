@@ -1,3 +1,9 @@
+2020-12-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug in presenza di una policy di RateLimiting con filtro basato su chiave estratta dal contenuto.
+	La policy andava in errore, invece di essere semplicemente filtrata, nel caso la richiesta non contenesse un payload http (es. GET).
+
 2020-12-17  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]
