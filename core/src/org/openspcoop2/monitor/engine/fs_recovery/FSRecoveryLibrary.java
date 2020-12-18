@@ -19,10 +19,13 @@
  */
 package org.openspcoop2.monitor.engine.fs_recovery;
 
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.sql.Connection;
@@ -37,14 +40,21 @@ import java.sql.Connection;
 public class FSRecoveryLibrary {
 
 	public static void generate(FSRecoveryConfig config,
+			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
 			IDumpProducer dumpAppender,
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM){
-		generate(config, transazioniSM, tracciamentoAppender, diagnosticoAppender, dumpAppender, pluginsEventiSM, null);
+		generate(config, 
+				daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
+				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+				transazioniSM, tracciamentoAppender, diagnosticoAppender, dumpAppender, pluginsEventiSM, null);
 	}
 	public static void generate(FSRecoveryConfig config,
+			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
@@ -109,7 +119,10 @@ public class FSRecoveryLibrary {
 				File dirTransazioniDLQ = new File(dirTransazioni,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
 				checkDir(dirTransazioniDLQ, true, true);
 				
-				FSRecoveryTransazioni fs = new FSRecoveryTransazioni(config.getLogCore(),config.isDebug(),transazioniSM,
+				FSRecoveryTransazioni fs = new FSRecoveryTransazioni(config.getLogCore(),config.isDebug(),
+						daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
+						gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+						transazioniSM,
 						tracciamentoAppender, diagnosticoAppender, dumpAppender, 
 						dirDiagnostici,dirDiagnosticiDLQ,
 						dirTracce,dirTracceDLQ,

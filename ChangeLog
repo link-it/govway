@@ -1,3 +1,20 @@
+2020-12-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolti i seguenti problemi, durante l'utilizzo delle funzionalità 'Integration Manager' e 'Consegna delle Notifiche' non ancora rilasciate come stabili:
+	- Il recovery delle notifiche (transazioni_sa) che non sono state salvate sul database delle transazioni, si occupa adesso di aggiornare anche l'esito della consegna multipla in completata o fallita.
+	- Durante lo scaricamento di un messaggio tramite il servizio IntegrationManager veniva segnalato un errore nel log govway_resources.log che però non causava un fallimento dello scaricamento del messaggio.
+	  L'errore era il seguente:
+		ERROR <18-12-2020 09:20:30.568> org.openspcoop2.pdd.logger.Dump.dump(732): Errore durante la registrazione, nel contesto della transazione, 
+			del contenuto applicativo presente nel messaggio (IntegrationManager) con identificativo di transazione [4e8504b5-64e6-48d9-8548-e392fca7381e]: Non abilitata la gestione delle transazioni stateful 
+			org.openspcoop2.pdd.core.transazioni.TransactionStatefulNotSupportedException: Non abilitata la gestione delle transazioni stateful
+			        at org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful.checkGestioneAbilitata(RepositoryGestioneStateful.java:106)
+        			at org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful.addMessaggio(RepositoryGestioneStateful.java:180)
+			        at org.openspcoop2.pdd.logger.Dump.dump(Dump.java:721)
+			        at org.openspcoop2.pdd.logger.Dump.dumpIntegrationManagerGetMessage(Dump.java:384)
+			        at org.openspcoop2.pdd.services.skeleton.IntegrationManager.getMessage_engine(IntegrationManager.java:1097)
+        			...
+
 2020-12-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

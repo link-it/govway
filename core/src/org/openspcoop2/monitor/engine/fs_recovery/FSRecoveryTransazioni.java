@@ -22,6 +22,8 @@ package org.openspcoop2.monitor.engine.fs_recovery;
 import java.io.File;
 import java.sql.Connection;
 
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
@@ -47,6 +49,8 @@ public class FSRecoveryTransazioni {
 	public FSRecoveryTransazioni( 
 			Logger log,
 			boolean debug,
+			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
@@ -59,7 +63,10 @@ public class FSRecoveryTransazioni {
 			int tentativi) {
 	
 		this.transazioniImpl = new FSRecoveryTransazioniImpl(log, debug, transazioniSM, directoryTransazioni, directoryTransazioniDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
-		this.transazioniApplicativoServerImpl = new FSRecoveryTransazioniApplicativoServerImpl(log, debug, transazioniSM, directoryTransazioniApplicativoServer, directoryTransazioniApplicativoServerDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
+		this.transazioniApplicativoServerImpl = new FSRecoveryTransazioniApplicativoServerImpl(log, debug,
+				daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
+				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+				transazioniSM, directoryTransazioniApplicativoServer, directoryTransazioniApplicativoServerDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 		this.tracceImpl = new FSRecoveryTracceImpl(log, debug, tracciamentoAppender, directoryTracce, directoryTracceDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 		this.dumpImpl = new FSRecoveryDumpImpl(log, debug, dumpAppender, directoryDump, directoryDumpDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 		this.diagnosticiImpl = new FSRecoveryDiagnosticiImpl(log, debug, diagnosticoAppender, directoryDiagnostici, directoryDiagnosticiDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);

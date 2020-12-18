@@ -841,14 +841,14 @@ public class TimerGestoreMessaggiLib  {
 
 				// log finale  
 				if(trovatiMessaggi){
-					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_INBOX_COMPLETATI, idMsgInutiliINBOX.size()+"");
-					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_OUTBOX_COMPLETATI, idMsgInutiliOUTBOX.size()+"");
-					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_INBOX_SCADUTI, idMsgScadutiINBOX.size()+"");
-					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_OUTBOX_SCADUTI, idMsgScadutiOUTBOX.size()+"");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_INBOX_COMPLETATI, idMsgInutiliINBOX!=null ? idMsgInutiliINBOX.size()+"" : 0+"");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_OUTBOX_COMPLETATI, idMsgInutiliOUTBOX!=null ? idMsgInutiliOUTBOX.size()+"" : 0+"");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_INBOX_SCADUTI, idMsgScadutiINBOX!=null ? idMsgScadutiINBOX.size()+"" : 0+"");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_OUTBOX_SCADUTI, idMsgScadutiOUTBOX!=null ? idMsgScadutiOUTBOX.size()+"" : 0+"");
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_NON_GESTITI_RICEZIONE_CONTENUTI_APPLICATIVI, 
-							idMsgServizioRicezioneContenutiApplicativiNonGestiti.size()+"");
+							idMsgServizioRicezioneContenutiApplicativiNonGestiti!=null ? idMsgServizioRicezioneContenutiApplicativiNonGestiti.size()+"" : 0+"");
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_NUM_MSG_NON_GESTITI_RICEZIONE_BUSTE, 
-							idMsgServizioRicezioneBusteNonGestiti.size()+"");
+							idMsgServizioRicezioneBusteNonGestiti!=null ? idMsgServizioRicezioneBusteNonGestiti.size()+"" : 0+"");
 					this.msgDiag.logPersonalizzato("ricercaMessaggiDaEliminare");
 				}
 

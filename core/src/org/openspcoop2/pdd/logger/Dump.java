@@ -410,7 +410,6 @@ public class Dump {
 				TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.equals(tipoMessaggio) ||
 				TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(tipoMessaggio);
 		
-		@SuppressWarnings("unused")
 		boolean dumpIntegrationManager = TipoMessaggio.INTEGRATION_MANAGER.equals(tipoMessaggio); 
 		
 		
@@ -715,7 +714,7 @@ public class Dump {
 				}catch(Exception e){
 					exc = e;
 				}
-				if(gestioneStateful){
+				if(gestioneStateful && !dumpIntegrationManager){
 					try{
 						//System.out.println("@@@@@REPOSITORY@@@@@ LOG DUMP ID TRANSAZIONE ["+idTransazione+"] ADD");
 						RepositoryGestioneStateful.addMessaggio(location, messaggio);
@@ -859,7 +858,7 @@ public class Dump {
 		
 		// Il dump via API lo effettuo solamente se ho davvero un messaggio OpenSPCoop
 		// Senno ottengo errori all'interno delle implementazioni degli appender dump
-		if(!onlyLogFileTrace) {
+		if(!onlyLogFileTrace && !dumpIntegrationManager) {
 			for(int i=0; i<this.loggerDumpOpenSPCoopAppender.size();i++){
 				try{
 					this.loggerDumpOpenSPCoopAppender.get(i).dump(getConnectionFromState(false),messaggio);

@@ -20,13 +20,28 @@
 
 package org.openspcoop2.core.transazioni.utils;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.List;
+import java.util.Map;
+
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.IDAOFactory;
 import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerService;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCTransazioneService;
+import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
+import org.slf4j.Logger;
 
 /**     
  * TransactionServerUtils
@@ -54,7 +69,7 @@ public class TransactionServerUtils {
 		boolean firstEntry = serverInfoParam.getDataUscitaRichiesta()==null && serverInfoParam.getDataPrelievoIm()==null && serverInfoParam.getDataEliminazioneIm()==null;
 		
 		if(firstEntry) {
-			return save(transazioneService, serverInfoParam, false, false);		
+			return save(transazioneService, serverInfoParam, false, false, true);		
 		}
 		else {
 			IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
@@ -64,7 +79,7 @@ public class TransactionServerUtils {
 				
 				TransazioneApplicativoServer transazioneApplicativoServer = transazioneService.get(idTransazioneApplicativoServer);
 				if(!transazioneApplicativoServer.isConsegnaTerminata() && transazioneApplicativoServer.getDataEliminazioneIm()==null && transazioneApplicativoServer.getDataMessaggioScaduto()==null) {
-					return save(transazioneService, serverInfoParam, true, false);
+					return save(transazioneService, serverInfoParam, true, false, true);
 				}
 				// else ho già registrato l'ultima informazione, è inutile fare update delle informazioni parziali.
 				else {
@@ -78,7 +93,7 @@ public class TransactionServerUtils {
 		
 	}
 	
-	public static boolean save(ITransazioneApplicativoServerService transazioneService, TransazioneApplicativoServer serverInfoParam, boolean update, boolean throwNotFoundIfNotExists) throws Exception {
+	public static boolean save(ITransazioneApplicativoServerService transazioneService, TransazioneApplicativoServer serverInfoParam, boolean update, boolean throwNotFoundIfNotExists, boolean recover) throws Exception {
 		
 		String idTransazione = serverInfoParam.getIdTransazione();
 		if(idTransazione==null) {
@@ -284,4 +299,170 @@ public class TransactionServerUtils {
 
 	}
 	
+	public static void safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, 
+			String tipoDatabase, Logger logCore,
+			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
+			boolean debug,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) {
+		
+		// aggiorno esito transazione
+		try{
+			TransactionServerUtils.aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
+					tipoDatabase, logCore,
+					daoFactory, logFactory, smpFactory,
+					debug,
+					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
+		}catch(Throwable e){
+			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server '"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"': " + e.getLocalizedMessage();
+			logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"] "+msg,e);
+		}
+	}
+	
+	private static void aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
+			String tipoDatabase, Logger logCore,
+			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
+			boolean debug,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) throws CoreException {
+		
+		/*
+	      Viene realizzato con livello di isolamento SERIALIZABLE, per essere sicuri
+	      che esecuzioni parallele non leggano dati inconsistenti.
+	      Con il livello SERIALIZABLE, se ritorna una eccezione, deve essere riprovato
+	      La sincronizzazione e' necessaria per via del possibile accesso simultaneo del servizio Gop
+	      e del servizio che si occupa di eliminare destinatari di messaggi
+		 */
+		// setAutoCommit e livello Isolamento
+		int oldTransactionIsolation = -1;
+		try{
+			oldTransactionIsolation = connectionDB.getTransactionIsolation();
+			// già effettuato fuori dal metodo connectionDB.setAutoCommit(false);
+			JDBCUtilities.setTransactionIsolationSerializable(tipoDatabase, connectionDB);
+		} catch(Exception er) {
+			throw new CoreException("(setIsolation) "+er.getMessage(),er);
+		}
+
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		boolean updateEffettuato = false;
+		
+		long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
+		
+		CoreException coreException = null;
+		while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
+
+			try{	
+				IDAOFactory daoF = daoFactory;
+				Logger log = logFactory;
+				ServiceManagerProperties smp = smpFactory;
+				
+				org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
+						(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) daoF.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
+								connectionDB, false,
+								smp, log);
+				jdbcServiceManager.getJdbcProperties().setShowSql(debug);
+				JDBCTransazioneService transazioneService = (JDBCTransazioneService) jdbcServiceManager.getTransazioneService();
+				
+				transazioneService.enableSelectForUpdate();
+				
+				IPaginatedExpression pagExpression = transazioneService.newPaginatedExpression();
+				pagExpression.equals(Transazione.model().ID_TRANSAZIONE, transazioneApplicativoServer.getIdTransazione());
+				List<Map<String, Object>> l = null;
+				try {
+					l = transazioneService.select(pagExpression, Transazione.model().ESITO, Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO);
+				}catch (NotFoundException notfound) {}
+				if(l!=null && l.size()>0) {
+					if(l.size()>1) {
+						coreException = new CoreException("Trovata più di una transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"'");
+					}
+					else {
+												
+						Object oEsito = l.get(0).get(Transazione.model().ESITO.getFieldName());
+						int esito = -1;
+						if(oEsito!=null && oEsito instanceof Integer) {
+							esito = (Integer) oEsito;
+						}
+						
+						Object oConsegneMultiple = l.get(0).get(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO.getFieldName());
+						int consegneMultiple = -1;
+						if(oConsegneMultiple!=null && oConsegneMultiple instanceof Integer) {
+							consegneMultiple = (Integer) oConsegneMultiple;
+						}
+						
+						if(esitoConsegnaMultipla == esito || esitoConsegnaMultiplaFallita == esito) {
+							int decrement = consegneMultiple-1;
+							UpdateField uFieldConsegneMultipleInCorso = new UpdateField(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO, decrement);
+							UpdateField uFieldEsito = null;
+							if(esitoConsegnaMultipla == esito) {
+								// non appena c'è un errore, marca la transazione come fallita
+								if(ok != transazioneApplicativoServer.getDettaglioEsito() || transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
+									uFieldEsito = new UpdateField(Transazione.model().ESITO, esitoConsegnaMultiplaFallita);
+								}
+								else if(decrement<=0) {
+									uFieldEsito = new UpdateField(Transazione.model().ESITO, esitoConsegnaMultiplaCompletata);
+								}
+							}
+							if(uFieldEsito!=null) {
+								transazioneService.updateFields(transazioneApplicativoServer.getIdTransazione(), uFieldConsegneMultipleInCorso, uFieldEsito);
+							}
+							else {
+								transazioneService.updateFields(transazioneApplicativoServer.getIdTransazione(), uFieldConsegneMultipleInCorso);
+							}
+						}
+						else if(esitoConsegnaMultiplaCompletata == esito) {
+							if(logCore!=null) {
+								logCore.debug("Trovata transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"', con un esito '"+esito+"' (ConsegnaMultiplaCompletata) già gestita da un altro nodo");
+							}
+						}
+						else {
+							coreException = new CoreException("Trovata transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"', con un esito '"+esito+"' non atteso");
+						}
+
+						
+					}
+				}
+
+				transazioneService.disableSelectForUpdate();
+				
+				// Chiusura Transazione
+				connectionDB.commit();
+
+				// ID Costruito
+				updateEffettuato = true;
+
+			} catch(Exception e) {
+				try{
+					if(rs != null)
+						rs.close();
+				} catch(Exception er) {}
+				try{
+					if(pstmt != null)
+						pstmt.close();
+				} catch(Exception er) {}
+				try{
+					connectionDB.rollback();
+				} catch(Exception er) {}
+			}
+
+			if(updateEffettuato == false){
+				// Per aiutare ad evitare conflitti
+				try{
+					Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+				}catch(Exception eRandom){}
+			}
+		}
+		// Ripristino Transazione
+		try{
+			connectionDB.setTransactionIsolation(oldTransactionIsolation);
+			// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
+		} catch(Exception er) {
+			throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
+		}
+
+		if(coreException!=null) {
+			throw coreException;
+		}
+	}
 }
