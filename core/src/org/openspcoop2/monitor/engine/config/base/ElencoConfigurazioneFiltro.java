@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="elenco-configurazione-filtro">
- * 		&lt;sequence>
- * 			&lt;element name="configurazione-filtro" type="{http://www.openspcoop2.org/monitor/engine/config/base}configurazione-filtro" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="elenco-configurazione-filtro"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="configurazione-filtro" type="{http://www.openspcoop2.org/monitor/engine/config/base}configurazione-filtro" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ElencoConfigurazioneFiltro extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getConfigurazioneFiltroList
-   * @return List<ConfigurazioneFiltro>
+   * @return List&lt;ConfigurazioneFiltro&gt;
   */
   @Deprecated
   public List<ConfigurazioneFiltro> getConfigurazioneFiltro() {
@@ -120,7 +120,7 @@ public class ElencoConfigurazioneFiltro extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setConfigurazioneFiltroList
-   * @param configurazioneFiltro List<ConfigurazioneFiltro>
+   * @param configurazioneFiltro List&lt;ConfigurazioneFiltro&gt;
   */
   @Deprecated
   public void setConfigurazioneFiltro(List<ConfigurazioneFiltro> configurazioneFiltro) {

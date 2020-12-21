@@ -93,6 +93,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -111,6 +112,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.slf4j.Logger;
@@ -1217,6 +1219,21 @@ public class ConfigurazionePdDManager {
 	public ConfigurazionePolicy getConfigurazionePolicy(boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getConfigurazionePolicy(this.getConnection(), useCache, id);
 	}
+	
+	
+	/* ******** PLUGINS ******** */
+	
+	public IRegistroPluginsReader getRegistroPluginsReader() {
+		return this.configurazionePdDReader.getRegistroPluginsReader();
+	}
+	
+	public String getPluginClassName(String tipoPlugin, String tipo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPluginClassName(this.getConnection(), tipoPlugin, tipo);
+	}
+	public String getPluginClassNameByFilter(String tipoPlugin, String tipo, NameValue ... filtri) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPluginClassNameByFilter(this.getConnection(), tipoPlugin, tipo, filtri);
+	}
+	
 
 	/* ******** MAPPING ******** */
 

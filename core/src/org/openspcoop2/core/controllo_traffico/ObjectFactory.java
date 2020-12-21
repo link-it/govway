@@ -52,10 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Cache }
+     * Create an instance of {@link ConfigurazioneGenerale }
      */
-    public Cache createCache() {
-        return new Cache();
+    public ConfigurazioneGenerale createConfigurazioneGenerale() {
+        return new ConfigurazioneGenerale();
     }
 
     /**
@@ -66,31 +66,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ElencoPolicyAttive }
+     * Create an instance of {@link TempiRispostaErogazione }
      */
-    public ElencoPolicyAttive createElencoPolicyAttive() {
-        return new ElencoPolicyAttive();
+    public TempiRispostaErogazione createTempiRispostaErogazione() {
+        return new TempiRispostaErogazione();
     }
 
     /**
-     * Create an instance of {@link AttivazionePolicyFiltro }
+     * Create an instance of {@link Cache }
      */
-    public AttivazionePolicyFiltro createAttivazionePolicyFiltro() {
-        return new AttivazionePolicyFiltro();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazionePolicy }
-     */
-    public ConfigurazionePolicy createConfigurazionePolicy() {
-        return new ConfigurazionePolicy();
-    }
-
-    /**
-     * Create an instance of {@link ElencoPolicy }
-     */
-    public ElencoPolicy createElencoPolicy() {
-        return new ElencoPolicy();
+    public Cache createCache() {
+        return new Cache();
     }
 
     /**
@@ -101,17 +87,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TempiRispostaErogazione }
+     * Create an instance of {@link ConfigurazioneRateLimiting }
      */
-    public TempiRispostaErogazione createTempiRispostaErogazione() {
-        return new TempiRispostaErogazione();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneGenerale }
-     */
-    public ConfigurazioneGenerale createConfigurazioneGenerale() {
-        return new ConfigurazioneGenerale();
+    public ConfigurazioneRateLimiting createConfigurazioneRateLimiting() {
+        return new ConfigurazioneRateLimiting();
     }
 
     /**
@@ -122,31 +101,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TempiRispostaFruizione }
+     * Create an instance of {@link ConfigurazionePolicy }
      */
-    public TempiRispostaFruizione createTempiRispostaFruizione() {
-        return new TempiRispostaFruizione();
+    public ConfigurazionePolicy createConfigurazionePolicy() {
+        return new ConfigurazionePolicy();
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneRateLimiting }
+     * Create an instance of {@link AttivazionePolicy }
      */
-    public ConfigurazioneRateLimiting createConfigurazioneRateLimiting() {
-        return new ConfigurazioneRateLimiting();
-    }
-
-    /**
-     * Create an instance of {@link ElencoIdPolicy }
-     */
-    public ElencoIdPolicy createElencoIdPolicy() {
-        return new ElencoIdPolicy();
-    }
-
-    /**
-     * Create an instance of {@link AttivazionePolicyRaggruppamento }
-     */
-    public AttivazionePolicyRaggruppamento createAttivazionePolicyRaggruppamento() {
-        return new AttivazionePolicyRaggruppamento();
+    public AttivazionePolicy createAttivazionePolicy() {
+        return new AttivazionePolicy();
     }
 
     /**
@@ -157,10 +122,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AttivazionePolicy }
+     * Create an instance of {@link AttivazionePolicyRaggruppamento }
      */
-    public AttivazionePolicy createAttivazionePolicy() {
-        return new AttivazionePolicy();
+    public AttivazionePolicyRaggruppamento createAttivazionePolicyRaggruppamento() {
+        return new AttivazionePolicyRaggruppamento();
+    }
+
+    /**
+     * Create an instance of {@link ElencoPolicy }
+     */
+    public ElencoPolicy createElencoPolicy() {
+        return new ElencoPolicy();
+    }
+
+    /**
+     * Create an instance of {@link TempiRispostaFruizione }
+     */
+    public TempiRispostaFruizione createTempiRispostaFruizione() {
+        return new TempiRispostaFruizione();
+    }
+
+    /**
+     * Create an instance of {@link ElencoIdPolicy }
+     */
+    public ElencoIdPolicy createElencoIdPolicy() {
+        return new ElencoIdPolicy();
+    }
+
+    /**
+     * Create an instance of {@link AttivazionePolicyFiltro }
+     */
+    public AttivazionePolicyFiltro createAttivazionePolicyFiltro() {
+        return new AttivazionePolicyFiltro();
+    }
+
+    /**
+     * Create an instance of {@link ElencoPolicyAttive }
+     */
+    public ElencoPolicyAttive createElencoPolicyAttive() {
+        return new ElencoPolicyAttive();
     }
 
 

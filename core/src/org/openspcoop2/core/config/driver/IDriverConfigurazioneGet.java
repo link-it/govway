@@ -37,6 +37,9 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
+import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
@@ -427,6 +430,38 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * 
 	 */
 	public CanaliConfigurazione getCanaliConfigurazione() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce la configurazione dei plugins
+	 *
+	 * @return RegistroPlugins
+	 * 
+	 */
+	public RegistroPlugins getRegistroPlugins() throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce la configurazione del plugin
+	 *
+	 * @return RegistroPlugin
+	 * 
+	 */
+	public RegistroPlugin getRegistroPlugin(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce la configurazione del plugin, senza gli archivi interni
+	 *
+	 * @return RegistroPlugin
+	 * 
+	 */
+	public RegistroPlugin getDatiRegistroPlugin(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce i dati dell'archivio di un plugin
+	 *
+	 * @return RegistroPlugin
+	 * 
+	 */
+	public RegistroPluginArchivio getRegistroPluginArchivio(String nomePlugin, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce la configurazione generale della Porta di Dominio 

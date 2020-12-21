@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:#pages#list#statoAllarmi.xhtml"
+  PATH="/pages/list/statoAllarmi.xhtml" SHAPE="274,113,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#pages#list#statoAllarmi.xhtml:0" NAME="item"
+   PATH="/pages/list/statoAllarmi.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="allarme::#pages#form#allarme.xhtml"
+    NAME="output" PATH="/pages/form/allarme.xhtml"
+    TARGET="rules:#pages#form#allarme.xhtml" TITLE="allarme" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:*" PATH="*" SHAPE="69,55,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:*:0" NAME="item" PATH="*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="allarmi::#pages#list#statoAllarmi.xhtml"
+    NAME="output" PATH="/pages/list/statoAllarmi.xhtml"
+    TARGET="rules:#pages#list#statoAllarmi.xhtml" TITLE="allarmi" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#pages#form#allarme.xhtml"
+  PATH="/pages/form/allarme.xhtml" SHAPE="294,236,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#pages#form#allarme.xhtml:0" NAME="item"
+   PATH="/pages/form/allarme.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="success:#{allarmiBean.salva}:#pages#list#statoAllarmi.xhtml"
+    NAME="output" PATH="/pages/list/statoAllarmi.xhtml"
+    TARGET="rules:#pages#list#statoAllarmi.xhtml"
+    TITLE="#{allarmiBean.salva}:success" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+</PROCESS>

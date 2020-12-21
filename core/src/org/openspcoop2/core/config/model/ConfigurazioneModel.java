@@ -68,6 +68,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new Field("gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"configurazione",Configurazione.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneGeneraleModel(new Field("response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale.class,"configurazione",Configurazione.class));
 		this.GESTIONE_CANALI = new org.openspcoop2.core.config.model.CanaliConfigurazioneModel(new Field("gestione-canali",org.openspcoop2.core.config.CanaliConfigurazione.class,"configurazione",Configurazione.class));
+		this.REGISTRO_PLUGINS = new org.openspcoop2.core.config.model.RegistroPluginsModel(new Field("registro-plugins",org.openspcoop2.core.config.RegistroPlugins.class,"configurazione",Configurazione.class));
 	
 	}
 	
@@ -103,6 +104,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new ComplexField(father,"gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"configurazione",Configurazione.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneGeneraleModel(new ComplexField(father,"response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale.class,"configurazione",Configurazione.class));
 		this.GESTIONE_CANALI = new org.openspcoop2.core.config.model.CanaliConfigurazioneModel(new ComplexField(father,"gestione-canali",org.openspcoop2.core.config.CanaliConfigurazione.class,"configurazione",Configurazione.class));
+		this.REGISTRO_PLUGINS = new org.openspcoop2.core.config.model.RegistroPluginsModel(new ComplexField(father,"registro-plugins",org.openspcoop2.core.config.RegistroPlugins.class,"configurazione",Configurazione.class));
 	
 	}
 	
@@ -163,6 +165,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	public org.openspcoop2.core.config.model.ResponseCachingConfigurazioneGeneraleModel RESPONSE_CACHING = null;
 	 
 	public org.openspcoop2.core.config.model.CanaliConfigurazioneModel GESTIONE_CANALI = null;
+
+	public org.openspcoop2.core.config.model.RegistroPluginsModel REGISTRO_PLUGINS = null;
 	 
 
 	@Override

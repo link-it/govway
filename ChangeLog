@@ -1,3 +1,85 @@
+2020-12-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolti i seguenti problemi, durante l'utilizzo delle funzionalità 'Integration Manager' e 'Consegna delle Notifiche' non ancora rilasciate come stabili:
+	- Il recovery delle notifiche (transazioni_sa) che non sono state salvate sul database delle transazioni, si occupa adesso di aggiornare anche l'esito della consegna multipla in completata o fallita.
+	- Durante lo scaricamento di un messaggio tramite il servizio IntegrationManager veniva segnalato un errore nel log govway_resources.log che però non causava un fallimento dello scaricamento del messaggio.
+	  L'errore era il seguente:
+		ERROR <18-12-2020 09:20:30.568> org.openspcoop2.pdd.logger.Dump.dump(732): Errore durante la registrazione, nel contesto della transazione, 
+			del contenuto applicativo presente nel messaggio (IntegrationManager) con identificativo di transazione [4e8504b5-64e6-48d9-8548-e392fca7381e]: Non abilitata la gestione delle transazioni stateful 
+			org.openspcoop2.pdd.core.transazioni.TransactionStatefulNotSupportedException: Non abilitata la gestione delle transazioni stateful
+			        at org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful.checkGestioneAbilitata(RepositoryGestioneStateful.java:106)
+        			at org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful.addMessaggio(RepositoryGestioneStateful.java:180)
+			        at org.openspcoop2.pdd.logger.Dump.dump(Dump.java:721)
+			        at org.openspcoop2.pdd.logger.Dump.dumpIntegrationManagerGetMessage(Dump.java:384)
+			        at org.openspcoop2.pdd.services.skeleton.IntegrationManager.getMessage_engine(IntegrationManager.java:1097)
+        			...
+
+2020-12-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug in presenza di una policy di RateLimiting con filtro basato su chiave estratta dal contenuto.
+	La policy andava in errore, invece di essere semplicemente filtrata, nel caso la richiesta non contenesse un payload http (es. GET).
+
+2020-12-17  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto problema sui criteri di generazione di un report statistico. 
+	Quando veniva selezionata un'implementazione di API non era più possibile modificare il tipo delle informazioni visualizzate nel report (numero transazioni, dimensione e latenza).
+	La visualizzazione della ComboBox per la selezione dell'operazione era controllata dalla seguente condizione:
+		<c:if test="#{sf_showAzioni and !empty sf_servizio}">
+	È stata sostituita con:
+	    <a4j:outputPanel id="filtriRicercaServizioAzione" layout="block" rendered="#{sf_showAzioni and !empty sf_servizio}">
+	poichÈ la selezione di un servizio, faceva apparire correttamente la combo, ma provocava un errore nella gestione dei campi della sezione 'Report'.
+	Lo stato interno dell'applicazione veniva modificato erroneamente "sganciando" la sezione 'Report' poichè gli identificativi dinamici 
+	per la gestione delle chiamate asincrone della sezione non venivano aggiornati correttamente.
+	Questo errore portava l'applicazione ad "ignorare" ogni input dell'utente per la sezione 'Report'. 
+
+2020-12-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1121
+	Su una installazione con più nodi in load balancer si verificava l'errore riportato di seguito, se arrivavano nel medesimo istante, ma su due nodi differente, 
+	due richieste che presentano la stessa credenziale fino ad ora mai ricevuta sul gateway:
+	ERROR org.openspcoop2.generic_project.exception.ServiceException: 
+		Create not completed: insertAndReturnGeneratedKey failed: ORA-00001: violata restrizione di unicità (GOVWAY_TRAC.UNIQUE_CREDENZIALE_MITTENTE_1)
+		    at org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteService.create(JDBCCredenzialeMittenteService.java:132) 
+    			at org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteService.create(JDBCCredenzialeMittenteService.java:67)
+
+2020-12-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Corretti i seguenti errori:
+	- Possibile deadlock nell'utilizzo delle connessioni se in una API veniva definita una Policy di Rate Limiting configurata per essere applicata solamente in presenza di degrado prestazionale.
+	- Segnalazione ERROR nel log govway_core.log quando si invocava una API senza specifica di interfaccia. Corretto livello di severità in WARN.
+		  ERROR <14-12-2020 12:41:31.169> org.openspcoop2.protocol.registry.RegistroServizi.getAccordoServizioRestEngine(3187): Costruisco API tramite il registro (Step1) error: L'API non contiene una specifica 
+ 			org.openspcoop2.core.registry.driver.DriverRegistroServiziException: L'API non contiene una specifica
+			at org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.buildApiFromSpecific(AccordoServizioWrapperUtilities.java:167) 
+			...
+	- Errore durante la comprensione dell'esito in presenza di richieste parallele ricevute non appena veniva avviato il gateway:
+		ERROR <14-12-2020 10:03:17.261> org.openspcoop2.pdd.services.service.RicezioneBusteService.process(1029): ErroreGenerale 
+ 			org.openspcoop2.protocol.sdk.ProtocolException: Comprensione stato non riuscita: null
+		        at org.openspcoop2.protocol.basic.builder.EsitoBuilder.getEsito(EsitoBuilder.java:473) 
+			...
+		Caused by: java.util.ConcurrentModificationException
+		        at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1042) ~[?:?]
+        		at java.util.ArrayList$Itr.next(ArrayList.java:996) ~[?:?]
+		        at org.openspcoop2.protocol.basic.builder.EsitoBuilder.getEsito(EsitoBuilder.java:253)
+
+2020-12-10  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio]
+	Risolto bug problema presente in una configurazione multitenant, con opzione 'multitenant.forzaSoggettoDefault' disabilitata (comportamento di default).
+	La generazione di report statistici con filtro contenente il field 'api_implementata', senza la definizione del soggetto referente (richiesta comune per il Profilo 'API Gateway'),
+	produceva il seguente errore: Parametro 'api' fornito possiede un valore 'NomeAPI:1' che non rispetta il formato atteso '^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$'
+	Il problema è stato risolto.
+
+2020-12-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug che causava una anomalia durante la valutazione di una Policy di Rate Limiting configurata per essere applicata solamente in presenza di degrado prestazionale.
+	L'errore era dovuto ad un accesso non riuscito alla base dati statistica a causa di una inizializzazione errata.
+
 2020-12-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

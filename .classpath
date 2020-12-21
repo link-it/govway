@@ -35,7 +35,8 @@
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore" kind="src" path="tools/web_interfaces/monitor/src/src_core"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore" kind="src" path="tools/web_interfaces/monitor/src/src_transazioni"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore" kind="src" path="tools/web_interfaces/monitor/src/src_stat"/>
-	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore" kind="src" path="tools/web_interfaces/monitor/src/src_eventi"/>
+	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore|*/.faces-config.xml.jsfdia" kind="src" path="tools/web_interfaces/monitor/src/src_eventi"/>
+	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore|*/.faces-config.xml.jsfdia" kind="src" path="tools/web_interfaces/monitor/src/src_allarmi"/>
 	<classpathentry kind="src" path="tools/web_interfaces/monitor/deploy/pages"/>
 	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/registry/server/src"/>
 	<classpathentry kind="src" path="tools/ws/registry/client/src"/>

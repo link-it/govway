@@ -20,13 +20,11 @@
 					<linkit:sql>
 						<linkit:sql-script generate="true">
 							<linkit:sql-table-list>
-								<linkit:sql-comment><![CDATA[INFORMAZIONI GENERALI]]></linkit:sql-comment>
-								<linkit:sql-table object-name="plugin-info" object-type="plugin-info"/>
 								<linkit:sql-comment><![CDATA[PLUGINS]]></linkit:sql-comment>
 								<linkit:sql-table object-name="plugin"	object-type="plugin"/>
 								<linkit:sql-table object-name="plugin-servizio-compatibilita"	object-type="plugin-servizio-compatibilita"/>
 								<linkit:sql-table object-name="plugin-servizio-azione-compatibilita"	object-type="plugin-servizio-azione-compatibilita"/>
-								<linkit:sql-table object-name="plugin-filtro-compatibilita"	object-type="plugin-filtro-compatibilita"/>
+								<linkit:sql-table object-name="plugin-proprieta-compatibilita"	object-type="plugin-proprieta-compatibilita"/>
 								<linkit:sql-comment><![CDATA[CONFIGURAZIONE DEI SERVIZI PER PERSONALIZZAZIONI]]></linkit:sql-comment>
 								<linkit:sql-table object-name="configurazione-servizio"
 									object-type="configurazione-servizio"/>
@@ -38,7 +36,7 @@
 							</linkit:sql-table-list>
 						</linkit:sql-script>
 						<linkit:sql-mapping single-table-mapping="false"
-							on-delete-cascade="true"/>
+							on-delete-cascade="true" check-tables-order-list="false"/>
 					</linkit:sql>
 				</linkit:dao>
 			</linkit:generator>
@@ -47,38 +45,7 @@
 	
 	
 	
-	
-	
-	<!-- ********* INFORMAZIONI GENERALI ************* -->
-	<xsd:element name="plugin-info">
-		<xsd:annotation>
-			<xsd:appinfo>
-				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-					<linkit:interface crud="true" single-instance="true"/>
-					<linkit:sql-table-mapping name="plugin_info" >
-						<linkit:sql-table-primary-key generate="false" generate-id="false"/>
-					</linkit:sql-table-mapping>
-				</linkit:generator>
-			</xsd:appinfo>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="content" type="xsd:base64Binary">
-					<xsd:annotation>
-						<xsd:appinfo>
-							<linkit:generator
-								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-mapping medium-binary="true"/>
-							</linkit:generator>
-						</xsd:appinfo>
-					</xsd:annotation>
-				</xsd:element>
-			</xsd:sequence>
-		</xsd:complexType>    
-	</xsd:element>
-	
-	
-	
+
 	
 	
 	<!-- ********* PLUGIN DEI SERVIZI PER PERSONALIZZAZIONI ************* -->
@@ -89,6 +56,15 @@
 			<xsd:enumeration value="RICERCA"/>
 			<xsd:enumeration value="STATISTICA"/>
 			<xsd:enumeration value="ALLARME"/>
+			<xsd:enumeration value="CONNETTORE"/>
+			<xsd:enumeration value="AUTENTICAZIONE"/>
+			<xsd:enumeration value="AUTORIZZAZIONE"/>
+			<xsd:enumeration value="AUTORIZZAZIONE_CONTENUTI"/>
+			<xsd:enumeration value="INTEGRAZIONE"/>
+			<xsd:enumeration value="MESSAGE_HANDLER"/>
+			<xsd:enumeration value="SERVICE_HANDLER"/>
+			<xsd:enumeration value="BEHAVIOUR"/>
+			<xsd:enumeration value="RATE_LIMITING"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
@@ -97,13 +73,17 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" id="id-plugin"/>
-					<linkit:sql-table-mapping name="plugins" comment="Plugins attivi per il monitoraggio delle transazioni gestite sulla Porta">
+					<linkit:sql-table-mapping name="plugins" comment="Plugins attivi">
 						<linkit:sql-table-unique create-index="true">
-							<linkit:sql-table-unique-field name="tipo"/>
+							<linkit:sql-table-unique-field name="tipo-plugin"/>
 							<linkit:sql-table-unique-field name="class-name"/>
 						</linkit:sql-table-unique>
 						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-field name="tipo-plugin"/>
 							<linkit:sql-table-unique-field name="tipo"/>
+						</linkit:sql-table-unique>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-field name="tipo-plugin"/>
 							<linkit:sql-table-unique-field name="label"/>
 						</linkit:sql-table-unique>
 					</linkit:sql-table-mapping>
@@ -113,7 +93,7 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<!-- Dati -->
-				<xsd:element name="tipo" type="tipo-plugin">
+				<xsd:element name="tipo-plugin" type="xsd:string"> <!-- lascio stringa libera per future aggiunte type="tipo-plugin" -->
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator
@@ -133,6 +113,16 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="tipo" type="xsd:string" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo del plugin]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="descrizione" type="xsd:string" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -148,7 +138,17 @@
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-ddl-column-comment><![CDATA[Label descrittivo del plugin]]></linkit:sql-ddl-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Label descrittiva del plugin]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="stato" type="xsd:boolean" default="true" minOccurs="0" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Stato (abilitato/disabilitato) del plugin]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -167,16 +167,16 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
-				<!-- Compatibilità (Per Allarmi) -->
-				<xsd:element name="plugin-filtro-compatibilita"
-					type="plugin-filtro-compatibilita" minOccurs="0" maxOccurs="unbounded">
+				<!-- Compatibilità -->
+				<xsd:element name="plugin-proprieta-compatibilita"
+					type="plugin-proprieta-compatibilita" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="id_plugin"
 									required="true"/>
-								<linkit:sql-ddl-column-comment><![CDATA[Configurazione della compatibilità del plugin per filtro]]></linkit:sql-ddl-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Configurazione della compatibilità del plugin per proprieta]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -268,12 +268,12 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	
-	<xsd:complexType name="plugin-filtro-compatibilita">
+	<xsd:complexType name="plugin-proprieta-compatibilita">
 		<xsd:annotation>
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-					<linkit:sql-table-mapping name="plugins_filtro_comp" comment="Indica i criteri di filtro che definiscono la compatibilità del plugin">
-						<linkit:sql-table-constraint unique="uniq_plug_filtro_com" index="idx_plug_filtro_com"/>
+					<linkit:sql-table-mapping name="plugins_props_comp" comment="Indica i criteri che definiscono la compatibilità del plugin come proprieta nome-valore">
+						<linkit:sql-table-constraint unique="uniq_plug_prop_com" index="idx_plug_prop_com"/>
 						<linkit:sql-table-index>
 							<linkit:sql-table-index-column name="id_plugin"/>
 						</linkit:sql-table-index>
@@ -283,102 +283,22 @@
 		</xsd:annotation>
 		<xsd:sequence>
 			<!-- Regole di match -->
-			<xsd:element name="tipo-mittente" type="xsd:string" minOccurs="0" >
+			<xsd:element name="nome" type="xsd:string">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[Tipo soggetto mittente con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Nome della proprietà]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element name="nome-mittente" type="xsd:string" minOccurs="0">
+			<xsd:element name="valore" type="xsd:string">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[Nome soggetto mittente con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="idporta-mittente" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[IdPorta soggetto mittente con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="tipo-destinatario" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[Tipo soggetto destinatario con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="nome-destinatario" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[Nome soggetto destinatario con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="idporta-destinatario" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[IdPorta soggetto destinatario con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[Tipo servizio con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="nome-servizio" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[Nome servizio con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="versione-servizio" type="xsd:unsignedInt" default="1" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[Versione servizio con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="azione" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment><![CDATA[Azione con cui è compatibilite il plugin]]></linkit:sql-ddl-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Valore della proprietà]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>
@@ -702,17 +622,11 @@
 	<!-- ID -->
 	
 	<xsd:complexType name="id-plugin">
-		<xsd:annotation>
-			<xsd:appinfo>
-				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-					<linkit:sql-id-mapping relationship="none" object-name="plugin"
-						object-type="plugin"/>
-				</linkit:generator>
-			</xsd:appinfo>
-		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="tipo" type="tipo-plugin"/>
+			<xsd:element name="tipo-plugin" type="xsd:string" /> <!-- lascio stringa libera per future aggiunte type="tipo-plugin" -->
+			<xsd:element name="tipo" type="xsd:string" />
 			<xsd:element name="class-name" type="xsd:string" />
+			<xsd:element name="label" type="xsd:string" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

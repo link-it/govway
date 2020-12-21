@@ -383,11 +383,13 @@ implements StatisticsContext{
 			}
 
 			// Validita' della statistica scelta.
-			IDynamicValidator bv = DynamicFactory.getInstance().newDynamicValidator(this.getStatisticaSelezionata().getPlugin().getClassName(),StatistichePersonalizzateSearchForm.log);
+			IDynamicValidator bv = DynamicFactory.getInstance().newDynamicValidator(this.getStatisticaSelezionata().getPlugin().getTipoPlugin(),this.getStatisticaSelezionata().getPlugin().getTipo(),
+					this.getStatisticaSelezionata().getPlugin().getClassName(),StatistichePersonalizzateSearchForm.log);
 			bv.validate(this);
 			
 			// lo recupero la condizione di ricerca personalizzata e la imposto nel filtro
-			org.openspcoop2.monitor.engine.dynamic.IDynamicFilter bf = DynamicFactory.getInstance().newDynamicFilter(this.getStatisticaSelezionata().getPlugin().getClassName(),StatistichePersonalizzateSearchForm.log);
+			org.openspcoop2.monitor.engine.dynamic.IDynamicFilter bf = DynamicFactory.getInstance().newDynamicFilter(this.getStatisticaSelezionata().getPlugin().getTipoPlugin(),this.getStatisticaSelezionata().getPlugin().getTipo(),
+					this.getStatisticaSelezionata().getPlugin().getClassName(),StatistichePersonalizzateSearchForm.log);
 			IFilter r = bf.createConditionFilter(this);
 			if (r != null) {
 				this.setFiltroReport(r);
@@ -536,8 +538,8 @@ implements StatisticsContext{
 			List<StatisticType> listaStatisticTypes = new ArrayList<StatisticType>();
 
 			try {
-				IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(this.getStatisticaSelezionata()
-						.getPlugin().getClassName(),StatistichePersonalizzateSearchForm.log);
+				IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(this.getStatisticaSelezionata().getPlugin().getTipoPlugin(),this.getStatisticaSelezionata().getPlugin().getTipo(),
+						this.getStatisticaSelezionata().getPlugin().getClassName(),StatistichePersonalizzateSearchForm.log);
 				listaStatisticTypes = bl.getEnabledStatisticType(this);
 			} catch (SearchException e) {
 				log.error("Errore durante la lettura dei tipi di statistica: "+e.getMessage(),e); 
@@ -578,7 +580,8 @@ implements StatisticsContext{
 
 			try {
 				if (r != null){
-					DynamicFactory.getInstance().newDynamicLoader(r.getPlugin().getClassName(),StatistichePersonalizzateSearchForm.log);
+					DynamicFactory.getInstance().newDynamicLoader(r.getPlugin().getTipoPlugin(),r.getPlugin().getTipo(),
+							r.getPlugin().getClassName(),StatistichePersonalizzateSearchForm.log);
 					//Class.forName(r.getClassName());
 				}
 			//} catch (ClassNotFoundException e) {

@@ -32,7 +32,6 @@ import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
-import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 
 /**
  * GruppiCore
@@ -198,7 +197,7 @@ public class GruppiCore extends ControlStationCore {
 			inUsoMessage.append(s);
 			inUsoMessage.append("\n");
 		} else {
-			inUsoMessage.append(RuoliCostanti.LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+			inUsoMessage.append(GruppiCostanti.LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
 		}
 		
 		return inUsoMessage.toString();

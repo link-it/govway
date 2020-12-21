@@ -229,8 +229,11 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			log.error(e.getMessage(), e);
 		}
 	}
-
-
+	
+	public org.openspcoop2.core.commons.search.dao.IServiceManager getUtilsServiceManager() {
+		return this.utilsServiceManager;
+	} 
+	
 	public static IExpression getExpressionTipiSoggettiCompatibiliConProtocollo(IServiceSearchWithId<?, ?> dao, IField field, String protocollo) throws Exception{
 		if(protocollo != null){
 			IExpression expr = dao.newExpression();
@@ -2701,5 +2704,53 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		
 		pdExpr.notEquals(PortaDelegata.model().MODE_AZIONE, org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione.DELEGATED_BY);
 		return pdExpr;
+	}
+	
+	@Override
+	public PortaApplicativa getPortaApplicativa(String nomePorta) {
+		log.debug("getPortaApplicativa [Nome: " + nomePorta + "]");
+		PortaApplicativa portaApplicativa = null;
+		try {
+			IExpression expr = this.portaApplicativaDAO.newExpression();
+
+			expr.equals(PortaApplicativa.model().NOME, nomePorta);
+			
+			portaApplicativa = this.portaApplicativaDAO.find(expr);
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return portaApplicativa;
+	}
+	
+	@Override
+	public PortaDelegata getPortaDelegata(String nomePorta) {
+		log.debug("getPortaDelegata [Nome: " + nomePorta + "]");
+		PortaDelegata portaDelegata = null;
+		try {
+			IExpression expr = this.portaDelegataDAO.newExpression();
+
+			expr.equals(PortaDelegata.model().NOME, nomePorta);
+			
+			portaDelegata = this.portaDelegataDAO.find(expr);
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return portaDelegata;
 	}
 }

@@ -220,6 +220,13 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 				return "filtro_sa_erogatore";
 			}
 		}
+		if(field.equals(AttivazionePolicy.model().FILTRO.TAG)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".filtro_tag";
+			}else{
+				return "filtro_tag";
+			}
+		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".filtro_tipo_servizio";
@@ -451,6 +458,9 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_EROGATORE)){
+			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().FILTRO.TAG)){
 			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO)){

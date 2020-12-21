@@ -41,20 +41,22 @@ public class BasicValidator implements IDynamicValidator{
 	
 	private static Logger log = LoggerWrapperFactory.getLogger(BasicValidator.class);
 	
+	private String tipoPlugin;
+	private String tipo;
 	private String className;
 	
-	protected BasicValidator(String className) {
+	protected BasicValidator(String tipoPlugin, String tipo, String className) {
+		this.tipoPlugin = tipoPlugin;
+		this.tipo = tipo;
 		this.className = className;
 	}
 	
 	@Override
 	public void validate(Context context) throws ValidationException {
 		
-
 		try{
 			
-			//Class<?> c = Class.forName(this.className);
-			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(this.className, BasicValidator.log);
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(this.tipoPlugin, this.tipo, this.className, BasicValidator.log);
 			
 			Object obj = bl.newInstance();
 			

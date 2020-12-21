@@ -28,6 +28,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -51,6 +53,7 @@ import org.openspcoop2.core.config.*;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
+import org.openspcoop2.core.config.constants.PluginSorgenteArchivio;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RegistroTipo;
@@ -10707,7 +10710,1197 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	
 	
 
+	
+	
+	
+	
+	@Override
+	public RegistroPlugins getRegistroPlugins() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
 
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getRegistroPlugins");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getRegistroPlugins] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		RegistroPlugins registro = null;
+		
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("posizione", true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			 
+			stm = con.prepareStatement(sqlQuery);
+			rs = stm.executeQuery();
+			List<String> nomi = new ArrayList<String>();
+			while(rs.next()) {
+				nomi.add(rs.getString("nome"));
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+			
+			if(!nomi.isEmpty()) {
+				if(registro==null) {
+					registro = new RegistroPlugins();
+				}
+				for (String nome : nomi) {
+					registro.addPlugin(this.getRegistroPlugin(nome));
+				}
+			}
+			
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getRegistroPlugins]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getRegistroPlugins]  Exception: " + se.getMessage(),se);
+		} finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		if(registro==null || registro.sizePluginList()<=0) {
+			throw new DriverConfigurazioneNotFound("Nessun plugin registrato");
+		}
+		return registro;
+		
+	}
+	
+	
+	
+	@Override
+	public RegistroPlugin getRegistroPlugin(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getRegistroPlugin(nome, false);
+	}
+	@Override
+	public RegistroPlugin getDatiRegistroPlugin(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getRegistroPlugin(nome, true);
+	}
+	private RegistroPlugin getRegistroPlugin(String nome, boolean soloDati) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getRegistroPlugin");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		RegistroPlugin plugin = null;
+		
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			 
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				
+				plugin = new RegistroPlugin();
+				
+				plugin.setId(rs.getLong("id"));
+				plugin.setNome(rs.getString("nome"));
+				plugin.setPosizione(rs.getInt("posizione"));
+				StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato"));
+				plugin.setStato(stato);
+				plugin.setDescrizione(rs.getString("descrizione"));
+				plugin.setData(rs.getTimestamp("data"));
+				
+				String compatibilita = rs.getString("compatibilita");
+				if( (compatibilita!=null && !"".equals(compatibilita)) ) {
+					if(compatibilita.contains(",")) {
+						String [] tmp = compatibilita.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							plugin.addCompatibilita(tmp[i].trim());
+						}
+					}
+					else {
+						plugin.addCompatibilita(compatibilita);
+					}
+				}
+				
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+			
+			if(plugin!=null && !soloDati) {
+				
+				// archive jar
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
+				sqlQueryObject.addWhereCondition("id_plugin=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				 
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, plugin.getId());
+				rs = stm.executeQuery();
+				while(rs.next()) {
+					
+					RegistroPluginArchivio archivio = new RegistroPluginArchivio();
+					archivio.setNome(rs.getString("nome"));
+					archivio.setData(rs.getTimestamp("data"));
+					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+					archivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
+					switch (archivio.getSorgente()) {
+					case JAR:
+						archivio.setContenuto(jdbcAdapter.getBinaryData(rs, "contenuto"));
+						break;
+					case URL:
+						archivio.setUrl(rs.getString("url"));
+						break;
+					case DIR:
+						archivio.setDir(rs.getString("dir"));
+						break;
+					}
+					plugin.addArchivio(archivio);
+					
+				}
+				rs.close();
+				stm.close();
+				rs=null;
+				stm=null;
+
+			}
+			
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getRegistroPlugin]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getRegistroPlugin]  Exception: " + se.getMessage(),se);
+		} finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		if(plugin!=null) {
+			return plugin;
+		}
+		throw new DriverConfigurazioneNotFound("Plugin '"+nome+"' non esistente");
+	}
+	
+	public RegistroPlugin getRegistroPluginFromPosizione(int posizione) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getRegistroPluginFromPosizione(posizione, false);
+	}
+	public RegistroPlugin getDatiRegistroPluginFromPosizione(int posizione) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getRegistroPluginFromPosizione(posizione, true);
+	}
+	private RegistroPlugin getRegistroPluginFromPosizione(int posizione, boolean soloDati) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getRegistroPlugin");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		RegistroPlugin plugin = null;
+		
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addWhereCondition("posizione=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			 
+			stm = con.prepareStatement(sqlQuery);
+			stm.setInt(1, posizione);
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				
+				plugin = new RegistroPlugin();
+				
+				plugin.setId(rs.getLong("id"));
+				plugin.setNome(rs.getString("nome"));
+				plugin.setPosizione(rs.getInt("posizione"));
+				StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato"));
+				plugin.setStato(stato);
+				plugin.setDescrizione(rs.getString("descrizione"));
+				plugin.setData(rs.getTimestamp("data"));
+				
+				String compatibilita = rs.getString("compatibilita");
+				if( (compatibilita!=null && !"".equals(compatibilita)) ) {
+					if(compatibilita.contains(",")) {
+						String [] tmp = compatibilita.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							plugin.addCompatibilita(tmp[i].trim());
+						}
+					}
+					else {
+						plugin.addCompatibilita(compatibilita);
+					}
+				}
+				
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+			
+			if(plugin!=null && !soloDati) {
+				
+				// archive jar
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
+				sqlQueryObject.addWhereCondition("id_plugin=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				 
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, plugin.getId());
+				rs = stm.executeQuery();
+				while(rs.next()) {
+					
+					RegistroPluginArchivio archivio = new RegistroPluginArchivio();
+					archivio.setNome(rs.getString("nome"));
+					archivio.setData(rs.getTimestamp("data"));
+					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+					archivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
+					switch (archivio.getSorgente()) {
+					case JAR:
+						archivio.setContenuto(jdbcAdapter.getBinaryData(rs, "contenuto"));
+						break;
+					case URL:
+						archivio.setUrl(rs.getString("url"));
+						break;
+					case DIR:
+						archivio.setDir(rs.getString("dir"));
+						break;
+					}
+					plugin.addArchivio(archivio);
+					
+				}
+				rs.close();
+				stm.close();
+				rs=null;
+				stm=null;
+
+			}
+			
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getRegistroPlugin]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getRegistroPlugin]  Exception: " + se.getMessage(),se);
+		} finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		if(plugin!=null) {
+			return plugin;
+		}
+		throw new DriverConfigurazioneNotFound("Plugin in posizione '"+posizione+"' non esistente");
+	}
+	
+	public boolean existsRegistroPlugin(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("existsRegistroPlugin");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[existsRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		int count = -1;
+		
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectCountField(CostantiDB.REGISTRO_PLUGINS+".id", "cont");
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			 
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			rs = stm.executeQuery();
+			
+			if(rs.next()) {
+				count = rs.getInt(1);
+			}
+			
+			return count > 0;
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[existsRegistroPlugin]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[existsRegistroPlugin]  Exception: " + se.getMessage(),se);
+		} finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public int getMaxPosizioneRegistroPlugin() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getMaxPosizioneRegistroPlugin");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getMaxPosizioneRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectMaxField(CostantiDB.REGISTRO_PLUGINS+".posizione", "max");
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			 
+			stm = con.prepareStatement(sqlQuery);
+			rs = stm.executeQuery();
+			
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+			
+			return 0;
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getMaxPosizioneRegistroPlugin]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getMaxPosizioneRegistroPlugin]  Exception: " + se.getMessage(),se);
+		} finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public int getNumeroArchiviJarRegistroPlugin(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getNumeroArchiviJarRegistroPlugin");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[existsRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		int count = -1;
+		
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectCountField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE+".id", "cont");
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addWhereCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".id_plugin = " + CostantiDB.REGISTRO_PLUGINS + ".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.REGISTRO_PLUGINS + ".nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			 
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			rs = stm.executeQuery();
+			
+			if(rs.next()) {
+				count = rs.getInt(1);
+			}
+			
+			return count;
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getNumeroArchiviJarRegistroPlugin]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getNumeroArchiviJarRegistroPlugin]  Exception: " + se.getMessage(),se);
+		} finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	@Override
+	public void createRegistroPlugin(RegistroPlugin plugin) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("createRegistroPlugin");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDRegistroPlugin type = 1");
+			DriverConfigurazioneDB_LIB.CRUDRegistroPlugin(1, plugin, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createRegistroPlugin] Errore durante la createRegistroPlugin : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	@Override
+	public void updateRegistroPlugin(RegistroPlugin plugin) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("updateRegistroPlugin");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDRegistroPlugin type = 2");
+			DriverConfigurazioneDB_LIB.CRUDRegistroPlugin(2, plugin, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateRegistroPlugin] Errore durante la updateRegistroPlugin : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	@Override
+	public void deleteRegistroPlugin(RegistroPlugin plugin) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("deleteRegistroPlugin");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDRegistroPlugin type = 3");
+			DriverConfigurazioneDB_LIB.CRUDRegistroPlugin(3, plugin, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteRegistroPlugin] Errore durante la deleteRegistroPlugin : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	@Override
+	public void updateDatiRegistroPlugin(String nomePlugin, RegistroPlugin plugin) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("updateDatiRegistroPlugin");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateDatiRegistroPlugin] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("updateDatiRegistroPlugin");
+			DriverConfigurazioneDB_LIB.updateDatiRegistroPlugin(nomePlugin, plugin, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateDatiRegistroPlugin] Errore durante la updateDatiRegistroPlugin : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	@Override
+	public RegistroPluginArchivio getRegistroPluginArchivio(String nomePlugin, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getRegistroPluginArchivio");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getRegistroPluginArchivio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		RegistroPluginArchivio archivio = null;
+		
+		try {
+			
+			long idPlugin = DBUtils.getIdRegistroPlugin(nomePlugin, con, this.tipoDB);
+			if(idPlugin<=0) {
+				throw new DriverConfigurazioneNotFound("Plugin '"+nomePlugin+"' non esistente");
+			}
+			
+			if(nome==null) {
+				throw new DriverConfigurazioneException("Nome archivio non indicato");
+			}
+			
+			// archive jar
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
+			sqlQueryObject.addWhereCondition("id_plugin=?");
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, idPlugin);
+			stm.setString(2, nome);
+			rs = stm.executeQuery();
+			if(rs.next()) {
+					
+				archivio = new RegistroPluginArchivio();
+				archivio.setNome(rs.getString("nome"));
+				archivio.setData(rs.getTimestamp("data"));
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+				archivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
+				switch (archivio.getSorgente()) {
+				case JAR:
+					archivio.setContenuto(jdbcAdapter.getBinaryData(rs, "contenuto"));
+					break;
+				case URL:
+					archivio.setUrl(rs.getString("url"));
+					break;
+				case DIR:
+					archivio.setDir(rs.getString("dir"));
+					break;
+				}
+	
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+
+	
+		}catch (DriverConfigurazioneNotFound notFound) {
+			throw notFound;
+		}catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getRegistroPluginArchivio]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getRegistroPluginArchivio]  Exception: " + se.getMessage(),se);
+		}
+		finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		if(archivio!=null) {
+			archivio.setNomePlugin(nomePlugin);
+			return archivio;
+		}
+		throw new DriverConfigurazioneNotFound("Archivio '"+nome+"' non esistente nel plugin '"+nomePlugin+"'");
+	}
+	
+	public boolean existsRegistroPluginArchivio(String nomePlugin, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("existsRegistroPluginArchivio");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[existsRegistroPluginArchivio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		int count = -1;
+		
+		try {
+			long idPlugin = DBUtils.getIdRegistroPlugin(nomePlugin, con, this.tipoDB);
+			if(idPlugin<=0) {
+				throw new DriverConfigurazioneNotFound("Plugin '"+nomePlugin+"' non esistente");
+			}
+			
+			if(nome==null) {
+				throw new DriverConfigurazioneException("Nome archivio non indicato");
+			}
+			
+			// archive jar
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectCountField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE+".id", "cont");
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
+			sqlQueryObject.addWhereCondition("id_plugin=?");
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, idPlugin);
+			stm.setString(2, nome);
+			rs = stm.executeQuery();
+			if(rs.next()) {
+					
+				count = rs.getInt(1);
+	
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+			
+			return count > 0;
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[existsRegistroPluginArchivio]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[existsRegistroPluginArchivio]  Exception: " + se.getMessage(),se);
+		} finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsRegistroPluginArchivio(String nomePlugin, PluginSorgenteArchivio tipoSorgente, String sorgente) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("existsRegistroPluginArchivio");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[existsRegistroPluginArchivio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		int count = -1;
+		
+		try {
+			long idPlugin = DBUtils.getIdRegistroPlugin(nomePlugin, con, this.tipoDB);
+			if(idPlugin<=0) {
+				throw new DriverConfigurazioneNotFound("Plugin '"+nomePlugin+"' non esistente");
+			}
+			
+			if(tipoSorgente==null) {
+				throw new DriverConfigurazioneException("TipoSorgente non indicata");
+			}
+			if(sorgente==null) {
+				throw new DriverConfigurazioneException("Sorgente non indicata");
+			}
+			
+			// archive jar
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectCountField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE+".id", "cont");
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
+			sqlQueryObject.addWhereCondition("id_plugin=?");
+			switch (tipoSorgente) {
+			case JAR:
+				sqlQueryObject.addWhereCondition("nome=?");
+				break;
+			case DIR:
+				sqlQueryObject.addWhereCondition("dir=?");
+				break;
+			case URL:
+				sqlQueryObject.addWhereCondition("url=?");
+				break;
+			default:
+				break;
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, idPlugin);
+			stm.setString(2, sorgente);
+			rs = stm.executeQuery();
+			if(rs.next()) {
+					
+				count = rs.getInt(1);
+	
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+			
+			return count > 0;
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[existsRegistroPluginArchivio]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[existsRegistroPluginArchivio]  Exception: " + se.getMessage(),se);
+		} finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	@Override
+	public void createRegistroPluginArchivio(String nomePlugin, RegistroPluginArchivio plugin) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("createRegistroPluginArchivio");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createRegistroPluginArchivio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDRegistroPlugin type = 1");
+			DriverConfigurazioneDB_LIB.CRUDRegistroPluginArchivio(1, nomePlugin, plugin, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createRegistroPluginArchivio] Errore durante la createRegistroPluginArchivio : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	@Override
+	public void updateRegistroPluginArchivio(String nomePlugin, RegistroPluginArchivio plugin) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("updateRegistroPluginArchivio");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateRegistroPluginArchivio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDRegistroPlugin type = 2");
+			DriverConfigurazioneDB_LIB.CRUDRegistroPluginArchivio(2, nomePlugin, plugin, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateRegistroPluginArchivio] Errore durante la updateRegistroPluginArchivio : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	@Override
+	public void deleteRegistroPluginArchivio(String nomePlugin, RegistroPluginArchivio plugin) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("deleteRegistroPluginArchivio");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteRegistroPluginArchivio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDRegistroPlugin type = 3");
+			DriverConfigurazioneDB_LIB.CRUDRegistroPluginArchivio(3, nomePlugin, plugin, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteRegistroPluginArchivio] Errore durante la deleteRegistroPluginArchivio : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 
 
 
@@ -17562,6 +18755,330 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.close();
 
 			return count > 0;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<RegistroPlugin> pluginsArchiviList(ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "pluginsArchiviList";
+		int idLista = Liste.CONFIGURAZIONE_PLUGINS_ARCHIVI;
+		int offset;
+		int limit;
+		String queryString;
+		String search;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<RegistroPlugin> lista = new ArrayList<RegistroPlugin>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("pluginsArchiviList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addSelectCountField("id", "cont");
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");            
+			sqlQueryObject.addSelectField("posizione");       
+			sqlQueryObject.addSelectField("stato");           
+			sqlQueryObject.addSelectField("descrizione");     
+			sqlQueryObject.addSelectField("data");         
+			sqlQueryObject.addSelectField("compatibilita");          
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			}
+			sqlQueryObject.addOrderBy("posizione");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+
+			
+			while (risultato.next()) { 
+				RegistroPlugin regola = new RegistroPlugin();
+				regola.setId(risultato.getLong("id"));
+				regola.setNome(risultato.getString("nome"));
+				regola.setPosizione(risultato.getInt("posizione"));
+				regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(risultato.getString("stato")));
+				regola.setDescrizione(risultato.getString("descrizione"));
+				Timestamp timestamp = risultato.getTimestamp("data");
+				regola.setData(new Date(timestamp.getTime()));
+				
+				String compatibilita = risultato.getString("compatibilita");
+				if(compatibilita != null)
+					regola.setCompatibilitaList(Arrays.asList(compatibilita.split(",")));
+				
+				lista.add(regola);
+			
+			}
+			risultato.close();
+			stmt.close();
+			
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<RegistroPluginArchivio> pluginsArchiviJarList(String nome, ISearch ricerca) throws DriverConfigurazioneException {
+		return this.pluginsArchiviJarList(nome, ricerca, true);
+	}
+	
+	private List<RegistroPluginArchivio> pluginsArchiviJarList(String nome, ISearch ricerca, boolean escludiContenuto) throws DriverConfigurazioneException {
+		String nomeMetodo = "pluginsArchiviList";
+		int idLista = Liste.CONFIGURAZIONE_PLUGINS_ARCHIVI_JAR;
+		int offset;
+		int limit;
+		String queryString;
+		String search;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<RegistroPluginArchivio> lista = new ArrayList<RegistroPluginArchivio>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("pluginsArchiviList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObjectOr = null;
+			if (!search.equals("")) {
+				ISQLQueryObject sqlQueryObjectJar = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectJar.addWhereLikeCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".nome", search, true, true);
+				sqlQueryObjectJar.addWhereCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".sorgente = ?");
+				sqlQueryObjectJar.setANDLogicOperator(true);	
+				
+				ISQLQueryObject sqlQueryObjectUrl = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectUrl.addWhereLikeCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".url", search, true, true);
+				sqlQueryObjectUrl.addWhereCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".sorgente = ?");
+				sqlQueryObjectUrl.setANDLogicOperator(true);	
+				
+				ISQLQueryObject sqlQueryObjectDir = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectDir.addWhereLikeCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".dir", search, true, true);
+				sqlQueryObjectDir.addWhereCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".sorgente = ?");
+				sqlQueryObjectDir.setANDLogicOperator(true);	
+				
+				sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectOr.setANDLogicOperator(false);	
+				sqlQueryObjectOr.addWhereCondition(sqlQueryObjectJar.createSQLConditions());
+				sqlQueryObjectOr.addWhereCondition(sqlQueryObjectUrl.createSQLConditions());
+				sqlQueryObjectOr.addWhereCondition(sqlQueryObjectDir.createSQLConditions());
+			}
+			
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectCountField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE+".id", "cont");
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addWhereCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".id_plugin = " + CostantiDB.REGISTRO_PLUGINS + ".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.REGISTRO_PLUGINS + ".nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			if (sqlQueryObjectOr!=null) {
+				sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setString(parameterIndex ++, nome);
+			if (sqlQueryObjectOr!=null) {
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.JAR));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.URL));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.DIR));
+			}
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addWhereCondition(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".id_plugin = " + CostantiDB.REGISTRO_PLUGINS + ".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.REGISTRO_PLUGINS + ".nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			if (sqlQueryObjectOr!=null) {
+				sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+			}
+			
+			sqlQueryObject.addSelectField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".id");
+			sqlQueryObject.addSelectField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".nome");            
+			sqlQueryObject.addSelectField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".data");       
+			sqlQueryObject.addSelectField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".sorgente");   
+			
+			if(!escludiContenuto) {
+				sqlQueryObject.addSelectField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".contenuto");     
+			}
+			sqlQueryObject.addSelectField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".url");         
+			sqlQueryObject.addSelectField(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".dir");
+						
+			sqlQueryObject.addOrderBy(CostantiDB.REGISTRO_PLUGINS_ARCHIVE + ".data");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			parameterIndex = 1;
+			stmt.setString(parameterIndex ++, nome);
+			if (sqlQueryObjectOr!=null) {
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.JAR));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.URL));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.DIR));
+			}
+			risultato = stmt.executeQuery();
+
+			
+			while (risultato.next()) { 
+				RegistroPluginArchivio archivio = new RegistroPluginArchivio();
+				archivio.setNome(risultato.getString("nome"));
+				archivio.setNomePlugin(nome);
+				Timestamp timestamp = risultato.getTimestamp("data");
+				archivio.setData(new Date(timestamp.getTime()));
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+				archivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(risultato.getString("sorgente")));
+				switch (archivio.getSorgente()) {
+				case JAR:
+					if(!escludiContenuto) {
+						archivio.setContenuto(jdbcAdapter.getBinaryData(risultato, "contenuto"));
+					}
+					break;
+				case URL:
+					archivio.setUrl(risultato.getString("url"));
+					break;
+				case DIR:
+					archivio.setDir(risultato.getString("dir"));
+					break;
+				}
+				lista.add(archivio);
+			}
+			risultato.close();
+			stmt.close();
+			
+			return lista;
 
 		} catch (Exception qe) {
 			error = true;
@@ -28488,6 +30005,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 	}
+
 	public List<CanaleConfigurazione> canaleConfigurazioneList(ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "canaleConfigurazioneList";
 		int idLista = Liste.CONFIGURAZIONE_CANALI;
@@ -28982,4 +30500,5 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		return config;
 	}
+
 }

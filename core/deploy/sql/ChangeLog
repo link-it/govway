@@ -1,3 +1,33 @@
+2020-12-03  Andrea Poli <apoli@link.it>
+
+	Aggiunta registrazione degli archivi che realizzano i plugins:
+	- registro_plugins
+	- registro_plug_jar
+	- registro_plug_url
+
+	Eliminata tabella inutilizzata:
+	- plugin_info
+	- plugins_filtro_comp
+
+	Modicato supporto per la registrazione delle classi di plugins:
+	ALTER TABLE plugins ADD COLUMN tipo_plugin VARCHAR(255) NOT NULL;
+	ALTER TABLE plugins DROP COLUMN tipo;
+	ALTER TABLE plugins ADD COLUMN tipo VARCHAR(255) NOT NULL;
+	ALTER TABLE plugins ADD COLUMN stato BOOLEAN DEFAULT true;
+	ALTER TABLE plugins ADD CONSTRAINT unique_plugins_1 UNIQUE (tipo_plugin,class_name);
+	ALTER TABLE plugins ADD CONSTRAINT unique_plugins_2 UNIQUE (tipo_plugin,tipo);
+	ALTER TABLE plugins ADD CONSTRAINT unique_plugins_3 UNIQUE (tipo_plugin,label);
+	Aggiunta tabella 'plugins_props_comp'
+	Aggiunto indice 'idx_plug_prop_com_1'
+
+	Aggiunto filtro per 'tag' sul controllo del traffico
+	ALTER TABLE ct_active_policy ADD COLUMN filtro_tag VARCHAR(255);
+
+	Aggiunte tabelle per gestione allarmistica:
+	- allarmi
+	- allarmi_parametri
+	- allarmi_history
+
 2020-11-17  Andrea Poli <apoli@link.it>
 
 	Modificati vincoli di univocità sulle tabelle contenenti proprietà

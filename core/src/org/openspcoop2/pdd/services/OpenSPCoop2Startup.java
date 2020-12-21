@@ -77,7 +77,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
+import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -91,6 +91,7 @@ import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.config.PreLoadingConfig;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.config.SystemPropertiesManager;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.FileSystemSerializer;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
@@ -919,7 +920,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			// GestoreStatistiche
 			try {
-				if(propertiesReader.isStatisticheGenerazioneEnabled()){
+				if(propertiesReader.isStatisticheGenerazioneEnabled() || propertiesReader.isControlloTrafficoEnabled()){
 					if(propertiesReader.isStatisticheUsePddRuntimeDatasource()) {
 						DBStatisticheManager.init(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
 					}
@@ -1726,6 +1727,26 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 
 
+			// *** Repository plugins ***
+			try{
+				if(propertiesReader.isConfigurazionePluginsEnabled()) {
+					CorePluginLoader.initialize(loader, OpenSPCoop2Logger.getLoggerOpenSPCoopPlugins(propertiesReader.isConfigurazionePluginsDebug()),
+							PddPluginLoader.class,
+							configurazionePdDManager.getRegistroPluginsReader(),
+							propertiesReader.getConfigurazionePluginsSeconds());
+				}
+				else {
+					CorePluginLoader.initialize(loader, OpenSPCoop2Logger.getLoggerOpenSPCoopPlugins(propertiesReader.isConfigurazionePluginsDebug()),
+							PddPluginLoader.class);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione plugins");
+				return;
+			}
+			
+			
+			
+			
 
 
 
@@ -1960,14 +1981,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					FileSystemUtilities.mkdir(dir, configMkdir);
 				}
 				
-				// sdkFramework
-				File sdkFrameworkDir = propertiesReader.getMonitorSDK_repositoryJars();
-				if(sdkFrameworkDir!=null){
-					configMkdir.setCheckCanWrite(false);
-					FileSystemUtilities.mkdir(sdkFrameworkDir, configMkdir);
-					configMkdir.setCheckCanWrite(true);
-				}
-				
 				// controlloTraffico
 				if(propertiesReader.isControlloTrafficoEnabled()){
 					File dirCT = propertiesReader.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
@@ -2078,29 +2091,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			
-			
-			
-			// *** Repository MonitorSDK ***
-			try{
-				DynamicFactory.initialize(propertiesReader.getMonitorSDK_repositoryJars());
-			}catch(Exception e){
-				msgDiag.logStartupError(e,"Inizializzazione DynamicFactory");
-				return;
-			}
-			
-			
-			
-			
-		
-		
-		
-		
-	
-		
-		
-		
-		
 		
 		
 			/* ----------- Inizializzazione Risorse JMX ------------ */

@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -85,10 +86,14 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.monitor.engine.config.base.IdPlugin;
+import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -112,10 +117,6 @@ import org.slf4j.Logger;
  */
 
 public class ConfigurazionePdD  {
-
-	private static final boolean CONTROLLO_TRAFFICO = true;
-	private static final boolean CONFIGURAZIONE_PORTA = false;
-	
 	
 	/** Fonti su cui effettuare le query:
 	 * - CACHE
@@ -158,6 +159,10 @@ public class ConfigurazionePdD  {
 	
 	/** ConfigurazionePdD_controlloTraffico */
 	private ConfigurazionePdD_controlloTraffico configurazionePdD_controlloTraffico = null;
+	
+	/** ConfigurazionePdD_plugins */
+	private ConfigurazionePdD_plugins configurazionePdD_plugins = null;
+	private ConfigurazionePdD_registroPlugins configurazionePdD_registroPlugins = null;
 
 
 
@@ -332,6 +337,15 @@ public class ConfigurazionePdD  {
 				this.configurazionePdD_controlloTraffico = new ConfigurazionePdD_controlloTraffico(this.openspcoopProperties, 
 						((DriverConfigurazioneDB)this.driverConfigurazionePdD),
 						this.useConnectionPdD);
+				
+				if(this.openspcoopProperties.isConfigurazionePluginsEnabled()) {
+					this.configurazionePdD_plugins = new ConfigurazionePdD_plugins(this.openspcoopProperties, 
+							((DriverConfigurazioneDB)this.driverConfigurazionePdD),
+							this.useConnectionPdD);
+					this.configurazionePdD_registroPlugins = new ConfigurazionePdD_registroPlugins(this.openspcoopProperties, 
+							((DriverConfigurazioneDB)this.driverConfigurazionePdD),
+							this.useConnectionPdD);
+				}
 			} 
 
 			// tipo di configurazione non conosciuto
@@ -1235,6 +1249,108 @@ public class ConfigurazionePdD  {
 			
 			this.prefillElencoPolicyAttive(alogConsole, connectionPdD, false, null, null);		
 
+			
+			
+			if(this.openspcoopProperties.isConfigurazionePluginsEnabled()) {
+			
+				msg = "[Prefill] Inizializzazione cache (Plugins), lettura dei pluins configurati ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			
+				int count = -1;
+				try {
+					count = this.configurazionePdD_plugins.countPlugins(connectionPdD);
+				}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				if(count>-1) {
+					msg = "[Prefill] Inizializzazione cache (Plugins), trovati "+count+" plugins";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
+					
+					int readed = 0;
+					while(readed<count) {
+					
+						int offset = readed;
+						int limit = 100;
+						
+						msg = "[Prefill] Inizializzazione cache (Plugins), inizializzazione (offset:"+offset+" limit:"+limit+") in corso ...";
+						this.log.debug(msg);
+						if(alogConsole!=null){
+							alogConsole.debug(msg);
+						}
+						
+						List<IdPlugin> list = null;
+						try {
+							list = this.configurazionePdD_plugins.findAllPluginIds(connectionPdD, offset, limit);
+							if(list!=null && !list.isEmpty()) {
+								for (IdPlugin idPlugin : list) {
+									
+									TipoPlugin tipoPlugin = TipoPlugin.toEnumConstant(idPlugin.getTipoPlugin());
+									if(tipoPlugin!=null) {
+										if(TipoPlugin.AUTENTICAZIONE.equals(tipoPlugin) || 
+												TipoPlugin.AUTORIZZAZIONE.equals(tipoPlugin) ||
+												TipoPlugin.AUTORIZZAZIONE_CONTENUTI.equals(tipoPlugin) ||
+												TipoPlugin.INTEGRAZIONE.equals(tipoPlugin)) {
+											
+											NameValue nvFruizione = new NameValue(PluginCostanti.FILTRO_RUOLO_NOME, PluginCostanti.FILTRO_RUOLO_VALORE_FRUIZIONE);
+											try{
+												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvFruizione));
+												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvFruizione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+
+											NameValue nvErogazione = new NameValue(PluginCostanti.FILTRO_RUOLO_NOME, PluginCostanti.FILTRO_RUOLO_VALORE_EROGAZIONE);
+											try{
+												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvErogazione));
+												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvErogazione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										}
+										else {
+											try{
+												this.cache.remove(_getKey_PluginClassName(idPlugin.getTipoPlugin(),idPlugin.getTipo()));
+												this.getPluginClassName(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo());
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										}
+									}
+									else {
+										try{
+											this.cache.remove(_getKey_PluginClassName(idPlugin.getTipoPlugin(),idPlugin.getTipo()));
+											this.getPluginClassName(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo());
+										}
+										catch(DriverConfigurazioneNotFound notFound){}
+										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+									}
+								}
+								readed = readed + list.size();
+							}
+							else {
+								readed = count; // condizione per uscire da while
+							}
+						}
+						catch(Exception e){
+							this.log.error("[prefill] errore"+e.getMessage(),e);
+							readed = count; // condizione per uscire da while
+						}
+						
+					}
+				}
+				
+				msg = "[Prefill] Inizializzazione cache (Plugins), lettura dei pluins configurati completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
 		}
 	}
 	
@@ -1445,7 +1561,7 @@ public class ConfigurazionePdD  {
 	 */
 	public Object getObjectCache(String keyCache,String methodName,
 			Connection connectionPdD,
-			boolean controlloTraffico,
+			ConfigurazionePdDType tipoConfigurazione,
 			Object ... instances) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		Class<?>[] classArgoments = null;
 		Object[] values = null;
@@ -1467,11 +1583,11 @@ public class ConfigurazionePdD  {
 				values[i] = instances[i];
 			}
 		}
-		return getObjectCache(keyCache, methodName, connectionPdD, controlloTraffico, classArgoments, values);
+		return getObjectCache(keyCache, methodName, connectionPdD, tipoConfigurazione, classArgoments, values);
 	}
 	public synchronized Object getObjectCache(String keyCache,String methodName,
 			Connection connectionPdD,
-			boolean controlloTraffico,
+			ConfigurazionePdDType tipoConfigurazione,
 			Class<?>[] classArgoments, Object[] values) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 
@@ -1506,7 +1622,7 @@ public class ConfigurazionePdD  {
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
 			try{
-				obj = getObject(methodName,connectionPdD,controlloTraffico,classArgoments,values);
+				obj = getObject(methodName,connectionPdD,tipoConfigurazione,classArgoments,values);
 			}catch(DriverConfigurazioneNotFound e){
 				dNotFound = e;
 			}
@@ -1556,7 +1672,7 @@ public class ConfigurazionePdD  {
 	 */
 	public Object getObject(String methodNameParam,
 			Connection connectionPdD,
-			boolean controlloTraffico,
+			ConfigurazionePdDType tipoConfigurazione,
 			Object ... instances) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		Class<?>[] classArgoments = null;
 		Object[] values = null;
@@ -1578,11 +1694,11 @@ public class ConfigurazionePdD  {
 				values[i] = instances[i];
 			}
 		}
-		return getObject(methodNameParam, connectionPdD, controlloTraffico, classArgoments, values);
+		return getObject(methodNameParam, connectionPdD, tipoConfigurazione, classArgoments, values);
 	}
 	public Object getObject(String methodNameParam,
 			Connection connectionPdD,
-			boolean controlloTraffico,
+			ConfigurazionePdDType tipoConfigurazione,
 			Class<?>[] classArgoments, Object[] values) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		String methodName = null;
@@ -1598,7 +1714,9 @@ public class ConfigurazionePdD  {
 		DriverConfigurazioneNotFound notFound = null;
 		this.log.debug("Cerco nella configurazione");
 		try{
-			if(controlloTraffico) {
+			switch (tipoConfigurazione) {
+			case controlloTraffico:
+			{
 				if(this.configurazionePdD_controlloTraffico==null) {
 					throw new Exception("Driver ControlloTraffico non istanziato");
 				}
@@ -1620,8 +1738,33 @@ public class ConfigurazionePdD  {
 					obj = method.invoke(this.configurazionePdD_controlloTraffico, connectionPdD,values[0],values[1],values[2],values[3]);
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
+				break;
 			}
-			else {
+			case plugins: {
+				if(this.configurazionePdD_plugins==null) {
+					throw new Exception("Driver Plugins non istanziato");
+				}
+				this.log.debug("invocazione metodo ["+methodName+"]...");
+				if(classArgoments==null || classArgoments.length==0){
+					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class);
+					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD);
+				}else if(classArgoments.length==1){
+					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class, classArgoments[0]);
+					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD,values[0]);
+				}else if(classArgoments.length==2){
+					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1]);
+					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD,values[0],values[1]);
+				}else if(classArgoments.length==3){
+					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2]);
+					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD,values[0],values[1],values[2]);
+				}else if(classArgoments.length==4){
+					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3]);
+					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD,values[0],values[1],values[2],values[3]);
+				}else
+					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
+				break;
+			}
+			case config: {
 				org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
 				this.log.debug("invocazione metodo ["+methodName+"]...");
 				if(classArgoments==null || classArgoments.length==0){
@@ -1641,6 +1784,8 @@ public class ConfigurazionePdD  {
 					obj = method.invoke(driver,values[0],values[1],values[2],values[3]);
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
+				break;
+			}
 			}
 		}catch(DriverConfigurazioneNotFound e){
 			this.log.debug("Ricerca nella configurazione non riuscita (metodo ["+methodName+"]): "+e.getMessage());
@@ -1798,9 +1943,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		Soggetto sogg = null;
 		if(this.cache!=null){
-			sogg = (Soggetto) this.getObjectCache(key,"getSoggetto",connectionPdD,CONFIGURAZIONE_PORTA,aSoggetto);
+			sogg = (Soggetto) this.getObjectCache(key,"getSoggetto",connectionPdD,ConfigurazionePdDType.config,aSoggetto);
 		}else{
-			sogg = (Soggetto) this.getObject("getSoggetto",connectionPdD,CONFIGURAZIONE_PORTA,aSoggetto);
+			sogg = (Soggetto) this.getObject("getSoggetto",connectionPdD,ConfigurazionePdDType.config,aSoggetto);
 		}
 
 		if(sogg!=null)
@@ -1835,9 +1980,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		Soggetto sogg = null;
 		if(this.cache!=null){
-			sogg = (Soggetto) this.getObjectCache(key,"getRouter",connectionPdD,CONFIGURAZIONE_PORTA);
+			sogg = (Soggetto) this.getObjectCache(key,"getRouter",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			sogg = (Soggetto) this.getObject("getRouter",connectionPdD,CONFIGURAZIONE_PORTA);
+			sogg = (Soggetto) this.getObject("getRouter",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(sogg!=null)
@@ -1873,9 +2018,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		List<IDSoggetto> lista = null;
 		if(this.cache!=null){
-			lista = (List<IDSoggetto>) this.getObjectCache(key,"getSoggettiVirtuali",connectionPdD,CONFIGURAZIONE_PORTA);
+			lista = (List<IDSoggetto>) this.getObjectCache(key,"getSoggettiVirtuali",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			lista = (List<IDSoggetto>) this.getObject("getSoggettiVirtuali",connectionPdD,CONFIGURAZIONE_PORTA);
+			lista = (List<IDSoggetto>) this.getObject("getSoggettiVirtuali",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(lista!=null)
@@ -1911,9 +2056,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		List<IDServizio> lista = null;
 		if(this.cache!=null){
-			lista = (List<IDServizio>) this.getObjectCache(key,"getServizi_SoggettiVirtuali",connectionPdD,CONFIGURAZIONE_PORTA);
+			lista = (List<IDServizio>) this.getObjectCache(key,"getServizi_SoggettiVirtuali",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			lista = (List<IDServizio>) this.getObject("getServizi_SoggettiVirtuali",connectionPdD,CONFIGURAZIONE_PORTA);
+			lista = (List<IDServizio>) this.getObject("getServizi_SoggettiVirtuali",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(lista!=null)
@@ -1959,9 +2104,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		IDPortaDelegata idPD = null;
 		if(this.cache!=null){
-			idPD = (IDPortaDelegata) this.getObjectCache(key,"getIDPortaDelegata",connectionPdD,CONFIGURAZIONE_PORTA,nome);
+			idPD = (IDPortaDelegata) this.getObjectCache(key,"getIDPortaDelegata",connectionPdD,ConfigurazionePdDType.config,nome);
 		}else{
-			idPD = (IDPortaDelegata) this.getObject("getIDPortaDelegata",connectionPdD,CONFIGURAZIONE_PORTA,nome);
+			idPD = (IDPortaDelegata) this.getObject("getIDPortaDelegata",connectionPdD,ConfigurazionePdDType.config,nome);
 		}
 
 		if(idPD!=null)
@@ -2002,9 +2147,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		PortaDelegata pd = null;
 		if(this.cache!=null){
-			pd = (PortaDelegata) this.getObjectCache(key,"getPortaDelegata",connectionPdD,CONFIGURAZIONE_PORTA,idPD);
+			pd = (PortaDelegata) this.getObjectCache(key,"getPortaDelegata",connectionPdD,ConfigurazionePdDType.config,idPD);
 		}else{
-			pd = (PortaDelegata) this.getObject("getPortaDelegata",connectionPdD,CONFIGURAZIONE_PORTA,idPD);
+			pd = (PortaDelegata) this.getObject("getPortaDelegata",connectionPdD,ConfigurazionePdDType.config,idPD);
 		}
 
 		if(pd!=null)
@@ -2036,7 +2181,7 @@ public class ConfigurazionePdD  {
 			}
 		}
 		
-		PortaDelegata pd = (PortaDelegata) this.getObject("getPortaDelegata",connectionPdD,CONFIGURAZIONE_PORTA,idPD);
+		PortaDelegata pd = (PortaDelegata) this.getObject("getPortaDelegata",connectionPdD,ConfigurazionePdDType.config,idPD);
 		if(!stato.equals(pd.getStato())) {
 			org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
 			if(driver instanceof DriverConfigurazioneDB) {
@@ -2084,9 +2229,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		IDPortaApplicativa idPA = null;
 		if(this.cache!=null){
-			idPA = (IDPortaApplicativa) this.getObjectCache(key,"getIDPortaApplicativa",connectionPdD,CONFIGURAZIONE_PORTA,nome);
+			idPA = (IDPortaApplicativa) this.getObjectCache(key,"getIDPortaApplicativa",connectionPdD,ConfigurazionePdDType.config,nome);
 		}else{
-			idPA = (IDPortaApplicativa) this.getObject("getIDPortaApplicativa",connectionPdD,CONFIGURAZIONE_PORTA,nome);
+			idPA = (IDPortaApplicativa) this.getObject("getIDPortaApplicativa",connectionPdD,ConfigurazionePdDType.config,nome);
 		}
 
 		if(idPA!=null)
@@ -2130,9 +2275,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		PortaApplicativa pa = null;
 		if(this.cache!=null){
-			pa = (PortaApplicativa) this.getObjectCache(key,"getPortaApplicativa",connectionPdD,CONFIGURAZIONE_PORTA,idPA);
+			pa = (PortaApplicativa) this.getObjectCache(key,"getPortaApplicativa",connectionPdD,ConfigurazionePdDType.config,idPA);
 		}else{
-			pa = (PortaApplicativa) this.getObject("getPortaApplicativa",connectionPdD,CONFIGURAZIONE_PORTA,idPA);
+			pa = (PortaApplicativa) this.getObject("getPortaApplicativa",connectionPdD,ConfigurazionePdDType.config,idPA);
 		}
 
 		if(pa!=null){
@@ -2167,7 +2312,7 @@ public class ConfigurazionePdD  {
 		}
 		
 		
-		PortaApplicativa pa = (PortaApplicativa) this.getObject("getPortaApplicativa",connectionPdD,CONFIGURAZIONE_PORTA,idPA);
+		PortaApplicativa pa = (PortaApplicativa) this.getObject("getPortaApplicativa",connectionPdD,ConfigurazionePdDType.config,idPA);
 		if(!stato.equals(pa.getStato())) {
 			org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
 			if(driver instanceof DriverConfigurazioneDB) {
@@ -2226,9 +2371,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		List<PortaApplicativa> list = null;
 		if(this.cache!=null){
-			list = (List<PortaApplicativa>) this.getObjectCache(key,"getPorteApplicative",connectionPdD,CONFIGURAZIONE_PORTA,classArgoments,values);
+			list = (List<PortaApplicativa>) this.getObjectCache(key,"getPorteApplicative",connectionPdD,ConfigurazionePdDType.config,classArgoments,values);
 		}else{
-			list = (List<PortaApplicativa>) this.getObject("getPorteApplicative",connectionPdD,CONFIGURAZIONE_PORTA,classArgoments,values);
+			list = (List<PortaApplicativa>) this.getObject("getPorteApplicative",connectionPdD,ConfigurazionePdDType.config,classArgoments,values);
 		}
 
 		if(list!=null){
@@ -2288,9 +2433,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		List<PortaApplicativa> list = null;
 		if(this.cache!=null){
-			list = (List<PortaApplicativa>) this.getObjectCache(key,"getPorteApplicativeVirtuali",connectionPdD,CONFIGURAZIONE_PORTA,classArgoments,values);
+			list = (List<PortaApplicativa>) this.getObjectCache(key,"getPorteApplicativeVirtuali",connectionPdD,ConfigurazionePdDType.config,classArgoments,values);
 		}else{
-			list = (List<PortaApplicativa>) this.getObject("getPorteApplicativeVirtuali",connectionPdD,CONFIGURAZIONE_PORTA,classArgoments,values);
+			list = (List<PortaApplicativa>) this.getObject("getPorteApplicativeVirtuali",connectionPdD,ConfigurazionePdDType.config,classArgoments,values);
 		}
 
 		if(list!=null){
@@ -2363,9 +2508,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		Map<IDSoggetto,PortaApplicativa> pa = null;
 		if(this.cache!=null){
-			pa = (Map<IDSoggetto,PortaApplicativa>) this.getObjectCache(key,"getPorteApplicative_SoggettiVirtuali",connectionPdD,CONFIGURAZIONE_PORTA,idServizio);
+			pa = (Map<IDSoggetto,PortaApplicativa>) this.getObjectCache(key,"getPorteApplicative_SoggettiVirtuali",connectionPdD,ConfigurazionePdDType.config,idServizio);
 		}else{
-			pa = (Map<IDSoggetto,PortaApplicativa>) this.getObject("getPorteApplicative_SoggettiVirtuali",connectionPdD,CONFIGURAZIONE_PORTA,idServizio);
+			pa = (Map<IDSoggetto,PortaApplicativa>) this.getObject("getPorteApplicative_SoggettiVirtuali",connectionPdD,ConfigurazionePdDType.config,idServizio);
 		}
 
 		if(pa!=null){
@@ -2558,9 +2703,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativo",connectionPdD,CONFIGURAZIONE_PORTA,idServizioApplicativo);
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativo",connectionPdD,ConfigurazionePdDType.config,idServizioApplicativo);
 		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativo",connectionPdD,CONFIGURAZIONE_PORTA,idServizioApplicativo);
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativo",connectionPdD,ConfigurazionePdDType.config,idServizioApplicativo);
 		}
 
 		if(s!=null)
@@ -2603,9 +2748,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiBasic",connectionPdD,CONFIGURAZIONE_PORTA,aUser,aPassword, config);
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiBasic",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, config);
 		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiBasic",connectionPdD,CONFIGURAZIONE_PORTA,aUser,aPassword, config);
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiBasic",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, config);
 		}
 
 		if(s!=null)
@@ -2648,9 +2793,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiApiKey",connectionPdD,CONFIGURAZIONE_PORTA,aUser,aPassword, appId, config);
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiApiKey",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, appId, config);
 		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiApiKey",connectionPdD,CONFIGURAZIONE_PORTA,aUser,aPassword, appId, config);
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiApiKey",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, appId, config);
 		}
 
 		if(s!=null)
@@ -2699,9 +2844,9 @@ public class ConfigurazionePdD  {
 		Object[]values = new Object[] {aSubject , aIssuer}; // passo gli argomenti tramite array poich' aIssuer puo' essere null
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA,classArguments, values);
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,ConfigurazionePdDType.config,classArguments, values);
 		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA,classArguments, values);
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiSsl",connectionPdD,ConfigurazionePdDType.config,classArguments, values);
 		}
 
 		if(s!=null)
@@ -2749,9 +2894,9 @@ public class ConfigurazionePdD  {
 		Object[]values = new Object[] {certificate , strictVerifier};
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA, classArguments, values);
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,ConfigurazionePdDType.config, classArguments, values);
 		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA, classArguments, values);
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiSsl",connectionPdD,ConfigurazionePdDType.config, classArguments, values);
 		}
 
 		if(s!=null)
@@ -2792,9 +2937,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiPrincipal",connectionPdD,CONFIGURAZIONE_PORTA,principal);
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal);
 		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiPrincipal",connectionPdD,CONFIGURAZIONE_PORTA,principal);
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal);
 		}
 
 		if(s!=null)
@@ -2834,9 +2979,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		List<IDConnettore> l = null;
 		if(this.cache!=null){
-			l = (List<IDConnettore>) this.getObjectCache(key,"getConnettoriConsegnaNotifichePrioritarie",connectionPdD,CONFIGURAZIONE_PORTA,queue);
+			l = (List<IDConnettore>) this.getObjectCache(key,"getConnettoriConsegnaNotifichePrioritarie",connectionPdD,ConfigurazionePdDType.config,queue);
 		}else{
-			l = (List<IDConnettore>) this.getObject("getConnettoriConsegnaNotifichePrioritarie",connectionPdD,CONFIGURAZIONE_PORTA,queue);
+			l = (List<IDConnettore>) this.getObject("getConnettoriConsegnaNotifichePrioritarie",connectionPdD,ConfigurazionePdDType.config,queue);
 		}
 
 		if(l!=null)
@@ -2891,9 +3036,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		RoutingTable r = null;
 		if(this.cache!=null){
-			r = (RoutingTable) this.getObjectCache(key,"getRoutingTable",connectionPdD,CONFIGURAZIONE_PORTA);
+			r = (RoutingTable) this.getObjectCache(key,"getRoutingTable",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			r = (RoutingTable) this.getObject("getRoutingTable",connectionPdD,CONFIGURAZIONE_PORTA);
+			r = (RoutingTable) this.getObject("getRoutingTable",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(r!=null){
@@ -2940,9 +3085,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoRegistro ar = null;
 		if(this.cache!=null){
-			ar = (AccessoRegistro) this.getObjectCache(key,"getAccessoRegistro",connectionPdD,CONFIGURAZIONE_PORTA);
+			ar = (AccessoRegistro) this.getObjectCache(key,"getAccessoRegistro",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			ar = (AccessoRegistro) this.getObject("getAccessoRegistro",connectionPdD,CONFIGURAZIONE_PORTA);
+			ar = (AccessoRegistro) this.getObject("getAccessoRegistro",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(ar!=null){
@@ -2989,9 +3134,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoConfigurazione object = null;
 		if(this.cache!=null){
-			object = (AccessoConfigurazione) this.getObjectCache(key,"getAccessoConfigurazione",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoConfigurazione) this.getObjectCache(key,"getAccessoConfigurazione",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoConfigurazione) this.getObject("getAccessoConfigurazione",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoConfigurazione) this.getObject("getAccessoConfigurazione",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(object!=null){
@@ -3038,9 +3183,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiAutorizzazione object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiAutorizzazione) this.getObjectCache(key,"getAccessoDatiAutorizzazione",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoDatiAutorizzazione) this.getObjectCache(key,"getAccessoDatiAutorizzazione",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiAutorizzazione) this.getObject("getAccessoDatiAutorizzazione",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoDatiAutorizzazione) this.getObject("getAccessoDatiAutorizzazione",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(object!=null){
@@ -3087,9 +3232,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiAutenticazione object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiAutenticazione) this.getObjectCache(key,"getAccessoDatiAutenticazione",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoDatiAutenticazione) this.getObjectCache(key,"getAccessoDatiAutenticazione",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiAutenticazione) this.getObject("getAccessoDatiAutenticazione",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoDatiAutenticazione) this.getObject("getAccessoDatiAutenticazione",connectionPdD,ConfigurazionePdDType.config);
 		}
 		
 		if(object!=null){
@@ -3137,9 +3282,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiGestioneToken object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiGestioneToken) this.getObjectCache(key,"getAccessoDatiGestioneToken",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoDatiGestioneToken) this.getObjectCache(key,"getAccessoDatiGestioneToken",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiGestioneToken) this.getObject("getAccessoDatiGestioneToken",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoDatiGestioneToken) this.getObject("getAccessoDatiGestioneToken",connectionPdD,ConfigurazionePdDType.config);
 		}
 		
 		if(object!=null){
@@ -3187,9 +3332,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiKeystore object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiKeystore) this.getObjectCache(key,"getAccessoDatiKeystore",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoDatiKeystore) this.getObjectCache(key,"getAccessoDatiKeystore",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiKeystore) this.getObject("getAccessoDatiKeystore",connectionPdD,CONFIGURAZIONE_PORTA);
+			object = (AccessoDatiKeystore) this.getObject("getAccessoDatiKeystore",connectionPdD,ConfigurazionePdDType.config);
 		}
 		
 		if(object!=null){
@@ -3264,7 +3409,7 @@ public class ConfigurazionePdD  {
 		}
 		if(this.cache!=null){
 			try{
-				ge = (GestioneErrore) this.getObjectCache(key,nomeMetodo,connectionPdD,CONFIGURAZIONE_PORTA);
+				ge = (GestioneErrore) this.getObjectCache(key,nomeMetodo,connectionPdD,ConfigurazionePdDType.config);
 			}catch(DriverConfigurazioneException e){
 				String erroreCooperazione= "Configurazione, Algoritmo di Cache fallito: Metodo (getGestioneErroreComponenteCooperazione) ha ritornato un valore null";
 				String erroreIntegrazione= "Configurazione, Algoritmo di Cache fallito: Metodo (getGestioneErroreComponenteIntegrazione) ha ritornato un valore null";
@@ -3275,7 +3420,7 @@ public class ConfigurazionePdD  {
 				}
 			}
 		}else{
-			ge = (GestioneErrore) this.getObject(nomeMetodo,connectionPdD,CONFIGURAZIONE_PORTA);
+			ge = (GestioneErrore) this.getObject(nomeMetodo,connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(ge!=null){
@@ -3327,9 +3472,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		Configurazione c = null;
 		if(this.cache!=null){
-			c = (Configurazione) this.getObjectCache(key,"getConfigurazioneGenerale",connectionPdD,CONFIGURAZIONE_PORTA);
+			c = (Configurazione) this.getObjectCache(key,"getConfigurazioneGenerale",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			c = (Configurazione) this.getObject("getConfigurazioneGenerale",connectionPdD,CONFIGURAZIONE_PORTA);
+			c = (Configurazione) this.getObject("getConfigurazioneGenerale",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(c!=null){
@@ -3396,12 +3541,12 @@ public class ConfigurazionePdD  {
 		GenericProperties gp = null;
 		if(!forceNoCache && this.cache!=null){
 			try{
-				gp = (GenericProperties) this.getObjectCache(key,"getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia, nome);
+				gp = (GenericProperties) this.getObjectCache(key,"getGenericProperties",connectionPdD,ConfigurazionePdDType.config, tipologia, nome);
 			}catch(DriverConfigurazioneException e){
 				throw e;
 			}
 		}else{
-			gp = (GenericProperties) this.getObject("getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia, nome);
+			gp = (GenericProperties) this.getObject("getGenericProperties",connectionPdD,ConfigurazionePdDType.config, tipologia, nome);
 		}
 
 		if(gp!=null){
@@ -3445,12 +3590,12 @@ public class ConfigurazionePdD  {
 		List<GenericProperties> gp = null;
 		if(!forceNoCache && this.cache!=null){
 			try{
-				gp = (List<GenericProperties>) this.getObjectCache(key,"getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia);
+				gp = (List<GenericProperties>) this.getObjectCache(key,"getGenericProperties",connectionPdD,ConfigurazionePdDType.config, tipologia);
 			}catch(DriverConfigurazioneException e){
 				throw e;
 			}
 		}else{
-			gp = (List<GenericProperties>) this.getObject("getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia);
+			gp = (List<GenericProperties>) this.getObject("getGenericProperties",connectionPdD,ConfigurazionePdDType.config, tipologia);
 		}
 
 		if(gp!=null){
@@ -3488,9 +3633,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		Configurazione c = null;
 		if(this.cache!=null){
-			c = (Configurazione) this.getObjectCache(key,"getConfigurazioneWithOnlyExtendedInfo",connectionPdD,CONFIGURAZIONE_PORTA);
+			c = (Configurazione) this.getObjectCache(key,"getConfigurazioneWithOnlyExtendedInfo",connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			c = (Configurazione) this.getObject("getConfigurazioneWithOnlyExtendedInfo",connectionPdD,CONFIGURAZIONE_PORTA);
+			c = (Configurazione) this.getObject("getConfigurazioneWithOnlyExtendedInfo",connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(c!=null){
@@ -3527,9 +3672,9 @@ public class ConfigurazionePdD  {
 		Object c = null;
 		Configurazione configurazioneGenerale = this.getConfigurazioneGenerale(connectionPdD);
 		if(this.cache!=null){
-			c = this.getObjectCache(key,"getConfigurazioneExtended",connectionPdD,CONFIGURAZIONE_PORTA, configurazioneGenerale, id);
+			c = this.getObjectCache(key,"getConfigurazioneExtended",connectionPdD,ConfigurazionePdDType.config, configurazioneGenerale, id);
 		}else{
-			c = this.getObject("getConfigurazioneExtended",connectionPdD,CONFIGURAZIONE_PORTA, configurazioneGenerale, id);
+			c = this.getObject("getConfigurazioneExtended",connectionPdD,ConfigurazionePdDType.config, configurazioneGenerale, id);
 		}
 
 		if(c!=null){
@@ -3589,9 +3734,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		List<?> list = null;
 		if(this.cache!=null){
-			list = (List<?>) this.getObjectCache(key,nomeMetodo,connectionPdD,CONFIGURAZIONE_PORTA,filtroRicerca);
+			list = (List<?>) this.getObjectCache(key,nomeMetodo,connectionPdD,ConfigurazionePdDType.config,filtroRicerca);
 		}else{
-			list = (List<?>) this.getObject(nomeMetodo,connectionPdD,CONFIGURAZIONE_PORTA,filtroRicerca);
+			list = (List<?>) this.getObject(nomeMetodo,connectionPdD,ConfigurazionePdDType.config,filtroRicerca);
 		}
 
 		if(list!=null)
@@ -3633,9 +3778,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ConfigurazioneGenerale conf = null;
 		if(this.cache!=null){
-			conf = (ConfigurazioneGenerale) this.getObjectCache(key,"getConfigurazioneControlloTraffico",connectionPdD, CONTROLLO_TRAFFICO);
+			conf = (ConfigurazioneGenerale) this.getObjectCache(key,"getConfigurazioneControlloTraffico",connectionPdD, ConfigurazionePdDType.controlloTraffico);
 		}else{
-			conf = (ConfigurazioneGenerale) this.getObject("getConfigurazioneControlloTraffico",connectionPdD, CONTROLLO_TRAFFICO);
+			conf = (ConfigurazioneGenerale) this.getObject("getConfigurazioneControlloTraffico",connectionPdD, ConfigurazionePdDType.controlloTraffico);
 		}
 
 		if(conf!=null)
@@ -3699,17 +3844,17 @@ public class ConfigurazionePdD  {
 		Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> elenco = null;
 		if(this.cache!=null  && useCache){
 			if(api) {
-				elenco = (Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive>) this.getObjectCache(key,nomeMetodo,connectionPdD, CONTROLLO_TRAFFICO, tipoPdD, nomePorta);
+				elenco = (Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive>) this.getObjectCache(key,nomeMetodo,connectionPdD, ConfigurazionePdDType.controlloTraffico, tipoPdD, nomePorta);
 			}
 			else {
-				elenco = (Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive>) this.getObjectCache(key,nomeMetodo,connectionPdD, CONTROLLO_TRAFFICO);
+				elenco = (Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive>) this.getObjectCache(key,nomeMetodo,connectionPdD, ConfigurazionePdDType.controlloTraffico);
 			}
 		}else{
 			if(api) {
-				elenco = (Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive>) this.getObject(nomeMetodo,connectionPdD, CONTROLLO_TRAFFICO, tipoPdD, nomePorta);
+				elenco = (Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive>) this.getObject(nomeMetodo,connectionPdD, ConfigurazionePdDType.controlloTraffico, tipoPdD, nomePorta);
 			}
 			else {
-				elenco = (Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive>) this.getObject(nomeMetodo,connectionPdD, CONTROLLO_TRAFFICO);
+				elenco = (Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive>) this.getObject(nomeMetodo,connectionPdD, ConfigurazionePdDType.controlloTraffico);
 			}
 		}
 
@@ -3746,9 +3891,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AttivazionePolicy policy = null;
 		if(this.cache!=null  && useCache){
-			policy = (AttivazionePolicy) this.getObjectCache(key,"getAttivazionePolicy",connectionPdD, CONTROLLO_TRAFFICO, id);
+			policy = (AttivazionePolicy) this.getObjectCache(key,"getAttivazionePolicy",connectionPdD, ConfigurazionePdDType.controlloTraffico, id);
 		}else{
-			policy = (AttivazionePolicy) this.getObject("getAttivazionePolicy",connectionPdD, CONTROLLO_TRAFFICO, id);
+			policy = (AttivazionePolicy) this.getObject("getAttivazionePolicy",connectionPdD, ConfigurazionePdDType.controlloTraffico, id);
 		}
 
 		if(policy!=null)
@@ -3784,9 +3929,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ElencoIdPolicy elenco = null;
 		if(this.cache!=null  && useCache){
-			elenco = (ElencoIdPolicy) this.getObjectCache(key,"getElencoIdPolicy",connectionPdD, CONTROLLO_TRAFFICO);
+			elenco = (ElencoIdPolicy) this.getObjectCache(key,"getElencoIdPolicy",connectionPdD, ConfigurazionePdDType.controlloTraffico);
 		}else{
-			elenco = (ElencoIdPolicy) this.getObject("getElencoIdPolicy",connectionPdD, CONTROLLO_TRAFFICO);
+			elenco = (ElencoIdPolicy) this.getObject("getElencoIdPolicy",connectionPdD, ConfigurazionePdDType.controlloTraffico);
 		}
 
 		if(elenco!=null)
@@ -3822,9 +3967,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ConfigurazionePolicy policy = null;
 		if(this.cache!=null  && useCache){
-			policy = (ConfigurazionePolicy) this.getObjectCache(key,"getConfigurazionePolicy",connectionPdD, CONTROLLO_TRAFFICO, id);
+			policy = (ConfigurazionePolicy) this.getObjectCache(key,"getConfigurazionePolicy",connectionPdD, ConfigurazionePdDType.controlloTraffico, id);
 		}else{
-			policy = (ConfigurazionePolicy) this.getObject("getConfigurazionePolicy",connectionPdD, CONTROLLO_TRAFFICO, id);
+			policy = (ConfigurazionePolicy) this.getObject("getConfigurazionePolicy",connectionPdD, ConfigurazionePdDType.controlloTraffico, id);
 		}
 
 		if(policy!=null)
@@ -3834,6 +3979,100 @@ public class ConfigurazionePdD  {
 	}
 	
 	
+	
+	
+	
+	
+	/* ******** PLUGINS ******** */
+	
+	public IRegistroPluginsReader getRegistroPluginsReader() {
+		return this.configurazionePdD_registroPlugins;
+	}
+	
+	public static String _getKey_PluginClassName(String tipoPlugin, String tipo){
+		return "PluginClassName_"+tipoPlugin+"#"+tipo;
+	}
+	public String getPluginClassName(Connection connectionPdD, String tipoPlugin, String tipo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_PluginClassName(tipoPlugin, tipo);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((String) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		String className = null;
+		if(this.cache!=null){
+			className = (String) this.getObjectCache(key,"getPluginClassName",connectionPdD, ConfigurazionePdDType.plugins, tipoPlugin, tipo);
+		}else{
+			className = (String) this.getObject("getPluginClassName",connectionPdD, ConfigurazionePdDType.plugins, tipoPlugin, tipo);
+		}
+
+		if(className!=null)
+			return className;
+		else
+			throw new DriverConfigurazioneNotFound("[getPluginClassName] plugin non trovato");
+	}
+	
+	
+	public static String _getKey_PluginClassNameByFilter(String tipoPlugin, String tipo, NameValue ... filtri){
+		StringBuilder sb = new StringBuilder();
+		sb.append("PluginClassNameByFilter_"+tipoPlugin+"#"+tipo);
+		
+		if(filtri!=null && filtri.length>0) {
+			for (int i = 0; i < filtri.length; i++) {
+				NameValue filtro = filtri[i];
+				sb.append(".F").append(i).append("_").append(filtro.getName()).append("=").append(filtro.getValue());
+			}
+		}
+		
+		return sb.toString();
+	}
+	public String getPluginClassNameByFilter(Connection connectionPdD, String tipoPlugin, String tipo, NameValue ... filtri) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_PluginClassNameByFilter(tipoPlugin, tipo, filtri);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((String) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		String className = null;
+		if(this.cache!=null){
+			className = (String) this.getObjectCache(key,"getPluginClassNameByFilter",connectionPdD, ConfigurazionePdDType.plugins, tipoPlugin, tipo, filtri);
+		}else{
+			className = (String) this.getObject("getPluginClassNameByFilter",connectionPdD, ConfigurazionePdDType.plugins, tipoPlugin, tipo, filtri);
+		}
+
+		if(className!=null)
+			return className;
+		else
+			throw new DriverConfigurazioneNotFound("[getPluginClassNameByFilter] plugin non trovato");
+	}
 	
 	
 	

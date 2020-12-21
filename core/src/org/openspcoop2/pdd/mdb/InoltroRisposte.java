@@ -45,7 +45,6 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
 import org.openspcoop2.pdd.core.AbstractCore;
@@ -1021,25 +1020,28 @@ public class InoltroRisposte extends GenericLib{
 			OpenSPCoop2MessageFactory faultConnectionReplyMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
-			// Ricerco connettore
-			ClassNameProperties prop = ClassNameProperties.getInstance();
-			String connectorClass = prop.getConnettore(tipoConnector);
-			if(connectorClass == null){
-				msgDiag.logErroreGenerico("Connettore non registrato","ClassNameProperties.getConnettore("+tipoConnector+")");
-				invokerNonSupportato = true;
-			}
-
 			// Carico connettore richiesto
+			String connectorClass = null;
 			@SuppressWarnings("unused")
 			Exception eInvokerNonSupportato = null;
 			if(invokerNonSupportato==false){
 				try{
-					connectorSender = (IConnettore) this.loader.newInstance(connectorClass);
-					AbstractCore.init(connectorSender, pddContext, protocolFactory);
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
+					connectorSender = (IConnettore) this.pluginLoader.newConnettore(tipoConnector);
+				}
+				catch(Exception e){
+					msgDiag.logErroreGenerico(e,"Inizializzazione Connettore"); // l'errore contiene gia tutte le informazioni
 					invokerNonSupportato = true;
 					eInvokerNonSupportato = e;
+				}
+				if(connectorSender!=null) {
+					try {
+						connectorClass = connectorSender.getClass().getName();
+						AbstractCore.init(connectorSender, pddContext, protocolFactory);
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e,"IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
+						invokerNonSupportato = true;
+						eInvokerNonSupportato = e;
+					}
 				}
 				if( (invokerNonSupportato == false) && (connectorSender == null)){
 					msgDiag.logErroreGenerico("ConnectorSender is null","IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");

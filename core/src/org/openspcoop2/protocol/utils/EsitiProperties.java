@@ -547,7 +547,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitiCodeKo() throws ProtocolException {
 		if(this.esitiCodeKo == null){
-			this.esitiCodeKo = new ArrayList<Integer>();
+			List<Integer> esitiCodeKo = new ArrayList<Integer>();
 			List<Integer> esiti = this.getEsitiCodeOrderLabel();
 			for (Integer esito : esiti) {
 				boolean found = false;
@@ -559,10 +559,10 @@ public class EsitiProperties {
 					}
 				}
 				if(!found){
-					this.esitiCodeKo.add(esito);
+					esitiCodeKo.add(esito);
 				}
 			}
-			this.esitiCodeKo = filterByProtocol(this.esitiCodeKo);
+			this.esitiCodeKo = filterByProtocol(esitiCodeKo);
 		}
 	}
 	
@@ -599,8 +599,9 @@ public class EsitiProperties {
 	private synchronized void initEsitiCodeFaultApplicativo() throws ProtocolException {
 		if(this.esitiCodeFaultApplicativo == null){
 			int codeFaultApplicativo = this.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
-			this.esitiCodeFaultApplicativo = new ArrayList<Integer>();
-			this.esitiCodeFaultApplicativo.add(codeFaultApplicativo);
+			List<Integer> esitiCodeFaultApplicativo = new ArrayList<Integer>();
+			esitiCodeFaultApplicativo.add(codeFaultApplicativo);
+			this.esitiCodeFaultApplicativo = esitiCodeFaultApplicativo;
 		}
 	}
 	
@@ -642,14 +643,14 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitiCodeForSoapFaultIdentificationMode() throws ProtocolException {
 		if(this.esitiCodeForSoapFaultIdentificationMode == null){
-			this.esitiCodeForSoapFaultIdentificationMode = new ArrayList<Integer>();
+			List<Integer> esitiCodeForSoapFaultIdentificationMode = new ArrayList<Integer>();
 			List<Integer> codes = getEsitiCode();  
 			for (Integer codeEsito : codes) {
 				if(EsitoIdentificationMode.SOAP_FAULT.equals(this.getEsitoIdentificationMode(codeEsito))){
-					this.esitiCodeForSoapFaultIdentificationMode.add(codeEsito);
+					esitiCodeForSoapFaultIdentificationMode.add(codeEsito);
 				}
 			}
-			this.esitiCodeForSoapFaultIdentificationMode = filterByProtocol(this.esitiCodeForSoapFaultIdentificationMode);
+			this.esitiCodeForSoapFaultIdentificationMode = filterByProtocol(esitiCodeForSoapFaultIdentificationMode);
 		}
 	}
 	
@@ -663,14 +664,14 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitiCodeForContextPropertyIdentificationMode() throws ProtocolException {
 		if(this.esitiCodeForContextPropertyIdentificationMode == null){
-			this.esitiCodeForContextPropertyIdentificationMode = new ArrayList<Integer>();
+			List<Integer> esitiCodeForContextPropertyIdentificationMode = new ArrayList<Integer>();
 			List<Integer> codes = getEsitiCode();  
 			for (Integer codeEsito : codes) {
 				if(EsitoIdentificationMode.CONTEXT_PROPERTY.equals(this.getEsitoIdentificationMode(codeEsito))){
-					this.esitiCodeForContextPropertyIdentificationMode.add(codeEsito);
+					esitiCodeForContextPropertyIdentificationMode.add(codeEsito);
 				}
 			}
-			this.esitiCodeForContextPropertyIdentificationMode = filterByProtocol(this.esitiCodeForContextPropertyIdentificationMode);
+			this.esitiCodeForContextPropertyIdentificationMode = filterByProtocol(esitiCodeForContextPropertyIdentificationMode);
 		}
 	}
 
@@ -699,10 +700,11 @@ public class EsitiProperties {
 	private synchronized void initEsitiOrderLabel() throws ProtocolException {
 		if(this.esitiOrderLabel == null){
 			List<Integer> codes = getEsitiCode();
-			this.esitiOrderLabel = new ArrayList<String>();
+			List<String> esitiOrderLabel = new ArrayList<String>();
 			for (Integer codeEsito : codes) {
-				this.esitiOrderLabel.add(this.getEsitoLabel(codeEsito));
+				esitiOrderLabel.add(this.getEsitoLabel(codeEsito));
 			}
+			this.esitiOrderLabel = esitiOrderLabel;
 		}
 	}
 	
@@ -718,11 +720,12 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoName() throws ProtocolException {
 		if(this.esitoName == null){
-			this.esitoName = new ConcurrentHashMap<String, String>();
+			ConcurrentHashMap<String,String> esitoName = new ConcurrentHashMap<String, String>();
 			List<Integer> codes = getEsitiCodeSenzaFiltri();
 			for (Integer code : codes) {
-				this.esitoName.put(code+"", getProperty("esito."+code+".name"));
+				esitoName.put(code+"", getProperty("esito."+code+".name"));
 			}
+			this.esitoName = esitoName;
 		}
 	}
 	
@@ -738,11 +741,12 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoDescription() throws ProtocolException {
 		if(this.esitoDescription == null){
-			this.esitoDescription = new ConcurrentHashMap<String, String>();
+			ConcurrentHashMap<String, String> esitoDescription = new ConcurrentHashMap<String, String>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
-				this.esitoDescription.put(code+"", getProperty("esito."+code+".description"));
+				esitoDescription.put(code+"", getProperty("esito."+code+".description"));
 			} 
+			this.esitoDescription = esitoDescription;
 		}
 	}
 	
@@ -758,13 +762,14 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoLabel() throws ProtocolException {
 		if(this.esitoLabel == null){
-			this.esitoLabel = new ConcurrentHashMap<String, String>();
+			ConcurrentHashMap<String, String> esitoLabel = new ConcurrentHashMap<String, String>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String label = getProperty("esito."+code+".label");
 				label = filterByProtocol(label, code);
-				this.esitoLabel.put(code+"", label);
-			}    
+				esitoLabel.put(code+"", label);
+			}  
+			this.esitoLabel = esitoLabel;
 		}
 	}
 	
@@ -780,13 +785,14 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoLabelSyntetic() throws ProtocolException {
 		if(this.esitoLabelSyntetic == null){
-			this.esitoLabelSyntetic = new ConcurrentHashMap<String, String>();
+			ConcurrentHashMap<String, String> esitoLabelSyntetic = new ConcurrentHashMap<String, String>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String label = getProperty("esito."+code+".label.syntetic");
 				label = filterByProtocol(label, code);
-				this.esitoLabelSyntetic.put(code+"", label);
-			}    
+				esitoLabelSyntetic.put(code+"", label);
+			}
+			this.esitoLabelSyntetic = esitoLabelSyntetic;
 		}
 	}
 	
@@ -802,7 +808,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationMode() throws ProtocolException {
 		if(this.esitoIdentificationMode == null){
-			this.esitoIdentificationMode = new ConcurrentHashMap<String, EsitoIdentificationMode>();
+			ConcurrentHashMap<String, EsitoIdentificationMode> esitoIdentificationMode = new ConcurrentHashMap<String, EsitoIdentificationMode>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String prop = "esito."+code+".mode";
@@ -812,13 +818,14 @@ public class EsitiProperties {
 					if(e==null){
 						throw new Exception("proprieta con valore non supportato");
 					}
-					this.esitoIdentificationMode.put(code+"", e);
+					esitoIdentificationMode.put(code+"", e);
 				}catch(java.lang.Exception e) {
 					String msg = "Riscontrato errore durante la lettura della proprieta' '"+prop+"': "+e.getMessage();
 					this.log.error(msg,e);
 					throw new ProtocolException(msg,e);
 				} 	 
-			}    
+			} 
+			this.esitoIdentificationMode = esitoIdentificationMode;
 		}
 	}
 	
@@ -831,18 +838,19 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationModeSoapFaultList() throws ProtocolException {
 		if(this.esitoIdentificationModeSoapFaultList==null){
-			this.esitoIdentificationModeSoapFaultList = new ConcurrentHashMap<String, List<EsitoIdentificationModeSoapFault>>();
+			ConcurrentHashMap<String, List<EsitoIdentificationModeSoapFault>> esitoIdentificationModeSoapFaultList = new ConcurrentHashMap<String, List<EsitoIdentificationModeSoapFault>>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				try{
 					EsitoIdentificationMode mode = this.getEsitoIdentificationMode(code);
 					if(EsitoIdentificationMode.SOAP_FAULT.equals(mode)){
-						this.esitoIdentificationModeSoapFaultList.put(code+"", this._getEsitoIdentificationModeSoapFaultList(code));
+						esitoIdentificationModeSoapFaultList.put(code+"", this._getEsitoIdentificationModeSoapFaultList(code));
 					}
 				}catch(Exception e){
 					throw new ProtocolException("Errore durante la gestione del codice ["+code+"]: "+e.getMessage(),e);
 				}
 			}
+			this.esitoIdentificationModeSoapFaultList= esitoIdentificationModeSoapFaultList;
 		}
 	}
 	private List<EsitoIdentificationModeSoapFault> _getEsitoIdentificationModeSoapFaultList(Integer codeEsito) throws ProtocolException {
@@ -906,18 +914,19 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationModeContextPropertyList() throws ProtocolException {
 		if(this.esitoIdentificationModeContextPropertyList==null){
-			this.esitoIdentificationModeContextPropertyList = new ConcurrentHashMap<String, List<EsitoIdentificationModeContextProperty>>();
+			ConcurrentHashMap<String, List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList = new ConcurrentHashMap<String, List<EsitoIdentificationModeContextProperty>>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				try{
 					EsitoIdentificationMode mode = this.getEsitoIdentificationMode(code);
 					if(EsitoIdentificationMode.CONTEXT_PROPERTY.equals(mode)){
-						this.esitoIdentificationModeContextPropertyList.put(code+"", this._getEsitoIdentificationModeContextPropertyList(code));
+						esitoIdentificationModeContextPropertyList.put(code+"", this._getEsitoIdentificationModeContextPropertyList(code));
 					}
 				}catch(Exception e){
 					throw new ProtocolException("Errore durante la gestione del codice ["+code+"]: "+e.getMessage(),e);
 				}
 			}
+			this.esitoIdentificationModeContextPropertyList=esitoIdentificationModeContextPropertyList;
 		}
 	}
 	private List<EsitoIdentificationModeContextProperty> _getEsitoIdentificationModeContextPropertyList(Integer codeEsito) throws ProtocolException {
@@ -1004,10 +1013,11 @@ public class EsitiProperties {
 	private synchronized void initEsitiTransactionContextOrderLabel() throws ProtocolException {
 		if(this.esitiTransactionContextOrderLabel == null){
 			List<String> codes = getEsitiTransactionContextCode();
-			this.esitiTransactionContextOrderLabel = new ArrayList<String>();
+			List<String> esitiTransactionContextOrderLabel = new ArrayList<String>();
 			for (String codeTransactionContext : codes) {
-				this.esitiTransactionContextOrderLabel.add(this.getEsitoTransactionContextLabel(codeTransactionContext));
+				esitiTransactionContextOrderLabel.add(this.getEsitoTransactionContextLabel(codeTransactionContext));
 			}
+			this.esitiTransactionContextOrderLabel = esitiTransactionContextOrderLabel;
 		}
 	}
 
@@ -1023,11 +1033,12 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoTransactionContextLabel() throws ProtocolException {
 		if(this.esitoTransactionContextLabel == null){
-			this.esitoTransactionContextLabel = new ConcurrentHashMap<String, String>();
+			ConcurrentHashMap<String, String> esitoTransactionContextLabel = new ConcurrentHashMap<String, String>();
 			List<String> codes = getEsitiTransactionContextCode();
 			for (String code : codes) {
-				this.esitoTransactionContextLabel.put(code, getProperty("esiti.transactionContext."+code+".label"));
-			}   
+				esitoTransactionContextLabel.put(code, getProperty("esiti.transactionContext."+code+".label"));
+			} 
+			this.esitoTransactionContextLabel = esitoTransactionContextLabel;
 		}
 	}
 	

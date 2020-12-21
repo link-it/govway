@@ -535,10 +535,11 @@ public class JDBCConfigurazioneStatisticaServiceSearchImpl implements IJDBCServi
 			
 			Plugin plugin = JDBCPluginsBaseLib.getPlugin(connection, jdbcProperties, log, idFK_configurazioneRicerca_plugin);
 			InfoPlugin info = new InfoPlugin();
+			info.setTipoPlugin(plugin.getTipoPlugin());
+			info.setTipo(plugin.getTipo());
 			info.setClassName(plugin.getClassName());
 			info.setDescrizione(plugin.getDescrizione());
 			info.setLabel(plugin.getLabel());
-			info.setTipo(plugin.getTipo().getValue());
 			configurazioneStatistica.setPlugin(info);
 		}
 		

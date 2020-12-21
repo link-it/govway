@@ -47,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -114,24 +115,30 @@ public final class ConnettorePropList extends Action {
 				AccordoServizioParteSpecifica servizio = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 				connettore = servizio.getConfigurazioneServizio().getConnettore();
 			}
-			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
+			else if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 				int idServizioFruitoreInt = Integer.parseInt(myId);
 				Fruitore servFru = apsCore.getServizioFruitore(idServizioFruitoreInt);
 				connettore = servFru.getConnettore();
 			}
-			if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
+			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 				int idSilInt = Integer.parseInt(idsil);
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				connettoreC = is.getConnettore();
 			}
-			if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
+			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
 				int idSilInt = Integer.parseInt(idsil);
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				RispostaAsincrona ra = sa.getRispostaAsincrona();
 				connettoreC = ra.getConnettore();
 			}
-			if (servlet.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
+			else if (servlet.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
+				int idSilInt = Integer.parseInt(idsil);
+				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
+				InvocazioneServizio is = sa.getInvocazioneServizio();
+				connettoreC = is.getConnettore();
+			}
+			else if (servlet.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
 				int idInt = Integer.parseInt(id);
 				SoggettoCtrlStat scs = soggettiCore.getSoggettoCtrlStat(idInt);
 				Soggetto ss = scs.getSoggettoReg();

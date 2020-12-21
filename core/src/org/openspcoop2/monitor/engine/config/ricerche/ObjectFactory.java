@@ -52,48 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IdConfigurazioneRicerca }
-     */
-    public IdConfigurazioneRicerca createIdConfigurazioneRicerca() {
-        return new IdConfigurazioneRicerca();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneServizioAzione }
-     */
-    public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
-        return new ConfigurazioneServizioAzione();
-    }
-
-    /**
-     * Create an instance of {@link IdPlugin }
-     */
-    public IdPlugin createIdPlugin() {
-        return new IdPlugin();
-    }
-
-    /**
-     * Create an instance of {@link InfoPlugin }
-     */
-    public InfoPlugin createInfoPlugin() {
-        return new InfoPlugin();
-    }
-
-    /**
-     * Create an instance of {@link IdConfigurazioneServizioAzione }
-     */
-    public IdConfigurazioneServizioAzione createIdConfigurazioneServizioAzione() {
-        return new IdConfigurazioneServizioAzione();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneRicerca }
-     */
-    public ConfigurazioneRicerca createConfigurazioneRicerca() {
-        return new ConfigurazioneRicerca();
-    }
-
-    /**
      * Create an instance of {@link IdConfigurazioneServizio }
      */
     public IdConfigurazioneServizio createIdConfigurazioneServizio() {
@@ -108,10 +66,52 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneServizioAzione }
+     */
+    public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
+        return new ConfigurazioneServizioAzione();
+    }
+
+    /**
+     * Create an instance of {@link InfoPlugin }
+     */
+    public InfoPlugin createInfoPlugin() {
+        return new InfoPlugin();
+    }
+
+    /**
      * Create an instance of {@link Plugin }
      */
     public Plugin createPlugin() {
         return new Plugin();
+    }
+
+    /**
+     * Create an instance of {@link IdPlugin }
+     */
+    public IdPlugin createIdPlugin() {
+        return new IdPlugin();
+    }
+
+    /**
+     * Create an instance of {@link IdConfigurazioneRicerca }
+     */
+    public IdConfigurazioneRicerca createIdConfigurazioneRicerca() {
+        return new IdConfigurazioneRicerca();
+    }
+
+    /**
+     * Create an instance of {@link IdConfigurazioneServizioAzione }
+     */
+    public IdConfigurazioneServizioAzione createIdConfigurazioneServizioAzione() {
+        return new IdConfigurazioneServizioAzione();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneRicerca }
+     */
+    public ConfigurazioneRicerca createConfigurazioneRicerca() {
+        return new ConfigurazioneRicerca();
     }
 
 

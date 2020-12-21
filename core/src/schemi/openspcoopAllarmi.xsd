@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/allarmi"
+	targetNamespace="http://www.openspcoop2.org/core/allarmi"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+
+
+	<!-- ********* ALLARMI ************* -->
+
+	<xsd:element name="allarme">
+		<xsd:complexType>
+			<xsd:sequence>
+
+				<!-- Informazioni generiche -->
+				<xsd:element name="nome" type="xsd:string"/>
+				<xsd:element name="tipo" type="xsd:string"/>
+				<xsd:element name="tipo-allarme" type="tipo-allarme" default="ATTIVO"/>
+
+				<!-- informazioni se inviare email -->
+				<xsd:element name="mail" type="allarme-mail" minOccurs="1"/>
+				
+				<!-- informazioni se invocare uno script esterno -->
+				<xsd:element name="script" type="allarme-script" minOccurs="1"/>
+
+				<!-- Stato allarme (0=OK, 1=Warning, 2=Allarme) -->
+				<xsd:element name="stato-precedente" type="xsd:integer"/>
+				<xsd:element name="stato" type="xsd:integer"/>
+				<xsd:element name="dettaglio-stato" type="xsd:string" minOccurs="0"/>
+
+				<!-- Tempi di creazione/esecuzione allarmi -->
+				<xsd:element name="lasttimestamp-create" type="xsd:dateTime"/>
+				<xsd:element name="lasttimestamp-update" type="xsd:dateTime" minOccurs="0"/>
+
+				<!-- Informazioni generali -->
+				<xsd:element name="enabled" type="xsd:integer"/>
+				<xsd:element name="acknowledged" type="xsd:integer"/>
+				<xsd:element name="tipo-periodo" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="periodo" type="xsd:integer" minOccurs="0"/>
+
+				<!-- Filtro -->
+				<xsd:element name="filtro" type="allarme-filtro" minOccurs="1"/>
+				
+				<!-- GroupBy -->
+				<xsd:element name="group-by" type="allarme-raggruppamento" minOccurs="1"/>
+
+				<!-- Parametri -->
+				<xsd:element ref="allarme-parametro" minOccurs="0" maxOccurs="unbounded"/>
+
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="allarme-mail">
+		<xsd:sequence>
+			<xsd:element name="ack-mode" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="invia-warning" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="invia-alert" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="destinatari" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="subject" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="body" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<xsd:complexType name="allarme-script">
+		<xsd:sequence>
+			<xsd:element name="ack-mode" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="invoca-warning" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="invoca-alert" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="command" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="args" type="xsd:string" minOccurs="0"/>			
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="allarme-filtro">
+		<xsd:sequence>
+			
+			<xsd:element name="enabled" type="xsd:boolean" default="false"/> <!-- Permette di indicare se se l'allarme deve essere attuata solamente per determinate transazioni -->
+			
+			<xsd:element name="protocollo" type="xsd:string" minOccurs="0" />
+			
+			<xsd:element name="ruolo-porta" type="ruolo-porta" minOccurs="0" />
+			
+			<xsd:element name="nome-porta" type="xsd:string" minOccurs="0" />
+			
+			<xsd:element name="tipo-fruitore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome-fruitore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="ruolo-fruitore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="servizio-applicativo-fruitore" type="xsd:string" minOccurs="0" />
+			
+			<xsd:element name="tipo-erogatore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome-erogatore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="ruolo-erogatore" type="xsd:string" minOccurs="0" />
+			
+			<xsd:element name="tag" type="xsd:string" minOccurs="0" />
+			<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome-servizio" type="xsd:string" minOccurs="0" />
+			<xsd:element name="versione-servizio" type="xsd:integer" minOccurs="0" />
+			
+			<xsd:element name="azione" type="xsd:string" minOccurs="0" />
+	
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="allarme-raggruppamento">
+		<xsd:sequence>
+			
+			<xsd:element name="enabled" type="xsd:boolean" default="false"/> <!-- Permette di indicare se se l'allarme deve attuare un raggruppamento -->
+			
+			<xsd:element name="ruolo-porta" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="protocollo" type="xsd:boolean" default="false"/>
+						
+			<xsd:element name="fruitore" type="xsd:boolean" default="false"/>
+
+			<xsd:element name="servizio-applicativo-fruitore" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="identificativo-autenticato" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="token" type="xsd:string" minOccurs="0"/>
+			
+			<xsd:element name="erogatore" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="servizio" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="azione" type="xsd:boolean" default="false"/>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="allarme-parametro">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-parametro" type="xsd:string"/>
+				<xsd:element name="valore" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+	<xsd:element name="allarme-history">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-allarme" type="id-allarme"/>
+				<xsd:element name="enabled" type="xsd:integer"/>
+				<xsd:element name="stato" type="xsd:integer"/>
+				<xsd:element name="dettaglio-stato" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="acknowledged" type="xsd:integer"/>
+				<xsd:element name="timestamp-update" type="xsd:dateTime"/>
+				<xsd:element name="utente" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+		
+
+
+
+
+
+
+
+
+
+	<!-- ********* Identificativi / Tipi / Enumerations ************* -->
+	
+	<!-- ID -->
+
+	<xsd:complexType name="id-allarme">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="tipo" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+
+	<!-- Tipi -->
+	
+	<xsd:simpleType name="tipo-allarme">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ATTIVO"/>
+			<xsd:enumeration value="PASSIVO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="stato-allarme">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ok"/> <!-- 0 -->
+			<xsd:enumeration value="warning"/> <!-- 1 -->
+			<xsd:enumeration value="error"/> <!-- 2 -->
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-periodo">
+		<xsd:restriction base="xsd:string">
+			<xsd:length value="1"/>
+			<xsd:enumeration value="g"/>
+			<xsd:enumeration value="h"/>
+			<xsd:enumeration value="m"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="ruolo-porta">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="delegata"/>
+			<xsd:enumeration value="applicativa"/>
+			<xsd:enumeration value="entrambi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Raccoglitori -->
+	
+	<xsd:element name="elenco-allarmi">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="allarme" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="elenco-id-allarmi">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-allarme" type="id-allarme" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+
+</xsd:schema>

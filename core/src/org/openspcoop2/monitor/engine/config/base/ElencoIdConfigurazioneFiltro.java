@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="elenco-id-configurazione-filtro">
- * 		&lt;sequence>
- * 			&lt;element name="id-configurazione-filtro" type="{http://www.openspcoop2.org/monitor/engine/config/base}id-configurazione-filtro" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="elenco-id-configurazione-filtro"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-configurazione-filtro" type="{http://www.openspcoop2.org/monitor/engine/config/base}id-configurazione-filtro" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ElencoIdConfigurazioneFiltro extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method getIdConfigurazioneFiltroList
-   * @return List<IdConfigurazioneFiltro>
+   * @return List&lt;IdConfigurazioneFiltro&gt;
   */
   @Deprecated
   public List<IdConfigurazioneFiltro> getIdConfigurazioneFiltro() {
@@ -120,7 +120,7 @@ public class ElencoIdConfigurazioneFiltro extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method setIdConfigurazioneFiltroList
-   * @param idConfigurazioneFiltro List<IdConfigurazioneFiltro>
+   * @param idConfigurazioneFiltro List&lt;IdConfigurazioneFiltro&gt;
   */
   @Deprecated
   public void setIdConfigurazioneFiltro(List<IdConfigurazioneFiltro> idConfigurazioneFiltro) {

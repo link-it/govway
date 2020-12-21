@@ -35,6 +35,10 @@ import java.util.List;
  */
 public interface IDynamicLoader{
 	
+	public String getTipoPlugin();
+	
+	public String getTipo();
+	
 	public String getClassName() throws SearchException;
 	
 	public String getClassSimpleName() throws SearchException;

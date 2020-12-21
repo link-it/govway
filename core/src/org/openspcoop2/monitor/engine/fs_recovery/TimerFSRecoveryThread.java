@@ -36,8 +36,10 @@ import javax.sql.DataSource;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
@@ -77,6 +79,7 @@ public class TimerFSRecoveryThread extends Thread{
 	
 	/** DAOFactory */
 	private DAOFactory daoFactory;
+	private ServiceManagerProperties daoFactoryServiceManagerPropertiesTransazioni = null;
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
 	private org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM = null;
 	
@@ -162,6 +165,7 @@ public class TimerFSRecoveryThread extends Thread{
 			this.fsRepositoryConfig = fsRepositoryConfig;
 			
 			this.daoFactory = DAOFactory.getInstance(this.fsRepositoryConfig.getLogSql());
+			this.daoFactoryServiceManagerPropertiesTransazioni = DAOFactoryProperties.getInstance(this.fsRepositoryConfig.getLogSql()).getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 			
 		}catch(Exception e){
 			throw new EngineException(e.getMessage(),e);
@@ -179,7 +183,10 @@ public class TimerFSRecoveryThread extends Thread{
 		
 		while(this.stop == false){
 			
-			FSRecoveryLibrary.generate(this.fsRepositoryConfig, this.transazioniSM, 
+			FSRecoveryLibrary.generate(this.fsRepositoryConfig, 
+					this.daoFactory, this.fsRepositoryConfig.getLogSql(), this.daoFactoryServiceManagerPropertiesTransazioni,
+					Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA, Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL,
+					this.transazioniSM, 
 					this.tracciamentoAppender, this.diagnosticoAppender, this.dumpAppender,
 					this.pluginsEventiSM);
 							

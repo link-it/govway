@@ -47,7 +47,6 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.slf4j.Logger;
 
 /**     
  * ConfigurazionePdD_controlloTraffico
@@ -56,23 +55,14 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConfigurazionePdD_controlloTraffico {
+public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazionePdDConnectionResourceManager {
 
-	private OpenSPCoop2Properties openspcoopProperties;
-	private boolean configurazioneDinamica = false;
-	private boolean useConnectionPdD = false;
-	private DriverConfigurazioneDB driver;
-	private Logger log;
 	private ServiceManagerProperties smp;
 	
 	
 	public ConfigurazionePdD_controlloTraffico(OpenSPCoop2Properties openspcoopProperties, DriverConfigurazioneDB driver, boolean useConnectionPdD) {
-		this.openspcoopProperties = openspcoopProperties;
-		this.configurazioneDinamica = this.openspcoopProperties.isConfigurazioneDinamica();
-		this.useConnectionPdD = useConnectionPdD;
-		this.driver = driver;
-		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(this.openspcoopProperties.isControlloTrafficoDebug());
-	
+		super(openspcoopProperties, driver, useConnectionPdD, OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(openspcoopProperties.isControlloTrafficoDebug()));
+			
 		this.smp = new ServiceManagerProperties();
 		this.smp.setShowSql(this.openspcoopProperties.isControlloTrafficoDebug());
 		this.smp.setDatabaseType(this.driver.getTipoDB());
@@ -81,34 +71,11 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	
 	
-	
-	// IMPL
-	
-	private ConnectionResource getConnection(Connection connectionPdD, String methodName) throws Exception{
-		ConnectionResource cr = new ConnectionResource();
-		if(connectionPdD!=null && this.useConnectionPdD){
-			cr.connectionDB = connectionPdD;
-			cr.connectionPdD = true;
-		}
-		else{
-			cr.connectionDB = this.driver.getConnection(methodName);
-			cr.connectionPdD = false;
-		}
-		return cr;
-	}
-	private void releaseConnection(ConnectionResource cr) {
-		if(cr!=null && cr.connectionDB!=null && !cr.connectionPdD) {
-			this.driver.releaseConnection(cr.connectionDB);
-		}
-	}
-	
-	
-	
 	private static ConfigurazioneGenerale configurazioneGenerale = null;
 	public ConfigurazioneGenerale getConfigurazioneControlloTraffico(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
 		if( this.configurazioneDinamica || ConfigurazionePdD_controlloTraffico.configurazioneGenerale==null){
-			ConnectionResource cr = null;
+			ConfigurazionePdDConnectionResource cr = null;
 			try{
 				cr = this.getConnection(connectionPdD, "ControlloTraffico.getConfigurazioneGenerale");
 				org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
@@ -157,7 +124,7 @@ public class ConfigurazionePdD_controlloTraffico {
 			}
 		}
 		
-		ConnectionResource cr = null;
+		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "ControlloTraffico.getElencoIdPolicyAttive");
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
@@ -246,7 +213,7 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	public AttivazionePolicy getAttivazionePolicy(Connection connectionPdD, String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
-		ConnectionResource cr = null;
+		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "ControlloTraffico.getAttivazionePolicy_"+id);
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
@@ -280,7 +247,7 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	public ElencoIdPolicy getElencoIdPolicy(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
-		ConnectionResource cr = null;
+		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "ControlloTraffico.getElencoIdPolicy");
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
@@ -320,7 +287,7 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	public ConfigurazionePolicy getConfigurazionePolicy(Connection connectionPdD, String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
-		ConnectionResource cr = null;
+		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "ControlloTraffico.getConfigurazionePolicy_"+id);
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
@@ -350,12 +317,5 @@ public class ConfigurazionePdD_controlloTraffico {
 
 	}
 	
-	
-}
-
-class ConnectionResource{
-	
-	Connection connectionDB = null;
-	boolean connectionPdD = false;
 	
 }

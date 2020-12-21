@@ -57,4 +57,34 @@ public class CostantiConfigurazione {
 	public final static String PDD_MONITOR_FW_CONF_DIR = "org.openspcoop2.monitor.config_dir";
 	public final static String PDD_MONITOR_DEFAULT_PROTOCOL = "org.openspcoop2.monitor.defaultProtocol";
 	
+	public static final String ALARM_HISTORY_ENABLED = "org.openspcoop2.monitor.alarm.history.enabled";
+	public static final String ALARM_MAIL_SENDER_TYPE = "org.openspcoop2.monitor.alarm.mailSender.type";
+	public static final String ALARM_MAIL_SENDER_CONNECTION_TIMEOUT = "org.openspcoop2.monitor.alarm.mailSender.connectionTimeout";
+	public static final String ALARM_MAIL_SENDER_READ_TIMEOUT = "org.openspcoop2.monitor.alarm.mailSender.readTimeout";
+	public static final String ALARM_MAIL_HOST = "org.openspcoop2.monitor.alarm.mail.host";
+	public static final String ALARM_MAIL_PORT = "org.openspcoop2.monitor.alarm.mail.port";
+	public static final String ALARM_MAIL_USERNAME = "org.openspcoop2.monitor.alarm.mail.username";
+	public static final String ALARM_MAIL_PASSWORD = "org.openspcoop2.monitor.alarm.mail.password";
+	public static final String ALARM_MAIL_SSL_TYPE = "org.openspcoop2.monitor.alarm.mail.ssl.type";
+	public static final String ALARM_MAIL_SSL_TRUSTSTORE_TYPE = "org.openspcoop2.monitor.alarm.mail.ssl.trustStore.type";
+	public static final String ALARM_MAIL_SSL_TRUSTSTORE_LOCATION = "org.openspcoop2.monitor.alarm.mail.ssl.trustStore.location";
+	public static final String ALARM_MAIL_SSL_TRUSTSTORE_PASSWORD = "org.openspcoop2.monitor.alarm.mail.ssl.trustStore.password";
+	public static final String ALARM_MAIL_SSL_TRUSTSTORE_MANAGEMENT_ALGORITHM = "org.openspcoop2.monitor.alarm.mail.ssl.trustStore.managementAlgorithm";
+	public static final String ALARM_MAIL_SSL_START_TLS = "org.openspcoop2.monitor.alarm.mail.ssl.startTls";
+	public static final String ALARM_MAIL_FROM = "org.openspcoop2.monitor.alarm.mail.from";
+	public static final String ALARM_MAIL_SUBJECT = "org.openspcoop2.monitor.alarm.mail.subject";
+	public static final String ALARM_MAIL_BODY = "org.openspcoop2.monitor.alarm.mail.body";
+	public static final String ALARM_MAIL_ACK_MODE = "org.openspcoop2.monitor.alarm.mail.ackMode";
+	public static final String ALARM_MAIL_DEBUG = "org.openspcoop2.monitor.alarm.mail.debug";
+	public static final String ALARM_MAIL_SEND_CHANGE_STATUS_OK = "org.openspcoop2.monitor.alarm.mail.sendChangeStatusOk";
+	public static final String ALARM_SCRIPT_PATH = "org.openspcoop2.monitor.alarm.script.path";
+	public static final String ALARM_SCRIPT_ARGS = "org.openspcoop2.monitor.alarm.script.args";
+	public static final String ALARM_SCRIPT_ACK_MODE = "org.openspcoop2.monitor.alarm.script.ackMode";
+	public static final String ALARM_SCRIPT_DEBUG = "org.openspcoop2.monitor.alarm.script.debug";
+	public static final String ALARM_SCRIPT_SEND_CHANGE_STATUS_OK = "org.openspcoop2.monitor.alarm.script.sendChangeStatusOk";
+
+	public static final String ALARM_KEYWORD_TEMPLATE_STATO_ALLARME = "@STATO_ALLARME@";
+	public static final String ALARM_KEYWORD_TEMPLATE_NOME_ALLARME = "@NOME_ALLARME@";
+	public static final String ALARM_KEYWORD_TEMPLATE_DETTAGLIO_ALLARME = "@DETTAGLIO_ALLARME@";
+	
 }

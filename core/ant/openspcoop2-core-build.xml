@@ -250,6 +250,20 @@
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.statistiche"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="core"/>
 				</antcall>
+
+				<!-- org.openspcoop.2.core.allarmi -->	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.allarmi,org.openspcoop2.core.allarmi.constants,org.openspcoop2.core.allarmi.models,org.openspcoop2.core.allarmi.utils,org.openspcoop2.core.allarmi.utils.serializer" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.allarmi.dao,org.openspcoop2.core.allarmi.dao.jdbc,org.openspcoop2.core.allarmi.dao.jdbc.converter,org.openspcoop2.core.allarmi.dao.jdbc.fetch" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/allarmi"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="core-allarmi"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="dao/jdbc/*.properties"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/core/allarmi"/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.allarmi"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="core"/>
+				</antcall>
 						
 				<!-- org.openspcoop.2.core.config.driver -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.config.driver" />

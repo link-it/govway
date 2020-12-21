@@ -52,45 +52,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PluginServizioAzioneCompatibilita }
+     * Create an instance of {@link IdConfigurazioneServizio }
      */
-    public PluginServizioAzioneCompatibilita createPluginServizioAzioneCompatibilita() {
-        return new PluginServizioAzioneCompatibilita();
+    public IdConfigurazioneServizio createIdConfigurazioneServizio() {
+        return new IdConfigurazioneServizio();
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneServizioAzione }
+     * Create an instance of {@link ConfigurazioneServizio }
      */
-    public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
-        return new ConfigurazioneServizioAzione();
-    }
-
-    /**
-     * Create an instance of {@link IdPlugin }
-     */
-    public IdPlugin createIdPlugin() {
-        return new IdPlugin();
-    }
-
-    /**
-     * Create an instance of {@link ElencoConfigurazioneFiltro }
-     */
-    public ElencoConfigurazioneFiltro createElencoConfigurazioneFiltro() {
-        return new ElencoConfigurazioneFiltro();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneFiltro }
-     */
-    public ConfigurazioneFiltro createConfigurazioneFiltro() {
-        return new ConfigurazioneFiltro();
-    }
-
-    /**
-     * Create an instance of {@link PluginServizioCompatibilita }
-     */
-    public PluginServizioCompatibilita createPluginServizioCompatibilita() {
-        return new PluginServizioCompatibilita();
+    public ConfigurazioneServizio createConfigurazioneServizio() {
+        return new ConfigurazioneServizio();
     }
 
     /**
@@ -101,38 +73,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ElencoIdPlugin }
+     * Create an instance of {@link ConfigurazioneServizioAzione }
      */
-    public ElencoIdPlugin createElencoIdPlugin() {
-        return new ElencoIdPlugin();
+    public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
+        return new ConfigurazioneServizioAzione();
     }
 
     /**
-     * Create an instance of {@link IdConfigurazioneServizioAzione }
+     * Create an instance of {@link PluginServizioAzioneCompatibilita }
      */
-    public IdConfigurazioneServizioAzione createIdConfigurazioneServizioAzione() {
-        return new IdConfigurazioneServizioAzione();
+    public PluginServizioAzioneCompatibilita createPluginServizioAzioneCompatibilita() {
+        return new PluginServizioAzioneCompatibilita();
     }
 
     /**
-     * Create an instance of {@link PluginFiltroCompatibilita }
+     * Create an instance of {@link Plugin }
      */
-    public PluginFiltroCompatibilita createPluginFiltroCompatibilita() {
-        return new PluginFiltroCompatibilita();
-    }
-
-    /**
-     * Create an instance of {@link ElencoIdConfigurazioneServizio }
-     */
-    public ElencoIdConfigurazioneServizio createElencoIdConfigurazioneServizio() {
-        return new ElencoIdConfigurazioneServizio();
-    }
-
-    /**
-     * Create an instance of {@link IdConfigurazioneServizio }
-     */
-    public IdConfigurazioneServizio createIdConfigurazioneServizio() {
-        return new IdConfigurazioneServizio();
+    public Plugin createPlugin() {
+        return new Plugin();
     }
 
     /**
@@ -143,10 +101,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneServizio }
+     * Create an instance of {@link IdPlugin }
      */
-    public ConfigurazioneServizio createConfigurazioneServizio() {
-        return new ConfigurazioneServizio();
+    public IdPlugin createIdPlugin() {
+        return new IdPlugin();
     }
 
     /**
@@ -164,17 +122,52 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PluginInfo }
+     * Create an instance of {@link IdConfigurazioneServizioAzione }
      */
-    public PluginInfo createPluginInfo() {
-        return new PluginInfo();
+    public IdConfigurazioneServizioAzione createIdConfigurazioneServizioAzione() {
+        return new IdConfigurazioneServizioAzione();
     }
 
     /**
-     * Create an instance of {@link Plugin }
+     * Create an instance of {@link PluginProprietaCompatibilita }
      */
-    public Plugin createPlugin() {
-        return new Plugin();
+    public PluginProprietaCompatibilita createPluginProprietaCompatibilita() {
+        return new PluginProprietaCompatibilita();
+    }
+
+    /**
+     * Create an instance of {@link ElencoIdPlugin }
+     */
+    public ElencoIdPlugin createElencoIdPlugin() {
+        return new ElencoIdPlugin();
+    }
+
+    /**
+     * Create an instance of {@link PluginServizioCompatibilita }
+     */
+    public PluginServizioCompatibilita createPluginServizioCompatibilita() {
+        return new PluginServizioCompatibilita();
+    }
+
+    /**
+     * Create an instance of {@link ElencoConfigurazioneFiltro }
+     */
+    public ElencoConfigurazioneFiltro createElencoConfigurazioneFiltro() {
+        return new ElencoConfigurazioneFiltro();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneFiltro }
+     */
+    public ConfigurazioneFiltro createConfigurazioneFiltro() {
+        return new ConfigurazioneFiltro();
+    }
+
+    /**
+     * Create an instance of {@link ElencoIdConfigurazioneServizio }
+     */
+    public ElencoIdConfigurazioneServizio createElencoIdConfigurazioneServizio() {
+        return new ElencoIdConfigurazioneServizio();
     }
 
 

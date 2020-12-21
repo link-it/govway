@@ -120,7 +120,7 @@ public class ElencoPolicy extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setConfigurazionePolicyList
-   * @param configurazionePolicy List<ConfigurazionePolicy>
+   * @param configurazionePolicy List&lt;ConfigurazionePolicy&gt;
   */
   @Deprecated
   public void setConfigurazionePolicy(List<ConfigurazionePolicy> configurazionePolicy) {

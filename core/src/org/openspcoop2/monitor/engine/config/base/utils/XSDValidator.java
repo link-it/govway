@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
-import org.openspcoop2.monitor.engine.config.base.PluginInfo;
+import org.openspcoop2.monitor.engine.config.base.Plugin;
 
 /** 
  * XSD Validator    
@@ -39,7 +39,7 @@ public class XSDValidator {
 	
 	private static synchronized void initValidator(Class<?> validatorImpl,Logger log) throws ServiceException{
 		if(validator==null){
-			validator = new org.openspcoop2.generic_project.utils.XSDValidator(log,PluginInfo.class, 
+			validator = new org.openspcoop2.generic_project.utils.XSDValidator(log,Plugin.class, 
 				"/openspcoopMonitorPluginsBase.xsd"
 				// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /openspcoopMonitorPluginsBase.xsd
 			);

@@ -44,6 +44,8 @@
       <!-- File di properties dove sono definiti i colori da utilizzare nel css -->
       <property name="temaConsoleProperties" value="tema.css.properties" />
       
+      <!-- Specifica se inserire le classi sperimentali -->
+      <property name="buildMonitoraggio" value="false" />
       
       <!-- Specifica se inserire le informazioni di debug nelle classi -->
       <property name="debug" value="true" />

@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="elenco-id-configurazione-servizio">
- * 		&lt;sequence>
- * 			&lt;element name="id-configurazione-servizio" type="{http://www.openspcoop2.org/monitor/engine/config/base}id-configurazione-servizio" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="elenco-id-configurazione-servizio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-configurazione-servizio" type="{http://www.openspcoop2.org/monitor/engine/config/base}id-configurazione-servizio" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ElencoIdConfigurazioneServizio extends org.openspcoop2.utils.beans.
 
   /**
    * @deprecated Use method getIdConfigurazioneServizioList
-   * @return List<IdConfigurazioneServizio>
+   * @return List&lt;IdConfigurazioneServizio&gt;
   */
   @Deprecated
   public List<IdConfigurazioneServizio> getIdConfigurazioneServizio() {
@@ -120,7 +120,7 @@ public class ElencoIdConfigurazioneServizio extends org.openspcoop2.utils.beans.
 
   /**
    * @deprecated Use method setIdConfigurazioneServizioList
-   * @param idConfigurazioneServizio List<IdConfigurazioneServizio>
+   * @param idConfigurazioneServizio List&lt;IdConfigurazioneServizio&gt;
   */
   @Deprecated
   public void setIdConfigurazioneServizio(List<IdConfigurazioneServizio> idConfigurazioneServizio) {

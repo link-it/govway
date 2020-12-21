@@ -192,8 +192,8 @@ public class PermessiUtenteOperatore {
 	}
 
 	public IExpression toExpressionAllarmi(IExpressionConstructor exprConstructor,
-			IField fieldIdentificativoPortaMittente,IField fieldTipoMittente,IField fieldMittente,
-			IField fieldIdentificativoPortaDestinatario,IField fieldTipoDestinatario,IField fieldDestinatario,
+			IField fieldTipoMittente,IField fieldMittente,
+			IField fieldTipoDestinatario,IField fieldDestinatario,
 			IField fieldTipoServizio,IField fieldNomeServizio, IField fieldVersioneServizio ) throws CoreException{
 		try{
 
@@ -203,23 +203,17 @@ public class PermessiUtenteOperatore {
 			if(this.listIDSoggetti.size()>0){
 
 				// utility
-				IExpression mittenteStartExpr = exprConstructor.newExpression();
-				mittenteStartExpr.and();
-				mittenteStartExpr.equals(fieldIdentificativoPortaMittente,"*");
-				mittenteStartExpr.equals(fieldTipoMittente,"*");
-				mittenteStartExpr.equals(fieldMittente,"*");
+				IExpression mittenteQualsiasiExpr = exprConstructor.newExpression();
+				mittenteQualsiasiExpr.and();
+				mittenteQualsiasiExpr.isNull(fieldTipoMittente);
+				mittenteQualsiasiExpr.isNull(fieldMittente);
 
-				IExpression destinatarioStartExpr = exprConstructor.newExpression();
-				destinatarioStartExpr.and();
-				destinatarioStartExpr.equals(fieldIdentificativoPortaDestinatario,"*");
-				destinatarioStartExpr.equals(fieldTipoDestinatario,"*");
-				destinatarioStartExpr.equals(fieldDestinatario,"*");
+				IExpression destinatarioQualsiasiExpr = exprConstructor.newExpression();
+				destinatarioQualsiasiExpr.and();
+				destinatarioQualsiasiExpr.isNull(fieldTipoDestinatario);
+				destinatarioQualsiasiExpr.isNull(fieldDestinatario);
 
-				List<String> identificativiPorta = new ArrayList<String>();
-				for (IDSoggetto idSoggetto : this.listIDSoggetti) {
-					identificativiPorta.add(idSoggetto.getCodicePorta());
-				}
-
+				
 
 				// gli allarmi che possono vedere sono:
 				// mittente '*' e destinatario uno dei soggetti associati all'utenza
@@ -233,9 +227,6 @@ public class PermessiUtenteOperatore {
 
 				// mittente '*' e destinatario uno dei soggetti associati all'utenza
 
-				IExpression idportaDestExpr = exprConstructor.newExpression();
-				idportaDestExpr.in(fieldIdentificativoPortaDestinatario,identificativiPorta);
-
 				IExpression destinatarioExpr = exprConstructor.newExpression();
 				destinatarioExpr.or();
 				for (IDSoggetto idSoggetto : this.listIDSoggetti) {
@@ -244,15 +235,12 @@ public class PermessiUtenteOperatore {
 					destSoggetto.put(fieldDestinatario,idSoggetto.getNome());
 					destinatarioExpr.allEquals(destSoggetto);
 				}
-
-				soggettiGestioneExpr.and(mittenteStartExpr,idportaDestExpr,destinatarioExpr);
+				
+				soggettiGestioneExpr.and(mittenteQualsiasiExpr,destinatarioExpr);
 
 
 
 				// mittente uno dei soggetti associati all'utenza e destinatario '*'
-
-				IExpression idportaMittExpr = exprConstructor.newExpression();
-				idportaMittExpr.in(fieldIdentificativoPortaMittente,identificativiPorta);
 
 				IExpression mittenteExpr = exprConstructor.newExpression();
 				mittenteExpr.or();
@@ -263,13 +251,13 @@ public class PermessiUtenteOperatore {
 					mittenteExpr.allEquals(mittSoggetto);
 				}
 
-				soggettiGestioneExpr.and(destinatarioStartExpr,idportaMittExpr,mittenteExpr);
+				soggettiGestioneExpr.and(destinatarioQualsiasiExpr,mittenteExpr);
 
 
 
 				// mittente e destinatario associati all'utenza
 
-				soggettiGestioneExpr.and(idportaMittExpr,mittenteExpr,idportaDestExpr,destinatarioExpr);
+				soggettiGestioneExpr.and(mittenteExpr,destinatarioExpr);
 
 
 				expr.or(soggettiGestioneExpr);

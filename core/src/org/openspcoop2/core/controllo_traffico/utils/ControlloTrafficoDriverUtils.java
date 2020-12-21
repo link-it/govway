@@ -1264,6 +1264,13 @@ public class ControlloTrafficoDriverUtils {
 				else{
 					expression.isNull(AttivazionePolicy.model().FILTRO.NOME_EROGATORE);
 				}
+		
+				if(filtro.getTag()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.TAG, filtro.getTag());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.TAG);
+				}
 								
 				if(filtro.getTipoServizio()!=null){
 					expression.equals(AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO, filtro.getTipoServizio());

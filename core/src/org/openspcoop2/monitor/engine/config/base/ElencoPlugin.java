@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="elenco-plugin">
- * 		&lt;sequence>
- * 			&lt;element name="plugin" type="{http://www.openspcoop2.org/monitor/engine/config/base}plugin" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="elenco-plugin"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="plugin" type="{http://www.openspcoop2.org/monitor/engine/config/base}plugin" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ElencoPlugin extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getPluginList
-   * @return List<Plugin>
+   * @return List&lt;Plugin&gt;
   */
   @Deprecated
   public List<Plugin> getPlugin() {
@@ -120,7 +120,7 @@ public class ElencoPlugin extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setPluginList
-   * @param plugin List<Plugin>
+   * @param plugin List&lt;Plugin&gt;
   */
   @Deprecated
   public void setPlugin(List<Plugin> plugin) {

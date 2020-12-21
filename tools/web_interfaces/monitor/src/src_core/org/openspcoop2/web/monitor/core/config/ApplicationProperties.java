@@ -227,4 +227,20 @@ public class ApplicationProperties {
 		}
 		return null;
 	}
+	
+	
+	public boolean isPluginsEnabled() throws Exception{
+		String cacheEnabled = this.getProperty("plugins.enabled", true, true);
+		return "true".equalsIgnoreCase(cacheEnabled);
+	}
+	public Integer getPluginsSeconds() throws Exception{
+		String cacheV = this.getProperty("plugins.seconds", false, true);
+		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
+			Integer i = Integer.valueOf(cacheV);
+			if(i.intValue()>0) {
+				return i;
+			}
+		}
+		return 300;
+	}
 }

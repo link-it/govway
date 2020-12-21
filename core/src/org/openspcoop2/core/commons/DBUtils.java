@@ -30,7 +30,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -45,6 +44,7 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCSqlLogger;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 
 /**
@@ -1138,7 +1138,111 @@ public class DBUtils {
 	
 	
 	
+	public static long getIdRegistroPlugin(String nome, Connection con,String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idRP=-1;
+		try
+		{
+			if(nome==null) {
+				throw new CoreException("Nome non fornito");
+			}
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_PLUGINS);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				idRP = rs.getLong("id");
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+			
+			return idRP;
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
 	
+	
+	public static long getIdPlugin(String className, String label, String tipoPlugin, String tipo, Connection con,String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idRP=-1;
+		try
+		{
+			if(className==null) {
+				throw new CoreException("ClassName non fornito");
+			}
+			if(label==null) {
+				throw new CoreException("Label non fornito");
+			}
+			if(tipoPlugin==null) {
+				throw new CoreException("TipoPlugin non fornito");
+			}
+			if(tipo==null) {
+				throw new CoreException("Tipo non fornito");
+			}
+			
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.REGISTRO_CLASSI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("class_name=?");
+			sqlQueryObject.addWhereCondition("label=?");
+			sqlQueryObject.addWhereCondition("tipo_plugin=?");
+			sqlQueryObject.addWhereCondition("tipo=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, className);
+			stm.setString(2, label);
+			stm.setString(3, tipoPlugin);
+			stm.setString(4, tipo);
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				idRP = rs.getLong("id");
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+			
+			return idRP;
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
 	
 
 	/**

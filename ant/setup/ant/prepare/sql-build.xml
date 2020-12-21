@@ -37,6 +37,7 @@
 			<param name="sql_users" value="${sql_users}"/>
 			<param name="dist_govwayConsole" value="${deploy_sql}/${TIPO_DB}/"/>
 			<param name="buildSQLSinglePdD_addArchivioComunicazioni" value="false"/>
+			<param name="buildSQLSinglePdD_addMonitoraggio" value="false"/>
 		</antcall>
 		
 		<!-- *** Pulizia file non utilizzati *** -->
@@ -50,6 +51,10 @@
 		<delete file="${deploy_sql}/${TIPO_DB}/ConfigurazionePdD_drop.sql" />
 		
 <!--
+
+		<delete file="${deploy_sql}/${TIPO_DB}/Monitoraggio.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/Monitoraggio_drop.sql" />
+
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici.sql" />
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_drop.sql" />
 
@@ -151,6 +156,19 @@
                            files="RepositoryStatistiche-DBInfo.sql"/>
 		</concat>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche-DBInfo.sql"/>
+
+		<!-- creo file GovWayMonitoraggio.sql -->
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWayMonitoraggio.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWayMonitoraggio.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Monitoraggio
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="Monitoraggio.sql"/>
+		</concat>
+		<delete file="${deploy_sql}/${TIPO_DB}/Monitoraggio.sql"/>
 
 		<!-- creo file GovWaySemaphore.sql -->
 		<delete file="${deploy_sql}/${TIPO_DB}/GovWaySemaphore.sql"/>
@@ -263,6 +281,20 @@
 		
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche-DBInfo_drop.sql"/>
 
+		<!-- creo file GovWayMonitoraggio_drop.sql -->
+
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-monitoraggio_drop.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Monitoraggio
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="Monitoraggio_drop.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/Monitoraggio_drop.sql"/>
+
 		<!-- creo file GovWaySemaphore_drop.sql -->
 
 		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-semaphore_drop.sql" append="yes" >
@@ -281,6 +313,17 @@
 
 
 		<!-- *** [DELETE] creo govway_delete.sql *** -->
+
+		<delete file="${deploy_sql}/${TIPO_DB}/govway-monitoraggio_delete.sql"/>		
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-monitoraggio_delete.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Monitoraggio
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="GovWayMonitoraggio_delete.sql"/>
+		</concat>
 				
 		<delete file="${deploy_sql}/${TIPO_DB}/govway-runtime_delete.sql"/>		
 		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-runtime_delete.sql" append="yes" >
@@ -338,6 +381,7 @@
 		</concat>
 		
 		
+		<delete file="${deploy_sql}/${TIPO_DB}/Monitoraggio_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWay_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche_delete.sql"/>

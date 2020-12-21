@@ -914,6 +914,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-cors" type="cors-configurazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="response-caching" type="response-caching-configurazione-generale"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-canali" type="canali-configurazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="registro-plugins" type="registro-plugins"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -1326,9 +1327,71 @@
 		<xsd:attribute name="cache-timeout-seconds" type="xsd:unsignedInt" use="optional"/>
 	</xsd:complexType>
 
+	<!-- Registro Plugins -->
+	<xsd:element name="registro-plugins" type="registro-plugins"/>
+	<xsd:complexType name="registro-plugins">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="plugin" type="registro-plugin"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="registro-plugin">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="archivio" type="registro-plugin-archivio"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="compatibilita" type="xsd:string"/> <!-- Tipi di Plugin -->
+		</xsd:sequence>
+		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="data" type="xsd:dateTime" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="registro-plugin-archivio">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="contenuto" type="xsd:base64Binary"/> 
+			<xsd:element maxOccurs="1" minOccurs="0" name="url" type="xsd:string"/> 
+			<xsd:element maxOccurs="1" minOccurs="0" name="dir" type="xsd:string"/> 
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="data" type="xsd:dateTime" use="required"/>
+		<xsd:attribute name="sorgente" type="PluginSorgenteArchivio" use="required"/>
+	</xsd:complexType>
+	
+
 
 	<!-- Enumeration -->
-	
+
+	<xsd:simpleType name="PluginSorgenteArchivio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="jar"/>
+			<xsd:enumeration value="url"/>
+			<xsd:enumeration value="dir"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="FaseServiceHandler">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="init"/>
+			<xsd:enumeration value="exit"/>
+			<xsd:enumeration value="integrationManagerRequest"/>
+			<xsd:enumeration value="integrationManagerResponse"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FaseMessageHandler">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="preIn"/>
+			<xsd:enumeration value="in"/>
+			<xsd:enumeration value="inProtocolInfo"/>
+			<xsd:enumeration value="out"/>
+			<xsd:enumeration value="postOut"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RuoloMessageHandler">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="richiesta"/>
+			<xsd:enumeration value="risposta"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
 	<xsd:simpleType name="TipoGestioneCORS">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="gateway"/>

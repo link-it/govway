@@ -55,6 +55,8 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.monitor.engine.config.base.IdPlugin;
+import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -380,6 +382,23 @@ public class ExporterUtils {
 			idsTokenPolicy.add(idGP);
 		}
 		return idsTokenPolicy;
+	}
+	
+	public List<?> getIdsPluginClassi(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<IdPlugin> idsPlugins = new ArrayList<IdPlugin>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			long idPluginLong = Long.parseLong(id);
+			Plugin plugin = this.confCore.getPlugin(idPluginLong);
+			
+			IdPlugin idPlugin = new IdPlugin();
+			idPlugin.setClassName(plugin.getClassName());
+			idPlugin.setLabel(plugin.getLabel());
+			idPlugin.setTipo(plugin.getTipo());
+			idPlugin.setTipoPlugin(plugin.getTipoPlugin());
+			idsPlugins.add(idPlugin);
+		}
+		return idsPlugins;
 	}
 	
 	public void filterByProtocol(List<String> tipiSoggetti,List<String> tipiServizi,Archive archive) throws ProtocolException {

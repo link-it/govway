@@ -33,15 +33,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-statistica">
- * 		&lt;sequence>
- * 			&lt;element name="id-configurazione-statistica" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="id-configurazione-servizio-azione" type="{http://www.openspcoop2.org/monitor/engine/config/statistiche}id-configurazione-servizio-azione" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="plugin" type="{http://www.openspcoop2.org/monitor/engine/config/statistiche}info-plugin" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-statistica"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-configurazione-statistica" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="id-configurazione-servizio-azione" type="{http://www.openspcoop2.org/monitor/engine/config/statistiche}id-configurazione-servizio-azione" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="plugin" type="{http://www.openspcoop2.org/monitor/engine/config/statistiche}info-plugin" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

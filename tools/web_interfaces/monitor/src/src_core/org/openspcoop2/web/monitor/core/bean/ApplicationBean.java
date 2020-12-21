@@ -122,7 +122,7 @@ public class ApplicationBean implements Serializable {
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE_OPERATORE, govwayMonitorProperties.isAttivoModuloTransazioniBase() && govwayMonitorProperties.isAttivoLiveRuoloOperatore());
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE, govwayMonitorProperties.isAttivoModuloTransazioniStatisticheBase());
-			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ALLARMI, govwayMonitorProperties.isAttivoModuloAllarmi());
+			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_ALLARMI, govwayMonitorProperties.isAllarmiEnabled());
 			boolean attivoModuloTransazioniPersonalizzate = govwayMonitorProperties.isAttivoModuloTransazioniPersonalizzate();
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI, attivoModuloTransazioniPersonalizzate); 
 			boolean attivoModuloRicerchePersonalizzate = govwayMonitorProperties.isAttivoModuloRicerchePersonalizzate();
@@ -816,22 +816,7 @@ public class ApplicationBean implements Serializable {
 	}
 
 	public boolean getShowConfigurazioneAllarmi() {
-		checkRoles();
-
-		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ALLARMI))
-			return false;
-
-		if(this.roles == null)
-			return false;
-
-		if(this.roles!= null && this.roles.isEmpty())
-			return false;
-
-		// processi visualizzabili dal configuratore
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		return false;
+		return false; // spostato sulla console di configurazione
 	}
 	
 	public boolean getShowReport(){

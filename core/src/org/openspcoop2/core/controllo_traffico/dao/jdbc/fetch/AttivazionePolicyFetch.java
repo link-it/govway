@@ -99,6 +99,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "filtro_ruolo_erogatore", AttivazionePolicy.model().FILTRO.RUOLO_EROGATORE.getFieldType()));
 				setParameter(object.getFiltro(), "setServizioApplicativoErogatore", AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_sa_erogatore", AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()));
+				setParameter(object.getFiltro(), "setTag", AttivazionePolicy.model().FILTRO.TAG.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "filtro_tag", AttivazionePolicy.model().FILTRO.TAG.getFieldType()));
 				setParameter(object.getFiltro(), "setTipoServizio", AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_tipo_servizio", AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO.getFieldType()));
 				setParameter(object.getFiltro(), "setNomeServizio", AttivazionePolicy.model().FILTRO.NOME_SERVIZIO.getFieldType(),
@@ -211,6 +213,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"filtro.ruolo-erogatore"));
 				setParameter(object.getFiltro(), "setServizioApplicativoErogatore", AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
 					this.getObjectFromMap(map,"filtro.servizio-applicativo-erogatore"));
+				setParameter(object.getFiltro(), "setTag", AttivazionePolicy.model().FILTRO.TAG.getFieldType(),
+					this.getObjectFromMap(map,"filtro.tag"));
 				setParameter(object.getFiltro(), "setTipoServizio", AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO.getFieldType(),
 					this.getObjectFromMap(map,"filtro.tipo-servizio"));
 				setParameter(object.getFiltro(), "setNomeServizio", AttivazionePolicy.model().FILTRO.NOME_SERVIZIO.getFieldType(),

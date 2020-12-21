@@ -356,7 +356,8 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 														activePolicy,
 														idUnivocoGroupBy, context.getPddContext(), 
 														msgDiag, tr, datiTransazione, pddCongestionata, datiTempiRisposta,
-														pddContext_policyApplicabile);
+														pddContext_policyApplicabile,
+														context.getStato());
 												
 												// Gestisco Risultato Verifica
 												if(risultatoVerifica.isErroreGenerico()){

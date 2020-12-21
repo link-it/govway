@@ -51,4 +51,9 @@ public class NameValue {
 		this.value = value;
 	}
 	
+	@Override
+	public String toString() {
+		return this.name+"="+this.value;
+	}
+	
 }

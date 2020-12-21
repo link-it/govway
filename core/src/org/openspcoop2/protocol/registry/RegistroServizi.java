@@ -3184,7 +3184,13 @@ public class RegistroServizi  {
 						throw e;
 					}
 					else {
-						this.log.error("Costruisco API tramite il registro (Step1) error: "+e.getMessage(),e);
+						String errorMsg = "Costruisco API tramite il registro (Step1) error: "+e.getMessage();
+						if(org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.API_SENZA_SPECIFICA.equals(e.getMessage())) {
+							this.log.warn(errorMsg,e);
+						}
+						else {
+							this.log.error(errorMsg,e);
+						}
 					}
 				}
 				
@@ -3199,7 +3205,13 @@ public class RegistroServizi  {
 						throw e;
 					}
 					else {
-						this.log.error("Costruisco API tramite il registro (Step2) error: "+e.getMessage(),e);
+						String errorMsg = "Costruisco API tramite il registro (Step2) error: "+e.getMessage();
+						if(org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.API_SENZA_SPECIFICA.equals(e.getMessage())) {
+							this.log.warn(errorMsg,e);
+						}
+						else {
+							this.log.error(errorMsg,e);
+						}
 					}
 				}
 				
@@ -3218,7 +3230,13 @@ public class RegistroServizi  {
 						throw e;
 					}
 					else {
-						this.log.error("Costruisco API tramite il registro (Step1) error: "+e.getMessage(),e);
+						String errorMsg = "Costruisco API tramite il registro (Step1) error: "+e.getMessage();
+						if(org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.API_SENZA_SPECIFICA.equals(e.getMessage())) {
+							this.log.warn(errorMsg,e);
+						}
+						else {
+							this.log.error(errorMsg,e);
+						}
 					}
 				}
 				
@@ -3233,7 +3251,13 @@ public class RegistroServizi  {
 						throw e;
 					}
 					else {
-						this.log.error("Costruisco API tramite il registro (Step2) error: "+e.getMessage(),e);
+						String errorMsg = "Costruisco API tramite il registro (Step2) error: "+e.getMessage();
+						if(org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.API_SENZA_SPECIFICA.equals(e.getMessage())) {
+							this.log.warn(errorMsg,e);
+						}
+						else {
+							this.log.error(errorMsg,e);
+						}
 					}
 				}
 					

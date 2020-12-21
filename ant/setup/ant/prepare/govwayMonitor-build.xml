@@ -49,6 +49,7 @@
 			<param name="deploy_govwayMonitor" value="${govwayMonitor}/deploy"/>
 			<param name="buildJsfAsModule" value="false"/>
 	 		<param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />
+			<param name="buildMonitoraggio" value="true"/>
 		</antcall>
 	
 		<move file="${deploy_sw}/${TIPO_AS}/dist/govwayMonitor.war" todir="${deploy_sw}/${TIPO_AS}"/>

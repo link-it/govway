@@ -268,7 +268,8 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="tipo" type="xsd:string" fixed="RICERCA"/>
+			<xsd:element name="tipo-plugin" type="xsd:string" fixed="RICERCA"/>
+			<xsd:element name="tipo" type="xsd:string" />
 			<xsd:element name="class-name" type="xsd:string" />
 			<xsd:element name="descrizione" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="label" type="xsd:string" />

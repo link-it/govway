@@ -420,10 +420,12 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<equals arg1="${nomeSqlUpgrade}" arg2="GovWay.sql"/>
 			<then>
 				<var name="upgradeConfigurazione" value="true"/>
+				<var name="upgradeMonitoraggio" value="${build_monitoraggio}"/>
 				<if>
 					<equals arg1="${antinstaller_config_db}" arg2="config"/>
 					<then>
 						<var name="upgradeConfigurazione" value="false"/>
+						<var name="upgradeMonitoraggio" value="false"/>
 					</then>
 				</if>
 				<var name="upgradeTracciamento" value="true"/>
@@ -446,6 +448,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<propertyfile file="${tmp_sql}/PROPS_UPGRADE/upgrade.properties">
 					<entry key="upgrade.runtime" value="true"/>
 					<entry key="upgrade.configurazione" value="${upgradeConfigurazione}"/>
+					<entry key="upgrade.monitoraggio" value="${upgradeMonitoraggio}"/>
 					<entry key="upgrade.tracciamento" value="${upgradeTracciamento}"/>
 					<entry key="upgrade.statistiche" value="${upgradeStatistiche}"/>
 				</propertyfile>
@@ -460,6 +463,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<propertyfile file="${tmp_sql}/PROPS_UPGRADE/upgrade.properties">
 					<entry key="upgrade.runtime" value="false"/>
 					<entry key="upgrade.configurazione" value="true"/>
+					<entry key="upgrade.monitoraggio" value="${build_monitoraggio}"/>
 					<entry key="upgrade.tracciamento" value="false"/>
 					<entry key="upgrade.statistiche" value="false"/>
 				</propertyfile>
@@ -483,6 +487,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<propertyfile file="${tmp_sql}/PROPS_UPGRADE/upgrade.properties">
 					<entry key="upgrade.runtime" value="false"/>
 					<entry key="upgrade.configurazione" value="false"/>
+					<entry key="upgrade.monitoraggio" value="false"/>
 					<entry key="upgrade.tracciamento" value="true"/>
 					<entry key="upgrade.statistiche" value="${upgradeStatistiche}"/>
 				</propertyfile>
@@ -497,6 +502,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<propertyfile file="${tmp_sql}/PROPS_UPGRADE/upgrade.properties">
 					<entry key="upgrade.runtime" value="false"/>
 					<entry key="upgrade.configurazione" value="false"/>
+					<entry key="upgrade.monitoraggio" value="false"/>
 					<entry key="upgrade.tracciamento" value="false"/>
 					<entry key="upgrade.statistiche" value="true"/>
 				</propertyfile>

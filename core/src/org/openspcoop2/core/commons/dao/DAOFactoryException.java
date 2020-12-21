@@ -21,6 +21,7 @@
 
 package org.openspcoop2.core.commons.dao;
 
+import org.openspcoop2.core.commons.CoreException;
 
 /**
  * DAOFactoryException
@@ -29,7 +30,7 @@ package org.openspcoop2.core.commons.dao;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DAOFactoryException extends Exception {
+public class DAOFactoryException extends CoreException {
 
 	 public DAOFactoryException(String message, Throwable cause)
 		{

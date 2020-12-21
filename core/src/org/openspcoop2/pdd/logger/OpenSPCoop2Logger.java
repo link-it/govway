@@ -167,6 +167,12 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per consegna contenuti */
 	protected static Logger loggerOpenSPCoopConsegnaContenutiSql = null;
 	protected static Logger loggerOpenSPCoopConsegnaContenutiSqlError = null;
+	/**  Logger log4j utilizzato per i Plugins */
+	protected static Logger loggerOpenSPCoopPlugins = null;
+	protected static Logger loggerOpenSPCoopPluginsError = null;
+	/**  Logger log4j utilizzato per i Plugins (sql) */
+	protected static Logger loggerOpenSPCoopPluginsSql = null;
+	protected static Logger loggerOpenSPCoopPluginsSqlError = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
 	public static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<IDiagnosticProducer>(); 
 	public static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<String>();
@@ -636,6 +642,26 @@ public class OpenSPCoop2Logger {
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSqlError==null)
 				throw new Exception("Logger govway.consegna_messaggi.sql.error non trovato");
 
+			// PLUGINS LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopPlugins = LoggerWrapperFactory.getLogger("govway.plugins");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopPlugins==null)
+				throw new Exception("Logger govway.plugins non trovato");
+			
+			// PLUGINS LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopPluginsError = LoggerWrapperFactory.getLogger("govway.plugins.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopPluginsError==null)
+				throw new Exception("Logger govway.plugins.error non trovato");
+			
+			// PLUGINS SQL LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopPluginsSql = LoggerWrapperFactory.getLogger("govway.plugins.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopPluginsSql==null)
+				throw new Exception("Logger govway.plugins.sql non trovato");
+			
+			// PLUGINS SQL LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopPluginsSqlError = LoggerWrapperFactory.getLogger("govway.plugins.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopPluginsSqlError==null)
+				throw new Exception("Logger govway.plugins.sql.error non trovato");
+			
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");
 			
@@ -1268,6 +1294,24 @@ public class OpenSPCoop2Logger {
 		}
 		else {
 			return OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSqlError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopPlugins(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopPlugins;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopPluginsError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopPluginsSql(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopPluginsSql;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopPluginsSqlError;
 		}
 	}
 	

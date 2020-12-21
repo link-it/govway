@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import java.io.Serializable;
 
 
@@ -34,12 +33,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="id-plugin">
- * 		&lt;sequence>
- * 			&lt;element name="tipo" type="{http://www.openspcoop2.org/monitor/engine/config/base}tipo-plugin" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="class-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="id-plugin"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="tipo-plugin" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="class-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -51,8 +52,10 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "id-plugin", 
   propOrder = {
+  	"tipoPlugin",
   	"tipo",
-  	"className"
+  	"className",
+  	"label"
   }
 )
 
@@ -76,23 +79,19 @@ public class IdPlugin extends org.openspcoop2.utils.beans.BaseBean implements Se
 		this.id=Long.valueOf(-1);
   }
 
-  public void set_value_tipo(String value) {
-    this.tipo = (TipoPlugin) TipoPlugin.toEnumConstantFromString(value);
+  public java.lang.String getTipoPlugin() {
+    return this.tipoPlugin;
   }
 
-  public String get_value_tipo() {
-    if(this.tipo == null){
-    	return null;
-    }else{
-    	return this.tipo.toString();
-    }
+  public void setTipoPlugin(java.lang.String tipoPlugin) {
+    this.tipoPlugin = tipoPlugin;
   }
 
-  public org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin getTipo() {
+  public java.lang.String getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin tipo) {
+  public void setTipo(java.lang.String tipo) {
     this.tipo = tipo;
   }
 
@@ -104,6 +103,14 @@ public class IdPlugin extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.className = className;
   }
 
+  public java.lang.String getLabel() {
+    return this.label;
+  }
+
+  public void setLabel(java.lang.String label) {
+    this.label = label;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -111,14 +118,20 @@ public class IdPlugin extends org.openspcoop2.utils.beans.BaseBean implements Se
 
 
 
-  @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo-plugin",required=true,nillable=false)
+  protected java.lang.String tipoPlugin;
 
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo",required=true,nillable=false)
-  protected TipoPlugin tipo;
+  protected java.lang.String tipo;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="class-name",required=true,nillable=false)
   protected java.lang.String className;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="label",required=true,nillable=false)
+  protected java.lang.String label;
 
 }

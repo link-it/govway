@@ -80,6 +80,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CORSFilter;
 import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
@@ -268,6 +269,7 @@ public class RicezioneBuste {
 			return; // inizializzato da un altro thread
 
 		Loader loader = Loader.getInstance();
+		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 		
 		// Inizializzazione NodeSender
 		String classTypeNodeSender = className.getNodeSender(propertiesReader.getNodeSender());
@@ -293,30 +295,20 @@ public class RicezioneBuste {
 
 		// Inizializzo IGestoreIntegrazionePA list
 		String [] tipiIntegrazioneDefault = propertiesReader.getTipoIntegrazionePA();
-		//List<IGestoreIntegrazionePA> v = new ArrayList<IGestoreIntegrazionePA>();
 		List<String> s = new ArrayList<String>();
 		for (int i = 0; i < tipiIntegrazioneDefault.length; i++) {
-			classType = className.getIntegrazionePortaApplicativa(tipiIntegrazioneDefault[i]);
 			try {
-				IGestoreIntegrazionePA test = (IGestoreIntegrazionePA)loader.newInstance(classType);
-				test.toString();
-				//v.add(((IGestoreIntegrazionePA)test));
+				IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazioneDefault[i]);
+				gestore.toString();
 				s.add(tipiIntegrazioneDefault[i]);
-				logCore	.info("Inizializzazione gestore per lettura integrazione PA di tipo "
+				logCore	.info("Inizializzazione gestore dati di integrazione per le erogazioni di tipo "
 						+ tipiIntegrazioneDefault[i]	+ " effettuata.");
 			} catch (Exception e) {
-				throw new Exception(
-						"Riscontrato errore durante il caricamento della classe ["+ classType
-						+ "] da utilizzare per la gestione dell'integrazione di tipo ["
-						+ tipiIntegrazioneDefault[i]+ "]: " + e.getMessage());
+				throw new Exception(e.getMessage(),e);
 			}
 		}
 		if(s.size()>0){
 			RicezioneBuste.defaultGestoriIntegrazionePA = s.toArray(new String[1]);
-//			RicezioneBuste.gestoriIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<String, IGestoreIntegrazionePA>();
-//			while(s.size()>0){
-//				RicezioneBuste.gestoriIntegrazionePA.put(s.remove(0), v.remove(0));
-//			}
 		}
 		
 		// Inizializzo IGestoreIntegrazionePA per protocollo
@@ -328,18 +320,14 @@ public class RicezioneBuste {
 			if(tipiIntegrazionePA!=null && tipiIntegrazionePA.length>0){
 				List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
 				for (int i = 0; i < tipiIntegrazionePA.length; i++) {
-					classType = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
 					try {
-						IGestoreIntegrazionePA test = (IGestoreIntegrazionePA)loader.newInstance(classType);
-						test.toString();
+						IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
+						gestore.toString();
 						tipiIntegrazionePerProtocollo.add(tipiIntegrazionePA[i]);
-						logCore	.info("Inizializzazione gestore per lettura integrazione PA di tipo "
+						logCore	.info("Inizializzazione gestore dati di integrazione (protocollo: "+protocol+") per le erogazioni di tipo "
 								+ tipiIntegrazionePA[i]	+ " effettuata.");
 					} catch (Exception e) {
-						throw new Exception(
-								"Riscontrato errore durante il caricamento della classe ["+ classType
-								+ "] da utilizzare per la gestione dell'integrazione di tipo ["
-								+ tipiIntegrazionePA[i]+ "]: " + e.getMessage());
+						throw new Exception(e.getMessage(),e);
 					}
 				}
 				if(tipiIntegrazionePerProtocollo.size()>0){
@@ -894,6 +882,7 @@ public class RicezioneBuste {
 		
 		// Loader
 		Loader loader = Loader.getInstance();
+		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 		
 		// RequestInfo
 		RequestInfo requestInfo = this.msgContext.getRequestInfo();
@@ -1497,28 +1486,29 @@ public class RicezioneBuste {
 			inRequestPAMessage.setServizio(idServizio);
 			for (int i = 0; i < tipiIntegrazionePA.length; i++) {
 				try {
-					
-					String classType = null;
 					IGestoreIntegrazionePA gestore = null;
 					try {
-						classType = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
-						gestore = (IGestoreIntegrazionePA)loader.newInstance(classType);
-						AbstractCore.init(gestore, pddContext, protocolFactory);
-					} catch (Exception e) {
-						throw new Exception(
-								"Riscontrato errore durante il caricamento della classe ["+ classType
-								+ "] da utilizzare per la gestione dell'integrazione di tipo ["+ tipiIntegrazionePA[i] + "]: " + e.getMessage());
+						gestore = (IGestoreIntegrazionePA) pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
+					}catch(Exception e){
+						throw e;
 					}
+					if(gestore!=null){
+						String classType = null;
+						try {
+							classType = gestore.getClass().getName();
+							AbstractCore.init(gestore, pddContext, protocolFactory);
+						} catch (Exception e) {
+							throw new Exception(
+									"Riscontrato errore durante l'inizializzazione della classe ["+ classType
+											+ "] da utilizzare per la gestione dell'integrazione delle erogazioni di tipo ["+ tipiIntegrazionePA[i] + "]: " + e.getMessage());
+						}
 					
-					if(gestore==null){
+						gestore.readInRequestHeader(headerIntegrazioneRichiesta, inRequestPAMessage);
+					}
+					else {
 						msgDiag.logErroreGenerico("Gestore ["
 								+ tipiIntegrazionePA[i]+ "], per la lettura dell'header di integrazione, non inizializzato",
 								"gestoriIntegrazionePASoap.get("+tipiIntegrazionePA[i]+")");
-					}
-					//else if (gestore instanceof IGestoreIntegrazionePASoap) {
-					//	((IGestoreIntegrazionePASoap)gestore).readInRequestHeader(headerIntegrazioneRichiesta, inRequestPAMessage);
-					else {
-						gestore.readInRequestHeader(headerIntegrazioneRichiesta, inRequestPAMessage);
 					}		
 				} catch (Exception e) {
 					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA[i]);
@@ -4438,6 +4428,9 @@ public class RicezioneBuste {
 		// ------------- in-protocol-handler -----------------------------
 		try{
 			InRequestProtocolContext inRequestProtocolContext = new InRequestProtocolContext(inRequestContext);
+			if(inRequestProtocolContext.getStato()==null) {
+				inRequestProtocolContext.setStato(openspcoopstate.getStatoRichiesta());
+			}
 			if(inRequestProtocolContext.getConnettore()!=null){
 				inRequestProtocolContext.getConnettore().setCredenziali(credenziali);
 			}
@@ -5000,28 +4993,31 @@ public class RicezioneBuste {
 			
 			for (int i = 0; i < tipiIntegrazionePA.length; i++) {
 				try {
-					//IGestoreIntegrazionePA gestore = RicezioneBuste.gestoriIntegrazionePA.get(tipiIntegrazionePA[i]);
-					
-					String classType = null;
 					IGestoreIntegrazionePA gestore = null;
 					try {
-						classType = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
-						gestore = (IGestoreIntegrazionePA)loader.newInstance(classType);
-						AbstractCore.init(gestore, pddContext, protocolFactory);
-					} catch (Exception e) {
-						throw new Exception(
-								"Riscontrato errore durante il caricamento della classe ["+ classType
-								+ "] da utilizzare per la gestione (aggiornamento/eliminazione) dell'integrazione di tipo ["+ tipiIntegrazionePA[i] + "]: " + e.getMessage());
+						gestore = (IGestoreIntegrazionePA) pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
+					}catch(Exception e){
+						throw e;
 					}
-					
-					if (gestore instanceof IGestoreIntegrazionePASoap) {
-						if(propertiesReader.deleteHeaderIntegrazioneRequestPA()){
-							((IGestoreIntegrazionePASoap)gestore).deleteInRequestHeader(inRequestPAMessage);
+					if(gestore!=null){
+						String classType = null;
+						try {
+							classType = gestore.getClass().getName();
+							AbstractCore.init(gestore, pddContext, protocolFactory);
+						} catch (Exception e) {
+							throw new Exception(
+									"Riscontrato errore durante l'inizializzazione della classe ["+ classType
+											+ "] da utilizzare per la gestione dell'integrazione delle erogazioni (aggiornamento/eliminazione) di tipo ["+ tipiIntegrazionePA[i] + "]: " + e.getMessage());
 						}
-						else{
-							((IGestoreIntegrazionePASoap)gestore).updateInRequestHeader(inRequestPAMessage, idMessageRequest, servizioApplicativoFruitore, correlazioneApplicativa);
-						}
-					} 					
+						if (gestore instanceof IGestoreIntegrazionePASoap) {
+							if(propertiesReader.deleteHeaderIntegrazioneRequestPA()){
+								((IGestoreIntegrazionePASoap)gestore).deleteInRequestHeader(inRequestPAMessage);
+							}
+							else{
+								((IGestoreIntegrazionePASoap)gestore).updateInRequestHeader(inRequestPAMessage, idMessageRequest, servizioApplicativoFruitore, correlazioneApplicativa);
+							}
+						} 	
+					}
 				} catch (Exception e) {
 					msgDiag.logErroreGenerico(e,"HeaderIntegrazione("+tipiIntegrazionePA[i]+")");
 					
@@ -7765,26 +7761,22 @@ public class RicezioneBuste {
 				
 				for (int i = 0; i < tipiIntegrazionePA_response.length; i++) {
 					try {
-//						if(RicezioneBuste.gestoriIntegrazionePA.containsKey(tipiIntegrazionePA[i])==false){
-//							RicezioneBuste.aggiornaListaGestoreIntegrazione(
-//									tipiIntegrazionePA[i], className,
-//									propertiesReader, logCore);
-//						}
-//						IGestoreIntegrazionePA gestore = RicezioneBuste.gestoriIntegrazionePA.get(tipiIntegrazionePA[i]);
-						
-						String classType = null;
 						IGestoreIntegrazionePA gestore = null;
 						try {
-							classType = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA_response[i]);
-							gestore = (IGestoreIntegrazionePA)loader.newInstance(classType);
-							AbstractCore.init(gestore, pddContext, protocolFactory);
-						} catch (Exception e) {
-							throw new Exception(
-									"Riscontrato errore durante il caricamento della classe ["+ classType
-									+ "] da utilizzare per la gestione dell'integrazione di tipo ["+ tipiIntegrazionePA_response[i] + "]: " + e.getMessage());
+							gestore = (IGestoreIntegrazionePA) pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA_response[i]);
+						}catch(Exception e){
+							throw e;
 						}
-						
-						if (gestore != null) {
+						if(gestore!=null){
+							String classType = null;
+							try {
+								classType = gestore.getClass().getName();
+								AbstractCore.init(gestore, pddContext, protocolFactory);
+							} catch (Exception e) {
+								throw new Exception(
+										"Riscontrato errore durante l'inizializzazione della classe ["+ classType
+												+ "] da utilizzare per la gestione dell'integrazione delle erogazioni (Risposta Update/Delete) di tipo ["+ tipiIntegrazionePA_response[i] + "]: " + e.getMessage());
+							}
 							if(gestore instanceof IGestoreIntegrazionePASoap){
 								if(propertiesReader.deleteHeaderIntegrazioneResponsePA()){
 									if(responseMessage==null){

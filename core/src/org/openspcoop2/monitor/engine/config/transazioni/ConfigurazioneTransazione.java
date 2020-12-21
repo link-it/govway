@@ -35,15 +35,15 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-transazione">
- * 		&lt;sequence>
- * 			&lt;element name="id-configurazione-servizio-azione" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}id-configurazione-servizio-azione" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="configurazione-transazione-plugin" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}configurazione-transazione-plugin" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="configurazione-transazione-stato" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}configurazione-transazione-stato" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="configurazione-transazione-risorsa-contenuto" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}configurazione-transazione-risorsa-contenuto" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-transazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-configurazione-servizio-azione" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}id-configurazione-servizio-azione" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-transazione-plugin" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}configurazione-transazione-plugin" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="configurazione-transazione-stato" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}configurazione-transazione-stato" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="configurazione-transazione-risorsa-contenuto" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}configurazione-transazione-risorsa-contenuto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -206,7 +206,7 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method getConfigurazioneTransazionePluginList
-   * @return List<ConfigurazioneTransazionePlugin>
+   * @return List&lt;ConfigurazioneTransazionePlugin&gt;
   */
   @Deprecated
   public List<ConfigurazioneTransazionePlugin> getConfigurazioneTransazionePlugin() {
@@ -215,7 +215,7 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method setConfigurazioneTransazionePluginList
-   * @param configurazioneTransazionePlugin List<ConfigurazioneTransazionePlugin>
+   * @param configurazioneTransazionePlugin List&lt;ConfigurazioneTransazionePlugin&gt;
   */
   @Deprecated
   public void setConfigurazioneTransazionePlugin(List<ConfigurazioneTransazionePlugin> configurazioneTransazionePlugin) {
@@ -236,7 +236,7 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method getConfigurazioneTransazioneStatoList
-   * @return List<ConfigurazioneTransazioneStato>
+   * @return List&lt;ConfigurazioneTransazioneStato&gt;
   */
   @Deprecated
   public List<ConfigurazioneTransazioneStato> getConfigurazioneTransazioneStato() {
@@ -245,7 +245,7 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method setConfigurazioneTransazioneStatoList
-   * @param configurazioneTransazioneStato List<ConfigurazioneTransazioneStato>
+   * @param configurazioneTransazioneStato List&lt;ConfigurazioneTransazioneStato&gt;
   */
   @Deprecated
   public void setConfigurazioneTransazioneStato(List<ConfigurazioneTransazioneStato> configurazioneTransazioneStato) {
@@ -266,7 +266,7 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method getConfigurazioneTransazioneRisorsaContenutoList
-   * @return List<ConfigurazioneTransazioneRisorsaContenuto>
+   * @return List&lt;ConfigurazioneTransazioneRisorsaContenuto&gt;
   */
   @Deprecated
   public List<ConfigurazioneTransazioneRisorsaContenuto> getConfigurazioneTransazioneRisorsaContenuto() {
@@ -275,7 +275,7 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method setConfigurazioneTransazioneRisorsaContenutoList
-   * @param configurazioneTransazioneRisorsaContenuto List<ConfigurazioneTransazioneRisorsaContenuto>
+   * @param configurazioneTransazioneRisorsaContenuto List&lt;ConfigurazioneTransazioneRisorsaContenuto&gt;
   */
   @Deprecated
   public void setConfigurazioneTransazioneRisorsaContenuto(List<ConfigurazioneTransazioneRisorsaContenuto> configurazioneTransazioneRisorsaContenuto) {

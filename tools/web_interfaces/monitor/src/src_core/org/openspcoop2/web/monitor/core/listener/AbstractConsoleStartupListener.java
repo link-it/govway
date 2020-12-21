@@ -29,7 +29,8 @@ import javax.servlet.ServletContextListener;
 
 import org.openspcoop2.core.commons.dao.DAOFactoryInstanceProperties;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
-import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
+import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
+import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
@@ -46,6 +47,7 @@ import org.openspcoop2.web.monitor.core.core.InitServlet;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCache;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxDatiConfigurazione;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxRicercheConfigurazione;
+import org.openspcoop2.web.monitor.core.dao.RegistroPluginsService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.Costanti;
 import org.slf4j.Logger;
@@ -443,11 +445,14 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		
 		// inizializza il repository dei plugin
 		try {
-
-			DynamicFactory.initialize(appProperties.getRepositoryJars());
-
+			if(appProperties.isPluginsEnabled()) {
+				CorePluginLoader.initialize(configPdD.getLoader(), LoggerManager.getPddMonitorSqlLogger(),
+						PluginLoader.class,
+						new RegistroPluginsService(),
+						appProperties.getPluginsSeconds());
+			}
 		} catch (Exception e) {
-			String msgErrore = "Errore durante l'inizializzazione del Repository dei jars: " + e.getMessage();
+			String msgErrore = "Errore durante l'inizializzazione del loader dei plugins: " + e.getMessage();
 			AbstractConsoleStartupListener.log.error(
 					//					throw new ServletException(
 					msgErrore,e);

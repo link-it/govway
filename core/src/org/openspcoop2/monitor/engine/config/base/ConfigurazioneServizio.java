@@ -35,16 +35,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-servizio">
- * 		&lt;sequence>
- * 			&lt;element name="accordo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tipo-soggetto-referente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="nome-soggetto-referente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="1" maxOccurs="1" default="1"/>
- * 			&lt;element name="servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="configurazione-servizio-azione" type="{http://www.openspcoop2.org/monitor/engine/config/base}id-configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-servizio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="accordo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-soggetto-referente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="nome-soggetto-referente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="1" maxOccurs="1" default="1"/&gt;
+ * 			&lt;element name="servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-servizio-azione" type="{http://www.openspcoop2.org/monitor/engine/config/base}id-configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -193,7 +193,7 @@ public class ConfigurazioneServizio extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method getConfigurazioneServizioAzioneList
-   * @return List<IdConfigurazioneServizioAzione>
+   * @return List&lt;IdConfigurazioneServizioAzione&gt;
   */
   @Deprecated
   public List<IdConfigurazioneServizioAzione> getConfigurazioneServizioAzione() {
@@ -202,7 +202,7 @@ public class ConfigurazioneServizio extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method setConfigurazioneServizioAzioneList
-   * @param configurazioneServizioAzione List<IdConfigurazioneServizioAzione>
+   * @param configurazioneServizioAzione List&lt;IdConfigurazioneServizioAzione&gt;
   */
   @Deprecated
   public void setConfigurazioneServizioAzione(List<IdConfigurazioneServizioAzione> configurazioneServizioAzione) {

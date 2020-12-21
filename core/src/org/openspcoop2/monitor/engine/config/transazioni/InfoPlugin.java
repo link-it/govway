@@ -33,14 +33,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="info-plugin">
- * 		&lt;sequence>
- * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="class-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="info-plugin"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="tipo-plugin" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="class-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -52,6 +53,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "info-plugin", 
   propOrder = {
+  	"tipoPlugin",
   	"tipo",
   	"className",
   	"descrizione",
@@ -77,6 +79,14 @@ public class InfoPlugin extends org.openspcoop2.utils.beans.BaseBean implements 
 		this.id=id;
 	else
 		this.id=Long.valueOf(-1);
+  }
+
+  public java.lang.String getTipoPlugin() {
+    return this.tipoPlugin;
+  }
+
+  public void setTipoPlugin(java.lang.String tipoPlugin) {
+    this.tipoPlugin = tipoPlugin;
   }
 
   public java.lang.String getTipo() {
@@ -117,6 +127,10 @@ public class InfoPlugin extends org.openspcoop2.utils.beans.BaseBean implements 
   private Long id;
 
 
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo-plugin",required=true,nillable=false)
+  protected java.lang.String tipoPlugin;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo",required=true,nillable=false)

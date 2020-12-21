@@ -119,6 +119,14 @@ public class PolicyUtilities {
 				bf.append(filtro.getTipoErogatore()+"/"+filtro.getNomeErogatore());
 			}
 
+			if( !(filtro.getTag()==null || "".equals(filtro.getTag())) ){
+				if(bf.length()>0){
+					bf.append(", ");
+				}
+				bf.append("Tag:");
+				bf.append(filtro.getTag());
+			}
+			
 			if( !( (filtro.getTipoServizio()==null || "".equals(filtro.getTipoServizio())) 
 					||
 					(filtro.getNomeServizio()==null || "".equals(filtro.getNomeServizio())) ) ){
@@ -127,6 +135,9 @@ public class PolicyUtilities {
 				}
 				bf.append("Servizio:");
 				bf.append(filtro.getTipoServizio()+"/"+filtro.getNomeServizio());
+				if(filtro.getVersioneServizio()!=null && filtro.getVersioneServizio()>0) {
+					bf.append("/v").append(filtro.getVersioneServizio());
+				}
 			}
 			
 			if( !(filtro.getAzione()==null || "".equals(filtro.getAzione())) ){

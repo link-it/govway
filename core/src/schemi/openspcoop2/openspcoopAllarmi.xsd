@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/allarmi"
+	targetNamespace="http://www.openspcoop2.org/core/allarmi"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="allarmi">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" xml-op2-types="true" ws="false"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:jdbc generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="true">
+							<linkit:sql-table-list>
+								<linkit:sql-comment><![CDATA[ALLARMI]]></linkit:sql-comment>
+								<linkit:sql-table object-name="allarme" object-type="allarme"/>
+								<linkit:sql-table object-name="allarme-parametro" object-type="allarme-parametro"/>
+								<linkit:sql-table object-name="allarme-history" object-type="allarme-history"/>
+							</linkit:sql-table-list>
+						</linkit:sql-script>
+						<linkit:sql-mapping single-table-mapping="true"
+							on-delete-cascade="true" check-tables-order-list="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+
+
+
+
+
+
+
+
+
+	<!-- ********* ALLARMI ************* -->
+
+	<xsd:element name="allarme">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-allarme"/>
+					<linkit:sql-table-mapping name="allarmi" comment="Registro degli allarmi attivati">
+						<linkit:sql-table-constraint unique="uniq_allarmi" index="idx_allarmi"
+							check="chk_allarmi"/>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-field name="nome"/>
+						</linkit:sql-table-unique>
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="filtro_ruolo"/>
+							<linkit:sql-table-index-column name="filtro_porta"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+
+				<!-- Informazioni generiche -->
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome"/>
+								<linkit:sql-column-comment><![CDATA[Informazioni generiche]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo univoco dell'allarme]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo" />
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo del plugin che implementa l'allarme]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-allarme" type="tipo-allarme" default="ATTIVO">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo_allarme"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipologia di allarme (ATTIVO/PASSIVO)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<!-- informazioni se inviare email -->
+				<xsd:element name="mail" type="allarme-mail" minOccurs="1"/>
+				
+				<!-- informazioni se invocare uno script esterno -->
+				<xsd:element name="script" type="allarme-script" minOccurs="1"/>
+
+				<!-- Stato allarme (0=OK, 1=Warning, 2=Allarme) -->
+				<xsd:element name="stato-precedente" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="stato_precedente"/>
+								<linkit:sql-column-comment><![CDATA[Stato allarme (0=OK, 1=Warning, 2=Allarme)]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Precedente stato dell'allarme (0=OK, 1=Warning, 2=Allarme)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="stato" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="stato"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Stato dell'allarme (0=OK, 1=Warning, 2=Allarme)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dettaglio-stato" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="stato_dettaglio" text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Dettaglio dello stato dell'allarme]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<!-- Tempi di creazione/esecuzione allarmi -->
+				<xsd:element name="lasttimestamp-create" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="lasttimestamp_create"/>
+								<linkit:sql-column-comment><![CDATA[Tempi di creazione/esecuzione allarmi]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Data di creazione dell'allarme]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="lasttimestamp-update" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="lasttimestamp_update"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Data di aggiornamento dell'allarme]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<!-- Informazioni generali -->
+				<xsd:element name="enabled" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="enabled"/>
+								<linkit:sql-column-comment><![CDATA[Informazioni generali (0=false/1=true)]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se l'allarme è abilitato (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="acknowledged" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="acknowledged"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se l'allarme è stato acknowledged (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-periodo" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="periodo_tipo"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo di Osservazione, tra orario, giornaliero, settimanale o mensile]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="periodo" type="xsd:integer" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="periodo"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo Osservazione in unità indicate dalla colonna periodo_tipo]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<!-- Filtro -->
+				<xsd:element name="filtro" type="allarme-filtro" minOccurs="1"/>
+				
+				<!-- GroupBy -->
+				<xsd:element name="group-by" type="allarme-raggruppamento" minOccurs="1"/>
+
+				<!-- Parametri -->
+				<xsd:element ref="allarme-parametro" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_allarme"
+									required="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'allarme (FK verso tabella allarmi(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="allarme-mail">
+		<xsd:sequence>
+			<xsd:element name="ack-mode" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="mail_ack_mode"/>
+							<linkit:sql-column-comment><![CDATA[Informazioni sull'invio di e-mail]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Stato (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="invia-warning" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="mail_invia_warning"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere spedita una mail quando lo stato dell'allarme diventa warning (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="invia-alert" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="mail_invia_alert"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere spedita una mail quando lo stato dell'allarme diventa alert (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="destinatari" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="mail_destinatari" text="true"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Elenco di e-mail separate con la virgola ',']]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="subject" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="mail_subject" />
+							<linkit:sql-ddl-column-comment><![CDATA[Subject della mail]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="body" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="mail_body" text="true"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Body della mail]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<xsd:complexType name="allarme-script">
+		<xsd:sequence>
+			<xsd:element name="ack-mode" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="script_ack_mode"/>
+							<linkit:sql-column-comment><![CDATA[Informazioni sull'invocazione di script esterni]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Stato (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="invoca-warning" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="script_invoke_warning"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere invocato lo script quando lo stato dell'allarme diventa warning (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="invoca-alert" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="script_invoke_alert"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se deve essere invocato lo script quando lo stato dell'allarme diventa alert (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="command" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="script_command" text="true"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Comando dello script da invocare]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="args" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="script_args" text="true"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Argomenti dello script]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>			
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="allarme-filtro">
+		<xsd:sequence>
+			
+			<xsd:element name="enabled" type="xsd:boolean" default="false"> <!-- Permette di indicare se se l'allarme deve essere attuata solamente per determinate transazioni -->
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_enabled"/>
+							<linkit:sql-column-comment><![CDATA[Filtro]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se l'allarme riguarda solamente transazioni che rientrano in un filtro specifico]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="protocollo" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_protocollo"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che rientrano nel protocollo indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="ruolo-porta" type="ruolo-porta" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_ruolo"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che rientrano nel ruolo della porta indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="nome-porta" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_porta" varchar="2000"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che transitano tramite la porta indicata]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="tipo-fruitore" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_tipo_fruitore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il tipo di fruitore indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="nome-fruitore" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_nome_fruitore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il nome del fruitore indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ruolo-fruitore" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_ruolo_fruitore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il ruolo del fruitore indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="servizio-applicativo-fruitore" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_sa_fruitore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il servizio applicativo fruitore indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="tipo-erogatore" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_tipo_erogatore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il tipo di erogatore indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="nome-erogatore" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_nome_erogatore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il nome dell'erogatore indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ruolo-erogatore" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_ruolo_erogatore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il ruolo dell'erogatore indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="tag" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_tag"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono un servizio associato al tag indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_tipo_servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il tipo di servizio indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="nome-servizio" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_nome_servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono il nome del servizio indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="versione-servizio" type="xsd:integer" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_versione_servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono la versione del servizio indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="azione" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_azione" text="true"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'allarme riguarda solamente transazioni che possiedono l'azione indicata]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+	
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="allarme-raggruppamento">
+		<xsd:sequence>
+			
+			<xsd:element name="enabled" type="xsd:boolean" default="false"> <!-- Permette di indicare se se l'allarme deve attuare un raggruppamento -->
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_enabled"/>
+							<linkit:sql-column-comment><![CDATA[Raggruppamento]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se i contatori dell'allarme vengono incrementati indipendentemente dai dati di servizio in cui una transazione rientra, o si raggruppano per determinate caratteristiche delle transazioni]]></linkit:sql-ddl-column-comment>					
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="ruolo-porta" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_ruolo"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per ruolo della porta]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="protocollo" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_protocollo"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per protocollo]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+						
+			<xsd:element name="fruitore" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_fruitore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per fruitore]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="servizio-applicativo-fruitore" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_sa_fruitore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per applicativo fruitore]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="identificativo-autenticato" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_id_autenticato"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per identificativo autenticato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="token" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_token" text="true"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per token (viene indicato un claim)]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="erogatore" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_erogatore"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per erogatore]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="servizio" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per servizio]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="azione" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_azione"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori dell'allarme vengono raggruppati per azione]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="allarme-parametro">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="allarmi_parametri" comment="Parametri di un allarme">
+						<linkit:sql-table-constraint unique="uniq_allarmi_param"
+							index="idx_allarmi_param" check="chk_allarmi_param"/>
+						<linkit:sql-table-primary-key name-id="chk_param_id"/>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-column name="id_allarme"/>
+							<linkit:sql-table-unique-field name="id-parametro"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-parametro" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="param_id"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo univoco del parametro]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="valore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="param_value" medium-text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Valore del parametro]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+	<xsd:element name="allarme-history">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" />
+					<linkit:sql-table-mapping name="allarmi_history" comment="Storico degli stati di un allarme">
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_allarme"/>
+							<linkit:sql-table-index-column name="timestamp_update" order="DESC" ignoreTypeCompatibility="true"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-allarme" type="id-allarme">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping object-name="allarme" object-type="allarme"
+									relationship="reversed"/>
+								<linkit:sql-column-mapping name="id_allarme" required="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'allarme (FK verso tabella allarmi(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="enabled" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="enabled"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Stato (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="stato" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="stato"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Stato dell'allarme (0=OK, 1=Warning, 2=Allarme)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dettaglio-stato" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="stato_dettaglio" text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Dettaglio dello stato dell'allarme]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="acknowledged" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="acknowledged"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se l'allarme è stato acknowledged (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="timestamp-update" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="timestamp_update" default-current-time="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Data di aggiornamento dello stato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="utente" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+		
+
+
+
+
+
+
+
+
+
+	<!-- ********* Identificativi / Tipi / Enumerations ************* -->
+	
+	<!-- ID -->
+
+	<xsd:complexType name="id-allarme">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="allarme" object-type="allarme"
+						relationship="normal"/>
+					<linkit:sql-column-mapping name="id_allarme" required="true"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="tipo" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+
+	<!-- Tipi -->
+	
+	<xsd:simpleType name="tipo-allarme">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ATTIVO"/>
+			<xsd:enumeration value="PASSIVO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="stato-allarme">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ok"/> <!-- 0 -->
+			<xsd:enumeration value="warning"/> <!-- 1 -->
+			<xsd:enumeration value="error"/> <!-- 2 -->
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-periodo">
+		<xsd:restriction base="xsd:string">
+			<xsd:length value="1"/>
+			<xsd:enumeration value="g"/>
+			<xsd:enumeration value="h"/>
+			<xsd:enumeration value="m"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="ruolo-porta">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="delegata"/>
+			<xsd:enumeration value="applicativa"/>
+			<xsd:enumeration value="entrambi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Raccoglitori -->
+	
+	<xsd:element name="elenco-allarmi">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="allarme" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="elenco-id-allarmi">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-allarme" type="id-allarme" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+
+</xsd:schema>

@@ -52,6 +52,7 @@
 			<include name="*/configurazionePdD/*"/>
 			<include name="*/registroServizi/*"/>
 			<include name="*/runtimePdD/*"/>
+			<include name="*/monitoraggio/*"/>
 			<include name="*/Users.sql"/>
 			<include name="*/Operations.sql"/>
 			<include name="*/Audit.sql"/>
@@ -62,6 +63,7 @@
 			<include name="utilities/*/configurazionePdD/*"/>
 			<include name="utilities/*/registroServizi/*"/>
 			<include name="utilities/*/runtimePdD/*"/>
+			<include name="utilities/*/monitoraggio/*"/>
 			<include name="utilities/*/Users*.sql"/>
 			<include name="utilities/*/Operations*.sql"/>
 			<include name="utilities/*/Audit*.sql"/>
@@ -74,85 +76,104 @@
 		<delete dir="${sql_govwayConsole}/init/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/init/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/init/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/init/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/init"/>
 
 		<delete dir="${sql_govwayConsole}/postgresql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/postgresql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/postgresql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/postgresql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/postgresql/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/utilities/postgresql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/postgresql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/utilities/postgresql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/postgresql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/utilities/postgresql/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/patch/postgresql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/postgresql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/patch/postgresql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/postgresql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/patch/postgresql/monitoraggio"/>
 		
 		<delete dir="${sql_govwayConsole}/mysql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/mysql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/mysql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/mysql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/mysql/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/utilities/mysql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/mysql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/utilities/mysql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/mysql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/utilities/mysql/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/patch/mysql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/mysql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/patch/mysql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/mysql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/patch/mysql/monitoraggio"/>
 		
 		<delete dir="${sql_govwayConsole}/oracle/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/oracle/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/oracle/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/oracle/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/oracle/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/utilities/oracle/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/oracle/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/utilities/oracle/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/oracle/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/utilities/oracle/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/patch/oracle/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/oracle/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/patch/oracle/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/oracle/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/patch/oracle/monitoraggio"/>
 		
 		<delete dir="${sql_govwayConsole}/hsql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/hsql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/hsql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/hsql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/hsql/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/utilities/hsql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/hsql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/utilities/hsql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/hsql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/utilities/hsql/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/patch/hsql/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/hsql/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/patch/hsql/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/hsql/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/patch/hsql/monitoraggio"/>
 		
 		<delete dir="${sql_govwayConsole}/sqlserver/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/sqlserver/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/sqlserver/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/sqlserver/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/sqlserver/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/utilities/sqlserver/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/sqlserver/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/utilities/sqlserver/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/sqlserver/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/utilities/sqlserver/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/patch/sqlserver/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/sqlserver/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/patch/sqlserver/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/sqlserver/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/patch/sqlserver/monitoraggio"/>
 		
 		<delete dir="${sql_govwayConsole}/db2/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/db2/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/db2/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/db2/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/db2/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/utilities/db2/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/db2/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/utilities/db2/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/utilities/db2/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/utilities/db2/monitoraggio"/>
 		<delete dir="${sql_govwayConsole}/patch/db2/configurazionePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/db2/registroServizi"/>
 		<delete dir="${sql_govwayConsole}/patch/db2/runtimePdD"/>
 		<delete dir="${sql_govwayConsole}/patch/db2/archiviComunicazioni"/>
+		<delete dir="${sql_govwayConsole}/patch/db2/monitoraggio"/>
 			
 	</target>
 	
@@ -309,6 +330,12 @@
 		<var name="sqlSourceFiles" value="configurazionePdD/configurazionePdD.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_ControlloTraffico.sql"/>
 		<if>
+			<equals arg1="${buildSQLSinglePdD_addMonitoraggio}" arg2="true" />
+			<then>
+				<var name="sqlSourceFiles" value="${sqlSourceFiles} monitoraggio/monitoraggio_Allarmi.sql"/>
+			</then>
+		</if>
+		<if>
 			<equals arg1="${buildSQLSinglePdD_addArchivioComunicazioni}" arg2="true" />
 			<then>
 				<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioTracce.sql"/>
@@ -374,6 +401,13 @@
 		
 		<var name="sqlSourceFiles_delete_config" value="configurazionePdD/configurazionePdD_delete.sql"/>
 		<var name="sqlSourceFiles_delete_config" value="${sqlSourceFiles_delete_config} configurazionePdD/configurazionePdD_ControlloTraffico_delete.sql"/>
+
+		<if>
+			<equals arg1="${buildSQLSinglePdD_addMonitoraggio}" arg2="true" />
+			<then>
+				<var name="sqlSourceFiles_delete_config" value="${sqlSourceFiles_delete_config} monitoraggio/monitoraggio_Allarmi_delete.sql"/>
+			</then>
+		</if>
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
@@ -422,6 +456,13 @@ DELETE FROM pdd where tipo='operativo';]]></replacevalue>
 
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_ControlloTraffico_drop.sql"/>
+
+		<if>
+			<equals arg1="${buildSQLSinglePdD_addMonitoraggio}" arg2="true" />
+			<then>
+				<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} monitoraggio/monitoraggio_Allarmi_drop.sql"/>
+			</then>
+		</if>
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>

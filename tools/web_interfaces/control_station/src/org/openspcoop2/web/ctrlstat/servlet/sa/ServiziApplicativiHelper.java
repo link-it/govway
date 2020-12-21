@@ -1196,6 +1196,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		if(configurazioneStandardNonApplicabile){
 			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE,Costanti.MESSAGE_TYPE_INFO);
 			this.pd.disableEditMode();
+			
+			for (int i = 0; i < dati.size(); i++) {
+				DataElement deCheck = dati.get(i);
+				if(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER.equals(deCheck.getName())) {
+					dati.remove(i);
+					break;
+				}
+			}
 		}
 		
 		

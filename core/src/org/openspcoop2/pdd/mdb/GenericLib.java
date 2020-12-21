@@ -21,9 +21,9 @@
 
 package org.openspcoop2.pdd.mdb;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
@@ -31,6 +31,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  *
@@ -50,6 +51,8 @@ public abstract class GenericLib {
 	protected OpenSPCoop2Properties propertiesReader;
 	/** Loader */
 	protected Loader loader;
+	/** PluginLoader */
+	protected PddPluginLoader pluginLoader;
 	
 	protected String idModulo;
 	
@@ -65,6 +68,7 @@ public abstract class GenericLib {
 			
 				this.propertiesReader = OpenSPCoop2Properties.getInstance();
 				this.loader = Loader.getInstance();
+				this.pluginLoader = PddPluginLoader.getInstance();
 			
 				this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 						

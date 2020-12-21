@@ -665,7 +665,8 @@ Context, Cloneable {
 
 			try {
 				if (r != null){
-					DynamicFactory.getInstance().newDynamicLoader(r.getPlugin().getClassName(), TransazioniSearchForm.log);
+					DynamicFactory.getInstance().newDynamicLoader(r.getPlugin().getTipoPlugin(), r.getPlugin().getTipo(),
+							r.getPlugin().getClassName(), TransazioniSearchForm.log);
 					//Class.forName(r.getPlugin().getClassName());
 				}
 			//} catch (ClassNotFoundException e) {
@@ -1033,7 +1034,8 @@ Context, Cloneable {
 			if (this.getRicercaSelezionata() == null)
 				return null;
 
-			IDynamicValidator bv = DynamicFactory.getInstance().newDynamicValidator(this.getRicercaSelezionata().getPlugin().getClassName(),TransazioniSearchForm.log);
+			IDynamicValidator bv = DynamicFactory.getInstance().newDynamicValidator(this.getRicercaSelezionata().getPlugin().getTipoPlugin(), this.getRicercaSelezionata().getPlugin().getTipo(),
+					this.getRicercaSelezionata().getPlugin().getClassName(),TransazioniSearchForm.log);
 
 			bv.validate(this);
 
@@ -1044,7 +1046,8 @@ Context, Cloneable {
 			// get
 			// lo recuperi e lo utilizzi
 			org.openspcoop2.monitor.engine.dynamic.IDynamicFilter bf = 
-					DynamicFactory.getInstance().newDynamicFilter(this.getRicercaSelezionata().getPlugin().getClassName(),TransazioniSearchForm.log);
+					DynamicFactory.getInstance().newDynamicFilter(this.getRicercaSelezionata().getPlugin().getTipoPlugin(), this.getRicercaSelezionata().getPlugin().getTipo(),
+							this.getRicercaSelezionata().getPlugin().getClassName(),TransazioniSearchForm.log);
 			IFilter f = bf.createConditionFilter(this);
 			if (f != null) {
 				this.setFiltro((f));

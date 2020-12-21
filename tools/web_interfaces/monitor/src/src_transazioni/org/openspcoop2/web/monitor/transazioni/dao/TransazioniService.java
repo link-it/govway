@@ -2218,7 +2218,8 @@ public class TransazioniService implements ITransazioniService {
 			
 			List<Parameter<?>> res = null;
 
-			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(configurazioneRicerca.getPlugin().getClassName(),this.log);
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(configurazioneRicerca.getPlugin().getTipoPlugin(), configurazioneRicerca.getPlugin().getTipo(),
+					configurazioneRicerca.getPlugin().getClassName(),this.log);
 			List<Parameter<?>> sdkParameters = bl.getParameters(context);
 			
 			if(sdkParameters!=null && sdkParameters.size()>0){

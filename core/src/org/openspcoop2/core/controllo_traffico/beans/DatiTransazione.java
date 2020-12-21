@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 
@@ -49,6 +50,9 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	private String idTransazione;
 	
 	private String protocollo;
+	
+	private List<String> tagsAccordoServizioParteComune;
+	private IDAccordo idAccordoServizioParteComune;
 	
 	private IDSoggetto soggettoFruitore;
 	private IDServizio idServizio;
@@ -91,6 +95,18 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	}
 	public void setProtocollo(String protocollo) {
 		this.protocollo = protocollo;
+	}
+	public List<String> getTagsAccordoServizioParteComune() {
+		return this.tagsAccordoServizioParteComune;
+	}
+	public void setTagsAccordoServizioParteComune(List<String> tagAccordoServizioParteComune) {
+		this.tagsAccordoServizioParteComune = tagAccordoServizioParteComune;
+	}
+	public IDAccordo getIdAccordoServizioParteComune() {
+		return this.idAccordoServizioParteComune;
+	}
+	public void setIdAccordoServizioParteComune(IDAccordo idAccordoServizioParteComune) {
+		this.idAccordoServizioParteComune = idAccordoServizioParteComune;
 	}
 	public IDSoggetto getSoggettoFruitore() {
 		return this.soggettoFruitore;

@@ -77,6 +77,7 @@ import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -171,7 +172,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
-import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
@@ -213,8 +213,6 @@ public class InoltroBuste extends GenericLib{
 	
 	
 	/** IGestoreIntegrazionePA: lista di gestori, ordinati per priorita' minore */
-	//public static java.util.concurrent.ConcurrentHashMap<String,IGestoreIntegrazionePD> gestoriIntegrazionePD = null;
-	// E' stato aggiunto lo stato dentro l'oggetto.
 	public static String[] defaultGestoriIntegrazionePD = null;
 	private static java.util.concurrent.ConcurrentHashMap<String, String[]> defaultPerProtocolloGestoreIntegrazionePD = null;
 
@@ -233,22 +231,18 @@ public class InoltroBuste extends GenericLib{
 
 		boolean error = false;
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		Loader loader = Loader.getInstance();
+		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 		
 		// Inizializzo IGestoreIntegrazionePD list
 		InoltroBuste.defaultGestoriIntegrazionePD = propertiesReader.getTipoIntegrazionePD();
-		//InoltroBuste.gestoriIntegrazionePD = new java.util.concurrent.ConcurrentHashMap<String,IGestoreIntegrazionePD>();
 		for(int i=0; i<InoltroBuste.defaultGestoriIntegrazionePD.length; i++){
-			String classType = className.getIntegrazionePortaDelegata(InoltroBuste.defaultGestoriIntegrazionePD[i]);
 			try{
-				IGestoreIntegrazionePD gestore = (IGestoreIntegrazionePD) loader.newInstance(classType);
+				IGestoreIntegrazionePD gestore = pluginLoader.newIntegrazionePortaDelegata(InoltroBuste.defaultGestoriIntegrazionePD[i]);
 				gestore.toString();
-				logCore.info("Inizializzazione gestore integrazione PdD->servizioApplicativo di tipo "+
+				logCore.info("Inizializzazione gestore dati di integrazione per le fruizioni di tipo "+
 						InoltroBuste.defaultGestoriIntegrazionePD[i]+" effettuata.");
 			}catch(Exception e){
-				logCore.error("Riscontrato errore durante il caricamento della classe ["+classType+
-						"] da utilizzare per la gestione dell'integrazione di tipo ["+
-						InoltroBuste.defaultGestoriIntegrazionePD[i]+"]: "+e.getMessage());
+				logCore.error(e.getMessage(),e);
 				error = true;
 			}
 		}
@@ -263,18 +257,14 @@ public class InoltroBuste extends GenericLib{
 				if(tipiIntegrazionePD!=null && tipiIntegrazionePD.length>0){
 					List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
 					for (int i = 0; i < tipiIntegrazionePD.length; i++) {
-						String classType = className.getIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
 						try {
-							IGestoreIntegrazionePD test = (IGestoreIntegrazionePD)loader.newInstance(classType);
-							test.toString();
+							IGestoreIntegrazionePD gestore = pluginLoader.newIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
+							gestore.toString();
 							tipiIntegrazionePerProtocollo.add(tipiIntegrazionePD[i]);
-							logCore	.info("Inizializzazione gestore per lettura integrazione PD di tipo "
+							logCore.info("Inizializzazione gestore dati di integrazione (protocollo: "+protocol+") per le fruizioni di tipo "
 									+ tipiIntegrazionePD[i]	+ " effettuata.");
 						} catch (Exception e) {
-							logCore.error(
-									"Riscontrato errore durante il caricamento della classe ["+ classType
-									+ "] da utilizzare per la gestione dell'integrazione di tipo ["
-									+ tipiIntegrazionePD[i]+ "]: " + e.getMessage());
+							logCore.error(e.getMessage(),e);
 							error = true;
 						}
 					}
@@ -292,31 +282,6 @@ public class InoltroBuste extends GenericLib{
 
 		InoltroBuste.initializeService = !error;
 	}
-
-	/**
-	 * Aggiorna la lista dei GestoreIntegrazionePD
-	 * 
-	 * @throws Exception
-	 */
-// E' stato aggiunto lo stato dentro l'oggetto.
-//	private synchronized static void aggiornaListaGestoreIntegrazione(String newTipo,
-//			ClassNameProperties className,OpenSPCoop2Properties propertiesReader) throws Exception{
-//		if(InoltroBuste.gestoriIntegrazionePD.contains(newTipo))
-//			return; // inizializzato da un altro thread
-//
-//		// Inizializzo IGestoreIntegrazionePD new Type
-//		String classType = className.getIntegrazionePortaDelegata(newTipo);
-//		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-//		Loader loader = Loader.getInstance();
-//		try{
-//			InoltroBuste.gestoriIntegrazionePD.put(newTipo,((IGestoreIntegrazionePD) loader.newInstance(classType)));
-//			logCore.info("Inizializzazione gestore integrazione PdD->servizioApplicativo di tipo "+newTipo+" effettuata.");
-//		}catch(Exception e){
-//			throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
-//					"] da utilizzare per la gestione dell'integrazione di tipo ["+newTipo+"]: "+e.getMessage());
-//		}
-//	}
-		
 		
 		
 		
@@ -1268,25 +1233,22 @@ public class InoltroBuste extends GenericLib{
 			outRequestPDMessage.setSoggettoMittente(soggettoFruitore);
 			
 			for (int i = 0; i < tipiIntegrazionePD.length; i++) {
-				try {
-//					if (InoltroBuste.gestoriIntegrazionePD.containsKey(tipiIntegrazionePD_risposta[i]) == false)
-//						InoltroBuste.aggiornaListaGestoreIntegrazione(
-//								tipiIntegrazionePD_risposta[i], ClassNameProperties.getInstance(),
-//										this.propertiesReader);
-//					IGestoreIntegrazionePD gestore = InoltroBuste.gestoriIntegrazionePD.get(tipiIntegrazionePD_risposta[i]);
-					
-					String classType = null;
+				try {					
 					IGestoreIntegrazionePD gestore = null;
 					try{
-						classType = ClassNameProperties.getInstance().getIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
-						gestore = (IGestoreIntegrazionePD) this.loader.newInstance(classType);
-						AbstractCore.init(gestore, pddContext, protocolFactory);
+						gestore = (IGestoreIntegrazionePD) this.pluginLoader.newIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
 					}catch(Exception e){
-						throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
-								"] da utilizzare per la gestione dell'integrazione di tipo ["+tipiIntegrazionePD[i]+"]: "+e.getMessage());
+						throw e;
 					}
-					
 					if(gestore!=null){
+						String classType = null;
+						try {
+							classType = gestore.getClass().getName();
+							AbstractCore.init(gestore, pddContext, protocolFactory);
+						}catch(Exception e){
+							throw new Exception("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+									"] da utilizzare per la gestione dell'integrazione delle fruizioni di tipo ["+tipiIntegrazionePD[i]+"]: "+e.getMessage());
+						}
 						if(gestore instanceof IGestoreIntegrazionePDSoap){
 							if(this.propertiesReader.deleteHeaderIntegrazioneRequestPD()){
 								gestore.setOutRequestHeader(headerIntegrazione,outRequestPDMessage);
@@ -1954,24 +1916,27 @@ public class InoltroBuste extends GenericLib{
 			OpenSPCoop2MessageFactory faultMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
-			// Ricerco connettore
-			ClassNameProperties prop = ClassNameProperties.getInstance();
-			String connectorClass = prop.getConnettore(tipoConnector);
-			if(connectorClass == null){
-				msgDiag.logErroreGenerico("Connettore non registrato","ClassNameProperties.getConnettore("+tipoConnector+")");
-				invokerNonSupportato = true;
-			}
-
 			// Carico connettore richiesto
+			String connectorClass = null;
 			Exception eInvokerNonSupportato = null;
 			if(invokerNonSupportato==false){
 				try{
-					connectorSender = (IConnettore) this.loader.newInstance(connectorClass);
-					AbstractCore.init(connectorSender, pddContext, protocolFactory);
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
+					connectorSender = (IConnettore) this.pluginLoader.newConnettore(tipoConnector);
+				}
+				catch(Exception e){
+					msgDiag.logErroreGenerico(e,"Inizializzazione Connettore"); // l'errore contiene gia tutte le informazioni
 					invokerNonSupportato = true;
 					eInvokerNonSupportato = e;
+				}
+				if(connectorSender!=null) {
+					try {
+						connectorClass = connectorSender.getClass().getName();
+						AbstractCore.init(connectorSender, pddContext, protocolFactory);
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e,"IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
+						invokerNonSupportato = true;
+						eInvokerNonSupportato = e;
+					}
 				}
 				if( (invokerNonSupportato == false) && (connectorSender == null)){
 					msgDiag.logErroreGenerico("ConnectorSender is null","IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
@@ -3633,24 +3598,21 @@ public class InoltroBuste extends GenericLib{
 				inResponsePDMessage.setSoggettoMittente(soggettoFruitore);
 				for (int i = 0; i < tipiIntegrazionePD_risposta.length; i++) {
 					try {
-//						if (InoltroBuste.gestoriIntegrazionePD.containsKey(tipiIntegrazionePD_risposta[i]) == false)
-//							InoltroBuste.aggiornaListaGestoreIntegrazione(
-//									tipiIntegrazionePD_risposta[i], ClassNameProperties.getInstance(),
-//											this.propertiesReader);
-//						IGestoreIntegrazionePD gestore = InoltroBuste.gestoriIntegrazionePD.get(tipiIntegrazionePD_risposta[i]);
-						
-						String classType = null;
 						IGestoreIntegrazionePD gestore = null;
 						try{
-							classType = ClassNameProperties.getInstance().getIntegrazionePortaDelegata(tipiIntegrazionePD_risposta[i]);
-							gestore = (IGestoreIntegrazionePD) this.loader.newInstance(classType);
-							AbstractCore.init(gestore, pddContext, protocolFactory);
+							gestore = (IGestoreIntegrazionePD) this.pluginLoader.newIntegrazionePortaDelegata(tipiIntegrazionePD_risposta[i]);
 						}catch(Exception e){
-							throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
-									"] da utilizzare per la gestione dell'integrazione di tipo ["+tipiIntegrazionePD_risposta[i]+"]: "+e.getMessage());
+							throw e;
 						}
-						
-						if (gestore != null) {
+						if(gestore!=null){
+							String classType = null;
+							try {
+								classType = gestore.getClass().getName();
+								AbstractCore.init(gestore, pddContext, protocolFactory);
+							}catch(Exception e){
+								throw new Exception("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+										"] da utilizzare per la gestione dell'integrazione (Risposta) delle fruizioni di tipo ["+tipiIntegrazionePD_risposta[i]+"]: "+e.getMessage());
+							}
 							if(responseMessage!=null){
 								gestore.readInResponseHeader(headerIntegrazioneRisposta,inResponsePDMessage);
 							}else if( ! (gestore instanceof IGestoreIntegrazionePDSoap) ){
@@ -4026,25 +3988,29 @@ public class InoltroBuste extends GenericLib{
 				if(responseMessage!=null && tipiIntegrazionePD_risposta!=null){
 					for (int i = 0; i < tipiIntegrazionePD_risposta.length; i++) {
 						try {
-							//IGestoreIntegrazionePD gestore = InoltroBuste.gestoriIntegrazionePD.get(tipiIntegrazionePD_risposta[i]);
 							
-							String classType = null;
 							IGestoreIntegrazionePD gestore = null;
 							try{
-								classType = ClassNameProperties.getInstance().getIntegrazionePortaDelegata(tipiIntegrazionePD_risposta[i]);
-								gestore = (IGestoreIntegrazionePD) this.loader.newInstance(classType);
-								AbstractCore.init(gestore, pddContext, protocolFactory);
+								gestore = (IGestoreIntegrazionePD) this.pluginLoader.newIntegrazionePortaDelegata(tipiIntegrazionePD_risposta[i]);
 							}catch(Exception e){
-								throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
-										"] da utilizzare per la gestione dell'integrazione (Aggiornamento/Eliminazione) di tipo ["+tipiIntegrazionePD_risposta[i]+"]: "+e.getMessage());
+								throw e;
 							}
-							
-							if (gestore != null && gestore instanceof IGestoreIntegrazionePDSoap) {
-								if(this.propertiesReader.deleteHeaderIntegrazioneResponsePD()){
-									((IGestoreIntegrazionePDSoap)gestore).deleteInResponseHeader(inResponsePDMessage);
-								}else{
-									((IGestoreIntegrazionePDSoap)gestore).updateInResponseHeader(inResponsePDMessage, idMessageRequest, idMessageResponse, 
-											servizioApplicativoFruitore, idCorrelazioneApplicativaRisposta, idCorrelazioneApplicativa);
+							if(gestore!=null){
+								String classType = null;
+								try {
+									classType = gestore.getClass().getName();
+									AbstractCore.init(gestore, pddContext, protocolFactory);
+								}catch(Exception e){
+									throw new Exception("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+											"] da utilizzare per la gestione dell'integrazione (Risposta Update/Delete) delle fruizioni di tipo ["+tipiIntegrazionePD_risposta[i]+"]: "+e.getMessage());
+								}
+								if (gestore instanceof IGestoreIntegrazionePDSoap) {
+									if(this.propertiesReader.deleteHeaderIntegrazioneResponsePD()){
+										((IGestoreIntegrazionePDSoap)gestore).deleteInResponseHeader(inResponsePDMessage);
+									}else{
+										((IGestoreIntegrazionePDSoap)gestore).updateInResponseHeader(inResponsePDMessage, idMessageRequest, idMessageResponse, 
+												servizioApplicativoFruitore, idCorrelazioneApplicativaRisposta, idCorrelazioneApplicativa);
+									}
 								}
 							}
 						} catch (Exception e) {

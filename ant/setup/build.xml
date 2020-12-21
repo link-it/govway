@@ -999,11 +999,18 @@
 				</antcall>
 			</then>
 		</if>
+		<var name="monitoraggioSqlInternalName" value=""/>
+		<if>
+			<istrue value="${build_monitoraggio}" />
+			<then>
+				<var name="monitoraggioSqlInternalName" value=" ${antinstaller_tipo_database}/GovWayMonitoraggio.sql"/>
+			</then>
+		</if>
 		<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 	       		<header filtering="no" trimleading="yes">
 </header>
 		  <filelist dir="${deploy_sql}"
-                           files="${antinstaller_tipo_database}/GovWayConfig.sql init.sql"/>
+                           files="${antinstaller_tipo_database}/GovWayConfig.sql init.sql${monitoraggioSqlInternalName}"/>
 		</concat>
 		
 		<!-- trasparente -->

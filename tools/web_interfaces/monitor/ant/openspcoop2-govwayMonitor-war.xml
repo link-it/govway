@@ -94,7 +94,17 @@
 				</jar>
 		<!--	</then>
 		</if> -->
-		
+
+		<var name="monitoraggio_allarme_jar" value="openspcoop2_web-govwayMonitor-allarmi*.jar" />
+		<var name="monitoraggio_allarme_pages" value="allarmi/**" />
+		<if>
+			<istrue value="${buildMonitoraggio}" />
+			<then>
+				<var name="monitoraggio_allarme_jar" value="" />
+				<var name="monitoraggio_allarme_pages" value="" />
+			</then>
+		</if>
+
 		<war destfile="${dist_govwayMonitor}/govwayMonitor.war" webxml="${build_govwayMonitor_war}/WEB-INF/web.xml">
 
 			<!-- Informazioni sulla versione -->
@@ -117,6 +127,7 @@
 			</fileset>
 			<fileset dir="${deploy_govwayMonitor}/pages">
 				<include name="**/*" />
+				<exclude name="${monitoraggio_allarme_pages}" />
 			</fileset>
 
 			<webinf dir="${src_govwayMonitor}/WEB-INF">
@@ -250,6 +261,7 @@
 			</lib>
 			<lib dir="${dist_govwayMonitor}">
 				<include name="openspcoop2*.jar" />
+				<exclude name="${monitoraggio_allarme_jar}" />
 			</lib>
 			<lib dir="${openspcoop2_jars}">
 				<include name="openspcoop2*.jar" />

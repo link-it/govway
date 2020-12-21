@@ -21,12 +21,17 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.allarmi.AllarmeParametro;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -43,10 +48,14 @@ import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
+import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.constants.PluginSorgenteArchivio;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -67,6 +76,16 @@ import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
+import org.openspcoop2.monitor.engine.config.base.IdPlugin;
+import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
+import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
+import org.openspcoop2.monitor.sdk.condition.Context;
+import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -80,6 +99,8 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.lib.audit.AuditException;
 import org.openspcoop2.web.lib.audit.DriverAudit;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
+import org.openspcoop2.web.lib.mvc.dynamic.DynamicComponentUtils;
+import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
 
 /**
  * ConfigurazioneCore
@@ -213,6 +234,432 @@ public class ConfigurazioneCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
+	}
+	
+	public List<RegistroPlugin> pluginsArchiviList(ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "pluginsArchiviList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().pluginsArchiviList(ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int numeroPluginsArchiviList() throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroPluginsArchiviList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			Search searchForCount = new Search(true,1);
+			driver.getDriverConfigurazioneDB().pluginsArchiviList(searchForCount);
+			return searchForCount.getNumEntries(Liste.CONFIGURAZIONE_PLUGINS_ARCHIVI);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public RegistroPlugin getRegistroPlugin(String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getRegistroPlugin";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getRegistroPlugin(nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public RegistroPlugin getDatiRegistroPlugin(String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getDatiRegistroPlugin";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getDatiRegistroPlugin(nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public RegistroPluginArchivio getRegistroPluginArchivio(String nomePlugin, String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getRegistroPluginArchivio";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getRegistroPluginArchivio(nomePlugin, nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsRegistroPluginArchivio(String nomePlugin, String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsRegistroPluginArchivio";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().existsRegistroPluginArchivio(nomePlugin, nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsRegistroPluginArchivio(String nomePlugin, PluginSorgenteArchivio tipoSorgente, String sorgente) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsRegistroPluginArchivio";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().existsRegistroPluginArchivio(nomePlugin, tipoSorgente, sorgente);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public RegistroPlugin getRegistroPluginFromPosizione(int posizione) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getRegistroPluginFromPosizione";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getRegistroPluginFromPosizione(posizione);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public RegistroPlugin getDatiRegistroPluginFromPosizione(int posizione) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getDatiRegistroPluginFromPosizione";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getDatiRegistroPluginFromPosizione(posizione);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsRegistroPlugin(String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsRegistroPlugin";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().existsRegistroPlugin(nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int getMaxPosizioneRegistroPlugin() throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMaxPosizioneRegistroPlugin";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getMaxPosizioneRegistroPlugin();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int getNumeroArchiviJarRegistroPlugin(String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getNumeroArchiviJarRegistroPlugin";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getNumeroArchiviJarRegistroPlugin(nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<RegistroPluginArchivio> pluginsArchiviJarList(String nome, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "pluginsArchiviJarList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().pluginsArchiviJarList(nome, ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<Plugin> pluginsClassiList(ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "pluginsClassiList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.pluginsClassiList(ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<Plugin> pluginsAllarmiList() throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "pluginsClassiList";
+		DriverControlStationDB driver = null;
+
+		try {
+			ISearch ricercaPlugin = new Search();
+			ricercaPlugin.addFilter( Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.ALLARME.toString());
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			List<Plugin> pluginsClassiList = new ArrayList<>();
+			List<Plugin> p = driver.pluginsClassiList(ricercaPlugin);
+			
+			Hashtable<String, Plugin> plugins = new Hashtable<String, Plugin>();
+			List<String> keys = new ArrayList<String>();
+			if(p!=null && p.size()>0){
+				for (Plugin plugin : p) {
+					String key = plugin.getLabel() + "_" + plugin.getClassName();
+					keys.add(key); // possono esistere più plugin con lo stesso label
+					plugins.put(key, plugin);
+				}	
+				
+				// ordino
+				Collections.sort(keys);
+				
+				for (String key : keys) {
+					pluginsClassiList.add(plugins.get(key));
+				}
+			}
+			
+			return pluginsClassiList;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public RegistroPlugins getRegistroPlugins() throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getRegistroPlugins";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getRegistroPlugins();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int numeroPluginsClassiList() throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroPluginsClassiList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.numeroPluginsClassiList();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsPlugin(TipoPlugin tipoPlugin, String tipo, String label, String className) throws DriverConfigurazioneException { 
+		Connection con = null;
+		String nomeMetodo = "existsPlugin";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.existsPlugin(tipoPlugin, tipo,label, className); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public Plugin getPlugin(long idPlugin) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getPlugin";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getPlugin(idPlugin);  
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public Plugin getPlugin(TipoPlugin tipoPlugin, String tipo) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getPlugin";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getPlugin(tipoPlugin,tipo);  
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean isPluginInUso(String className, String label, String tipoPlugin, String tipo, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "isPluginInUso";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.isPluginInUso(className, label, tipoPlugin, tipo, whereIsInUso, normalizeObjectIds);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
 	}
 		
 	/**
@@ -971,7 +1418,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	public List<IDServizio> getServizi(String protocolloSelezionato,List<String> protocolliSupportati, 
-			String tipoErogatore, String nomeErogatore) throws DriverControlStationException{
+			String tipoErogatore, String nomeErogatore, String tag) throws DriverControlStationException{
 		String nomeMetodo = "getServizi";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -982,7 +1429,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getServizi(protocolloSelezionato,protocolliSupportati, tipoErogatore, nomeErogatore);
+			return driver.getServizi(protocolloSelezionato,protocolliSupportati, tipoErogatore, nomeErogatore, tag);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1445,5 +1892,207 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 		
 		return inUsoMessage.toString();
+	}
+	
+	public boolean isPluginClasseInUso(IdPlugin idPlugin, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+		String nomeMetodo = "isPluginClasseInUso";
+		Connection con = null; 
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+	
+			return DBOggettiInUsoUtils.isPluginInUso(con, this.tipoDB, idPlugin.getClassName(), idPlugin.getLabel(), idPlugin.getTipoPlugin(), idPlugin.getTipo(), 
+					whereIsInUso, normalizeObjectIds);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public String getDettagliPluginClasseInUso(IdPlugin idPlugin) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean pluginClasseInUso  = this.isPluginClasseInUso(idPlugin, whereIsInUso, normalizeObjectIds);
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(pluginClasseInUso) {
+			String s = DBOggettiInUsoUtils.toString(idPlugin.getClassName(), idPlugin.getLabel(), idPlugin.getTipoPlugin(), idPlugin.getTipo(), whereIsInUso, false, "\n");
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(ConfigurazioneCostanti.LABEL_PLUGIN_CLASSE_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
+	}
+
+	public List<ConfigurazioneAllarmeBean> allarmiList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{ 
+		String nomeMetodo = "allarmiList";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.allarmiList(ricerca, ruoloPorta, nomePorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public boolean existsAllarme(String nome) throws DriverControlStationException{
+		Connection con = null;
+		String nomeMetodo = "existsAllarme";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.existsAllarme(nome); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public ConfigurazioneAllarmeBean getAllarme(Long id) throws DriverControlStationException{ 
+		String nomeMetodo = "getAllarme";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getAllarme(id);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean isUsableFilter(ConfigurazioneAllarmeBean configurazioneAllarme) throws Exception{
+		return this._isUsable(configurazioneAllarme, true);
+	}
+	
+	public boolean isUsableGroupBy(ConfigurazioneAllarmeBean configurazioneAllarme) throws Exception{
+		return this._isUsable(configurazioneAllarme, false);
+	}
+	
+	public boolean _isUsable(ConfigurazioneAllarmeBean configurazioneAllarme, boolean filter) throws Exception{
+		String nomeMetodo = "_isUsable";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo());
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), plugin.getClassName(), ControlStationCore.log);
+			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
+			return filter ? alarmProcessing.isUsableFilter() : alarmProcessing.isUsableGroupBy();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<Parameter<?>> instanceParameters(ConfigurazioneAllarmeBean configurazioneAllarme, Context context) throws Exception{
+		String nomeMetodo = "instanceParameters";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo());
+			
+			List<Parameter<?>> res = null;
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, plugin.getTipo(), plugin.getClassName(), ControlStationCore.log);
+			List<Parameter<?>> sdkParameters = bl.getParameters(context);
+			
+			if(sdkParameters!=null && sdkParameters.size()>0){
+				
+				res = new ArrayList<Parameter<?>>();
+				
+				for (Parameter<?> sdkParameter : sdkParameters) {
+					Parameter<?> par = DynamicComponentUtils.createDynamicComponentParameter(sdkParameter, bl);
+					((BaseComponent<?>)par).setContext(context);
+					res.add(par);
+				}
+			}
+
+			return res;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<Parameter<?>> getParameters(ConfigurazioneAllarmeBean configurazioneAllarme, Context context) throws Exception{
+		List<Parameter<?>> parameters = this.instanceParameters(configurazioneAllarme, context);
+		if(parameters!=null && parameters.size()>0){
+			for (AllarmeParametro parDB : configurazioneAllarme.getAllarmeParametroList()) {
+				for (Parameter<?> par : parameters) {
+					if(parDB.getIdParametro().equals(par.getId())){
+						par.setValueAsString(parDB.getValore());
+						break;
+					}
+				}
+			}
+		}
+		
+		return parameters;
+	}
+	public List<ConfigurazioneAllarmeHistoryBean> allarmiHistoryList(Search ricerca, Long idAllarme) throws Exception {
+		String nomeMetodo = "allarmiHistoryList";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.allarmiHistoryList(ricerca, idAllarme); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
 	}
 }

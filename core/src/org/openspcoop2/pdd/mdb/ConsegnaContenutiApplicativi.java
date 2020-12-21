@@ -77,6 +77,7 @@ import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -151,7 +152,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
-import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemConstants;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
@@ -188,8 +188,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 	/** IGestoreIntegrazionePA: lista di gestori, ordinati per priorita' minore */
-	//public static java.util.concurrent.ConcurrentHashMap<String,IGestoreIntegrazionePA> gestoriIntegrazionePA = null;
-	// E' stato aggiunto lo stato dentro l'oggetto.
 	public static String[] defaultGestoriIntegrazionePA = null;
 	private static java.util.concurrent.ConcurrentHashMap<String, String[]> defaultPerProtocolloGestoreIntegrazionePA = null;
 	
@@ -208,28 +206,21 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 		boolean error = false;
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		Loader loader = Loader.getInstance();
+		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 		
 		// Inizializzo IGestoreIntegrazionePA list
 		ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA = propertiesReader.getTipoIntegrazionePA();
-//		ConsegnaContenutiApplicativi.gestoriIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<String,IGestoreIntegrazionePA>();
 		for(int i=0; i<ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA.length; i++){
-			String classType = className.getIntegrazionePortaApplicativa(ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA[i]);
 			try{
-				IGestoreIntegrazionePA gestore = (IGestoreIntegrazionePA) loader.newInstance(classType);
-//				ConsegnaContenutiApplicativi.gestoriIntegrazionePA.put(ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA[i],
-//						((IGestoreIntegrazionePA) loader.newInstance(classType)));
-				logCore.info("Inizializzazione gestore integrazione PdD->servizioApplicativo di tipo "+
-						ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA[i]+" effettuata.");
+				IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA[i]);
 				gestore.toString();
+				logCore.info("Inizializzazione gestore dati di integrazione per le erogazioni di tipo "+
+						ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA[i]+" effettuata.");
 			}catch(Exception e){
-				logCore.error("Riscontrato errore durante il caricamento della classe ["+classType+
-						"] da utilizzare per la gestione dell'integrazione di tipo ["+
-						ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA[i]+"]: "+e.getMessage());
+				logCore.error(e.getMessage(),e);
 				error = true;
 			}
 		}
-		
 		
 		// Inizializzo IGestoreIntegrazionePA per protocollo
 		ConsegnaContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<String, String[]>();
@@ -241,18 +232,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(tipiIntegrazionePA!=null && tipiIntegrazionePA.length>0){
 					List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
 					for (int i = 0; i < tipiIntegrazionePA.length; i++) {
-						String classType = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
 						try {
-							IGestoreIntegrazionePA test = (IGestoreIntegrazionePA)loader.newInstance(classType);
-							test.toString();
+							IGestoreIntegrazionePA gestore =  pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
+							gestore.toString();
 							tipiIntegrazionePerProtocollo.add(tipiIntegrazionePA[i]);
-							logCore	.info("Inizializzazione gestore per lettura integrazione PA di tipo "
-									+ tipiIntegrazionePA[i]	+ " effettuata.");
+							logCore.info("Inizializzazione gestore dati di integrazione (protocollo: "+protocol+") per le erogazioni di tipo "+
+									tipiIntegrazionePA[i]+" effettuata.");
 						} catch (Exception e) {
-							logCore.error(
-									"Riscontrato errore durante il caricamento della classe ["+ classType
-									+ "] da utilizzare per la gestione dell'integrazione di tipo ["
-									+ tipiIntegrazionePA[i]+ "]: " + e.getMessage());
+							logCore.error(e.getMessage(),e);
 							error = true;
 						}
 					}
@@ -271,30 +258,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 		ConsegnaContenutiApplicativi.initializeService = !error;
 	}
-
-	/**
-	 * Aggiorna la lista dei GestoreIntegrazionePA
-	 * 
-	 * @throws Exception
-	 */
-// Aggiunto lo stato
-//	private synchronized static void aggiornaListaGestoreIntegrazione(String newTipo,
-//			ClassNameProperties className,OpenSPCoop2Properties propertiesReader) throws Exception{
-//		if(ConsegnaContenutiApplicativi.gestoriIntegrazionePA.contains(newTipo))
-//			return; // inizializzato da un altro thread
-//
-//		// Inizializzo IGestoreIntegrazionePA new Type
-//		String classType = className.getIntegrazionePortaApplicativa(newTipo);
-//		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-//		Loader loader = Loader.getInstance();
-//		try{
-//			ConsegnaContenutiApplicativi.gestoriIntegrazionePA.put(newTipo,((IGestoreIntegrazionePA) loader.newInstance(classType)));
-//			logCore.info("Inizializzazione gestore integrazione PdD->servizioApplicativo di tipo "+newTipo+" effettuata.");
-//		}catch(Exception e){
-//			throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
-//					"] da utilizzare per la gestione dell'integrazione di tipo ["+newTipo+"]: "+e.getMessage());
-//		}
-//	}
 
 
 
@@ -1526,23 +1489,21 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			for(int i=0; i<tipiIntegrazione.length;i++){
 				try{
-//					if(ConsegnaContenutiApplicativi.gestoriIntegrazionePA.containsKey(tipiIntegrazione[i])==false)
-//						ConsegnaContenutiApplicativi.aggiornaListaGestoreIntegrazione(tipiIntegrazione[i], 
-//								ClassNameProperties.getInstance(), this.propertiesReader);
-//					IGestoreIntegrazionePA gestore = ConsegnaContenutiApplicativi.gestoriIntegrazionePA.get(tipiIntegrazione[i]);
-					
-					String classType = null;
 					IGestoreIntegrazionePA gestore = null;
 					try{
-						classType = ClassNameProperties.getInstance().getIntegrazionePortaApplicativa(tipiIntegrazione[i]);
-						gestore = (IGestoreIntegrazionePA) this.loader.newInstance(classType);
-						AbstractCore.init(gestore, pddContext, protocolFactory);
+						gestore = (IGestoreIntegrazionePA) this.pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazione[i]);
 					}catch(Exception e){
-						throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
-								"] da utilizzare per la gestione dell'integrazione di tipo ["+tipiIntegrazione[i]+"]: "+e.getMessage());
+						throw e;
 					}
-					
 					if(gestore!=null){
+						String classType = null;
+						try {
+							classType = gestore.getClass().getName();
+							AbstractCore.init(gestore, pddContext, protocolFactory);
+						}catch(Exception e){
+							throw new Exception("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+									"] da utilizzare per la gestione dell'integrazione delle erogazione di tipo ["+tipiIntegrazione[i]+"]: "+e.getMessage());
+						}
 						if(gestore instanceof IGestoreIntegrazionePASoap){
 							if(this.propertiesReader.processHeaderIntegrazionePARequest(false)){
 								if(this.propertiesReader.deleteHeaderIntegrazioneRequestPA()){
@@ -1718,24 +1679,27 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			OpenSPCoop2MessageFactory faultMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
-			// Ricerco connettore
-			ClassNameProperties prop = ClassNameProperties.getInstance();
-			String connectorClass = prop.getConnettore(tipoConnector);
-			if(connectorClass == null){
-				msgDiag.logErroreGenerico("Connettore non registrato","ClassNameProperties.getConnettore("+tipoConnector+")");
-				invokerNonSupportato = true;
-			}
-
 			// Carico connettore richiesto
+			String connectorClass = null;
 			Exception eInvokerNonSupportato = null;
 			if(invokerNonSupportato==false){
 				try{
-					connectorSender = (IConnettore) this.loader.newInstance(connectorClass);
-					AbstractCore.init(connectorSender, pddContext, protocolFactory);
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
+					connectorSender = (IConnettore) this.pluginLoader.newConnettore(tipoConnector);
+				}
+				catch(Exception e){
+					msgDiag.logErroreGenerico(e,"Inizializzazione Connettore"); // l'errore contiene gia tutte le informazioni
 					invokerNonSupportato = true;
 					eInvokerNonSupportato = e;
+				}
+				if(connectorSender!=null) {
+					try {
+						connectorClass = connectorSender.getClass().getName();
+						AbstractCore.init(connectorSender, pddContext, protocolFactory);
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e,"IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
+						invokerNonSupportato = true;
+						eInvokerNonSupportato = e;
+					}
 				}
 				if( (invokerNonSupportato == false) && (connectorSender == null)){
 					msgDiag.logErroreGenerico("ConnectorSender is null","IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
@@ -3351,20 +3315,21 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						Utilities.printFreeMemory("ConsegnaContenutiApplicativi - Gestione Header Integrazione... ");					
 						for(int i=0; i<tipiIntegrazione.length;i++){
 							try{
-//								IGestoreIntegrazionePA gestore = ConsegnaContenutiApplicativi.gestoriIntegrazionePA.get(tipiIntegrazione[i]);
-								
-								String classType = null;
 								IGestoreIntegrazionePA gestore = null;
 								try{
-									classType = ClassNameProperties.getInstance().getIntegrazionePortaApplicativa(tipiIntegrazione[i]);
-									gestore = (IGestoreIntegrazionePA) this.loader.newInstance(classType);
-									AbstractCore.init(gestore, pddContext, protocolFactory);
+									gestore = (IGestoreIntegrazionePA) this.pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazione[i]);
 								}catch(Exception e){
-									throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
-											"] da utilizzare per la gestione dell'integrazione (Risposta) di tipo ["+tipiIntegrazione[i]+"]: "+e.getMessage());
+									throw e;
 								}
-								
-								if (gestore != null) {
+								if(gestore!=null){
+									String classType = null;
+									try {
+										classType = gestore.getClass().getName();
+										AbstractCore.init(gestore, pddContext, protocolFactory);
+									}catch(Exception e){
+										throw new Exception("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+												"] da utilizzare per la gestione dell'integrazione (Risposta) delle erogazione di tipo ["+tipiIntegrazione[i]+"]: "+e.getMessage());
+									}
 									if(responseMessage!=null){
 										gestore.readInResponseHeader(headerIntegrazioneRisposta,inResponsePAMessage);
 									}else if( ! (gestore instanceof IGestoreIntegrazionePASoap) ){
@@ -3448,25 +3413,28 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						Utilities.printFreeMemory("ConsegnaContenutiApplicativi - Update/Delete Header Integrazione... ");					
 						for(int i=0; i<tipiIntegrazione.length;i++){
 							try{
-								//IGestoreIntegrazionePA gestore = ConsegnaContenutiApplicativi.gestoriIntegrazionePA.get(tipiIntegrazione[i]);
-								
-								String classType = null;
 								IGestoreIntegrazionePA gestore = null;
 								try{
-									classType = ClassNameProperties.getInstance().getIntegrazionePortaApplicativa(tipiIntegrazione[i]);
-									gestore = (IGestoreIntegrazionePA) this.loader.newInstance(classType);
-									AbstractCore.init(gestore, pddContext, protocolFactory);
+									gestore = (IGestoreIntegrazionePA) this.pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazione[i]);
 								}catch(Exception e){
-									throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
-											"] da utilizzare per la gestione dell'integrazione (Risposta Update/Delete) di tipo ["+tipiIntegrazione[i]+"]: "+e.getMessage());
+									throw e;
 								}
-								
-								if (gestore != null && responseMessage!=null && (gestore instanceof IGestoreIntegrazionePASoap) ) {
-									if(this.propertiesReader.deleteHeaderIntegrazioneResponsePA()){
-										((IGestoreIntegrazionePASoap)gestore).deleteInResponseHeader(inResponsePAMessage);
-									}else{
-										((IGestoreIntegrazionePASoap)gestore).updateInResponseHeader(inResponsePAMessage, idMessaggioConsegna, idMessageResponse, servizioApplicativoFruitore, 
-												idCorrelazioneApplicativaRisposta, idCorrelazioneApplicativa);
+								if(gestore!=null){
+									String classType = null;
+									try {
+										classType = gestore.getClass().getName();
+										AbstractCore.init(gestore, pddContext, protocolFactory);
+									}catch(Exception e){
+										throw new Exception("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+												"] da utilizzare per la gestione dell'integrazione (Risposta Update/Delete) delle erogazione di tipo ["+tipiIntegrazione[i]+"]: "+e.getMessage());
+									}
+									if (responseMessage!=null && (gestore instanceof IGestoreIntegrazionePASoap) ) {
+										if(this.propertiesReader.deleteHeaderIntegrazioneResponsePA()){
+											((IGestoreIntegrazionePASoap)gestore).deleteInResponseHeader(inResponsePAMessage);
+										}else{
+											((IGestoreIntegrazionePASoap)gestore).updateInResponseHeader(inResponsePAMessage, idMessaggioConsegna, idMessageResponse, servizioApplicativoFruitore, 
+													idCorrelazioneApplicativaRisposta, idCorrelazioneApplicativa);
+										}
 									}
 								}
 							} catch (Exception e) {

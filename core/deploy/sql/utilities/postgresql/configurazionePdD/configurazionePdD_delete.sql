@@ -1,3 +1,5 @@
+DELETE FROM registro_plug_jar;
+DELETE FROM registro_plugins;
 DELETE FROM canali_nodi;
 DELETE FROM canali_configurazione;
 DELETE FROM generic_property;

@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.TrasformazioneRegola;
@@ -76,6 +77,7 @@ import org.openspcoop2.utils.xml.XSDSchemaCollection;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
@@ -976,6 +978,26 @@ public class DocumentoExporter extends HttpServlet {
 						}
 					}catch(Exception e){
 						String msgErrore = "Errore durante il recupero dei certificati server del "+labelConnettore+" con id '"+idConnettore+"' (jmxResource '"+risorsa+"') (node:"+aliasForVerificaConnettore+"): "+e.getMessage();
+						ControlStationCore.logError(msgErrore, e);
+						//throw new ServletException(msgErrore);
+						// se lancio una eccezione ho il crash dell'interfaccia. Ritorno anzi un file errato.
+						fileName+=".error";
+						docBytes = msgErrore.getBytes();
+					}
+				}
+				else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ARCHIVIO_JAR.equals(tipoDocumento)){
+					
+					String nomePlugin = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_JAR_NOME_PLUGIN);
+					String nomeJar = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_JAR_NOME_ARCHVIO);
+					
+					fileName = nomeJar;
+					
+					ConfigurazioneCore confCore = new ConfigurazioneCore(archiviCore);
+					try{
+						RegistroPluginArchivio jar = confCore.getRegistroPluginArchivio(nomePlugin, nomeJar);
+						docBytes = jar.getContenuto();
+					}catch(Exception e){
+						String msgErrore = "Errore durante il recupero dell'archivio jar '"+nomeJar+"' del plugin "+nomePlugin+": "+e.getMessage();
 						ControlStationCore.logError(msgErrore, e);
 						//throw new ServletException(msgErrore);
 						// se lancio una eccezione ho il crash dell'interfaccia. Ritorno anzi un file errato.

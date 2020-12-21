@@ -193,7 +193,7 @@
 						<ui:param name="sf_labelServizio" value="#{sf_labelServizio}" />
 				 	</ui:include>
 		
-					<c:if test="#{sf_showAzioni and !empty sf_servizio}">
+				 	<a4j:outputPanel id="filtriRicercaServizioAzione" layout="block" rendered="#{sf_showAzioni and !empty sf_servizio}">
 						<ui:include src="/stat/includes/searchFormStatisticheFiltroAzione.xhtml">
 							<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
 							<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
@@ -209,7 +209,7 @@
 							<ui:param name="sf_mbean" value="#{sf_mbean}" />
 							<ui:param name="sf_labelNomeAzione" value="#{sf_labelNomeAzione}" />
 					 	</ui:include>
-					</c:if>
+					</a4j:outputPanel>
 				</c:if>
 				<c:if test="#{not sf_showServizi}">
 					<a4j:outputPanel layout="block" id="distribuzionePerApiPnl" rendered="#{true}">

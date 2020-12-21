@@ -59,13 +59,13 @@
 								columnClasses="labelAllineataDx,valueAllineataSx">
 								<h:outputLabel styleClass="outputFieldLabel" value="Stato:" />
 								<h:panelGroup columns="3">
-									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{statoPdd._value_stato == 'ok'}" />
+									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{statoPdd._value_stato == 'ok'}" style="vertical-align: super;" />
 									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'ok'}" />
 									<h:outputText value="OK" rendered="#{statoPdd._value_stato == 'ok'}" style="text-decoration: none; vertical-align: bottom;"/>
-									<h:graphicImage value="/images/tema_link/status_yellow.png" rendered="#{statoPdd._value_stato == 'warning'}" />
+									<h:graphicImage value="/images/tema_link/status_yellow.png" rendered="#{statoPdd._value_stato == 'warning'}" style="vertical-align: super;"/>
 									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'warning'}" />
 									<h:outputText value="WARN" rendered="#{statoPdd._value_stato == 'warning'}" style="text-decoration: none; FONT-WEIGHT: bold; vertical-align: bottom;" />										
-									<h:graphicImage value="/images/tema_link/status_red.png" rendered="#{statoPdd._value_stato == 'error'}"/>
+									<h:graphicImage value="/images/tema_link/status_red.png" rendered="#{statoPdd._value_stato == 'error'}" style="vertical-align: super;"/>
 									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'error'}" />
 									<h:outputText value="ERROR" rendered="#{statoPdd._value_stato == 'error'}" style="text-decoration: none; FONT-WEIGHT: bold; vertical-align: bottom;" />
 								</h:panelGroup>

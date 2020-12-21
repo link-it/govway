@@ -20,13 +20,9 @@
 package org.openspcoop2.pdd.core.transazioni;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.OpenspcoopAppender;
@@ -36,14 +32,9 @@ import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerService;
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCTransazioneService;
 import org.openspcoop2.core.transazioni.utils.TransactionServerUtils;
-import org.openspcoop2.generic_project.beans.UpdateField;
-import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
@@ -62,9 +53,6 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.slf4j.Logger;
 
 /**     
@@ -385,7 +373,7 @@ public class GestoreConsegnaMultipla {
 					isMessaggioConsegnato = true;
 				}
 
-				boolean transazioneAggiornata = TransactionServerUtils.save(transazioneService, (TransazioneApplicativoServer)o, update, throwNotFoundIfNotExists);
+				boolean transazioneAggiornata = TransactionServerUtils.save(transazioneService, (TransazioneApplicativoServer)o, update, throwNotFoundIfNotExists, false);
 				if(!transazioneAggiornata) {
 					isMessaggioConsegnato = false; // per gestire eventuali errori durante il  recupero da file system
 				}
@@ -408,6 +396,9 @@ public class GestoreConsegnaMultipla {
 			}catch(Exception eRollback){}
 
 			if(o instanceof TransazioneApplicativoServer) {
+				
+				isMessaggioConsegnato = false; // per gestire eventuali errori durante il  recupero da file system
+				
 				TransazioneApplicativoServer serverInfo = (TransazioneApplicativoServer) o;
 				try{
 					if(serverInfo.getIdTransazione()!=null && serverInfo.getServizioApplicativoErogatore()!=null) {
@@ -448,15 +439,9 @@ public class GestoreConsegnaMultipla {
 			
 			if(isMessaggioConsegnato) {
 
-				// aggiorno esito transazione
-				try{
-					if(isMessaggioConsegnato){
-						aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties);
-					}
-				}catch(Throwable e){
-					String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server '"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"': " + e.getLocalizedMessage();
-					this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"] "+msg,e);
-				}
+				// aggiorno esito transazione (non viene sollevata alcuna eccezione)
+				_safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties);
+
 			}
 			
 			try{
@@ -538,159 +523,37 @@ public class GestoreConsegnaMultipla {
 		
 	}
 
-
-	private void aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
-			EsitiProperties esitiProperties) throws CoreException {
+	private void _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties) {
 		
-		/*
-	      Viene realizzato con livello di isolamento SERIALIZABLE, per essere sicuri
-	      che esecuzioni parallele non leggano dati inconsistenti.
-	      Con il livello SERIALIZABLE, se ritorna una eccezione, deve essere riprovato
-	      La sincronizzazione e' necessaria per via del possibile accesso simultaneo del servizio Gop
-	      e del servizio che si occupa di eliminare destinatari di messaggi
-		 */
-		// setAutoCommit e livello Isolamento
-		int oldTransactionIsolation = -1;
-		try{
-			oldTransactionIsolation = connectionDB.getTransactionIsolation();
-			// già effettuato fuori dal metodo connectionDB.setAutoCommit(false);
-			JDBCUtilities.setTransactionIsolationSerializable(this.tipoDatabase, connectionDB);
-		} catch(Exception er) {
-			throw new CoreException("(setIsolation) "+er.getMessage(),er);
-		}
-
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		boolean updateEffettuato = false;
+		DAOFactory daoF = this.debug ? daoFactory : daoFactoryDevNull;
+		Logger logFactory = this.debug ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;
+		ServiceManagerProperties smp = this.debug ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
 		
-		long scadenzaWhile = DateManager.getTimeMillis() + openspcoopProperties.getGestioneSerializableDB_AttesaAttiva();
-
 		int esitoConsegnaMultipla = -1;
 		int esitoConsegnaMultiplaFallita = -1;
 		int esitoConsegnaMultiplaCompletata = -1;
 		int ok = -1;
+		boolean esitiLetti = false;
 		try {
 			esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 			esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 			esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
 			ok = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
+			esitiLetti = true;			
 		}catch(Exception er) {
-			throw new CoreException("(readEsiti) "+er.getMessage(),er);
+			// errore che non dovrebbe succedere
+			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server '"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"': (readEsiti) " + er.getMessage();
+			this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"] "+msg,er);
 		}
 		
-		CoreException coreException = null;
-		while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
-
-			try{	
-				DAOFactory daoF = this.debug ? daoFactory : daoFactoryDevNull;
-				Logger log = this.debug ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;
-				ServiceManagerProperties smp = this.debug ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
-				
-				org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
-						(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) daoF.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
-								connectionDB, false,
-								smp, log);
-				jdbcServiceManager.getJdbcProperties().setShowSql(this.debug);
-				JDBCTransazioneService transazioneService = (JDBCTransazioneService) jdbcServiceManager.getTransazioneService();
-				
-				transazioneService.enableSelectForUpdate();
-				
-				IPaginatedExpression pagExpression = transazioneService.newPaginatedExpression();
-				pagExpression.equals(Transazione.model().ID_TRANSAZIONE, transazioneApplicativoServer.getIdTransazione());
-				List<Map<String, Object>> l = null;
-				try {
-					l = transazioneService.select(pagExpression, Transazione.model().ESITO, Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO);
-				}catch (NotFoundException notfound) {}
-				if(l!=null && l.size()>0) {
-					if(l.size()>1) {
-						coreException = new CoreException("Trovata più di una transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"'");
-					}
-					else {
-												
-						Object oEsito = l.get(0).get(Transazione.model().ESITO.getFieldName());
-						int esito = -1;
-						if(oEsito!=null && oEsito instanceof Integer) {
-							esito = (Integer) oEsito;
-						}
-						
-						Object oConsegneMultiple = l.get(0).get(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO.getFieldName());
-						int consegneMultiple = -1;
-						if(oConsegneMultiple!=null && oConsegneMultiple instanceof Integer) {
-							consegneMultiple = (Integer) oConsegneMultiple;
-						}
-						
-						if(esitoConsegnaMultipla == esito || esitoConsegnaMultiplaFallita == esito) {
-							int decrement = consegneMultiple-1;
-							UpdateField uFieldConsegneMultipleInCorso = new UpdateField(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO, decrement);
-							UpdateField uFieldEsito = null;
-							if(esitoConsegnaMultipla == esito) {
-								// non appena c'è un errore, marca la transazione come fallita
-								if(ok != transazioneApplicativoServer.getDettaglioEsito() || transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
-									uFieldEsito = new UpdateField(Transazione.model().ESITO, esitoConsegnaMultiplaFallita);
-								}
-								else if(decrement<=0) {
-									uFieldEsito = new UpdateField(Transazione.model().ESITO, esitoConsegnaMultiplaCompletata);
-								}
-							}
-							if(uFieldEsito!=null) {
-								transazioneService.updateFields(transazioneApplicativoServer.getIdTransazione(), uFieldConsegneMultipleInCorso, uFieldEsito);
-							}
-							else {
-								transazioneService.updateFields(transazioneApplicativoServer.getIdTransazione(), uFieldConsegneMultipleInCorso);
-							}
-						}
-						else if(esitoConsegnaMultiplaCompletata == esito) {
-							if(this.log!=null) {
-								this.log.debug("Trovata transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"', con un esito '"+esito+"' (ConsegnaMultiplaCompletata) già gestita da un altro nodo");
-							}
-						}
-						else {
-							coreException = new CoreException("Trovata transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"', con un esito '"+esito+"' non atteso");
-						}
-
-						
-					}
-				}
-
-				transazioneService.disableSelectForUpdate();
-				
-				// Chiusura Transazione
-				connectionDB.commit();
-
-				// ID Costruito
-				updateEffettuato = true;
-
-			} catch(Exception e) {
-				try{
-					if(rs != null)
-						rs.close();
-				} catch(Exception er) {}
-				try{
-					if(pstmt != null)
-						pstmt.close();
-				} catch(Exception er) {}
-				try{
-					connectionDB.rollback();
-				} catch(Exception er) {}
-			}
-
-			if(updateEffettuato == false){
-				// Per aiutare ad evitare conflitti
-				try{
-					Utilities.sleep((new java.util.Random()).nextInt(openspcoopProperties.getGestioneSerializableDB_CheckInterval())); // random da 0ms a checkIntervalms
-				}catch(Exception eRandom){}
-			}
-		}
-		// Ripristino Transazione
-		try{
-			connectionDB.setTransactionIsolation(oldTransactionIsolation);
-			// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
-		} catch(Exception er) {
-			throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
-		}
-
-		if(coreException!=null) {
-			throw coreException;
+		if(esitiLetti) {
+			TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
+					this.tipoDatabase, this.log,
+					daoF,logFactory,smp,
+					this.debug,
+					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),openspcoopProperties.getGestioneSerializableDB_CheckInterval());
 		}
 	}
+
 }

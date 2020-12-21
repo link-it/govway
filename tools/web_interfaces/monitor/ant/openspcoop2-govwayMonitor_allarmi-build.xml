@@ -1,0 +1,87 @@
+<project name="openspcoop2-compile-govwayMonitor-allarmi">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.web.monitor.allarmi
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="openspcoop2-govwayMonitor-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
+	<target name="compile_openspcoop2_govwayMonitor_allarmi" description="compila la libreria org.openspcoop.web.monitor.allarmi.*">
+
+		<!-- Creo faces-config.xml -->
+		<antcall target="buildFacesConfig">
+			<param name="srcFacesConfigDir" value="${src_allarmi_govwayMonitor}/META-INF"/>
+		</antcall>
+
+		<if>
+			<istrue value="${buildPddMonitor}"/>
+			<then>
+		
+				<!-- Info git -->
+				<runtarget target="checkgit" />
+				
+				<!-- org.openspcoop2.web.monitor -->
+				<var name="packagesCompiled" value="org.openspcoop2.web.monitor" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.allarmi.bean" />		
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.allarmi.converter" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.allarmi.dao" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.allarmi.datamodel" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.allarmi.mbean" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.allarmi.status" />	
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_allarmi_govwayMonitor}/"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-govwayMonitor-allarmi"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="META-INF/faces-config.xml"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="META-INF/conf/spring/*"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.monitor.allarmi"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_govwayMonitor}"/>
+					<param name="build" value="${build_govwayMonitor}"/>
+				</antcall>
+				
+				<!-- Jar Complessivo -->
+				<!--<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-govwayMonitor-allarmi"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_govwayMonitor}"/>
+					<param name="build" value="${build_govwayMonitor}"/>
+				</antcall>-->
+				
+				<!-- API -->
+				<if>
+					<istrue value="${buildAPI}"/>
+					<then>
+						<mkdir dir="${doc_govwayMonitor}"/>
+					</then>
+				</if>
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="web-govwayMonitor-allarmi"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc_govwayMonitor}/api/allarmi"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="src" value="${src_allarmi_govwayMonitor}"/>
+					<param name="doc" value="${doc_govwayMonitor}"/>
+					<param name="dist" value="${dist_govwayMonitor}"/>
+				</antcall>
+				
+			</then>
+		</if>
+		
+	</target>
+	
+</project>

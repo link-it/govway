@@ -27,6 +27,8 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.PortType;
+import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
@@ -292,4 +294,8 @@ public interface IDynamicUtilsService {
 	public int countConfigurazioneServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, 
 			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
 			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
+
+	public PortaApplicativa getPortaApplicativa(String nomePorta);
+	public PortaDelegata getPortaDelegata(String nomePorta);
+	
 }

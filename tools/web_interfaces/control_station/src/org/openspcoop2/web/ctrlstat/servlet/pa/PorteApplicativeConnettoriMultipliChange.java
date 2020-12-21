@@ -362,6 +362,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			InvocazioneServizio oldIS = oldSA.getInvocazioneServizio();
 			InvocazioneCredenziali oldCis = oldIS.getCredenziali();
 			Connettore oldConnis = oldIS.getConnettore();
+			isConnettoreCustomUltimaImmagineSalvata = oldConnis.getCustom();
 			List<Property> oldCP = oldConnis.getPropertyList();
 			String oldTipoSA = oldSA.getTipo();
 
@@ -583,6 +584,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			Parameter pConnettoreAccesso = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro);
 			String connettoreAccessoListaConnettori = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI);
 
+			String idConnTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			Parameter pIdConTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, idConnTabP != null ? idConnTabP : "");
+			
 			listParametersConfigutazioneConnettoriMultipli.add(pIdSogg);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
 			listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
@@ -1140,8 +1144,16 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
 							httpsKeyAlias, httpsTrustStoreCRLs,
-							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE, idPorta, idsogg,
-							idAsps, nomeSAConnettore, null, null, null, null, true,
+							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE, 
+							idPorta, // elem1 
+							idsogg, // elem2
+							idAsps, // elem3
+							nomeSAConnettore, // elem4 
+							pa.getNome(), // elem5 
+							oldSA.getId()+"", // elem6 
+							pIdConTab.getValue(), // elem7 
+							null, // elem8 
+							true,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
@@ -1176,8 +1188,15 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpstipokey, httpspwdkey,
 							httpspwdprivatekey, httpsalgoritmokey,
 							httpsKeyAlias, httpsTrustStoreCRLs,
-							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE, idPorta, idsogg,
-							idAsps, nomeSAConnettore, null, null, null, null,
+							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE, 
+							idPorta, // elem1 
+							idsogg, // elem2
+							idAsps, // elem3
+							nomeSAConnettore, // elem4 
+							pa.getNome(), // elem5 
+							oldSA.getId()+"", // elem6 
+							pIdConTab.getValue(), // elem7 
+							null, // elem8 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -1259,8 +1278,16 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
 							httpsKeyAlias, httpsTrustStoreCRLs,
-							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE, idPorta, idsogg,
-							idAsps, nomeSAConnettore, null, null, null, null, true,
+							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,
+							idPorta, // elem1 
+							idsogg, // elem2
+							idAsps, // elem3
+							nomeSAConnettore, // elem4 
+							pa.getNome(), // elem5 
+							oldSA.getId()+"", // elem6 
+							pIdConTab.getValue(), // elem7 
+							null, // elem8 
+							true,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
@@ -1295,8 +1322,15 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpstipokey, httpspwdkey,
 							httpspwdprivatekey, httpsalgoritmokey,
 							httpsKeyAlias, httpsTrustStoreCRLs,
-							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE, idPorta, idsogg,
-							idAsps, nomeSAConnettore, null, null, null, null,
+							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,
+							idPorta, // elem1 
+							idsogg, // elem2
+							idAsps, // elem3
+							nomeSAConnettore, // elem4 
+							pa.getNome(), // elem5 
+							oldSA.getId()+"", // elem6 
+							pIdConTab.getValue(), // elem7 
+							null, // elem8 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,

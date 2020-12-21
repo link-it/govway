@@ -214,6 +214,7 @@
 			<xsd:element name="ruolo-erogatore" type="xsd:string" minOccurs="0" />
 			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0" />
 			
+			<xsd:element name="tag" type="xsd:string" minOccurs="0" />
 			<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0" />
 			<xsd:element name="nome-servizio" type="xsd:string" minOccurs="0" />
 			<xsd:element name="versione-servizio" type="xsd:integer" minOccurs="0" />

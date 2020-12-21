@@ -19,6 +19,7 @@
       <property name="buildPddConsole" value="true"/>
       <property name="buildAPI" value="true"/>
       <property name="buildSQLSinglePdD_addArchivioComunicazioni" value="true"/>
+      <property name="buildSQLSinglePdD_addMonitoraggio" value="true"/>
 
       <!-- Dipendenze di compilazione -->
       <property name="mvc" location="../lib/mvc"/>

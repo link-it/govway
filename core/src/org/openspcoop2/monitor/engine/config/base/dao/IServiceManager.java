@@ -35,32 +35,6 @@ public interface IServiceManager {
 
 	/*
 	 =====================================================================================================================
-	 Services relating to the object with name:plugin-info type:plugin-info
-	 =====================================================================================================================
-	*/
-	
-	/**
-	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.monitor.engine.config.base.PluginInfo}
-	 *
-	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.monitor.engine.config.base.PluginInfo}	
-	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
-	 * @throws NotImplementedException Exception thrown when the method is not implemented
-	 */
-	public IPluginInfoServiceSearch getPluginInfoServiceSearch() throws ServiceException,NotImplementedException;
-	
-	/**
-	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.monitor.engine.config.base.PluginInfo}
-	 *
-	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.monitor.engine.config.base.PluginInfo}	
-	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
-	 * @throws NotImplementedException Exception thrown when the method is not implemented
-	 */
-	public IPluginInfoService getPluginInfoService() throws ServiceException,NotImplementedException;
-	
-	
-	
-	/*
-	 =====================================================================================================================
 	 Services relating to the object with name:plugin type:plugin
 	 =====================================================================================================================
 	*/

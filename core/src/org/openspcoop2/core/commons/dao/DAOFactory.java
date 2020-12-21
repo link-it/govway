@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.commons.dao;
 
+import org.openspcoop2.core.commons.IDAOFactory;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ import javax.sql.DataSource;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DAOFactory {
+public class DAOFactory implements IDAOFactory {
 
 	/** Copia Statica */
 	private static DAOFactory daoFactory = null;
@@ -228,78 +229,102 @@ public class DAOFactory {
 
 
 
+	@Override
 	public Object getServiceManager(IProjectInfo dao) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, null, null, null, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, boolean autoCommit) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, null, autoCommit, null, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, DataSource ds) throws DAOFactoryException{
 		return this.getServiceManager(dao, ds, null, null, null, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, DataSource ds,boolean autoCommit) throws DAOFactoryException{
 		return this.getServiceManager(dao, ds, null, autoCommit, null, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Connection connection) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, connection, null, null, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Connection connection,boolean autoCommit) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, connection, autoCommit, null, null);
 	}
 
+	@Override
 	public Object getServiceManager(IProjectInfo dao, ServiceManagerProperties smProperties) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, null, null, smProperties, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, boolean autoCommit, ServiceManagerProperties smProperties) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, null, autoCommit, smProperties, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, DataSource ds, ServiceManagerProperties smProperties) throws DAOFactoryException{
 		return this.getServiceManager(dao, ds, null, null, smProperties, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, DataSource ds,boolean autoCommit, ServiceManagerProperties smProperties) throws DAOFactoryException{
 		return this.getServiceManager(dao, ds, null, autoCommit, smProperties, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Connection connection, ServiceManagerProperties smProperties) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, connection, null, smProperties, null);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Connection connection,boolean autoCommit, ServiceManagerProperties smProperties) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, connection, autoCommit, smProperties, null);
 	}
 
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, null, null, null, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, boolean autoCommit, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, null, autoCommit, null, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, DataSource ds, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, ds, null, null, null, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, DataSource ds,boolean autoCommit, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, ds, null, autoCommit, null, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Connection connection, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, connection, null, null, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Connection connection,boolean autoCommit, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, connection, autoCommit, null, log);
 	}
 
+	@Override
 	public Object getServiceManager(IProjectInfo dao, ServiceManagerProperties smProperties, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, null, null, smProperties, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, boolean autoCommit, ServiceManagerProperties smProperties, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, null, autoCommit, smProperties, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, DataSource ds, ServiceManagerProperties smProperties, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, ds, null, null, smProperties, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, DataSource ds,boolean autoCommit, ServiceManagerProperties smProperties, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, ds, null, autoCommit, smProperties, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Connection connection, ServiceManagerProperties smProperties, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, connection, null, smProperties, log);
 	}
+	@Override
 	public Object getServiceManager(IProjectInfo dao, Connection connection,boolean autoCommit, ServiceManagerProperties smProperties, Logger log) throws DAOFactoryException{
 		return this.getServiceManager(dao, null, connection, autoCommit, smProperties, log);
 	}

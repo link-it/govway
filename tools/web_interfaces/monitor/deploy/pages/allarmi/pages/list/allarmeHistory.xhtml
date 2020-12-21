@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:link="http://www.link.it">
+
+<ui:composition template="/templates/defaultTemplate.xhtml">
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<h:outputText id="allarmi" value="Storia Allarme" styleClass="ultimo-path" />
+			</li>
+		</ul>
+	</ui:define>
+	<ui:define name="navbar">
+			<ul>
+				<li>
+					<h:commandLink action="allarmi" value="/Monitoraggio Allarmi" rendered="#{true}"/>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li>
+					<a4j:htmlCommandLink id="dettaglioAllarmeStato" action="#{allarmiBean.dettaglioHistoryAllarme}" value="Stato Allarme (#{allarmiBean.allarme.nome})" rendered="#{true}">
+						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+	                </a4j:htmlCommandLink>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li><h:outputText id="allarmi" value="Archivio Stati" styleClass="ultimo-path" /></li>
+			</ul>
+		</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="allarmiBean" />
+		<div class="spacer"></div>
+		<a4j:outputPanel id="allarmiHistoryTbl" layout="block" styleClass="panelLista">
+			<h:form id="formAllarmi">
+				<link:dataTable value="#{allarmeHistoryDM}" id="tableAllarmeHistory"
+					headerText="Archivio Stati"
+					showSelectAll="false" mBean="#{allarmiBean}"
+					reRenderIds="allarmiHistoryTbl"
+					useCount="#{allarmiBean.search.useCount}">
+
+					<rich:column id="colData">
+						<f:facet name="header">
+							<h:outputText id="outData" value="Data Aggiornamento" />
+						</f:facet>
+						<h:outputText  value="#{item.timestampUpdate}" id="outData2">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column id="colAbilitato">
+						<f:facet name="header">
+							<h:outputText id="outAbilitato" value="Abilitato" />
+						</f:facet>
+						<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{item.enabled==1}" id="outAbilitato2"/>
+						<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{item.enabled==0}" id="outAbilitato3"/>
+					</rich:column>
+
+					<rich:column id="colStato">
+						<f:facet name="header">
+							<h:outputText id="outStato" value="Stato" />
+						</f:facet>
+						<h:outputText value="#{item.labelStato}" id="outStato2" rendered="#{item.enabled == 1}"/>
+						<h:outputText value="Disabilitato" id="outStato3" rendered="#{item.enabled == 0}"/>
+					</rich:column>
+					
+					<rich:column id="colAcknowledged">
+						<f:facet name="header">
+							<h:outputText id="outAcknowledged" value="Acknowledged" />
+						</f:facet>
+						<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{item.acknowledged==1}" id="outAcknowledged2"/>
+						<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{item.acknowledged==0}" id="outAcknowledged3"/>
+					</rich:column>
+					
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="Dettaglio" />
+						</f:facet>
+						<h:outputText value="#{item.dettaglioStatoAbbr}" id="allDettStato"/>
+						<rich:toolTip for="allDettStato">
+							<h:outputText value="#{item.dettaglioStatoHtmlEscaped}" escape="false" />
+						</rich:toolTip>
+					</rich:column>
+					
+					<rich:column id="colUtente">
+						<f:facet name="header">
+							<h:outputText id="outUtente" value="Utente" />
+						</f:facet>
+						<h:outputText value="#{item.utente}" readonly="true" style="width: 412px" id="outUtente2"/>
+					</rich:column>
+					
+				</link:dataTable>
+			</h:form>
+		</a4j:outputPanel>
+
+	</ui:define>
+</ui:composition>
+
+</html>

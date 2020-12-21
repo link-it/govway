@@ -19,15 +19,11 @@
  */
 package org.openspcoop2.monitor.engine.condition;
 
-import org.openspcoop2.core.transazioni.Transazione;
-import org.openspcoop2.core.transazioni.dao.jdbc.converter.TransazioneFieldConverter;
-import org.openspcoop2.monitor.sdk.condition.IStatisticFilter;
-import org.openspcoop2.monitor.sdk.exceptions.SearchException;
-import org.openspcoop2.monitor.sdk.statistic.StatisticFilterName;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.dao.jdbc.converter.TransazioneFieldConverter;
 import org.openspcoop2.generic_project.beans.AliasTableComplexField;
 import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.IAliasTableField;
@@ -35,6 +31,10 @@ import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.monitor.engine.config.base.utils.FilterUtils;
+import org.openspcoop2.monitor.sdk.condition.IStatisticFilter;
+import org.openspcoop2.monitor.sdk.exceptions.SearchException;
+import org.openspcoop2.monitor.sdk.statistic.StatisticFilterName;
 import org.openspcoop2.utils.TipiDatabase;
 
 /**

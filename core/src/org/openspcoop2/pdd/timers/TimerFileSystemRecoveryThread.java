@@ -272,7 +272,10 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 							this.daoFactoryServiceManagerPropertiesPluginsEventi, this.daoFactoryLogger);
 				}
 									
-				FSRecoveryLibrary.generate(this.conf, transazioniSM, 
+				FSRecoveryLibrary.generate(this.conf, 
+						this.daoFactory, this.daoFactoryLogger, this.daoFactoryServiceManagerPropertiesTransazioni,
+						this.properties.getGestioneSerializableDB_AttesaAttiva(), this.properties.getGestioneSerializableDB_CheckInterval(),
+						transazioniSM, 
 						this.loggerTracciamentoOpenSPCoopAppender, 
 						this.loggerMsgDiagnosticoOpenSPCoopAppender,
 						this.loggerDumpOpenSPCoopAppender,

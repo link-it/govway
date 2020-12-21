@@ -52,6 +52,7 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 		this.NOME_EROGATORE = new Field("nome-erogatore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.RUOLO_EROGATORE = new Field("ruolo-erogatore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new Field("servizio-applicativo-erogatore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
+		this.TAG = new Field("tag",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.TIPO_SERVIZIO = new Field("tipo-servizio",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.NOME_SERVIZIO = new Field("nome-servizio",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.VERSIONE_SERVIZIO = new Field("versione-servizio",java.lang.Integer.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
@@ -79,6 +80,7 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 		this.NOME_EROGATORE = new ComplexField(father,"nome-erogatore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.RUOLO_EROGATORE = new ComplexField(father,"ruolo-erogatore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new ComplexField(father,"servizio-applicativo-erogatore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
+		this.TAG = new ComplexField(father,"tag",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.TIPO_SERVIZIO = new ComplexField(father,"tipo-servizio",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.NOME_SERVIZIO = new ComplexField(father,"nome-servizio",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione-servizio",java.lang.Integer.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
@@ -115,6 +117,8 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 	public IField RUOLO_EROGATORE = null;
 	 
 	public IField SERVIZIO_APPLICATIVO_EROGATORE = null;
+	 
+	public IField TAG = null;
 	 
 	public IField TIPO_SERVIZIO = null;
 	 

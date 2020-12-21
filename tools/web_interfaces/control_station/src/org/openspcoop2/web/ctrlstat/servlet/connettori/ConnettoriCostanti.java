@@ -325,6 +325,8 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ = "Delete After Read";
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = "WaitTime ifNotExists (ms)";
 		
+	public final static String LABEL_SEZIONE_CONNETTORE_CUSTOM_PROPRIETA = "Proprietà";
+	
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE = "Valore";
 	
@@ -465,4 +467,5 @@ public class ConnettoriCostanti {
 			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_BASIC, 
 			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_APIKEY, 
 			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL};
+
 }

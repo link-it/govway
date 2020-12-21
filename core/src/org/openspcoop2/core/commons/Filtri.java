@@ -83,6 +83,9 @@ public final class Filtri
 	public final static String FILTRO_AZIONE = "filtroAzione";
 	
 	public final static String FILTRO_RUOLO = "filtroRuolo";
+	public final static String FILTRO_RUOLO_NOME = "Ruolo";
+	public final static String FILTRO_RUOLO_VALORE_FRUIZIONE = "Fruizione";
+	public final static String FILTRO_RUOLO_VALORE_EROGAZIONE = "Erogazione";
 	
 	public final static String FILTRO_TIPO_POLICY = "filtroTipoPolicy";
 	public final static String FILTRO_TIPO_POLICY_BUILT_IN = "built-in";
@@ -98,6 +101,10 @@ public final class Filtri
 	
 	public final static String FILTRO_CANALE = "filtroCanale";
 	public final static String PREFIX_VALUE_CANALE_DEFAULT = "__DEFAULT__ ";
+
+	public final static String FILTRO_TIPO_PLUGIN_CLASSI = "filtroTipoPluginClassi";
+	
+	public final static String FILTRO_PROP_PLUGIN_CLASSI = "filtroPropPluginClassi";
 	
 	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {
 		List<String> tipoSoggettiProtocollo = null;

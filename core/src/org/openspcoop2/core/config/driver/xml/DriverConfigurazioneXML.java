@@ -50,6 +50,9 @@ import org.openspcoop2.core.config.Openspcoop2;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
+import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
@@ -2268,7 +2271,26 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		
 		throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti con tipologia '"+tipologia+"' e nome '"+name+"'");
 	}
+
+	/**
+	 * Restituisce la configurazione dei plugins
+	 *
+	 * @return RegistroPlugins
+	 * 
+	 */
+	@Override
+	public RegistroPlugins getRegistroPlugins() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		refreshConfigurazioneXML();
+
+		RegistroPlugins registro = this.openspcoop.getConfigurazione().getRegistroPlugins();
+		if(registro==null || registro.sizePluginList()<=0) {
+			throw new DriverConfigurazioneNotFound("Nessun plugin registrato");
+		}
+		
+		return registro;
+	}
 	
+
 	@Override
 	public CanaliConfigurazione getCanaliConfigurazione() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
@@ -2282,6 +2304,66 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		return c;
 	}
 
+	/**
+	 * Restituisce la configurazione del plugin
+	 *
+	 * @return RegistroPlugin
+	 * 
+	 */
+	@Override
+	public RegistroPlugin getRegistroPlugin(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getRegistroPlugin(nome, false);
+	}
+	@Override
+	public RegistroPlugin getDatiRegistroPlugin(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getRegistroPlugin(nome, true);
+	}
+	private RegistroPlugin getRegistroPlugin(String nome, boolean soloDati) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		if(nome==null) {
+			throw new DriverConfigurazioneException("Nome plugin non indicato");
+		}
+		
+		refreshConfigurazioneXML();
+
+		RegistroPlugins registro = this.openspcoop.getConfigurazione().getRegistroPlugins();
+		if(registro==null || registro.sizePluginList()<=0) {
+			throw new DriverConfigurazioneNotFound("Plugin '"+nome+"' non esistente");
+		}
+		for (int i = 0; i < registro.sizePluginList(); i++) {
+			RegistroPlugin plug = registro.getPlugin(i);
+			if(plug.getNome().equals(nome)) {
+				if(soloDati) {
+					RegistroPlugin plugCloned = (RegistroPlugin) plug.clone();
+					while(plugCloned.sizeArchivioList()>0) {
+						plugCloned.removeArchivio(0);
+					}
+				}
+				else {
+					return plug;
+				}
+			}
+		}
+		throw new DriverConfigurazioneNotFound("Plugin '"+nome+"' non esistente");
+	}
+	
+	@Override
+	public RegistroPluginArchivio getRegistroPluginArchivio(String nomePlugin, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		RegistroPlugin plug = this.getRegistroPlugin(nomePlugin);
+		
+		if(nome==null) {
+			throw new DriverConfigurazioneException("Nome archivio non indicato");
+		}
+		
+		for (int i = 0; i < plug.sizeArchivioList(); i++) {
+			RegistroPluginArchivio plugArchivio = plug.getArchivio(i);
+			if(plugArchivio.getNome().equals(nome)) {
+				return plugArchivio;
+			}
+		}
+		throw new DriverConfigurazioneNotFound("Archivio '"+nome+"' non esistente nel plugin '"+nomePlugin+"'");
+	}
+	
 	/**
 	 * Restituisce la configurazione generale della Porta di Dominio 
 	 *

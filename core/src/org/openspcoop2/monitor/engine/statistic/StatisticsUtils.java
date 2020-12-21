@@ -25,6 +25,9 @@ import java.util.Map;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.statistiche.StatisticaContenuti;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.generic_project.beans.AliasTableComplexField;
 import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.Function;
@@ -36,18 +39,14 @@ import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.utils.sql.SQLQueryObjectException;
-
-import org.openspcoop2.core.transazioni.Transazione;
-import org.openspcoop2.core.transazioni.constants.PddRuolo;
-import org.openspcoop2.core.statistiche.StatisticaContenuti;
-import org.openspcoop2.monitor.engine.utils.ContentFormatter;
-import org.openspcoop2.monitor.engine.exceptions.EngineException;
-import org.openspcoop2.monitor.engine.condition.FilterUtils;
+import org.openspcoop2.monitor.engine.config.base.utils.FilterUtils;
 import org.openspcoop2.monitor.engine.constants.Costanti;
+import org.openspcoop2.monitor.engine.exceptions.EngineException;
 import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
+import org.openspcoop2.monitor.engine.utils.ContentFormatter;
 import org.openspcoop2.monitor.sdk.statistic.StatisticFilterName;
 import org.openspcoop2.monitor.sdk.statistic.StatisticResourceFilter;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
  * StatisticsUtils

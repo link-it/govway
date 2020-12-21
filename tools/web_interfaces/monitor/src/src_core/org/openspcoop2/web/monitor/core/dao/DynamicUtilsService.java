@@ -29,6 +29,8 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.PortType;
+import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
@@ -78,7 +80,9 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		this.driver = new DynamicUtilsServiceEngine(con, autoCommit, serviceManagerProperties, log);
 	}
 
-	
+	public org.openspcoop2.core.commons.search.dao.IServiceManager getUtilsServiceManager() {
+		return this.driver.getUtilsServiceManager();
+	}
 	
 	
 	// **** UTILITY ****
@@ -1380,4 +1384,37 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 	}
 
+	@Override
+	public PortaDelegata getPortaDelegata(String nomePorta) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione!=null) {
+			String key = buildKey("PD", nomePorta);
+			String methodName = "getPortaDelegata";
+			try {
+				return (PortaDelegata) AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_ricercheConfigurazione, key, methodName,
+						new Class<?>[] {String.class }, nomePorta);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		} else {
+			return this.driver.getPortaDelegata(nomePorta);
+		}
+	}
+	
+	@Override
+	public PortaApplicativa getPortaApplicativa(String nomePorta) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione!=null) {
+			String key = buildKey("PA", nomePorta);
+			String methodName = "getPortaApplicativa";
+			try {
+				return (PortaApplicativa) AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_ricercheConfigurazione, key, methodName,
+						new Class<?>[] {String.class }, nomePorta);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		} else {
+			return this.driver.getPortaApplicativa(nomePorta);
+		}
+	}
 }

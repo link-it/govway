@@ -321,6 +321,30 @@ Esempi:
 			</then>
 		</if>
 
+		<!-- *** Aggiunta dell'applicazione runtimeRepository ***-->
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="runtimeRepository"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_batch}/runtimeRepository"/>
+						<var name="patchTmpArchiveType" value="ear"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+					</then>
+				</if>
+			</then>
+		</if>
+
 		<echo message="Patch archiveType [${patchArchiveType}] ok"/>
 
 	</target>
@@ -425,14 +449,25 @@ Esempi:
 
 	<target name="-patch-lib-add">
 		<basename property="patchLibAddJar" file="${patchLibAdd}"/>
+		<dirname property="patchLibAddJar.dirname" file="${patchLibAdd}"/>
 		<echo message="addOrReplace '${patchLibAddJar}'"/>
 		<if>
 			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
 			<then>
-				<copy file="${patchLibAdd}" todir="${patchTmpArchive}/lib" overwrite="true"/>
+				<copy todir="${patchTmpArchive}/lib" overwrite="true">
+					<fileset dir="${patchLibAddJar.dirname}">
+					    	<include name="${patchLibAddJar}"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+				</copy>
 			</then>
 			<else>
-				<copy file="${patchLibAdd}" todir="${patchTmpArchive}/WEB-INF/lib" overwrite="true"/>
+				<copy todir="${patchTmpArchive}/WEB-INF/lib" overwrite="true">
+					<fileset dir="${patchLibAddJar.dirname}">
+                                                <include name="${patchLibAddJar}"/>
+                                        </fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+				</copy>
 			</else>
 		</if>
 	</target>
@@ -440,13 +475,17 @@ Esempi:
 	<target name="-patch-lib-remove">
 		<basename property="patchLibRemoveJar" file="${patchLibRemove}"/>
 		<echo message="remove '${patchLibRemoveJar}'"/>
+		<propertyregex property="patchLibRemoveJarVersionato"
+                                       input="${patchLibRemoveJar}"
+                                       regexp="_RELEASE.jar"
+                                       replace="-${antinstaller_versione_attuale_con_p_level}.jar" />
 		<if>
 			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
 			<then>
-				<delete file="${patchTmpArchive}/lib/${patchLibRemoveJar}"/>
+				<delete file="${patchTmpArchive}/lib/${patchLibRemoveJarVersionato}"/>
 			</then>
 			<else>
-				<delete file="${patchTmpArchive}/WEB-INF/lib/${patchLibRemoveJar}"/>
+				<delete file="${patchTmpArchive}/WEB-INF/lib/${patchLibRemoveJarVersionato}"/>
 			</else>
 		</if>
 	</target>

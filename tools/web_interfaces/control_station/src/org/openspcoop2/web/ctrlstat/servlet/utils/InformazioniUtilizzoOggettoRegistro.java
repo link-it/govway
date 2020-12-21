@@ -47,6 +47,7 @@ import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.monitor.engine.config.base.IdPlugin;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -200,6 +201,13 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDGenericProperties idGP = (IDGenericProperties)object;
 					risultatiRicerca.add(confCore.getDettagliTokenPolicyInUso(idGP));
+				}
+				break;
+			case PLUGIN_CLASSE:
+				identificativi = exporterUtils.getIdsPluginClassi(identificativoOggetto);
+				for (Object object : identificativi) {
+					IdPlugin idPlugin = (IdPlugin)object;
+					risultatiRicerca.add(confCore.getDettagliPluginClasseInUso(idPlugin));
 				}
 				break;
 			case ACCORDO_COOPERAZIONE:

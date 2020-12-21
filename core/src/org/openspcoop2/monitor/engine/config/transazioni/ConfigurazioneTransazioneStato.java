@@ -35,16 +35,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-transazione-stato">
- * 		&lt;sequence>
- * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tipo-controllo" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-controllo" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="valore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="xpath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-transazione-stato"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-controllo" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-controllo" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="valore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="xpath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

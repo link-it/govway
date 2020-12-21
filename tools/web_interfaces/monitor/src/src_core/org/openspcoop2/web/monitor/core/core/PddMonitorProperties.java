@@ -141,15 +141,15 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
-	public boolean isAttivoModuloAllarmi() throws Exception{
-		String tmp = this.appProperties.getProperty("modules.allarmi", false, true);
-		if(tmp!=null && !"".equals(tmp)) {
-			return "true".equalsIgnoreCase(tmp);
-		}
-		else {
-			return false; // default
-		}
-	}
+//	public boolean isAttivoModuloAllarmi() throws Exception{
+//		String tmp = this.appProperties.getProperty("modules.allarmi", false, true);
+//		if(tmp!=null && !"".equals(tmp)) {
+//			return "true".equalsIgnoreCase(tmp);
+//		}
+//		else {
+//			return false; // default
+//		}
+//	}
 	public boolean isAttivoModuloProcessi() throws Exception{
 		String tmp = this.appProperties.getProperty("modules.processi", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
@@ -925,6 +925,10 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("eventi.lista.utilizzaCount.enabled", true, true));
 	}
 
+	public boolean isAttivoUtilizzaCountListaAllarmi() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.lista.utilizzaCount.enabled", true, false));
+	}
+	
 	public boolean isAttivoUtilizzaCountStatisticheListaConfigurazioni() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.configurazioni.lista.utilizzaCount.enabled", true, true));
 	}
@@ -1001,5 +1005,79 @@ public class PddMonitorProperties {
 	
 	public Integer getSearchFormLimit() throws Exception{
 		return Integer.valueOf(this.appProperties.getProperty("console.searchForm.limit",true,true));
+	}
+	
+	// allarmi
+	
+	public boolean isAllarmiEnabled() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.enabled", true, true));
+	}
+	
+	public String getAllarmiConfigurazione() throws Exception{
+		return this.appProperties.getProperty("allarmi.configurazione", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixStartAlarm() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url.suffix.startAlarm", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixStopAlarm() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url.suffix.stopAlarm", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixReStartAlarm() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url.suffix.restartAlarm", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.ok", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.warning", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.error", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateAcknoledgement.enabled", true, true);
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm() throws Exception{
+		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateAcknoledgement.disabled", true, true);
+	}
+	
+	public boolean isAllarmiConsultazioneModificaStatoAbilitata() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.consultazione.modificaStatoAbilitata", true, false));
+	}
+	
+	public boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.acknowledged.associazioneStatoAllarme", true, false));
+	}
+	
+	public boolean isAllarmiNotificaMailVisualizzazioneCompleta() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.notificaMail.visualizzazioneCompleta", true, false));
+	}
+	
+	public boolean isAllarmiMonitoraggioEsternoVisualizzazioneCompleta() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.monitoraggioEsterno.visualizzazioneCompleta", true, false));
+	}
+
+	public boolean isAllarmiGroupByApi() throws Exception {
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.groupBy.api", true, false));
+	}
+	
+	public boolean isAllarmiFiltroApi() throws Exception {
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.filtro.api", true, false));
+	}
+	
+	public boolean isAllarmiFiltroApiSoggettoErogatore() throws Exception {
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.filtro.api.soggettoErogatore", true, false));
 	}
 }

@@ -182,6 +182,14 @@
 			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.eventi"/>
 		</concat>
 		<if>
+			<istrue value="${buildMonitoraggio}" />
+			<then>
+				<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.allarmi"/>
+				</concat>
+			</then>
+		</if>
+		<if>
 			<not>
 				<equals arg1="${plugins.classpath.web.xml.servlet}" arg2=""/>
 			</not>
@@ -210,6 +218,14 @@
 		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
 			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.mapping.eventi"/>
 		</concat>
+		<if>
+			<istrue value="${buildMonitoraggio}" />
+			<then>
+				<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.servlet.mapping.allarmi"/>
+				</concat>
+			</then>
+		</if>
 		<if>
 			<not>
 				<equals arg1="${plugins.classpath.web.xml.servlet.mapping}" arg2=""/>

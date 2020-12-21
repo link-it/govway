@@ -837,6 +837,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_CONFIG_DI = "Servizi Applicativi di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_CONFIG = "Servizi Applicativi";
 	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ALLARMI = "Allarmi";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ALLARMI_DI = "Allarmi di ";
+	
 	/* DEFAULT VALUE PARAMETRI */
 	
 	

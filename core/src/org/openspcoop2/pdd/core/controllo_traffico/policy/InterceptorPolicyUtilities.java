@@ -19,6 +19,9 @@
  */
 package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.Costanti;
@@ -26,8 +29,12 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -217,6 +224,33 @@ public class InterceptorPolicyUtilities {
 					versione); 
 			idServizio.setAzione(context.getProtocollo().getAzione());
 			datiTransazione.setIdServizio(idServizio);
+			
+			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(context.getStato());
+			if(context.getProtocollo().getIdAccordo()!=null) {
+				datiTransazione.setIdAccordoServizioParteComune(context.getProtocollo().getIdAccordo());
+			}
+			else {
+				try {
+					AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+					datiTransazione.setIdAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+				}catch(Exception e) {
+					context.getLogCore().debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
+				}				
+			}
+			if(datiTransazione.getIdAccordoServizioParteComune()!=null) {
+				try {
+					AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(datiTransazione.getIdAccordoServizioParteComune(), null, false);
+					if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
+						List<String> tags = new ArrayList<String>();
+						for (GruppoAccordo gruppoAccordo : aspc.getGruppi().getGruppoList()) {
+							tags.add(gruppoAccordo.getNome());
+						}
+						datiTransazione.setTagsAccordoServizioParteComune(tags);
+					}
+				}catch(Exception e) {
+					context.getLogCore().debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
+				}	
+			}
 			
 		}
 		
@@ -491,6 +525,22 @@ public class InterceptorPolicyUtilities {
 					return false;
 				}				
 				if(datiTransazione.getListServiziApplicativiErogatori().contains(filtro.getServizioApplicativoErogatore())==false){
+					return false;
+				}
+			}
+			
+			if(filtro.getTag()!=null && !"".equals(filtro.getTag())){
+				if(datiTransazione.getTagsAccordoServizioParteComune()==null || datiTransazione.getTagsAccordoServizioParteComune().isEmpty()){
+					return false;
+				}
+				boolean find = false;
+				for (String tag : datiTransazione.getTagsAccordoServizioParteComune()) {
+					if(filtro.getTag().equals(tag)){
+						find = true;
+						break;
+					}
+				}
+				if(!find){
 					return false;
 				}
 			}

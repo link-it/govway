@@ -171,6 +171,7 @@ CREATE TABLE ct_active_policy
 	filtro_nome_erogatore VARCHAR2(255),
 	filtro_ruolo_erogatore VARCHAR2(255),
 	filtro_sa_erogatore VARCHAR2(255),
+	filtro_tag VARCHAR2(255),
 	filtro_tipo_servizio VARCHAR2(255),
 	filtro_nome_servizio VARCHAR2(255),
 	filtro_versione_servizio NUMBER,

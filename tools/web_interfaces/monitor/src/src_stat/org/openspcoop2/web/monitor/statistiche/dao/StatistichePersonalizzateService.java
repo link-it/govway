@@ -439,7 +439,8 @@ IStatisticaPersonalizzataService {
 		try {
 			List<Parameter<?>> res = null;
 
-			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(configurazioneStatistica.getPlugin().getClassName(),StatistichePersonalizzateService.log);
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(configurazioneStatistica.getPlugin().getTipoPlugin(), configurazioneStatistica.getPlugin().getTipo(),
+					configurazioneStatistica.getPlugin().getClassName(),StatistichePersonalizzateService.log);
 			List<Parameter<?>> sdkParameters = bl.getParameters(context);
 			
 			if(sdkParameters!=null && sdkParameters.size()>0){

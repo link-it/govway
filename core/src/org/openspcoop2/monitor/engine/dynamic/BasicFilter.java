@@ -40,17 +40,20 @@ public class BasicFilter implements IDynamicFilter{
 	
 	private static Logger log = LoggerWrapperFactory.getLogger(BasicFilter.class);
 	
+	private String tipoPlugin;
+	private String tipo;
 	private String className;
 	
-	protected BasicFilter(String className) {
+	protected BasicFilter(String tipoPlugin, String tipo, String className) {
+		this.tipoPlugin = tipoPlugin;
+		this.tipo = tipo;
 		this.className = className;
 	}
 	
 	@Override
 	public org.openspcoop2.monitor.sdk.condition.IFilter createConditionFilter(Context context) throws SearchException {
 		try{
-			//Class<?> c = Class.forName(this.className);
-			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(this.className, BasicFilter.log);
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(this.tipoPlugin, this.tipo, this.className, BasicFilter.log);
 			
 			Object obj = bl.newInstance();
 			

@@ -588,7 +588,8 @@ public abstract class AbstractStatistiche {
 				}
 				stat.setIdStatistica(confStat.getIdConfigurazioneStatistica());
 				stat.setPluginClassname(classNameStatisticaPersonalizzata);
-				IDynamicLoader cStatPersonalizzata = DynamicFactory.getInstance().newDynamicLoader(classNameStatisticaPersonalizzata, this.logger);
+				IDynamicLoader cStatPersonalizzata = DynamicFactory.getInstance().newDynamicLoader(confStat.getPlugin().getTipoPlugin(), confStat.getPlugin().getTipo(),
+						classNameStatisticaPersonalizzata, this.logger);
 				IStatisticProcessing statProcessing = (IStatisticProcessing) cStatPersonalizzata.newInstance();
 				if(this.isEnabledStatisticTypeCustom(statProcessing)){
 					if(this.debug){

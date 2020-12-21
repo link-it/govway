@@ -192,6 +192,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RegistroPlugins }
+     */
+    public RegistroPlugins createRegistroPlugins() {
+        return new RegistroPlugins();
+    }
+
+    /**
      * Create an instance of {@link InvocazionePortaGestioneErrore }
      */
     public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
@@ -329,6 +336,13 @@ public class ObjectFactory {
      */
     public MessageSecurity createMessageSecurity() {
         return new MessageSecurity();
+    }
+
+    /**
+     * Create an instance of {@link RegistroPlugin }
+     */
+    public RegistroPlugin createRegistroPlugin() {
+        return new RegistroPlugin();
     }
 
     /**
@@ -665,6 +679,13 @@ public class ObjectFactory {
      */
     public StatoServiziPddPortaDelegata createStatoServiziPddPortaDelegata() {
         return new StatoServiziPddPortaDelegata();
+    }
+
+    /**
+     * Create an instance of {@link RegistroPluginArchivio }
+     */
+    public RegistroPluginArchivio createRegistroPluginArchivio() {
+        return new RegistroPluginArchivio();
     }
 
     /**

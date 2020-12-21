@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +35,18 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="plugin">
- * 		&lt;sequence>
- * 			&lt;element name="tipo" type="{http://www.openspcoop2.org/monitor/engine/config/base}tipo-plugin" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="class-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="plugin-servizio-compatibilita" type="{http://www.openspcoop2.org/monitor/engine/config/base}plugin-servizio-compatibilita" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="plugin-filtro-compatibilita" type="{http://www.openspcoop2.org/monitor/engine/config/base}plugin-filtro-compatibilita" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="plugin"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="tipo-plugin" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="class-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="stato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="true"/&gt;
+ * 			&lt;element name="plugin-servizio-compatibilita" type="{http://www.openspcoop2.org/monitor/engine/config/base}plugin-servizio-compatibilita" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="plugin-proprieta-compatibilita" type="{http://www.openspcoop2.org/monitor/engine/config/base}plugin-proprieta-compatibilita" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -57,12 +58,14 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "plugin", 
   propOrder = {
-  	"tipo",
+  	"tipoPlugin",
   	"className",
+  	"tipo",
   	"descrizione",
   	"label",
+  	"stato",
   	"pluginServizioCompatibilita",
-  	"pluginFiltroCompatibilita"
+  	"pluginProprietaCompatibilita"
   }
 )
 
@@ -86,24 +89,20 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBean implements Seri
 		this.id=Long.valueOf(-1);
   }
 
-  public void set_value_tipo(String value) {
-    this.tipo = (TipoPlugin) TipoPlugin.toEnumConstantFromString(value);
+  public IdPlugin getOldIdPlugin() {
+    return this.oldIdPlugin;
   }
 
-  public String get_value_tipo() {
-    if(this.tipo == null){
-    	return null;
-    }else{
-    	return this.tipo.toString();
-    }
+  public void setOldIdPlugin(IdPlugin oldIdPlugin) {
+    this.oldIdPlugin=oldIdPlugin;
   }
 
-  public org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin getTipo() {
-    return this.tipo;
+  public java.lang.String getTipoPlugin() {
+    return this.tipoPlugin;
   }
 
-  public void setTipo(org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin tipo) {
-    this.tipo = tipo;
+  public void setTipoPlugin(java.lang.String tipoPlugin) {
+    this.tipoPlugin = tipoPlugin;
   }
 
   public java.lang.String getClassName() {
@@ -112,6 +111,14 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   public void setClassName(java.lang.String className) {
     this.className = className;
+  }
+
+  public java.lang.String getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(java.lang.String tipo) {
+    this.tipo = tipo;
   }
 
   public java.lang.String getDescrizione() {
@@ -128,6 +135,18 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   public void setLabel(java.lang.String label) {
     this.label = label;
+  }
+
+  public boolean isStato() {
+    return this.stato;
+  }
+
+  public boolean getStato() {
+    return this.stato;
+  }
+
+  public void setStato(boolean stato) {
+    this.stato = stato;
   }
 
   public void addPluginServizioCompatibilita(PluginServizioCompatibilita pluginServizioCompatibilita) {
@@ -154,28 +173,28 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBean implements Seri
     return this.pluginServizioCompatibilita.size();
   }
 
-  public void addPluginFiltroCompatibilita(PluginFiltroCompatibilita pluginFiltroCompatibilita) {
-    this.pluginFiltroCompatibilita.add(pluginFiltroCompatibilita);
+  public void addPluginProprietaCompatibilita(PluginProprietaCompatibilita pluginProprietaCompatibilita) {
+    this.pluginProprietaCompatibilita.add(pluginProprietaCompatibilita);
   }
 
-  public PluginFiltroCompatibilita getPluginFiltroCompatibilita(int index) {
-    return this.pluginFiltroCompatibilita.get( index );
+  public PluginProprietaCompatibilita getPluginProprietaCompatibilita(int index) {
+    return this.pluginProprietaCompatibilita.get( index );
   }
 
-  public PluginFiltroCompatibilita removePluginFiltroCompatibilita(int index) {
-    return this.pluginFiltroCompatibilita.remove( index );
+  public PluginProprietaCompatibilita removePluginProprietaCompatibilita(int index) {
+    return this.pluginProprietaCompatibilita.remove( index );
   }
 
-  public List<PluginFiltroCompatibilita> getPluginFiltroCompatibilitaList() {
-    return this.pluginFiltroCompatibilita;
+  public List<PluginProprietaCompatibilita> getPluginProprietaCompatibilitaList() {
+    return this.pluginProprietaCompatibilita;
   }
 
-  public void setPluginFiltroCompatibilitaList(List<PluginFiltroCompatibilita> pluginFiltroCompatibilita) {
-    this.pluginFiltroCompatibilita=pluginFiltroCompatibilita;
+  public void setPluginProprietaCompatibilitaList(List<PluginProprietaCompatibilita> pluginProprietaCompatibilita) {
+    this.pluginProprietaCompatibilita=pluginProprietaCompatibilita;
   }
 
-  public int sizePluginFiltroCompatibilitaList() {
-    return this.pluginFiltroCompatibilita.size();
+  public int sizePluginProprietaCompatibilitaList() {
+    return this.pluginProprietaCompatibilita.size();
   }
 
   private static final long serialVersionUID = 1L;
@@ -198,14 +217,19 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected IdPlugin oldIdPlugin;
 
-  @XmlElement(name="tipo",required=true,nillable=false)
-  protected TipoPlugin tipo;
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo-plugin",required=true,nillable=false)
+  protected java.lang.String tipoPlugin;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="class-name",required=true,nillable=false)
   protected java.lang.String className;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo",required=true,nillable=false)
+  protected java.lang.String tipo;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="descrizione",required=false,nillable=false)
@@ -215,12 +239,16 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBean implements Seri
   @XmlElement(name="label",required=true,nillable=false)
   protected java.lang.String label;
 
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="stato",required=false,nillable=false,defaultValue="true")
+  protected boolean stato = true;
+
   @XmlElement(name="plugin-servizio-compatibilita",required=true,nillable=false)
   protected List<PluginServizioCompatibilita> pluginServizioCompatibilita = new ArrayList<PluginServizioCompatibilita>();
 
   /**
    * @deprecated Use method getPluginServizioCompatibilitaList
-   * @return List<PluginServizioCompatibilita>
+   * @return List&lt;PluginServizioCompatibilita&gt;
   */
   @Deprecated
   public List<PluginServizioCompatibilita> getPluginServizioCompatibilita() {
@@ -229,7 +257,7 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   /**
    * @deprecated Use method setPluginServizioCompatibilitaList
-   * @param pluginServizioCompatibilita List<PluginServizioCompatibilita>
+   * @param pluginServizioCompatibilita List&lt;PluginServizioCompatibilita&gt;
   */
   @Deprecated
   public void setPluginServizioCompatibilita(List<PluginServizioCompatibilita> pluginServizioCompatibilita) {
@@ -245,34 +273,34 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBean implements Seri
   	return this.pluginServizioCompatibilita.size();
   }
 
-  @XmlElement(name="plugin-filtro-compatibilita",required=true,nillable=false)
-  protected List<PluginFiltroCompatibilita> pluginFiltroCompatibilita = new ArrayList<PluginFiltroCompatibilita>();
+  @XmlElement(name="plugin-proprieta-compatibilita",required=true,nillable=false)
+  protected List<PluginProprietaCompatibilita> pluginProprietaCompatibilita = new ArrayList<PluginProprietaCompatibilita>();
 
   /**
-   * @deprecated Use method getPluginFiltroCompatibilitaList
-   * @return List<PluginFiltroCompatibilita>
+   * @deprecated Use method getPluginProprietaCompatibilitaList
+   * @return List&lt;PluginProprietaCompatibilita&gt;
   */
   @Deprecated
-  public List<PluginFiltroCompatibilita> getPluginFiltroCompatibilita() {
-  	return this.pluginFiltroCompatibilita;
+  public List<PluginProprietaCompatibilita> getPluginProprietaCompatibilita() {
+  	return this.pluginProprietaCompatibilita;
   }
 
   /**
-   * @deprecated Use method setPluginFiltroCompatibilitaList
-   * @param pluginFiltroCompatibilita List<PluginFiltroCompatibilita>
+   * @deprecated Use method setPluginProprietaCompatibilitaList
+   * @param pluginProprietaCompatibilita List&lt;PluginProprietaCompatibilita&gt;
   */
   @Deprecated
-  public void setPluginFiltroCompatibilita(List<PluginFiltroCompatibilita> pluginFiltroCompatibilita) {
-  	this.pluginFiltroCompatibilita=pluginFiltroCompatibilita;
+  public void setPluginProprietaCompatibilita(List<PluginProprietaCompatibilita> pluginProprietaCompatibilita) {
+  	this.pluginProprietaCompatibilita=pluginProprietaCompatibilita;
   }
 
   /**
-   * @deprecated Use method sizePluginFiltroCompatibilitaList
+   * @deprecated Use method sizePluginProprietaCompatibilitaList
    * @return lunghezza della lista
   */
   @Deprecated
-  public int sizePluginFiltroCompatibilita() {
-  	return this.pluginFiltroCompatibilita.size();
+  public int sizePluginProprietaCompatibilita() {
+  	return this.pluginProprietaCompatibilita.size();
   }
 
 }

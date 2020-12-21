@@ -10,6 +10,7 @@
 	<import file="./ant/openspcoop2-govwayMonitor_transazioni-build.xml" />
 	<import file="./ant/openspcoop2-govwayMonitor_statistiche-build.xml" />
 	<import file="./ant/openspcoop2-govwayMonitor_eventi-build.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor_allarmi-build.xml" />
 	<import file="./ant/openspcoop2-govwayMonitor-war.xml" />
 	<import file="./ant/openspcoop2-govwayMonitor-codeGen.xml" />
 	<import file="./ant/openspcoop2-govwayMonitor-resource.xml" />
@@ -30,6 +31,7 @@
 	<property name="src_stat_govwayMonitor" value="${src_govwayMonitor}/src_stat" />
 	<property name="src_transazioni_govwayMonitor" value="${src_govwayMonitor}/src_transazioni" />
 	<property name="src_eventi_govwayMonitor" value="${src_govwayMonitor}/src_eventi" />
+	<property name="src_allarmi_govwayMonitor" value="${src_govwayMonitor}/src_allarmi" />
 	<property name="build_govwayMonitor" location="build/govwayMonitor" />
 	<property name="build_govwayMonitor_war" location="build/govwayMonitorWar" />
 	<property name="dist_govwayMonitor" location="dist" />
@@ -416,7 +418,7 @@
 	<target name="compile_dipendenze_invoke" depends="compile_users,compile_audit" description="compila le dipendenze" />
 
 	<!-- Compilazione della PddMonitor-->
-	<target name="compile_openspcoop2_govwayMonitor" depends="compile_openspcoop2_govwayMonitor_core,compile_openspcoop2_govwayMonitor_transazioni,compile_openspcoop2_govwayMonitor_statistiche,compile_openspcoop2_govwayMonitor_eventi" description="compila govwayMonitor"/>
+	<target name="compile_openspcoop2_govwayMonitor" depends="compile_openspcoop2_govwayMonitor_core,compile_openspcoop2_govwayMonitor_transazioni,compile_openspcoop2_govwayMonitor_statistiche,compile_openspcoop2_govwayMonitor_eventi,compile_openspcoop2_govwayMonitor_allarmi" description="compila govwayMonitor"/>
 	<target name="compile_govwayMonitor" depends="init_compile_govwayMonitor,compile_dipendenze,compile_openspcoop2_govwayMonitor" description="compila govwayMonitor"/>
 
 

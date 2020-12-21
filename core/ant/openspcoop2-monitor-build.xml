@@ -84,6 +84,7 @@
 
 				<!-- org.openspcoop2.monitor.engine -->
 				<var name="packagesCompiled" value="org.openspcoop2.monitor.engine" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.alarm" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.conditions" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.constants" />

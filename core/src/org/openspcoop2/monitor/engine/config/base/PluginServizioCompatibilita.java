@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="plugin-servizio-compatibilita">
- * 		&lt;sequence>
- * 			&lt;element name="uri-accordo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="plugin-servizio-azione-compatibilita" type="{http://www.openspcoop2.org/monitor/engine/config/base}plugin-servizio-azione-compatibilita" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="plugin-servizio-compatibilita"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="uri-accordo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="plugin-servizio-azione-compatibilita" type="{http://www.openspcoop2.org/monitor/engine/config/base}plugin-servizio-azione-compatibilita" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -139,7 +139,7 @@ public class PluginServizioCompatibilita extends org.openspcoop2.utils.beans.Bas
 
   /**
    * @deprecated Use method getPluginServizioAzioneCompatibilitaList
-   * @return List<PluginServizioAzioneCompatibilita>
+   * @return List&lt;PluginServizioAzioneCompatibilita&gt;
   */
   @Deprecated
   public List<PluginServizioAzioneCompatibilita> getPluginServizioAzioneCompatibilita() {
@@ -148,7 +148,7 @@ public class PluginServizioCompatibilita extends org.openspcoop2.utils.beans.Bas
 
   /**
    * @deprecated Use method setPluginServizioAzioneCompatibilitaList
-   * @param pluginServizioAzioneCompatibilita List<PluginServizioAzioneCompatibilita>
+   * @param pluginServizioAzioneCompatibilita List&lt;PluginServizioAzioneCompatibilita&gt;
   */
   @Deprecated
   public void setPluginServizioAzioneCompatibilita(List<PluginServizioAzioneCompatibilita> pluginServizioAzioneCompatibilita) {

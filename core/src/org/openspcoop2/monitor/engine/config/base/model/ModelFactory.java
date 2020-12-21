@@ -28,8 +28,6 @@ package org.openspcoop2.monitor.engine.config.base.model;
  */
 public class ModelFactory {
 
-	public static PluginInfoModel PLUGIN_INFO = new PluginInfoModel();
-	
 	public static PluginModel PLUGIN = new PluginModel();
 	
 	public static ConfigurazioneServizioModel CONFIGURAZIONE_SERVIZIO = new ConfigurazioneServizioModel();

@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="elenco-id-plugin">
- * 		&lt;sequence>
- * 			&lt;element name="id-plugin" type="{http://www.openspcoop2.org/monitor/engine/config/base}id-plugin" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="elenco-id-plugin"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-plugin" type="{http://www.openspcoop2.org/monitor/engine/config/base}id-plugin" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ElencoIdPlugin extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getIdPluginList
-   * @return List<IdPlugin>
+   * @return List&lt;IdPlugin&gt;
   */
   @Deprecated
   public List<IdPlugin> getIdPlugin() {
@@ -120,7 +120,7 @@ public class ElencoIdPlugin extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setIdPluginList
-   * @param idPlugin List<IdPlugin>
+   * @param idPlugin List&lt;IdPlugin&gt;
   */
   @Deprecated
   public void setIdPlugin(List<IdPlugin> idPlugin) {

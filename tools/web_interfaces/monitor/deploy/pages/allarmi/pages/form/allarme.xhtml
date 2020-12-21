@@ -1,0 +1,494 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+	template="/templates/defaultTemplate.xhtml">
+		<ui:param value="#{not empty allarmiBean.allarme.id ? 'Stato Allarme' : 'Nuovo Allarme'}" name="title" />
+		<ui:define name="navbar">
+			<ul>
+				<li>
+					<h:commandLink action="allarmi" value="Monitoraggio Allarmi"/>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li>
+					<h:outputText id="inserisciAllarme" value="Inserisci Allarme" rendered="#{allarmiBean.allarme.id == -1}" styleClass="ultimo-path"/>
+					<h:outputText id="modificaAllarme" value="Stato Allarme (#{allarmiBean.allarme.nome})" styleClass="ultimo-path"
+						 rendered="#{allarmiBean.allarme.id != -1 and ((allarmiBean.allarme.mail.ackMode==1 and allarmiBean.allarme.mail.inviaAlert==1) or (allarmiBean.allarme.script.ackMode==1 and allarmiBean.allarme.script.invocaAlert==1))}"/>
+					<h:outputText id="visualizzaAllarme" value="Stato Allarme (#{allarmiBean.allarme.nome})" styleClass="ultimo-path"
+						 rendered="#{allarmiBean.allarme.id != -1 and not ((allarmiBean.allarme.mail.ackMode==1 and allarmiBean.allarme.mail.inviaAlert==1) or (allarmiBean.allarme.script.ackMode==1 and allarmiBean.allarme.script.invocaAlert==1))}"/>
+				</li>
+			</ul>
+		</ui:define>
+		<ui:define name="body">
+			<rich:panel styleClass="noborder" id="paginaAllarme"> 
+				<style>
+					#legendPanel_body  { padding: 0px !important; }
+				</style>
+				<rich:panel id="legendPanel" rendered="#{(allarmiBean.allarme.id != -1 and ((allarmiBean.allarme.mail.ackMode==1 and allarmiBean.allarme.mail.inviaAlert==1) or (allarmiBean.allarme.script.ackMode==1 and allarmiBean.allarme.script.invocaAlert==1)))}">
+					<p class="legend">
+						<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+					</p>
+				</rich:panel>	
+				<div class="form-container noborder nopadding">
+					<a4j:keepAlive beanName="allarmiBean"/>
+					<a4j:form>
+					
+						<link:fieldset legend="Informazioni Generali" rendered="#{true}" collapsible="false" closed="false">
+						
+							<link:prop label="Nome">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText value="#{allarmiBean.allarme.nome}" readonly="true" style="width: 412px" />
+								</a4j:outputPanel>
+							</link:prop>
+							
+							<a4j:outputPanel id="descrPnl" layout="block" rendered="#{not empty allarmiBean.descrizione}">
+								<link:prop label="Descrizione">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText id="descrizione" value="#{allarmiBean.descrizione}" style="width: 412px" label="Descrizione"/>
+									</a4j:outputPanel>
+								</link:prop>
+							</a4j:outputPanel>
+							
+							<link:prop label="Tipo">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText value="#{allarmiBean.allarme.tipo}" readonly="true" style="width: 412px"/>
+								</a4j:outputPanel>
+							</link:prop>
+							
+							<link:prop label="Modalità" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and allarmiBean.allarme._value_tipoAllarme == 'ATTIVO'}">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText value="Attiva" readonly="true" style="width: 432px"/>
+								</a4j:outputPanel>
+							</link:prop>
+							<link:prop label="Modalità" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and allarmiBean.allarme._value_tipoAllarme == 'PASSIVO'}">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText value="Passiva" readonly="true" style="width: 432px"/>
+								</a4j:outputPanel>
+							</link:prop>
+												
+							<a4j:outputPanel id="tipoPeriodo" layout="block">
+								<a4j:outputPanel id="tipoPeriodoRendered" layout="block" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and (allarmiBean.allarme._value_tipoAllarme=='ATTIVO' or allarmiBean.allarme._value_tipoAllarme=='ATTIVO_PASSIVO')}">
+									<link:prop label="Frequenza" >
+										<h:panelGrid columns="3" styleClass="divNoEdit">
+												<h:outputText id="periodo" value="#{allarmiBean.allarme.periodo}" label="Periodo" style="margin-left: 0px;"/>
+												<rich:spacer width="1"/>
+												<h:outputText id="tipoPeriodoCombo" value="#{allarmiBean.tipoPeriodo}" label="Tipo Periodo" style="width: 152px; margin-left: 0px;"/>
+										</h:panelGrid>
+									</link:prop>
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+							
+							<link:prop label="Abilitato">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText id="abilitatoIdParam" value="#{allarmiBean.allarme.enabled==1 ? 'Si' : 'No'}" />
+								</a4j:outputPanel>
+							</link:prop>
+							
+						</link:fieldset>
+						
+						<link:fieldset legend="Dettagli" collapsible="false" closed="false">
+								
+							<link:prop label="Stato Attuale">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit" rendered="#{ (allarmiBean.allarme.enabled == 1) and (allarmiBean.allarmiConsultazioneModificaStatoAbilitata==false) }">
+									<h:outputText value="#{allarmiBean.labelStato}" readonly="true" style="width: 412px" 
+												rendered="#{ (allarmiBean.allarme.enabled == 1) and (allarmiBean.allarmiConsultazioneModificaStatoAbilitata==false) }"/>
+								</a4j:outputPanel>
+								<rich:comboBox id="idStatoAttuale" value="#{allarmiBean.modificaStato}" 
+												rendered="#{ (allarmiBean.allarme.enabled == 1) and (allarmiBean.allarmiConsultazioneModificaStatoAbilitata) }"
+												converter="selectItemConverter" width="412" enableManualInput="false">
+									<f:selectItem itemValue="0" itemLabel="Ok"/>
+									<f:selectItem itemValue="1" itemLabel="Warning"/>
+									<f:selectItem itemValue="2" itemLabel="Error"/>
+									<a4j:support event="onselect" reRender="idAcknowledge" ajaxSingle="true"/>
+								</rich:comboBox>
+								<a4j:outputPanel layout="block" styleClass="divNoEdit" rendered="#{allarmiBean.allarme.enabled == 0}">
+									<h:outputText value="Disabilitato" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.enabled == 0}"/>
+								</a4j:outputPanel>
+							</link:prop>
+														
+							<link:prop label="Dettaglio">
+								<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" readonly="#{allarmiConsultazioneModificaStatoAbilitata==false}" styleClass="inputLinkLong" 
+									rows="7"/>
+							</link:prop>
+														
+							<link:prop label="Data Creazione">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText id="lasttimestampCreate" value="#{allarmiBean.allarme.lasttimestampCreate}" >
+										<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+									</h:outputText>
+								</a4j:outputPanel>
+							</link:prop>
+							
+							<a4j:outputPanel id="dettaglioModifica" layout="block" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}">
+								<link:prop label="Ultima Modifica">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText id="lasttimestampUpdate" value="#{allarmiBean.allarme.lasttimestampUpdate}" >
+											<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+										</h:outputText>
+									</a4j:outputPanel>
+								</link:prop>
+							</a4j:outputPanel>
+							
+							<a4j:outputPanel id="idAcknowledge" layout="block" 
+								rendered="#{
+										(allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme)
+										or
+										(allarmiBean.allarme.mail.inviaAlert==1 and allarmiBean.allarme.mail.ackMode==1) 
+										or 
+										(allarmiBean.allarme.script.invocaAlert==1 and allarmiBean.allarme.script.ackMode==1)
+									}">
+								<link:prop label="Acknowledge">
+									<h:selectOneRadio id="idAcknowledgeAbilitato" styleClass="controlset" value="#{allarmiBean.modificaAcknowledged}" 
+										disabled="#{(allarmiBean.allarme.enabled == 0) or (allarmiBean.allarme.stato == 0)}">
+										<f:selectItem itemValue="1" itemLabel="Si"/>
+										<f:selectItem itemValue="0" itemLabel="No"/>
+									</h:selectOneRadio>
+								</link:prop>
+							</a4j:outputPanel>
+
+							<link:prop label="Stato Precedente">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText value="#{allarmiBean.labelPrecedenteStato}" readonly="true" style="width: 412px"/>
+								</a4j:outputPanel>
+							</link:prop>
+							
+							<link:prop label="Archivio Stati">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" action="visualizzaHistoryAllarme" value="Visualizza">
+										<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+									</a4j:htmlCommandLink>
+								</a4j:outputPanel>
+		                    </link:prop>
+							
+						</link:fieldset>
+						
+						<a4j:outputPanel id="filtroPnl" ajaxRendered="false" layout="block" rendered="#{allarmiBean.showFilter}">
+							<link:fieldset 	legend="Filtro" collapsible="false" closed="false">
+								<link:prop label="Stato" rendered="#{true}">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText id="filtro_Abilitato" value="Abilitato" style=" width : 412px;"  rendered="#{allarmiBean.allarme.filtro.enabled}"/>
+										<h:outputText id="filtro_Disabilitato" value="Disabilitato" style=" width : 412px;" rendered="#{not allarmiBean.allarme.filtro.enabled}"/>
+									</a4j:outputPanel>
+								</link:prop>
+								
+								<link:prop label="Tipologia" rendered="#{not empty allarmiBean.ruoloPortaFiltro}">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText id="ruolo_porta" value="#{allarmiBean.ruoloPortaFiltro}" style=" width : 412px;"  rendered="#{true}"/>
+									</a4j:outputPanel>
+								</link:prop>
+								
+								<link:prop label="Nome Porta" rendered="#{not empty allarmiBean.allarme.filtro.nomePorta}">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText id="nome_porta" value="#{allarmiBean.nomePortaFiltro}" style=" width : 412px;"  rendered="#{true}"/>
+									</a4j:outputPanel>
+								</link:prop>
+								
+								<link:prop label="Profilo" rendered="#{not empty allarmiBean.protocolloFiltro}">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText id="profilo" value="#{allarmiBean.protocolloFiltro}" style=" width : 412px;"  rendered="#{true}"/>
+									</a4j:outputPanel>
+								</link:prop>
+								
+								<a4j:outputPanel id="ruoloErogatoreFiltroPnl" layout="block" rendered="#{allarmiBean.visualizzaRuoloErogatoreFiltro}">
+									<link:prop label="Ruolo Erogatore" rendered="#{true}">
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText id="ruolo_erogatore" value="#{allarmiBean.allarme.filtro.ruoloErogatore}" style=" width : 412px;"  rendered="#{not empty allarmiBean.allarme.filtro.ruoloErogatore}"/>
+											<h:outputText id="ruolo_erogatore_noVal" value="[Qualsiasi]" style=" width : 412px;" rendered="#{empty allarmiBean.allarme.filtro.ruoloErogatore}"/>
+										</a4j:outputPanel>
+									</link:prop>
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="soggettoErogatoreFiltroPnl" layout="block" rendered="#{allarmiBean.visualizzaSoggettoErogatoreFiltro}">
+									<link:prop label="Soggetto Erogatore">
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">		
+											<h:outputText id="erogatore" value="#{allarmiBean.tipoNomeDestinatarioFiltro}" style=" width : 412px;"   rendered="#{not empty allarmiBean.tipoNomeDestinatarioFiltro}"/>
+											<h:outputText id="erogatore_noVal" value="[Qualsiasi]" style=" width : 412px;" rendered="#{empty allarmiBean.tipoNomeDestinatarioFiltro}"/>
+										</a4j:outputPanel>
+									</link:prop>
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="tagFiltroPnl" layout="block" rendered="#{allarmiBean.visualizzaTagFiltro}">
+									<link:prop label="Tag" rendered="#{true}">
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText id="tag" value="#{allarmiBean.allarme.filtro.tag}" style=" width : 412px;"  rendered="#{not empty allarmiBean.allarme.filtro.tag}"/>
+											<h:outputText id="tag_noVal" value="[Qualsiasi]" style=" width : 412px;" rendered="#{empty allarmiBean.allarme.filtro.tag}"/>
+										</a4j:outputPanel>
+									</link:prop>
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="servizioFiltroPnl" layout="block" rendered="#{allarmiBean.visualizzaServizioFiltro}">
+									<link:prop label="API">
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText id="servizio" value="#{allarmiBean.tipoNomeServizioFiltro}" style=" width : 412px;"   rendered="#{not empty allarmiBean.tipoNomeServizioFiltro}"/>
+											<h:outputText id="servizio_noVal" value="[Qualsiasi]" style=" width : 412px;" rendered="#{empty allarmiBean.tipoNomeServizioFiltro}"/>
+										</a4j:outputPanel>	
+									</link:prop>
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="azioneFiltroPnl" layout="block" rendered="#{allarmiBean.visualizzaAzioneFiltro}">
+									<link:prop label="#{allarmiBean.labelAzioneFiltro}" rendered="#{true}">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText id="azione_filtro" value="#{allarmiBean.azioneFiltro}" style=" width : 412px;"  rendered="#{not empty allarmiBean.allarme.filtro.azione}"/>
+										<h:outputText id="azione_filtro_noVal" value="[Qualsiasi]" style=" width : 412px;" rendered="#{empty allarmiBean.allarme.filtro.azione}"/>
+									</a4j:outputPanel>
+								</link:prop>
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="ruoloRichiedenteFiltroPnl" layout="block" rendered="#{allarmiBean.visualizzaRuoloFruitoreFiltro}">
+									<link:prop label="Ruolo Richiedente" rendered="#{true}">
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText id="ruolo_richiedente" value="#{allarmiBean.allarme.filtro.ruoloFruitore}" style=" width : 412px;"  rendered="#{not empty allarmiBean.allarme.filtro.ruoloFruitore}"/>
+											<h:outputText id="ruolo_richiedente_noVal" value="[Qualsiasi]" style=" width : 412px;" rendered="#{empty allarmiBean.allarme.filtro.ruoloFruitore}"/>
+										</a4j:outputPanel>
+									</link:prop>
+								</a4j:outputPanel>
+							
+								<a4j:outputPanel id="soggettoFruitoreFiltroPnl" layout="block" rendered="#{allarmiBean.visualizzaSoggettoFruitoreFiltro}">
+									<link:prop label="Soggetto Fruitore"  >
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText id="fruitore" value="#{allarmiBean.tipoNomeMittenteFiltro}" style=" width : 412px;"  rendered="#{not empty allarmiBean.tipoNomeMittenteFiltro}"/>
+											<h:outputText id="fruitore_noVal" value="[Qualsiasi]" style=" width : 412px;" rendered="#{empty allarmiBean.tipoNomeMittenteFiltro}"/>  
+										</a4j:outputPanel>
+									</link:prop>
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="saFruitoreFiltroPnl" layout="block" rendered="#{allarmiBean.visualizzaSaFruitoreFiltro}">
+									<link:prop label="Applicativo Fruitore"  >
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText id="saFruitore" value="#{allarmiBean.saFruitoreFiltro}" style=" width : 412px;"  rendered="#{not empty allarmiBean.allarme.filtro.servizioApplicativoFruitore}"/>
+											<h:outputText id="saFruitore_noVal" value="[Qualsiasi]" style=" width : 412px;" rendered="#{empty allarmiBean.allarme.filtro.servizioApplicativoFruitore}"/>  
+										</a4j:outputPanel>
+									</link:prop>
+								</a4j:outputPanel>
+			
+							</link:fieldset>
+						</a4j:outputPanel>
+						
+						<a4j:outputPanel id="groupByPnl" ajaxRendered="false" layout="block" rendered="#{allarmiBean.showGroupBy}">
+							<link:fieldset 	legend="Raggruppamento" collapsible="false" closed="false">
+								<link:prop label="Stato" rendered="#{true}">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText id="gBy_Abilitato" value="Abilitato" style=" width : 412px;"  rendered="#{allarmiBean.allarme.groupBy.enabled}"/>
+										<h:outputText id="gBy_Disabilitato" value="Disabilitato" style=" width : 412px;" rendered="#{not allarmiBean.allarme.groupBy.enabled}"/>
+									</a4j:outputPanel>
+								</link:prop>
+								
+								<a4j:outputPanel id="confGroupByPnl" layout="block" rendered="#{allarmiBean.allarme.groupBy.enabled}">
+									<a4j:outputPanel id="ruoloPortaGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaRuoloPortaGroupBy}">
+										<link:prop label="Tipologia" rendered="#{true}">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">
+												<h:outputText id="gBy_ruoloPorta_si" value="Si" style=" width : 412px;"   rendered="#{allarmiBean.allarme.groupBy.ruoloPorta == true}"/>
+												<h:outputText id="gBy_ruoloPorta_no" value="No" style=" width : 412px;" rendered="#{allarmiBean.allarme.groupBy.ruoloPorta == false}"/>
+											</a4j:outputPanel>
+										</link:prop>
+									</a4j:outputPanel>
+									
+									<a4j:outputPanel id="protocolloGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaProtocolloGroupBy}">
+										<link:prop label="Profilo" rendered="#{true}">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">
+												<h:outputText id="gBy_profilo_si" value="Si" style=" width : 412px;"   rendered="#{allarmiBean.allarme.groupBy.protocollo == true}"/>
+												<h:outputText id="gBy_profilo_no" value="No" style=" width : 412px;" rendered="#{allarmiBean.allarme.groupBy.protocollo == false}"/>
+											</a4j:outputPanel>
+										</link:prop>
+									</a4j:outputPanel>
+									
+									<a4j:outputPanel id="soggettoErogatoreGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaSoggettoErogatoreGroupBy}">
+										<link:prop label="Soggetto Erogatore">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">		
+												<h:outputText id="gBy_erogatore_si" value="Si" style=" width : 412px;"   rendered="#{allarmiBean.allarme.groupBy.erogatore == true}"/>
+												<h:outputText id="gBy_erogatore_no" value="No" style=" width : 412px;" rendered="#{allarmiBean.allarme.groupBy.erogatore == false}"/>
+											</a4j:outputPanel>
+										</link:prop>
+									</a4j:outputPanel>
+									
+									<a4j:outputPanel id="servizioGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaServizioGroupBy}">
+										<link:prop label="API">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">
+												<h:outputText id="gBy_servizio_si" value="Si" style=" width : 412px;"   rendered="#{allarmiBean.allarme.groupBy.servizio == true}"/>
+												<h:outputText id="gBy_servizio_no" value="No" style=" width : 412px;" rendered="#{allarmiBean.allarme.groupBy.servizio == false}"/>
+											</a4j:outputPanel>	
+										</link:prop>
+									</a4j:outputPanel>
+									
+									<a4j:outputPanel id="azioneGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaAzioneGroupBy}">
+										<link:prop label="#{allarmiBean.labelAzioneGroupBy}">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">
+												<h:outputText id="gBy_azione_si" value="Si" style=" width : 412px;"   rendered="#{allarmiBean.allarme.groupBy.azione == true}"/>
+												<h:outputText id="gBy_azione_no" value="No" style=" width : 412px;" rendered="#{allarmiBean.allarme.groupBy.azione == false}"/>
+											</a4j:outputPanel>	
+										</link:prop>
+									</a4j:outputPanel>
+									
+									<a4j:outputPanel id="soggettoFruitoreGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaSoggettoFruitoreGroupBy}">
+										<link:prop label="Soggetto Fruitore">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">		
+												<h:outputText id="gBy_fruitore_si" value="Si" style=" width : 412px;"   rendered="#{allarmiBean.allarme.groupBy.fruitore == true}"/>
+												<h:outputText id="gBy_fruitore_no" value="No" style=" width : 412px;" rendered="#{allarmiBean.allarme.groupBy.fruitore == false}"/>
+											</a4j:outputPanel>
+										</link:prop>
+									</a4j:outputPanel>
+									
+									<a4j:outputPanel id="applicativoFruitoreGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaServizioApplicativoFruitoreGroupBy}">
+										<link:prop label="Applicativo Fruitore">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">		
+												<h:outputText id="gBy_app_fruitore_si" value="Si" style=" width : 412px;"   rendered="#{allarmiBean.allarme.groupBy.servizioApplicativoFruitore == true}"/>
+												<h:outputText id="gBy_app_fruitore_no" value="No" style=" width : 412px;" rendered="#{allarmiBean.allarme.groupBy.servizioApplicativoFruitore == false}"/>
+											</a4j:outputPanel>
+										</link:prop>
+									</a4j:outputPanel>
+									
+									<a4j:outputPanel id="tokenGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaTokenGroupBy}">
+										<link:prop label="Token">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">		
+												<h:outputText id="gBy_token_si" value="Si" style=" width : 412px;"   rendered="#{not empty allarmiBean.allarme.groupBy.token}"/>
+												<h:outputText id="gBy_token_noVal" value="No" style=" width : 412px;" rendered="#{empty allarmiBean.allarme.groupBy.token}"/>
+											</a4j:outputPanel>
+										</link:prop>
+										
+										<a4j:outputPanel layout="block" rendered="#{not empty allarmiBean.allarme.groupBy.token}" id="gBy_token_claims_div">	
+											<link:prop label="Claims">
+												<a4j:outputPanel layout="block" styleClass="divNoEdit">		
+													<h:outputText id="gBy_token_claims" value="#{allarmiBean.claimsGroupBy}" style=" width : 412px;"   rendered="#{not empty allarmiBean.allarme.groupBy.token}"/>
+												</a4j:outputPanel>
+											</link:prop>
+										</a4j:outputPanel>
+									</a4j:outputPanel>
+									
+									<a4j:outputPanel id="richiedenteGroupByPnl" layout="block" rendered="#{allarmiBean.visualizzaIdentificativoAutenticatoGroupBy}">
+										<link:prop label="Richiedente">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">		
+												<h:outputText id="gBy_id_autenticato_si" value="Si" style=" width : 412px;"   rendered="#{allarmiBean.allarme.groupBy.identificativoAutenticato == true}"/>
+												<h:outputText id="gBy_id_autenticato_no" value="No" style=" width : 412px;" rendered="#{allarmiBean.allarme.groupBy.identificativoAutenticato == false}"/>
+											</a4j:outputPanel>
+										</link:prop>
+									</a4j:outputPanel>
+									
+								</a4j:outputPanel>
+			
+							</link:fieldset>
+						</a4j:outputPanel>
+						
+						<link:fieldset legend="Parametri" rendered="#{(!empty allarmiBean.parameters)}" collapsible="false" closed="false">
+							<a4j:region renderRegionOnly="true">
+								<ui:include src="/commons/includes/dynamicOutputComponent.xhtml">
+									<ui:param value="#{allarmiBean.parameters}" name="formParameters" />
+								</ui:include>
+							</a4j:region>		
+						</link:fieldset>
+						
+						<link:fieldset legend="Notifica via Email" rendered="#{true}" collapsible="false" closed="false">
+							
+							<link:prop label="Abilitato">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.mail.inviaAlert==1}"/>
+									<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.mail.inviaAlert==0}"/>
+								</a4j:outputPanel>
+							</link:prop>
+							
+							<a4j:outputPanel id="dettaglioMailRenderedReadOnly" layout="block" rendered="#{allarmiBean.allarme.mail.inviaAlert==1}">
+							
+								<link:prop label="Destinatari Email">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText value="#{allarmiBean.allarme.mail.destinatari}" readonly="true" style="width: 412px"/>
+									</a4j:outputPanel>
+								</link:prop>
+							
+								<link:prop label="Notifica Warning">
+									<a4j:outputPanel layout="block" styleClass="divNoEdit">
+										<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.mail.inviaWarning==1}"/>
+										<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.mail.inviaWarning==0}"/>
+									</a4j:outputPanel>
+								</link:prop>
+								
+								<a4j:outputPanel id="ConfigMailAvanzataReadOnly" layout="block" rendered="#{allarmiBean.allarmiNotificaMailVisualizzazioneCompleta}">
+								
+									<link:prop label="Acknowledge"
+										note="Notifica una mail, ad ogni intervallo di frequenza, fino a che non viene effettuato un ack manuale dell'allarme">
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.mail.ackMode==1}"/>
+											<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.mail.ackMode==0}"/>
+										</a4j:outputPanel>
+									</link:prop>
+									
+									<link:prop label="Subject">
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText id="subjectReadOnly" value="#{allarmiBean.allarme.subject}" style="width: 432px;"/>
+										</a4j:outputPanel>
+									</link:prop>
+									
+									<link:prop label="Body">
+										<h:inputTextarea id="bodyReadOnly" value="#{allarmiBean.allarme.body}" readonly="true" style="width: 432px;" styleClass="inputLink"/>
+									</link:prop>	
+									
+								</a4j:outputPanel>	
+							
+							</a4j:outputPanel>
+							
+						</link:fieldset>
+						
+						<link:fieldset legend="Notifica Monitoraggio Esterno" rendered="#{true}" collapsible="false" closed="false">
+						
+							<link:prop label="Abilitato">
+								<a4j:outputPanel layout="block" styleClass="divNoEdit">
+									<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.script.invocaAlert==1}"/>
+									<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.script.invocaAlert==0}"/>
+								</a4j:outputPanel>
+							</link:prop>
+						
+							<a4j:outputPanel id="dettaglioScriptRenderedReadOnly" layout="block" rendered="#{allarmiBean.allarme.script.invocaAlert==1}">
+																
+									<link:prop label="Notifica Warning">
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.mail.invocaWarning==1}"/>
+											<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.mail.invocaWarning==0}"/>
+										</a4j:outputPanel>
+									</link:prop>
+									
+									<a4j:outputPanel id="ConfigScriptAvanzataReadOnly" layout="block" rendered="#{allarmiBean.allarmiMonitoraggioEsternoVisualizzazioneCompleta}">
+									
+										<link:prop label="Acknowledge"
+											note="Viene invocato lo script, ad ogni intervallo di frequenza, fino a che non viene effettuato un ack manuale dell'allarme">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">
+												<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.script.ackMode==1}"/>
+												<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{allarmiBean.allarme.script.ackMode==0}"/>
+											</a4j:outputPanel>
+										</link:prop>
+										
+										<link:prop label="Script Path">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">
+												<h:outputText id="scriptPathReadOnly" value="#{allarmiBean.allarme.script.command}" style="width: 432px;"/>
+											</a4j:outputPanel>
+										</link:prop>
+										
+										<link:prop label="Script Arguments">
+											<a4j:outputPanel layout="block" styleClass="divNoEdit">
+												<h:outputText id="scriptArgsReadOnly" value="#{allarmiBean.allarme.script.args}" style="width: 432px;"/>
+											</a4j:outputPanel>
+										</link:prop>
+										
+									</a4j:outputPanel>
+									
+							</a4j:outputPanel>
+							
+						</link:fieldset>
+						
+						
+						<div class="buttonrow">
+							<h:commandButton styleClass="icon-save positive" value="Salva" action="#{allarmiBean.salva}" 
+								rendered="#{
+									(allarmiBean.allarme.mail.ackMode==1 and allarmiBean.allarme.mail.inviaAlert==1) 
+									or
+									(allarmiBean.allarme.script.ackMode==1 and allarmiBean.allarme.script.invocaAlert==1)
+									or
+									(allarmiBean.allarmiConsultazioneModificaStatoAbilitata)
+									}"/>
+						</div>
+					</a4j:form>		
+				</div>
+			</rich:panel>
+		</ui:define>
+	
+</ui:composition>

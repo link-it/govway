@@ -26,9 +26,9 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.handlers.notifier.NotifierConstants;
 import org.openspcoop2.pdd.core.handlers.notifier.NotifierInRequestHandler;
 import org.openspcoop2.pdd.core.handlers.notifier.NotifierInRequestProtocolHandler;
@@ -43,6 +43,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 
 /**
@@ -147,6 +148,7 @@ public class GestoreHandlers  {
 			GestoreHandlers.properties = OpenSPCoop2Properties.getInstance();
 			ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
 			Loader loader = Loader.getInstance();
+			PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 			if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && !UniqueIdentifierManager.isGenerazioneUIDDisabilitata()){
 				GestoreHandlers.generatoreCasualeDati = GeneratoreCasualeDate.getGeneratoreCasualeDate();
 			}
@@ -457,8 +459,7 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiInitHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiInitHandlers[i];
-						String classe = classNameProperties.getInitHandler(tipo);
-						GestoreHandlers.initHandlers[i] = (InitHandler) loader.newInstance(classe);
+						GestoreHandlers.initHandlers[i] = (InitHandler) pluginLoader.newInitHandler(tipo);
 						if(printInfo)
 							logConsoleInit.info("InitHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -475,8 +476,7 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiExitHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiExitHandlers[i];
-						String classe = classNameProperties.getExitHandler(tipo);
-						GestoreHandlers.exitHandlers[i] = (ExitHandler) loader.newInstance(classe);
+						GestoreHandlers.exitHandlers[i] = (ExitHandler) pluginLoader.newExitHandler(tipo);
 						if(printInfo)
 							logConsoleInit.info("ExitHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -494,13 +494,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiPreInRequestHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiPreInRequestHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierPreInRequestHandler.class.getName();
+							String classe = NotifierPreInRequestHandler.class.getName();
+							GestoreHandlers.preInRequestHandlers[i] = (PreInRequestHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getPreInRequestHandler(tipo);
+							GestoreHandlers.preInRequestHandlers[i] = pluginLoader.newPreInRequestHandler(tipo);
 						}
-						GestoreHandlers.preInRequestHandlers[i] = (PreInRequestHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("PreInRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -518,13 +517,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiInRequestHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiInRequestHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierInRequestHandler.class.getName();
+							String classe = NotifierInRequestHandler.class.getName();
+							GestoreHandlers.inRequestHandlers[i] = (InRequestHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getInRequestHandler(tipo);
+							GestoreHandlers.inRequestHandlers[i] = pluginLoader.newInRequestHandler(tipo);
 						}
-						GestoreHandlers.inRequestHandlers[i] = (InRequestHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("InRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -542,13 +540,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiInRequestProtocolHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiInRequestProtocolHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierInRequestProtocolHandler.class.getName();
+							String classe = NotifierInRequestProtocolHandler.class.getName();
+							GestoreHandlers.inRequestProtocolHandlers[i] = (InRequestProtocolHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getInRequestProtocolHandler(tipo);
+							GestoreHandlers.inRequestProtocolHandlers[i] = pluginLoader.newInRequestProtocolHandler(tipo);
 						}
-						GestoreHandlers.inRequestProtocolHandlers[i] = (InRequestProtocolHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("InRequestProtocolHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -566,13 +563,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiOutRequestHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiOutRequestHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierOutRequestHandler.class.getName();
+							String classe = NotifierOutRequestHandler.class.getName();
+							GestoreHandlers.outRequestHandlers[i] = (OutRequestHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getOutRequestHandler(tipo);
+							GestoreHandlers.outRequestHandlers[i] = pluginLoader.newOutRequestHandler(tipo);
 						}
-						GestoreHandlers.outRequestHandlers[i] = (OutRequestHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("OutRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -590,13 +586,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiPostOutRequestHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiPostOutRequestHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierPostOutRequestHandler.class.getName();
+							String classe = NotifierPostOutRequestHandler.class.getName();
+							GestoreHandlers.postOutRequestHandlers[i] = (PostOutRequestHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getPostOutRequestHandler(tipo);
+							GestoreHandlers.postOutRequestHandlers[i] = pluginLoader.newPostOutRequestHandler(tipo);
 						}
-						GestoreHandlers.postOutRequestHandlers[i] = (PostOutRequestHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("PostOutRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -614,13 +609,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiPreInResponseHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiPreInResponseHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierPreInResponseHandler.class.getName();
+							String classe = NotifierPreInResponseHandler.class.getName();
+							GestoreHandlers.preInResponseHandlers[i] = (PreInResponseHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getPreInResponseHandler(tipo);
+							GestoreHandlers.preInResponseHandlers[i] = pluginLoader.newPreInResponseHandler(tipo);
 						}
-						GestoreHandlers.preInResponseHandlers[i] = (PreInResponseHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("PreInResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -638,13 +632,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiInResponseHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiInResponseHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierInResponseHandler.class.getName();
+							String classe = NotifierInResponseHandler.class.getName();
+							GestoreHandlers.inResponseHandlers[i] = (InResponseHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getInResponseHandler(tipo);
+							GestoreHandlers.inResponseHandlers[i] = pluginLoader.newInResponseHandler(tipo);
 						}
-						GestoreHandlers.inResponseHandlers[i] = (InResponseHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("InResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -662,13 +655,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiOutResponseHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiOutResponseHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierOutResponseHandler.class.getName();
+							String classe = NotifierOutResponseHandler.class.getName();
+							GestoreHandlers.outResponseHandlers[i] = (OutResponseHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getOutResponseHandler(tipo);
+							GestoreHandlers.outResponseHandlers[i] = pluginLoader.newOutResponseHandler(tipo);
 						}
-						GestoreHandlers.outResponseHandlers[i] = (OutResponseHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("OutResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -686,13 +678,12 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiPostOutResponseHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiPostOutResponseHandlers[i];
-						String classe = null;
 						if(NotifierConstants.TIPO_NOTIFIER.equals(tipo)){
-							classe = NotifierPostOutResponseHandler.class.getName();
+							String classe = NotifierPostOutResponseHandler.class.getName();
+							GestoreHandlers.postOutResponseHandlers[i] = (PostOutResponseHandler) loader.newInstance(classe);
 						}else{
-							classe = classNameProperties.getPostOutResponseHandler(tipo);
+							GestoreHandlers.postOutResponseHandlers[i] = pluginLoader.newPostOutResponseHandler(tipo);
 						}
-						GestoreHandlers.postOutResponseHandlers[i] = (PostOutResponseHandler) loader.newInstance(classe);
 						if(printInfo)
 							logConsoleInit.info("PostOutResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -709,8 +700,7 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiIntegrationManagerRequestHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiIntegrationManagerRequestHandlers[i];
-						String classe = classNameProperties.getIntegrationManagerRequestHandler(tipo);
-						GestoreHandlers.integrationManagerRequestHandlers[i] = (IntegrationManagerRequestHandler) loader.newInstance(classe);
+						GestoreHandlers.integrationManagerRequestHandlers[i] = (IntegrationManagerRequestHandler) pluginLoader.newIntegrationManagerRequestHandler(tipo);
 						if(printInfo)
 							logConsoleInit.info("IntegrationManagerRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){
@@ -727,8 +717,7 @@ public class GestoreHandlers  {
 				for(int i=0; i<GestoreHandlers.tipiIntegrationManagerResponseHandlers.length; i++){
 					try{
 						String tipo=GestoreHandlers.tipiIntegrationManagerResponseHandlers[i];
-						String classe = classNameProperties.getIntegrationManagerResponseHandler(tipo);
-						GestoreHandlers.integrationManagerResponseHandlers[i] = (IntegrationManagerResponseHandler) loader.newInstance(classe);
+						GestoreHandlers.integrationManagerResponseHandlers[i] = (IntegrationManagerResponseHandler) pluginLoader.newIntegrationManagerResponseHandler(tipo);
 						if(printInfo)
 							logConsoleInit.info("IntegrationManagerResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
 					}catch(Exception e){

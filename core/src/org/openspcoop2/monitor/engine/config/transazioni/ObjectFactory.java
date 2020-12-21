@@ -52,10 +52,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneServizioAzione }
+     * Create an instance of {@link IdConfigurazioneServizio }
      */
-    public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
-        return new ConfigurazioneServizioAzione();
+    public IdConfigurazioneServizio createIdConfigurazioneServizio() {
+        return new IdConfigurazioneServizio();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneServizio }
+     */
+    public ConfigurazioneServizio createConfigurazioneServizio() {
+        return new ConfigurazioneServizio();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneTransazioneStato }
+     */
+    public ConfigurazioneTransazioneStato createConfigurazioneTransazioneStato() {
+        return new ConfigurazioneTransazioneStato();
     }
 
     /**
@@ -66,10 +80,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IdPlugin }
+     * Create an instance of {@link ConfigurazioneServizioAzione }
      */
-    public IdPlugin createIdPlugin() {
-        return new IdPlugin();
+    public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
+        return new ConfigurazioneServizioAzione();
     }
 
     /**
@@ -80,17 +94,31 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Plugin }
+     */
+    public Plugin createPlugin() {
+        return new Plugin();
+    }
+
+    /**
+     * Create an instance of {@link IdPlugin }
+     */
+    public IdPlugin createIdPlugin() {
+        return new IdPlugin();
+    }
+
+    /**
+     * Create an instance of {@link IdConfigurazioneTransazione }
+     */
+    public IdConfigurazioneTransazione createIdConfigurazioneTransazione() {
+        return new IdConfigurazioneTransazione();
+    }
+
+    /**
      * Create an instance of {@link ConfigurazioneTransazionePlugin }
      */
     public ConfigurazioneTransazionePlugin createConfigurazioneTransazionePlugin() {
         return new ConfigurazioneTransazionePlugin();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneTransazione }
-     */
-    public ConfigurazioneTransazione createConfigurazioneTransazione() {
-        return new ConfigurazioneTransazione();
     }
 
     /**
@@ -108,38 +136,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneTransazioneStato }
+     * Create an instance of {@link ConfigurazioneTransazione }
      */
-    public ConfigurazioneTransazioneStato createConfigurazioneTransazioneStato() {
-        return new ConfigurazioneTransazioneStato();
-    }
-
-    /**
-     * Create an instance of {@link IdConfigurazioneServizio }
-     */
-    public IdConfigurazioneServizio createIdConfigurazioneServizio() {
-        return new IdConfigurazioneServizio();
-    }
-
-    /**
-     * Create an instance of {@link IdConfigurazioneTransazione }
-     */
-    public IdConfigurazioneTransazione createIdConfigurazioneTransazione() {
-        return new IdConfigurazioneTransazione();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneServizio }
-     */
-    public ConfigurazioneServizio createConfigurazioneServizio() {
-        return new ConfigurazioneServizio();
-    }
-
-    /**
-     * Create an instance of {@link Plugin }
-     */
-    public Plugin createPlugin() {
-        return new Plugin();
+    public ConfigurazioneTransazione createConfigurazioneTransazione() {
+        return new ConfigurazioneTransazione();
     }
 
 

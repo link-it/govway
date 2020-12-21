@@ -294,8 +294,8 @@ public class TimerGestoreRepositoryBusteLib {
 
 
 				if(trovatiMessaggi){
-					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_REPOSITORY_BUSTE_NUM_MSG_INBOX, idMsgINBOX.size()+"");
-					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_REPOSITORY_BUSTE_NUM_MSG_OUTBOX, idMsgOUTBOX.size()+"");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_REPOSITORY_BUSTE_NUM_MSG_INBOX, idMsgINBOX!=null ? idMsgINBOX.size()+"" : 0+"");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_REPOSITORY_BUSTE_NUM_MSG_OUTBOX, idMsgOUTBOX!=null ? idMsgOUTBOX.size()+"" : 0+"");
 					this.msgDiag.logPersonalizzato("ricercaMessaggiDaEliminare");
 				}
 

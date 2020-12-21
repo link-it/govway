@@ -37,23 +37,23 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-transazione-risorsa-contenuto">
- * 		&lt;sequence>
- * 			&lt;element name="abilita-anonimizzazione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1" default="0"/>
- * 			&lt;element name="abilita-compressione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1" default="0"/>
- * 			&lt;element name="tipo-compressione" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-compressione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="carattere-maschera" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="numero-caratteri-maschera" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="posizionamento-maschera" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}posizione-mascheramento" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-mascheramento" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-mascheramento" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="xpath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="stat-enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="id-configurazione-transazione-stato" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}id-configurazione-transazione-stato" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-transazione-risorsa-contenuto"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="abilita-anonimizzazione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1" default="0"/&gt;
+ * 			&lt;element name="abilita-compressione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1" default="0"/&gt;
+ * 			&lt;element name="tipo-compressione" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-compressione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="carattere-maschera" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="numero-caratteri-maschera" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="posizionamento-maschera" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}posizione-mascheramento" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-mascheramento" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-mascheramento" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="xpath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="stat-enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 			&lt;element name="id-configurazione-transazione-stato" type="{http://www.openspcoop2.org/monitor/engine/config/transazioni}id-configurazione-transazione-stato" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -28,6 +28,7 @@
 					
 				<!-- org.openspcoop.2.monitor.sdk -->
 				<var name="packagesCompiled" value="org.openspcoop2.monitor.sdk" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.alarm" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.condition" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.constants" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.exceptions" />

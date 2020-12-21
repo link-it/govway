@@ -32,6 +32,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -85,6 +86,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -3093,6 +3095,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam );
+			
+			boolean visualizzaAllarmi = this.confCore.isConfigurazioneAllarmiEnabled();
 
 			boolean visualizzaMTOM = true;
 			boolean visualizzaSicurezza = true;
@@ -3207,6 +3211,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO);
 				}
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE);
+				
+				if(visualizzaAllarmi) {
+					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ALLARMI);
+				}
 				
 				if(this.isModalitaAvanzata() || this.apsCore.isProprietaErogazioni_showModalitaStandard()) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
@@ -4035,6 +4043,51 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					e.addElement(de);
 					
+					// Allarmi
+					if(visualizzaAllarmi) {
+						de = new DataElement();
+						if(visualizzazioneTabs)
+							de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI);
+						
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST+"?"+
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA+"="+RuoloPorta.APPLICATIVA.getValue()+"&"+
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA+"="+paAssociata.getNome()+"&"+
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING+"="+serviceBindingMessage.name()
+								);
+						List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+						if(contaListe || visualizzazioneTabs) {
+							Search searchPolicy = new Search(true);
+							listaAllarmi = this.confCore.allarmiList(searchPolicy, RuoloPorta.APPLICATIVA, paAssociata.getNome());
+						}
+						if(visualizzazioneTabs) {
+							this.setStatoAllarmi(de, listaAllarmi);
+						}
+						else {
+							if(contaListe) {
+								ServletUtils.setDataElementVisualizzaLabel(de, (long) listaAllarmi.size() );
+							}
+							else {
+								ServletUtils.setDataElementVisualizzaLabel(de);
+							}
+						}
+						de.allineaTdAlCentro();
+						if(visualizzazioneTabs) {
+							DataElementImage image = new DataElementImage();
+							
+							image.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST, 
+									new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA,RuoloPorta.APPLICATIVA.getValue()),
+									new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA,paAssociata.getNome()),
+									new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING,serviceBindingMessage.name()),
+									pIdTAb
+									);
+							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI));
+							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+							
+							de.setImage(image);
+						}
+						e.addElement(de);
+					}
+					
 					// Protocol Properties
 					if(this.isModalitaAvanzata() || this.apsCore.isProprietaErogazioni_showModalitaStandard()) {
 						de = new DataElement();
@@ -4762,6 +4815,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			else {
 				this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
 			}
+			
+			boolean visualizzaAllarmi = this.confCore.isConfigurazioneAllarmiEnabled();
 			
 			boolean visualizzaMTOM = true;
 			boolean visualizzaSicurezza = true;
@@ -5610,6 +5665,49 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setImage(image);
 					}
 					e.addElement(de);
+					
+					// Allarmi
+					if(visualizzaAllarmi) {
+						de = new DataElement();
+						if(visualizzazioneTabs)
+							de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI);
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST+"?"+
+				                ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA+"="+RuoloPorta.DELEGATA.getValue()+"&"+
+				                ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA+"="+pdAssociata.getNome()+"&"+
+				                ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING+"="+serviceBindingMessage.name()
+				                );
+
+						List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+						if(contaListe || visualizzazioneTabs) {
+							Search searchPolicy = new Search(true);
+							listaAllarmi = this.confCore.allarmiList(searchPolicy, RuoloPorta.DELEGATA, pdAssociata.getNome());
+						}
+						if(visualizzazioneTabs) {
+							this.setStatoAllarmi(de, listaAllarmi);
+						}
+						else {
+							if(contaListe) {
+								ServletUtils.setDataElementVisualizzaLabel(de, (long) listaAllarmi.size() );
+							}
+							else {
+								ServletUtils.setDataElementVisualizzaLabel(de);
+							}
+						}
+						de.allineaTdAlCentro();
+						if(visualizzazioneTabs) {
+							DataElementImage image = new DataElementImage();
+							image.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST, 
+					                new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA,RuoloPorta.DELEGATA.getValue()),
+					                new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA,pdAssociata.getNome()),
+					                new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING,serviceBindingMessage.name()),
+					                pIdTAb
+					                );
+							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI));
+							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+							de.setImage(image);
+						}
+						e.addElement(de);
+					}
 					
 					// Protocol Properties
 					if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioni_showModalitaStandard())){

@@ -44,12 +44,26 @@ public class BasicLoader implements IDynamicLoader{
 
 	private static Logger log = LoggerWrapperFactory.getLogger(BasicLoader.class);
 
+	private String tipoPlugin;
+	private String tipo;
 	private String className;
 	private Class<?> c;
 
-	protected BasicLoader(String className, Class<?> c) {
+	protected BasicLoader(String tipoPlugin, String tipo, String className, Class<?> c) {
+		this.tipoPlugin = tipoPlugin;
+		this.tipo = tipo;
 		this.className = className;
 		this.c = c;
+	}
+
+	@Override
+	public String getTipoPlugin() {
+		return this.tipoPlugin;
+	}
+
+	@Override
+	public String getTipo() {
+		return this.tipo;
 	}
 	
 	@Override

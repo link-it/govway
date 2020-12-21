@@ -39,7 +39,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
-import org.openspcoop2.pdd.config.ClassNameProperties;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
@@ -65,7 +65,6 @@ import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
-import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
 /**
@@ -90,8 +89,6 @@ public class GestoreAutorizzazione {
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
 
-	/** ClassName */
-	private static ClassNameProperties className = ClassNameProperties.getInstance();
 
 
 	/* --------------- Cache --------------------*/
@@ -665,30 +662,40 @@ public class GestoreAutorizzazione {
     }
     
     private static IAutorizzazionePortaDelegata newInstanceAuthPortaDelegata(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws AutorizzazioneException{
-    	String classType = null; 
-		IAutorizzazionePortaDelegata auth = null;
+    	IAutorizzazionePortaDelegata auth = null;
 		try{
-			classType = GestoreAutorizzazione.className.getAutorizzazionePortaDelegata(tipoAutorizzazione);
-			auth = (IAutorizzazionePortaDelegata) Loader.getInstance().newInstance(classType);
+			PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+			auth = (IAutorizzazionePortaDelegata) pluginLoader.newAutorizzazionePortaDelegata(tipoAutorizzazione);
+		}catch(Exception e){
+			throw new AutorizzazioneException(e.getMessage(),e); // descrizione errore già corretta
+		}
+		String classType = null; 
+    	try{
+			classType = auth.getClass().getName();
 			AbstractCore.init(auth, pddContext, protocolFactory);
 			return auth;
 		}catch(Exception e){
-			throw new AutorizzazioneException("Riscontrato errore durante il caricamento della classe ["+classType+
-					"] da utilizzare per l'autorizzazione via PD: "+e.getMessage(),e);
+			throw new AutorizzazioneException("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+					"] che definisce l'autorizzazione della fruizione: "+e.getMessage(),e);
 		}
     }
     
     private static IAutorizzazionePortaApplicativa newInstanceAuthPortaApplicativa(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws AutorizzazioneException{
-    	String classType = null; 
     	IAutorizzazionePortaApplicativa auth = null;
 		try{
-			classType = GestoreAutorizzazione.className.getAutorizzazionePortaApplicativa(tipoAutorizzazione);
-			auth = (IAutorizzazionePortaApplicativa) Loader.getInstance().newInstance(classType);
+			PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+			auth = (IAutorizzazionePortaApplicativa) pluginLoader.newAutorizzazionePortaApplicativa(tipoAutorizzazione);
+		}catch(Exception e){
+			throw new AutorizzazioneException(e.getMessage(),e); // descrizione errore già corretta
+		}
+		String classType = null; 
+    	try{
+			classType = auth.getClass().getName();
 			AbstractCore.init(auth, pddContext, protocolFactory);
 			return auth;
 		}catch(Exception e){
-			throw new AutorizzazioneException("Riscontrato errore durante il caricamento della classe ["+classType+
-					"] da utilizzare per l'autorizzazione delle buste via PA: "+e.getMessage(),e);
+			throw new AutorizzazioneException("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+					"] che definisce l'autorizzazione della erogazione: "+e.getMessage(),e);
 		}
     }
     
@@ -1211,30 +1218,40 @@ public class GestoreAutorizzazione {
     }
     
     private static IAutorizzazioneContenutoPortaDelegata newInstanceAuthContenutoPortaDelegata(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws AutorizzazioneException{
-    	String classType = null; 
-		IAutorizzazioneContenutoPortaDelegata auth = null;
+    	IAutorizzazioneContenutoPortaDelegata auth = null;
 		try{
-			classType = GestoreAutorizzazione.className.getAutorizzazioneContenutoPortaDelegata(tipoAutorizzazione);
-			auth = (IAutorizzazioneContenutoPortaDelegata) Loader.getInstance().newInstance(classType);
+			PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+			auth = (IAutorizzazioneContenutoPortaDelegata) pluginLoader.newAutorizzazioneContenutiPortaDelegata(tipoAutorizzazione);
+		}catch(Exception e){
+			throw new AutorizzazioneException(e.getMessage(),e); // descrizione errore già corretta
+		}
+		String classType = null; 
+    	try{
+			classType = auth.getClass().getName();
 			AbstractCore.init(auth, pddContext, protocolFactory);
 			return auth;
 		}catch(Exception e){
-			throw new AutorizzazioneException("Riscontrato errore durante il caricamento della classe ["+classType+
-					"] da utilizzare per l'autorizzazione dei contenuti via PD: "+e.getMessage(),e);
+			throw new AutorizzazioneException("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+					"] che definisce l'autorizzazione dei contenuti della fruizione: "+e.getMessage(),e);
 		}
     }
     
     private static IAutorizzazioneContenutoPortaApplicativa newInstanceAuthContenutoPortaApplicativa(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws AutorizzazioneException{
-    	String classType = null; 
     	IAutorizzazioneContenutoPortaApplicativa auth = null;
 		try{
-			classType = GestoreAutorizzazione.className.getAutorizzazioneContenutoPortaApplicativa(tipoAutorizzazione);
-			auth = (IAutorizzazioneContenutoPortaApplicativa) Loader.getInstance().newInstance(classType);
+			PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+			auth = (IAutorizzazioneContenutoPortaApplicativa) pluginLoader.newAutorizzazioneContenutiPortaApplicativa(tipoAutorizzazione);
+		}catch(Exception e){
+			throw new AutorizzazioneException(e.getMessage(),e); // descrizione errore già corretta
+		}
+		String classType = null; 
+    	try{
+			classType = auth.getClass().getName();
 			AbstractCore.init(auth, pddContext, protocolFactory);
 			return auth;
 		}catch(Exception e){
-			throw new AutorizzazioneException("Riscontrato errore durante il caricamento della classe ["+classType+
-					"] da utilizzare per l'autorizzazione dei contenuti delle buste via PA: "+e.getMessage(),e);
+			throw new AutorizzazioneException("Riscontrato errore durante l'inizializzazione della classe ["+classType+
+					"] che definisce l'autorizzazione dei contenuti della erogazione: "+e.getMessage(),e);
 		}
     }
 }

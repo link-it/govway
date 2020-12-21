@@ -48,6 +48,7 @@ import java.io.Serializable;
  * 			&lt;element name="nome-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="ruolo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tag" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo-servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="nome-servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="versione-servizio" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
@@ -81,6 +82,7 @@ import java.io.Serializable;
   	"nomeErogatore",
   	"ruoloErogatore",
   	"servizioApplicativoErogatore",
+  	"tag",
   	"tipoServizio",
   	"nomeServizio",
   	"versioneServizio",
@@ -224,6 +226,14 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
     this.servizioApplicativoErogatore = servizioApplicativoErogatore;
   }
 
+  public java.lang.String getTag() {
+    return this.tag;
+  }
+
+  public void setTag(java.lang.String tag) {
+    this.tag = tag;
+  }
+
   public java.lang.String getTipoServizio() {
     return this.tipoServizio;
   }
@@ -348,6 +358,10 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="servizio-applicativo-erogatore",required=false,nillable=false)
   protected java.lang.String servizioApplicativoErogatore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tag",required=false,nillable=false)
+  protected java.lang.String tag;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-servizio",required=false,nillable=false)

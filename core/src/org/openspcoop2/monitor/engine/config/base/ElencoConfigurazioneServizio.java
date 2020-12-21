@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="elenco-configurazione-servizio">
- * 		&lt;sequence>
- * 			&lt;element name="configurazione-servizio" type="{http://www.openspcoop2.org/monitor/engine/config/base}configurazione-servizio" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="elenco-configurazione-servizio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="configurazione-servizio" type="{http://www.openspcoop2.org/monitor/engine/config/base}configurazione-servizio" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ElencoConfigurazioneServizio extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method getConfigurazioneServizioList
-   * @return List<ConfigurazioneServizio>
+   * @return List&lt;ConfigurazioneServizio&gt;
   */
   @Deprecated
   public List<ConfigurazioneServizio> getConfigurazioneServizio() {
@@ -120,7 +120,7 @@ public class ElencoConfigurazioneServizio extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method setConfigurazioneServizioList
-   * @param configurazioneServizio List<ConfigurazioneServizio>
+   * @param configurazioneServizio List&lt;ConfigurazioneServizio&gt;
   */
   @Deprecated
   public void setConfigurazioneServizio(List<ConfigurazioneServizio> configurazioneServizio) {

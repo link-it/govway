@@ -60,6 +60,8 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.OpenspcoopAppender;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.IdPortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
@@ -68,6 +70,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.IdPortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataAzione;
@@ -4602,6 +4605,242 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: registro-plugin
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>registroPlugin</var>
+	 * @param registroPlugin Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RegistroPlugin registroPlugin) throws SerializerException {
+		this.objToXml(fileName, RegistroPlugin.class, registroPlugin, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>registroPlugin</var>
+	 * @param registroPlugin Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RegistroPlugin registroPlugin,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, RegistroPlugin.class, registroPlugin, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param file Xml file to serialize the object <var>registroPlugin</var>
+	 * @param registroPlugin Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RegistroPlugin registroPlugin) throws SerializerException {
+		this.objToXml(file, RegistroPlugin.class, registroPlugin, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param file Xml file to serialize the object <var>registroPlugin</var>
+	 * @param registroPlugin Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RegistroPlugin registroPlugin,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, RegistroPlugin.class, registroPlugin, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param out OutputStream to serialize the object <var>registroPlugin</var>
+	 * @param registroPlugin Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RegistroPlugin registroPlugin) throws SerializerException {
+		this.objToXml(out, RegistroPlugin.class, registroPlugin, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param out OutputStream to serialize the object <var>registroPlugin</var>
+	 * @param registroPlugin Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RegistroPlugin registroPlugin,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, RegistroPlugin.class, registroPlugin, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param registroPlugin Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RegistroPlugin registroPlugin) throws SerializerException {
+		return this.objToXml(RegistroPlugin.class, registroPlugin, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param registroPlugin Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RegistroPlugin registroPlugin,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RegistroPlugin.class, registroPlugin, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param registroPlugin Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RegistroPlugin registroPlugin) throws SerializerException {
+		return this.objToXml(RegistroPlugin.class, registroPlugin, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>registroPlugin</var> of type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param registroPlugin Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RegistroPlugin registroPlugin,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RegistroPlugin.class, registroPlugin, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: registro-plugins
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>registroPlugins</var>
+	 * @param registroPlugins Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RegistroPlugins registroPlugins) throws SerializerException {
+		this.objToXml(fileName, RegistroPlugins.class, registroPlugins, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>registroPlugins</var>
+	 * @param registroPlugins Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RegistroPlugins registroPlugins,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, RegistroPlugins.class, registroPlugins, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param file Xml file to serialize the object <var>registroPlugins</var>
+	 * @param registroPlugins Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RegistroPlugins registroPlugins) throws SerializerException {
+		this.objToXml(file, RegistroPlugins.class, registroPlugins, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param file Xml file to serialize the object <var>registroPlugins</var>
+	 * @param registroPlugins Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RegistroPlugins registroPlugins,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, RegistroPlugins.class, registroPlugins, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param out OutputStream to serialize the object <var>registroPlugins</var>
+	 * @param registroPlugins Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RegistroPlugins registroPlugins) throws SerializerException {
+		this.objToXml(out, RegistroPlugins.class, registroPlugins, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param out OutputStream to serialize the object <var>registroPlugins</var>
+	 * @param registroPlugins Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RegistroPlugins registroPlugins,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, RegistroPlugins.class, registroPlugins, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param registroPlugins Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RegistroPlugins registroPlugins) throws SerializerException {
+		return this.objToXml(RegistroPlugins.class, registroPlugins, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param registroPlugins Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RegistroPlugins registroPlugins,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RegistroPlugins.class, registroPlugins, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param registroPlugins Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RegistroPlugins registroPlugins) throws SerializerException {
+		return this.objToXml(RegistroPlugins.class, registroPlugins, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>registroPlugins</var> of type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param registroPlugins Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RegistroPlugins registroPlugins,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RegistroPlugins.class, registroPlugins, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: configurazione-url-invocazione-regola
 	 =================================================================================
 	*/
@@ -5540,6 +5779,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(PortaApplicativaServizioApplicativoConnettore portaApplicativaServizioApplicativoConnettore,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(PortaApplicativaServizioApplicativoConnettore.class, portaApplicativaServizioApplicativoConnettore, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: registro-plugin-archivio
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>registroPluginArchivio</var>
+	 * @param registroPluginArchivio Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RegistroPluginArchivio registroPluginArchivio) throws SerializerException {
+		this.objToXml(fileName, RegistroPluginArchivio.class, registroPluginArchivio, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>registroPluginArchivio</var>
+	 * @param registroPluginArchivio Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RegistroPluginArchivio registroPluginArchivio,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, RegistroPluginArchivio.class, registroPluginArchivio, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param file Xml file to serialize the object <var>registroPluginArchivio</var>
+	 * @param registroPluginArchivio Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RegistroPluginArchivio registroPluginArchivio) throws SerializerException {
+		this.objToXml(file, RegistroPluginArchivio.class, registroPluginArchivio, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param file Xml file to serialize the object <var>registroPluginArchivio</var>
+	 * @param registroPluginArchivio Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RegistroPluginArchivio registroPluginArchivio,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, RegistroPluginArchivio.class, registroPluginArchivio, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param out OutputStream to serialize the object <var>registroPluginArchivio</var>
+	 * @param registroPluginArchivio Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RegistroPluginArchivio registroPluginArchivio) throws SerializerException {
+		this.objToXml(out, RegistroPluginArchivio.class, registroPluginArchivio, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param out OutputStream to serialize the object <var>registroPluginArchivio</var>
+	 * @param registroPluginArchivio Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RegistroPluginArchivio registroPluginArchivio,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, RegistroPluginArchivio.class, registroPluginArchivio, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param registroPluginArchivio Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RegistroPluginArchivio registroPluginArchivio) throws SerializerException {
+		return this.objToXml(RegistroPluginArchivio.class, registroPluginArchivio, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param registroPluginArchivio Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RegistroPluginArchivio registroPluginArchivio,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RegistroPluginArchivio.class, registroPluginArchivio, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param registroPluginArchivio Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RegistroPluginArchivio registroPluginArchivio) throws SerializerException {
+		return this.objToXml(RegistroPluginArchivio.class, registroPluginArchivio, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>registroPluginArchivio</var> of type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param registroPluginArchivio Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RegistroPluginArchivio registroPluginArchivio,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RegistroPluginArchivio.class, registroPluginArchivio, prettyPrint).toString();
 	}
 	
 	

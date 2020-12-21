@@ -40,6 +40,8 @@ import java.util.Vector;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -62,6 +64,8 @@ import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
@@ -111,6 +115,8 @@ import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
+import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
@@ -148,6 +154,7 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.web.ctrlstat.config.AllarmiConsoleConfig;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -868,7 +875,24 @@ public class ControlStationCore {
 	public boolean isModipaFruizioniConnettoreCheckHttps() {
 		return this.isModipaFruizioniConnettoreCheckHttps;
 	}
-
+	
+	/** Plugins */
+	private boolean configurazionePluginsEnabled = false;
+	private Integer configurazionePluginsSeconds = null;
+	public boolean isConfigurazionePluginsEnabled() {
+		return this.configurazionePluginsEnabled;
+	}
+	
+	/** Configurazione Allarmi */
+	private boolean configurazioneAllarmiEnabled = false;
+	public boolean isConfigurazioneAllarmiEnabled() {
+		return this.configurazioneAllarmiEnabled;
+	}
+	private AllarmiConfig allarmiConfig = null;
+	public AllarmiConfig getAllarmiConfig() {
+		return this.allarmiConfig;
+	}
+	
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -1034,6 +1058,7 @@ public class ControlStationCore {
 	public boolean showCodaMessage() {
 		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
 	}
+
 
 	/** Motori di Sincronizzazione */
 	private boolean sincronizzazionePddEngineEnabled;
@@ -2325,6 +2350,14 @@ public class ControlStationCore {
 		/** ModI */
 		this.isModipaFruizioniConnettoreCheckHttps = core.isModipaFruizioniConnettoreCheckHttps;
 		
+		/** Plugins */
+		this.configurazionePluginsEnabled = core.configurazionePluginsEnabled;
+		this.configurazionePluginsSeconds = core.configurazionePluginsSeconds;
+		
+		/** Configurazione Allarmi */
+		this.configurazioneAllarmiEnabled = core.configurazioneAllarmiEnabled;
+		this.allarmiConfig = core.allarmiConfig;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -2685,7 +2718,11 @@ public class ControlStationCore {
 				this.consegnaNotificaConfigurazionePriorita.put(priorita, consoleProperties.getConsegnaNotificaConfigurazionePriorita(priorita));
 			}
 			this.isModipaFruizioniConnettoreCheckHttps = consoleProperties.isModipaFruizioniConnettoreCheckHttps();
-
+			this.configurazionePluginsEnabled = consoleProperties.isConfigurazionePluginsEnabled();
+			this.configurazionePluginsSeconds = consoleProperties.getPluginsSeconds();
+			this.configurazioneAllarmiEnabled = consoleProperties.isConfigurazioneAllarmiEnabled();
+			this.allarmiConfig = new AllarmiConsoleConfig(consoleProperties);
+		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
 			this.consoleNomeEsteso = consoleProperties.getConsoleNomeEsteso();
@@ -3722,6 +3759,46 @@ public class ControlStationCore {
 					}
 					
 					/***********************************************************
+					 * Operazioni su Registro Plugin *
+					 **********************************************************/
+					// Registro Plugin
+					if(oggetto instanceof RegistroPlugin) {
+						RegistroPlugin registroPlugin = (RegistroPlugin) oggetto;
+						driver.getDriverConfigurazioneDB().createRegistroPlugin(registroPlugin);
+						doSetDati = false;
+					}
+					
+					// Registro Plugin Archivio
+					if(oggetto instanceof RegistroPluginArchivio) {
+						RegistroPluginArchivio registroPlugin = (RegistroPluginArchivio) oggetto;
+						driver.getDriverConfigurazioneDB().createRegistroPluginArchivio(registroPlugin.getNomePlugin(), registroPlugin);
+						doSetDati = false;
+					}
+					
+					// Plugin Classi
+					if(oggetto instanceof Plugin) {
+						Plugin plugin = (Plugin) oggetto;
+						driver.createPluginClassi(plugin);
+						doSetDati = false;
+					}
+					
+					/***********************************************************
+					 * Operazioni su Allarmi *
+					 **********************************************************/
+					// Allarmi
+					if(oggetto instanceof Allarme) {
+						Allarme allarme = (Allarme) oggetto;
+						driver.createAllarme(allarme);
+						doSetDati = false;
+					}
+					// Allarmi History
+					if(oggetto instanceof AllarmeHistory) {
+						AllarmeHistory allarme = (AllarmeHistory) oggetto;
+						driver.createHistoryAllarme(allarme);
+						doSetDati = false;
+					}
+					
+					/***********************************************************
 					 * Extended *
 					 **********************************************************/
 					if(extendedBean!=null && extendedServlet!=null){
@@ -4276,6 +4353,44 @@ public class ControlStationCore {
 					}
 					
 					/***********************************************************
+					 * Operazioni su Registro Plugin *
+					 **********************************************************/
+					// Registro Plugin
+					if(oggetto instanceof RegistroPlugin) {
+						RegistroPlugin registroPlugin = (RegistroPlugin) oggetto;
+						String nome = registroPlugin.getNome();
+						if(registroPlugin.getOldNome()!=null) {
+							nome = registroPlugin.getOldNome();
+						}
+						driver.getDriverConfigurazioneDB().updateDatiRegistroPlugin(nome,registroPlugin);
+						doSetDati = false;
+					}
+					
+					// Registro Plugin Archivio
+					if(oggetto instanceof RegistroPluginArchivio) {
+						RegistroPluginArchivio registroPlugin = (RegistroPluginArchivio) oggetto;
+						driver.getDriverConfigurazioneDB().updateRegistroPluginArchivio(registroPlugin.getNomePlugin(),registroPlugin);
+						doSetDati = false;
+					}
+					
+					// Plugin Classi
+					if(oggetto instanceof Plugin) {
+						Plugin plugin = (Plugin) oggetto;
+						driver.updatePluginClassi(plugin);
+						doSetDati = false;
+					}
+					
+					/***********************************************************
+					 * Operazioni su Allarmi *
+					 **********************************************************/
+					// Allarmi
+					if(oggetto instanceof Allarme) {
+						Allarme allarme = (Allarme) oggetto;
+						driver.updateAllarme(allarme);
+						doSetDati = false;
+					}
+					
+					/***********************************************************
 					 * Extended *
 					 **********************************************************/
 					if(extendedBean!=null && extendedServlet!=null){
@@ -4752,6 +4867,40 @@ public class ControlStationCore {
 					if(oggetto instanceof GenericProperties) {
 						GenericProperties genericProperties = (GenericProperties) oggetto;
 						driver.getDriverConfigurazioneDB().deleteGenericProperties(genericProperties);
+						doSetDati = false;
+					}
+					
+					/***********************************************************
+					 * Operazioni su Registro Plugin *
+					 **********************************************************/
+					// Registro Plugin
+					if(oggetto instanceof RegistroPlugin) {
+						RegistroPlugin registroPlugin = (RegistroPlugin) oggetto;
+						driver.getDriverConfigurazioneDB().deleteRegistroPlugin(registroPlugin);
+						doSetDati = false;
+					}
+					
+					// Registro Plugin Archivio
+					if(oggetto instanceof RegistroPluginArchivio) {
+						RegistroPluginArchivio registroPlugin = (RegistroPluginArchivio) oggetto;
+						driver.getDriverConfigurazioneDB().deleteRegistroPluginArchivio(registroPlugin.getNomePlugin(), registroPlugin);
+						doSetDati = false;
+					}
+					
+					// Plugin Classi
+					if(oggetto instanceof Plugin) {
+						Plugin plugin = (Plugin) oggetto;
+						driver.deletePluginClassi(plugin);
+						doSetDati = false;
+					}
+					
+					/***********************************************************
+					 * Operazioni su Allarmi *
+					 **********************************************************/
+					// Allarmi
+					if(oggetto instanceof Allarme) {
+						Allarme allarme = (Allarme) oggetto;
+						driver.deleteAllarme(allarme);
 						doSetDati = false;
 					}
 					
@@ -5849,12 +5998,71 @@ public class ControlStationCore {
 			bf.append("IDActivePolicy[").append(policy.getIdActivePolicy()).append("] IDPolicy[").append(policy.getIdPolicy()).append("]");
 			msg+=":<"+bf.toString()+">";
 		}
-		// Generic Propertie
+		// Generic Properties
 		else if(oggetto instanceof GenericProperties) {
 			GenericProperties genericProperties = (GenericProperties) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			StringBuilder bf = new StringBuilder();
 			bf.append("Nome[").append(genericProperties.getNome()).append("] Tipologia[").append(genericProperties.getTipologia()).append("]");
+			msg+=":<"+bf.toString()+">";
+		}
+		// Registro Plugin
+		else if(oggetto instanceof RegistroPlugin) {
+			RegistroPlugin registroPlugins = (RegistroPlugin) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuilder bf = new StringBuilder();
+			bf.append("Nome[").append(registroPlugins.getNome()).append("]");
+			msg+=":<"+bf.toString()+">";
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
+				String oldNome = registroPlugins.getOldNome();
+				if(  (oldNome.equals(registroPlugins.getNome())==false) )
+					msg+=":OLD<"+oldNome+">";
+			}
+		}
+		// Registro Plugin Archivi 
+		else if(oggetto instanceof RegistroPluginArchivio) {
+			RegistroPluginArchivio registroPluginArchivio = (RegistroPluginArchivio) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuilder bf = new StringBuilder();
+			bf.append("Nome[").append(registroPluginArchivio.getNome()).append("]");
+			bf.append(" Nome Plugin[").append(registroPluginArchivio.getNomePlugin()).append("]");
+			msg+=":<"+bf.toString()+">";
+		}
+		// Plugin Classi
+		else if(oggetto instanceof Plugin) {
+			Plugin plugin = (Plugin) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuilder bf = new StringBuilder();
+			bf.append("Tipo Plugin[").append(plugin.getTipoPlugin()).append("]");
+			bf.append(" Tipo[").append(plugin.getTipo()).append("]");
+			bf.append(" Label[").append(plugin.getLabel()).append("]");
+			msg+=":<"+bf.toString()+">";
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
+				if((plugin.getOldIdPlugin().getTipoPlugin().equals(plugin.getTipoPlugin())==false) ||
+						(plugin.getOldIdPlugin().getTipo().equals(plugin.getTipo())==false) ||
+						(plugin.getOldIdPlugin().getLabel().equals(plugin.getLabel())==false) ) {
+					StringBuilder bf2 = new StringBuilder();
+					bf2.append("Tipo Plugin[").append(plugin.getTipoPlugin()).append("]");
+					bf2.append(" Tipo[").append(plugin.getTipo()).append("]");
+					bf2.append(" Label[").append(plugin.getLabel()).append("]");
+					msg+=":OLD<"+bf2.toString()+">";
+				}
+			}
+		}
+		// Allarme
+		else if(oggetto instanceof Allarme) {
+			Allarme allarme = (Allarme) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuilder bf = new StringBuilder();
+			bf.append("Nome[").append(allarme.getNome()).append("]");
+			msg+=":<"+bf.toString()+">";
+		}
+		// AllarmeHistory
+		else if(oggetto instanceof AllarmeHistory) {
+			AllarmeHistory allarme = (AllarmeHistory) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuilder bf = new StringBuilder();
+			bf.append("Nome[").append(allarme.getIdAllarme().getNome()).append("]");
 			msg+=":<"+bf.toString()+">";
 		}
 		// IExtendedBean

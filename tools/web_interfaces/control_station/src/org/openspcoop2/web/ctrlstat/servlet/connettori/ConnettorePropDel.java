@@ -49,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -136,7 +137,7 @@ public final class ConnettorePropDel extends Action {
 				asps.getConfigurazioneServizio().setConnettore(connettore);
 				connettoriCore.performUpdateOperation(superUser, connettoriHelper.smista(), asps);
 			}
-			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
+			else if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 				int idServizioInt = Integer.parseInt(id);
 				AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 				int idServizioFruitoreInt = Integer.parseInt(myId);
@@ -168,7 +169,7 @@ public final class ConnettorePropDel extends Action {
 				saveNomeFru = servFru.getNome();
 				saveTipoFru = servFru.getTipo();
 			}
-			if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
+			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 				int idSilInt = Integer.parseInt(idsil);
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				InvocazioneServizio is = sa.getInvocazioneServizio();
@@ -188,7 +189,7 @@ public final class ConnettorePropDel extends Action {
 				sa.setInvocazioneServizio(is);
 				connettoriCore.performUpdateOperation(superUser, connettoriHelper.smista(), sa);
 			}
-			if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
+			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
 				int idSilInt = Integer.parseInt(idsil);
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				RispostaAsincrona ra = sa.getRispostaAsincrona();
@@ -208,7 +209,27 @@ public final class ConnettorePropDel extends Action {
 				sa.setRispostaAsincrona(ra);
 				connettoriCore.performUpdateOperation(superUser, connettoriHelper.smista(), sa);
 			}
-			if (servlet.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
+			else if (servlet.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
+				int idSilInt = Integer.parseInt(idsil);
+				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
+				InvocazioneServizio is = sa.getInvocazioneServizio();
+				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
+				// Elimino le proprieta' dal connettore
+				for (int i = 0; i < idsToRemove.size(); i++) {
+					String nomeToDel = idsToRemove.get(i);
+					for (int j = 0; j < connettore.sizePropertyList(); j++) {
+						org.openspcoop2.core.config.Property tmpProp = connettore.getProperty(j);
+						if (tmpProp.getNome().equals(nomeToDel)) {
+							connettore.removeProperty(j);
+							break;
+						}
+					}
+				}
+				is.setConnettore(connettore);
+				sa.setInvocazioneServizio(is);
+				connettoriCore.performUpdateOperation(superUser, connettoriHelper.smista(), sa);
+			}
+			else if (servlet.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
 				int idInt = Integer.parseInt(id);
 				SoggettoCtrlStat scs = soggettiCore.getSoggettoCtrlStat(idInt);
 				Soggetto ss = scs.getSoggettoReg();
@@ -241,7 +262,7 @@ public final class ConnettorePropDel extends Action {
 				AccordoServizioParteSpecifica servizio = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 				connettore = servizio.getConfigurazioneServizio().getConnettore();
 			}
-			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
+			else if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 				//int idServizioFruitoreInt = Integer.parseInt(myId);
 				int idServizioInt = Integer.parseInt(id);
 				AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
@@ -256,19 +277,25 @@ public final class ConnettorePropDel extends Action {
 				Fruitore servFru = apsCore.getServizioFruitore(newMyId);
 				connettore = servFru.getConnettore();
 			}
-			if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
+			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 				int idSilInt = Integer.parseInt(idsil);
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				connettoreC = is.getConnettore();
 			}
-			if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
+			else if (servlet.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
 				int idSilInt = Integer.parseInt(idsil);
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 				RispostaAsincrona ra = sa.getRispostaAsincrona();
 				connettoreC = ra.getConnettore();
 			}
-			if (servlet.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
+			else if (servlet.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
+				int idSilInt = Integer.parseInt(idsil);
+				ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
+				InvocazioneServizio is = sa.getInvocazioneServizio();
+				connettoreC = is.getConnettore();
+			}
+			else if (servlet.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
 				int idInt = Integer.parseInt(id);
 				SoggettoCtrlStat scs = soggettiCore.getSoggettoCtrlStat(idInt);
 				Soggetto ss = scs.getSoggettoReg();

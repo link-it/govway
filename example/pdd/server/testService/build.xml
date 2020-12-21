@@ -205,6 +205,21 @@
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
 			</lib>
+			<!-- Risoluzione Warning WARN  [org.jboss.as.ee] (MSC service thread 1-5) WFLYEE0007: Not installing optional component org.springframework ... -->
+			<lib dir="${libs}/commons">
+				<include name="commons-lang3-3.9.jar"/>
+			</lib>
+			<lib dir="${libs}/shared">
+				<include name="reactive-streams-1.0.3.jar"/>
+			</lib>
+			<lib dir="${libs}/swagger">
+				<include name="swagger-annotations-2.1.1.jar"/>
+				<include name="swagger-core-2.1.1.jar"/>
+				<include name="swagger-integration-2.1.1.jar"/>
+				<include name="swagger-jaxrs2-2.1.1.jar"/>
+				<include name="swagger-models-2.1.1.jar"/>
+			</lib>
+			<!-- Fine Risoluzione Warning WARN  [org.jboss.as.ee] (MSC service thread 1-5) WFLYEE0007: Not installing optional component org.springframework ... -->
 			<lib dir="${openspcoop2_libs}/">
 				<include name="openspcoop2_utils*.jar"/>
 				<include name="openspcoop2_core*.jar"/>

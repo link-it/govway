@@ -26,7 +26,7 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
- * Enumeration dell'elemento id-plugin.tipo xsd (tipo:string) 
+ * Enumeration dell'elemento tipo-plugin xsd (tipo:string) 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
@@ -43,7 +43,25 @@ public enum TipoPlugin implements IEnumeration , Serializable , Cloneable {
 	@javax.xml.bind.annotation.XmlEnumValue("STATISTICA")
 	STATISTICA ("STATISTICA"),
 	@javax.xml.bind.annotation.XmlEnumValue("ALLARME")
-	ALLARME ("ALLARME");
+	ALLARME ("ALLARME"),
+	@javax.xml.bind.annotation.XmlEnumValue("CONNETTORE")
+	CONNETTORE ("CONNETTORE"),
+	@javax.xml.bind.annotation.XmlEnumValue("AUTENTICAZIONE")
+	AUTENTICAZIONE ("AUTENTICAZIONE"),
+	@javax.xml.bind.annotation.XmlEnumValue("AUTORIZZAZIONE")
+	AUTORIZZAZIONE ("AUTORIZZAZIONE"),
+	@javax.xml.bind.annotation.XmlEnumValue("AUTORIZZAZIONE_CONTENUTI")
+	AUTORIZZAZIONE_CONTENUTI ("AUTORIZZAZIONE_CONTENUTI"),
+	@javax.xml.bind.annotation.XmlEnumValue("INTEGRAZIONE")
+	INTEGRAZIONE ("INTEGRAZIONE"),
+	@javax.xml.bind.annotation.XmlEnumValue("MESSAGE_HANDLER")
+	MESSAGE_HANDLER ("MESSAGE_HANDLER"),
+	@javax.xml.bind.annotation.XmlEnumValue("SERVICE_HANDLER")
+	SERVICE_HANDLER ("SERVICE_HANDLER"),
+	@javax.xml.bind.annotation.XmlEnumValue("BEHAVIOUR")
+	BEHAVIOUR ("BEHAVIOUR"),
+	@javax.xml.bind.annotation.XmlEnumValue("RATE_LIMITING")
+	RATE_LIMITING ("RATE_LIMITING");
 	
 	
 	/** Value */

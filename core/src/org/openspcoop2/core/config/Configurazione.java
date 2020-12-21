@@ -65,6 +65,7 @@ import java.util.List;
  * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-generale" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="gestione-canali" type="{http://www.openspcoop2.org/core/config}canali-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="registro-plugins" type="{http://www.openspcoop2.org/core/config}registro-plugins" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -105,7 +106,8 @@ import java.util.List;
   	"genericProperties",
   	"gestioneCors",
   	"responseCaching",
-  	"gestioneCanali"
+  	"gestioneCanali",
+  	"registroPlugins"
   }
 )
 
@@ -392,6 +394,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
   public void setGestioneCanali(CanaliConfigurazione gestioneCanali) {
     this.gestioneCanali = gestioneCanali;
   }
+  
+  public RegistroPlugins getRegistroPlugins() {
+    return this.registroPlugins;
+  }
+
+  public void setRegistroPlugins(RegistroPlugins registroPlugins) {
+    this.registroPlugins = registroPlugins;
+  }
 
   private static final long serialVersionUID = 1L;
 
@@ -552,5 +562,8 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="gestione-canali",required=false,nillable=false)
   protected CanaliConfigurazione gestioneCanali;
+
+  @XmlElement(name="registro-plugins",required=false,nillable=false)
+  protected RegistroPlugins registroPlugins;
 
 }

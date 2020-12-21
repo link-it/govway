@@ -43,7 +43,7 @@ package org.openspcoop2.pdd.monitor.ws.server.filter.beans;
  */
  
 import java.io.Serializable;
- 
+
 import javax.xml.bind.annotation.XmlElement;
 
 /**     

@@ -35,6 +35,7 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
@@ -425,6 +426,93 @@ public class ConsoleProperties {
 	
 	public boolean isModipaFruizioniConnettoreCheckHttps() throws UtilsException{
 		return this.readBooleanProperty(true, "modipa.fruizioni.connettore.checkHttps");
+	}
+	
+	public Boolean isConfigurazionePluginsEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "plugins.enabled");
+	}
+	
+	public Integer getPluginsSeconds() throws Exception{
+		String cacheV = this.readProperty(true, "plugins.seconds");
+		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
+			Integer i = Integer.valueOf(cacheV);
+			if(i.intValue()>0) {
+				return i;
+			}
+		}
+		return 300;
+	}
+	
+	public Boolean isConfigurazioneAllarmiEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.enabled");
+	}
+	
+	public String getAllarmiConfigurazione() throws Exception{
+		return this.readProperty(true, "allarmi.configurazione");
+	}
+	
+	public String getAllarmiActiveServiceUrl() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url");
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixStartAlarm() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url.suffix.startAlarm");
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixStopAlarm() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url.suffix.stopAlarm");
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixReStartAlarm() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url.suffix.restartAlarm");
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.ok");
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.warning");
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.error");
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url.suffix.updateAcknoledgement.enabled");
+	}
+	
+	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm() throws Exception{
+		return this.readProperty(true, "allarmi.active.service.url.suffix.updateAcknoledgement.disabled");
+	}
+	
+	public Boolean isAllarmiConsultazioneModificaStatoAbilitata() throws Exception{
+		return this.readBooleanProperty(true, "allarmi.consultazione.modificaStatoAbilitata");
+	}
+	
+	public Boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() throws Exception{
+		return this.readBooleanProperty(true, "allarmi.acknowledged.associazioneStatoAllarme");
+	}
+	
+	public Boolean isAllarmiNotificaMailVisualizzazioneCompleta() throws Exception{
+		return this.readBooleanProperty(true, "allarmi.notificaMail.visualizzazioneCompleta");
+	}
+	
+	public Boolean isAllarmiMonitoraggioEsternoVisualizzazioneCompleta() throws Exception{
+		return this.readBooleanProperty(true, "allarmi.monitoraggioEsterno.visualizzazioneCompleta");
+	}
+	
+	public boolean isAllarmiGroupByApi() throws Exception {
+		return this.readBooleanProperty(true, "allarmi.groupBy.api");
+	}
+	
+	public boolean isAllarmiFiltroApi() throws Exception {
+		return this.readBooleanProperty(true, "allarmi.filtro.api");
+	}
+	
+	public boolean isAllarmiFiltroApiSoggettoErogatore() throws Exception {
+		return this.readBooleanProperty(true, "allarmi.filtro.api.soggettoErogatore");
 	}
 	
 	
@@ -1150,6 +1238,7 @@ public class ConsoleProperties {
 	public boolean isSetSearchAfterAdd() throws UtilsException{
 		return this.readBooleanProperty(true, "console.setSearchAfterAdd");
 	}
+
 	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 

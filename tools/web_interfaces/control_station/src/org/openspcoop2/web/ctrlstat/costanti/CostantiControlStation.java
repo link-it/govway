@@ -1336,6 +1336,9 @@ public class CostantiControlStation {
 	/** COSTANTI VISUALIZZAZIONE MESSAGGI MODIFICA POSIZIONE REGOLA PROXY PASS */
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_REGOLA_PROXY_PASS = false;
 	
+	/** COSTANTI VISUALIZZAZIONE MESSAGGI MODIFICA POSIZIONE PLUGINS ARCHIVI */
+	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_PLUGINS_ARCHIVI = false;
+	
 	/** COSTANTE DIMENSIONE TEXT_AREAD */
 	public final static int LABEL_PARAMETRO_TEXT_AREA_SIZE = 3;
 	
@@ -1875,12 +1878,19 @@ public class CostantiControlStation {
 		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_username.name());
 		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_eMail.name());
 	}
-			
+		
+	
+	public final static String PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED = "--";
+	public final static String PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED = "-";
+	
+	
+	
 	/** MESSAGGI */
 	public static final String MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE = "Posizione della policy modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE ="Posizione della regola di risposta modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_PROXY_PASS_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
+	public static final String MESSAGGIO_CONFERMA_PLUGINS_ARCHIVIO_SPOSTATO_CORRETTAMENTE = "Posizione dell'archivio modificata correttamente.";
 	
 	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_GRUPPO ="Procedere con l''abilitazione del gruppo ''{0}''?"; 
 	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_FROM_API ="Procedere con l'abilitazione dell'API ?"; 
@@ -1999,4 +2009,11 @@ public class CostantiControlStation {
 	
 	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
 	public final static Integer NUMERO_GRUPPI_CSS = Costanti.NUMERO_GRUPPI_CSS;
+	
+	public static final String EMAIL_PATTERN = 
+//			"^([0-9a-zA-Z].*?@([0-9a-zA-Z].*\\.\\w{2,4}))$";
+			"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+"[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	
+	public static final String VALORE_QUALSIASI_STAR = "*";
+
 }

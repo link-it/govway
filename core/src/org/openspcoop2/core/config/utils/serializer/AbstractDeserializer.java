@@ -58,6 +58,8 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.OpenspcoopAppender;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.IdPortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
@@ -66,6 +68,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.IdPortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataAzione;
@@ -2491,6 +2494,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: registro-plugin
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugin readRegistroPlugin(String fileName) throws DeserializerException {
+		return (RegistroPlugin) this.xmlToObj(fileName, RegistroPlugin.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugin readRegistroPlugin(File file) throws DeserializerException {
+		return (RegistroPlugin) this.xmlToObj(file, RegistroPlugin.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugin readRegistroPlugin(InputStream in) throws DeserializerException {
+		return (RegistroPlugin) this.xmlToObj(in, RegistroPlugin.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugin readRegistroPlugin(byte[] in) throws DeserializerException {
+		return (RegistroPlugin) this.xmlToObj(in, RegistroPlugin.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugin}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugin readRegistroPluginFromString(String in) throws DeserializerException {
+		return (RegistroPlugin) this.xmlToObj(in.getBytes(), RegistroPlugin.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: registro-plugins
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugins readRegistroPlugins(String fileName) throws DeserializerException {
+		return (RegistroPlugins) this.xmlToObj(fileName, RegistroPlugins.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugins readRegistroPlugins(File file) throws DeserializerException {
+		return (RegistroPlugins) this.xmlToObj(file, RegistroPlugins.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugins readRegistroPlugins(InputStream in) throws DeserializerException {
+		return (RegistroPlugins) this.xmlToObj(in, RegistroPlugins.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugins readRegistroPlugins(byte[] in) throws DeserializerException {
+		return (RegistroPlugins) this.xmlToObj(in, RegistroPlugins.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPlugins}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPlugins readRegistroPluginsFromString(String in) throws DeserializerException {
+		return (RegistroPlugins) this.xmlToObj(in.getBytes(), RegistroPlugins.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: configurazione-url-invocazione-regola
 	 =================================================================================
 	*/
@@ -2989,6 +3118,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public PortaApplicativaServizioApplicativoConnettore readPortaApplicativaServizioApplicativoConnettoreFromString(String in) throws DeserializerException {
 		return (PortaApplicativaServizioApplicativoConnettore) this.xmlToObj(in.getBytes(), PortaApplicativaServizioApplicativoConnettore.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: registro-plugin-archivio
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPluginArchivio readRegistroPluginArchivio(String fileName) throws DeserializerException {
+		return (RegistroPluginArchivio) this.xmlToObj(fileName, RegistroPluginArchivio.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPluginArchivio readRegistroPluginArchivio(File file) throws DeserializerException {
+		return (RegistroPluginArchivio) this.xmlToObj(file, RegistroPluginArchivio.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPluginArchivio readRegistroPluginArchivio(InputStream in) throws DeserializerException {
+		return (RegistroPluginArchivio) this.xmlToObj(in, RegistroPluginArchivio.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPluginArchivio readRegistroPluginArchivio(byte[] in) throws DeserializerException {
+		return (RegistroPluginArchivio) this.xmlToObj(in, RegistroPluginArchivio.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @return Object type {@link org.openspcoop2.core.config.RegistroPluginArchivio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RegistroPluginArchivio readRegistroPluginArchivioFromString(String in) throws DeserializerException {
+		return (RegistroPluginArchivio) this.xmlToObj(in.getBytes(), RegistroPluginArchivio.class);
 	}	
 	
 	

@@ -1,31 +1,27 @@
--- INFORMAZIONI GENERALI
-
-CREATE TABLE plugin_info
-(
-	content BLOB NOT NULL
-);
-
-
 -- PLUGINS
 
 CREATE SEQUENCE seq_plugins MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
 CREATE TABLE plugins
 (
-	tipo VARCHAR2(255) NOT NULL,
+	tipo_plugin VARCHAR2(255) NOT NULL,
 	class_name VARCHAR2(255) NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
 	descrizione VARCHAR2(255),
 	label VARCHAR2(255) NOT NULL,
+	stato NUMBER,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
-	-- check constraints
-	CONSTRAINT chk_plugins_1 CHECK (tipo IN ('TRANSAZIONE','RICERCA','STATISTICA','ALLARME')),
 	-- unique constraints
-	CONSTRAINT unique_plugins_1 UNIQUE (tipo,class_name),
-	CONSTRAINT unique_plugins_2 UNIQUE (tipo,label),
+	CONSTRAINT unique_plugins_1 UNIQUE (tipo_plugin,class_name),
+	CONSTRAINT unique_plugins_2 UNIQUE (tipo_plugin,tipo),
+	CONSTRAINT unique_plugins_3 UNIQUE (tipo_plugin,label),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_plugins PRIMARY KEY (id)
 );
+
+
+ALTER TABLE plugins MODIFY stato DEFAULT 1;
 
 CREATE TRIGGER trg_plugins
 BEFORE
@@ -102,40 +98,29 @@ end;
 
 
 
-CREATE SEQUENCE seq_plugins_filtro_comp MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_plugins_props_comp MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE plugins_filtro_comp
+CREATE TABLE plugins_props_comp
 (
-	tipo_mittente VARCHAR2(255),
-	nome_mittente VARCHAR2(255),
-	idporta_mittente VARCHAR2(255),
-	tipo_destinatario VARCHAR2(255),
-	nome_destinatario VARCHAR2(255),
-	idporta_destinatario VARCHAR2(255),
-	tipo_servizio VARCHAR2(255),
-	nome_servizio VARCHAR2(255),
-	versione_servizio NUMBER,
-	azione VARCHAR2(255),
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	id_plugin NUMBER NOT NULL,
 	-- fk/pk keys constraints
-	CONSTRAINT fk_plugins_filtro_comp_1 FOREIGN KEY (id_plugin) REFERENCES plugins(id) ON DELETE CASCADE,
-	CONSTRAINT pk_plugins_filtro_comp PRIMARY KEY (id)
+	CONSTRAINT fk_plugins_props_comp_1 FOREIGN KEY (id_plugin) REFERENCES plugins(id) ON DELETE CASCADE,
+	CONSTRAINT pk_plugins_props_comp PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX idx_plug_filtro_com_1 ON plugins_filtro_comp (id_plugin);
-
-ALTER TABLE plugins_filtro_comp MODIFY versione_servizio DEFAULT 1;
-
-CREATE TRIGGER trg_plugins_filtro_comp
+CREATE INDEX idx_plug_prop_com_1 ON plugins_props_comp (id_plugin);
+CREATE TRIGGER trg_plugins_props_comp
 BEFORE
-insert on plugins_filtro_comp
+insert on plugins_props_comp
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_plugins_filtro_comp.nextval INTO :new.id
+      SELECT seq_plugins_props_comp.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

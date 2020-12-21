@@ -120,7 +120,7 @@ public class ElencoPolicyAttive extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method setAttivazionePolicyList
-   * @param attivazionePolicy List<AttivazionePolicy>
+   * @param attivazionePolicy List&lt;AttivazionePolicy&gt;
   */
   @Deprecated
   public void setAttivazionePolicy(List<AttivazionePolicy> attivazionePolicy) {

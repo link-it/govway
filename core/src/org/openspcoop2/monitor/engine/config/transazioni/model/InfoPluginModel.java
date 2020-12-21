@@ -40,6 +40,7 @@ public class InfoPluginModel extends AbstractModel<InfoPlugin> {
 	
 		super();
 	
+		this.TIPO_PLUGIN = new Field("tipo-plugin",java.lang.String.class,"info-plugin",InfoPlugin.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"info-plugin",InfoPlugin.class);
 		this.CLASS_NAME = new Field("class-name",java.lang.String.class,"info-plugin",InfoPlugin.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"info-plugin",InfoPlugin.class);
@@ -51,6 +52,7 @@ public class InfoPluginModel extends AbstractModel<InfoPlugin> {
 	
 		super(father);
 	
+		this.TIPO_PLUGIN = new ComplexField(father,"tipo-plugin",java.lang.String.class,"info-plugin",InfoPlugin.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"info-plugin",InfoPlugin.class);
 		this.CLASS_NAME = new ComplexField(father,"class-name",java.lang.String.class,"info-plugin",InfoPlugin.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"info-plugin",InfoPlugin.class);
@@ -60,6 +62,8 @@ public class InfoPluginModel extends AbstractModel<InfoPlugin> {
 	
 	
 
+	public IField TIPO_PLUGIN = null;
+	 
 	public IField TIPO = null;
 	 
 	public IField CLASS_NAME = null;

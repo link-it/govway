@@ -849,7 +849,8 @@ public class TransactionServiceLibrary implements Serializable {
 				if(configTransazionePlugin.isEnabled()){
 					String className = configTransazionePlugin.getPlugin().getClassName();
 					if(idRisorse.contains(className)==false){
-						IDynamicLoader loader = DynamicFactory.getInstance().newDynamicLoader(className, log);
+						IDynamicLoader loader = DynamicFactory.getInstance().newDynamicLoader(configTransazionePlugin.getPlugin().getTipoPlugin(), configTransazionePlugin.getPlugin().getTipo(),
+								className, log);
 						ITransactionProcessing transactionProcessor = (ITransactionProcessing) loader.newInstance();
 						idRisorse.add(className);
 						list.add(transactionProcessor);
@@ -866,7 +867,8 @@ public class TransactionServiceLibrary implements Serializable {
 				if(configTransazionePlugin.isEnabled()){
 					String className = configTransazionePlugin.getPlugin().getClassName();
 					if(idRisorse.contains(className)==false){
-						IDynamicLoader loader = DynamicFactory.getInstance().newDynamicLoader(className, log);
+						IDynamicLoader loader = DynamicFactory.getInstance().newDynamicLoader(configTransazionePlugin.getPlugin().getTipoPlugin(), configTransazionePlugin.getPlugin().getTipo(),
+								className, log);
 						ITransactionProcessing transactionProcessor = (ITransactionProcessing) loader.newInstance();
 						idRisorse.add(className);
 						list.add(transactionProcessor);

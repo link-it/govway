@@ -1020,6 +1020,17 @@
 				</xsd:annotation>
 			</xsd:element>
 			
+			<xsd:element name="tag" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_tag"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono un servizio associato al tag indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>

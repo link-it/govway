@@ -120,7 +120,7 @@ public class ElencoIdPolicy extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setIdPolicyList
-   * @param idPolicy List<IdPolicy>
+   * @param idPolicy List&lt;IdPolicy&gt;
   */
   @Deprecated
   public void setIdPolicy(List<IdPolicy> idPolicy) {

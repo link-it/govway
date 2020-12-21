@@ -24,8 +24,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 
-import org.openspcoop2.monitor.engine.config.base.dao.IPluginInfoServiceSearch;
-import org.openspcoop2.monitor.engine.config.base.dao.IPluginInfoService;
 import org.openspcoop2.monitor.engine.config.base.dao.IPluginServiceSearch;
 import org.openspcoop2.monitor.engine.config.base.dao.IPluginService;
 import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioServiceSearch;
@@ -154,38 +152,6 @@ public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc
 	
 
 
-	/*
-	 =====================================================================================================================
-	 Services relating to the object with name:plugin-info type:plugin-info
-	 =====================================================================================================================
-	*/
-	
-	/**
-	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.monitor.engine.config.base.PluginInfo}
-	 *
-	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.monitor.engine.config.base.PluginInfo}	
-	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
-	 * @throws NotImplementedException Exception thrown when the method is not implemented
-	 */
-	@Override
-	public IPluginInfoServiceSearch getPluginInfoServiceSearch() throws ServiceException,NotImplementedException{
-		return new JDBCPluginInfoServiceSearch(this);
-	}
-	
-	/**
-	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.monitor.engine.config.base.PluginInfo}
-	 *
-	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.monitor.engine.config.base.PluginInfo}	
-	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
-	 * @throws NotImplementedException Exception thrown when the method is not implemented
-	 */
-	@Override
-	public IPluginInfoService getPluginInfoService() throws ServiceException,NotImplementedException{
-		return new JDBCPluginInfoService(this);
-	}
-	
-	
-	
 	/*
 	 =====================================================================================================================
 	 Services relating to the object with name:plugin type:plugin

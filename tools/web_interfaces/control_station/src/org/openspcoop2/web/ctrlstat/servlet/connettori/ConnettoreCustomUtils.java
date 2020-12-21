@@ -40,8 +40,13 @@ public class ConnettoreCustomUtils {
 			String servlet, String id, String nomeprov, String tipoprov,String nomeservizio,String tiposervizio, String versioneservizio,
 			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo,
 			String provider, String accessoDaAPSParametro, String idPorta, String azioneConnettoreIdPorta)  {
-
+		
 		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConnettoriCostanti.LABEL_SEZIONE_CONNETTORE_CUSTOM_PROPRIETA);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME);

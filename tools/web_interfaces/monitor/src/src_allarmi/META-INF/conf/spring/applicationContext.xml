@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<bean id="searchFormAllarmi" class="org.openspcoop2.web.monitor.allarmi.bean.AllarmiSearchForm" scope="session"/>
+	
+	<bean id="allarmiService" class="org.openspcoop2.web.monitor.allarmi.dao.AllarmiService" scope="request">
+		<property name="search" ref="searchFormAllarmi"/>
+	</bean>
+	<bean id="allarmiBean" class="org.openspcoop2.web.monitor.allarmi.mbean.AllarmiBean" scope="request">
+		<property name="service" ref="allarmiService"/>
+		<property name="search" ref="searchFormAllarmi"/>
+	</bean>
+	
+</beans>

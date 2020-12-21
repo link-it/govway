@@ -27,6 +27,8 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
@@ -419,6 +421,65 @@ public interface IDriverConfigurazioneCRUD {
 	public void deleteGenericProperties(GenericProperties genericProperties) throws DriverConfigurazioneException;
 	
 	
+	
+	
+	// PLUGINS
+	
+	/**
+	 * Crea una configurazione di plugin
+	 * 
+	 * @param plugin
+	 * @throws DriverConfigurazioneException
+	 */
+	public void createRegistroPlugin(RegistroPlugin plugin) throws DriverConfigurazioneException;
+	
+	/**
+	 * Aggiorna una configurazione di plugin
+	 * 
+	 * @param plugin
+	 * @throws DriverConfigurazioneException
+	 */
+	public void updateRegistroPlugin(RegistroPlugin plugin) throws DriverConfigurazioneException;
+	
+	/**
+	 * Elimina una configurazione di plugin
+	 * 
+	 * @param plugin
+	 * @throws DriverConfigurazioneException
+	 */
+	public void deleteRegistroPlugin(RegistroPlugin plugin) throws DriverConfigurazioneException;
+	
+	/**
+	 * Aggiorna solamente i dati generali della configurazione del plugin
+	 * 
+	 * @param plugin
+	 * @throws DriverConfigurazioneException
+	 */
+	public void updateDatiRegistroPlugin(String nomePlugin, RegistroPlugin plugin) throws DriverConfigurazioneException;
+	
+	/**
+	 * Crea una configurazione di plugin realizzata tramite un archivio jar
+	 * 
+	 * @param plugin
+	 * @throws DriverConfigurazioneException
+	 */
+	public void createRegistroPluginArchivio(String nomePlugin, RegistroPluginArchivio plugin) throws DriverConfigurazioneException;
+	
+	/**
+	 * Aggiorna una configurazione di plugin realizzata tramite un archivio jar
+	 * 
+	 * @param plugin
+	 * @throws DriverConfigurazioneException
+	 */
+	public void updateRegistroPluginArchivio(String nomePlugin, RegistroPluginArchivio plugin) throws DriverConfigurazioneException;
+	
+	/**
+	 * Elimina una configurazione di plugin realizzata tramite un archivio jar
+	 * 
+	 * @param plugin
+	 * @throws DriverConfigurazioneException
+	 */
+	public void deleteRegistroPluginArchivio(String nomePlugin, RegistroPluginArchivio plugin) throws DriverConfigurazioneException;
 	
 	
 	

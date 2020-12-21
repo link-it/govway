@@ -241,15 +241,15 @@ public class RegistroCore {
 		return list;
 	}
 	
-	public static List<IDServizio> getServizi(JDBCServiceManager manager, String protocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore) throws Exception{
+	public static List<IDServizio> getServizi(JDBCServiceManager manager, String protocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tag) throws Exception{
 		List<String> protocolli = null;
 		if(protocollo!=null) {
 			protocolli = new ArrayList<>();
 			protocolli.add(protocollo);
 		}
-		return getServizi(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore);
+		return getServizi(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tag);
 	}
-	public static List<IDServizio> getServizi(JDBCServiceManager manager,  List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore) throws Exception{
+	public static List<IDServizio> getServizi(JDBCServiceManager manager,  List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tag) throws Exception{
 		List<IDServizio> list = new ArrayList<IDServizio>();
 		
 		IAccordoServizioParteSpecificaServiceSearch aspsServiceSearch = manager.getAccordoServizioParteSpecificaServiceSearch();
@@ -267,6 +267,26 @@ public class RegistroCore {
 		if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null){
 			pag.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO, tipoSoggettoErogatore);
 			pag.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeSoggettoErogatore);
+		}
+		
+		if(tag!=null) {
+			IAccordoServizioParteComuneGruppoServiceSearch gruppiServiceSearch = manager.getAccordoServizioParteComuneGruppoServiceSearch();
+			IPaginatedExpression pagGruppi = gruppiServiceSearch.newPaginatedExpression();
+			pagGruppi.and();
+			pagGruppi.equals(AccordoServizioParteComuneGruppo.model().ID_GRUPPO.NOME, tag);
+			List<AccordoServizioParteComuneGruppo> listGruppi = gruppiServiceSearch.findAll(pagGruppi);
+			List<Long> idAccordo = new ArrayList<Long>();
+			if(listGruppi!=null && !listGruppi.isEmpty()) {
+				for (AccordoServizioParteComuneGruppo aspcGruppo : listGruppi) {
+					idAccordo.add(aspcGruppo.getIdAccordoServizioParteComune().getId());
+				}
+			}
+			else {
+				idAccordo.add(-4l); // volutamente per non trovare alcun servizio
+			}
+			
+			CustomField cf = new CustomField("idAccordo", Long.class, "id_accordo", CostantiDB.SERVIZI);
+			pag.in(cf, idAccordo);
 		}
 		
 		pag.addOrder(AccordoServizioParteSpecifica.model().NOME,SortOrder.ASC);

@@ -3417,6 +3417,114 @@
             <forward name="configurazioneCanaliNodiDel" path="/jsplib/listElement.jsp"/>
             <forward name="configurazioneCanaliNodiError" path="/jsplib/info.jsp"/>
         </action>
+
+        <!-- Configurazione Plugins Archivi -->
+
+        <action path="/configurazionePluginsArchiviAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsArchiviAdd"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsArchiviAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsArchiviAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsArchiviAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsArchiviError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePluginsArchiviList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsArchiviList"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsArchiviList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsArchiviError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePluginsArchiviChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsArchiviChange"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsArchiviChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsArchiviChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsArchiviChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsArchiviError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePluginsArchiviDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsArchiviDel"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsArchiviDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsArchiviError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Configurazione Plugins Archivi Jar -->
+
+        <action path="/configurazionePluginsArchiviJarAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsArchiviJarAdd"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsArchiviJarAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsArchiviJarAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsArchiviJarAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsArchiviJarError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePluginsArchiviJarList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsArchiviJarList"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsArchiviJarList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsArchiviJarError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePluginsArchiviJarDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsArchiviJarDel"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsArchiviJarDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsArchiviJarError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Configurazione Plugins Classi -->
+
+        <action path="/configurazionePluginsClassiAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsClassiAdd"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsClassiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsClassiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsClassiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsClassiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePluginsClassiList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsClassiList"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsClassiList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsClassiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePluginsClassiChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsClassiChange"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsClassiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsClassiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsClassiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePluginsClassiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePluginsClassiDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePluginsClassiDel"
+            scope="request" validate="true">
+            <forward name="configurazionePluginsClassiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePluginsClassiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+         <!-- Configurazione Allarmi -->
+
+        <action path="/configurazioneAllarmiAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAllarmiAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneAllarmiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAllarmiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAllarmiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAllarmiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneAllarmiList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAllarmiList"
+            scope="request" validate="true">
+            <forward name="configurazioneAllarmiList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAllarmiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneAllarmiChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAllarmiChange"
+            scope="request" validate="true">
+            <forward name="configurazioneAllarmiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAllarmiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAllarmiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAllarmiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneAllarmiDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAllarmiDel"
+            scope="request" validate="true">
+            <forward name="configurazioneAllarmiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAllarmiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Configurazione Allarmi History -->
+        <action path="/configurazioneAllarmiHistoryList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAllarmiHistoryList"
+            scope="request" validate="true">
+            <forward name="configurazioneAllarmiHistoryList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAllarmiHistoryError" path="/jsplib/info.jsp"/>
+        </action>
     
      	<!-- Audit (Pagina Iniziale)  -->
     

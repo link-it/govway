@@ -628,10 +628,11 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 				
 					Plugin plugin = JDBCPluginsBaseLib.getPlugin(connection, jdbcProperties, log, idFK_configurazioneTransazione_configurazioneTransazionePlugin_plugin);
 					org.openspcoop2.monitor.engine.config.transazioni.InfoPlugin info = new org.openspcoop2.monitor.engine.config.transazioni.InfoPlugin();
+					info.setTipoPlugin(plugin.getTipoPlugin());
+					info.setTipo(plugin.getTipo());
 					info.setClassName(plugin.getClassName());
 					info.setDescrizione(plugin.getDescrizione());
 					info.setLabel(plugin.getLabel());
-					info.setTipo(plugin.getTipo().getValue());
 					configurazioneTransazione_configurazioneTransazionePlugin.setPlugin(info);
 				
 					configurazioneTransazione.addConfigurazioneTransazionePlugin(configurazioneTransazione_configurazioneTransazionePlugin);

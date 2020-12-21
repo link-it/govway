@@ -78,6 +78,11 @@ public class ContentAuthorizationCostanti {
 		// Eventi
 		"/eventi/pages/form/evento.jsf",
 		"/eventi/pages/list/eventi.jsf",
+		
+		// Allarmi
+		"/allarmi/pages/form/allarme.jsf",
+		"/allarmi/pages/list/statoAllarmi.jsf",
+		"/allarmi/pages/list/allarmeHistory.jsf",
 	}; 
 
 	// Elenco delle pagine che sono disponibili al ruolo configuratore
@@ -141,6 +146,11 @@ public class ContentAuthorizationCostanti {
 		"/stat/pages/form/statsPersonalizzateGrafico.jsf",
 		"/stat/pages/list/configurazioniGenerali.jsf",
 		"/stat/pages/form/dettaglioConfigurazione.jsf",
+		
+		// Allarmi
+		"/allarmi/pages/form/allarme.jsf",
+		"/allarmi/pages/list/statoAllarmi.jsf",
+		"/allarmi/pages/list/allarmeHistory.jsf",
 		
 		//Servlet Configurazioni Exporter
 		"/configurazioniexporter"
@@ -206,6 +216,11 @@ public class ContentAuthorizationCostanti {
 		// Statistiche personalizzate
 		{"/stat/pages/form/statsPersonalizzate.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
 		{"/stat/pages/form/statsPersonalizzateGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
+		
+		// Allarmi
+		{"/allarmi/pages/form/allarme.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
+		{"/allarmi/pages/list/statoAllarmi.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
+		{"/allarmi/pages/list/allarmeHistory.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
 
 	};
 

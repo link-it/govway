@@ -540,6 +540,11 @@ public class OpenSPCoop2Properties {
 			this.isConfigurazioneCache_RegistryPrefill();
 			this.isConfigurazioneCache_accessiSynchronized();
 			this.isConfigurazioneCache_transactionContext_accessiSynchronized();
+			
+			if(this.isConfigurazionePluginsEnabled()) {
+				this.isConfigurazionePluginsDebug();
+				this.getConfigurazionePluginsSeconds();
+			}
 
 			// DataSource
 			if (getJNDIName_DataSource() == null){		
@@ -1711,9 +1716,6 @@ public class OpenSPCoop2Properties {
 			
 			// FormUrlEncodedFilter
 			this.isFormUrlEncodedFilterEnabled();
-			
-			// Monitor SDK
-			this.getMonitorSDK_repositoryJars();
 			
 			// JminixConsole
 			this.getPortJminixConsole();
@@ -3769,6 +3771,84 @@ public class OpenSPCoop2Properties {
 
 
 
+	
+	
+	/* ********  CONFIGURAZIONE PLUGINS  ******** */
+	
+	private static Boolean isConfigurazionePluginsEnabled = null;
+	public boolean isConfigurazionePluginsEnabled(){
+		
+		String pName = "org.openspcoop2.pdd.config.plugins.enabled";
+		if(OpenSPCoop2Properties.isConfigurazionePluginsEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isConfigurazionePluginsEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isConfigurazionePluginsEnabled = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isConfigurazionePluginsEnabled = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isConfigurazionePluginsEnabled;
+	}
+	
+	private static Boolean isConfigurazionePluginsDebug = null;
+	public boolean isConfigurazionePluginsDebug(){
+		
+		String pName = "org.openspcoop2.pdd.config.plugins.debug";
+		if(OpenSPCoop2Properties.isConfigurazionePluginsDebug==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isConfigurazionePluginsDebug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isConfigurazionePluginsDebug = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isConfigurazionePluginsDebug = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isConfigurazionePluginsDebug;
+	}
+	
+	private static Integer getConfigurazionePluginsSeconds = null;
+	public int getConfigurazionePluginsSeconds(){
+		
+		String pName = "org.openspcoop2.pdd.config.plugins.seconds";
+		if(OpenSPCoop2Properties.getConfigurazionePluginsSeconds==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getConfigurazionePluginsSeconds = Integer.valueOf(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=300");
+					OpenSPCoop2Properties.getConfigurazionePluginsSeconds = 300;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=300, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getConfigurazionePluginsSeconds = 300;
+			}
+		}
+
+		return OpenSPCoop2Properties.getConfigurazionePluginsSeconds;
+	}
 
 
 
@@ -16611,42 +16691,7 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
-	
-	
-	/* ------------- MonitorSDK  ---------------------*/
-	
-	private static File getMonitorSDK_repositoryJars = null;
-	public File getMonitorSDK_repositoryJars() throws Exception {	
-		if(OpenSPCoop2Properties.getMonitorSDK_repositoryJars==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.monitor.sdk.repositoryJars");
-				if(name!=null){
-					name = name.trim();
-					OpenSPCoop2Properties.getMonitorSDK_repositoryJars = new File(name);
-					if(OpenSPCoop2Properties.getMonitorSDK_repositoryJars.exists()) {
-						if(OpenSPCoop2Properties.getMonitorSDK_repositoryJars.isDirectory()==false) {
-							throw new Exception("Dir ["+OpenSPCoop2Properties.getMonitorSDK_repositoryJars.getAbsolutePath()+"] not dir");
-						}
-						if(OpenSPCoop2Properties.getMonitorSDK_repositoryJars.canRead()==false) {
-							throw new Exception("Dir ["+OpenSPCoop2Properties.getMonitorSDK_repositoryJars.getAbsolutePath()+"] cannot read");
-						}
-					}
-					else {
-						// viene creata automaticamente
-					}
-				}
-			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.monitor.sdk.repositoryJars': "+e.getMessage(),e);
-				throw e;
-			}    
-		}
-
-		return OpenSPCoop2Properties.getMonitorSDK_repositoryJars;
-	}
-	
-	
-	
+		
 	/* ------------- JMINIX Console  ---------------------*/
 	
 	private static Integer portJminixConsole = null;
@@ -20897,7 +20942,7 @@ public class OpenSPCoop2Properties {
 					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository = new File(name);
 					if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.exists()) {
 						if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.isDirectory()==false) {
-							throw new Exception("Dir ["+OpenSPCoop2Properties.getMonitorSDK_repositoryJars.getAbsolutePath()+"] not dir");
+							throw new Exception("Dir ["+OpenSPCoop2Properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] not dir");
 						}
 						if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canRead()==false) {
 							throw new Exception("Dir ["+OpenSPCoop2Properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] cannot read");

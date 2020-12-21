@@ -61,6 +61,7 @@ public class SQLScriptBuilder {
 		boolean configurazioneUpgrade_config = true;
 		boolean configurazioneUpgrade_tracce = true;
 		boolean configurazioneUpgrade_statistiche = true;
+		boolean configurazioneUpgrade_monitoraggio = true;
 		if(args.length>4){
 			versionePrecedente = (String) args[4];
 			versioneAttuale = (String) args[5];
@@ -76,6 +77,7 @@ public class SQLScriptBuilder {
 						configurazioneUpgrade_config = readBooleanProperty(p, "upgrade.configurazione");
 						configurazioneUpgrade_tracce = readBooleanProperty(p, "upgrade.tracciamento");
 						configurazioneUpgrade_statistiche = readBooleanProperty(p, "upgrade.statistiche");
+						configurazioneUpgrade_monitoraggio = readBooleanProperty(p, "upgrade.monitoraggio");
 					}
 				}
 			}
@@ -98,7 +100,8 @@ public class SQLScriptBuilder {
 					configurazioneUpgrade_runtime,
 					configurazioneUpgrade_config,
 					configurazioneUpgrade_tracce,
-					configurazioneUpgrade_statistiche);
+					configurazioneUpgrade_statistiche,
+					configurazioneUpgrade_monitoraggio);
 		}
 		else{
 			throw new Exception("Modalità installazione ["+modalitaInstallazione+"] sconosciuta");
@@ -170,7 +173,8 @@ public class SQLScriptBuilder {
 			boolean configurazioneUpgrade_runtime,
 			boolean configurazioneUpgrade_config,
 			boolean configurazioneUpgrade_tracce,
-			boolean configurazioneUpgrade_statistiche) throws Exception {
+			boolean configurazioneUpgrade_statistiche,
+			boolean configurazioneUpgrade_monitoraggio) throws Exception {
 
 		
 		if(sqlSourceDir.exists()==false){
@@ -272,7 +276,8 @@ public class SQLScriptBuilder {
 						configurazioneUpgrade_runtime,
 						configurazioneUpgrade_config,
 						configurazioneUpgrade_tracce,
-						configurazioneUpgrade_statistiche);
+						configurazioneUpgrade_statistiche,
+						configurazioneUpgrade_monitoraggio);
 				if(tmp!=null) {
 					infoVersion = tmp;
 				}
@@ -294,7 +299,8 @@ public class SQLScriptBuilder {
 							configurazioneUpgrade_runtime,
 							configurazioneUpgrade_config,
 							configurazioneUpgrade_tracce,
-							configurazioneUpgrade_statistiche);
+							configurazioneUpgrade_statistiche,
+							configurazioneUpgrade_monitoraggio);
 					if(tmp!=null) {
 						infoVersion = tmp;
 					}
@@ -328,7 +334,8 @@ public class SQLScriptBuilder {
 			boolean configurazioneUpgrade_runtime,
 			boolean configurazioneUpgrade_config,
 			boolean configurazioneUpgrade_tracce,
-			boolean configurazioneUpgrade_statistiche) throws Exception {
+			boolean configurazioneUpgrade_statistiche,
+			boolean configurazioneUpgrade_monitoraggio) throws Exception {
 						
 		File sqlVersionSourceDirDatabase = new File(sqlVersionSourceDir, tipoDatabase);
 		
@@ -355,6 +362,12 @@ public class SQLScriptBuilder {
 				else if(upgradeFile.getName().contains("-informazioniStatistiche-")) {
 					// statistiche
 					if(!configurazioneUpgrade_statistiche) {
+						continue;
+					}
+				}
+				else if(upgradeFile.getName().contains("-monitoraggio-")) {
+					// monitoraggio
+					if(!configurazioneUpgrade_monitoraggio) {
 						continue;
 					}
 				}

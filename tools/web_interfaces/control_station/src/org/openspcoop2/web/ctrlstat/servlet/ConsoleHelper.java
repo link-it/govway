@@ -54,6 +54,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.constants.StatoAllarme;
+import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -99,6 +101,7 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
+import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -164,7 +167,10 @@ import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
@@ -1592,6 +1598,9 @@ public class ConsoleHelper implements IConsoleHelper {
 
 					dimensioneEntries = 5; // configurazione, tracciamento, controllo del traffico, policy e audit
 					
+					if(this.core.isConfigurazioneAllarmiEnabled())
+						dimensioneEntries++; // configurazione allarmi
+					
 					dimensioneEntries++; // gruppi
 
 					if(!isModalitaStandard()) {
@@ -1644,6 +1653,11 @@ public class ConsoleHelper implements IConsoleHelper {
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 					index++;
+					if(this.core.isConfigurazioneAllarmiEnabled()) { // configurazione allarmi
+						entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI;
+						entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST;
+						index++;	
+					}
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
 					index++;	
@@ -2396,6 +2410,15 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean checkSpazi(String value, String object) throws Exception{
 		if(value.contains(" ")) {
 			this.pd.setMessage("L'informazione fornita nel campo '"+object+"' non deve contenere spazi");
+			return false;
+		}
+		return true;
+	}
+
+	public boolean checkEmail(String email, String object) throws Exception{
+		// Email deve rispettare il pattern
+		if (!RegularExpressionEngine.isMatch(email,CostantiControlStation.EMAIL_PATTERN)) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un indirizzo e-mail valido");
 			return false;
 		}
 		return true;
@@ -7539,6 +7562,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setStatusValue(statusValue);
 		de.setStatusToolTip(statusTooltip);
 	}
+
 	public void setStatoCanale(DataElement de, String canaleNome, List<CanaleConfigurazione> canaleList) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		de.setType(DataElementType.TEXT);
 		
@@ -7580,6 +7604,84 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValue(canaleNome);
 		de.setToolTip(canaleTooltip);
 	}
+	
+	public void setStatoAllarmi(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound {
+		de.setType(DataElementType.CHECKBOX);
+		if(listaAllarmi!=null && listaAllarmi.size()>0) {
+			Integer countOk = 0;
+			Integer countError = 0;
+			Integer countWarn = 0;
+			
+			for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+				if(allarme.getEnabled() == 0) {// skip dei disabilitati
+					continue;
+				}
+				
+				StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(allarme.getStato());
+				switch (statoAllarme) {
+				case OK:
+					countOk ++;
+					break;
+				case WARNING:
+					countWarn ++;
+					break;
+				case ERROR:
+					countError ++;
+					break;
+				}
+			}
+			
+			int multi = 0;
+			
+			if(countOk > 0)
+				multi++;
+			
+			if(countError > 0)
+				multi++;
+			
+			if(countWarn > 0)
+				multi++;
+			
+			if(multi > 1) {
+				de.setType(DataElementType.MULTI_SELECT);
+			}
+			
+			if(countOk > 0 || countError > 0 || countWarn > 0) {
+				
+				if(countOk > 0) {
+					StringBuilder bf = new StringBuilder();
+					bf.append(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+					bf.append(" (").append(countOk).append(")");
+					de.addStatus(bf.toString(), CheckboxStatusType.CONFIG_ENABLE);
+				}
+				
+				if(countWarn > 0) {
+					StringBuilder bf = new StringBuilder();
+					bf.append(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+					bf.append(" (").append(countWarn).append(")");
+					de.addStatus(bf.toString(), CheckboxStatusType.CONFIG_WARNING);
+				}
+				
+				if(countError > 0) {
+					StringBuilder bf = new StringBuilder();
+					bf.append(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+					bf.append(" (").append(countError).append(")");
+					de.addStatus(bf.toString(), CheckboxStatusType.CONFIG_ERROR);
+				}
+			}
+			else {
+				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+				de.setStatusToolTip("Sull'API sono registrati "+listaAllarmi.size()+" allarmi tutti con stato disabilitato");
+			}
+			
+		}
+		else {
+			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+		}
+	}
+	
 	
 	public void setStatoOpzioniAvanzatePortaDelegataDefault(DataElement de, String options) throws Exception {
 		this._setStatoOpzioniAvanzatePortaDefault(de, options);
@@ -12815,6 +12917,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		return configurazione.sizeRegolaList();
 	}
 	
+	public int numeroPluginsRegistroArchivi()  throws Exception {
+		return this.confCore.numeroPluginsArchiviList();
+	}
+	
+	public int numeroPluginsRegistroClassi() throws Exception {
+		return this.confCore.numeroPluginsClassiList();
+	}
+	
 	public boolean isCorsAbilitato(CorsConfigurazione configurazione) {
 		boolean abilitato = false;
 		
@@ -16382,5 +16492,132 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		return true;
+	}
+	
+	public void addCustomField(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati) throws Exception {
+		
+		List<String> values = new ArrayList<String>();
+		List<String> labeles = new ArrayList<String>();
+		String note = null;
+		
+		if(	this.confCore.isConfigurazionePluginsEnabled() ) {
+			Search ricerca = new Search(true);
+			ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, tipoPlugin.toString());
+			switch (tipoPlugin) {
+			case AUTENTICAZIONE:
+			case AUTORIZZAZIONE:
+			case AUTORIZZAZIONE_CONTENUTI:
+			case INTEGRAZIONE:
+				if(ruolo!=null && !"".equals(ruolo)) {
+					ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_RUOLO_NOME, ruolo);
+				}
+				break;
+			case SERVICE_HANDLER:{
+				if(fase!=null && !"".equals(fase)) {
+					ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  PluginCostanti.FILTRO_SERVICE_HANDLER_NOME, fase);
+				}
+				break;
+			}
+			case MESSAGE_HANDLER:{
+				// message handler e ruolo
+				if(ruolo!=null && !"".equals(ruolo)) {
+					ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME, ruolo);
+				}
+				if(fase!=null && !"".equals(fase)) {
+					ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME, fase);
+				}
+				break;
+			}
+			case ALLARME:
+			case BEHAVIOUR:
+			case CONNETTORE:
+			case RATE_LIMITING:
+			case RICERCA:
+			case STATISTICA:
+			case TRANSAZIONE:
+				break;
+			}
+			
+			
+			List<Plugin> listaTmp = this.confCore.pluginsClassiList(ricerca);
+			if(listaTmp!=null && !listaTmp.isEmpty()) {
+				for (Plugin plugin : listaTmp) {
+					if(plugin.isStato()) {
+						
+						if(values.isEmpty()) {
+							values.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED);
+							labeles.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
+						}
+						
+						values.add(plugin.getTipo());
+						labeles.add(plugin.getLabel());
+						
+						if(plugin.getTipo().equals(value)) {
+							note = plugin.getDescrizione();
+							if(note!=null) {
+								note = note.trim();
+								if("".equals(note)) {
+									note = null;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if(values.size()==2) {
+				// se c'e' solo un plugin elimino la non selezione
+				values.remove(0);
+				labeles.remove(0);
+			}
+		}
+			
+		boolean customValidType = true;
+		if(	this.confCore.isConfigurazionePluginsEnabled() ) {
+		
+			if(value!=null && !"".equals(value) && !CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(value)) {
+				customValidType = values.contains(value); // backward compatibility
+			}
+			
+			String postBackElementName = this.getPostBackElementName();
+			if(nomeParametroSelezioneTipo.equals(postBackElementName) && !customValidType) {
+				value = null;
+				customValidType = true;
+			}
+		}
+		else {
+			customValidType = false;
+		}
+		
+		DataElement de = new DataElement();
+		de.setName(nomeParametro);
+		de.setValue(value);
+		if (hidden)
+			de.setType(DataElementType.HIDDEN);
+		else{
+			de.setRequired(true);
+			if(!customValidType) {
+				de.setLabel(label);
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(labeles);
+				de.setSelected(value);
+				de.setNote(note);
+				de.setPostBack(true);
+				if(values.size()==1) {
+					de.setRequired(false);
+				}
+			}
+		}
+		
+		dati.addElement(de);
+		
 	}
 }

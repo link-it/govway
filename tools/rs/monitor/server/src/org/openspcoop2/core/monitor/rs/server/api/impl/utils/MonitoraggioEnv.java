@@ -20,8 +20,20 @@
 
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.List;
+
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.Search;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.monitor.rs.server.config.DBManager;
+import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.SoggettiConfig;
+import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
@@ -49,6 +61,8 @@ public class MonitoraggioEnv {
 	public final String tipo_protocollo;
 	public final ProtocolFactoryManager protocolFactoryMgr;
 
+	public final boolean supportatoSoggettoReferenteAPI;
+	public IDSoggetto soggettoReferenteAPIDefault;
 	
 	public MonitoraggioEnv(IContext context, ProfiloEnum profilo, String nome_soggetto, Logger log) throws UtilsException, ProtocolException {
 		this.context = context;
@@ -59,12 +73,20 @@ public class MonitoraggioEnv {
 			this.profilo = profilo;
 		}
 		
-		this.tipoSoggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(Converter.toProtocollo(profilo));
+		String protocollo = Converter.toProtocollo(profilo);
+		
+		this.tipoSoggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo);
+		
+		ServerProperties serverProperties = ServerProperties.getInstance();
 				
+		this.supportatoSoggettoReferenteAPI = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+		if(!this.supportatoSoggettoReferenteAPI) {
+			this.soggettoReferenteAPIDefault = getSoggettoOperativoDefault(protocollo);
+		}
+		
 		if (nome_soggetto == null) {
-			ServerProperties serverProperties = ServerProperties.getInstance();
 			if(serverProperties.useSoggettoDefault()) {
-				nome_soggetto = serverProperties.getSoggettoDefaultIfEnabled(ProfiloUtils.toProtocollo(profilo));
+				nome_soggetto = serverProperties.getSoggettoDefaultIfEnabled(ProfiloUtils.toProtocollo(this.profilo));
 			}
 		}
 				
@@ -82,6 +104,48 @@ public class MonitoraggioEnv {
 		
 		this.tipo_protocollo = BaseHelper.tipoProtocolloFromProfilo.get(this.profilo);
 		this.protocolFactoryMgr = ProtocolFactoryManager.getInstance();
+	}
+	
+	private static HashMap<String, IDSoggetto> map = new HashMap<String, IDSoggetto>();
+	private static IDSoggetto getSoggettoOperativoDefault(String protocollo) {
+		if(map.containsKey(protocollo)) {
+			return map.get(protocollo);
+		}
+		return _getSoggettoOperativoDefault(protocollo);
+	}
+	private static synchronized IDSoggetto _getSoggettoOperativoDefault(String protocollo) {
+		
+		if(map.containsKey(protocollo)) {
+			return map.get(protocollo);
+		}
+		
+		Search s = new Search();
+		s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_SOGGETTO_DEFAULT, "true"); // imposto indicazione di volere il soggetto operativo di default
+		List<org.openspcoop2.core.registry.Soggetto> lista = null;
+		DBManager dbManager = DBManager.getInstance();
+		Connection con = null;
+		try {
+			con = dbManager.getConnectionConfig();
+			DriverRegistroServiziDB driver = new DriverRegistroServiziDB(con, LoggerProperties.getLoggerCore(), dbManager.getServiceManagerPropertiesConfig().getDatabaseType());
+			lista = driver.soggettiRegistroList(null, s);
+		}
+		catch(Exception e) {
+			LoggerProperties.getLoggerCore().error("getSoggettoOperativoDefault("+protocollo+"): "+e.getMessage(),e);
+		}
+		finally {
+			dbManager.releaseConnectionConfig(con);
+		}
+		if(lista!=null && lista.size()>0) {
+			IDSoggetto id = new IDSoggetto(lista.get(0).getTipo(), lista.get(0).getNome());
+			map.put(protocollo, id);
+			return id;
+		}
+		else {
+			return null;
+		}
 	}
 
 }

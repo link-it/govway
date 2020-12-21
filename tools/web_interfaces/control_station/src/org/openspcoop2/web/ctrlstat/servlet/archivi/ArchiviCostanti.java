@@ -148,6 +148,9 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE = "idConn";
 	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE = "nomeConn";
 			
+	public final static String PARAMETRO_ARCHIVI_JAR_NOME_ARCHVIO = "nomeJar";
+	public final static String PARAMETRO_ARCHIVI_JAR_NOME_PLUGIN = "nomePlugin";
+	
 	public final static String PARAMETRO_ARCHIVI_IMPORTER_MODALITA = "modalita";
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE = "theFile";
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE_PATH = "filePath";
@@ -336,6 +339,8 @@ public class ArchiviCostanti {
 	
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_CERTIFICATO_SSL = "sslCert";
 		
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ARCHIVIO_JAR = "jar";
+	
 	public final static String[] PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP = { ArchiveType.ALL.toString(), ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.toString(), ArchiveType.CONFIGURAZIONE.toString() };
 	public final static String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO , ConfigurazioneCostanti.LABEL_CONFIGURAZIONE };
 			//"Dati applicativi", "Parametri di configurazione" };

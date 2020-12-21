@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" 
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+
+<ui:composition template="/templates/defaultTemplate.xhtml">
+	<ui:define name="navbar">
+		<ul>
+			<li><h:outputText value="Monitoraggio Allarmi" styleClass="ultimo-path"/></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<rich:panel id="statusPnl" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme==false}">
+			<f:facet name="header">	
+				<h:outputText value="Stato Allarmi" />
+			</f:facet>
+			<h:panelGrid columns="7">
+				<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
+					<h:outputText value="Ok:" styleClass="outputFieldLabel"/>
+					<h:panelGrid columns="2">
+						<h:outputText value="#{allarmiBean.totOk}" />
+						<h:graphicImage value="/images/tema_link/verified_green.png"/>
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+				
+				<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
+					<h:outputText value="Warn:" styleClass="outputFieldLabel" />
+					<h:panelGrid columns="2">
+						<h:outputText value="#{allarmiBean.totWarn}" />
+						<h:graphicImage value="/images/tema_link/alert_yellow.png" />
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+				
+				<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
+					<h:outputText value="Error:" styleClass="outputFieldLabel" />
+					<h:panelGrid columns="2">
+						<h:outputText value="#{allarmiBean.totError}" />
+						<h:graphicImage value="/images/tema_link/alert_red.png"/>
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+				
+				<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
+					<h:outputText value="Disabilitati:" styleClass="outputFieldLabel" />
+					<h:panelGrid columns="2">
+						<h:outputText value="#{allarmiBean.totDisabilitati}" />
+						<h:graphicImage value="/images/tema_link/circle_light_grey.png"/>
+					</h:panelGrid>
+				</h:panelGrid>
+			</h:panelGrid>
+		</rich:panel>
+		<rich:panel id="statusPnlWithAcknoledged" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme}">
+			<f:facet name="header">	
+				<h:outputText value="Stato Allarmi" />
+			</f:facet>
+			<h:panelGrid columns="7">
+				<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
+					<h:outputText value="Ok:" styleClass="outputFieldLabel"/>
+					<h:panelGrid columns="2">
+						<h:outputText value="#{allarmiBean.totOk}" />
+						<h:graphicImage value="/images/tema_link/verified_green.png"/>
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+				
+				<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
+					<h:outputText value="Warn:" styleClass="outputFieldLabel" />
+					<h:panelGrid columns="5">
+						<h:outputText value="#{allarmiBean.totWarnNoAck}" />
+						<h:graphicImage value="/images/tema_link/alert_yellow.png" />
+						<h:outputText value="&#160;&#160;" />
+						<h:outputText value="#{allarmiBean.totWarnAck}" />
+						<h:graphicImage value="/images/tema_link/verified_yellow.png" />
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+				
+				<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
+					<h:outputText value="Error:" styleClass="outputFieldLabel" />
+					<h:panelGrid columns="5">
+						<h:outputText value="#{allarmiBean.totErrorNoAck}" />
+						<h:graphicImage value="/images/tema_link/alert_red.png"/>
+						<h:outputText value="&#160;&#160;" />
+						<h:outputText value="#{allarmiBean.totErrorAck}" />
+						<h:graphicImage value="/images/tema_link/verified_red.png"/>
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+				
+				<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
+					<h:outputText value="Disabilitati:" styleClass="outputFieldLabel" />
+					<h:panelGrid columns="2">
+						<h:outputText value="#{allarmiBean.totDisabilitati}" />
+						<h:graphicImage value="/images/tema_link/circle_light_grey.png"/>
+					</h:panelGrid>
+				</h:panelGrid>
+				
+				
+			</h:panelGrid>
+		</rich:panel>
+		<div class="spacerDettaglio"></div>
+		<rich:simpleTogglePanel id="panelFiltri1" opened="false" label="Modifica Filtri di Ricerca" switchType="client">
+			<f:facet name="openMarker">
+				<h:graphicImage value="/images/tema_link/down_white.png"/>
+			</f:facet>
+			
+			<f:facet name="closeMarker">
+				<h:graphicImage value="/images/tema_link/up_white.png"/>
+			</f:facet>
+			<div class="form-container noborder">
+				<h:form>
+					<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
+						<link:prop label="Nome">
+						
+							<h:inputText id="nomeAllarmeInput" value="#{searchFormAllarmi.nomeAllarme}" styleClass="inputLinkLong"/>
+							<rich:suggestionbox 
+										id="nomeAllarmeSuggestion"
+										width="412" 
+										for="nomeAllarmeInput" 
+										suggestionAction="#{allarmiBean.nomeAllarmeAutoComplete}"
+										var="nomeAllarme"
+										ajaxSingle="true"
+										nothingLabel="--"
+										param="nomeAllarmeInput">
+								<h:column>
+									<h:outputText value="#{nomeAllarme}" rendered="true" />
+								</h:column>
+								<a4j:support status="mainStatus" event="onselect" actionListener="#{searchFormAllarmi.nomeAllarmeSelected}"  />
+							</rich:suggestionbox>
+						</link:prop>
+		
+						<link:prop label="Stato" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme==false}">
+							<rich:comboBox enableManualInput="false"
+								suggestionValues="#{allarmiBean.statusFilterValues}"
+								value="#{searchFormAllarmi.statoSelezionato}" defaultLabel="Non Disabilitato"
+								width="412">
+								<a4j:support event="onselect" />
+							</rich:comboBox>
+						</link:prop>
+						<link:prop label="Stato" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme}">
+							<rich:comboBox enableManualInput="false"
+								suggestionValues="#{allarmiBean.statusFilterValuesWithAck}"
+								value="#{searchFormAllarmi.statoSelezionato}" defaultLabel="Non Disabilitato"
+								width="412">
+								<a4j:support event="onselect" />
+							</rich:comboBox>
+						</link:prop>
+						
+						<a4j:outputPanel id="tmpPanelPnl" layout="block" rendered="#{false}">
+							<c:if test="#{applicationBean.user}">
+								<c:if test="#{!applicationBean.amministratore}">
+										<link:prop label="Soggetto Locale" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
+											<rich:comboBox width="412" id="sogLocaleSuggestion" 
+													value="#{searchFormAllarmi.tipoNomeSoggettoLocale}" 
+													suggestionValues="#{loginBean.loggedUser.tipiNomiSoggettiAssociati}"
+													enableManualInput="false">
+												<f:selectItem itemValue="--"/>
+												<a4j:support status="mainStatus" event="onselect" actionListener="#{searchFormAllarmi.soggettoLocaleSelected}" reRender="searchPnl"/>
+											</rich:comboBox>
+										</link:prop>
+									</c:if>
+							</c:if>
+							<c:if test="#{applicationBean.amministratore}">
+									<link:prop label="Soggetto Locale">
+											<h:inputText id="sogLocaleInput" value="#{searchFormAllarmi.tipoNomeSoggettoLocale}" styleClass="inputLinkLong"/>
+											<rich:suggestionbox 
+														id="sogLocaleSuggestion"
+														width="412" 
+														for="sogLocaleInput" 
+														suggestionAction="#{allarmiBean.soggettiAutoComplete}"
+														var="soggetto"
+														ajaxSingle="true"
+														nothingLabel="--"
+														param="sogLocaleInput">
+												<h:column>
+													<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+													<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+												</h:column>
+												<a4j:support status="mainStatus" event="onselect" actionListener="#{searchFormAllarmi.soggettoLocaleSelected}" reRender="searchPnl"/>
+											</rich:suggestionbox>
+										
+									</link:prop>
+							</c:if>
+	
+							<link:prop label="Servizio">
+								<rich:comboBox id="servizioCombo" value="#{searchFormAllarmi.nomeServizio}"  
+									defaultLabel="Selezione Servizio" directInputSuggestions="true" listWidth="#{allarmiBean.serviziSelectItemsWidth}"
+									width="412" enableManualInput="false">
+									<f:selectItem itemValue="--"/>
+									<f:selectItems value="#{allarmiBean.servizi}"  />
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{searchFormAllarmi.servizioSelected}" reRender="searchPnl,azComboCtr"/>
+								</rich:comboBox>
+								<rich:toolTip rendered="#{not empty searchFormAllarmi.nomeServizio}" 
+									direction="top-right" for="servizioCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{searchFormAllarmi.nomeServizio}"/>
+							</link:prop>
+	
+							<a4j:outputPanel layout="block" id="azComboCtr">
+								<link:prop label="Azione" rendered="#{not empty searchFormAllarmi.nomeServizio}">
+									<rich:comboBox id="azCombo" value="#{searchFormAllarmi.nomeAzione}" defaultLabel="Selezione Azione" directInputSuggestions="true" width="412" enableManualInput="false" >
+										<f:selectItem itemValue="--"/>
+										<f:selectItems value="#{allarmiBean.azioni}"/>
+										<a4j:support status="mainStatus" event="onselect" actionListener="#{searchFormAllarmi.azioneSelected}" reRender="searchPnl"/>
+									</rich:comboBox>
+								</link:prop>	
+							</a4j:outputPanel>			
+
+						</a4j:outputPanel>	
+					</a4j:outputPanel>	
+					
+					<div class="buttonrow">
+					<a4j:commandButton styleClass="icon-refresh" value="Filtra"
+					reRender="statusPnl,allarmiTbl" />
+				
+					<a4j:commandButton id="svuota" value="Ripulisci"
+						styleClass="icon-refresh" process="genSearchPnl"
+						reRender="searchPnl,statusPnl,allarmiTbl" rendered="#{true}"
+						action="#{searchFormAllarmi.ripulisci}"
+						oncomplete="completa(event)" />
+					</div>			
+				</h:form>		
+			</div>
+		</rich:simpleTogglePanel>		
+		<div class="spacer"></div>
+		<a4j:outputPanel id="allarmiTbl" layout="block" styleClass="panelLista">
+			<h:form>
+				<link:dataTable value="#{allarmiDM}"
+					id="tableAllarmi"
+					headerText="Lista Allarmi"
+					enableDelete="false"
+					reRenderIds="allarmiTbl"
+					useCount="#{searchFormAllarmi.useCount}">
+					
+					<rich:column id="statusColumn" align="center">
+						<f:facet name="header">
+							<h:outputText value="Stato" id="outStato"/>
+						</f:facet>
+						<h:graphicImage id="alarmDisabled" value="/images/tema_link/circle_light_grey.png" rendered="#{item.enabled==0}">
+							<rich:toolTip for="alarmDisabled" mode="client" value="Disabilitato"/>
+						</h:graphicImage>
+						<a4j:outputPanel rendered="#{ 
+								(item.enabled>0) 
+								and 
+								(
+									(allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme)
+									or
+									(item.inviaEmailAlert==1 and item.mailAckMode==1) 
+									or 
+									(item.invocaScriptAlert==1 and item.scriptAckMode==1)
+								) 
+							}">
+							<h:graphicImage value="/images/tema_link/verified_green.png" rendered="#{item.stato==0}" id="imgStatoOk">
+								<rich:toolTip mode="client" for="imgStatoOk">
+									<h:outputText value="Ok" />
+								</rich:toolTip>
+							</h:graphicImage>
+							<rich:toolTip mode="client" for="ackLinkT">
+								<h:outputText value="Click to Acknowledge." />
+							</rich:toolTip>
+							<rich:toolTip mode="client" for="ackLinkF">
+								<h:outputText value="Click to Un-Acknowledge." />
+							</rich:toolTip>
+							<a4j:commandLink id="ackLinkT" styleClass="link-plain"
+								rendered="#{item.acknowledged==0 and item.stato>0}"
+								 reRender="allarmiTbl,statusPnlWithAcknoledged">
+								<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
+								<a4j:actionparam name="ack" value="true" assignTo="#{allarmiBean.ack}" actionListener="#{allarmiBean.toggleAck}"/>
+								<h:graphicImage value="/images/tema_link/alert_red.png" rendered="#{item.stato==2}"/>
+								<h:graphicImage value="/images/tema_link/alert_yellow.png" rendered="#{item.stato==1}"/>
+							</a4j:commandLink>					
+							<a4j:commandLink id="ackLinkF" styleClass="link-plain"
+								rendered="#{(item.acknowledged==1) and (item.stato>0)}"
+								 reRender="allarmiTbl,statusPnlWithAcknoledged">
+								<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
+								<a4j:actionparam name="ack" value="false" assignTo="#{allarmiBean.ack}" actionListener="#{allarmiBean.toggleAck}"/>
+								<h:graphicImage value="/images/tema_link/verified_red.png" rendered="#{item.stato==2}"/>
+								<h:graphicImage value="/images/tema_link/verified_yellow.png" rendered="#{item.stato==1}"/>
+							</a4j:commandLink>
+						</a4j:outputPanel> 
+						<a4j:outputPanel rendered="#{ 
+								(item.enabled>0) 
+								and 
+								not(
+									(allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme)
+									or
+									(item.inviaEmailAlert==1 and item.mailAckMode==1) 
+									or 
+									(item.invocaScriptAlert==1 and item.scriptAckMode==1)
+								) 
+							}">
+							<h:graphicImage value="/images/tema_link/verified_green.png" rendered="#{item.stato==0}" title="Ok"/>
+							<h:graphicImage value="/images/tema_link/alert_red.png" rendered="#{item.stato==2}" title="Error"/>
+							<h:graphicImage value="/images/tema_link/alert_yellow.png" rendered="#{item.stato==1}" title="Warn"/>
+						</a4j:outputPanel> 
+					</rich:column>
+					<rich:column id="colTipo" style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText id="outTipo" value="Tipo" />
+						</f:facet>
+						<h:outputText value="#{item.tipo}" id="outTipo2"/>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="Nome" id="outNome" />
+						</f:facet>
+						<a4j:htmlCommandLink id="edit-iconLink" styleClass="icon-edit" value="#{item.nomeAbbr}" action="#{allarmiBean.dettaglioAllarme}">
+							<rich:toolTip id="toolLink" for="edit-iconLink" mode="client" value="#{item.nome}, #{item.descrizione}" />
+							<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
+						</a4j:htmlCommandLink>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="Dettaglio" id="outDettaglio" />
+						</f:facet>
+						<h:outputText value="#{item.dettaglioStatoAbbr}" id="allDettStato"/>
+						<rich:toolTip for="allDettStato">
+							<h:outputText value="#{item.dettaglioStatoHtmlEscaped}" escape="false" />
+						</rich:toolTip>
+					</rich:column>
+				</link:dataTable>
+			</h:form>
+		</a4j:outputPanel>
+	</ui:define>
+</ui:composition>
+
+</html>

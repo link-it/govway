@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/monitoraggio/2020-12-03-patch.sql
