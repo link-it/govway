@@ -471,7 +471,7 @@ Esempi:
 			</else>
 		</if>
 	</target>
-f
+
 	<target name="-patch-lib-remove">
 		<basename property="patchLibRemoveJar" file="${patchLibRemove}"/>
 		<echo message="remove '${patchLibRemoveJar}'"/>
