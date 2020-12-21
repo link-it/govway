@@ -29,7 +29,7 @@
 				  non consente la creazione degli indici 'INDEX_STAT_<TIPOSTAT>_FULL' e 'INDEX_STAT_<TIPOSTAT>'. 
 				  Errore: ERROR 1070 (42000): Too many key parts specified; max 16 parts allowed
 		- hsql: consente qualsiasi indice
-		- sqlserver: consente qualsiasi indice (verificato su sqlserver 2017)
+		- sqlserver: consente qualsiasi indice (verificato su sqlserver 2019)
 	-->	
 
 
