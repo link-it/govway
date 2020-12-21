@@ -438,6 +438,7 @@
 			<param name="src_stat_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_stat" />
 			<param name="src_transazioni_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_transazioni" />
 			<param name="src_eventi_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_eventi" />
+			<param name="src_allarmi_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_allarmi" />
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>
