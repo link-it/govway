@@ -1,3 +1,15 @@
+2020-12-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1123
+	Sono stati risolti i seguenti problemi:
+	- In una API, creata tramite una interfaccia OpenAPI, la descrizione viene troncata ai 255 caratteri. 
+	  Provano a modificare i dati dell'API (nome, tag, descrizione stessa, ...) veniva visualizzato il messaggio di errore: 'La descrizione supera i 255 caratteri ammessi'.
+	  Il problema derivava dall'aggiunta dei caratteri '\r' dove erano presenti i caratteri '\n' nella descrizione.
+	  La risoluzione è stata effettuata per tutti gli elementi della console che vengono gestiti con lo stesso tipo di elemento html: 'text-area'.
+	- In presenza di una policy di RateLimiting con raggruppamento per risorsa/azione, se veniva abilitato un filtro sulla policy, l'impostazione del raggruppamento spariva.
+	- Nella sezione 'Configurazione - Cache' (disponibile in modalità avanzata) sono adesso configurabili tutte le cache del prodotto (anche registry e controllo del traffico).
+
 2020-12-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

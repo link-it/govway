@@ -811,6 +811,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 
 		if(paramAsString != null) {
+			
+			// Fix: textarea un ritorno a capo viene codificato con \r\n, anche se il valore fornito iniziale possedeva solo lo \n.
+			if(paramAsString.contains("\r\n")) {
+				while(paramAsString.contains("\r\n")) {
+					paramAsString = paramAsString.replace("\r\n", "\n");
+				}
+			}
+			
 			Constructor<T> constructor = type.getConstructor(String.class);
 			if(constructor != null)
 				toReturn = constructor.newInstance(paramAsString);

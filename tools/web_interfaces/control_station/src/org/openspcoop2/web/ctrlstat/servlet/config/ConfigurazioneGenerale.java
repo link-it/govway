@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.CanaleConfigurazione;
@@ -79,6 +80,7 @@ import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
+import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -156,6 +158,12 @@ public final class ConfigurazioneGenerale extends Action {
 			boolean isAllHiddenConfigurazione = ServletUtils.isCheckBoxEnabled(configurazioneCachesTmp);
 			boolean isAllHiddenCache = !isAllHiddenConfigurazione;
 			
+			String statocache_registry = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY);
+			String dimensionecache_registry = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY);
+			String algoritmocache_registry = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY);
+			String idlecache_registry = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY);
+			String lifecache_registry = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY);
+			
 			String statocache_config = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG);
 			String dimensionecache_config = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG);
 			String algoritmocache_config = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG);
@@ -187,6 +195,12 @@ public final class ConfigurazioneGenerale extends Action {
 			String lifecache_keystore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_KEYSTORE);
 			String crl_lifecache_keystore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE_KEYSTORE);
 
+			String statocache_controllo_traffico = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONTROLLO_TRAFFICO);
+			String dimensionecache_controllo_traffico = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONTROLLO_TRAFFICO);
+			String algoritmocache_controllo_traffico = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONTROLLO_TRAFFICO);
+			String idlecache_controllo_traffico = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONTROLLO_TRAFFICO);
+			String lifecache_controllo_traffico = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONTROLLO_TRAFFICO);
+			
 			String statocache_risposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE);
 			String dimensionecache_risposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE);
 			String algoritmocache_risposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE);
@@ -390,6 +404,14 @@ public final class ConfigurazioneGenerale extends Action {
 							canaliEnabled, numeroCanali, numeroNodi, canaliNome, canaliDescrizione, canaleList, canaliDefault,
 							numeroArchiviPlugins, numeroClassiPlugins);
 
+					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY,statocache_registry,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY,dimensionecache_registry,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY,algoritmocache_registry,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY,idlecache_registry,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY,lifecache_registry,
+							isAllHiddenCache);
+					
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG,dimensionecache_config,
@@ -433,6 +455,16 @@ public final class ConfigurazioneGenerale extends Action {
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE_KEYSTORE,crl_lifecache_keystore,
 							isAllHiddenCache);
 
+					if(!isAllHiddenCache) {
+						confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONTROLLO_TRAFFICO,statocache_controllo_traffico,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONTROLLO_TRAFFICO,dimensionecache_controllo_traffico,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONTROLLO_TRAFFICO,algoritmocache_controllo_traffico,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONTROLLO_TRAFFICO,idlecache_controllo_traffico,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONTROLLO_TRAFFICO,lifecache_controllo_traffico,
+								isAllHiddenCache);
+					}
+					
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE,statocache_risposte,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE,dimensionecache_risposte,
@@ -581,6 +613,20 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.setValidazioneContenutiApplicativi(vca);
 				}
 
+				if(newConfigurazione.getAccessoRegistro()==null){
+					newConfigurazione.setAccessoRegistro(new AccessoRegistro());
+				}
+				if(statocache_registry.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)){
+					newConfigurazione.getAccessoRegistro().setCache(new Cache());
+					newConfigurazione.getAccessoRegistro().getCache().setDimensione(dimensionecache_registry);
+					newConfigurazione.getAccessoRegistro().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_registry));
+					newConfigurazione.getAccessoRegistro().getCache().setItemIdleTime(idlecache_registry);
+					newConfigurazione.getAccessoRegistro().getCache().setItemLifeSecond(confHelper.convertLifeCacheValue(lifecache_registry));
+				}
+				else{
+					newConfigurazione.getAccessoRegistro().setCache(null);
+				}
+				
 				if(newConfigurazione.getAccessoConfigurazione()==null){
 					newConfigurazione.setAccessoConfigurazione(new AccessoConfigurazione());
 				}
@@ -764,6 +810,24 @@ public final class ConfigurazioneGenerale extends Action {
 
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
 
+				if(!isAllHiddenCache) {
+					org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
+					if(statocache_controllo_traffico.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)){
+						configurazioneControlloTraffico.setCache(new org.openspcoop2.core.controllo_traffico.Cache());
+						configurazioneControlloTraffico.getCache().setCache(true);
+						configurazioneControlloTraffico.getCache().setSize(Long.valueOf(dimensionecache_controllo_traffico));
+						configurazioneControlloTraffico.getCache().setAlgorithm(CacheAlgorithm.toEnumConstant(algoritmocache_controllo_traffico));
+						if(idlecache_controllo_traffico!=null && !"".equals(idlecache_controllo_traffico)) {
+							configurazioneControlloTraffico.getCache().setIdleTime(Long.valueOf(idlecache_controllo_traffico));
+						}
+						configurazioneControlloTraffico.getCache().setLifeTime(Long.valueOf(confHelper.convertLifeCacheValue(lifecache_controllo_traffico)));
+					}
+					else{
+						configurazioneControlloTraffico.setCache(null);
+					}
+					confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneControlloTraffico);
+				}
+				
 				if(extendedBeanList!=null && extendedBeanList.size()>0){
 					for (ExtendedInfo ei : extendedBeanList) {
 						if(ei.extended && !ei.extendedToNewWindow){
@@ -801,6 +865,14 @@ public final class ConfigurazioneGenerale extends Action {
 						canaliEnabled, numeroCanali, numeroNodi, canaliNome, canaliDescrizione, canaleList, canaliDefault,
 						numeroArchiviPlugins, numeroClassiPlugins);
 
+				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY,statocache_registry,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY,dimensionecache_registry,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY,algoritmocache_registry,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY,idlecache_registry,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY,lifecache_registry,
+						isAllHiddenCache);
+				
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG,dimensionecache_config,
@@ -844,6 +916,16 @@ public final class ConfigurazioneGenerale extends Action {
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE_KEYSTORE,crl_lifecache_keystore,
 						isAllHiddenCache);
 
+				if(!isAllHiddenCache) {
+					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONTROLLO_TRAFFICO,statocache_controllo_traffico,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONTROLLO_TRAFFICO,dimensionecache_controllo_traffico,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONTROLLO_TRAFFICO,algoritmocache_controllo_traffico,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONTROLLO_TRAFFICO,idlecache_controllo_traffico,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONTROLLO_TRAFFICO,lifecache_controllo_traffico,
+							isAllHiddenCache);
+				}
+				
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE,statocache_risposte,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE,dimensionecache_risposte,
@@ -1065,6 +1147,18 @@ public final class ConfigurazioneGenerale extends Action {
 //					}
 					numeroRegoleProxyPass = configurazione.getUrlInvocazione().sizeRegolaList();
 				}
+				if(configurazione.getAccessoRegistro()!=null && configurazione.getAccessoRegistro().getCache()!=null){
+					statocache_registry = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					dimensionecache_registry = configurazione.getAccessoRegistro().getCache().getDimensione();
+					if(configurazione.getAccessoRegistro().getCache().getAlgoritmo()!=null){
+						algoritmocache_registry = configurazione.getAccessoRegistro().getCache().getAlgoritmo().getValue();
+					}
+					idlecache_registry = configurazione.getAccessoRegistro().getCache().getItemIdleTime();
+					lifecache_registry = configurazione.getAccessoRegistro().getCache().getItemLifeSecond();
+				}
+				else{
+					statocache_registry = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+				}
 				if(configurazione.getAccessoConfigurazione()!=null && configurazione.getAccessoConfigurazione().getCache()!=null){
 					statocache_config = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
 					dimensionecache_config = configurazione.getAccessoConfigurazione().getCache().getDimensione();
@@ -1125,6 +1219,23 @@ public final class ConfigurazioneGenerale extends Action {
 				}
 				else{
 					statocache_keystore = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+				}
+				if(!isAllHiddenCache) {
+					org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
+					if(configurazioneControlloTraffico.getCache()!=null && configurazioneControlloTraffico.getCache().isCache()){
+						statocache_controllo_traffico = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						dimensionecache_controllo_traffico = configurazioneControlloTraffico.getCache().getSize()+"";
+						if(configurazioneControlloTraffico.getCache().getAlgorithm()!=null){
+							algoritmocache_controllo_traffico = configurazioneControlloTraffico.getCache().getAlgorithm().getValue();
+						}
+						if(configurazioneControlloTraffico.getCache().getIdleTime()!=null) {
+							idlecache_controllo_traffico = configurazioneControlloTraffico.getCache().getIdleTime()+"";
+						}
+						lifecache_controllo_traffico = configurazioneControlloTraffico.getCache().getLifeTime()+"";
+					}
+					else{
+						statocache_controllo_traffico = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
 				}
 				if(configurazione.getResponseCaching()!=null && configurazione.getResponseCaching().getCache()!=null) {
 					statocache_risposte = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
@@ -1341,6 +1452,14 @@ public final class ConfigurazioneGenerale extends Action {
 					canaliEnabled, numeroCanali, numeroNodi, canaliNome, canaliDescrizione, canaleList, canaliDefault,
 					numeroArchiviPlugins, numeroClassiPlugins);
 
+			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY,statocache_registry,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY,dimensionecache_registry,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY,algoritmocache_registry,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY,idlecache_registry,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY,lifecache_registry,
+					isAllHiddenCache);
+			
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG,dimensionecache_config,
@@ -1384,6 +1503,16 @@ public final class ConfigurazioneGenerale extends Action {
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE_KEYSTORE,crl_lifecache_keystore,
 					isAllHiddenCache);
 
+			if(!isAllHiddenCache) {
+				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONTROLLO_TRAFFICO,statocache_controllo_traffico,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONTROLLO_TRAFFICO,dimensionecache_controllo_traffico,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONTROLLO_TRAFFICO,algoritmocache_controllo_traffico,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONTROLLO_TRAFFICO,idlecache_controllo_traffico,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONTROLLO_TRAFFICO,lifecache_controllo_traffico,
+						isAllHiddenCache);
+			}
+			
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE,statocache_risposte,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE,dimensionecache_risposte,

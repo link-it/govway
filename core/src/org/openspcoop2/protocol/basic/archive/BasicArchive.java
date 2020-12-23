@@ -377,11 +377,15 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	         
 	         if(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) {
 	        	 if(api.getDescription()!=null) {
-	        		 if(api.getDescription().length()<=255) {
-	        			 accordoServizioParteComune.setDescrizione(api.getDescription());
+	        		 String descr = api.getDescription();
+	        		 while(descr.contains("\r")) {
+	        			 descr = descr.replace("\r", "");
+	        		 }
+	        		 if(descr.length()<=255) {
+	        			 accordoServizioParteComune.setDescrizione(descr);
 	        		 }
 	        		 else {
-	        			 accordoServizioParteComune.setDescrizione(api.getDescription().substring(0, 250)+ " ...");
+	        			 accordoServizioParteComune.setDescrizione(descr.substring(0, 250)+ " ...");
 	        		 }
 	        	 }
 	         }

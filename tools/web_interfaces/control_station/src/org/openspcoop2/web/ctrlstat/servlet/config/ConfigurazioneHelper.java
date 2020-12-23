@@ -2312,6 +2312,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 
+			String configurazioneCachesTmp = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CACHES);
+			boolean isAllHiddenConfigurazione = ServletUtils.isCheckBoxEnabled(configurazioneCachesTmp);
+			boolean isAllHiddenCache = !isAllHiddenConfigurazione;
+			
+			if(this.registryCheckDataCache()==false){
+				return false;
+			}
+			
 			if(this.configurazioneCheckDataCache()==false){
 				return false;
 			}
@@ -2330,6 +2338,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(this.datiKeystoreCheckDataCache()==false){
 				return false;
+			}
+			
+			if(!isAllHiddenCache) {
+				if(this.controlloTrafficoCheckDataCache()==false){
+					return false;
+				}
 			}
 			
 			if(this.datiResponseCachingCheckDataCache()==false){
@@ -2453,6 +2467,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return true;
 	}
 	
+	public boolean registryCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY);
+			String dimensionecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY);
+			String algoritmocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY);
+			String idlecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY);
+			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY);
+
+			return checkDatiCache(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
 	public boolean configurazioneCheckDataCache() throws Exception {
 
 		try{
@@ -2547,6 +2579,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean controlloTrafficoCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONTROLLO_TRAFFICO);
+			String dimensionecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONTROLLO_TRAFFICO);
+			String algoritmocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONTROLLO_TRAFFICO);
+			String idlecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONTROLLO_TRAFFICO);
+			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONTROLLO_TRAFFICO);
+
+			return checkDatiCache(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -14653,8 +14703,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean showServizio = false;
 			
 			boolean showAzione = policy.getFiltro()==null || 
-					policy.getFiltro().isEnabled()==false || 
-					policy.getFiltro().getAzione()==null;
+					policy.getFiltro().isEnabled()==false ||
+					policy.getFiltro().getAzione()==null ||
+					"".equals(policy.getFiltro().getAzione()) ||
+					policy.getFiltro().getAzione().contains(",");
 			
 			boolean showSAErogatore = false;
 			
@@ -14705,21 +14757,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 				
 			// Azione
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE);
+			if(serviceBinding!=null) {
+				de.setLabel(getLabelAzione(serviceBinding));
+			}
+			else {
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE);
+			}
 			if( showAzione ){
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE);
-				if(serviceBinding!=null) {
-					de.setLabel(getLabelAzione(serviceBinding));
-				}
-				else {
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE);
-				}
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(policy.getGroupBy().isAzione());
-				de.setValue(policy.getGroupBy().isAzione()+"");
-				dati.addElement(de);
 			}
-				
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setValue(policy.getGroupBy().isAzione()+"");
+			dati.addElement(de);
+			
+			
 			// Servizio Applicativo Erogatore
 			if(configurazione) {
 				if( showSAErogatore	){
