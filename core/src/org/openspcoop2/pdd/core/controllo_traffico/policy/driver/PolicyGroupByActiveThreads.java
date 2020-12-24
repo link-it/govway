@@ -158,7 +158,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile) throws PolicyException,PolicyNotFoundException{
+	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		//System.out.println("<"+idTransazione+">registerStopRequest ...");
 		synchronized (this.semaphore) {			
 			//System.out.println("<"+idTransazione+">registerStopRequest entro");
@@ -186,7 +186,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 						throw new PolicyException(e.getMessage(),e);
 					}
 					datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, dati,
-							esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo);
+							esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, isViolata);
 					//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ok");
 				}
 			}

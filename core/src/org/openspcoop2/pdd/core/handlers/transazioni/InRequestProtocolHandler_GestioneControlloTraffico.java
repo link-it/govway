@@ -230,6 +230,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					List<String> pddContext_uniqueIdsPolicy = new ArrayList<String>();
 					List<IDUnivocoGroupByPolicy> pddContext_idUnivociGroupBy = new ArrayList<IDUnivocoGroupByPolicy>();
 					List<Boolean> pddContext_policyApplicabile = new ArrayList<Boolean>();
+					List<Boolean> pddContext_policyViolata = new ArrayList<Boolean>();
 					
 					DatiTempiRisposta datiTempiRisposta = null;
 					
@@ -356,7 +357,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 														activePolicy,
 														idUnivocoGroupBy, context.getPddContext(), 
 														msgDiag, tr, datiTransazione, pddCongestionata, datiTempiRisposta,
-														pddContext_policyApplicabile,
+														pddContext_policyApplicabile, pddContext_policyViolata,
 														context.getStato());
 												
 												// Gestisco Risultato Verifica
@@ -507,6 +508,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_GROUP_BY_CONDITION, pddContext_idUnivociGroupBy);
 							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY,pddContext_uniqueIdsPolicy);
 							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_APPLICABILE,pddContext_policyApplicabile);
+							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_VIOLATA,pddContext_policyViolata);
 						}
 					}
 

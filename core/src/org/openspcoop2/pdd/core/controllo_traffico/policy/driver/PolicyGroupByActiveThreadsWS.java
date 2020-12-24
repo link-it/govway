@@ -105,13 +105,14 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 
 	@Override
 	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati,
-			boolean isApplicabile) throws PolicyException, PolicyNotFoundException {
+			boolean isApplicabile, boolean isViolata) throws PolicyException, PolicyNotFoundException {
 		try{
 			Map<String, String> p = new HashMap<String, String>();
 			p.put(CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			p.put(CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			p.put(CostantiServizioControlloTraffico.PARAMETER_MISURAZIONI_TRANSAZIONE, MisurazioniTransazione.serialize(dati));
 			p.put(CostantiServizioControlloTraffico.PARAMETER_APPLICABILE, isApplicabile+"");
+			p.put(CostantiServizioControlloTraffico.PARAMETER_VIOLATA, isViolata+"");
 			String url = TransportUtils.buildLocationWithURLBasedParameter(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_STOP_REQUEST);
 			
 			this.log.debug("[PolicyGroupByActiveThreadsWS.registerStopRequest] invoke ("+url+") ...");

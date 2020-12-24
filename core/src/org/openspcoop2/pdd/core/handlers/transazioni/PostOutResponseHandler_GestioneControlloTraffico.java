@@ -80,15 +80,20 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 					List<String> uniqueIdsPolicies = (List<String>) objectId;
 					if(uniqueIdsPolicies!=null && uniqueIdsPolicies.size()>0){
 						Object object = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_GROUP_BY_CONDITION);
-						Object objectIncrementCounter = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_APPLICABILE);
+						Object objectIncrementCounter_policyApplicabile = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_APPLICABILE);
+						Object objectIncrementCounter_policyViolata = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_VIOLATA);
 						if(object!=null && (object instanceof List<?>) &&
-								objectIncrementCounter!=null && (objectIncrementCounter instanceof List<?>)){
+								objectIncrementCounter_policyApplicabile!=null && (objectIncrementCounter_policyApplicabile instanceof List<?>) &&
+								objectIncrementCounter_policyViolata!=null && (objectIncrementCounter_policyViolata instanceof List<?>)){
 							@SuppressWarnings("unchecked")
 							List<IDUnivocoGroupByPolicy> groupByPolicies = (List<IDUnivocoGroupByPolicy>) object; 
 							@SuppressWarnings("unchecked")
-							List<Boolean> incrementCounter = (List<Boolean>) objectIncrementCounter; 
+							List<Boolean> incrementCounter_policyApplicabile = (List<Boolean>) objectIncrementCounter_policyApplicabile; 
+							@SuppressWarnings("unchecked")
+							List<Boolean> incrementCounter_policyViolata = (List<Boolean>) objectIncrementCounter_policyViolata; 
 							if(groupByPolicies!=null && groupByPolicies.size()==uniqueIdsPolicies.size() &&
-									incrementCounter!=null && incrementCounter.size()==uniqueIdsPolicies.size()){
+									incrementCounter_policyApplicabile!=null && incrementCounter_policyApplicabile.size()==uniqueIdsPolicies.size() &&
+									incrementCounter_policyViolata!=null && incrementCounter_policyViolata.size()==uniqueIdsPolicies.size()){
 								
 								MisurazioniTransazione misurazioniTransazione = new MisurazioniTransazione();
 								misurazioniTransazione.setTipoPdD(context.getTipoPorta());
@@ -110,7 +115,9 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 									try{
 										uniqueIdMap = uniqueIdsPolicies.get(i);
 										GestorePolicyAttive.getInstance().getActiveThreadsPolicy(uniqueIdMap).
-											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i), misurazioniTransazione, incrementCounter.get(i));
+											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i), misurazioniTransazione, 
+													incrementCounter_policyApplicabile.get(i),
+													incrementCounter_policyViolata.get(i));
 									}catch(PolicyNotFoundException notFound){
 										logControlloTraffico.debug("NotFoundException durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+")",notFound);
 									}catch(PolicyShutdownException shutdown){

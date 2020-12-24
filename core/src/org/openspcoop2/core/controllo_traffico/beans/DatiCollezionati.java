@@ -1136,7 +1136,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	public void updateDatiEndRequestApplicabile(Logger log, ActivePolicy activePolicy,
 			MisurazioniTransazione dati,
-			List<Integer> esitiCodeOk, List<Integer> esitiCodeKo_senzaFaultApplicativo, List<Integer> esitiCodeFaultApplicativo) throws PolicyException{
+			List<Integer> esitiCodeOk, List<Integer> esitiCodeKo_senzaFaultApplicativo, List<Integer> esitiCodeFaultApplicativo, 
+			boolean isViolata) throws PolicyException{
 		
 		if(this.policyRealtime!=null && this.policyRealtime){
 		
@@ -1154,7 +1155,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 						isRisorsaContaNumeroRichiesteDipendentiEsito(activePolicy.getTipoRisorsaPolicy())==false){          		
             		this.policyRequestCounter--; // l'avevo incrementato nello start
             	}
-				this.policyDenyRequestCounter++;
+            	if(isViolata) {
+            		// Aumento solamente il contatore della policy la quale ha bloccato la transazione
+            		this.policyDenyRequestCounter++;
+            	}
 				return; // non incremento alcun contatore.
 			}
             

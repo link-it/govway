@@ -61,6 +61,8 @@ public class CostantiServizioControlloTraffico {
     
     public final static String PARAMETER_APPLICABILE = "applicabile";
     
+    public final static String PARAMETER_VIOLATA = "violata";
+    
     public final static String PARAMETER_SUM = "sum";
     
     public final static String PARAMETER_SEPARATOR = "separator";

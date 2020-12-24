@@ -81,7 +81,7 @@ public class PolicyVerifier {
 			MsgDiagnostico msgDiag, 
 			Transaction tr,
 			DatiTransazione datiTransazione, boolean isPddCongestionata, DatiTempiRisposta tempiRisposta,
-			List<Boolean> pddContext_policyApplicabile,
+			List<Boolean> pddContext_policyApplicabile, List<Boolean> pddContext_policyViolata,
 			IState state) throws Exception{
 				
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
@@ -296,6 +296,8 @@ public class PolicyVerifier {
 				risultatoVerificaPolicy.setNonApplicabile(true);
 				risultatoVerificaPolicy.setDescrizione(descrizioneNonApplicabile);
 								
+				pddContext_policyViolata.add(false);
+				
 				return risultatoVerificaPolicy;
 			}
 
@@ -745,6 +747,8 @@ public class PolicyVerifier {
 			}
 			
 			risultatoVerificaPolicy.setViolata(rilevataViolazione);
+			
+			pddContext_policyViolata.add(rilevataViolazione);
 			
 			return risultatoVerificaPolicy;
 				
