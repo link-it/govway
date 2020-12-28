@@ -202,7 +202,7 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getDegradoAvgTimeFinestraOsservazione(),
 							activePolicy.getConfigurazionePolicy().getDegradoAvgTimeTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getDegradoAvgTimeTipoLatenza(),
-							datiTransazione, datiGroupBy,
+							datiTransazione, datiGroupBy, activePolicy.getInstanceConfiguration().getFiltro(),
 							state);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
@@ -399,7 +399,7 @@ public class PolicyVerifier {
 								leftDate,rightDate,
 								activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
 								activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
-								datiTransazione, datiGroupBy,
+								datiTransazione, datiGroupBy, activePolicy.getInstanceConfiguration().getFiltro(),
 								state);
 						valoreAttuale = risultatoStatistico.getRisultato();
 						checkDate = risultatoStatistico.getDateCheck();
@@ -501,7 +501,7 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
 							activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getValoreTipoBanda(),
-							datiTransazione, datiGroupBy,
+							datiTransazione, datiGroupBy, activePolicy.getInstanceConfiguration().getFiltro(),
 							state);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
@@ -657,7 +657,7 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
 							activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getValoreTipoLatenza(),
-							datiTransazione, datiGroupBy,
+							datiTransazione, datiGroupBy, activePolicy.getInstanceConfiguration().getFiltro(),
 							state);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();

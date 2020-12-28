@@ -45,6 +45,10 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 	private Map<String, int []> calcoloLatenzaPortaApplicativaEsitiConsiderati;
 	
 	private boolean elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente;
+	
+	private boolean elaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere;
+	private boolean elaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere;
+	private boolean elaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata;
 		
 	private Map<String, int []> esitiPolicyViolate;
 	
@@ -95,6 +99,13 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 		
 		bf.append(", ");
 		bf.append("elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente="+this.elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente);
+		
+		bf.append(", ");
+		bf.append("elaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere="+this.elaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere);
+		bf.append(", ");
+		bf.append("elaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere="+this.elaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere);
+		bf.append(", ");
+		bf.append("elaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata="+this.elaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata);
 		
 		if(this.esitiPolicyViolate!=null){
 			bf.append(", ");
@@ -161,6 +172,37 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 		this.elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente = elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente;
 	}
 
+	public boolean isElaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere() {
+		return this.elaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere;
+	}
+
+
+	public void setElaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere(
+			boolean elaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere) {
+		this.elaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere = elaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere;
+	}
+
+
+	public boolean isElaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere() {
+		return this.elaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere;
+	}
+
+
+	public void setElaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere(
+			boolean elaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere) {
+		this.elaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere = elaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere;
+	}
+
+
+	public boolean isElaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata() {
+		return this.elaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata;
+	}
+
+
+	public void setElaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata(
+			boolean elaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata) {
+		this.elaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata = elaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata;
+	}
 
 	public Map<String, int []> getEsitiPolicyViolate() {
 		return this.esitiPolicyViolate;

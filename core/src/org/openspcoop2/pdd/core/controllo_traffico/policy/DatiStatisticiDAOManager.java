@@ -20,24 +20,43 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.NotFoundException;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.RisultatoStatistico;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoBanda;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
 import org.openspcoop2.core.statistiche.StatisticaMensile;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
@@ -49,12 +68,14 @@ import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -151,7 +172,7 @@ public class DatiStatisticiDAOManager  {
 	
     public RisultatoStatistico readNumeroRichieste(String key,TipoRisorsa tipoRisorsa,
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
-    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy,
+    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
     		IState state) throws Exception{
 	
     	Resource r = null;
@@ -189,34 +210,46 @@ public class DatiStatisticiDAOManager  {
 				
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
-
+		
 			if(tipoFinestra!=null && TipoFinestra.SCORREVOLE.equals(tipoFinestra)){
 				model = StatisticaOraria.model().STATISTICA_BASE;
 				dao = statisticheSM.getStatisticaOrariaServiceSearch();
 			}
 			else{
 				switch (tipoPeriodo) {
-				case GIORNALIERO:
-					model = StatisticaGiornaliera.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
-					break;
-				case MENSILE:
-					model = StatisticaMensile.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaMensileServiceSearch();
-					break;
 				case ORARIO:
 					model = StatisticaOraria.model().STATISTICA_BASE;
 					dao = statisticheSM.getStatisticaOrariaServiceSearch();
 					break;
+				case GIORNALIERO:
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+					break;
 				case SETTIMANALE:
-					model = StatisticaSettimanale.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaSettimanaleServiceSearch();
+					if(this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere()) {
+						model = StatisticaGiornaliera.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+					}
+					else {
+						model = StatisticaSettimanale.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaSettimanaleServiceSearch();
+					}
+					break;
+				case MENSILE:
+					if(this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere()) {
+						model = StatisticaGiornaliera.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+					}
+					else {
+						model = StatisticaMensile.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaMensileServiceSearch();
+					}
 					break;
 				}
 			}
 			
 			IExpression expression = this.createWhereExpressionNumeroRichieste(dao, model, tipoRisorsa, leftInterval, rightInterval, 
-					datiTransazione.getTipoPdD(),datiTransazione.getProtocollo(), groupByPolicy);
+					datiTransazione.getTipoPdD(),datiTransazione.getProtocollo(), groupByPolicy, filtro, state);
 						
 			FunctionField ff = new  FunctionField(model.NUMERO_TRANSAZIONI, Function.SUM, "somma");
 			
@@ -269,9 +302,11 @@ public class DatiStatisticiDAOManager  {
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
 			String protocollo,
-			IDUnivocoGroupByPolicy groupByPolicy) throws Exception {
+			IDUnivocoGroupByPolicy groupByPolicy,
+			AttivazionePolicyFiltro filtro,
+			IState state) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy, filtro, state);
 
     	expr.isNotNull(model.NUMERO_TRANSAZIONI);
     	
@@ -292,7 +327,7 @@ public class DatiStatisticiDAOManager  {
     public RisultatoStatistico readOccupazioneBanda(String key,TipoRisorsa tipoRisorsa,
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
     		TipoBanda tipoBanda,
-    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy,
+    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
     		IState state) throws Exception{
 	
     	Resource r = null;
@@ -336,27 +371,39 @@ public class DatiStatisticiDAOManager  {
 			}
 			else{
 				switch (tipoPeriodo) {
-				case GIORNALIERO:
-					model = StatisticaGiornaliera.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
-					break;
-				case MENSILE:
-					model = StatisticaMensile.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaMensileServiceSearch();
-					break;
 				case ORARIO:
 					model = StatisticaOraria.model().STATISTICA_BASE;
 					dao = statisticheSM.getStatisticaOrariaServiceSearch();
 					break;
+				case GIORNALIERO:
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+					break;
 				case SETTIMANALE:
-					model = StatisticaSettimanale.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaSettimanaleServiceSearch();
+					if(this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere()) {
+						model = StatisticaGiornaliera.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+					}
+					else {
+						model = StatisticaSettimanale.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaSettimanaleServiceSearch();
+					}
+					break;
+				case MENSILE:
+					if(this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere()) {
+						model = StatisticaGiornaliera.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+					}
+					else {
+						model = StatisticaMensile.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaMensileServiceSearch();
+					}
 					break;
 				}
 			}
 			
 			IExpression expression = this.createWhereExpressionBanda(dao, model, tipoRisorsa, leftInterval, rightInterval, 
-					datiTransazione.getTipoPdD(),datiTransazione.getProtocollo(), groupByPolicy, tipoBanda);
+					datiTransazione.getTipoPdD(),datiTransazione.getProtocollo(), groupByPolicy, filtro, tipoBanda, state);
 						
 			FunctionField ff = null;
 			switch (tipoBanda) {
@@ -421,10 +468,11 @@ public class DatiStatisticiDAOManager  {
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
 			String protocollo,
-			IDUnivocoGroupByPolicy groupByPolicy,
-			TipoBanda tipoBanda) throws Exception {
+			IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
+			TipoBanda tipoBanda,
+			IState state) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy, filtro, state);
 
     	switch (tipoBanda) {
 		case COMPLESSIVA:
@@ -449,7 +497,7 @@ public class DatiStatisticiDAOManager  {
     public RisultatoStatistico readLatenza(String key,TipoRisorsa tipoRisorsa, 
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
     		TipoLatenza tipoLatenza,
-    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy,
+    		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
     		IState state) throws Exception{
 	
     	Resource r = null;
@@ -486,34 +534,49 @@ public class DatiStatisticiDAOManager  {
 				
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
-
+			boolean calcolaSommeMediaPesata = false;
+			
 			if(tipoFinestra!=null && TipoFinestra.SCORREVOLE.equals(tipoFinestra)){
 				model = StatisticaOraria.model().STATISTICA_BASE;
 				dao = statisticheSM.getStatisticaOrariaServiceSearch();
 			}
 			else{
 				switch (tipoPeriodo) {
-				case GIORNALIERO:
-					model = StatisticaGiornaliera.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
-					break;
-				case MENSILE:
-					model = StatisticaMensile.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaMensileServiceSearch();
-					break;
 				case ORARIO:
 					model = StatisticaOraria.model().STATISTICA_BASE;
 					dao = statisticheSM.getStatisticaOrariaServiceSearch();
 					break;
+				case GIORNALIERO:
+					model = StatisticaGiornaliera.model().STATISTICA_BASE;
+					dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+					break;
 				case SETTIMANALE:
-					model = StatisticaSettimanale.model().STATISTICA_BASE;
-					dao = statisticheSM.getStatisticaSettimanaleServiceSearch();
+					if(this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere()) {
+						model = StatisticaGiornaliera.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+						calcolaSommeMediaPesata = this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata();
+					}
+					else {
+						model = StatisticaSettimanale.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaSettimanaleServiceSearch();
+					}
+					break;
+				case MENSILE:
+					if(this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere()) {
+						model = StatisticaGiornaliera.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+						calcolaSommeMediaPesata = this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata();
+					}
+					else {
+						model = StatisticaMensile.model().STATISTICA_BASE;
+						dao = statisticheSM.getStatisticaMensileServiceSearch();
+					}
 					break;
 				}
 			}
 			
 			IExpression expression = this.createWhereExpressionLatenza(dao, model, tipoRisorsa, leftInterval, rightInterval, 
-					datiTransazione.getTipoPdD(), datiTransazione.getProtocollo(), groupByPolicy, tipoLatenza);
+					datiTransazione.getTipoPdD(), datiTransazione.getProtocollo(), groupByPolicy, filtro, tipoLatenza, state);
 						
 			FunctionField ff = null;
 			switch (tipoLatenza) {
@@ -529,26 +592,65 @@ public class DatiStatisticiDAOManager  {
 				break;
 			}
 			
+			FunctionField ffSommaPesata = null;
+			if(calcolaSommeMediaPesata) {
+				// per media pesata
+				ffSommaPesata = new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma_media_pesata");
+			}
+			
 			RisultatoStatistico risultato = new RisultatoStatistico();
 			risultato.setDataInizio(leftInterval);
 			risultato.setDataFine(rightInterval);
 			risultato.setDateCheck(DateManager.getDate());
 			
 			try{
-				Object result = dao.aggregate(expression, ff);
-				if(result!=null && this.isKnownType(result) ){
-					//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
-					this.log.debug("LatenzaFound ["+result.getClass().getName()+"]: "+result);
-					risultato.setRisultato(this.translateType(result));
-				}
-				else{
-					if(result!=null){
-						//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
-						this.log.debug("LatenzaNotFound ["+result.getClass().getName()+"]: "+result);
-					}else{
-						this.log.debug("LatenzaNotFound, result is null");
+				if(ffSommaPesata!=null) {
+					
+					expression.addGroupBy(model.DATA);
+					
+					List<Map<String, Object>> list = dao.groupBy(expression, ff, ffSommaPesata);
+					if(list!=null && !list.isEmpty()) {
+						long sommaMediePesate = 0;
+						long sommaNumeroTransazioni = 0;
+						for (Map<String, Object> map : list) {
+							Object result = map.get("somma_latenza");
+							Object resultPesata = map.get("somma_media_pesata");
+							long latenza = 0;
+							long numeroTransazioni = 0;
+							if(result!=null && this.isKnownType(result) ){
+								latenza = this.translateType(result);
+							}
+							if(resultPesata!=null && this.isKnownType(resultPesata) ){
+								numeroTransazioni = this.translateType(resultPesata);
+							}
+							sommaNumeroTransazioni+=numeroTransazioni;
+							long mediaPesata = latenza*numeroTransazioni;
+							sommaMediePesate+=mediaPesata;
+						}
+						long risultatoPesato = sommaMediePesate / sommaNumeroTransazioni;
+						risultato.setRisultato(risultatoPesato);
 					}
-					risultato.setRisultato(0);
+					else {
+						this.log.debug("LatenzaNotFound");
+						risultato.setRisultato(0);
+					}
+				}
+				else {
+					Object result = dao.aggregate(expression, ff);
+					if(result!=null && this.isKnownType(result) ){
+						//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
+						this.log.debug("LatenzaFound ["+result.getClass().getName()+"]: "+result);
+						risultato.setRisultato(this.translateType(result));
+					}
+					else{
+						if(result!=null){
+							//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
+							this.log.debug("LatenzaNotFound ["+result.getClass().getName()+"]: "+result);
+						}else{
+							this.log.debug("LatenzaNotFound, result is null");
+						}
+						risultato.setRisultato(0);
+					}
 				}
 			}catch(NotFoundException notFound){
 				this.log.debug("LatenzaNotFound:"+notFound.getMessage(),notFound);
@@ -578,10 +680,11 @@ public class DatiStatisticiDAOManager  {
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
 			String protocollo,
-			IDUnivocoGroupByPolicy groupByPolicy,
-			TipoLatenza tipoLatenza) throws Exception {
+			IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
+			TipoLatenza tipoLatenza,
+			IState state) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy, filtro, state);
 
 		int [] esiti = null;
 		if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){
@@ -628,7 +731,9 @@ public class DatiStatisticiDAOManager  {
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
 			String protocollo,
-			IDUnivocoGroupByPolicy groupByPolicy) throws Exception {
+			IDUnivocoGroupByPolicy groupByPolicy,
+			AttivazionePolicyFiltro filtro,
+			IState state) throws Exception {
 
 		IExpression expr = null;
 
@@ -675,9 +780,31 @@ public class DatiStatisticiDAOManager  {
 		}
 		
 		
+		// capisco tipologia di policy
+		boolean policyGlobale = true;
+		if(filtro!=null && filtro.isEnabled() && filtro.getNomePorta()!=null && !"".equals(filtro.getNomePorta())){
+			policyGlobale = false;
+		}
+		
+		
 		// Tipo Porta
 		TipoPorta tipoPortaStat = null;
 		TipoPdD tipoPdD = groupByPolicy.getRuoloPortaAsTipoPdD();
+		if(tipoPdD==null) {
+			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+			if(filtro!=null && filtro.isEnabled()){
+				if(filtro.getRuoloPorta()!=null && !"".equals(filtro.getRuoloPorta()) && 
+						!RuoloPolicy.ENTRAMBI.equals(filtro.getRuoloPorta())){				
+					if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
+						tipoPdD = TipoPdD.DELEGATA;
+					}
+					if(RuoloPolicy.APPLICATIVA.equals(filtro.getRuoloPorta())){
+						tipoPdD = TipoPdD.APPLICATIVA;
+					}
+					
+				}
+			}
+		}
 		if(tipoPdD!=null){
 			switch (tipoPdD) {
 			case DELEGATA:
@@ -699,28 +826,184 @@ public class DatiStatisticiDAOManager  {
 		
 		// mittente
 		IDSoggetto fruitore = groupByPolicy.getFruitoreIfDefined();
+		List<IDSoggetto> fruitoriByRuolo = null;
+		if(fruitore==null) {
+			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+			if(filtro!=null && filtro.isEnabled()){
+				if(filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore()) &&
+						filtro.getNomeFruitore()!=null && !"".equals(filtro.getNomeFruitore())){
+					fruitore = new IDSoggetto(filtro.getTipoFruitore(), filtro.getNomeFruitore());
+				}
+				else if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
+					/*
+					 * Se policyGlobale:
+					 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
+					 * else
+					 * 	  nel caso di delegata si controlla solo l'applicativo.
+					 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
+					 **/
+					if(policyGlobale || TipoPdD.APPLICATIVA.equals(tipoPdD)){
+						RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
+						FiltroRicercaSoggetti filtroRicerca = new FiltroRicercaSoggetti();
+						IDRuolo idRuolo = new IDRuolo(filtro.getRuoloFruitore());
+						filtroRicerca.setIdRuolo(idRuolo);
+						try {
+							fruitoriByRuolo = registroManager.getAllIdSoggetti(filtroRicerca, null);
+						}catch(DriverRegistroServiziNotFound notFound) {}
+					}
+				}
+			}
+		}
 		if(fruitore!=null){
 			expr.equals(model.TIPO_MITTENTE, fruitore.getTipo());
 			expr.equals(model.MITTENTE, fruitore.getNome());
 		}
+		else if (fruitoriByRuolo!=null && !fruitoriByRuolo.isEmpty()) {
+			List<IExpression> l = new ArrayList<IExpression>();
+			for (IDSoggetto soggetto : fruitoriByRuolo) {
+				IExpression exprSoggetto = dao.newExpression();
+				exprSoggetto.equals(model.TIPO_MITTENTE, soggetto.getTipo());
+				exprSoggetto.and();
+				exprSoggetto.equals(model.MITTENTE, soggetto.getNome());
+				l.add(exprSoggetto);
+			}
+			expr.or(l.toArray(new IExpression[l.size()]));
+		}
 		
 		// destinatario
 		IDSoggetto erogatore = groupByPolicy.getErogatoreIfDefined();
+		List<IDSoggetto> erogatoriByRuolo = null;
+		if(erogatore==null) {
+			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+			if(filtro!=null && filtro.isEnabled()){
+				if(filtro.getTipoErogatore()!=null && !"".equals(filtro.getTipoErogatore()) &&
+						filtro.getNomeErogatore()!=null && !"".equals(filtro.getNomeErogatore())){
+					erogatore = new IDSoggetto(filtro.getTipoErogatore(), filtro.getNomeErogatore());
+				}
+				else if(filtro.getRuoloErogatore()!=null && !"".equals(filtro.getRuoloErogatore())){
+					RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
+					FiltroRicercaSoggetti filtroRicerca = new FiltroRicercaSoggetti();
+					IDRuolo idRuolo = new IDRuolo(filtro.getRuoloErogatore());
+					filtroRicerca.setIdRuolo(idRuolo);
+					try {
+						erogatoriByRuolo = registroManager.getAllIdSoggetti(filtroRicerca, null);
+					}catch(DriverRegistroServiziNotFound notFound) {}
+				}
+			}
+		}
 		if(erogatore!=null){
 			expr.equals(model.TIPO_DESTINATARIO, erogatore.getTipo());
 			expr.equals(model.DESTINATARIO, erogatore.getNome());
 		}
+		else if (erogatoriByRuolo!=null && !erogatoriByRuolo.isEmpty()) {
+			List<IExpression> l = new ArrayList<IExpression>();
+			for (IDSoggetto soggetto : erogatoriByRuolo) {
+				IExpression exprSoggetto = dao.newExpression();
+				exprSoggetto.equals(model.TIPO_DESTINATARIO, soggetto.getTipo());
+				exprSoggetto.and();
+				exprSoggetto.equals(model.DESTINATARIO, soggetto.getNome());
+				l.add(exprSoggetto);
+			}
+			expr.or(l.toArray(new IExpression[l.size()]));
+		}
 		
 		// servizio
 		IDServizio idServizio = groupByPolicy.getServizioIfDefined();
+		List<IDServizio> idServiziByTag = null;
+		if(idServizio==null) {
+			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+			if(filtro!=null && filtro.isEnabled()){
+				if(filtro.getTipoServizio()!=null && !"".equals(filtro.getTipoServizio()) &&
+						filtro.getNomeServizio()!=null && !"".equals(filtro.getNomeServizio()) &&
+						filtro.getVersioneServizio()!=null){
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(filtro.getTipoServizio(), filtro.getNomeServizio(), null, null, filtro.getVersioneServizio().intValue());
+				}
+				else if(!policyGlobale && filtro.getNomePorta()!=null && !"".equals(filtro.getNomePorta()) && filtro.getRuoloPorta()!=null) {
+					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+					if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
+						IDPortaDelegata idPD = new IDPortaDelegata();
+						idPD.setNome(filtro.getNomePorta());
+						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+						if(pd!=null && pd.getServizio()!=null && pd.getSoggettoErogatore()!=null) {
+							idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+									pd.getServizio().getVersione());
+						}
+					}
+					else {
+						IDPortaApplicativa idPA = new IDPortaApplicativa();
+						idPA.setNome(filtro.getNomePorta());
+						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+						if(pa!=null && pa.getServizio()!=null) {
+							idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+									pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+									pa.getServizio().getVersione());
+						}
+					}
+				}
+				else if(filtro.getTag()!=null && !"".equals(filtro.getTag())){
+					RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
+					FiltroRicercaAccordi filtroRicercaAccordi = new FiltroRicercaAccordi(); 
+					filtroRicercaAccordi.setIdGruppo(new IDGruppo(filtro.getTag()));
+					List<IDAccordo> lIdAccordi = null;
+					try {
+						lIdAccordi = registroManager.getAllIdAccordiServizioParteComune(filtroRicercaAccordi, null);
+					}catch(DriverRegistroServiziNotFound notFound) {}
+					if(lIdAccordi!=null && !lIdAccordi.isEmpty()) {
+						for (IDAccordo idAccordoByTag : lIdAccordi) {
+							FiltroRicercaServizi filtroRicerca = new FiltroRicercaServizi();
+							filtroRicerca.setIdAccordoServizioParteComune(idAccordoByTag);
+							if(erogatore!=null) {
+								filtroRicerca.setTipoSoggettoErogatore(erogatore.getTipo());
+								filtroRicerca.setNomeSoggettoErogatore(erogatore.getNome());
+							}
+							List<IDServizio> lIdServizi = null;
+							try {
+								lIdServizi = registroManager.getAllIdServizi(filtroRicerca, null);
+							}catch(DriverRegistroServiziNotFound notFound) {}
+							if(lIdServizi!=null && !lIdServizi.isEmpty()) {
+								if(idServiziByTag==null) {
+									idServiziByTag = new ArrayList<IDServizio>();
+								}
+								for (IDServizio idServizioByTag : lIdServizi) {
+									idServiziByTag.add(idServizioByTag);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 		if(idServizio!=null){
 			expr.equals(model.TIPO_SERVIZIO, idServizio.getTipo());
 			expr.equals(model.SERVIZIO, idServizio.getNome());
 			expr.equals(model.VERSIONE_SERVIZIO, idServizio.getVersione());
 		}
+		else if (idServiziByTag!=null && !idServiziByTag.isEmpty()) {
+			List<IExpression> l = new ArrayList<IExpression>();
+			for (IDServizio idServizioByTag : idServiziByTag) {
+				IExpression exprServizio = dao.newExpression();
+				exprServizio.and();
+				exprServizio.equals(model.TIPO_DESTINATARIO, idServizioByTag.getSoggettoErogatore().getTipo());
+				exprServizio.equals(model.DESTINATARIO, idServizioByTag.getSoggettoErogatore().getNome());
+				expr.equals(model.TIPO_SERVIZIO, idServizioByTag.getTipo());
+				expr.equals(model.SERVIZIO, idServizioByTag.getNome());
+				expr.equals(model.VERSIONE_SERVIZIO, idServizioByTag.getVersione());
+				l.add(exprServizio);
+			}
+			expr.or(l.toArray(new IExpression[l.size()]));
+		}
 		
 		// protocollo
 		String protocolloGroupBy = groupByPolicy.getProtocolloIfDefined();
+		if(protocolloGroupBy==null) {
+			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+			if(filtro!=null && filtro.isEnabled()){
+				if(filtro.getProtocollo()!=null && !"".equals(filtro.getProtocollo())){
+					protocolloGroupBy = filtro.getProtocollo();
+				}
+			}
+		}
 		if(protocolloGroupBy!=null){
 			if(fruitore==null && erogatore==null && idServizio==null){
 				// il tipo se è definito uno dei 3 elementi è insito nell'elemento stesso
@@ -735,14 +1018,64 @@ public class DatiStatisticiDAOManager  {
 		if(azione!=null){
 			expr.equals(model.AZIONE, azione);
 		}
+		else {
+			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+			if(filtro!=null && filtro.isEnabled()){
+				if(filtro.getAzione()!=null && !"".equals(filtro.getAzione()) && idServizio!=null){
+					String [] tmp = filtro.getAzione().split(",");
+					List<String> azioneList = new ArrayList<String>();
+					if(tmp!=null && tmp.length>0) {
+						for (String az : tmp) {
+							azioneList.add(az);
+						}
+					}
+					expr.in(model.AZIONE, azioneList);
+				}
+			}
+		}
 		
 		// Servizio Applicativo
 		if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){
 			
 			// servizioApplicativoFruitore
 			String servizioApplicativoFruitore = groupByPolicy.getServizioApplicativoFruitoreIfDefined();
+			List<String> servizioApplicativoFruitoreByRuolo = null;
+			if(servizioApplicativoFruitore==null) {
+				// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+				if(filtro!=null && filtro.isEnabled()){
+					if(filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
+						servizioApplicativoFruitore = filtro.getServizioApplicativoFruitore();
+					}
+					else if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
+						/*
+						 * Se policyGlobale:
+						 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
+						 * else
+						 * 	  nel caso di delegata si controlla solo l'applicativo.
+						 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
+						 **/
+						ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+						FiltroRicercaServiziApplicativi filtroRicerca = new FiltroRicercaServiziApplicativi();
+						IDRuolo idRuolo = new IDRuolo(filtro.getRuoloFruitore());
+						filtroRicerca.setIdRuolo(idRuolo);
+						List<IDServizioApplicativo> list = null;
+						try {
+							list = configurazionePdDManager.getAllIdServiziApplicativi(filtroRicerca);
+						}catch(DriverConfigurazioneNotFound notFound) {}
+						if(list!=null && !list.isEmpty()) {
+							servizioApplicativoFruitoreByRuolo = new ArrayList<String>();
+							for (IDServizioApplicativo idServizioApplicativo : list) {
+								servizioApplicativoFruitoreByRuolo.add(idServizioApplicativo.getNome());
+							}
+						}
+					}
+				}
+			}
 			if(servizioApplicativoFruitore!=null){
 				expr.equals(model.SERVIZIO_APPLICATIVO, servizioApplicativoFruitore);
+			}
+			else if (servizioApplicativoFruitoreByRuolo!=null && !servizioApplicativoFruitoreByRuolo.isEmpty()) {
+				expr.in(model.SERVIZIO_APPLICATIVO, servizioApplicativoFruitoreByRuolo);
 			}
 			
 		}
@@ -750,6 +1083,14 @@ public class DatiStatisticiDAOManager  {
 			
 			// servizioApplicativoErogatore
 			String servizioApplicativoErogatore = groupByPolicy.getServizioApplicativoErogatoreIfDefined();
+			if(servizioApplicativoErogatore==null) {
+				// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+				if(filtro!=null && filtro.isEnabled()){
+					if(filtro.getServizioApplicativoErogatore()!=null && !"".equals(filtro.getServizioApplicativoErogatore())){
+						servizioApplicativoErogatore = filtro.getServizioApplicativoErogatore();
+					}
+				}
+			}
 			if(servizioApplicativoErogatore!=null){
 				expr.equals(model.SERVIZIO_APPLICATIVO, servizioApplicativoErogatore);
 			}

@@ -20754,6 +20754,72 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo;
 	}
 	
+	private static Boolean isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere = null;
+	private boolean isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere() {	
+		if(OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.statistiche.distribuzioneSettimanale.usaStatisticheGiornaliere";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere;
+	}
+	
+	private static Boolean isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere = null;
+	private boolean isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere() {	
+		if(OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.statistiche.distribuzioneMensile.usaStatisticheGiornaliere";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere;
+	}
+	
+	private static Boolean isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata = null;
+	private boolean isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata() {	
+		if(OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.statistiche.distribuzioneSettimanaleMensile.usaStatisticheGiornaliere.latenza.mediaPesata";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata;
+	}
+	
 	private static Map<String, int[]> getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = new HashMap<>();
 	private int[] getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy(String protocollo) throws Exception{
 		if(getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.containsKey(protocollo) == false){
@@ -20845,6 +20911,10 @@ public class OpenSPCoop2Properties {
 			
 			controlloTrafficoConfigurazione.setElaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente(this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo());
 			
+			controlloTrafficoConfigurazione.setElaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere(this.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere());
+			controlloTrafficoConfigurazione.setElaborazioneStatistica_distribuzioneMensile_usaStatisticheGiornaliere(this.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere());
+			controlloTrafficoConfigurazione.setElaborazioneStatistica_distribuzioneSettimanaleMensile_usaStatisticheGiornaliere_latenza_mediaPesata(this.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata());
+						
 			INotify notifier = this.getControlloTrafficoNotifyImpl(loaderOpenSPCoop);
 			controlloTrafficoConfigurazione.setNotifierEnabled(notifier!=null);
 			controlloTrafficoConfigurazione.setNotifier(notifier);
