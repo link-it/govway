@@ -550,7 +550,13 @@ public final class SoggettiChange extends Action {
 			
 			boolean checkWizard = false;
 			if(this.tipoauthSoggetto != null && this.tipoauthSoggetto.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
-				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
+				
+				boolean changeTipoDominio = false;
+				if(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO.equalsIgnoreCase(postBackElementName)) {
+					changeTipoDominio = true;
+				}
+				
+				if(!changeTipoDominio && tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 					if(tipoCredenzialiSSLFileCertificato.getValue() != null && tipoCredenzialiSSLFileCertificato.getValue().length > 0) {
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ALIAS_NON_SCELTO;
 						if(!tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.CER)) {

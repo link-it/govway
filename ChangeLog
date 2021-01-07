@@ -1,3 +1,8 @@
+2021-01-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug presente in fase di modifica di un soggetto con credenziali https con Multitenant abilitato. Se si modificava il dominio, si avviava erroneamente il wizard di caricamento dei certificati.
+
 2020-12-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
