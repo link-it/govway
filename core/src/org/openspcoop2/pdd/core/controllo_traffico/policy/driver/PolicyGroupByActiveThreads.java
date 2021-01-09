@@ -53,7 +53,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	
 	private Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati>();
 	
-	private Boolean semaphore = Boolean.valueOf(false);
+	private final Boolean semaphore = Boolean.valueOf(false);
 		
 	private ActivePolicy activePolicy;
 
@@ -104,7 +104,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			// incremento il numero di thread
 			//System.out.println("<"+idTransazione+">registerStartRequest in datiCollezionati ...");
 			datiCollezionati.registerStartRequest(log, this.activePolicy);
-			//System.out.println("<"+idTransazione+">registerStartRequest in datiCollezionati ok");
+			//System.out.println("<"+idTransazione+">registerStartRequest in datiCollezionati ok: "+datiCollezionati.getActiveRequestCounter());
 									
 			// mi salvo fuori dal synchronized l'attuale stato
 			datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
@@ -140,11 +140,13 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			
 			// incremento il numero dei contatori
 			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile updateDatiStartRequestApplicabile ...");
-			datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy);
+			boolean updated = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy);
 			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile updateDatiStartRequestApplicabile ok");
 									
 			// mi salvo fuori dal synchronized l'attuale stato
-			datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
+			if(updated) {
+				datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone();
+			}
 			
 			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile esco");
 		}

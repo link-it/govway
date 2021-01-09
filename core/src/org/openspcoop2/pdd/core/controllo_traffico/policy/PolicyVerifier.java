@@ -282,8 +282,11 @@ public class PolicyVerifier {
 			// aggiorno contatori
 			if(isApplicabile || !activePolicy.getConfigurazioneControlloTraffico().isElaborazioneRealtime_incrementaSoloPolicyApplicabile()){
 			
-				datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy);
-				now = datiCollezionatiReaded.getCloneDate(); // Data in cui sono stati prelevati gli intervalli.
+				DatiCollezionati datiCollezionatiUpdated = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy);
+				if(datiCollezionatiUpdated!=null) {
+					datiCollezionatiReaded = datiCollezionatiUpdated; 
+					now = datiCollezionatiReaded.getCloneDate(); // Data in cui sono stati prelevati gli intervalli.
+				}
 				
 				pddContext_policyApplicabile.add(true);
 			}
@@ -505,6 +508,10 @@ public class PolicyVerifier {
 							state);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
+					/*System.out.println("LETTO DA STATISTICA "+activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico()+
+							" check("+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(checkDate)+") intervallo '"+
+							DateUtils.getSimpleDateFormatMs().format(leftDate)+"'-'"+
+							DateUtils.getSimpleDateFormatMs().format(rightDate)+"': "+valoreAttuale);*/
 				}
 						
 				long kb = DatiCollezionati.translateToKb(valoreAttuale);

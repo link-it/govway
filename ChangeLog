@@ -1,3 +1,10 @@
+2021-01-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolti problemi su RateLimiting:
+	- Policy basate sulle richieste simultanee potevano bloccare un numero maggiore di richieste rispetto a quelle permesse per via di un problema di sincronizzazione.
+	- Risolto problema sull'aggiornamento dell'intervallo temporale corrente che in alcuni casi provocava una mancata generazione dell'header X-*-Reset
+
 2021-01-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
