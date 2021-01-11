@@ -42,6 +42,7 @@ import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.manifest.EmptySubContextMapping;
 import org.openspcoop2.protocol.manifest.IntegrationErrorCode;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
@@ -130,7 +131,11 @@ public class ServiceBindingConfigurationReader  {
 		
 		try{
 		
-			ServiceBinding defaultBinding = getServiceBindingDefault(manifest);
+			String protocolWebContext = null;
+			if(transportRequest!=null && transportRequest.getProtocolWebContext()!=null && !"".equals(transportRequest.getProtocolWebContext())) {
+				protocolWebContext = transportRequest.getProtocolWebContext();
+			}
+			ServiceBinding defaultBinding = getServiceBindingDefault(manifest, protocolWebContext);
 			ConfigurationServiceBindingSoap soap = readConfigurationServiceBindingSoap(manifest);
 			ConfigurationServiceBindingRest rest = readConfigurationServiceBindingRest(manifest);
 			ContextUrlCollection contextUrlCollection = readContextUrlCollection(manifest,soap,rest);
@@ -295,7 +300,7 @@ public class ServiceBindingConfigurationReader  {
 		}
 	}
 		
-	private static ServiceBinding getServiceBindingDefault(Openspcoop2 manifest){
+	private static ServiceBinding getServiceBindingDefault(Openspcoop2 manifest, String protocolWebContext){
 		
 		ServiceBinding defaultBinding = null;
 		
@@ -317,6 +322,26 @@ public class ServiceBindingConfigurationReader  {
 			}
 			else{
 				defaultBinding = ServiceBinding.REST;
+			}
+		}
+		
+		if(protocolWebContext!=null) {
+			if(manifest.getWeb()!=null && manifest.getWeb().sizeContextList()>0) {
+				for (Context webContext : manifest.getWeb().getContextList()) {
+					if(webContext.getName()!=null && webContext.getName().equals(protocolWebContext)) {
+						if(webContext.getBinding()!=null) {
+							switch (webContext.getBinding()) {
+							case SOAP:
+								defaultBinding = ServiceBinding.SOAP;
+								break;
+							case REST:
+								defaultBinding = ServiceBinding.REST;
+								break;
+							}
+						}
+						break;
+					}
+				}
 			}
 		}
 		
