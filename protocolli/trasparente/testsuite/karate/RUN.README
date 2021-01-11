@@ -1,0 +1,136 @@
+- Impostare a <15> il massimo numero di richieste simultanee generali nella console di govway sotto 
+		
+		Configurazione->Controllo del Traffico->Limitazione Numero di Richieste Complessive
+
+- Editare il file <govway_local.properties> impostando le seguenti proprietà:
+
+		# ====================================================
+		#	Parametri per testsuite trasparente
+		# Consentono di far passare i parametri url dal client al backend della erogazione
+		org.openspcoop2.pdd.soap.urlParameters.forward.enable=true
+		org.openspcoop2.pdd.soap.urlParameters.blackList.internal=*
+		org.openspcoop2.pdd.soap.urlParameters.whiteList=fault*,returnCode,sleep
+
+- Abilitare la congestione del traffico impostando una soglia del 55% in modo
+  che il sistema venga considerato congestionato con 8 richieste simultanee.
+	
+	Configurazione-Controllo del Traffico->Controllo della congestione
+	
+  Assicurarsi che la proprietà "soglia_congestione" in <testsuite.properties> abbia
+  il valore impostato sopra
+
+
+- Impostare nella console di GovWay:
+		 Controllo Traffico->Tempi Risposta->Tempo MedioRisposta = 3000
+	Sia per Erogazione che per Fruizione
+	Questo per ridurre il tempo necessario ad entrare in situazione di degrado prestazionale
+
+
+- Nella console Andare su Tracciamento->Superamento Limite Richieste e impostarlo su <abilitato>
+	 Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale.
+
+- Impostare in govway_local.properties 
+	org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi=8
+	org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi=8
+	org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi=8
+	org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi=8
+
+
+	
+	Questo per consentire di controllare in un tempo accettabile le metriche dipendenti da statistiche,
+	in particolare quando si abilitano in presenza di degrado prestazionale. 
+
+- Inoltre è necessario disabilitare la cache delle informazioni statistiche:
+	Console -> Controllo del Traffico -> Configurazione Cache Controllo del Traffico -> Stato = Disabilitato
+
+- Aggiungere nel govway_local.properties la seguente impostazione:
+
+	org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo=true
+
+  Questo perchè di base govway controlla i tempi medi risposta sulla finestra di tempo precedente per evitare di bloccare il sistema quando
+	una sola richiesta ha fatto superare il tempo medio risposta.
+
+- Modificare le properties del config_loader in modo che vengano caricate le policy utente.
+	Impostare in <.../distrib/properties/config_loader.cli.properties>
+
+		policy.enable=true
+
+- Per variare il ritardo con cui vengono scritti gli eventi sul database:
+	In <govway_local.properties>:
+		org.openspcoop2.pdd.eventi.timer.seconds=3
+	In <testsuite.properties>:
+		eventi_db_delay=3
+
+- Copiare o linkare sotto /etc/govway/keys il keystore in:
+	/protocolli/spcoop/testsuite/deploy/wss_examples/jks/pa.p12
+
+	Serve per verificare il raggruppamento per token policy
+		
+
+Per eseguire i test:
+	ant run_test
+
+	Parametri:
+		-Dload=false (default: true) Carica la configurazione di govway all'inizio del test	
+		-Ddelete=false (default: true) Elimina la configurazione di govway alla fine del test
+		-Dwait=false (default:true) Non aspetta lo scoccare della nuova finestra di tempo nei test di rate limiting
+
+Per eseguire solo una classe, indicare il package e il metodo:
+
+    ant run_test -Dpackage=rate_limiting.numero_richieste -Dtest=SoapTest
+
+Per eseguire solo un metodo, indicare il nome del metodo e il sottopackage+classe
+
+	ant run_test -Dmethods=richiesteSimultaneeGlobali -Dtest=rate_limiting.numero_richieste.SoapTest 
+
+
+Di seguito vengono descritti i test:
+
+- 'congestione', verifica policy che usano l'applicabilità con degrado prestazionale e/o congestione (invocarli separati tra rest e soap per non incorrere in errori di sincronizzazione temporale). Verifica anche gli eventi:
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.congestione -Dtest=RestTest
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.congestione -Dtest=SoapTest
+
+- 'custom policy', verifica policy che usano intervalli statistici (invocarli separati tra rest e soap per non incorrere in errori di sincronizzazione temporale):
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.custom_policy -Dtest=RestTest
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.custom_policy -Dtest=SoapTest
+
+- 'global_policy', verifica policy definite a livello globale
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.global_policy
+
+- 'numero_richieste', verifica policy definite con metriche basate sul numero di richieste simultanee e in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste
+
+- 'numero_richieste_fallite', verifica policy definite con metriche basate sul numero di richieste fallite in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste_fallite
+
+- 'numero_richieste_fallite_o_fault', verifica policy definite con metriche basate sul numero di richieste fallite o fault in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste_fallite_o_fault
+
+- 'numero_richieste_fault', verifica policy definite con metriche basate sul numero di fault in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste_fault
+
+- 'numero_richieste_completate_con_successo', verifica policy definite con metriche basate sul numero di richieste completate con successo in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste_completate_con_successo
+
+- 'occupazione_banda', verifica policy definite con metriche basate sull'occupazine di banda in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.occupazione_banda
+
+- 'tempo_complessivo_risposta', verifica policy definite con metriche basate sul tempo complessivo di risposta in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.tempo_complessivo_risposta
+
+- 'tempo_medio_risposta', verifica policy definite con metriche basate sul tempo medio di risposta in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.tempo_medio_risposta
+
+- 'filtri', verifica policy definite con filtri
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.filtri
+
+- 'raggruppamento', verifica policy definite con raggruppamento dei contatori
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.raggruppamento
+
+- 'flusso', verifica policy definite rispetto ad un ordinamento di applicabilità
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.flusso
+
+- 'warning_only', verifica policy definite con stato warning_only (verifica anche gli eventi)
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.warning_only                                         
+
+
