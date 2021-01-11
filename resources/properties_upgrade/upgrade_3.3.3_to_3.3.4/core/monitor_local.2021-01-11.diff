@@ -1,0 +1,15 @@
+diff --git ant/setup/deploy/resources/core/monitor_local.properties ant/setup/deploy/resources/core/monitor_local.properties
+index e56f6ae9c..32c57cced 100644
+--- ant/setup/deploy/resources/core/monitor_local.properties
++++ ant/setup/deploy/resources/core/monitor_local.properties
+@@ -31,6 +31,10 @@ statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/check
+ #IDGW1.configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePath=PATH
+ #IDGW1.configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststoreType=jks
+ #IDGW1.configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword=PASSWORD
++
++# Esempio per nodo IDGW1 per personalizzare i timeout (ms)
++#IDGW1.configurazioni.risorseJmxPdd.remoteAccess.readConnectionTimeout=5000
++#IDGW1.configurazioni.risorseJmxPdd.remoteAccess.connectionTimeout=5000
+ # ================================================
+ 
+ # ================================================

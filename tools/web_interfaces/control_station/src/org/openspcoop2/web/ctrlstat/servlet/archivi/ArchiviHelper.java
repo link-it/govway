@@ -177,6 +177,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			else {
 				de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
 			}
+			if(!ArchiveType.ALL.equals(servletSourceExport) && 
+					!ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.equals(servletSourceExport) &&
+					!ArchiveType.CONFIGURAZIONE.equals(servletSourceExport)) {
+				de.setType(DataElementType.HIDDEN);
+			}
 			dati.addElement(de);
 		}
 

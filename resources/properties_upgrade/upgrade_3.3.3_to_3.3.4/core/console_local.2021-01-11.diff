@@ -1,0 +1,15 @@
+diff --git ant/setup/deploy/resources/core/console_local.properties ant/setup/deploy/resources/core/console_local.properties
+index 034fb83a8..ce824285c 100644
+--- ant/setup/deploy/resources/core/console_local.properties
++++ ant/setup/deploy/resources/core/console_local.properties
+@@ -22,6 +22,10 @@
+ #IDGW1.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststoreType=jks
+ #IDGW1.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword=PASSWORD
+ 
++# Esempio per nodo IDGW1 per personalizzare i timeout (ms)
++#IDGW1.risorseJmxPdd.remoteAccess.readConnectionTimeout=5000
++#IDGW1.risorseJmxPdd.remoteAccess.connectionTimeout=5000
++
+ # Classificazione dei nodi in gruppi
+ #risorseJmxPdd.aliases.<idGruppo1>=<IDGW1>,<IDGW2>
+ #risorseJmxPdd.aliases.<idGruppo2>=<IDGW2>,<IDGWN>

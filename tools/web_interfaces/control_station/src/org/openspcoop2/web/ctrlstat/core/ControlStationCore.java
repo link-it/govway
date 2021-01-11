@@ -1254,6 +1254,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_remoteAccess_https_truststorePath = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_https_truststoreType = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_https_truststorePassword = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_connectionTimeout = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_readConnectionTimeout = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_as = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_factory = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_remoteAccess_url = new Hashtable<String, String>();
@@ -1425,6 +1427,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_remoteAccess_https_truststorePassword(String alias) {
 		return this.jmxPdD_remoteAccess_https_truststorePassword.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_connectionTimeout(String alias) {
+		return this.jmxPdD_remoteAccess_connectionTimeout.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_readConnectionTimeout(String alias) {
+		return this.jmxPdD_remoteAccess_readConnectionTimeout.get(alias);
 	}
 	public String getJmxPdD_remoteAccess_as(String alias) {
 		return this.jmxPdD_remoteAccess_as.get(alias);
@@ -1870,12 +1878,26 @@ public class ControlStationCore {
 			}
 		}
 		
+		Integer connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+		Integer readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+		// Fix abbasso i tempi di default
+		connectionTimeout = 5000;
+		readConnectionTimeout = 5000;
+		String connectionTimeoutS = this.getJmxPdD_remoteAccess_connectionTimeout(alias);
+		if(connectionTimeoutS!=null) {
+			connectionTimeout = Integer.valueOf(connectionTimeoutS);
+		}
+		String readConnectionTimeoutS = this.getJmxPdD_remoteAccess_readConnectionTimeout(alias);
+		if(readConnectionTimeoutS!=null) {
+			readConnectionTimeout = Integer.valueOf(readConnectionTimeoutS);
+		}
+		
 		HttpResponse response = null;
 		if(https) {
 			HttpRequest httpRequest = new HttpRequest();
 			httpRequest.setUrl(urlWithParameters);
-			httpRequest.setReadTimeout(HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT);
-			httpRequest.setConnectTimeout(HttpUtilities.HTTP_CONNECTION_TIMEOUT);
+			httpRequest.setConnectTimeout(connectionTimeout);
+			httpRequest.setReadTimeout(readConnectionTimeout);
 			httpRequest.setUsername(username);
 			httpRequest.setPassword(password);
 			httpRequest.setMethod(HttpRequestMethod.GET);
@@ -1891,7 +1913,9 @@ public class ControlStationCore {
 			response = HttpUtilities.httpInvoke(httpRequest);
 		}
 		else {
-			response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+			response = HttpUtilities.getHTTPResponse(urlWithParameters, 
+					readConnectionTimeout, connectionTimeout,
+					username, password);
 		}
 		return response;
 	}
@@ -2458,6 +2482,8 @@ public class ControlStationCore {
 		this.jmxPdD_remoteAccess_https_truststorePath = core.jmxPdD_remoteAccess_https_truststorePath;
 		this.jmxPdD_remoteAccess_https_truststoreType = core.jmxPdD_remoteAccess_https_truststoreType;
 		this.jmxPdD_remoteAccess_https_truststorePassword = core.jmxPdD_remoteAccess_https_truststorePassword;
+		this.jmxPdD_remoteAccess_connectionTimeout = core.jmxPdD_remoteAccess_connectionTimeout;
+		this.jmxPdD_remoteAccess_readConnectionTimeout = core.jmxPdD_remoteAccess_readConnectionTimeout;
 		this.jmxPdD_remoteAccess_as = core.jmxPdD_remoteAccess_as;
 		this.jmxPdD_remoteAccess_factory = core.jmxPdD_remoteAccess_factory;
 		this.jmxPdD_remoteAccess_url = core.jmxPdD_remoteAccess_url;
@@ -2920,6 +2946,12 @@ public class ControlStationCore {
 					String sslAuthServer_truststorePassword = consoleProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(alias);
 					if(sslAuthServer_truststorePassword!=null)
 						this.jmxPdD_remoteAccess_https_truststorePassword.put(alias,sslAuthServer_truststorePassword);
+					String connectionTimeout = consoleProperties.getJmxPdD_remoteAccess_connectionTimeout(alias);
+					if(connectionTimeout!=null)
+						this.jmxPdD_remoteAccess_connectionTimeout.put(alias,connectionTimeout);
+					String readConnectionTimeout = consoleProperties.getJmxPdD_remoteAccess_readConnectionTimeout(alias);
+					if(readConnectionTimeout!=null)
+						this.jmxPdD_remoteAccess_readConnectionTimeout.put(alias,readConnectionTimeout);
 					String as = consoleProperties.getJmxPdD_remoteAccess_applicationServer(alias);
 					if(as!=null)
 						this.jmxPdD_remoteAccess_as.put(alias,as);

@@ -186,6 +186,13 @@
 										<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 										<rich:toolTip for="sottotitoloDx" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 									</a4j:outputPanel>
+									<a4j:outputPanel layout="block" id="sottotitoloDx_profilo" styleClass="" rendered="#{mBean.visualizzaProfiloTransazione}">
+										<h:outputText id="outProfilo1" value=",&#160;&#160;&#160;Profilo: " />
+										<h:outputText id="outProfilo2" value="#{item.protocolloLabel}" rendered="#{mBean.visualizzaProfiloTransazione}"/>
+										<rich:toolTip for="sottotitoloDx_profilo" rendered="#{mBean.visualizzaProfiloTransazione}">
+											<h:outputText value="#{item.protocolloLabel}" rendered="#{mBean.visualizzaProfiloTransazione}"/>
+										</rich:toolTip>
+									</a4j:outputPanel>
 								</a4j:outputPanel>
 								<a4j:outputPanel layout="block" id="infoColDXSottotitolo" styleClass="infoColDXTransazioneRiga2">
 									<a4j:outputPanel layout="block" id="entryInfoLatenzaTransazioneSottotitolo" styleClass="entryInfoLatenzaTransazione #{item.cssColonnaLatenza}">

@@ -41,6 +41,7 @@ import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazio
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
@@ -720,6 +721,15 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		this.visualizzaIdCluster = visualizzaIdCluster;
 	}
 
+	public boolean isVisualizzaProfiloTransazione() {
+		if(this.search!=null &&
+				ModalitaRicercaTransazioni.RICERCA_LIBERA.getValue().equals(((TransazioniSearchForm)this.search).getModalitaRicercaStorico()) &&
+				Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.search.getModalita()) &&
+				(this.search.getProtocollo()==null || Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.search.getProtocollo()))) { 
+			return true;
+		}
+		return false;
+	}
 	
 	public boolean isVisualizzaDataAccettazione() {
 		return this.visualizzaDataAccettazione;

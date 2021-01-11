@@ -41,7 +41,9 @@ public class PddStatus extends BaseStatus{
 	private String https_autenticazioneServer_truststorePath;
 	private String https_autenticazioneServer_truststoreType;
 	private String https_autenticazioneServer_truststorePassword;
-
+	private int connectionTimeout = 5000; //org.openspcoop2.utils.transport.http.HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+	// Fix: uso un tempo più basso in modo da non bloccare la console
+	private int readConnectionTimeout = 5000; //org.openspcoop2.utils.transport.http.HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 	
 	public PddStatus(){
 		super();
@@ -101,5 +103,21 @@ public class PddStatus extends BaseStatus{
 
 	public void setHttps_autenticazioneServer_truststorePassword(String https_autenticazioneServer_truststorePassword) {
 		this.https_autenticazioneServer_truststorePassword = https_autenticazioneServer_truststorePassword;
+	}
+	
+	public int getConnectionTimeout() {
+		return this.connectionTimeout;
+	}
+
+	public void setConnectionTimeout(int connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
+	}
+
+	public int getReadConnectionTimeout() {
+		return this.readConnectionTimeout;
+	}
+
+	public void setReadConnectionTimeout(int readConnectionTimeout) {
+		this.readConnectionTimeout = readConnectionTimeout;
 	}
 }

@@ -709,6 +709,12 @@ public class ConsoleProperties {
 	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(String alias) throws UtilsException {
 		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword");
 	}
+	public String getJmxPdD_remoteAccess_connectionTimeout(String alias) throws Exception {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.connectionTimeout");
+	}
+	public String getJmxPdD_remoteAccess_readConnectionTimeout(String alias) throws Exception {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.readConnectionTimeout");
+	}
 	public String getJmxPdD_remoteAccess_applicationServer(String alias) throws UtilsException {
 		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.as");
 	}

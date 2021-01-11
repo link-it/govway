@@ -125,12 +125,26 @@ public class JmxUtils {
 			}
 		}
 		
+		Integer connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+		Integer readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+		// Fix abbasso i tempi di default
+		connectionTimeout = 5000;
+		readConnectionTimeout = 5000;
+		String connectionTimeoutS = this.monitorProperties.getJmxPdD_remoteAccess_connectionTimeout(alias);
+		if(connectionTimeoutS!=null) {
+			connectionTimeout = Integer.valueOf(connectionTimeoutS);
+		}
+		String readConnectionTimeoutS = this.monitorProperties.getJmxPdD_remoteAccess_readConnectionTimeout(alias);
+		if(readConnectionTimeoutS!=null) {
+			readConnectionTimeout = Integer.valueOf(readConnectionTimeoutS);
+		}
+		
 		HttpResponse response = null;
 		if(https) {
 			HttpRequest httpRequest = new HttpRequest();
 			httpRequest.setUrl(urlWithParameters);
-			httpRequest.setReadTimeout(HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT);
-			httpRequest.setConnectTimeout(HttpUtilities.HTTP_CONNECTION_TIMEOUT);
+			httpRequest.setConnectTimeout(connectionTimeout);
+			httpRequest.setReadTimeout(readConnectionTimeout);
 			httpRequest.setUsername(username);
 			httpRequest.setPassword(password);
 			httpRequest.setMethod(HttpRequestMethod.GET);
@@ -146,7 +160,9 @@ public class JmxUtils {
 			response = HttpUtilities.httpInvoke(httpRequest);
 		}
 		else {
-			response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+			response = HttpUtilities.getHTTPResponse(urlWithParameters,
+					readConnectionTimeout, connectionTimeout,
+					username, password);
 		}
 		return response;
 	}

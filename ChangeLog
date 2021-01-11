@@ -1,5 +1,13 @@
 2021-01-11  Andrea Poli <apoli@link.it>
 
+	* [GovWayMonitor, GovWayConsole]
+	In presenza di una configurazione in Load Balancing, se la connessione verso un nodo andava in "read timed out",
+	la console era accessibile allo scadere del timeout impostato a 120 secondi.
+	Il valore di default del timeout è stato ridotto a 5 secondi.
+	Nella ricerca avanza dello storico delle transazioni, se vengono cercati tutti i profili le transazioni riportate nell'elenco visualizzano adesso anche il profilo di appartenenza.
+
+2021-01-11  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto Bug OP-1125
 	L'aggiornamento dell'interfaccia WSDL di una API SOAP provocava un errore inatteso della console se il WSDL possedeva un carattere \r\n all'inizio del file.

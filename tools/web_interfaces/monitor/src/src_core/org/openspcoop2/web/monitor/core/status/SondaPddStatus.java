@@ -77,6 +77,8 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 				String https_truststorePath = null;
 				String https_truststoreType = null;
 				String https_truststorePassword = null;
+				Integer connectionTimeout = null;
+				Integer readConnectionTimeout = null;
 				
 				String httpsP = this.propertiesSonda.getProperty(namePdD+".https");
 				if(httpsP!=null) {
@@ -84,6 +86,22 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 				}
 				else {
 					https = pddMonitorProperties.isJmxPdD_remoteAccess_https(namePdD);
+				}
+				
+				String connectionTimeoutS = this.propertiesSonda.getProperty(namePdD+".connectionTimeout");
+				if(connectionTimeoutS==null) {
+					connectionTimeoutS = pddMonitorProperties.getJmxPdD_remoteAccess_connectionTimeout(namePdD);
+				}					
+				if(connectionTimeoutS!=null) {
+					connectionTimeout = Integer.valueOf(connectionTimeoutS);
+				}
+				
+				String readConnectionTimeoutS = this.propertiesSonda.getProperty(namePdD+".readConnectionTimeout");
+				if(readConnectionTimeoutS==null) {
+					readConnectionTimeoutS = pddMonitorProperties.getJmxPdD_remoteAccess_readConnectionTimeout(namePdD);
+				}
+				if(readConnectionTimeoutS!=null) {
+					readConnectionTimeout = Integer.valueOf(readConnectionTimeoutS);
 				}
 								
 				if(https) {
@@ -141,6 +159,12 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 				pddStat.setHttps_autenticazioneServer_truststorePath(https_truststorePath);
 				pddStat.setHttps_autenticazioneServer_truststoreType(https_truststoreType);
 				pddStat.setHttps_autenticazioneServer_truststorePassword(https_truststorePassword);
+				if(connectionTimeout!=null) {
+					pddStat.setConnectionTimeout(connectionTimeout);
+				}
+				if(readConnectionTimeout!=null) {
+					pddStat.setReadConnectionTimeout(readConnectionTimeout);
+				}
 
 				this.listaStatus.add(pddStat);
 			}
@@ -215,8 +239,8 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 		if(https) {
 			HttpRequest httpRequest = new HttpRequest();
 			httpRequest.setUrl(pdd.getUrl());
-			httpRequest.setReadTimeout(HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT);
-			httpRequest.setConnectTimeout(HttpUtilities.HTTP_CONNECTION_TIMEOUT);
+			httpRequest.setReadTimeout(pdd.getReadConnectionTimeout());
+			httpRequest.setConnectTimeout(pdd.getConnectionTimeout());
 			httpRequest.setMethod(HttpRequestMethod.GET);
 			httpRequest.setHostnameVerifier(https_verificaHostName);
 			if(https_autenticazioneServer) {
@@ -230,7 +254,7 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 			HttpUtilities.check(httpRequest);
 		}
 		else {
-			HttpUtilities.check(pdd.getUrl());
+			HttpUtilities.check(pdd.getUrl(), pdd.getReadConnectionTimeout(), pdd.getConnectionTimeout());
 		}
 	}
 	

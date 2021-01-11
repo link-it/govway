@@ -587,6 +587,13 @@ public class PddMonitorProperties {
 		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword");
 	}
 	
+	public String getJmxPdD_remoteAccess_connectionTimeout(String alias) throws Exception {
+		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.connectionTimeout");
+	}
+	public String getJmxPdD_remoteAccess_readConnectionTimeout(String alias) throws Exception {
+		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.readConnectionTimeout");
+	}
+	
 	public String getJmxPdD_remoteAccess_applicationServer(String alias) throws Exception {
 		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.as");
 	}
