@@ -65,7 +65,7 @@
 						<![CDATA[<h1>API GovWay [${compile_src_openspcoop2.API_NAME}]</h1>]]>
 					</doctitle>
 					<bottom>
-						<![CDATA[<i>Copyright 2005-2020 Link.it srl, https://link.it.</i>]]>
+						<![CDATA[<i>Copyright 2005-2021 Link.it srl, https://link.it.</i>]]>
 					</bottom>
 <!--
 					Non funziona da java 9
