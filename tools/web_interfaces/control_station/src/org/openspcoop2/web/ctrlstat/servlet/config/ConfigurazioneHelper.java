@@ -14553,6 +14553,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setType(DataElementType.TEXT_EDIT);
 					}
 					dati.addElement(de);
+					
+					// se sono richiesti campionamenti statistici
+					if(infoPolicy!=null && infoPolicy.isIntervalloUtilizzaRisorseStatistiche()){
+						de = new DataElement();
+						de.setType(DataElementType.NOTE);
+						de.setBold(true);
+						de.setLabel("Nota");
+						de.setValue("Il filtro per chiave, su campionamento statistico, serve solamente a filtrare l'applicabilità della policy.<BR/>Verranno conteggiate anche le richieste che non hanno un match con il filtro per chiave indicato.");
+						dati.addElement(de);
+					}
 				}
 				
 			}

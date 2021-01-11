@@ -1,3 +1,9 @@
+2021-01-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1125
+	L'aggiornamento dell'interfaccia WSDL di una API SOAP provocava un errore inatteso della console se il WSDL possedeva un carattere \r\n all'inizio del file.
+
 2021-01-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

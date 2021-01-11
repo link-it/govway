@@ -529,7 +529,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			List<IDResource> risorseEliminate = new ArrayList<IDResource>();
 			List<IDPortType> portTypeEliminati = new ArrayList<IDPortType>();
 			List<IDPortTypeAzione> operationEliminate = new ArrayList<IDPortTypeAzione>();
-			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(this.tipo, this.wsdl, as,
+			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(this.tipo, this.wsdl!=null ? this.wsdl.trim() : null, as,
 					enableAutoMapping, this.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard,
 					tipoProtocollo, 
 					apcCore,
