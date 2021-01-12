@@ -48,6 +48,6 @@ public interface StatusApi  {
     @Operation(summary = "Ritorna lo stato dell'applicazione", tags={ "Status" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Il servizio funziona correttamente", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public Problem getStatus();
 }

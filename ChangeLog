@@ -1,5 +1,11 @@
 2021-01-12  Andrea Poli <apoli@link.it>
 
+	* [ApiRsMonitoraggio, ApiRsConfigurazione]
+	Risolto Bug presente nella generazione delle interfacce yaml/json tramite 'CXF OpenApiFeature'.
+	Le interfacce generate presentavano erroneamente come risposta 2xx un problem detail.
+
+2021-01-12  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Aggiunta funzionalità OP-1131
 	Nella configurazione dei gruppi di risorse di una erogazione o fruizione è adesso possibile filtrare per metodo http e path.

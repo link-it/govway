@@ -82,7 +82,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] exportConfigurazioneApiByFullSearch(@Valid RicercaConfigurazioneApi body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -103,7 +103,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] exportConfigurazioneApiBySimpleSearch(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio);
 
     /**
@@ -124,7 +124,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public ListaRiepilogoApi getConfigurazioneApi(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("limit") Integer limit);
 
     /**
@@ -146,7 +146,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneApiByFullSearch(@Valid RicercaStatisticaDistribuzioneApi body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -167,7 +167,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneApiBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("distingui_api_implementata") @DefaultValue("true") Boolean distinguiApiImplementata, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -189,7 +189,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneApplicativoByFullSearch(@Valid RicercaStatisticaDistribuzioneApplicativoRegistrato body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -210,7 +210,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneApplicativoBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("soggetto_mittente") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoMittente, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -232,7 +232,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneAzioneByFullSearch(@Valid RicercaStatisticaDistribuzioneAzione body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -253,7 +253,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneAzioneBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -275,7 +275,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneEsitiByFullSearch(@Valid RicercaStatisticaDistribuzioneEsiti body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -296,7 +296,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneEsitiBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -318,7 +318,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneIdAutenticatoByFullSearch(@Valid RicercaStatisticaDistribuzioneApplicativo body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -339,7 +339,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneIdAutenticatoBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -361,7 +361,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneIndirizzoIPByFullSearch(@Valid RicercaStatisticaDistribuzioneApplicativo body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -382,7 +382,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneIndirizzoIPBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -404,7 +404,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneSoggettoLocaleByFullSearch(@Valid RicercaStatisticaDistribuzioneSoggettoLocale body, @QueryParam("profilo") ProfiloEnum profilo);
 
     /**
@@ -425,7 +425,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneSoggettoLocaleBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -447,7 +447,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneSoggettoRemotoByFullSearch(@Valid RicercaStatisticaDistribuzioneSoggettoRemoto body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -468,7 +468,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneSoggettoRemotoBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -490,7 +490,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneTemporaleByFullSearch(@Valid RicercaStatisticaAndamentoTemporale body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -511,7 +511,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneTemporaleBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -533,7 +533,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneTokenInfoByFullSearch(@Valid RicercaStatisticaDistribuzioneTokenInfo body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
@@ -554,7 +554,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneTokenInfoBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("claim") @NotNull TokenClaimEnum claim, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
@@ -575,7 +575,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public InfoImplementazioneApi getRiepilogoApi(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("nome_servizio") @NotNull @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio);
 
     /**
@@ -596,6 +596,6 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public Riepilogo getRiepologoConfigurazioni(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 }

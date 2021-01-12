@@ -167,6 +167,8 @@ import org.openspcoop2.core.monitor.rs.server.model.ProblemId;
 			<replacevalue><![CDATA[]]></replacevalue>
 		</replace>
 
+		<antcall target="-fixReturCodeDefault"/>
+
 		<!-- Elimino elementi non usati e segnalati dal validatore del team -->
 		<replace file="${src_govwayMonitorApiRS}/schemi/merge/govway_rs-api_monitor.yaml">
 			<replacetoken><![CDATA[    TransazioneDettaglioMessaggioContenuti:
@@ -204,6 +206,13 @@ import org.openspcoop2.core.monitor.rs.server.model.ProblemId;
 			token="&amp;#${TokenCode};" value="${TokenValue}" includes="*.java"/>
 		<replace dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/model"
 			token="&amp;#${TokenCode};" value="${TokenValue}" includes="*.java"/>
+	</target>
+
+	<target name="-fixReturCodeDefault">
+		<replace dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/api" 
+			token="@ApiResponse(responseCode = &quot;200&quot;, description = &quot;Unexpected error&quot;, content = @Content(schema = @Schema(implementation = Problem.class))) })" 
+			value="@ApiResponse(responseCode = &quot;500&quot;, description = &quot;Unexpected error&quot;, content = @Content(schema = @Schema(implementation = Problem.class))) })" 
+			includes="*Api.java"/>	
 	</target>
 
 </project>
