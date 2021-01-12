@@ -83,7 +83,7 @@ public abstract class MessageSecurityContext{
       
 	protected Hashtable<String,Object> incomingProperties = new Hashtable<String,Object>();
 	protected Hashtable<String,Object> outgoingProperties = new Hashtable<String,Object>();
-	
+
 	protected boolean useActorDefaultIfNotDefined = true;
 	protected String actorDefault = null;
 	protected String actor;
@@ -133,6 +133,25 @@ public abstract class MessageSecurityContext{
 	}
 	public void setReferences(List<Reference> references) {
 		this.references = references;
+	}
+	
+	
+	// I due encrypt part servono per un utilizzo manuale delle classi di sicurezza
+	
+	private String manualAttachmentsEncryptPart = null;
+	private String manualAttachmentsSignaturePart = null;
+	
+	public String getManualAttachmentsEncryptPart() {
+		return this.manualAttachmentsEncryptPart;
+	}
+	public void setManualAttachmentsEncryptPart(String manualAttachmentsEncryptPart) {
+		this.manualAttachmentsEncryptPart = manualAttachmentsEncryptPart;
+	}
+	public String getManualAttachmentsSignaturePart() {
+		return this.manualAttachmentsSignaturePart;
+	}
+	public void setManualAttachmentsSignaturePart(String manualAttachmentsSignaturePart) {
+		this.manualAttachmentsSignaturePart = manualAttachmentsSignaturePart;
 	}
 	
 	// I due bean signatureBean e encryptionBean servono per un utilizzo manuale delle classi di sicurezza.

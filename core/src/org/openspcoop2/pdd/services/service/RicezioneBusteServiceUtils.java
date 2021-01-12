@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import javax.mail.internet.ContentType;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -73,6 +72,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -324,7 +324,8 @@ public class RicezioneBusteServiceUtils {
 			try {
 				ct = protocolContext.getContentType();
 				if(ct!=null && !"".equals(ct)) {
-					new ContentType(ct).getBaseType();
+					//new ContentType(ct).getBaseType();
+					ContentTypeUtilities.validateContentType(ct);
 				}
 			}catch(Exception error){
 				if(res!=null) {

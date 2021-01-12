@@ -50,6 +50,24 @@ public class ContentTypeUtilities {
 	
 	// Utilities generiche
 	
+	public static void validateContentType(String ct) throws UtilsException{
+		try {
+			if(ct!=null && !"".equals(ct)) {
+				
+				(new ContentType(ct)).getBaseType();
+				
+				if(ContentTypeUtilities.isMultipart(ct)){
+					String internal = ContentTypeUtilities.getInternalMultipartContentType(ct);
+					if(internal!=null){
+						ContentTypeUtilities.isMtom(internal);
+					}
+				}
+			}
+		}catch(Throwable e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 	public static String buildContentType(String baseType,Map<String, String> parameters) throws UtilsException{
 		try{
 			ContentType cType = new ContentType(baseType);

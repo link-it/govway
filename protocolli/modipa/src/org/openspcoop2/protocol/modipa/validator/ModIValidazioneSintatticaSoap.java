@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeaderElement;
 
@@ -60,6 +61,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
+import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j;
@@ -177,7 +179,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 	}
 	
-	public SOAPEnvelope validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, boolean includiRequestDigest, 
+	public SOAPEnvelope validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, boolean includiRequestDigest, boolean signAttachments, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig,
 			boolean buildSecurityTokenInRequest) throws Exception {
@@ -233,6 +235,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		WSDataRef wsaMessageIdRef = null;
 		WSDataRef bodyRef = null;
 		WSDataRef requestDigestRef = null;
+		List<WSDataRef> attachmentsRef = new ArrayList<WSDataRef>();
 		MessageSecurityReceiver_wss4j wss4jSignature = null;
 		try {
 		
@@ -275,6 +278,12 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			if(integrita) {
 				bf.append(";");
 				bf.append("{Element}{").append(soapEnvelope.getNamespaceURI()).append("}Body");
+				if(signAttachments) {
+					if(bf.length()>0) {
+						bf.append(";");
+					}
+					bf.append("{}"+SecurityConstants.CID_ATTACH_WSS4j);
+				}
 			}
 			if(addCorniceSicurezza) {
 				bf.append(";");
@@ -303,6 +312,9 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			// setProperties
 			messageSecurityContext.setIncomingProperties(secProperties, false);
+			if(signAttachments) {
+				messageSecurityContext.setManualAttachmentsSignaturePart("{}"+SecurityConstants.CID_ATTACH_WSS4j);
+			}
 			
 			
 			// ** Raccolgo elementi "toccati" da Security per pulirli poi in fase di sbustamento ** /
@@ -367,6 +379,14 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 							requestDigestHeader.getNamespaceURI().equals(wsDataRef.getName().getNamespaceURI())) {
 						requestDigestRef = wsDataRef;
 					}
+					else if(wsDataRef.getName()!=null && 
+							"attachment".equals(wsDataRef.getName().getLocalPart()) &&
+							WSSAttachmentsConstants.SWA_NS.equals(wsDataRef.getName().getNamespaceURI())) {
+						attachmentsRef.add(wsDataRef);
+					}
+//					else {
+//						System.out.println("TROVATO ALTRO WS DATA Name["+wsDataRef.getName()+"] wsuId["+wsDataRef.getWsuId()+"]");
+//					}
 				}
 			}
 			
@@ -478,6 +498,64 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_NON_VALIDO, 
 							"Header WSSecurity Signature; Header Request Digest non firmato"));
 				}
+			}
+			
+			if(signAttachments) {
+				
+				List<String> cidAttachments = new ArrayList<String>();
+				if(msg.castAsSoap().countAttachments()>0){
+					Iterator<?> itAttach = msg.castAsSoap().getAttachments();
+					while (itAttach.hasNext()) {
+						AttachmentPart ap = (AttachmentPart) itAttach.next();
+						String contentId = normalizeContentID(ap.getContentId());
+						cidAttachments.add(contentId);
+						//System.out.println("ADD '"+contentId+"'");
+					}
+				}
+				
+				if(attachmentsRef.isEmpty()) {
+					if(requestDigestRef==null || requestDigestRef.getDigestValue()==null || requestDigestRef.getDigestAlgorithm()==null) {
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_ALLEGATO_NON_PRESENTE, 
+								"Header WSSecurity Signature; Allegati non firmati"));
+					}
+				}
+				else {
+					for (WSDataRef wsDateRef : attachmentsRef) {
+						
+						String cid = null;
+						String idLog = "";
+						if(wsDateRef!=null) {
+							cid = normalizeContentID(wsDateRef.getWsuId());
+							idLog = (wsDateRef.getWsuId()!=null) ? " '"+cid+"'" : "";
+						}
+						 												
+						if(wsDateRef==null || wsDateRef.getDigestValue()==null || wsDateRef.getDigestAlgorithm()==null) {
+							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_ALLEGATO_NON_VALIDA, 
+									"Header WSSecurity Signature; Allegato"+idLog+" non firmato (digest non presente)"));
+						}
+						if(cid==null) {
+							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_ALLEGATO_NON_VALIDA, 
+									"Header WSSecurity Signature; Allegato"+idLog+" non firmato (cid non presente)"));
+						}
+						//System.out.println("CID FIRMATO '"+cid+"'");
+						
+						if(!cidAttachments.contains(cid)) {
+							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_ALLEGATO_NON_VALIDA, 
+									"Header WSSecurity Signature; Allegato con id"+idLog+", riferito nella firma, non esiste"));
+						}
+						else {
+							cidAttachments.remove(cid);
+						}
+					}
+				}
+				
+				if(!cidAttachments.isEmpty()) {
+					for (String cid : cidAttachments) {
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_ALLEGATO_NON_VALIDA, 
+								"Header WSSecurity Signature; Allegato"+cid+" non firmato"));
+					}
+				}
+				
 			}
 		}
 
@@ -648,6 +726,22 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 		return soapSecurity.buildTraccia(msg.getMessageType());
 		
+	}
+	
+	private String normalizeContentID(String contentId) {
+		if(contentId==null) {
+			return null;
+		}
+		contentId = contentId.replace("&lt;", "<");
+		contentId = contentId.replace("&gt;", ">");
+		if(contentId.startsWith("cid:") && contentId.length()>4){
+			contentId = contentId.substring(4);
+		}
+		if(contentId.startsWith("<") && contentId.length()>1)
+			contentId = contentId.substring(1);
+		if(contentId.endsWith(">") && contentId.length()>1)
+			contentId = contentId.substring(0,contentId.length()-1);
+		return contentId;
 	}
 	
 	private void addValidationCorniceSicurezza(Hashtable<String,Object> secProperties) {

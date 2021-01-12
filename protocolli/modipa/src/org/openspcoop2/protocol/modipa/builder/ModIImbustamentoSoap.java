@@ -253,7 +253,8 @@ public class ModIImbustamentoSoap {
 	}
 	
 	public SOAPEnvelope addSecurity(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
-			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest) throws Exception {
+			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
+			boolean signAttachments) throws Exception {
 	
 		ModIProperties modIProperties = ModIProperties.getInstance();
 	
@@ -436,6 +437,12 @@ public class ModIImbustamentoSoap {
 				bf.append(";");
 			}
 			bf.append("{Element}{").append(soapEnvelope.getNamespaceURI()).append("}Body");
+			if(signAttachments) {
+				if(bf.length()>0) {
+					bf.append(";");
+				}
+				bf.append("{}"+SecurityConstants.CID_ATTACH_WSS4j);
+			}
 		}
 		if(corniceSicurezza) {
 			if(bf.length()>0) {

@@ -260,6 +260,11 @@ public class ModIImbustamento {
 					
 					boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
 					
+					boolean signAttachments = false;
+					if(!rest) {
+						signAttachments = ModIPropertiesUtils.isAttachmentsSignature(aspc, nomePortType, azione, isRichiesta, msg);
+					}
+					
 					if(MessageRole.REQUEST.equals(messageRole)) {
 						if(sa==null) {
 							ProtocolException pe = new ProtocolException("Il profilo di sicurezza richiesto '"+securityMessageProfile+"' richiede l'identificazione di un applicativo");
@@ -289,7 +294,7 @@ public class ModIImbustamento {
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(token));
 					}
 					else {
-						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest);
+						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest, signAttachments);
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(env));
 					}
 					

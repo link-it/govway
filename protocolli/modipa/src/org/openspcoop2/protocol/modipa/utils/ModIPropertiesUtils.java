@@ -454,8 +454,32 @@ public class ModIPropertiesUtils {
 		securityMessageProfile = securityMessageProfile.replace("s", "m");
 		return securityMessageProfile;
 	}
-	
-	
+
+	public static boolean isAttachmentsSignature(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean isRichiesta, 
+			OpenSPCoop2Message message) throws Exception {
+		boolean sign = false;
+		String securityMessageApplicabilita = ModIPropertiesUtils.readPropertySecurityMessageApplicabilita(aspc, nomePortType, azione);
+		if(securityMessageApplicabilita==null || StringUtils.isEmpty(securityMessageApplicabilita)) {
+			securityMessageApplicabilita = ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_DEFAULT;
+		}
+		
+		if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS.equals(securityMessageApplicabilita)) {
+			sign = true;
+		}
+		else if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA_CON_ATTACHMENTS.equals(securityMessageApplicabilita)) {
+			sign = isRichiesta;
+		}
+		else if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS.equals(securityMessageApplicabilita)) {
+			sign = !isRichiesta;
+		}
+		
+		if(sign) {
+			return message.castAsSoap().countAttachments()>0;
+		}
+		
+		return false;
+	}
+
 	public static boolean processSecurity(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean isRichiesta, 
 			OpenSPCoop2Message message, boolean rest, ModIProperties modiProperties) throws Exception {
 		boolean processSecurity = false;
@@ -465,13 +489,16 @@ public class ModIPropertiesUtils {
 		}
 		
 		boolean configurazionePersonalizzata = false;
-		if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI.equals(securityMessageApplicabilita)) {
+		if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI.equals(securityMessageApplicabilita) ||
+				ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS.equals(securityMessageApplicabilita)) {
 			processSecurity = true;
 		}
-		else if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA.equals(securityMessageApplicabilita)) {
+		else if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA.equals(securityMessageApplicabilita) ||
+				ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA_CON_ATTACHMENTS.equals(securityMessageApplicabilita)) {
 			processSecurity = isRichiesta;
 		}
-		else if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA.equals(securityMessageApplicabilita)) {
+		else if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA.equals(securityMessageApplicabilita) ||
+				ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS.equals(securityMessageApplicabilita)) {
 			processSecurity = !isRichiesta;
 		}
 		else if(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO.equals(securityMessageApplicabilita)) {

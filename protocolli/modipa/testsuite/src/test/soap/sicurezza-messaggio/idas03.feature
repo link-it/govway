@@ -7,6 +7,7 @@ Background:
     * configure afterFeature = function(){ karate.call('classpath:utils/jmx-disable-error-disclosure.feature'); }
     
     * def check_traccia = read('check-tracce/check-traccia.feature')
+    * def check_traccia_basic = read('check-tracce/check-traccia-basic.feature')
     * def check_signature = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/check-signature.feature')
 
     * def x509sub_client1 = 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT'
@@ -63,6 +64,29 @@ And match response == read("response.xml")
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: x509sub_client1, profilo_sicurezza: "IDAS0301", other_checks: checks_richiesta })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: x509sub_server, profilo_sicurezza: "IDAS0301", other_checks: checks_risposta })
+
+
+@attachments
+Scenario: Test giro ok con attachments
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS03WithAttachments/v1'
+
+Given url soap_url
+And request read("richiestaConAllegati.bin")
+And header Content-Type = 'multipart/related; boundary=----=_Part_1_1678144365.1610454048429; type=text/xml'
+And header SOAPAction = ""
+And header GovWay-TestSuite-Test-ID = 'attachments-idas03'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_basic ({tid: tid, tipo: 'Richiesta', profilo_sicurezza: "IDAS0301" })
+* call check_traccia_basic ({tid: tid, tipo: 'Risposta', profilo_sicurezza: "IDAS0301" })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_basic ({tid: tid, tipo: 'Richiesta', profilo_sicurezza: "IDAS0301" })
+* call check_traccia_basic ({tid: tid, tipo: 'Risposta', profilo_sicurezza: "IDAS0301" })
 
 
 @manomissione-token-richiesta

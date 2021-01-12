@@ -1,6 +1,13 @@
+2021-01-12  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1129
+	Per API di tipo SOAP è adesso possibile attivare anche la firma degli allegati utilizzando il pattern di sicurezza 'INTEGRITY_SOAP_01'.
+
 2021-01-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor, GovWayConsole]
+	Risolto Bug OP-1127
 	In presenza di una configurazione in Load Balancing, se la connessione verso un nodo andava in "read timed out",
 	la console era accessibile allo scadere del timeout impostato a 120 secondi.
 	Il valore di default del timeout è stato ridotto a 5 secondi.

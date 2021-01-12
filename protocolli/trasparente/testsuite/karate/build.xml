@@ -136,6 +136,7 @@
 		<delete dir="${output}"/>
 		<delete dir="${log_testsuite}"/>
 		<mkdir dir="${output}"/>
+		<mkdir dir="${log_testsuite}"/>
 
 		<var name="loadEnabled" value="true"/>
 		<if>

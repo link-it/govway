@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.services.connector;
 import java.io.IOException;
 import java.util.Enumeration;
 
-import javax.mail.internet.ContentType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,6 +44,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -87,7 +87,8 @@ public class ConnectorUtils {
 		try {
 			ct = protocolContext.getContentType();
 			if(ct!=null && !"".equals(ct)) {
-				(new ContentType(ct)).getBaseType();
+				//(new ContentType(ct)).getBaseType();
+				ContentTypeUtilities.validateContentType(ct);
 			}
 		}catch(Throwable e) {
 			// valido content type ricevuto; eventuale tipo non correto verrà segnalato in seguito

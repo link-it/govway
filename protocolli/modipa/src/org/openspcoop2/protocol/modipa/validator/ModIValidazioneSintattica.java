@@ -311,6 +311,11 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						
 						boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
 						
+						boolean signAttachments = false;
+						if(!rest) {
+							signAttachments = ModIPropertiesUtils.isAttachmentsSignature(aspc, nomePortType, azione, request, msg);
+						}
+						
 						boolean buildSecurityTokenInRequest = true;
 						if(!request) {
 							String securityMessageRequest = null;
@@ -346,7 +351,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						}
 						else {
 
-							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, includiRequestDigest, bustaRitornata, 
+							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, includiRequestDigest, signAttachments, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, securityConfig,
 									buildSecurityTokenInRequest );
 							

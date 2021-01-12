@@ -24,7 +24,7 @@ L'attivazione di questo pattern avviene a livello della relativa API, nella sezi
 
     Pattern di sicurezza messaggio "INTEGRITY_SOAP_01" per l'API
 
-Le voci 'Header HTTP del Token' (presente solamente su API di tipo REST) e 'Applicabilità' consentono di personalizzare l'header HTTP utilizzato e di indicare se il pattern di sicurezza verrà attuato sia sulla richiesta che sulla risposta. Maggiori informazioni vengono fornite nella sezione ':ref:`modipa_sicurezza_avanzate`'.
+Le voci 'Header HTTP del Token' (presente solamente su API di tipo REST) e 'Applicabilità' consentono di personalizzare l'header HTTP utilizzato e di indicare se il pattern di sicurezza verrà attuato sia sulla richiesta che sulla risposta. Su API di tipo SOAP è possibile selezionare una 'Applicatibilità' che firmi oltre al body anche gli attachments, se presenti. Maggiori informazioni vengono fornite nella sezione ':ref:`modipa_sicurezza_avanzate`'.
 
 La voce 'Informazioni Utente' consente di abilitare la funzionalità, descritta nella sezione ':ref:`modipa_infoUtente`', che consente di aggiungere all'interno del token di sicurezza le informazioni sull'utente che ha effettuato la richiesta.
 

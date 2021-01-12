@@ -79,6 +79,23 @@ public class AttachmentsConfigReaderUtils {
 				}
 			}
 		}
+		
+		if(ap==null) {
+			if(wssContext.getManualAttachmentsEncryptPart()!=null) {
+				List<ProcessingPart<?,?>> listProcessingParts = ProcessingPartUtils.getEncryptionInstance().getProcessingParts(wssContext.getManualAttachmentsEncryptPart());
+				AttachmentProcessingPart apFound = findAttachmentProcessingPart(listProcessingParts, ap, SecurityConstants.ENCRYPTION_PARTS); 
+				if(ap==null){
+					ap = apFound;
+				}
+			}
+			else if(wssContext.getManualAttachmentsSignaturePart()!=null) {
+				List<ProcessingPart<?,?>> listProcessingParts = ProcessingPartUtils.getEncryptionInstance().getProcessingParts(wssContext.getManualAttachmentsSignaturePart());
+				AttachmentProcessingPart apFound = findAttachmentProcessingPart(listProcessingParts, ap, SecurityConstants.SIGNATURE_PARTS); 
+				if(ap==null){
+					ap = apFound;
+				}
+			}
+		}
 
 		return ap;
 	}
