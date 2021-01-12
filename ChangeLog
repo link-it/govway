@@ -1,5 +1,10 @@
 2021-01-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Per API di tipo REST è stato arricchito il diagnostico di consegna, in presenza di codice di risposta http 3xx, per registrare anche il valore dell'header http 'Location'.
+
+2021-01-12  Andrea Poli <apoli@link.it>
+
 	* [ApiRsMonitoraggio, ApiRsConfigurazione]
 	Risolto Bug presente nella generazione delle interfacce yaml/json tramite 'CXF OpenApiFeature'.
 	Le interfacce generate presentavano erroneamente come risposta 2xx un problem detail.

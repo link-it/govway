@@ -847,6 +847,11 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 						}
 						else {
 							this.logger.debug("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+							
+							if(this.location!=null && redirectLocation!=null){
+								this.location = this.location+" [redirect-location: "+redirectLocation+"]";
+					    	}
+							
 							if(httpBody.isDoInput()){
 								this.isResponse = this.httpConn.getInputStream();
 								if(this.isResponse==null) {
