@@ -407,6 +407,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 	public boolean importCheckData(FormFile ff,ImporterUtils importerUtils,String protocollo,ArchiveMode importMode,ArchiveModeType importType) throws Exception {
 
+		if(ff==null || ff.getFileName()==null || "".equals(ff.getFileName()) || ff.getFileData()==null || ff.getFileData().length<=0) {
+			this.pd.setMessage("Non è stato selezionato alcun file");
+			return false;
+		}
+		
 		// check estensione
 		if(ff.getFileName().contains(".")==false){
 			this.pd.setMessage("Estensione di file non valida");

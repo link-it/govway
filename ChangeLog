@@ -1,5 +1,12 @@
 2021-01-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1131
+	Nella configurazione dei gruppi di risorse di una erogazione o fruizione è adesso possibile filtrare per metodo http e path.
+	Migliorato inoltre il messaggio di errore riportato dalla console se viene utilizzata la funzionalità 'Importa' o 'Esporta' senza fornire un archivio.
+
+2021-01-12  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloModIPA]
 	Aggiunta funzionalità OP-1129
 	Per API di tipo SOAP è adesso possibile attivare anche la firma degli allegati utilizzando il pattern di sicurezza 'INTEGRITY_SOAP_01'.

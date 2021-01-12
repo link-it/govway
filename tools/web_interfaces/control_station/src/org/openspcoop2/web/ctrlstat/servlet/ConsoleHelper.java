@@ -8788,19 +8788,74 @@ public class ConsoleHelper implements IConsoleHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			org.openspcoop2.core.registry.constants.HttpMethod httpMethod = null;
+			if(!ServiceBinding.SOAP.equals(serviceBinding)) {
+				String filterHttpMethod = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_HTTP_METHOD);
+				this.addFilterHttpMethod(filterHttpMethod, false);
+				
+				if(filterHttpMethod!=null) {
+					httpMethod = org.openspcoop2.core.registry.constants.HttpMethod.toEnumConstant(filterHttpMethod);
+				}
+			}
+			
+			HashMap<String, ResourceSintetica> mapIdResourceToMethodPath = new HashMap<String, ResourceSintetica>();
+			
 			List<String> listaAzioniPaginata = new ArrayList<>();
 			if(listaAzioniParamDaPaginare!=null && !listaAzioniParamDaPaginare.isEmpty()) {
 				List<String> listaAzioniDopoSearch = new ArrayList<>();
-				if(search!=null && !"".equals(search)) {
+				
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
 					for (int i = 0; i < listaAzioniParamDaPaginare.size(); i++) {
-						if(listaAzioniParamDaPaginare.get(i).toLowerCase().contains(search.toLowerCase())) {
-							listaAzioniDopoSearch.add(listaAzioniParamDaPaginare.get(i));
+						String idRisorsa = listaAzioniParamDaPaginare.get(i);
+						
+						// verifico nome
+						if(search!=null && !"".equals(search)) {
+							if(!idRisorsa.toLowerCase().contains(search.toLowerCase())) {
+								continue;
+							}
 						}
+						
+						// azione che ha un match
+						listaAzioniDopoSearch.add(idRisorsa);
 					}
 				}
 				else {
-					listaAzioniDopoSearch.addAll(listaAzioniParamDaPaginare);
+					for (int i = 0; i < listaAzioniParamDaPaginare.size(); i++) {
+						String idRisorsa = listaAzioniParamDaPaginare.get(i);
+						ResourceSintetica risorsa = null;
+						for (ResourceSintetica resourceTmp : aspc.getResource()) {
+							if(resourceTmp.getNome().equals(idRisorsa)) {
+								risorsa = resourceTmp;
+								break;
+							}
+						}
+						
+						if(risorsa==null) {
+							throw new Exception("Risorsa con id '"+idRisorsa+"' non esistente ?");
+						}
+						
+						// verifico path
+						if(search!=null && !"".equals(search)) {
+							if(risorsa.getPath()==null || !risorsa.getPath().toLowerCase().contains(search.toLowerCase())) {
+								continue;
+							}
+						}
+						
+						// verifico metodo
+						if(httpMethod!=null) {
+							if(risorsa.getMethod()==null || !risorsa.getMethod().equals(httpMethod)) {
+								continue;
+							}
+						}
+						
+						// azione che ha un match sia con path che con metodo
+						listaAzioniDopoSearch.add(idRisorsa);
+						if(risorsa!=null) {
+							mapIdResourceToMethodPath.put(idRisorsa, risorsa);
+						}
+					}
 				}
+				
 				ricerca.setNumEntries(idLista, listaAzioniDopoSearch.size());
 				
 				if(listaAzioniDopoSearch!=null && !listaAzioniDopoSearch.isEmpty()) {
@@ -8819,7 +8874,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
-			this.pd.setSearchLabel(this.getLabelAzione(serviceBinding));
+			if(ServiceBinding.SOAP.equals(serviceBinding)) {
+				this.pd.setSearchLabel(this.getLabelAzione(serviceBinding));
+			}
+			else {
+				this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
+			}
+			
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, label, search);
 			}
@@ -8831,13 +8892,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					listaAzioni.add(azione);
 				}
 				else {
-					ResourceSintetica risorsa = null;
-					for (ResourceSintetica resourceTmp : aspc.getResource()) {
-						if(resourceTmp.getNome().equals(azione)) {
-							risorsa = resourceTmp;
-							break;
-						}
-					}
+					ResourceSintetica risorsa = mapIdResourceToMethodPath.get(azione);
 					String nomeRisorsaConPathPerOrderBy = 
 							(risorsa.getPath()==null ? "*" : risorsa.getPath())
 							+" " +
