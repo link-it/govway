@@ -474,7 +474,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				}else{
 					tipoLetturaRisposta = "Imbustamento messaggio in un messaggio SOAP";
 					String contentTypeForEnvelope = null; // todo renderlo parametrico soprattutto per soap1.2
-					String soapAction = "\"OpenSPCoop2\""; // todo renderlo parametrico
+					//String soapAction = "\"OpenSPCoop2\""; // todo renderlo parametrico
+					String soapAction = "\"GovWay\""; // todo renderlo parametrico
 					OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(logCore,requestInfo, MessageRole.REQUEST).
 							envelopingMessage(messageTypeReq, contentTypeForEnvelope, soapAction, 
 							requestInfo.getProtocolContext(), inputBody, notifierInputStreamParams, 

@@ -225,7 +225,7 @@ public class ConnectorUtils {
 	
 	
 	public static String generateError404Message(String code){
-		return "OpenSPCoop2-"+code;
+		return "GovWay-"+code;
 	}
 	
 	public static void generateErrorMessage(IDService idService, HttpRequestMethod httpMethod,
