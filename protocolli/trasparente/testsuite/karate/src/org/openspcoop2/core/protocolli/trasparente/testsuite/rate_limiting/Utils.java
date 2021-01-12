@@ -22,6 +22,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -687,4 +688,10 @@ public class Utils {
 		}
 	}
 
+	public static void checkHeaderTooManyRequest(HttpResponse r) {
+		String returnCode = r.getHeader(Headers.ReturnCode);
+		boolean equalsWithReason = HeaderValues.RETURNCODE_TOO_MANY_REQUESTS.equalsIgnoreCase(returnCode);
+		boolean equalsWithoutReason = HeaderValues.RETURNCODE_TOO_MANY_REQUESTS_NO_REASON.equalsIgnoreCase(returnCode);
+		assertTrue("Verifico return code 429: '"+returnCode+"'", (equalsWithReason || equalsWithoutReason));
+	}
 }

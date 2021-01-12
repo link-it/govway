@@ -29,7 +29,11 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting;
 * @version $Rev$, $Date$
 */
 public class HeaderValues {
-	public static final String LimitExceeded = "LimitExceeded";
-	public static final String ReturnCodeTooManyRequests = "HTTP/1.1 429 Too Many Requests";
-	public static final String TooManyRequests = "TooManyRequests";		 
+	
+	public static final String LIMIT_EXCEEDED = "LimitExceeded";
+	public static final String TOO_MANY_REQUESTS = "TooManyRequests";		 
+	
+	public static final String RETURNCODE_TOO_MANY_REQUESTS = "HTTP/1.1 429 Too Many Requests";
+	public static final String RETURNCODE_TOO_MANY_REQUESTS_NO_REASON = "HTTP/1.1 429"; // tomcat 9
+	
 }

@@ -69,6 +69,7 @@
 	</path>
 	<property name="src_testsuite" location="src" />
 	<property name="build_testsuite" location="build" />
+	<property name="log_testsuite" location="log" />
 
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
@@ -133,6 +134,7 @@
 	<target name="run_test">
 
 		<delete dir="${output}"/>
+		<delete dir="${log_testsuite}"/>
 		<mkdir dir="${output}"/>
 
 		<var name="loadEnabled" value="true"/>
@@ -421,6 +423,10 @@
 			</fileset>
 			<report format="frames" todir="${output}\html\" />
 		</junitreport>
+
+		<copy todir="${output}/log">
+			<fileset dir="${log_testsuite}"/>
+		</copy>
 
 	</target>
 

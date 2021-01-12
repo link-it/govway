@@ -141,8 +141,8 @@ public class SoapTest extends ConfigLoader {
 		assertEquals("Too Many Requests", matcher.read("/html/body/h1/text()"));
 		assertEquals("Too many requests detected", matcher.read("/html/body/p/text()"));
 		
-		assertEquals(HeaderValues.TooManyRequests, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
-		assertEquals(HeaderValues.ReturnCodeTooManyRequests, failedResponse.getHeader(Headers.ReturnCode));
+		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		Utils.checkHeaderTooManyRequest(failedResponse);
 		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));		
 		
 		Utils.waitForZeroGovWayThreads();		
@@ -483,8 +483,8 @@ public class SoapTest extends ConfigLoader {
 		assertEquals("Limit exceeded detected", matcher.read("/html/body/p/text()"));		
 		
 		assertEquals("0", failedResponse.getHeader(Headers.RateLimitRemaining));
-		assertEquals(HeaderValues.LimitExceeded, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
-		assertEquals(HeaderValues.ReturnCodeTooManyRequests, failedResponse.getHeader(Headers.ReturnCode));
+		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		Utils.checkHeaderTooManyRequest(failedResponse);
 		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
 		
 		// Lo header X-RateLimit-Remaining deve assumere tutti i
@@ -525,8 +525,8 @@ public class SoapTest extends ConfigLoader {
 		assertEquals("Too many requests detected", matcher.read("/html/body/p/text()"));
 		
 		assertEquals("0", failedResponse.getHeader(Headers.ConcurrentRequestsRemaining));
-		assertEquals(HeaderValues.TooManyRequests, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
-		assertEquals(HeaderValues.ReturnCodeTooManyRequests, failedResponse.getHeader(Headers.ReturnCode));
+		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		Utils.checkHeaderTooManyRequest(failedResponse);
 		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
 	}
 

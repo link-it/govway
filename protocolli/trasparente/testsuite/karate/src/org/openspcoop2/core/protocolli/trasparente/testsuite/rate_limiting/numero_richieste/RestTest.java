@@ -448,8 +448,8 @@ public class RestTest extends ConfigLoader {
 		assertNotEquals(null, jsonPath.getStringMatchPattern(jsonResp, "$.govway_id").get(0));
 		
 		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
-		assertEquals(HeaderValues.TooManyRequests, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
-		assertEquals(HeaderValues.ReturnCodeTooManyRequests, failedResponse.getHeader(Headers.ReturnCode));
+		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		Utils.checkHeaderTooManyRequest(failedResponse);
 
 		
 		Utils.waitForZeroGovWayThreads();		
@@ -498,8 +498,8 @@ public class RestTest extends ConfigLoader {
 		
 
 		assertEquals("0", failedResponse.getHeader(Headers.ConcurrentRequestsRemaining));
-		assertEquals(HeaderValues.TooManyRequests, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
-		assertEquals(HeaderValues.ReturnCodeTooManyRequests, failedResponse.getHeader(Headers.ReturnCode));
+		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		Utils.checkHeaderTooManyRequest(failedResponse);
 		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
 	}
 
@@ -550,8 +550,8 @@ public class RestTest extends ConfigLoader {
 		}
 		
 		assertEquals("0", failedResponse.getHeader(Headers.RateLimitRemaining));
-		assertEquals(HeaderValues.LimitExceeded, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
-		assertEquals(HeaderValues.ReturnCodeTooManyRequests, failedResponse.getHeader(Headers.ReturnCode));
+		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		Utils.checkHeaderTooManyRequest(failedResponse);
 		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
 
 		// Lo header X-RateLimit-Remaining deve assumere tutti i

@@ -223,8 +223,8 @@ public class RestTest extends ConfigLoader {
 		Utils.matchLimitExceededRest(jsonResp);
 		
 		assertEquals("0", failedResponse.getHeader(Headers.RateLimitTimeResponseQuotaRemaining));
-		assertEquals(HeaderValues.LimitExceeded, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
-		assertEquals(HeaderValues.ReturnCodeTooManyRequests, failedResponse.getHeader(Headers.ReturnCode));
+		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		Utils.checkHeaderTooManyRequest(failedResponse);
 		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
 	}
 	

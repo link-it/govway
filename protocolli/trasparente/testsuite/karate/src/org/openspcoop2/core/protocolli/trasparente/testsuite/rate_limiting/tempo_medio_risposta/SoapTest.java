@@ -229,8 +229,8 @@ public class SoapTest extends ConfigLoader {
 	
 			Utils.matchLimitExceededSoap(Utils.buildXmlElement(r.getContent()));
 			
-			assertEquals(HeaderValues.LimitExceeded, r.getHeader(Headers.GovWayTransactionErrorType));
-			assertEquals(HeaderValues.ReturnCodeTooManyRequests, r.getHeader(Headers.ReturnCode));
+			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeader(Headers.GovWayTransactionErrorType));
+			Utils.checkHeaderTooManyRequest(r);
 			assertNotEquals(null, r.getHeader(Headers.RetryAfter));
 		}	
 	}
