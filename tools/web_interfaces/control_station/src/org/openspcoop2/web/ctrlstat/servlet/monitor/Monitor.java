@@ -390,6 +390,15 @@ public final class Monitor extends Action {
 				StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
 				int[] idToRemove = new int[objTok.countTokens()];
 
+				Tipologia tipoOperazione = Tipologia.DEL;
+				//System.out.println("tIPOOO '"+objToRemoveType+"'");
+				if(objToRemoveType!=null && MonitorCostanti.ACTION_RICONSEGNA_IMMEDIATA.equals(objToRemoveType)) {
+					tipoOperazione = Tipologia.CHANGE;
+				}
+				
+				long n = 0;
+				long nError = 0;
+				
 				int k = 0;
 				while (objTok.hasMoreElements()) {
 					idToRemove[k++] = Integer.parseInt(objTok.nextToken());
@@ -412,12 +421,6 @@ public final class Monitor extends Action {
 					String tipo = de.getValue();
 					filter.setTipo(tipo);
 					
-					Tipologia tipoOperazione = Tipologia.DEL;
-					//System.out.println("tIPOOO '"+objToRemoveType+"'");
-					if(objToRemoveType!=null && MonitorCostanti.ACTION_RICONSEGNA_IMMEDIATA.equals(objToRemoveType)) {
-						tipoOperazione = Tipologia.CHANGE;
-					}
-
 					IDOperazione [] idOperazione = null;
 					boolean auditDisabiltato = false;
 					try{
@@ -426,15 +429,17 @@ public final class Monitor extends Action {
 						auditDisabiltato = true;
 					}
 					try{
-						long n = -1;
-
 						if(Tipologia.CHANGE.equals(tipoOperazione)) {
-							n = MonitorUtilities.aggiornaDataRispedizioneRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
-							pd.setMessage("Aggiornata la data di rispedizione di " + n + " messaggi"+(n==1?"o":""), Costanti.MESSAGE_TYPE_INFO);
+							long changeReali = MonitorUtilities.aggiornaDataRispedizioneRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+							if(changeReali>0) {
+								n = n + changeReali;
+							}
 						}
 						else {
-							n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
-							pd.setMessage("Eliminat"+(n==1?"o":"i")+" " + n + " messaggi"+(n==1?"o":""), Costanti.MESSAGE_TYPE_INFO);
+							long deleteReali =MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd(),formBean.getSorgenteDati());
+							if(deleteReali>0) {
+								n = n + deleteReali;
+							}
 						}
 						
 						if (n > 0) {
@@ -446,6 +451,9 @@ public final class Monitor extends Action {
 							core.performAuditComplete(idOperazione, new Tipologia []{tipoOperazione}, userLogin, new Object[] {filter});
 						}
 					}catch(Exception e){
+						
+						nError++;
+						
 						if(!auditDisabiltato){
 							core.performAuditError(idOperazione, e.getMessage(), new Tipologia []{tipoOperazione}, userLogin, new Object[] {filter});
 						}
@@ -454,6 +462,17 @@ public final class Monitor extends Action {
 					}
 					
 
+				}
+				
+				if(Tipologia.CHANGE.equals(tipoOperazione)) {
+					pd.setMessage("Aggiornata la data di rispedizione di " + n + " messaggi"+(n==1?"o":"") + 
+							(nError>0 ? "<br>L'aggiornamento è fallito per "+nError+" messaggi"+(nError==1?"o":"") : ""), 
+							nError>0 ? Costanti.MESSAGE_TYPE_ERROR : Costanti.MESSAGE_TYPE_INFO);
+				}
+				else {
+					pd.setMessage("Eliminat"+(n==1?"o":"i")+" " + n + " messaggi"+(n==1?"o":"") + 
+							(nError>0 ? "<br>L'eliminazione è fallita per "+nError+" messaggi"+(nError==1?"o":"") : ""), 
+							nError>0 ? Costanti.MESSAGE_TYPE_ERROR : Costanti.MESSAGE_TYPE_INFO);
 				}
 
 			}
@@ -2144,7 +2163,8 @@ public final class Monitor extends Action {
 			pd.setLabels(labels.toArray(new String[1]));
 
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
-			
+
+			boolean existsMessaggioInConsegna = false;
 
 			if (listaMessaggi != null) {
 				// aggiungo i messaggi
@@ -2395,6 +2415,9 @@ public final class Monitor extends Action {
 															
 								boolean appenaPresoInCarico = false;
 								if(GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE.equals(sac.getTipoConsegna())){
+									
+									existsMessaggioInConsegna=true;
+									
 									if(TimerConsegnaContenutiApplicativiThread.ID_MODULO.equals(sac.getErroreProcessamento())) {
 										appenaPresoInCarico = true;
 										sbDestinatari.append("In coda in attesa di essere gestito");
@@ -2451,7 +2474,7 @@ public final class Monitor extends Action {
 
 			pd.setAddButton(false);
 			
-			if (listaMessaggi != null && !listaMessaggi.isEmpty()) {
+			if (listaMessaggi != null && !listaMessaggi.isEmpty() && existsMessaggioInConsegna) {
 				Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 				AreaBottoni ab = new AreaBottoni();
 				Vector<DataElement> otherbott = new Vector<DataElement>();

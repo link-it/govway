@@ -266,12 +266,18 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			// ** Esito Transazione **
 			if (context.getEsito()!=null){
-				if(consegnaMultipla && schedulaNotificheDopoConsegnaSincrona) {
-					transactionDTO.setEsito(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA));
-					if(context.getEsito().getCode()!=null){
-						transactionDTO.setEsitoSincrono(context.getEsito().getCode());
+				if(consegnaMultipla) {
+					if(consegnaMultipla_profiloSincrono && schedulaNotificheDopoConsegnaSincrona) {
+						transactionDTO.setEsito(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA));
+						if(context.getEsito().getCode()!=null){
+							transactionDTO.setEsitoSincrono(context.getEsito().getCode());
+						}
+						transactionDTO.setConsegneMultipleInCorso(connettoriMultipli);	
 					}
-					transactionDTO.setConsegneMultipleInCorso(connettoriMultipli);	
+					else {
+						transactionDTO.setEsito(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA));
+						transactionDTO.setConsegneMultipleInCorso(connettoriMultipli);	
+					}
 				}
 				else {
 					if(context.getEsito().getCode()!=null){
