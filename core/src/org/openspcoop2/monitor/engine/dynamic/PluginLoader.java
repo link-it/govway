@@ -71,14 +71,23 @@ public class PluginLoader implements IPluginLoader {
 		if(className==null) {
 			throw new Exception("Class not found ("+getObjectName(tipoPlugin)+" type '"+tipo+"')");
 		}
-		if(this.pluginManager==null) {
-			throw new Exception("Plugin manager not initialized");
-		}
 		Class<?> c = null;
-		try {
-			c = this.pluginManager.findClass(this.log, tipoPlugin, className);
-		}catch(Exception e) {
-			throw new Exception("Class '"+className+"' not found in registry ("+getObjectName(tipoPlugin)+" type '"+tipo+"'): "+e.getMessage(),e);
+		if(this.isPluginManagerEnabled()) {
+			if(this.pluginManager==null) {
+				throw new Exception("Plugin manager not initialized");
+			}
+			try {
+				c = this.pluginManager.findClass(this.log, tipoPlugin, className);
+			}catch(Exception e) {
+				throw new Exception("Class '"+className+"' not found in registry ("+getObjectName(tipoPlugin)+" type '"+tipo+"'): "+e.getMessage(),e);
+			}
+		}
+		else {
+			try {
+				c = Class.forName(className);
+			}catch(Exception e) {
+				throw new Exception("Class '"+className+"' not found in classpath: "+e.getMessage(),e);
+			}	
 		}
 		if(c==null) {
 			throw new Exception("Class '"+className+"' not found in registry ("+getObjectName(tipoPlugin)+" type '"+tipo+"')");

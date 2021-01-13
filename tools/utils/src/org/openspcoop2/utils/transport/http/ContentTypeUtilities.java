@@ -31,6 +31,7 @@ import com.sun.xml.messaging.saaj.packaging.mime.internet.ParameterList;
 
 import javax.xml.soap.SOAPException;
 
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -54,7 +55,7 @@ public class ContentTypeUtilities {
 		try {
 			if(ct!=null && !"".equals(ct)) {
 				
-				(new ContentType(ct)).getBaseType();
+				(new javax.mail.internet.ContentType(ct)).getBaseType(); // uso javax.mail per validare, restituisce un errore migliore
 				
 				if(ContentTypeUtilities.isMultipart(ct)){
 					String internal = ContentTypeUtilities.getInternalMultipartContentType(ct);
@@ -64,7 +65,14 @@ public class ContentTypeUtilities {
 				}
 			}
 		}catch(Throwable e) {
-			throw new UtilsException(e.getMessage(),e);
+			String msgError = e.getMessage();
+			if(msgError==null || "".equals(msgError) || "null".equals(msgError)) {
+				msgError = Utilities.getInnerNotEmptyMessageException(e).getMessage();
+			}
+			if(msgError==null || "".equals(msgError) || "null".equals(msgError)) {
+				msgError = "Parsing failed";
+			}
+			throw new UtilsException(msgError,e);
 		}
 	}
 	
