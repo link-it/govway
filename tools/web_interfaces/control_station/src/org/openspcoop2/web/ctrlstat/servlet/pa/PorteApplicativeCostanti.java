@@ -1034,7 +1034,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE_WEIGHT = "Weight";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA = "Modalit&agrave; Consegna";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = "Strategia";
 	
@@ -1391,5 +1391,7 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX = "Esiste gi&agrave; una Regola con Nome ''{0}''";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_ALMENO_UNO_TRA_XX = "Dati incompleti. &Egrave; necessario indicare almeno uno tra: {0}";
 	public static final String MESSAGGIO_ERRORE_CODICI_NON_VALIDI_NEL_CAMPO_XX = "Inserire solo codici numerici validi separati da '','' nel campo ''{0}''";
+
+	public static final String MESSAGGIO_ERRORE_BEHAVIOUR_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare come modalità di consegna";
 	
 }

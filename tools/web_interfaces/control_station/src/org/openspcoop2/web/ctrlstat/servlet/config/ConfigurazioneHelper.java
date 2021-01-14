@@ -15215,7 +15215,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(policy.getFiltro().getInformazioneApplicativaNome()==null || 
 							CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(policy.getFiltro().getInformazioneApplicativaNome())){
 						String messaggio = null;
-						if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipo)) {
+						if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipo) && this.confCore.isConfigurazionePluginsEnabled()) {
 							messaggio = ConfigurazioneCostanti.MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_FILTRO_NON_SELEZIONATO;
 						}
 						else {

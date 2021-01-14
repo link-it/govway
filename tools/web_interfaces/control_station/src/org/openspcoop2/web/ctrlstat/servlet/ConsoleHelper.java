@@ -5821,7 +5821,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
 				
 				if(StringUtils.isEmpty(autenticazioneCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autenticazioneCustom)){
-					if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
+					if(this.confCore.isConfigurazionePluginsEnabled()) {
 						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTENTICAZIONE_CUSTOM_NON_INDICATA);
 					}
 					else {
@@ -6297,7 +6297,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String autorizzazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 				
 				if(StringUtils.isEmpty(autorizzazioneCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autorizzazioneCustom)){
-					if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
+					if(this.confCore.isConfigurazionePluginsEnabled()) {
 						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA);
 					}
 					else {
@@ -6347,7 +6347,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
 					if(StringUtils.isEmpty(autorizzazioneContenuto) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autorizzazioneContenuto)){
-						if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
+						if(this.confCore.isConfigurazionePluginsEnabled()) {
 							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA);
 						}
 						else {
@@ -16228,7 +16228,17 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			break;
 		case CUSTOM:
-			sbConnettoriMultipli.append("Consegna Personalizzata '"+paAssociata.getBehaviour().getNome()+"'");
+			
+			String customLabel = paAssociata.getBehaviour().getNome();
+			Plugin plugin = null;
+			try {
+				plugin = this.confCore.getPlugin(TipoPlugin.BEHAVIOUR,customLabel, false);
+			}catch(Throwable e) {}
+			if(plugin!=null) {
+				customLabel = plugin.getLabel();
+			}
+			
+			sbConnettoriMultipli.append("Consegna Personalizzata '"+customLabel+"'");
 			break;
 		}
 		

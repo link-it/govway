@@ -90,6 +90,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
@@ -6534,7 +6535,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			boolean connettoreNonTrovatoAbortTransaction, String connettoreNonTrovatoDiagnostico, String connettoreNonTrovatoConnettore,
 			boolean sticky, String stickyTipoSelettore, String stickyTipoSelettorePattern, String stickyMaxAge,
 			boolean passiveHealthCheck, String passiveHealthCheck_excludeForSeconds
-			) throws NotFoundException {
+			) throws Exception {
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		DataElement de = new DataElement();
@@ -6590,15 +6591,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			// custom
 			if(BehaviourType.CUSTOM.getValue().equals(modalitaConsegna)) {
+				
 				// campo tipo e link proprieta
-				de = new DataElement();
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO);
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO);
-				de.setSize(this.getSize());
-				de.setRequired(true);
-				de.setValue(tipoCustom);
-				dati.addElement(de);
+				
+				this.addCustomField(TipoPlugin.BEHAVIOUR,
+						null,
+						null,
+						PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA,
+						PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO, 
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO, 
+						tipoCustom, false, dati); 	
+				
+//				de = new DataElement();
+//				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO);
+//				de.setType(DataElementType.TEXT_EDIT);
+//				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO);
+//				de.setSize(this.getSize());
+//				de.setRequired(true);
+//				de.setValue(tipoCustom);
+//				dati.addElement(de);
 				
 				// Link
 				if(visualizzaLinkProprietaCustom){
@@ -7434,8 +7445,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			boolean validaSezioneCondizionalita = false;
 			// custom
 			if(modalitaConsegna.equals(BehaviourType.CUSTOM.getValue())) {
-				if (StringUtils.isEmpty(tipoCustom)) {
-					this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO+" non pu&ograve; essere vuoto");
+				if (StringUtils.isEmpty(tipoCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(tipoCustom)) {
+					if(this.confCore.isConfigurazionePluginsEnabled()) {
+						this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_BEHAVIOUR_CUSTOM_NON_INDICATA);
+					}
+					else {
+						this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO+" non pu&ograve; essere vuoto");
+					}
 					return false;
 				}
 				if (tipoCustom.indexOf(" ") != -1 || tipoCustom.indexOf(",") != -1 ) {

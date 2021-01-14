@@ -6900,12 +6900,14 @@ public class DBOggettiInUsoUtils  {
 			else if("AUTENTICAZIONE".equals(tipoPlugin) || 
 					"AUTORIZZAZIONE".equals(tipoPlugin) || 
 					"AUTORIZZAZIONE_CONTENUTI".equals(tipoPlugin) ||
-					"INTEGRAZIONE".equals(tipoPlugin)) {
+					"INTEGRAZIONE".equals(tipoPlugin) ||
+					"BEHAVIOUR".equals(tipoPlugin)) {
 				
 				boolean autenticazione = "AUTENTICAZIONE".equals(tipoPlugin);
 				boolean autorizzazione = "AUTORIZZAZIONE".equals(tipoPlugin);
 				boolean autorizzazione_contenuti = "AUTORIZZAZIONE_CONTENUTI".equals(tipoPlugin);
 				boolean integrazione = "INTEGRAZIONE".equals(tipoPlugin);
+				boolean behaviour = "BEHAVIOUR".equals(tipoPlugin);
 				
 				
 				ErrorsHandlerCostant PD_tipoControllo_mapping = null;
@@ -6941,19 +6943,30 @@ public class DBOggettiInUsoUtils  {
 					PA_tipoControllo = ErrorsHandlerCostant.INTEGRAZIONE_PA;
 					colonna = "integrazione";
 				}
+				else if(behaviour) {
+					PA_tipoControllo_mapping = ErrorsHandlerCostant.BEHAVIOUR_MAPPING_PA;
+					PA_tipoControllo = ErrorsHandlerCostant.BEHAVIOUR_PA;
+					colonna = "behaviour";
+				}
 				
-				List<String> PD_mapping_list = whereIsInUso.get(PD_tipoControllo_mapping);
-				List<String> PD_list = whereIsInUso.get(PD_tipoControllo);
+				List<String> PD_mapping_list = null;
+				List<String> PD_list = null;
+				if(!behaviour) {
+					PD_mapping_list = whereIsInUso.get(PD_tipoControllo_mapping);
+					PD_list = whereIsInUso.get(PD_tipoControllo);
+				}
 				List<String> PA_mapping_list = whereIsInUso.get(PA_tipoControllo_mapping);
 				List<String> PA_list = whereIsInUso.get(PA_tipoControllo);
 				
-				if (PD_mapping_list == null) {
-					PD_mapping_list = new ArrayList<String>();
-					whereIsInUso.put(PD_tipoControllo_mapping, PD_mapping_list);
-				}
-				if (PD_list == null) {
-					PD_list = new ArrayList<String>();
-					whereIsInUso.put(PD_tipoControllo, PD_list);
+				if(!behaviour) {
+					if (PD_mapping_list == null) {
+						PD_mapping_list = new ArrayList<String>();
+						whereIsInUso.put(PD_tipoControllo_mapping, PD_mapping_list);
+					}
+					if (PD_list == null) {
+						PD_list = new ArrayList<String>();
+						whereIsInUso.put(PD_tipoControllo, PD_list);
+					}
 				}
 				if (PA_mapping_list == null) {
 					PA_mapping_list = new ArrayList<String>();
@@ -6964,7 +6977,11 @@ public class DBOggettiInUsoUtils  {
 					whereIsInUso.put(PA_tipoControllo, PA_list);
 				}
 				
-				for (int i = 0; i < 2; i++) {
+				int i = 0;
+				if(behaviour) {
+					i=1;
+				}
+				for (; i < 2; i++) {
 					
 					String table = CostantiDB.PORTE_DELEGATE;
 					if(i==1) {
@@ -7378,6 +7395,17 @@ public class DBOggettiInUsoUtils  {
 			case INTEGRAZIONE_PA:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Porte Inbound (Opzioni Avanzate - Metadata di Integrazione): " + formatList(messages,separator) + separator;
+				}
+				break;
+				
+			case BEHAVIOUR_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nella configurazione dei connettori multipli come consegna personalizzata delle Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case BEHAVIOUR_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Connettori Multipli - Consegna Personalizzata): " + formatList(messages,separator) + separator;
 				}
 				break;
 				
