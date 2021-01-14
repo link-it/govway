@@ -148,7 +148,12 @@ public class ConfigurazionePluginsTipoPluginUtils {
 					if(sb.length() > 0)
 						sb.append(", ");
 					
-					sb.append(prop.getValore());
+					if(PluginCostanti.FILTRO_RUOLO_VALORE_ENTRAMBI.equals(prop.getValore())) {
+						sb.append(PluginCostanti.FILTRO_RUOLO_LABEL_ENTRAMBI);
+					}
+					else {
+						sb.append(prop.getValore());
+					}
 				}
 				return sb.toString();
 			case SERVICE_HANDLER:
@@ -293,7 +298,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				DataElement deRuolo = new DataElement();
 				
 				deRuolo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO);
-				deRuolo.setLabels(PluginCostanti.FILTRO_RUOLO_VALORI);
+				deRuolo.setLabels(PluginCostanti.FILTRO_RUOLO_LABELS);
 				deRuolo.setValues(PluginCostanti.FILTRO_RUOLO_VALORI);
 				deRuolo.setType(DataElementType.SELECT);
 				deRuolo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO);
@@ -407,7 +412,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case INTEGRAZIONE:
 			String filtroRuolo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_RUOLO_NOME);
 			addFilterTipoPlugin(pd, log, PluginCostanti.FILTRO_RUOLO_NOME, PluginCostanti.FILTRO_RUOLO_LABEL, filtroRuolo, 
-					PluginCostanti.FILTRO_RUOLO_VALORI, PluginCostanti.FILTRO_RUOLO_VALORI, false, size);
+					PluginCostanti.FILTRO_RUOLO_VALORI_SENZA_ENTRAMBI, PluginCostanti.FILTRO_RUOLO_VALORI_SENZA_ENTRAMBI, false, size);
 			break;
 		case SERVICE_HANDLER:{
 			

@@ -58,7 +58,7 @@ public class AllarmiDriverUtils {
 				
 				for (Allarme al : findAll) {
 					
-					Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), al.getTipo(), con, log, tipoDB);
+					Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), al.getTipo(), true, con, log, tipoDB);
 					
 					lista.add(new ConfigurazioneAllarmeBean(al, plugin));
 				}
@@ -76,7 +76,7 @@ public class AllarmiDriverUtils {
 		
 		try {
 			Allarme al = org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.getAllarme(id, con, log, tipoDB);
-			Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), al.getTipo(), con, log, tipoDB);
+			Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), al.getTipo(), true, con, log, tipoDB);
 			return new ConfigurazioneAllarmeBean(al, plugin);
 		} catch (Exception qe) {
 			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);

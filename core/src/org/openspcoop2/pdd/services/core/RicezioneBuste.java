@@ -3262,6 +3262,8 @@ public class RicezioneBuste {
 							}
 							
 						} catch (Exception e) {
+							CostantiPdD.addKeywordInCache(msgDiag, false,
+									pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
 							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione ["
 											+ tipoAutenticazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
@@ -5628,6 +5630,8 @@ public class RicezioneBuste {
 					msgDiag.logPersonalizzato("autorizzazioneBusteEffettuata");
 				}
 			}catch(Exception e){
+				CostantiPdD.addKeywordInCache(msgDiag, false,
+						pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE);
 				msgDiag.logErroreGenerico(e,"AutorizzazioneMessaggio("+bustaRichiesta.getID()+")");
 				logCore.error("Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+bustaRichiesta.getID()+"]",e);
 				if(this.msgContext.isGestioneRisposta()){
@@ -6147,6 +6151,8 @@ public class RicezioneBuste {
 					}
 
 				}catch(Exception ex){
+					CostantiPdD.addKeywordInCache(msgDiag, false,
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI);
 					msgDiag.logErroreGenerico(ex,"AutorizzazioneContenuto Messaggio("+bustaRichiesta.getID()+")");
 					logCore.error("Riscontrato errore durante il processo di Autorizzazione del Contenuto per il messaggio con identificativo ["+bustaRichiesta.getID()+"]",ex);
 					if(this.msgContext.isGestioneRisposta()){

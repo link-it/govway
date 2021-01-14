@@ -1725,7 +1725,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 					urlAutorizzazioneErogazioneApplicativiAutenticati, 0, urlAutorizzazioneErogazioneCustomPropertiesList , 0);
 			
-			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, autorizzazioneContenutiStato, 
+			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, false, autorizzazioneContenutiStato, 
 					autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding, 
 					false, urlAutorizzazioneContenutiErogazioneCustomPropertiesList, 0,
 					confPers); 

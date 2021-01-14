@@ -42,6 +42,7 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -4234,6 +4235,108 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
+	
+	public boolean existsPluginConTipo(TipoPlugin tipoPlugin, String tipo) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPluginConTipo";
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			return PluginsDriverUtils.existsPluginConTipo(tipoPlugin, tipo, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsPluginConLabel(TipoPlugin tipoPlugin,String label) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPluginConLabel";
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			return PluginsDriverUtils.existsPluginConLabel(tipoPlugin, label, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsPluginConClassName(TipoPlugin tipoPlugin, String className) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPluginConClassName";
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			return PluginsDriverUtils.existsPluginConClassName(tipoPlugin, className, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 
 	public Plugin getPlugin(long idPlugin) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPlugin";
@@ -4269,7 +4372,7 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public Plugin getPlugin(TipoPlugin tipoPlugin, String tipo) throws DriverConfigurazioneException {
+	public Plugin getPlugin(TipoPlugin tipoPlugin, String tipo, boolean throwNotFound) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		String nomeMetodo = "getPlugin";
 		Connection con = null;
 
@@ -4288,8 +4391,12 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
 		try {
-			return PluginsDriverUtils.getPlugin(tipoPlugin, tipo, con, this.log, this.tipoDB);
-		} catch (Exception qe) {
+			return PluginsDriverUtils.getPlugin(tipoPlugin, tipo, throwNotFound, con, this.log, this.tipoDB);
+		} 
+		catch(NotFoundException notFound) {
+			throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + notFound.getMessage(),notFound);
+		}
+		catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 			try {

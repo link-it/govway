@@ -6047,7 +6047,7 @@ public class ControlStationCore {
 			msg+=":<"+bf.toString()+">";
 			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldNome = registroPlugins.getOldNome();
-				if(  (oldNome.equals(registroPlugins.getNome())==false) )
+				if( oldNome!=null && (oldNome.equals(registroPlugins.getNome())==false) )
 					msg+=":OLD<"+oldNome+">";
 			}
 		}

@@ -837,7 +837,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					null, 0, null, 0);
 			
 				
-			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
+			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, true, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 					serviceBinding, false, null, 0,
 					confPers);
 		}

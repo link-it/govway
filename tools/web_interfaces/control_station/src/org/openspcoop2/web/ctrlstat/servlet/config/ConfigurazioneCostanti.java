@@ -2249,9 +2249,12 @@ public class ConfigurazioneCostanti {
 	public final static String MESSAGGIO_ERRORE_PLUGINS_ARCHIVIO_DUPLICATO = "Esiste gi&agrave; un Archivio con questo nome.";
 	public final static String MESSAGGIO_ERRORE_PLUGINS_ARCHIVIO_NUOVO_NOME_DUPLICATO = "Il nuovo nome scelto &egrave; gi&agrave; usato per un altro Archivio.";
 	
-	public final static String MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO = "Esiste gi&agrave; un Plugin con questa implementazione.";
-	public final static String MESSAGGIO_ERRORE_PLUGINS_PLUGIN_NUOVA_CHIAVE_DUPLICATA = "La nuova implementazione scelta &egrave; gi&agrave; usata per un altro Plugin.";
+	public final static String MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_TIPO = "Esiste gi&agrave; un plugin ''{0}'' con lo stesso tipo ''{1}''";
+	public final static String MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_LABEL = "Esiste gi&agrave; un plugin {0} con la stessa label ''{1}''";
+	public final static String MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_CLASSNAME = "Esiste gi&agrave; un plugin {0} con la stessa classe ''{1}''";
 	
+	public final static String MESSAGGIO_ERRORE_PLUGINS_PLUGIN_INUSO_MODIFICA_TIPO = "Il plugin risulta essere utilizzato in configurazioni e quindi non è consentito modificarne il tipo";
+	public final static String MESSAGGIO_ERRORE_PLUGINS_PLUGIN_INUSO_MODIFICA_STATO = "Il plugin risulta essere utilizzato in configurazioni e quindi non è consentito modificarne lo stato";
 	
 	public final static String MESSAGGIO_ERRORE_ALLARME_FILTRO_NON_COMPATIBILE = "I tipi indicati per i campi Fruitore (Soggetto), Erogatore (Soggetto) e Servizio non sono compatibili.";
 	public final static String MESSAGGIO_ERRORE_ALLARME_FILTRO_PLUGIN_NON_TROVATI = "Non risultano registrati plugins per gli allarmi. Prima di poter creare un allarme personalizzato è necessario registrare almeno un plugin tramite la sezione 'Archivi Plugin'";

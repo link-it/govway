@@ -6711,6 +6711,106 @@ public class DBOggettiInUsoUtils  {
 				formatConnettori(idConnettori,whereIsInUso, con, normalizeObjectIds, tipoDB);
 			}
 			
+			else if("AUTENTICAZIONE".equals(tipoPlugin) || "AUTORIZZAZIONE".equals(tipoPlugin) || "AUTORIZZAZIONE_CONTENUTI".equals(tipoPlugin)) {
+				
+				boolean autenticazione = "AUTENTICAZIONE".equals(tipoPlugin);
+				boolean autorizzazione = "AUTORIZZAZIONE".equals(tipoPlugin);
+				boolean autorizzazione_contenuti = "AUTORIZZAZIONE_CONTENUTI".equals(tipoPlugin);
+				
+				
+				ErrorsHandlerCostant PD_tipoControllo_mapping = null;
+				ErrorsHandlerCostant PD_tipoControllo = null;
+				ErrorsHandlerCostant PA_tipoControllo_mapping = null;
+				ErrorsHandlerCostant PA_tipoControllo = null;
+				String colonna = "";
+				if(autenticazione){
+					PD_tipoControllo_mapping = ErrorsHandlerCostant.AUTENTICAZIONE_MAPPING_PD;
+					PD_tipoControllo = ErrorsHandlerCostant.AUTENTICAZIONE_PD;
+					PA_tipoControllo_mapping = ErrorsHandlerCostant.AUTENTICAZIONE_MAPPING_PA;
+					PA_tipoControllo = ErrorsHandlerCostant.AUTENTICAZIONE_PA;
+					colonna = "autenticazione";
+				}
+				else if(autorizzazione){
+					PD_tipoControllo_mapping = ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING_PD;
+					PD_tipoControllo = ErrorsHandlerCostant.AUTORIZZAZIONE_PD;
+					PA_tipoControllo_mapping = ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING_PA;
+					PA_tipoControllo = ErrorsHandlerCostant.AUTORIZZAZIONE_PA;
+					colonna = "autorizzazione";
+				}
+				else if(autorizzazione_contenuti){
+					PD_tipoControllo_mapping = ErrorsHandlerCostant.AUTORIZZAZIONE_CONTENUTI_MAPPING_PD;
+					PD_tipoControllo = ErrorsHandlerCostant.AUTORIZZAZIONE_CONTENUTI_PD;
+					PA_tipoControllo_mapping = ErrorsHandlerCostant.AUTORIZZAZIONE_CONTENUTI_MAPPING_PA;
+					PA_tipoControllo = ErrorsHandlerCostant.AUTORIZZAZIONE_CONTENUTI_PA;
+					colonna = "autorizzazione_contenuto";
+				}
+				
+				List<String> PD_mapping_list = whereIsInUso.get(PD_tipoControllo_mapping);
+				List<String> PD_list = whereIsInUso.get(PD_tipoControllo);
+				List<String> PA_mapping_list = whereIsInUso.get(PA_tipoControllo_mapping);
+				List<String> PA_list = whereIsInUso.get(PA_tipoControllo);
+				
+				if (PD_mapping_list == null) {
+					PD_mapping_list = new ArrayList<String>();
+					whereIsInUso.put(PD_tipoControllo_mapping, PD_mapping_list);
+				}
+				if (PD_list == null) {
+					PD_list = new ArrayList<String>();
+					whereIsInUso.put(PD_tipoControllo, PD_list);
+				}
+				if (PA_mapping_list == null) {
+					PA_mapping_list = new ArrayList<String>();
+					whereIsInUso.put(PA_tipoControllo_mapping, PA_mapping_list);
+				}
+				if (PA_list == null) {
+					PA_list = new ArrayList<String>();
+					whereIsInUso.put(PA_tipoControllo, PA_list);
+				}
+				
+				for (int i = 0; i < 2; i++) {
+					
+					String table = CostantiDB.PORTE_DELEGATE;
+					if(i==1) {
+						table = CostantiDB.PORTE_APPLICATIVE;
+					}
+					
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(table);
+					sqlQueryObject.addSelectField("nome_porta");
+					sqlQueryObject.setANDLogicOperator(true);
+					sqlQueryObject.addWhereCondition(colonna+"=?");
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setString(1, tipo);
+					risultato = stmt.executeQuery();
+					while (risultato.next()){
+						String nome = risultato.getString("nome_porta");
+						if(CostantiDB.PORTE_DELEGATE.equals(table)) {
+							ResultPorta resultPorta = formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+							if(resultPorta.mapping) {
+								PD_mapping_list.add(resultPorta.label);
+							}
+							else {
+								PD_list.add(resultPorta.label);
+							}
+						}
+						else {
+							ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+							if(resultPorta.mapping) {
+								PA_mapping_list.add(resultPorta.label);
+							}
+							else {
+								PA_list.add(resultPorta.label);
+							}
+						}
+						isInUso = true;
+					}
+					risultato.close();
+					stmt.close();
+					
+				}
+			}
+			
 			else if("ALLARME".equals(tipoPlugin)) {
 				List<String> allarmiPD_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI_MAPPING_PD);
 				List<String> allarmiPD_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI_PD);
@@ -6892,6 +6992,69 @@ public class DBOggettiInUsoUtils  {
 				}
 				break;
 			
+			case AUTENTICAZIONE_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato come processo di autenticazione nel Controllo degli Accessi delle Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTENTICAZIONE_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi - Autenticazione): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTENTICAZIONE_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato come processo di autenticazione nel Controllo degli Accessi delle Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTENTICAZIONE_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Autenticazione): " + formatList(messages,separator) + separator;
+				}
+				break;
+				
+			case AUTORIZZAZIONE_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato come processo di autorizzazione nel Controllo degli Accessi delle Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTORIZZAZIONE_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi - Autorizzazione): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTORIZZAZIONE_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato come processo di autorizzazione nel Controllo degli Accessi delle Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTORIZZAZIONE_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Autorizzazione): " + formatList(messages,separator) + separator;
+				}
+				break;
+				
+			case AUTORIZZAZIONE_CONTENUTI_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato come processo di autorizzazione dei contenuti nel Controllo degli Accessi delle Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTORIZZAZIONE_CONTENUTI_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi - Autorizzazione dei Contenuti): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTORIZZAZIONE_CONTENUTI_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato come processo di autorizzazione dei contenuti nel Controllo degli Accessi delle Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case AUTORIZZAZIONE_CONTENUTI_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Autorizzazione dei Contenuti): " + formatList(messages,separator) + separator;
+				}
+				break;
+				
 			case ALLARMI_MAPPING_PA:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato negli Allarmi delle Erogazioni: " + formatList(messages,separator) + separator;

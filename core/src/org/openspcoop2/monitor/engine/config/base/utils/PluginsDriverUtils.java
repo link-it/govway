@@ -36,6 +36,7 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.IAliasTableField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
@@ -145,8 +146,16 @@ public class PluginsDriverUtils {
 					String filtroRuolo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_RUOLO_NOME);
 				
 					if(!filtroRuolo.equals("")) {
-						expr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, PluginCostanti.FILTRO_RUOLO_NOME)
-							.and().equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, filtroRuolo);
+						
+						expr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, PluginCostanti.FILTRO_RUOLO_NOME);
+						expr.and();
+						
+						IExpression exprOr = pluginServiceSearch.newExpression();
+						exprOr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, filtroRuolo);
+						exprOr.or();
+						exprOr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, PluginCostanti.FILTRO_RUOLO_VALORE_ENTRAMBI);
+						expr.and(exprOr);
+						
 					}
 					break;
 				case SERVICE_HANDLER:
@@ -279,6 +288,19 @@ public class PluginsDriverUtils {
 	}
 
 	public static boolean existsPlugin(TipoPlugin tipoPlugin, String tipo, String label, String className, Connection con, Logger log, String tipoDB) throws ServiceException {
+		return _existsPlugin(tipoPlugin, tipo, label, className, con, log, tipoDB);
+	}
+	public static boolean existsPluginConTipo(TipoPlugin tipoPlugin, String tipo, Connection con, Logger log, String tipoDB) throws ServiceException {
+		return _existsPlugin(tipoPlugin, tipo, null, null, con, log, tipoDB);
+	}
+	public static boolean existsPluginConLabel(TipoPlugin tipoPlugin, String label, Connection con, Logger log, String tipoDB) throws ServiceException {
+		return _existsPlugin(tipoPlugin, null, label, null, con, log, tipoDB);
+	}
+	public static boolean existsPluginConClassName(TipoPlugin tipoPlugin, String className, Connection con, Logger log, String tipoDB) throws ServiceException {
+		return _existsPlugin(tipoPlugin, null, null, className, con, log, tipoDB);
+	}
+	
+	private static boolean _existsPlugin(TipoPlugin tipoPlugin, String tipo, String label, String className, Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "existsPlugin";
 		
 		try {
@@ -291,14 +313,25 @@ public class PluginsDriverUtils {
 			
 			IExpression expr = pluginServiceSearch.newExpression();
 			
-			IExpression tipoExp = pluginServiceSearch.newExpression();
-			tipoExp.equals(Plugin.model().TIPO_PLUGIN, tipoPlugin.toString()).and().equals(Plugin.model().TIPO, tipo);
-			IExpression labelExp = pluginServiceSearch.newExpression();
-			labelExp.equals(Plugin.model().TIPO_PLUGIN, tipoPlugin.toString()).and().equals(Plugin.model().LABEL, label);
-			IExpression classExp = pluginServiceSearch.newExpression();
-			classExp.equals(Plugin.model().TIPO_PLUGIN, tipoPlugin.toString()).and().equals(Plugin.model().CLASS_NAME, className);
+			List<IExpression> list = new ArrayList<IExpression>();
 			
-			expr.or(tipoExp, labelExp, classExp);
+			if(tipo!=null) {
+				IExpression tipoExp = pluginServiceSearch.newExpression();
+				tipoExp.equals(Plugin.model().TIPO_PLUGIN, tipoPlugin.toString()).and().equals(Plugin.model().TIPO, tipo);
+				list.add(tipoExp);
+			}
+			if(label!=null) {
+				IExpression labelExp = pluginServiceSearch.newExpression();
+				labelExp.equals(Plugin.model().TIPO_PLUGIN, tipoPlugin.toString()).and().equals(Plugin.model().LABEL, label);
+				list.add(labelExp);
+			}
+			if(className!=null) {
+				IExpression classExp = pluginServiceSearch.newExpression();
+				classExp.equals(Plugin.model().TIPO_PLUGIN, tipoPlugin.toString()).and().equals(Plugin.model().CLASS_NAME, className);
+				list.add(classExp);
+			}
+			
+			expr.or(list.toArray(new IExpression[list.size()]));
 			
 			NonNegativeNumber count = pluginServiceSearch.count(expr);
 			
@@ -335,10 +368,10 @@ public class PluginsDriverUtils {
 		}
 	}
 	
-	public static Plugin getPlugin(TipoPlugin tipoPlugin, String tipo, Connection con, Logger log, String tipoDB) throws ServiceException {
-		return getPlugin(tipoPlugin.getValue(), tipo, con, log, tipoDB);
+	public static Plugin getPlugin(TipoPlugin tipoPlugin, String tipo, boolean throwNotFound, Connection con, Logger log, String tipoDB) throws ServiceException,NotFoundException {
+		return getPlugin(tipoPlugin.getValue(), tipo, throwNotFound, con, log, tipoDB);
 	}
-	public static Plugin getPlugin(String tipoPlugin, String tipo, Connection con, Logger log, String tipoDB) throws ServiceException {
+	public static Plugin getPlugin(String tipoPlugin, String tipo, boolean throwNotFound, Connection con, Logger log, String tipoDB) throws ServiceException,NotFoundException {
 		String nomeMetodo = "getPlugin";
 		
 		try {
@@ -354,12 +387,22 @@ public class PluginsDriverUtils {
 			idPlugin.setTipo(tipo);
 			
 			Plugin plugin = pluginServiceSearch.get(idPlugin);
+			if(plugin==null) {
+				throw new NotFoundException("NotFound");
+			}
 			
 			IdPlugin idPluginObj = pluginServiceSearch.convertToId(plugin);
 			plugin.setOldIdPlugin(idPluginObj);
 			
 			return plugin;
-		} catch (Exception qe) {
+		} 
+		catch (NotFoundException notFound) {
+			if(throwNotFound) {
+				throw new NotFoundException("[" + nomeMetodo + "] Errore : " + notFound.getMessage(),notFound);
+			}
+			return null;
+		}
+		catch (Exception qe) {
 			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		}
 	}

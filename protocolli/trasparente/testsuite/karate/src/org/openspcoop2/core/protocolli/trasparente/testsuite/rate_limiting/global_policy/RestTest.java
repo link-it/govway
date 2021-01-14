@@ -52,6 +52,7 @@ public class RestTest extends ConfigLoader {
 		}
 		
 		if (idPolicy == null) {
+			// dovrebbe già esistere; l'ho aggiunta nello zip
 			createGlobalPolicy();
 			idPolicy = dbUtils.getIdGlobalPolicy("Orario");
 		}
@@ -107,6 +108,7 @@ public class RestTest extends ConfigLoader {
 	}
 	
 	
+	@Deprecated
 	static void createGlobalPolicy() {
 		String policy_id = "__TestsuiteGlobaleTestOrarioConFiltroPerChiave__";
 		String policy_alias = "Orario";

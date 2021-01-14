@@ -2352,6 +2352,8 @@ public class RicezioneContenutiApplicativi {
 					}
 					
 				} catch (Exception e) {
+					CostantiPdD.addKeywordInCache(msgDiag, false,
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento("processo di autenticazione ["
 									+ tipoAutenticazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
@@ -3090,6 +3092,8 @@ public class RicezioneContenutiApplicativi {
 					}
 					
 				} catch (Exception e) {
+					CostantiPdD.addKeywordInCache(msgDiag, false,
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE);
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento("processo di autorizzazione ["
 									+ tipoAutorizzazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_504_AUTORIZZAZIONE);
@@ -3937,6 +3941,8 @@ public class RicezioneContenutiApplicativi {
 						msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");
 					}
 				} catch (Exception e) {
+					CostantiPdD.addKeywordInCache(msgDiag, false,
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI);
 					String msgErroreAutorizzazione = "processo di autorizzazione ["
 							+ tipoAutorizzazioneContenuto + "] fallito, " + e.getMessage();
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

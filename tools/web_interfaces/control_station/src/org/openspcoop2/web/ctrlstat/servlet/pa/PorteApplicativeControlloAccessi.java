@@ -586,7 +586,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 
-				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 						confPers); 
 
@@ -674,7 +674,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 
-				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 						confPers); 
 
@@ -1129,7 +1129,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
 					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 
-			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 					old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 					confPers); 
 

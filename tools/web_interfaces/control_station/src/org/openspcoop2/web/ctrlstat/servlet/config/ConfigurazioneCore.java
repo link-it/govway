@@ -602,6 +602,63 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public boolean existsPluginConTipo(TipoPlugin tipoPlugin, String tipo) throws DriverConfigurazioneException { 
+		Connection con = null;
+		String nomeMetodo = "existsPluginConTipo";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.existsPluginConTipo(tipoPlugin, tipo); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsPluginConLabel(TipoPlugin tipoPlugin, String label) throws DriverConfigurazioneException { 
+		Connection con = null;
+		String nomeMetodo = "existsPluginConLabel";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.existsPluginConLabel(tipoPlugin, label); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsPluginConClassName(TipoPlugin tipoPlugin, String className) throws DriverConfigurazioneException { 
+		Connection con = null;
+		String nomeMetodo = "existsPluginConClassName";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.existsPluginConClassName(tipoPlugin, className); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public Plugin getPlugin(long idPlugin) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getPlugin";
@@ -621,7 +678,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public Plugin getPlugin(TipoPlugin tipoPlugin, String tipo) throws DriverConfigurazioneException {
+	public Plugin getPlugin(TipoPlugin tipoPlugin, String tipo, boolean throwNotFound) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getPlugin";
 		DriverControlStationDB driver = null;
@@ -631,7 +688,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getPlugin(tipoPlugin,tipo);  
+			return driver.getPlugin(tipoPlugin,tipo, throwNotFound);  
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -2010,7 +2067,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo());
+			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), true);
 			
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), plugin.getClassName(), ControlStationCore.log);
 			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
@@ -2034,7 +2091,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo());
+			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), true);
 			
 			List<Parameter<?>> res = null;
 			

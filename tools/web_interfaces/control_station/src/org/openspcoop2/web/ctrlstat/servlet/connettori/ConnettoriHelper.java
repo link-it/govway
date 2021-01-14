@@ -3687,7 +3687,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						this.pd.setMessage("Non è stato selezionato un plugin");
 					}
 					else {
-						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" obbligatorio per il tipo di connettore custom");
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" obbligatorio per il tipo di connettore selezionato");
 					}
 					return false;
 				}
@@ -4869,7 +4869,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				tipoLabel = "[" + TipiConnettore.CUSTOM.getLabel() + "] ";
 				Plugin plugin = null;
 				try {
-					plugin = this.confCore.getPlugin(TipoPlugin.CONNETTORE,connettore.getTipo());
+					plugin = this.confCore.getPlugin(TipoPlugin.CONNETTORE,connettore.getTipo(), false);
 				}catch(Throwable e) {}
 				if(plugin!=null) {
 					urlConnettore = tipoLabel + plugin.getLabel();

@@ -84,6 +84,7 @@ public final class Filtri
 	
 	public final static String FILTRO_RUOLO = "filtroRuolo";
 	public final static String FILTRO_RUOLO_NOME = "Ruolo";
+	public final static String FILTRO_RUOLO_VALORE_ENTRAMBI = "Qualsiasi";
 	public final static String FILTRO_RUOLO_VALORE_FRUIZIONE = "Fruizione";
 	public final static String FILTRO_RUOLO_VALORE_EROGAZIONE = "Erogazione";
 	

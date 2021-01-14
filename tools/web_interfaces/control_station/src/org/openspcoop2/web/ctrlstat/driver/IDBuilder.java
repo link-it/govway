@@ -818,7 +818,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				if(plugin.getOldIdPlugin()==null || plugin.getOldIdPlugin().getTipoPlugin()==null || plugin.getOldIdPlugin().getTipo()==null){
 					return null; // non lancio un errore
 				}
-				String id = plugin.getTipoPlugin()+"-"+plugin.getTipo();
+				String id = plugin.getOldIdPlugin().getTipoPlugin()+"-"+plugin.getOldIdPlugin().getTipo();
 				if(this.prefix){
 					return "[Plugin] "+ id;
 				}else{

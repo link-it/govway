@@ -539,7 +539,7 @@ public class PorteDelegateControlloAccessi extends Action {
 						null, 0,
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 				
-				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 						confPers); 
 				
@@ -593,7 +593,7 @@ public class PorteDelegateControlloAccessi extends Action {
 						null, 0,
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 				
-				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 						confPers); 
 				
@@ -989,7 +989,7 @@ public class PorteDelegateControlloAccessi extends Action {
 					null, 0,
 					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 			
-			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 					old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 					confPers); 
 			

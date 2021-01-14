@@ -4200,7 +4200,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				if (confPers ){
 					tipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
-					labelTipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+					labelTipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 				}
 				DataElement de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
@@ -4232,6 +4232,16 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				dati.addElement(de);
 		
+				String tipoAutenticazioneCustom = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
+				boolean autenticazioneCustomHidden = (allHidden || (autenticazione == null) || (!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)));
+				this.addCustomField(TipoPlugin.AUTENTICAZIONE,
+						tipoAutenticazioneCustom,
+						null,
+						CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE,
+						CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM, 
+						CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM, 
+						autenticazioneCustom, autenticazioneCustomHidden, dati); 	
+				/*
 				de = new DataElement();
 				de.setLabel("");
 				if(allHidden) {
@@ -4247,6 +4257,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 				de.setValue(autenticazioneCustom);
 				dati.addElement(de);
+				*/
 				
 				// se ho salvato il tipo custom faccio vedere il link alle proprieta'
 				if(autenticazione != null && autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
@@ -4919,11 +4930,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			if (confPers )
 				totEl++;
 			String[] tipoAutorizzazione = new String[totEl];
+			String[] tipoAutorizzazione_label = new String[totEl];
 			for (int i = 0; i < auturizzazioneValues.size(); i++) {
 				tipoAutorizzazione[i]=auturizzazioneValues.get(i);
+				tipoAutorizzazione_label[i]=auturizzazioneValues.get(i);
 			}
 			if (confPers ){
 				tipoAutorizzazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+				tipoAutorizzazione_label[totEl-1] = CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
 			}
 			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
@@ -4935,26 +4949,37 @@ public class ConsoleHelper implements IConsoleHelper {
 			else {
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoAutorizzazione);
+				de.setLabels(tipoAutorizzazione_label);
 				de.setPostBack(true);
 				de.setSelected(autorizzazione);
 			}
 			dati.addElement(de);
 			
-			de = new DataElement();
-			de.setLabel("");
-			if(allHidden) {
-				de.setType(DataElementType.HIDDEN);
-			}
-			else if (autorizzazione == null ||
-					!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
-				de.setType(DataElementType.HIDDEN);
-			} else {
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true); 
-			}
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
-			de.setValue(autorizzazioneCustom);
-			dati.addElement(de);
+			String tipoAutorizzazioneCustom = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
+			boolean autorizzazioneCustomHidden = (allHidden || (autorizzazione == null) || (!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)));
+			this.addCustomField(TipoPlugin.AUTORIZZAZIONE,
+					tipoAutorizzazioneCustom,
+					null,
+					CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE,
+					CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM, 
+					CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM, 
+					autorizzazioneCustom, autorizzazioneCustomHidden, dati); 
+			
+//			de = new DataElement();
+//			de.setLabel("");
+//			if(allHidden) {
+//				de.setType(DataElementType.HIDDEN);
+//			}
+//			else if (autorizzazione == null ||
+//					!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
+//				de.setType(DataElementType.HIDDEN);
+//			} else {
+//				de.setType(DataElementType.TEXT_EDIT);
+//				de.setRequired(true); 
+//			}
+//			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
+//			de.setValue(autorizzazioneCustom);
+//			dati.addElement(de);
 			
 			boolean old_autorizzazione_autenticazione = false;
 			boolean old_autorizzazione_ruoli = false;
@@ -5556,10 +5581,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, TipoOperazione tipoOperazione,
+	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean isPortaDelegata,
 			String autorizzazioneContenutiStato, String autorizzazioneContenuti, String autorizzazioneContenutiProperties, ServiceBinding serviceBinding,
 			boolean old_autorizzazione_contenuti_custom, String urlAutorizzazioneContenutiCustomPropertiesList, int numAutorizzazioneContenutiCustomPropertiesList,
-			boolean confPers){
+			boolean confPers) throws Exception{
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
@@ -5619,13 +5644,24 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// custom
 			if(autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
-				de.setValue(autorizzazioneContenuti);
-				de.setRequired(true); 
-				dati.addElement(de);
+				
+				String tipoAutorizzazioneCustom = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
+				boolean autorizzazioneCustomHidden = false;
+				this.addCustomField(TipoPlugin.AUTORIZZAZIONE_CONTENUTI,
+						tipoAutorizzazioneCustom,
+						null,
+						CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO,
+						CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI, 
+						CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM, 
+						autorizzazioneContenuti, autorizzazioneCustomHidden, dati); 
+				
+//				de = new DataElement();
+//				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+//				de.setType(DataElementType.TEXT_EDIT);
+//				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+//				de.setValue(autorizzazioneContenuti);
+//				de.setRequired(true); 
+//				dati.addElement(de);
 				
 				// link proprieta
 				if(old_autorizzazione_contenuti_custom) {
@@ -5784,8 +5820,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(autenticazione != null && autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
 				String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
 				
-				if(StringUtils.isEmpty(autenticazioneCustom)){
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTENTICAZIONE_CUSTOM_NON_INDICATA);
+				if(StringUtils.isEmpty(autenticazioneCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autenticazioneCustom)){
+					if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTENTICAZIONE_CUSTOM_NON_INDICATA);
+					}
+					else {
+						this.pd.setMessage(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM+" obbligatorio per il tipo di autenticazione selezionato");
+					}
 					return false;
 				}
 				
@@ -6255,8 +6296,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(autorizzazione != null && autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
 				String autorizzazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 				
-				if(StringUtils.isEmpty(autorizzazioneCustom)){
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA);
+				if(StringUtils.isEmpty(autorizzazioneCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autorizzazioneCustom)){
+					if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA);
+					}
+					else {
+						this.pd.setMessage(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+" obbligatorio per il tipo di autorizzazione selezionato");
+					}
 					return false;
 				}
 				
@@ -6300,8 +6346,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 				if(autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
-					if(StringUtils.isEmpty(autorizzazioneContenuto)){
-						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA);
+					if(StringUtils.isEmpty(autorizzazioneContenuto) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autorizzazioneContenuto)){
+						if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA);
+						}
+						else {
+							this.pd.setMessage(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+" obbligatorio per il tipo di autorizzazione selezionato");
+						}
 						return false;
 					}
 					
@@ -6608,6 +6659,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
 			autenticazioneCustom = autenticazione;
 			autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+					
+			Plugin plugin = null;
+			try {
+				plugin = this.confCore.getPlugin(TipoPlugin.AUTENTICAZIONE,autenticazioneCustom, false);
+			}catch(Throwable e) {}
+			
+			if(plugin!=null && plugin.getLabel()!=null) {
+				autenticazioneCustom = plugin.getLabel();
+			}
 		}
 		String autenticazioneOpzionale = "";
 		if(paAssociata.getAutenticazioneOpzionale()!=null){
@@ -6624,6 +6684,15 @@ public class ConsoleHelper implements IConsoleHelper {
 				!TipoAutorizzazione.getAllValues().contains(paAssociata.getAutorizzazione())) {
 			autorizzazioneCustom = paAssociata.getAutorizzazione();
 			autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+			
+			Plugin plugin = null;
+			try {
+				plugin = this.confCore.getPlugin(TipoPlugin.AUTORIZZAZIONE,autorizzazioneCustom, false);
+			}catch(Throwable e) {}
+			
+			if(plugin!=null && plugin.getLabel()!=null) {
+				autorizzazioneCustom = plugin.getLabel();
+			}
 		}
 		else{
 			if(de!=null) {
@@ -6645,6 +6714,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		String autorizzazioneContenuti = paAssociata.getAutorizzazioneContenuto();
+		if(StringUtils.isNotEmpty(autorizzazioneContenuti) && !CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)) {
+			Plugin plugin = null;
+			try {
+				plugin = this.confCore.getPlugin(TipoPlugin.AUTORIZZAZIONE_CONTENUTI,autorizzazioneContenuti, false);
+			}catch(Throwable e) {}
+			
+			if(plugin!=null && plugin.getLabel()!=null) {
+				autorizzazioneContenuti = plugin.getLabel();
+			}
+		}
 		
 		if(de!=null) {
 			this.setStatoControlloAccessi(de, false, 
@@ -6872,6 +6951,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
 			autenticazioneCustom = autenticazione;
 			autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+			
+			Plugin plugin = null;
+			try {
+				plugin = this.confCore.getPlugin(TipoPlugin.AUTENTICAZIONE,autenticazioneCustom, false);
+			}catch(Throwable e) {}
+			
+			if(plugin!=null && plugin.getLabel()!=null) {
+				autenticazioneCustom = plugin.getLabel();
+			}
 		}
 		String autenticazioneOpzionale = "";
 		if(pdAssociata.getAutenticazioneOpzionale()!=null){
@@ -6888,6 +6976,15 @@ public class ConsoleHelper implements IConsoleHelper {
 				!TipoAutorizzazione.getAllValues().contains(pdAssociata.getAutorizzazione())) {
 			autorizzazioneCustom = pdAssociata.getAutorizzazione();
 			autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+			
+			Plugin plugin = null;
+			try {
+				plugin = this.confCore.getPlugin(TipoPlugin.AUTORIZZAZIONE,autorizzazioneCustom, false);
+			}catch(Throwable e) {}
+			
+			if(plugin!=null && plugin.getLabel()!=null) {
+				autorizzazioneCustom = plugin.getLabel();
+			}
 		}
 		else{
 			if(de!=null) {
@@ -6903,6 +7000,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		String autorizzazioneContenuti = pdAssociata.getAutorizzazioneContenuto();
+		if(StringUtils.isNotEmpty(autorizzazioneContenuti) && !CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)) {
+			Plugin plugin = null;
+			try {
+				plugin = this.confCore.getPlugin(TipoPlugin.AUTORIZZAZIONE_CONTENUTI,autorizzazioneContenuti, false);
+			}catch(Throwable e) {}
+			
+			if(plugin!=null && plugin.getLabel()!=null) {
+				autorizzazioneContenuti = plugin.getLabel();
+			}
+		}
 		
 		if(de!=null) {
 			this.setStatoControlloAccessi(de, true, 
@@ -7097,7 +7204,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				bfToolTip.append(labelAuth);	
 			}
 			else {
-				bf.append(" [ ").append(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM).append(" ]");
+				//bf.append(" [ ").append(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM).append(" ]");
+				bf.append(" [ ").append(CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM).append(" '").append(authTrasporto).append("'").append(" ]");
 				bfToolTip.append(authTrasporto);
 			}
 			
@@ -7293,7 +7401,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					bf.append(" [ ");
 				}
 				bf.append(" ");
-				bf.append(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
+				bf.append(CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM).append(" '").append(autorizzazioneCustom).append("'");
+				//bf.append(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 				bfToolTip.append(": ").append(autorizzazioneCustom);
 			}
 			
@@ -7353,7 +7462,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 			bfToolTip.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 			if(!CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)) {
-				bf.append(" [ ").append(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM).append(" ]");
+				//bf.append(" [ ").append(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM).append(" ]");
+				bf.append(" [ ").append(CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM).append(" '").append(autorizzazioneContenuti).append("'").append(" ]");
 				bfToolTip.append(": ").append(autorizzazioneContenuti);
 			}
 			de.addStatus(bfToolTip.toString(), bf.toString(), CheckboxStatusType.CONFIG_ENABLE);

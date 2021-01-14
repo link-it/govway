@@ -46,6 +46,7 @@ import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoPeriodo;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -17393,26 +17394,80 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			// Se tipoOp = add, controllo che l'archivio non sia gia' stato registrato
-			boolean existsPlugin = this.confCore.existsPlugin(tipoPlugin, tipo, label, className); 
-						
-			if (tipoOp.equals(TipoOperazione.ADD)) {
-				if (existsPlugin) {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO);
-					return false;
+			
+			// Non posso modificare, negli elementi riferiti, un plugin in uso
+			if (tipoOp.equals(TipoOperazione.CHANGE)) {
+				
+				TipoPlugin oldTipoPlugin = TipoPlugin.toEnumConstant(oldPlugin.getTipoPlugin());
+				boolean oldStatoEnabled = ServletUtils.isCheckBoxEnabled(stato);
+				boolean modificatiElementiRiferiti = (!tipoPlugin.equals(oldTipoPlugin)) || (!tipo.equals(oldPlugin.getTipo())) || (oldStatoEnabled != oldPlugin.getStato());
+				
+				if(modificatiElementiRiferiti) {
+					
+					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+					boolean normalizeObjectIds = !this.isModalitaCompleta();
+					boolean pluginInUso = this.confCore.isPluginInUso(oldPlugin.getClassName(), 
+							oldPlugin.getLabel(), oldPlugin.getTipoPlugin(), oldPlugin.getTipo(),whereIsInUso,normalizeObjectIds);
+					
+					if (pluginInUso) {
+						if((oldStatoEnabled != oldPlugin.getStato())) {
+							this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_INUSO_MODIFICA_STATO);
+						}
+						else {
+							this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_INUSO_MODIFICA_TIPO);
+						}
+						return false;
+					}
 				}
+				
+			}
+			
+			
+			// Se tipoOp = add, controllo che l'archivio non sia gia' stato registrato
+			boolean existsPluginConTipo = this.confCore.existsPluginConTipo(tipoPlugin, tipo); 
+			boolean existsPluginConLabel = this.confCore.existsPluginConLabel(tipoPlugin, label); 
+			boolean existsPluginConClassName = this.confCore.existsPluginConClassName(tipoPlugin, className); 
+			boolean errorExists = false;	
+			
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				errorExists = existsPluginConTipo || existsPluginConLabel || existsPluginConClassName;
 			} else {
 				// controllo che le modifiche ai parametri non coincidano con altre regole gia' presenti
 				TipoPlugin oldTipoPlugin = TipoPlugin.toEnumConstant(oldPlugin.getTipoPlugin());
 					
 				// controllare se e' variato uno dei tipi della unique 
-				if((!tipoPlugin.equals(oldTipoPlugin) || !tipo.equals(oldPlugin.getTipo()) 
-						|| !label.equals(oldPlugin.getLabel()) || !className.equals(oldPlugin.getClassName())) && existsPlugin) {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_NUOVA_CHIAVE_DUPLICATA); 
+				if(!tipoPlugin.equals(oldTipoPlugin)) {
+					errorExists = existsPluginConTipo || existsPluginConLabel || existsPluginConClassName;
+				}
+				else if(!tipo.equals(oldPlugin.getTipo()) && existsPluginConTipo) {
+					errorExists = true;
+				} 
+				else if(!label.equals(oldPlugin.getLabel()) && existsPluginConLabel) {
+					errorExists = true;
+				} 
+				else if(!className.equals(oldPlugin.getClassName()) && existsPluginConClassName) {
+					errorExists = true;
+				} 
+			}
+				
+			if(errorExists) {
+				
+				String descrizioneTipoPlugin = ConfigurazionePluginsTipoPluginUtils.tipoPluginToLabel(tipoPlugin);
+				
+				if (existsPluginConTipo) {
+					this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_TIPO, descrizioneTipoPlugin, tipo));
+					return false;
+				}
+				if (existsPluginConLabel) {
+					this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_LABEL, descrizioneTipoPlugin, label));
+					return false;
+				}
+				if (existsPluginConClassName) {
+					this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_CLASSNAME, descrizioneTipoPlugin, className));
 					return false;
 				}
 			}
-				
+			
 			if(!this.checkLength255(descrizione, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DESCRIZIONE)) {
 				return false;
 			}

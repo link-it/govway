@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.config;
 import java.sql.Connection;
 import java.util.List;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -146,7 +147,15 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 							PluginProprietaCompatibilita ppc = plugin.getPluginProprietaCompatibilita(j);
 							if(ppc.getNome().equals(filtro.getName())) {
 								if(!ppc.getValore().equals(filtro.getValue())) {
-									throw new NotFoundException("Filtro '"+ppc.getNome()+"' non soddisfatto (atteso:"+filtro.getValue()+" trovato:"+ppc.getValore()+")");
+									
+									// gestisco caso speciale
+									boolean isCasoSpecialeQualsiasi = false;
+									if(Filtri.FILTRO_RUOLO_NOME.equals(ppc.getNome()) && Filtri.FILTRO_RUOLO_VALORE_ENTRAMBI.equals(ppc.getValore())) {
+										isCasoSpecialeQualsiasi = true;
+									}
+									if(!isCasoSpecialeQualsiasi) {									
+										throw new NotFoundException("Filtro '"+ppc.getNome()+"' non soddisfatto (atteso:"+filtro.getValue()+" trovato:"+ppc.getValore()+")");
+									}
 								}
 							}
 						}

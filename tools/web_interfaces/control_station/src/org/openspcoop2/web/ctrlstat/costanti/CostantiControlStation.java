@@ -196,6 +196,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE_CUSTOM = "Autorizzazione Contenuti - controlli custom";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN = "Autenticazione Token"; //"Gestione Token";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Stato";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD = "Forward Authorization";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER = ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
@@ -219,6 +220,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD = "Forward";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD_PREFIX = "Forward ";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE = "Stato";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI_SUFFIX = "Richiedente";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Autorizzazione per Richiedente";//"Applicativi Autenticati";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Autorizzazione per Richiedente";//"Soggetti Autenticati";
@@ -754,7 +756,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO = "disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_ABILITATO = "abilitato";
-	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM = "custom";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_CUSTOM_IN_SELECT;
 
 	public final static String[] PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_LABELS = {
 			LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO,
@@ -1049,6 +1051,8 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_MTOM_VERIFY = "verify";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM =  "custom";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "custom";
+	public final static String DEFAULT_LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM =  org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_CUSTOM_IN_SELECT;
+	public final static String DEFAULT_LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_CUSTOM_IN_SELECT;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO = CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO = CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.toString();
@@ -1972,10 +1976,10 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE = "Operazione {0} non assegnabile poich&egrave; utilizzata nel criterio di applicabilità della regola di trasformazione ''{1}''";
 	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE_GRUPPO = "Operazione {0} non assegnabile poich&egrave; utilizzata nel criterio di applicabilità della regola di trasformazione ''{1}'' (gruppo: {2})";
 
-	public static final String MESSAGGIO_ERRORE_AUTENTICAZIONE_CUSTOM_NON_INDICATA = "Dati incompleti. Definire almeno un valore per il controllo di autenticazione di tipo custom";
-	public static final String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA = "Dati incompleti. Definire almeno un valore per il controllo di autorizzazione di tipo custom";
+	public static final String MESSAGGIO_ERRORE_AUTENTICAZIONE_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare come meccanismo di autenticazione";
+	public static final String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare come meccanismo di autorizzazione";
 	public static final String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_NON_INDICATA = "Dati incompleti. Definire almeno un controllo di autorizzazione per il contenuto della richiesta";
-	public static final String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA = "Dati incompleti. Definire almeno un valore per il controllo di autorizzazione contenuti di tipo custom";
+	public static final String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare per autorizzare il contenuto della richiesta";
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrato il carattere separatore '='";
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrata l'indicazione di una risorsa, tramite espressioni dinamiche, nella linea ";
 
