@@ -14508,32 +14508,43 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					dati.addElement(de);
 					
-					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME);
-					de.setLabel(this.getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo()));
-					de.setValue(policy.getFiltro().getInformazioneApplicativaNome());
-					if(tipoFiltro==null || 
-							TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipoFiltro) || 
-							TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipoFiltro) || 
-							TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipoFiltro)){
-						de.setType(DataElementType.HIDDEN);
+					if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipoFiltro)) {
+						this.addCustomField(TipoPlugin.RATE_LIMITING,
+								null,
+								null,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME, 
+								this.getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo()), 
+								policy.getFiltro().getInformazioneApplicativaNome(), false, dati); 	
 					}
-					else{
-						if(protocolloAssociatoFiltroNonSelezionatoUtente) {
-							de.setType(DataElementType.TEXT);
+					else {
+						de = new DataElement();
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME);
+						de.setLabel(this.getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo()));
+						de.setValue(policy.getFiltro().getInformazioneApplicativaNome());
+						if(tipoFiltro==null || 
+								TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipoFiltro) || 
+								TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipoFiltro) || 
+								TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipoFiltro)){
+							de.setType(DataElementType.HIDDEN);
 						}
-						else {
-							de.setRequired(true);
-							if(TipoFiltroApplicativo.URLBASED.equals(tipoFiltro) ||
-									TipoFiltroApplicativo.CONTENT_BASED.equals(tipoFiltro)) {
-								de.setType(DataElementType.TEXT_AREA);
+						else{
+							if(protocolloAssociatoFiltroNonSelezionatoUtente) {
+								de.setType(DataElementType.TEXT);
 							}
 							else {
-								de.setType(DataElementType.TEXT_EDIT);
+								de.setRequired(true);
+								if(TipoFiltroApplicativo.URLBASED.equals(tipoFiltro) ||
+										TipoFiltroApplicativo.CONTENT_BASED.equals(tipoFiltro)) {
+									de.setType(DataElementType.TEXT_AREA);
+								}
+								else {
+									de.setType(DataElementType.TEXT_EDIT);
+								}
 							}
 						}
+						dati.addElement(de);
 					}
-					dati.addElement(de);
 				
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
@@ -14968,26 +14979,37 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setPostBack_viaPOST(true);
 					dati.addElement(de);
 					
-					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME);
-					de.setLabel(this.getLabelTipoInformazioneApplicativaGroupBy(policy.getGroupBy().getInformazioneApplicativaTipo()));
-					de.setValue(policy.getGroupBy().getInformazioneApplicativaNome());
-					if(tipoChiaveGroupBy==null || 
-							TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipoChiaveGroupBy)  || 
-							TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipoChiaveGroupBy) || 
-							TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipoChiaveGroupBy)){
-						de.setType(DataElementType.HIDDEN);
+					if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipoChiaveGroupBy)) {
+						this.addCustomField(TipoPlugin.RATE_LIMITING,
+								null,
+								null,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO,
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME, 
+								this.getLabelTipoInformazioneApplicativaGroupBy(policy.getGroupBy().getInformazioneApplicativaTipo()), 
+								policy.getGroupBy().getInformazioneApplicativaNome(), false, dati); 	
 					}
-					else if(TipoFiltroApplicativo.URLBASED.equals(tipoChiaveGroupBy) ||
-							TipoFiltroApplicativo.CONTENT_BASED.equals(tipoChiaveGroupBy)) {
-						de.setRequired(true);
-						de.setType(DataElementType.TEXT_AREA);
+					else {
+						de = new DataElement();
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME);
+						de.setLabel(this.getLabelTipoInformazioneApplicativaGroupBy(policy.getGroupBy().getInformazioneApplicativaTipo()));
+						de.setValue(policy.getGroupBy().getInformazioneApplicativaNome());
+						if(tipoChiaveGroupBy==null || 
+								TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipoChiaveGroupBy)  || 
+								TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipoChiaveGroupBy) || 
+								TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipoChiaveGroupBy)){
+							de.setType(DataElementType.HIDDEN);
+						}
+						else if(TipoFiltroApplicativo.URLBASED.equals(tipoChiaveGroupBy) ||
+								TipoFiltroApplicativo.CONTENT_BASED.equals(tipoChiaveGroupBy)) {
+							de.setRequired(true);
+							de.setType(DataElementType.TEXT_AREA);
+						}
+						else{
+							de.setRequired(true);
+							de.setType(DataElementType.TEXT_EDIT);
+						}
+						dati.addElement(de);
 					}
-					else{
-						de.setRequired(true);
-						de.setType(DataElementType.TEXT_EDIT);
-					}
-					dati.addElement(de);
 				}
 				
 			}
@@ -15187,10 +15209,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(!TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipo) &&
 						!TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipo) &&
 						!TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipo)){
-					if(policy.getFiltro().getInformazioneApplicativaNome()==null){
-						String messaggio = "Deve essere indicato un valore in '"+
+					if(policy.getFiltro().getInformazioneApplicativaNome()==null || 
+							CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(policy.getFiltro().getInformazioneApplicativaNome())){
+						String messaggio = null;
+						if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipo)) {
+							messaggio = ConfigurazioneCostanti.MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_FILTRO_NON_SELEZIONATO;
+						}
+						else {
+							messaggio = "Deve essere indicato un valore in '"+
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
 								+" - "+getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo())+"'";
+						}
 						this.pd.setMessage(messaggio);
 						return false;
 					}
@@ -15263,10 +15292,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						!TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipo) &&
 						!TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipo)){
 				
-					if(policy.getGroupBy().getInformazioneApplicativaNome()==null){
-						String messaggio = "Deve essere indicato un valore in '"+
+					if(policy.getGroupBy().getInformazioneApplicativaNome()==null || 
+							CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(policy.getGroupBy().getInformazioneApplicativaNome())){
+						String messaggio = null;
+						if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipo)) {
+							messaggio = ConfigurazioneCostanti.MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_GROUP_BY_NON_SELEZIONATO;
+						}
+						else {
+							messaggio = "Deve essere indicato un valore in '"+
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE
 								+" - "+getLabelTipoInformazioneApplicativaGroupBy(policy.getGroupBy().getInformazioneApplicativaTipo())+"'";
+						}
 						this.pd.setMessage(messaggio);
 						return false;
 					}
@@ -17312,6 +17348,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME);
 		de.setSize(this.getSize());
 		de.setRequired(true);
+		if(tipoPlugin!=null) {
+			ConfigurazionePluginsTipoPluginUtils.addInfoClassePlugin(de, tipoPlugin, ruolo, shTipo, mhTipo, mhRuolo,
+					this.confCore.isIntegrationManagerEnabled());
+		}
 		dati.addElement(de);
 		
 		// label

@@ -49,7 +49,7 @@ public enum ModalitaIdentificazione {
 	INDIRIZZO_IP_BASED("Client IP",null),
 	X_FORWARD_FOR_BASED("X-Forwarded-For",null),
 	TOKEN("Token","Claim"),
-	PLUGIN_BASED("Plugin Personalizzato", "Tipo"),
+	PLUGIN_BASED("Plugin", "Tipo"),
 	GOVWAY_TEMPLATE("Template", "Template"),
 	FREEMARKER_TEMPLATE("Freemarker Template", "Template"),
 	VELOCITY_TEMPLATE("Velocity Template", "Template");
