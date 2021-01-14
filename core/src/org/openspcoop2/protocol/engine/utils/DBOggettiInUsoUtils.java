@@ -6897,11 +6897,15 @@ public class DBOggettiInUsoUtils  {
 				formatConnettori(idConnettori,whereIsInUso, con, normalizeObjectIds, tipoDB);
 			}
 			
-			else if("AUTENTICAZIONE".equals(tipoPlugin) || "AUTORIZZAZIONE".equals(tipoPlugin) || "AUTORIZZAZIONE_CONTENUTI".equals(tipoPlugin)) {
+			else if("AUTENTICAZIONE".equals(tipoPlugin) || 
+					"AUTORIZZAZIONE".equals(tipoPlugin) || 
+					"AUTORIZZAZIONE_CONTENUTI".equals(tipoPlugin) ||
+					"INTEGRAZIONE".equals(tipoPlugin)) {
 				
 				boolean autenticazione = "AUTENTICAZIONE".equals(tipoPlugin);
 				boolean autorizzazione = "AUTORIZZAZIONE".equals(tipoPlugin);
 				boolean autorizzazione_contenuti = "AUTORIZZAZIONE_CONTENUTI".equals(tipoPlugin);
+				boolean integrazione = "INTEGRAZIONE".equals(tipoPlugin);
 				
 				
 				ErrorsHandlerCostant PD_tipoControllo_mapping = null;
@@ -6929,6 +6933,13 @@ public class DBOggettiInUsoUtils  {
 					PA_tipoControllo_mapping = ErrorsHandlerCostant.AUTORIZZAZIONE_CONTENUTI_MAPPING_PA;
 					PA_tipoControllo = ErrorsHandlerCostant.AUTORIZZAZIONE_CONTENUTI_PA;
 					colonna = "autorizzazione_contenuto";
+				}
+				else if(integrazione) {
+					PD_tipoControllo_mapping = ErrorsHandlerCostant.INTEGRAZIONE_MAPPING_PD;
+					PD_tipoControllo = ErrorsHandlerCostant.INTEGRAZIONE_PD;
+					PA_tipoControllo_mapping = ErrorsHandlerCostant.INTEGRAZIONE_MAPPING_PA;
+					PA_tipoControllo = ErrorsHandlerCostant.INTEGRAZIONE_PA;
+					colonna = "integrazione";
 				}
 				
 				List<String> PD_mapping_list = whereIsInUso.get(PD_tipoControllo_mapping);
@@ -6964,10 +6975,26 @@ public class DBOggettiInUsoUtils  {
 					sqlQueryObject.addFromTable(table);
 					sqlQueryObject.addSelectField("nome_porta");
 					sqlQueryObject.setANDLogicOperator(true);
-					sqlQueryObject.addWhereCondition(colonna+"=?");
+					if(integrazione) {
+						// condizione di controllo
+						ISQLQueryObject sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectOr.setANDLogicOperator(false);
+						// (integrazione == 'NOME') OR (integrazione like 'NOME,%') OR (integrazione like '%,NOME') OR (integrazione like '%,applicabilita_azioni,%')
+						// CLOB sqlQueryObjectOr.addWhereCondition(integrazione = ?");
+						sqlQueryObjectOr.addWhereLikeCondition(colonna, tipo, false , false);
+						sqlQueryObjectOr.addWhereLikeCondition(colonna, tipo+",", LikeConfig.startsWith(false));
+						sqlQueryObjectOr.addWhereLikeCondition(colonna, ","+tipo, LikeConfig.endsWith(false));
+						sqlQueryObjectOr.addWhereLikeCondition(colonna, ","+tipo+",", true , false);
+						sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+					}
+					else {
+						sqlQueryObject.addWhereCondition(colonna+"=?");
+					}
 					queryString = sqlQueryObject.createSQLQuery();
 					stmt = con.prepareStatement(queryString);
-					stmt.setString(1, tipo);
+					if(!integrazione) {
+						stmt.setString(1, tipo);
+					}
 					risultato = stmt.executeQuery();
 					while (risultato.next()){
 						String nome = risultato.getString("nome_porta");
@@ -7330,6 +7357,27 @@ public class DBOggettiInUsoUtils  {
 			case CONTROLLO_TRAFFICO:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "utilizzato in Policy di Rate Limiting: " + formatList(messages,separator) + separator;
+				}
+				break;
+				
+			case INTEGRAZIONE_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato per generare i metadati di integrazione nelle Opzioni Avanzate delle Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case INTEGRAZIONE_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Opzioni Avanzate - Metadata di Integrazione): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case INTEGRAZIONE_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato per generare i metadati di integrazione nelle Opzioni Avanzate delle Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case INTEGRAZIONE_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Opzioni Avanzate - Metadata di Integrazione): " + formatList(messages,separator) + separator;
 				}
 				break;
 				
