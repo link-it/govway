@@ -35,6 +35,8 @@ import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
@@ -76,6 +78,8 @@ import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -382,6 +386,20 @@ public class ExporterUtils {
 			idsTokenPolicy.add(idGP);
 		}
 		return idsTokenPolicy;
+	}
+	
+	public List<?> getIdsRateLimitingPolicy(String ids) throws DriverControlStationNotFound, DriverControlStationException{
+		List<IdPolicy> idsRateLimitingPolicy = new ArrayList<IdPolicy>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			long idPolicy = Long.parseLong(id);
+			ConfigurazionePolicy policy = this.confCore.getConfigurazionePolicy(idPolicy);
+			
+			IdPolicy idGP = new IdPolicy();
+			idGP.setNome(policy.getIdPolicy());
+			idsRateLimitingPolicy.add(idGP);
+		}
+		return idsRateLimitingPolicy;
 	}
 	
 	public List<?> getIdsPluginClassi(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{

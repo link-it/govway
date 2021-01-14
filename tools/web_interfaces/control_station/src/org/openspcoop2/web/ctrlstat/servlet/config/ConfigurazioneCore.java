@@ -65,6 +65,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
@@ -1946,6 +1947,44 @@ public class ConfigurazioneCore extends ControlStationCore {
 			inUsoMessage.append("\n");
 		} else {
 			inUsoMessage.append(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+		}
+		
+		return inUsoMessage.toString();
+	}
+	
+	public boolean isRateLimitingPolicyInUso(IdPolicy idRP, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+		String nomeMetodo = "isRateLimitingPolicyInUso";
+		Connection con = null; 
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+	
+			return DBOggettiInUsoUtils.isRateLimitingPolicyInUso(con, this.tipoDB, idRP, whereIsInUso, normalizeObjectIds);
+	
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public String getDettagliRateLimitingPolicyInUso(IdPolicy idRP) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = true;
+		boolean rateLimitingPolicyInUso  = this.isRateLimitingPolicyInUso(idRP, whereIsInUso, normalizeObjectIds);
+		
+		StringBuilder inUsoMessage = new StringBuilder();
+		if(rateLimitingPolicyInUso) {
+			String s = DBOggettiInUsoUtils.toString(idRP, whereIsInUso, false, "\n");
+			if(s!=null && s.startsWith("\n") && s.length()>1) {
+				s = s.substring(1);
+			}
+			inUsoMessage.append(s);
+			inUsoMessage.append("\n");
+		} else {
+			inUsoMessage.append(ConfigurazioneCostanti.LABEL_RATE_LIMITING_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
 		}
 		
 		return inUsoMessage.toString();

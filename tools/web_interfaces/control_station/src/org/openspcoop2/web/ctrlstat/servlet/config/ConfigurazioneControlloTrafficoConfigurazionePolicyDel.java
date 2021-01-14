@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +31,11 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -81,7 +85,9 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 
 			// Elimino i filtri dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			StringBuilder delMsg = new StringBuilder();
+			StringBuilder inUsoMessage = new StringBuilder();
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			boolean normalizeObjectIds = !confHelper.isModalitaCompleta();
 			List<ConfigurazionePolicy> elemToRemove = new ArrayList<ConfigurazionePolicy>();
 			boolean delBuiltIn = false;
 			boolean delUtente = false;
@@ -89,40 +95,53 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 				boolean delete = true;
 				long idPolicy = Long.parseLong(idsToRemove.get(i));
 				ConfigurazionePolicy policy = confCore.getConfigurazionePolicy(idPolicy);
+				IdPolicy idPolicyObject = new IdPolicy();
+				idPolicyObject.setNome(policy.getIdPolicy());
 				
 				if(policy.isBuiltIn()) {
 					
-					if(delMsg.length()>0){
-						delMsg.append("<br/>");
-					}
-					delMsg.append("- ");
-					delMsg.append(policy.getIdPolicy());
-					delMsg.append(" non eliminabile");
+					inUsoMessage.append("- ");
+					inUsoMessage.append(policy.getIdPolicy());
+					inUsoMessage.append(" non eliminabile");
+					inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					
 					delete = false;
 					
 					delBuiltIn = true;
 				}
 				else {
-					long configurazioneUtilizzata = confCore.countInUseAttivazioni(policy.getIdPolicy());
 					
-					if(configurazioneUtilizzata >0){
-						if(delMsg.length()>0){
-							delMsg.append("<br/>");
-						}
-						delMsg.append("- ");
-						delMsg.append(policy.getIdPolicy());
-						delMsg.append(" viene utilizzata in ");
-						delMsg.append(configurazioneUtilizzata);
-						if(configurazioneUtilizzata >1)
-							delMsg.append(" istanze di ");
-						else
-							delMsg.append(" istanza di ");
-						delMsg.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+					boolean policyInUso = confCore.isRateLimitingPolicyInUso(idPolicyObject,whereIsInUso,normalizeObjectIds);
+
+					if (policyInUso) {
+						inUsoMessage.append(DBOggettiInUsoUtils.toString(idPolicyObject, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+						inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						
 						delete = false;
 						
-						delUtente = true;
+						// Con il dettaglio di dove viene utilizzato, non serve piu' questo messaggio
+						//delUtente = true;
 					}
+					
+//					long configurazioneUtilizzata = confCore.countInUseAttivazioni(policy.getIdPolicy());
+//					
+//					if(configurazioneUtilizzata >0){
+//						if(delMsg.length()>0){
+//							delMsg.append("<br/>");
+//						}
+//						delMsg.append("- ");
+//						delMsg.append(policy.getIdPolicy());
+//						delMsg.append(" viene utilizzata in ");
+//						delMsg.append(configurazioneUtilizzata);
+//						if(configurazioneUtilizzata >1)
+//							delMsg.append(" istanze di ");
+//						else
+//							delMsg.append(" istanza di ");
+//						delMsg.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+//						delete = false;
+//						
+//						delUtente = true;
+//					}
 				}
 
 				if(delete) {
@@ -131,16 +150,16 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 				}
 			}
 			
-			if(delMsg.length() > 0){
-				delMsg.append("<br/>");
+			if(inUsoMessage.length() > 0){
+				inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if(delBuiltIn) {
-					delMsg.append("<br/>Le policy '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN+"' non possono essere eliminate.");
+					inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).append("!Attenzione! Le policy '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN+"' non possono essere eliminate.");
 				}
 				if(delUtente) {
 					if(delBuiltIn) {
-						delMsg.append("<br/>");
+						inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
-					delMsg.append("<br/>Per poter eliminare una policy '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE+"' dal registro è necessario prima eliminare tutte le sue istanze esistenti in "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+					inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).append("Per poter eliminare una policy '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE+"' dal registro è necessario prima eliminare tutte le sue istanze esistenti in "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
 				}
 			}
 			
@@ -151,8 +170,8 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 			}
 			
 			// alcuni elementi non sono stati eliminati
-			if(delMsg.length() > 0) {
-				pd.setMessage(delMsg.toString()); 
+			if(inUsoMessage.length() > 0) {
+				pd.setMessage(inUsoMessage.toString()); 
 			} else {
 				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_SENZA_RIAVVIO_RICHIESTO,MessageType.INFO); 
 			}

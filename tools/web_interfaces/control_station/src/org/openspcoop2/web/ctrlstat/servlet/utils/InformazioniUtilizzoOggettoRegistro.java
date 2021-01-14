@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
@@ -201,6 +202,13 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDGenericProperties idGP = (IDGenericProperties)object;
 					risultatiRicerca.add(confCore.getDettagliTokenPolicyInUso(idGP));
+				}
+				break;
+			case RATE_LIMITING_POLICY:
+				identificativi = exporterUtils.getIdsRateLimitingPolicy(identificativoOggetto);
+				for (Object object : identificativi) {
+					IdPolicy idRP = (IdPolicy)object;
+					risultatiRicerca.add(confCore.getDettagliRateLimitingPolicyInUso(idRP));
 				}
 				break;
 			case PLUGIN_CLASSE:

@@ -2230,6 +2230,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "La policy non risulta utilizzata in alcuna configurazione";
 	
+	public final static String LABEL_RATE_LIMITING_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "La policy non risulta utilizzata in alcuna configurazione";
+	
 	public final static String LABEL_CANALE_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il Canale non risulta utilizzato in alcuna configurazione";
 	public static final String MESSAGGIO_FUNZIONALITA_CANALI_NON_DISATTIVABILE = "Impossibile disabilitare la configurazione dei Canali perch&egrave; : {0}";
 	

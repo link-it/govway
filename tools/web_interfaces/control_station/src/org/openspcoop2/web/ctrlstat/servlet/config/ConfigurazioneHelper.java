@@ -8032,7 +8032,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto le label delle colonne
 			String[] labels = { 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME,
-					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO,
+					CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER // inuso
 			};
 			this.pd.setLabels(labels);
 		
@@ -8064,6 +8065,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE);
 					}
 					e.addElement(de);
+					
+					this.addInUsoButtonVisualizzazioneClassica(e, policy.getIdPolicy(), policy.getId()+"", InUsoType.RATE_LIMITING_POLICY);
 					
 					dati.addElement(e);
 				}
