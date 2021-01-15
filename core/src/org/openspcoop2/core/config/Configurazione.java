@@ -66,6 +66,7 @@ import java.util.List;
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-generale" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="gestione-canali" type="{http://www.openspcoop2.org/core/config}canali-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="registro-plugins" type="{http://www.openspcoop2.org/core/config}registro-plugins" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-handler" type="{http://www.openspcoop2.org/core/config}configurazione-generale-handler" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -107,7 +108,8 @@ import java.util.List;
   	"gestioneCors",
   	"responseCaching",
   	"gestioneCanali",
-  	"registroPlugins"
+  	"registroPlugins",
+  	"configurazioneHandler"
   }
 )
 
@@ -394,13 +396,21 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
   public void setGestioneCanali(CanaliConfigurazione gestioneCanali) {
     this.gestioneCanali = gestioneCanali;
   }
-  
+
   public RegistroPlugins getRegistroPlugins() {
     return this.registroPlugins;
   }
 
   public void setRegistroPlugins(RegistroPlugins registroPlugins) {
     this.registroPlugins = registroPlugins;
+  }
+
+  public ConfigurazioneGeneraleHandler getConfigurazioneHandler() {
+    return this.configurazioneHandler;
+  }
+
+  public void setConfigurazioneHandler(ConfigurazioneGeneraleHandler configurazioneHandler) {
+    this.configurazioneHandler = configurazioneHandler;
   }
 
   private static final long serialVersionUID = 1L;
@@ -565,5 +575,8 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="registro-plugins",required=false,nillable=false)
   protected RegistroPlugins registroPlugins;
+
+  @XmlElement(name="configurazione-handler",required=false,nillable=false)
+  protected ConfigurazioneGeneraleHandler configurazioneHandler;
 
 }

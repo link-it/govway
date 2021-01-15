@@ -12404,6 +12404,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DriverConfigurazioneDB_LIB.readCanaliConfigurazione(con, config.getGestioneCanali(), true);
 				}
 				
+				// Handlers
+				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, null, null, true);
+				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, null, null, false);
+				ConfigurazioneServiceHandlers serviceHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneServiceHandlers(con, null, null, false);
+				if(requestHandlers!=null || responseHandlers!=null || serviceHandlers!=null) {
+					config.setConfigurazioneHandler(new ConfigurazioneGeneraleHandler());
+					config.getConfigurazioneHandler().setRequest(requestHandlers);
+					config.getConfigurazioneHandler().setResponse(responseHandlers);
+					config.getConfigurazioneHandler().setService(serviceHandlers);
+				}
+				
 				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
 				if(extInfoConfigurazioneDriver!=null){
@@ -22175,6 +22186,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				pa.setDump(dumpConfig);
 				
 				
+				// Handlers
+				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, null, pa.getId(), true);
+				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, null, pa.getId(), false);
+				if(requestHandlers!=null || responseHandlers!=null) {
+					pa.setConfigurazioneHandler(new ConfigurazionePortaHandler());
+					pa.getConfigurazioneHandler().setRequest(requestHandlers);
+					pa.getConfigurazioneHandler().setResponse(responseHandlers);
+				}
+				
 				
 				// *** Aggiungo extInfo ***
 				
@@ -23101,7 +23121,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				pd.setDump(dumpConfig);
 				
 				
-				
+				// Handlers
+				ConfigurazioneMessageHandlers requestHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, pd.getId(), null, true);
+				ConfigurazioneMessageHandlers responseHandlers = DriverConfigurazioneDB_LIB.readConfigurazioneMessageHandlers(con, pd.getId(), null, false);
+				if(requestHandlers!=null || responseHandlers!=null) {
+					pd.setConfigurazioneHandler(new ConfigurazionePortaHandler());
+					pd.getConfigurazioneHandler().setRequest(requestHandlers);
+					pd.getConfigurazioneHandler().setResponse(responseHandlers);
+				}
+
 				
 				// *** Aggiungo extInfo ***
 				
@@ -23339,6 +23367,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_HANDLERS);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_AUTORIZZATI);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -23513,6 +23548,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.executeUpdate();
 			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_HANDLERS);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_RUOLI);
 			updateString = sqlQueryObject.createSQLDelete();

@@ -46,6 +46,7 @@
                                 <linkit:sql-table object-name="porte-applicative-trasformazioni-url" object-type="porte-applicative-trasformazioni-url"/>
                                 <linkit:sql-table object-name="porte-applicative-trasformazioni-risposta" object-type="porte-applicative-trasformazioni-risposta"/>
                                 <linkit:sql-table object-name="porte-applicative-trasformazioni-header-risposta" object-type="porte-applicative-trasformazioni-header-risposta"/>
+                                <linkit:sql-table object-name="porte-applicative-handlers" object-type="porte-applicative-handlers"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -436,7 +437,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="integrazione"/>
+                                <linkit:sql-column-mapping name="integrazione" varchar="4000"/>
                                 <linkit:sql-ddl-column-comment>Lista di interfacce (tipi separati da virgola) per l'integrazione verso l'applicativo erogatore. I tipi indicati devono essere stati registrati nel file 'govway.classRegistry.properties'</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[lista di tipi separati dalla virgola]]></linkit:sql-column-comment>
                             </linkit:generator>
@@ -3107,6 +3108,89 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    <xsd:element name="porte-applicative-handlers">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_handlers"
+                        comment="Elenco degli handlers attivi sulla porta applicativa">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="tipologia" />
+                            <linkit:sql-table-unique-column name="tipo" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipologia" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipologia"/>
+                                <linkit:sql-ddl-column-comment>Tipo di handler</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco dell'handler all'interno del namespace rappresentato dalla colonna 'tipologia'</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="posizione" type="xsd:integer" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Posizionamento dell'handler</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'handler è abilitato (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
     
     
     

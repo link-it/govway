@@ -237,6 +237,16 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="configurazione-handler" type="configurazione-porta-handler" maxOccurs="1" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -555,6 +565,16 @@
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="behaviour" type="porta-applicativa-behaviour" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="configurazione-handler" type="configurazione-porta-handler" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -1676,6 +1696,7 @@
 			<xsd:element name="response-caching" type="response-caching-configurazione-generale" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="gestione-canali" type="canali-configurazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="registro-plugins" type="registro-plugins" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="configurazione-handler" type="configurazione-generale-handler" maxOccurs="1" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -2086,6 +2107,43 @@
 		<xsd:attribute name="return-code-max" type="xsd:unsignedInt" use="optional"/>
 		<xsd:attribute name="fault" type="xsd:boolean" default="false"/>
 		<xsd:attribute name="cache-timeout-seconds" type="xsd:unsignedInt" use="optional"/>
+	</xsd:complexType>
+
+	<!-- Configurazione handlers -->
+	<xsd:complexType name="configurazione-generale-handler">
+		<xsd:sequence>
+			<xsd:element name="request" type="configurazione-message-handlers" minOccurs="0"/>
+			<xsd:element name="response" type="configurazione-message-handlers" minOccurs="0"/>
+			<xsd:element name="service" type="configurazione-service-handlers" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="configurazione-porta-handler">
+		<xsd:sequence>
+			<xsd:element name="request" type="configurazione-message-handlers" minOccurs="0"/>
+			<xsd:element name="response" type="configurazione-message-handlers" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>	
+	<xsd:complexType name="configurazione-message-handlers">
+		<xsd:sequence>
+			<xsd:element name="pre-in" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="in" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="inProtocolInfo" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="out" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="postOut" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="configurazione-service-handlers">
+		<xsd:sequence>
+			<xsd:element name="init" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="exit" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="integrationManagerRequest" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="integrationManagerResponse" type="configurazione-handler" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>	
+	<xsd:complexType name="configurazione-handler">
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
+		<xsd:attribute name="stato" type="StatoFunzionalita" use="optional" default="abilitato"/>
 	</xsd:complexType>
 
 	<!-- Registro Plugins -->

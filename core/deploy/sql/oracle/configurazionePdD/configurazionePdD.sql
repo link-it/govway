@@ -964,3 +964,35 @@ end;
 /
 
 
+
+-- **** Handlers ****
+
+CREATE SEQUENCE seq_config_handlers MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE config_handlers
+(
+	tipologia VARCHAR2(255) NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
+	posizione NUMBER NOT NULL,
+	stato VARCHAR2(255),
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_config_handlers_1 UNIQUE (tipologia,tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_handlers PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_config_handlers
+BEFORE
+insert on config_handlers
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_config_handlers.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+

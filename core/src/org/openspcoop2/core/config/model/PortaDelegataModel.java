@@ -63,6 +63,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new Field("gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"porta-delegata",PortaDelegata.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel(new Field("response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazione.class,"porta-delegata",PortaDelegata.class));
 		this.TRASFORMAZIONI = new org.openspcoop2.core.config.model.TrasformazioniModel(new Field("trasformazioni",org.openspcoop2.core.config.Trasformazioni.class,"porta-delegata",PortaDelegata.class));
+		this.CONFIGURAZIONE_HANDLER = new org.openspcoop2.core.config.model.ConfigurazionePortaHandlerModel(new Field("configurazione-handler",org.openspcoop2.core.config.ConfigurazionePortaHandler.class,"porta-delegata",PortaDelegata.class));
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_PORT_TYPE = new Field("id-port-type",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
@@ -117,6 +118,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new ComplexField(father,"gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"porta-delegata",PortaDelegata.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel(new ComplexField(father,"response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazione.class,"porta-delegata",PortaDelegata.class));
 		this.TRASFORMAZIONI = new org.openspcoop2.core.config.model.TrasformazioniModel(new ComplexField(father,"trasformazioni",org.openspcoop2.core.config.Trasformazioni.class,"porta-delegata",PortaDelegata.class));
+		this.CONFIGURAZIONE_HANDLER = new org.openspcoop2.core.config.model.ConfigurazionePortaHandlerModel(new ComplexField(father,"configurazione-handler",org.openspcoop2.core.config.ConfigurazionePortaHandler.class,"porta-delegata",PortaDelegata.class));
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_PORT_TYPE = new ComplexField(father,"id-port-type",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
@@ -191,6 +193,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel RESPONSE_CACHING = null;
 	 
 	public org.openspcoop2.core.config.model.TrasformazioniModel TRASFORMAZIONI = null;
+	 
+	public org.openspcoop2.core.config.model.ConfigurazionePortaHandlerModel CONFIGURAZIONE_HANDLER = null;
 	 
 	public IField ID_SOGGETTO = null;
 	 

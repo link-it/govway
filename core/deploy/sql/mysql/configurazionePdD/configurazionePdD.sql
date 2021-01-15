@@ -613,3 +613,24 @@ CREATE TABLE registro_plug_jar
 CREATE INDEX index_registro_plug_jar_1 ON registro_plug_jar (id_plugin);
 
 
+
+-- **** Handlers ****
+
+CREATE TABLE config_handlers
+(
+	tipologia VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
+	stato VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_config_handlers_1 UNIQUE (tipologia,tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_handlers PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE UNIQUE INDEX index_config_handlers_1 ON config_handlers (tipologia,tipo);
+
+

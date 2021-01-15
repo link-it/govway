@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_config_handlers_1;
 -- DROP INDEX index_registro_plugins_1;
 -- DROP INDEX index_generic_properties_1;
 -- DROP INDEX index_pdd_sys_props_1;
@@ -6,6 +7,7 @@
 -- DROP INDEX index_config_url_regole_1;
 -- DROP INDEX index_registro_plug_jar_1;
 -- DROP INDEX index_generic_property_1;
+DROP TABLE config_handlers;
 DROP TABLE registro_plug_jar;
 DROP TABLE registro_plugins;
 DROP TABLE canali_nodi;

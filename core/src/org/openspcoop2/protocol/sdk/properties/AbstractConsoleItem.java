@@ -82,9 +82,9 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	}
 	public List<String> getLabels(){
 		if(this.mapLabelValues!=null && this.mapLabelValues.size()>0){	
-			List<String> labeles = new ArrayList<String>();
-			labeles.addAll(this.mapLabelValues.keySet());
-			return labeles;
+			List<String> labels = new ArrayList<String>();
+			labels.addAll(this.mapLabelValues.keySet());
+			return labels;
 		}
 		return null;
 	}

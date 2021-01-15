@@ -87,6 +87,7 @@ import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.ConfigurazionePortaHandler;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
@@ -99,6 +100,8 @@ import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.ConfigurazioneHandler;
+import org.openspcoop2.core.config.ConfigurazioneMessageHandlers;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.TrasformazioneRegola;
@@ -114,6 +117,8 @@ import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
+import org.openspcoop2.core.config.ConfigurazioneGeneraleHandler;
+import org.openspcoop2.core.config.ConfigurazioneServiceHandlers;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
@@ -7791,6 +7796,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: configurazione-porta-handler
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazionePortaHandler</var>
+	 * @param configurazionePortaHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazionePortaHandler configurazionePortaHandler) throws SerializerException {
+		this.objToXml(fileName, ConfigurazionePortaHandler.class, configurazionePortaHandler, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazionePortaHandler</var>
+	 * @param configurazionePortaHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazionePortaHandler configurazionePortaHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConfigurazionePortaHandler.class, configurazionePortaHandler, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazionePortaHandler</var>
+	 * @param configurazionePortaHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazionePortaHandler configurazionePortaHandler) throws SerializerException {
+		this.objToXml(file, ConfigurazionePortaHandler.class, configurazionePortaHandler, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazionePortaHandler</var>
+	 * @param configurazionePortaHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazionePortaHandler configurazionePortaHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConfigurazionePortaHandler.class, configurazionePortaHandler, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazionePortaHandler</var>
+	 * @param configurazionePortaHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazionePortaHandler configurazionePortaHandler) throws SerializerException {
+		this.objToXml(out, ConfigurazionePortaHandler.class, configurazionePortaHandler, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazionePortaHandler</var>
+	 * @param configurazionePortaHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazionePortaHandler configurazionePortaHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConfigurazionePortaHandler.class, configurazionePortaHandler, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param configurazionePortaHandler Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazionePortaHandler configurazionePortaHandler) throws SerializerException {
+		return this.objToXml(ConfigurazionePortaHandler.class, configurazionePortaHandler, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param configurazionePortaHandler Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazionePortaHandler configurazionePortaHandler,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazionePortaHandler.class, configurazionePortaHandler, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param configurazionePortaHandler Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazionePortaHandler configurazionePortaHandler) throws SerializerException {
+		return this.objToXml(ConfigurazionePortaHandler.class, configurazionePortaHandler, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>configurazionePortaHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param configurazionePortaHandler Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazionePortaHandler configurazionePortaHandler,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazionePortaHandler.class, configurazionePortaHandler, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: response-caching-configurazione-regola
 	 =================================================================================
 	*/
@@ -9201,6 +9324,242 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(CorrelazioneApplicativaRispostaElemento correlazioneApplicativaRispostaElemento,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(CorrelazioneApplicativaRispostaElemento.class, correlazioneApplicativaRispostaElemento, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-handler
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneHandler</var>
+	 * @param configurazioneHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneHandler configurazioneHandler) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneHandler.class, configurazioneHandler, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneHandler</var>
+	 * @param configurazioneHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneHandler configurazioneHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneHandler.class, configurazioneHandler, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneHandler</var>
+	 * @param configurazioneHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneHandler configurazioneHandler) throws SerializerException {
+		this.objToXml(file, ConfigurazioneHandler.class, configurazioneHandler, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneHandler</var>
+	 * @param configurazioneHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneHandler configurazioneHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConfigurazioneHandler.class, configurazioneHandler, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneHandler</var>
+	 * @param configurazioneHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneHandler configurazioneHandler) throws SerializerException {
+		this.objToXml(out, ConfigurazioneHandler.class, configurazioneHandler, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneHandler</var>
+	 * @param configurazioneHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneHandler configurazioneHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConfigurazioneHandler.class, configurazioneHandler, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param configurazioneHandler Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneHandler configurazioneHandler) throws SerializerException {
+		return this.objToXml(ConfigurazioneHandler.class, configurazioneHandler, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param configurazioneHandler Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneHandler configurazioneHandler,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneHandler.class, configurazioneHandler, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param configurazioneHandler Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneHandler configurazioneHandler) throws SerializerException {
+		return this.objToXml(ConfigurazioneHandler.class, configurazioneHandler, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>configurazioneHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param configurazioneHandler Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneHandler configurazioneHandler,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneHandler.class, configurazioneHandler, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-message-handlers
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneMessageHandlers</var>
+	 * @param configurazioneMessageHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneMessageHandlers configurazioneMessageHandlers) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneMessageHandlers</var>
+	 * @param configurazioneMessageHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneMessageHandlers configurazioneMessageHandlers,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneMessageHandlers</var>
+	 * @param configurazioneMessageHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneMessageHandlers configurazioneMessageHandlers) throws SerializerException {
+		this.objToXml(file, ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneMessageHandlers</var>
+	 * @param configurazioneMessageHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneMessageHandlers configurazioneMessageHandlers,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneMessageHandlers</var>
+	 * @param configurazioneMessageHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneMessageHandlers configurazioneMessageHandlers) throws SerializerException {
+		this.objToXml(out, ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneMessageHandlers</var>
+	 * @param configurazioneMessageHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneMessageHandlers configurazioneMessageHandlers,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param configurazioneMessageHandlers Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneMessageHandlers configurazioneMessageHandlers) throws SerializerException {
+		return this.objToXml(ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param configurazioneMessageHandlers Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneMessageHandlers configurazioneMessageHandlers,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param configurazioneMessageHandlers Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneMessageHandlers configurazioneMessageHandlers) throws SerializerException {
+		return this.objToXml(ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>configurazioneMessageHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param configurazioneMessageHandlers Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneMessageHandlers configurazioneMessageHandlers,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneMessageHandlers.class, configurazioneMessageHandlers, prettyPrint).toString();
 	}
 	
 	
@@ -10971,6 +11330,242 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(OpenspcoopSorgenteDati openspcoopSorgenteDati,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(OpenspcoopSorgenteDati.class, openspcoopSorgenteDati, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-generale-handler
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneGeneraleHandler</var>
+	 * @param configurazioneGeneraleHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneGeneraleHandler configurazioneGeneraleHandler) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneGeneraleHandler</var>
+	 * @param configurazioneGeneraleHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneGeneraleHandler configurazioneGeneraleHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneGeneraleHandler</var>
+	 * @param configurazioneGeneraleHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneGeneraleHandler configurazioneGeneraleHandler) throws SerializerException {
+		this.objToXml(file, ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneGeneraleHandler</var>
+	 * @param configurazioneGeneraleHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneGeneraleHandler configurazioneGeneraleHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneGeneraleHandler</var>
+	 * @param configurazioneGeneraleHandler Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneGeneraleHandler configurazioneGeneraleHandler) throws SerializerException {
+		this.objToXml(out, ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneGeneraleHandler</var>
+	 * @param configurazioneGeneraleHandler Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneGeneraleHandler configurazioneGeneraleHandler,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param configurazioneGeneraleHandler Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneGeneraleHandler configurazioneGeneraleHandler) throws SerializerException {
+		return this.objToXml(ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param configurazioneGeneraleHandler Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneGeneraleHandler configurazioneGeneraleHandler,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param configurazioneGeneraleHandler Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneGeneraleHandler configurazioneGeneraleHandler) throws SerializerException {
+		return this.objToXml(ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>configurazioneGeneraleHandler</var> of type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param configurazioneGeneraleHandler Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneGeneraleHandler configurazioneGeneraleHandler,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneGeneraleHandler.class, configurazioneGeneraleHandler, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-service-handlers
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneServiceHandlers</var>
+	 * @param configurazioneServiceHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneServiceHandlers configurazioneServiceHandlers) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneServiceHandlers</var>
+	 * @param configurazioneServiceHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneServiceHandlers configurazioneServiceHandlers,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneServiceHandlers</var>
+	 * @param configurazioneServiceHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneServiceHandlers configurazioneServiceHandlers) throws SerializerException {
+		this.objToXml(file, ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneServiceHandlers</var>
+	 * @param configurazioneServiceHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneServiceHandlers configurazioneServiceHandlers,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneServiceHandlers</var>
+	 * @param configurazioneServiceHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneServiceHandlers configurazioneServiceHandlers) throws SerializerException {
+		this.objToXml(out, ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneServiceHandlers</var>
+	 * @param configurazioneServiceHandlers Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneServiceHandlers configurazioneServiceHandlers,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param configurazioneServiceHandlers Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneServiceHandlers configurazioneServiceHandlers) throws SerializerException {
+		return this.objToXml(ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param configurazioneServiceHandlers Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneServiceHandlers configurazioneServiceHandlers,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param configurazioneServiceHandlers Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneServiceHandlers configurazioneServiceHandlers) throws SerializerException {
+		return this.objToXml(ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>configurazioneServiceHandlers</var> of type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param configurazioneServiceHandlers Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneServiceHandlers configurazioneServiceHandlers,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneServiceHandlers.class, configurazioneServiceHandlers, prettyPrint).toString();
 	}
 	
 	

@@ -118,6 +118,7 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_SEQUENCE = "seq_pa_transform_risp";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pa_transform_risp_init_seq";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER = "pa_transform_risp_hdr";
+    public static final String PORTE_APPLICATIVE_HANDLERS = "pa_handlers";
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
     public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP = "pd_auth_properties";
@@ -146,6 +147,7 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_SEQUENCE = "seq_pd_transform_risp";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pd_transform_risp_init_seq";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER = "pd_transform_risp_hdr";
+    public static final String PORTE_DELEGATE_HANDLERS = "pd_handlers";
     public static final String REGISTRI = "registri";
     public static final String SERVIZI_PDD = "servizi_pdd";
     public static final String SERVIZI_PDD_FILTRI = "servizi_pdd_filtri";
@@ -158,6 +160,7 @@ public final class CostantiDB {
     public static final String GESTIONE_ERRORE_SOAP = "gestione_errore_soap";
     public static final String CONFIGURAZIONE_CANALI = "canali_configurazione";
     public static final String CONFIGURAZIONE_CANALI_NODI = "canali_nodi";
+    public static final String CONFIGURAZIONE_HANDLERS = "config_handlers";
 
     
     public static final String CONFIG_URL_INVOCAZIONE = "config_url_invocazione";
@@ -554,4 +557,17 @@ public final class CostantiDB {
     public static boolean isAPPID(String issuer) {
     	return ISSUER_APIKEY_APPID.equals(issuer);
     }
+    
+    public static final String HANDLER_PRE_IN = "PreIn";
+    public static final String HANDLER_IN = "PreIn";
+    public static final String HANDLER_IN_PROTOCOL = "InProtocol";
+    public static final String HANDLER_OUT = "Out";
+    public static final String HANDLER_POST_OUT = "PostOut";
+    public static final String HANDLER_REQUEST_SUFFIX = "Request";
+    public static final String HANDLER_RESPONSE_SUFFIX = "Response";
+    
+    public static final String HANDLER_INIT = "Init";
+    public static final String HANDLER_EXIT = "Exit";
+    public static final String HANDLER_INTEGRATION_MANAGER_REQUEST = "IntegrationManagerRequest";
+    public static final String HANDLER_INTEGRATION_MANAGER_RESPONSE = "IntegrationManagerResponse";
 }

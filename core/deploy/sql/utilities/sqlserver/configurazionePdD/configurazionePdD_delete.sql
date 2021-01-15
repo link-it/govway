@@ -1,3 +1,4 @@
+DELETE FROM config_handlers;
 DELETE FROM registro_plug_jar;
 DELETE FROM registro_plugins;
 DELETE FROM canali_nodi;

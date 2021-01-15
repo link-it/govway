@@ -655,3 +655,24 @@ CREATE TABLE registro_plug_jar
 CREATE INDEX index_registro_plug_jar_1 ON registro_plug_jar (id_plugin);
 
 
+
+-- **** Handlers ****
+
+CREATE SEQUENCE seq_config_handlers start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE config_handlers
+(
+	tipologia VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
+	stato VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_config_handlers') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_config_handlers_1 UNIQUE (tipologia,tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_handlers PRIMARY KEY (id)
+);
+
+
+

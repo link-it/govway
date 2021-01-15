@@ -538,7 +538,35 @@ public class ConfigurazionePdDManager {
 	}
 
 	public Trasformazioni getTrasformazioni(PortaDelegata pd) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getTrasformazioni(this.getConnection(), pd);
+		return this.configurazionePdDReader.getTrasformazioni(pd);
+	}
+
+	public List<String> getPreInRequestHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPreInRequestHandlers(pd);
+	}
+	public List<String> getInRequestHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInRequestHandlers(pd);
+	}
+	public List<String> getInRequestProtocolHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInRequestProtocolHandlers(pd);
+	}
+	public List<String> getOutRequestHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getOutRequestHandlers(pd);
+	}
+	public List<String> getPostOutRequestHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPostOutRequestHandlers(pd);
+	}
+	public List<String> getPreInResponseHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPreInResponseHandlers(pd);
+	}
+	public List<String> getInResponseHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInResponseHandlers(pd);
+	}
+	public List<String> getOutResponseHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getOutResponseHandlers(pd);
+	}
+	public List<String> getPostOutResponseHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPostOutResponseHandlers(pd);
 	}
 
 	public List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
@@ -768,9 +796,37 @@ public class ConfigurazionePdDManager {
 	}
 
 	public Trasformazioni getTrasformazioni(PortaApplicativa pa) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getTrasformazioni(this.getConnection(), pa);
+		return this.configurazionePdDReader.getTrasformazioni(pa);
 	}
 
+	public List<String> getPreInRequestHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPreInRequestHandlers(pa);
+	}
+	public List<String> getInRequestHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInRequestHandlers(pa);
+	}
+	public List<String> getInRequestProtocolHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInRequestProtocolHandlers(pa);
+	}
+	public List<String> getOutRequestHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getOutRequestHandlers(pa);
+	}
+	public List<String> getPostOutRequestHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPostOutRequestHandlers(pa);
+	}
+	public List<String> getPreInResponseHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPreInResponseHandlers(pa);
+	}
+	public List<String> getInResponseHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInResponseHandlers(pa);
+	}
+	public List<String> getOutResponseHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getOutResponseHandlers(pa);
+	}
+	public List<String> getPostOutResponseHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPostOutResponseHandlers(pa);
+	}
+	
 	public List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pa);
 	}
@@ -1161,6 +1217,47 @@ public class ConfigurazionePdDManager {
 				protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo, 
 				tags, 
 				canaleApi);
+	}
+	
+	public List<String> getInitHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInitHandlers(this.getConnection());
+	}
+	public List<String> getExitHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getExitHandlers(this.getConnection());
+	}
+	public List<String> getIntegrationManagerRequestHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getIntegrationManagerRequestHandlers(this.getConnection());
+	}
+	public List<String> getIntegrationManagerResponseHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getIntegrationManagerResponseHandlers(this.getConnection());
+	}
+	
+	public List<String> getPreInRequestHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPreInRequestHandlers(this.getConnection());
+	}
+	public List<String> getInRequestHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInRequestHandlers(this.getConnection());
+	}
+	public List<String> getInRequestProtocolHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInRequestProtocolHandlers(this.getConnection());
+	}
+	public List<String> getOutRequestHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getOutRequestHandlers(this.getConnection());
+	}
+	public List<String> getPostOutRequestHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPostOutRequestHandlers(this.getConnection());
+	}
+	public List<String> getPreInResponseHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPreInResponseHandlers(this.getConnection());
+	}
+	public List<String> getInResponseHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getInResponseHandlers(this.getConnection());
+	}
+	public List<String> getOutResponseHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getOutResponseHandlers(this.getConnection());
+	}
+	public List<String> getPostOutResponseHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPostOutResponseHandlers(this.getConnection());
 	}
 
 	public List<Object> getExtendedInfoConfigurazione() throws DriverConfigurazioneException{

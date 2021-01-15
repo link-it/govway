@@ -57,6 +57,8 @@
                                 <linkit:sql-comment><![CDATA[**** Regitro Plugins ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="registro-plugins" object-type="registro-plugins"/>
                                 <linkit:sql-table object-name="registro-plugin-archivio" object-type="registro-plugin-archivio"/>
+                                <linkit:sql-comment><![CDATA[**** Handlers ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="handlers" object-type="handlers"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -2794,7 +2796,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="registro_plugins"
-                        comment="Elenco di un plugin (descritto da uno o più jar) utilizzati dalla porta di dominio">
+                        comment="Elenco di un plugin (descritto da uno o più jar) utilizzati dal gateway">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-column name="nome" />
                         </linkit:sql-table-unique>
@@ -2810,7 +2812,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
-                                <linkit:sql-ddl-column-comment>Identificativo univoco della configurazione all'interno del namespace rappresentato dalla colonna 'tipologia'</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco del plugin</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -2972,6 +2974,72 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="data" default-current-time="true"/>
                                 <linkit:sql-ddl-column-comment>Data di ultima modifica</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+    <xsd:element name="handlers">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="config_handlers"
+                        comment="Elenco degli handlers attivi sul gateway">
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="tipologia" />
+                            <linkit:sql-table-unique-column name="tipo" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tipologia" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipologia"/>
+                                <linkit:sql-ddl-column-comment>Tipo di handler</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco dell'handler all'interno del namespace rappresentato dalla colonna 'tipologia'</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="posizione" type="xsd:integer" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Posizionamento dell'handler</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'handler è abilitato (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

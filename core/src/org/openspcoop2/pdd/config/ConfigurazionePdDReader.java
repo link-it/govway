@@ -51,7 +51,10 @@ import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneGeneraleHandler;
+import org.openspcoop2.core.config.ConfigurazioneHandler;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
+import org.openspcoop2.core.config.ConfigurazionePortaHandler;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -1752,11 +1755,102 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	protected Trasformazioni getTrasformazioni(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+	protected Trasformazioni getTrasformazioni(PortaDelegata pd) throws DriverConfigurazioneException{
 		if(pd!=null && pd.getTrasformazioni()!=null) {
 			return pd.getTrasformazioni();
 		}
 		return null;
+	}
+	
+	protected List<String> getPreInRequestHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getPreInList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getInRequestHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getInList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getInRequestProtocolHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getInProtocolInfoList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getOutRequestHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getOutList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getPostOutRequestHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getPostOutList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getPreInResponseHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getResponse().getPreInList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getInResponseHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getResponse().getInList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getOutResponseHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getResponse().getOutList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getPostOutResponseHandlers(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getResponse().getPostOutList(), list);
+			}
+		}
+		return list;
 	}
 
 	protected List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
@@ -2628,13 +2722,104 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	protected Trasformazioni getTrasformazioni(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+	protected Trasformazioni getTrasformazioni(PortaApplicativa pa) throws DriverConfigurazioneException{
 		if(pa!=null && pa.getTrasformazioni()!=null) {
 			return pa.getTrasformazioni();
 		}
 		return null;
 	}
-
+	
+	protected List<String> getPreInRequestHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getPreInList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getInRequestHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getInList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getInRequestProtocolHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getInProtocolInfoList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getOutRequestHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getOutList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getPostOutRequestHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getRequest().getPostOutList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getPreInResponseHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getResponse().getPreInList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getInResponseHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getResponse().getInList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getOutResponseHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getResponse().getOutList(), list);
+			}
+		}
+		return list;
+	}
+	protected List<String> getPostOutResponseHandlers(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> list = new ArrayList<String>();
+		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
+			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
+			if(confPorta.getRequest()!=null) {
+				fillListHandlers(confPorta.getResponse().getPostOutList(), list);
+			}
+		}
+		return list;
+	}
+	
 	protected List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		if(pa == null || pa.sizeExtendedInfoList()<=0)
@@ -5285,8 +5470,123 @@ public class ConfigurazionePdDReader {
 				tags, canale);
 	}
 
+	
+	
+	protected List<String> getInitHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getService().getInitList(), list);
+		}
+		return list;
+	}
+	protected List<String> getExitHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getService().getExitList(), list);
+		}
+		return list;
+	}
+	protected List<String> getIntegrationManagerRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getService().getIntegrationManagerRequestList(), list);
+		}
+		return list;
+	}
+	protected List<String> getIntegrationManagerResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getService().getIntegrationManagerResponseList(), list);
+		}
+		return list;
+	}
+	
+	protected List<String> getPreInRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getRequest().getPreInList(), list);
+		}
+		return list;
+	}
+	protected List<String> getInRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getRequest().getInList(), list);
+		}
+		return list;
+	}
+	protected List<String> getInRequestProtocolHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getRequest().getInProtocolInfoList(), list);
+		}
+		return list;
+	}
+	protected List<String> getOutRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getRequest().getOutList(), list);
+		}
+		return list;
+	}
+	protected List<String> getPostOutRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getRequest().getPostOutList(), list);
+		}
+		return list;
+	}
+	protected List<String> getPreInResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getResponse().getPreInList(), list);
+		}
+		return list;
+	}
+	protected List<String> getInResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getResponse().getInList(), list);
+		}
+		return list;
+	}
+	protected List<String> getOutResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getResponse().getOutList(), list);
+		}
+		return list;
+	}
+	protected List<String> getPostOutResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
+		List<String> list = new ArrayList<String>();
+		if(confGenerale.getService()!=null) {
+			fillListHandlers(confGenerale.getResponse().getPostOutList(), list);
+		}
+		return list;
+	}
 
-
+	private void fillListHandlers(List<ConfigurazioneHandler> handlers, List<String> list) {
+		if(handlers!=null && !handlers.isEmpty()) {
+			for (ConfigurazioneHandler handler : handlers) {
+				if(StatoFunzionalita.ABILITATO.equals(handler.getStato())){
+					list.add(handler.getTipo());
+				}
+			}
+		}
+	}
 
 
 	// Per la configurazione realizzo due versioni.

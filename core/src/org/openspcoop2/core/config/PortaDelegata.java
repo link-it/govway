@@ -63,6 +63,7 @@ import java.util.List;
  * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="trasformazioni" type="{http://www.openspcoop2.org/core/config}trasformazioni" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-handler" type="{http://www.openspcoop2.org/core/config}configurazione-porta-handler" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
@@ -122,7 +123,8 @@ import java.util.List;
   	"tracciamento",
   	"gestioneCors",
   	"responseCaching",
-  	"trasformazioni"
+  	"trasformazioni",
+  	"configurazioneHandler"
   }
 )
 
@@ -440,6 +442,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setTrasformazioni(Trasformazioni trasformazioni) {
     this.trasformazioni = trasformazioni;
+  }
+
+  public ConfigurazionePortaHandler getConfigurazioneHandler() {
+    return this.configurazioneHandler;
+  }
+
+  public void setConfigurazioneHandler(ConfigurazionePortaHandler configurazioneHandler) {
+    this.configurazioneHandler = configurazioneHandler;
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -998,6 +1008,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="trasformazioni",required=false,nillable=false)
   protected Trasformazioni trasformazioni;
+
+  @XmlElement(name="configurazione-handler",required=false,nillable=false)
+  protected ConfigurazionePortaHandler configurazioneHandler;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

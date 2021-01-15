@@ -16,6 +16,7 @@
 -- DROP INDEX INDEX_PD_SA;
 -- DROP INDEX index_porte_delegate_2;
 -- DROP INDEX index_porte_delegate_1;
+DROP TABLE pd_handlers;
 DROP TABLE pd_transform_risp_hdr;
 DROP TABLE pd_transform_risp;
 DROP TABLE pd_transform_url;
@@ -38,6 +39,7 @@ DROP TABLE pd_authz_properties;
 DROP TABLE pd_auth_properties;
 DROP TABLE porte_delegate_sa;
 DROP TABLE porte_delegate;
+DROP SEQUENCE seq_pd_handlers;
 DROP SEQUENCE seq_pd_transform_risp_hdr;
 DROP SEQUENCE seq_pd_transform_risp;
 DROP SEQUENCE seq_pd_transform_url;

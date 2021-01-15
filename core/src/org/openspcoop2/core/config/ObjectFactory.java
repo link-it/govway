@@ -164,10 +164,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneGeneraleHandler }
+     */
+    public ConfigurazioneGeneraleHandler createConfigurazioneGeneraleHandler() {
+        return new ConfigurazioneGeneraleHandler();
+    }
+
+    /**
      * Create an instance of {@link ConfigurazioneGestioneErrore }
      */
     public ConfigurazioneGestioneErrore createConfigurazioneGestioneErrore() {
         return new ConfigurazioneGestioneErrore();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneHandler }
+     */
+    public ConfigurazioneHandler createConfigurazioneHandler() {
+        return new ConfigurazioneHandler();
     }
 
     /**
@@ -185,17 +199,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CanaleConfigurazioneNodo }
-     */
-    public CanaleConfigurazioneNodo createCanaleConfigurazioneNodo() {
-        return new CanaleConfigurazioneNodo();
-    }
-
-    /**
      * Create an instance of {@link RegistroPlugins }
      */
     public RegistroPlugins createRegistroPlugins() {
         return new RegistroPlugins();
+    }
+
+    /**
+     * Create an instance of {@link CanaleConfigurazioneNodo }
+     */
+    public CanaleConfigurazioneNodo createCanaleConfigurazioneNodo() {
+        return new CanaleConfigurazioneNodo();
     }
 
     /**
@@ -360,6 +374,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneServiceHandlers }
+     */
+    public ConfigurazioneServiceHandlers createConfigurazioneServiceHandlers() {
+        return new ConfigurazioneServiceHandlers();
+    }
+
+    /**
      * Create an instance of {@link RouteRegistro }
      */
     public RouteRegistro createRouteRegistro() {
@@ -514,6 +535,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneMessageHandlers }
+     */
+    public ConfigurazioneMessageHandlers createConfigurazioneMessageHandlers() {
+        return new ConfigurazioneMessageHandlers();
+    }
+
+    /**
      * Create an instance of {@link ResponseCachingConfigurazioneHashGenerator }
      */
     public ResponseCachingConfigurazioneHashGenerator createResponseCachingConfigurazioneHashGenerator() {
@@ -665,6 +693,13 @@ public class ObjectFactory {
      */
     public AutorizzazioneRuoli createAutorizzazioneRuoli() {
         return new AutorizzazioneRuoli();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazionePortaHandler }
+     */
+    public ConfigurazionePortaHandler createConfigurazionePortaHandler() {
+        return new ConfigurazionePortaHandler();
     }
 
     /**

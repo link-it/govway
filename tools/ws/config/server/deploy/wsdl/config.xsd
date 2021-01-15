@@ -108,6 +108,9 @@
 			<xsd:element minOccurs="0" name="trasformazioni" type="trasformazioni">
 				
 			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="configurazione-handler" type="configurazione-porta-handler">
+				
+			</xsd:element>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -248,6 +251,9 @@
 				
 			</xsd:element>
 			<xsd:element minOccurs="0" name="behaviour" type="porta-applicativa-behaviour">
+				
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="configurazione-handler" type="configurazione-porta-handler">
 				
 			</xsd:element>
 		</xsd:sequence>
@@ -915,6 +921,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="response-caching" type="response-caching-configurazione-generale"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-canali" type="canali-configurazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="registro-plugins" type="registro-plugins"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="configurazione-handler" type="configurazione-generale-handler"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -1325,6 +1332,43 @@
 		<xsd:attribute name="return-code-max" type="xsd:unsignedInt" use="optional"/>
 		<xsd:attribute default="false" name="fault" type="xsd:boolean"/>
 		<xsd:attribute name="cache-timeout-seconds" type="xsd:unsignedInt" use="optional"/>
+	</xsd:complexType>
+
+	<!-- Configurazione handlers -->
+	<xsd:complexType name="configurazione-generale-handler">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="request" type="configurazione-message-handlers"/>
+			<xsd:element minOccurs="0" name="response" type="configurazione-message-handlers"/>
+			<xsd:element minOccurs="0" name="service" type="configurazione-service-handlers"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="configurazione-porta-handler">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="request" type="configurazione-message-handlers"/>
+			<xsd:element minOccurs="0" name="response" type="configurazione-message-handlers"/>
+		</xsd:sequence>
+	</xsd:complexType>	
+	<xsd:complexType name="configurazione-message-handlers">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="pre-in" type="configurazione-handler"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="in" type="configurazione-handler"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="inProtocolInfo" type="configurazione-handler"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="out" type="configurazione-handler"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="postOut" type="configurazione-handler"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="configurazione-service-handlers">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="init" type="configurazione-handler"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="exit" type="configurazione-handler"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="integrationManagerRequest" type="configurazione-handler"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="integrationManagerResponse" type="configurazione-handler"/>
+		</xsd:sequence>
+	</xsd:complexType>	
+	<xsd:complexType name="configurazione-handler">
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
+		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita" use="optional"/>
 	</xsd:complexType>
 
 	<!-- Registro Plugins -->

@@ -43,104 +43,7 @@ import java.util.List;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
-import org.openspcoop2.core.config.AccessoConfigurazione;
-import org.openspcoop2.core.config.AccessoDatiAutenticazione;
-import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
-import org.openspcoop2.core.config.AccessoDatiGestioneToken;
-import org.openspcoop2.core.config.AccessoDatiKeystore;
-import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroRegistro;
-import org.openspcoop2.core.config.Attachments;
-import org.openspcoop2.core.config.Cache;
-import org.openspcoop2.core.config.CanaleConfigurazione;
-import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
-import org.openspcoop2.core.config.CanaliConfigurazione;
-import org.openspcoop2.core.config.Configurazione;
-import org.openspcoop2.core.config.ConfigurazioneMultitenant;
-import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
-import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.CorrelazioneApplicativa;
-import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
-import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
-import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
-import org.openspcoop2.core.config.CorsConfigurazione;
-import org.openspcoop2.core.config.Credenziali;
-import org.openspcoop2.core.config.Dump;
-import org.openspcoop2.core.config.DumpConfigurazione;
-import org.openspcoop2.core.config.DumpConfigurazioneRegola;
-import org.openspcoop2.core.config.GenericProperties;
-import org.openspcoop2.core.config.GestioneErrore;
-import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
-import org.openspcoop2.core.config.GestioneErroreSoapFault;
-import org.openspcoop2.core.config.GestioneToken;
-import org.openspcoop2.core.config.IndirizzoRisposta;
-import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
-import org.openspcoop2.core.config.IntegrationManager;
-import org.openspcoop2.core.config.InvocazioneCredenziali;
-import org.openspcoop2.core.config.InvocazionePorta;
-import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
-import org.openspcoop2.core.config.InvocazioneServizio;
-import org.openspcoop2.core.config.MessageSecurity;
-import org.openspcoop2.core.config.MessageSecurityFlow;
-import org.openspcoop2.core.config.MessageSecurityFlowParameter;
-import org.openspcoop2.core.config.MessaggiDiagnostici;
-import org.openspcoop2.core.config.MtomProcessor;
-import org.openspcoop2.core.config.MtomProcessorFlow;
-import org.openspcoop2.core.config.MtomProcessorFlowParameter;
-import org.openspcoop2.core.config.OpenspcoopAppender;
-import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
-import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
-import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.PortaApplicativaServizio;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.PortaDelegataAzione;
-import org.openspcoop2.core.config.PortaDelegataServizio;
-import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
-import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
-import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.Proprieta;
-import org.openspcoop2.core.config.ProtocolProperty;
-import org.openspcoop2.core.config.RegistroPlugin;
-import org.openspcoop2.core.config.RegistroPluginArchivio;
-import org.openspcoop2.core.config.ResponseCachingConfigurazione;
-import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
-import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
-import org.openspcoop2.core.config.RispostaAsincrona;
-import org.openspcoop2.core.config.Risposte;
-import org.openspcoop2.core.config.Route;
-import org.openspcoop2.core.config.RouteGateway;
-import org.openspcoop2.core.config.RouteRegistro;
-import org.openspcoop2.core.config.RoutingTable;
-import org.openspcoop2.core.config.RoutingTableDefault;
-import org.openspcoop2.core.config.RoutingTableDestinazione;
-import org.openspcoop2.core.config.Ruolo;
-import org.openspcoop2.core.config.Scope;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.StatoServiziPdd;
-import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
-import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
-import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
-import org.openspcoop2.core.config.SystemProperties;
-import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
-import org.openspcoop2.core.config.Tracciamento;
-import org.openspcoop2.core.config.Transazioni;
-import org.openspcoop2.core.config.TrasformazioneRegola;
-import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
-import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
-import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
-import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
-import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
-import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
-import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
-import org.openspcoop2.core.config.TrasformazioneRest;
-import org.openspcoop2.core.config.TrasformazioneSoap;
-import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
-import org.openspcoop2.core.config.Trasformazioni;
-import org.openspcoop2.core.config.ValidazioneBuste;
+import org.openspcoop2.core.config.*;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
@@ -1732,6 +1635,8 @@ public class DriverConfigurazioneDB_LIB {
 			response_cache_regole = responseCachingConfigurazone.getRegolaList();
 		}
 		
+		ConfigurazionePortaHandler configHandlers = aPD.getConfigurazioneHandler();
+		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
 		
@@ -2523,6 +2428,15 @@ public class DriverConfigurazioneDB_LIB {
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), aPD.getId(), true);
 				
+				// handlers
+				if(configHandlers!=null) {
+					if(configHandlers.getRequest()!=null) {
+						CRUDConfigurazioneMessageHandlers(type, con, aPD.getId(), null, true, configHandlers.getRequest());
+					}
+					if(configHandlers.getResponse()!=null) {
+						CRUDConfigurazioneMessageHandlers(type, con, aPD.getId(), null, false, configHandlers.getResponse());
+					}
+				}
 				
 				// extendedInfo
 				i=0;
@@ -3482,6 +3396,11 @@ public class DriverConfigurazioneDB_LIB {
 				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), idPortaDelegata, true);
 				
 				
+				// Handlers
+				CRUDConfigurazioneMessageHandlers(type, con, idPortaDelegata, null, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
+				CRUDConfigurazioneMessageHandlers(type, con, idPortaDelegata, null, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
+				
+				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, CRUDType.UPDATE);
@@ -3511,6 +3430,10 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), idPortaDelegata, true);
+				
+				// Handlers
+				CRUDConfigurazioneMessageHandlers(type, con, idPortaDelegata, null, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
+				CRUDConfigurazioneMessageHandlers(type, con, idPortaDelegata, null, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -4786,6 +4709,8 @@ public class DriverConfigurazioneDB_LIB {
 			behaviour = aPA.getBehaviour().getNome();
 		}
 		
+		ConfigurazionePortaHandler configHandlers = aPA.getConfigurazioneHandler();
+		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
 		
@@ -5731,6 +5656,17 @@ public class DriverConfigurazioneDB_LIB {
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), aPA.getId(), false);
 				
+								
+				// handlers
+				if(configHandlers!=null) {
+					if(configHandlers.getRequest()!=null) {
+						CRUDConfigurazioneMessageHandlers(type, con, null, aPA.getId(), true, configHandlers.getRequest());
+					}
+					if(configHandlers.getResponse()!=null) {
+						CRUDConfigurazioneMessageHandlers(type, con, null, aPA.getId(), false, configHandlers.getResponse());
+					}
+				}
+						
 				
 				// extendedInfo
 				i=0;
@@ -6951,6 +6887,11 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
+
+				
+				// Handlers
+				CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
+				CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
 				
 				
 				// extendedInfo
@@ -6986,6 +6927,10 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// trasformazioni
 				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
+				
+				// Handlers
+				CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
+				CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -9025,7 +8970,8 @@ public class DriverConfigurazioneDB_LIB {
 				config.getGestioneCors()==null && 
 				config.getResponseCaching()==null &&
 				config.getGestioneCanali()==null &&
-				config.getRegistroPlugins()==null ) {
+				config.getRegistroPlugins()==null &&
+				config.getConfigurazioneHandler()==null) {
 						
 			// caso speciale extended info
 			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
@@ -9467,6 +9413,8 @@ public class DriverConfigurazioneDB_LIB {
 		if(configurazioneCanali!=null) {
 			configurazioneCanali_stato = DriverConfigurazioneDB_LIB.getValue(configurazioneCanali.getStato());
 		}
+		
+		ConfigurazioneGeneraleHandler configHandlers = config.getConfigurazioneHandler();
 		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
@@ -10119,6 +10067,19 @@ public class DriverConfigurazioneDB_LIB {
 				// canali
 				if(configurazioneCanali!=null) {
 					CRUDCanaliConfigurazione(type, con, configurazioneCanali);
+				}
+				
+				// handlers
+				if(configHandlers!=null) {
+					if(configHandlers.getRequest()!=null) {
+						CRUDConfigurazioneMessageHandlers(type, con, null, null, true, configHandlers.getRequest());
+					}
+					if(configHandlers.getResponse()!=null) {
+						CRUDConfigurazioneMessageHandlers(type, con, null, null, false, configHandlers.getResponse());
+					}
+					if(configHandlers.getService()!=null) {
+						CRUDConfigurazioneServiceHandlers(type, con, null, null, false, configHandlers.getService());
+					}
 				}
 				
 				// ExtendedInfo
@@ -10789,6 +10750,13 @@ public class DriverConfigurazioneDB_LIB {
 				// Canali
 				CRUDCanaliConfigurazione(type, con, configurazioneCanali);
 				
+				
+				// Handlers
+				CRUDConfigurazioneMessageHandlers(type, con, null, null, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
+				CRUDConfigurazioneMessageHandlers(type, con, null, null, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
+				CRUDConfigurazioneServiceHandlers(type, con, null, null, false, (configHandlers!=null) ? configHandlers.getService() : null);
+
+				
 				// ExtendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					
@@ -10818,6 +10786,12 @@ public class DriverConfigurazioneDB_LIB {
 				// Canali
 				CRUDCanaliConfigurazione(type, con, configurazioneCanali);
 				
+				// Handlers
+				CRUDConfigurazioneMessageHandlers(type, con, null, null, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
+				CRUDConfigurazioneMessageHandlers(type, con, null, null, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
+				CRUDConfigurazioneServiceHandlers(type, con, null, null, false, (configHandlers!=null) ? configHandlers.getService() : null);
+				
+				// Cache
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
 				updateQuery = sqlQueryObject.createSQLDelete();
@@ -13489,6 +13463,425 @@ public class DriverConfigurazioneDB_LIB {
 			
 		}
 	}
+	
+	
+
+	protected static ConfigurazioneMessageHandlers readConfigurazioneMessageHandlers(Connection con, Long idPortaDelegata, Long idPortaApplicatva, boolean request) throws Exception {
+		PreparedStatement stm1=null;
+		ResultSet rs1= null;
+		try {
+			
+			ConfigurazioneMessageHandlers config = null;
+			
+			String tabella = CostantiDB.CONFIGURAZIONE_HANDLERS;
+			if(idPortaDelegata!=null) {
+				tabella = CostantiDB.PORTE_DELEGATE_HANDLERS;
+			}
+			else if(idPortaApplicatva!=null) {
+				tabella = CostantiDB.PORTE_APPLICATIVE_HANDLERS;
+			}
+			
+			List<String> tipologie = new ArrayList<String>();
+			String suffix = request ? CostantiDB.HANDLER_REQUEST_SUFFIX : CostantiDB.HANDLER_RESPONSE_SUFFIX;
+			tipologie.add(CostantiDB.HANDLER_PRE_IN+suffix);
+			tipologie.add(CostantiDB.HANDLER_IN+suffix);
+			if(request) {
+				tipologie.add(CostantiDB.HANDLER_IN_PROTOCOL+suffix);
+			}
+			tipologie.add(CostantiDB.HANDLER_OUT+suffix);
+			tipologie.add(CostantiDB.HANDLER_POST_OUT+suffix);
+			
+			for (String tipologia : tipologie) {
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tabella);
+				sqlQueryObject.addSelectField("*");
+				if(idPortaDelegata!=null || idPortaApplicatva!=null) {
+					sqlQueryObject.addWhereCondition("id_porta=?");
+				}
+				sqlQueryObject.addWhereCondition("tipologia=?");
+				sqlQueryObject.addOrderBy("posizione");
+				
+				sqlQueryObject.setANDLogicOperator(true);
+				String sqlQuery = sqlQueryObject.createSQLQuery();
+				stm1 = con.prepareStatement(sqlQuery);
+				int index = 1;
+				if(idPortaDelegata!=null) {
+					stm1.setLong(index++, idPortaDelegata);
+				}
+				else if(idPortaApplicatva!=null) {
+					stm1.setLong(index++, idPortaApplicatva);
+				}
+				stm1.setString(index++, tipologia);
+				rs1 = stm1.executeQuery();
+				List<ConfigurazioneHandler> list = new ArrayList<ConfigurazioneHandler>();
+				while(rs1.next()){
+					
+					ConfigurazioneHandler handler = new ConfigurazioneHandler();
+					handler.setId(rs1.getLong("id"));
+					handler.setTipo(rs1.getString("tipo"));
+					handler.setPosizione(rs1.getInt("posizione"));
+					String stato = rs1.getString("stato");
+					if(stato!=null && !"".equals(stato)) {
+						handler.setStato(getEnumStatoFunzionalita(stato));
+					}
+					list.add(handler);
+					
+				}
+				rs1.close();
+				stm1.close();
+				
+				if(!list.isEmpty()) {
+					if(config==null) {
+						config = new ConfigurazioneMessageHandlers();
+					}
+					if(tipologia.startsWith(CostantiDB.HANDLER_PRE_IN)) {
+						config.setPreInList(list);
+					}
+					else if(tipologia.startsWith(CostantiDB.HANDLER_IN)) {
+						config.setInList(list);
+					}
+					else if(tipologia.startsWith(CostantiDB.HANDLER_IN_PROTOCOL)) {
+						config.setInProtocolInfoList(list);
+					}
+					else if(tipologia.startsWith(CostantiDB.HANDLER_OUT)) {
+						config.setOutList(list);
+					}
+					else if(tipologia.startsWith(CostantiDB.HANDLER_POST_OUT)) {
+						config.setPostOutList(list);
+					}
+				}
+			}
+			
+			return config;
+			
+		}finally {
+			try {
+				if(rs1!=null) {
+					rs1.close();
+				}
+			}catch(Exception e) {}
+			try {
+				if(stm1!=null) {
+					stm1.close();
+				}
+			}catch(Exception e) {}
+		}
+	}
+	
+	protected static ConfigurazioneServiceHandlers readConfigurazioneServiceHandlers(Connection con, Long idPortaDelegata, Long idPortaApplicatva, boolean request) throws Exception {
+		PreparedStatement stm1=null;
+		ResultSet rs1= null;
+		try {
+			
+			ConfigurazioneServiceHandlers config = null;
+			
+			String tabella = CostantiDB.CONFIGURAZIONE_HANDLERS;
+			if(idPortaDelegata!=null) {
+				tabella = CostantiDB.PORTE_DELEGATE_HANDLERS;
+			}
+			else if(idPortaApplicatva!=null) {
+				tabella = CostantiDB.PORTE_APPLICATIVE_HANDLERS;
+			}
+			
+			List<String> tipologie = new ArrayList<String>();
+			tipologie.add(CostantiDB.HANDLER_INIT);
+			tipologie.add(CostantiDB.HANDLER_EXIT);
+			tipologie.add(CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST);
+			tipologie.add(CostantiDB.HANDLER_INTEGRATION_MANAGER_RESPONSE);
+			
+			for (String tipologia : tipologie) {
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tabella);
+				sqlQueryObject.addSelectField("*");
+				if(idPortaDelegata!=null || idPortaApplicatva!=null) {
+					sqlQueryObject.addWhereCondition("id_porta=?");
+				}
+				sqlQueryObject.addWhereCondition("tipologia=?");
+				sqlQueryObject.addOrderBy("posizione");
+				
+				sqlQueryObject.setANDLogicOperator(true);
+				String sqlQuery = sqlQueryObject.createSQLQuery();
+				stm1 = con.prepareStatement(sqlQuery);
+				int index = 1;
+				if(idPortaDelegata!=null) {
+					stm1.setLong(index++, idPortaDelegata);
+				}
+				else if(idPortaApplicatva!=null) {
+					stm1.setLong(index++, idPortaApplicatva);
+				}
+				stm1.setString(index++, tipologia);
+				rs1 = stm1.executeQuery();
+				List<ConfigurazioneHandler> list = new ArrayList<ConfigurazioneHandler>();
+				while(rs1.next()){
+					
+					ConfigurazioneHandler handler = new ConfigurazioneHandler();
+					handler.setId(rs1.getLong("id"));
+					handler.setTipo(rs1.getString("tipo"));
+					handler.setPosizione(rs1.getInt("posizione"));
+					String stato = rs1.getString("stato");
+					if(stato!=null && !"".equals(stato)) {
+						handler.setStato(getEnumStatoFunzionalita(stato));
+					}
+					list.add(handler);
+					
+				}
+				rs1.close();
+				stm1.close();
+				
+				if(!list.isEmpty()) {
+					if(config==null) {
+						config = new ConfigurazioneServiceHandlers();
+					}
+					if(tipologia.equals(CostantiDB.HANDLER_INIT)) {
+						config.setInitList(list);
+					}
+					else if(tipologia.equals(CostantiDB.HANDLER_EXIT)) {
+						config.setExitList(list);
+					}
+					else if(tipologia.equals(CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST)) {
+						config.setIntegrationManagerRequestList(list);
+					}
+					else if(tipologia.equals(CostantiDB.HANDLER_INTEGRATION_MANAGER_RESPONSE)) {
+						config.setIntegrationManagerResponseList(list);
+					}
+				}
+			}
+			
+			return config;
+			
+		}finally {
+			try {
+				if(rs1!=null) {
+					rs1.close();
+				}
+			}catch(Exception e) {}
+			try {
+				if(stm1!=null) {
+					stm1.close();
+				}
+			}catch(Exception e) {}
+		}
+	}
+	
+	private static void CRUDConfigurazioneMessageHandlers(int type, Connection con, Long idPortaDelegata, Long idPortaApplicatva, boolean request, ConfigurazioneMessageHandlers config) throws DriverConfigurazioneException {
+		
+		Long idPorta = null;
+		String tabella = CostantiDB.CONFIGURAZIONE_HANDLERS;
+		if(idPortaDelegata!=null) {
+			tabella = CostantiDB.PORTE_DELEGATE_HANDLERS;
+			idPorta = idPortaDelegata;
+		}
+		else if(idPortaApplicatva!=null) {
+			tabella = CostantiDB.PORTE_APPLICATIVE_HANDLERS;
+			idPorta = idPortaApplicatva;
+		}
+		
+		String suffix = request ? CostantiDB.HANDLER_REQUEST_SUFFIX : CostantiDB.HANDLER_RESPONSE_SUFFIX;
+				
+		PreparedStatement updateStmt = null;
+		try {
+			switch (type) {
+			case CREATE:
+		
+				if(config==null) {
+					break;
+				}
+				
+				createConfigurazioneHandlers(con, config.getPreInList(), tabella, CostantiDB.HANDLER_PRE_IN+suffix, idPorta);
+				createConfigurazioneHandlers(con, config.getInList(), tabella, CostantiDB.HANDLER_IN+suffix, idPorta);
+				if(request) {
+					createConfigurazioneHandlers(con, config.getInList(), tabella, CostantiDB.HANDLER_IN_PROTOCOL+suffix, idPorta);
+				}
+				createConfigurazioneHandlers(con, config.getInList(), tabella, CostantiDB.HANDLER_OUT+suffix, idPorta);
+				createConfigurazioneHandlers(con, config.getInList(), tabella, CostantiDB.HANDLER_POST_OUT+suffix, idPorta);
+
+				break;
+				
+			case UPDATE:
+				
+				// Faccio prima delete
+				CRUDConfigurazioneMessageHandlers(DELETE, con, idPortaDelegata, idPortaApplicatva, request, null);
+				
+				// Creo la nuova immagine
+				if(config!=null) {
+					CRUDConfigurazioneMessageHandlers(CREATE, con, idPortaDelegata, idPortaApplicatva, request, config);
+				}
+				break;
+				
+			case DELETE:
+				
+				List<String> tipologie = new ArrayList<String>();
+				tipologie.add(CostantiDB.HANDLER_PRE_IN+suffix);
+				tipologie.add(CostantiDB.HANDLER_IN+suffix);
+				if(request) {
+					tipologie.add(CostantiDB.HANDLER_IN_PROTOCOL+suffix);
+				}
+				tipologie.add(CostantiDB.HANDLER_OUT+suffix);
+				tipologie.add(CostantiDB.HANDLER_POST_OUT+suffix);
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(tabella);
+				sqlQueryObject.setANDLogicOperator(true);
+				if(idPorta!=null) {
+					sqlQueryObject.addWhereCondition("id_porta=?");
+				}
+				sqlQueryObject.addWhereINCondition("tipologia", true, tipologie.toArray(new String[1]));
+				String updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				int index = 1;
+				if(idPorta!=null) {
+					updateStmt.setLong(index++, idPorta);
+				}
+				updateStmt.executeUpdate();
+				updateStmt.close();
+
+				break;
+			}
+		
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneMessageHandlers] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneMessageHandlers] Exception [" + se.getMessage() + "].",se);
+		} finally {
+	
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			
+		}
+	}
+	
+	private static void CRUDConfigurazioneServiceHandlers(int type, Connection con, Long idPortaDelegata, Long idPortaApplicatva, boolean request, ConfigurazioneServiceHandlers config) throws DriverConfigurazioneException {
+		
+		Long idPorta = null;
+		String tabella = CostantiDB.CONFIGURAZIONE_HANDLERS;
+		if(idPortaDelegata!=null) {
+			tabella = CostantiDB.PORTE_DELEGATE_HANDLERS;
+			idPorta = idPortaDelegata;
+		}
+		else if(idPortaApplicatva!=null) {
+			tabella = CostantiDB.PORTE_APPLICATIVE_HANDLERS;
+			idPorta = idPortaApplicatva;
+		}
+		
+		@SuppressWarnings("unused")
+		String suffix = request ? CostantiDB.HANDLER_REQUEST_SUFFIX : CostantiDB.HANDLER_RESPONSE_SUFFIX;
+				
+		PreparedStatement updateStmt = null;
+		try {
+			switch (type) {
+			case CREATE:
+		
+				if(config==null) {
+					break;
+				}
+				
+				createConfigurazioneHandlers(con, config.getInitList(), tabella, CostantiDB.HANDLER_INIT, idPorta);
+				createConfigurazioneHandlers(con, config.getInitList(), tabella, CostantiDB.HANDLER_EXIT, idPorta);
+				createConfigurazioneHandlers(con, config.getInitList(), tabella, CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST, idPorta);
+				createConfigurazioneHandlers(con, config.getInitList(), tabella, CostantiDB.HANDLER_INTEGRATION_MANAGER_RESPONSE, idPorta);		
+
+				break;
+				
+			case UPDATE:
+				
+				// Faccio prima delete
+				CRUDConfigurazioneServiceHandlers(DELETE, con, idPortaDelegata, idPortaApplicatva, request, null);
+				
+				// Creo la nuova immagine
+				if(config!=null) {
+					CRUDConfigurazioneServiceHandlers(CREATE, con, idPortaDelegata, idPortaApplicatva, request, config);
+				}
+				break;
+				
+			case DELETE:
+				
+				List<String> tipologie = new ArrayList<String>();
+				tipologie.add(CostantiDB.HANDLER_INIT);
+				tipologie.add(CostantiDB.HANDLER_EXIT);
+				tipologie.add(CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST);
+				tipologie.add(CostantiDB.HANDLER_INTEGRATION_MANAGER_RESPONSE);
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(tabella);
+				sqlQueryObject.setANDLogicOperator(true);
+				if(idPorta!=null) {
+					sqlQueryObject.addWhereCondition("id_porta=?");
+				}
+				sqlQueryObject.addWhereINCondition("tipologia", true, tipologie.toArray(new String[1]));
+				String updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				int index = 1;
+				if(idPorta!=null) {
+					updateStmt.setLong(index++, idPorta);
+				}
+				updateStmt.executeUpdate();
+				updateStmt.close();
+
+				break;
+			}
+		
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneMessageHandlers] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneMessageHandlers] Exception [" + se.getMessage() + "].",se);
+		} finally {
+	
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			
+		}
+	}
+	
+	private static void createConfigurazioneHandlers(Connection con, List<ConfigurazioneHandler> list, String tabella, String tipologia, Long idPorta) throws Exception {
+		if(list!=null && list.size()>0) {
+			for (ConfigurazioneHandler handler : list) {
+				PreparedStatement updateStmt = null;
+				try {
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(tabella);
+					if(idPorta!=null) {
+						sqlQueryObject.addInsertField("id_porta", "?");
+					}
+					sqlQueryObject.addInsertField("tipologia", "?");
+					sqlQueryObject.addInsertField("tipo", "?");
+					sqlQueryObject.addInsertField("posizione", "?");
+					sqlQueryObject.addInsertField("stato", "?");
+					String updateQuery = sqlQueryObject.createSQLInsert();
+					updateStmt = con.prepareStatement(updateQuery);
+					int index = 1;
+					if(idPorta!=null) {
+						updateStmt.setLong(index++, idPorta);
+					}
+					updateStmt.setString(index++, tipologia);
+					updateStmt.setString(index++, handler.getTipo());
+					updateStmt.setInt(index++, handler.getPosizione());
+					updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(handler.getStato()));
+					updateStmt.executeUpdate();
+					updateStmt.close();
+					updateStmt = null;
+				} finally {
+					try {
+						if(updateStmt!=null)updateStmt.close();
+					} catch (Exception e) {
+						// ignore exception
+					}
+					
+				}
+			}
+		}
+	}
+
+	
+	
+	
 	
 	public static long getIdServizioApplicativo(String nomeServizioApplicativo, String tipoProprietario,String nomeProprietario,
 			Connection con, String tipoDB) throws CoreException

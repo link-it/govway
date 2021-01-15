@@ -90,17 +90,17 @@ public class ConfigurazionePluginsTipoPluginUtils {
 	}
 	
 	public static List<String> getLabelsTipoPlugin() {
-		List<String> labeles = new ArrayList<>();
+		List<String> labels = new ArrayList<>();
 		List<String> values = getValuesTipoPlugin();
 		
 		for (String value : values) {
 			String label = tipoPluginToLabel(TipoPlugin.toEnumConstant(value));
 			if(label != null) {
-				labeles.add(label);
+				labels.add(label);
 			}
 		}
 		
-		return labeles;
+		return labels;
 	}
 
 	public static String tipoPluginToLabel(TipoPlugin value) {
@@ -515,8 +515,8 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				DataElement deShTipo = new DataElement();
 				deShTipo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_SERVICE_HANDLER);
 				List<String> values = integrationManagerEnabled ? PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_CON_INTEGRATION_MANAGER : PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_SENZA_INTEGRATION_MANAGER;
-				List<String> labeles = integrationManagerEnabled ? PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_CON_INTEGRATION_MANAGER : PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_SENZA_INTEGRATION_MANAGER;
-				deShTipo.setLabels(labeles);
+				List<String> labels = integrationManagerEnabled ? PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_CON_INTEGRATION_MANAGER : PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_SENZA_INTEGRATION_MANAGER;
+				deShTipo.setLabels(labels);
 				deShTipo.setValues(values);
 				deShTipo.setType(DataElementType.SELECT);
 				deShTipo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_SERVICE_HANDLER);
@@ -530,7 +530,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				DataElement deMhRuolo = new DataElement();
 				
 				deMhRuolo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER);
-				deMhRuolo.setLabels(PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_LABELES);
+				deMhRuolo.setLabels(PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_LABELS);
 				deMhRuolo.setValues(PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORI);
 				deMhRuolo.setType(DataElementType.SELECT);
 				deMhRuolo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER);
@@ -542,8 +542,8 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deMhTipo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER);
 				boolean isRisposta = PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RISPOSTA.equals(mhRuolo);
 				List<String> values = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA;
-				List<String> labeles = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RICHIESTA;
-				deMhTipo.setLabels(labeles);
+				List<String> labels = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RICHIESTA;
+				deMhTipo.setLabels(labels);
 				deMhTipo.setValues(values);
 				deMhTipo.setType(DataElementType.SELECT);
 				deMhTipo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER);
@@ -625,11 +625,11 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case SERVICE_HANDLER:{
 			
 			List<String> values = integrationManagerEnabled ? PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_CON_INTEGRATION_MANAGER : PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_SENZA_INTEGRATION_MANAGER;
-			List<String> labeles = integrationManagerEnabled ? PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_CON_INTEGRATION_MANAGER : PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_SENZA_INTEGRATION_MANAGER;
+			List<String> labels = integrationManagerEnabled ? PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_CON_INTEGRATION_MANAGER : PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_SENZA_INTEGRATION_MANAGER;
 			
 			String filtroShTipo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_SERVICE_HANDLER_NOME);
 			addFilterTipoPlugin(pd, log, PluginCostanti.FILTRO_SERVICE_HANDLER_NOME, PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL, filtroShTipo, 
-					values, labeles, false, size);
+					values, labels, false, size);
 			break;
 		}
 		case MESSAGE_HANDLER:{
@@ -637,16 +637,16 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			
 			String filtroMhRuolo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME);
 			addFilterTipoPlugin(pd, log, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_LABEL, filtroMhRuolo, 
-					PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORI, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_LABELES, true, size);
+					PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORI, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_LABELS, true, size);
 					
 			boolean isRisposta = PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RISPOSTA.equals(filtroMhRuolo);
 			
 			List<String> values = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA;
-			List<String> labeles = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RICHIESTA;
+			List<String> labels = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RICHIESTA;
 			
 			String filtroMhTipo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME);
 			addFilterTipoPlugin(pd, log, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL, filtroMhTipo, 
-					values, labeles, false, size);
+					values, labels, false, size);
 			
 			break;
 		}

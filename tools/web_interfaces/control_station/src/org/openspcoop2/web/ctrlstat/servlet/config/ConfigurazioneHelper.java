@@ -5334,9 +5334,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
-			String[] labeles = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST_ABILITATO, 
+			String[] labels = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST_ABILITATO, 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST_DISABILITATO };
-			de.setLabels(labeles);
+			de.setLabels(labels);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
@@ -5364,9 +5364,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
-			String[] labeles = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE_ABILITATO, 
+			String[] labels = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE_ABILITATO, 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE_DISABILITATO };
-			de.setLabels(labeles);
+			de.setLabels(labels);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
@@ -5391,9 +5391,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
-			String[] labeles = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR_ABILITATO, 
+			String[] labels = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR_ABILITATO, 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR_DISABILITATO };
-			de.setLabels(labeles);
+			de.setLabels(labels);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
@@ -6857,11 +6857,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(TimerState.OFF.name());
 			}
 			else {
-				String[] labeles = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+				String[] labels = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 				String[] values = { TimerState.ENABLED.name(), TimerState.DISABLED.name() };
 				de.setType(DataElementType.SELECT);
 				de.setValues(values);
-				de.setLabels(labeles);
+				de.setLabels(labels);
 				de.setSelected(stato);
 				de.setPostBack_viaPOST(true);
 			}
@@ -14518,7 +14518,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO,
 								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME, 
 								this.getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo()), 
-								policy.getFiltro().getInformazioneApplicativaNome(), false, dati); 	
+								policy.getFiltro().getInformazioneApplicativaNome(), false, dati,
+								true); 	
 					}
 					else {
 						de = new DataElement();
@@ -14989,7 +14990,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO,
 								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME, 
 								this.getLabelTipoInformazioneApplicativaGroupBy(policy.getGroupBy().getInformazioneApplicativaTipo()), 
-								policy.getGroupBy().getInformazioneApplicativaNome(), false, dati); 	
+								policy.getGroupBy().getInformazioneApplicativaNome(), false, dati,
+								true); 	
 					}
 					else {
 						de = new DataElement();
@@ -17292,17 +17294,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// tipoPlugin
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN);
-		List<String> labeles = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
 		if(tipoOp.equals(TipoOperazione.ADD)) {
-			labeles.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
+			labels.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
 		}
-		labeles.addAll(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin());
+		labels.addAll(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin());
 		List<String> values = new ArrayList<String>();
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			values.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED);
 		}
 		values.addAll(ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin());
-		de.setLabels(labeles);
+		de.setLabels(labels);
 		de.setValues(values);
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN);

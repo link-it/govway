@@ -76,7 +76,7 @@ CREATE TABLE porte_delegate
 	-- abilitato/disabilitato
 	validazione_contenuti_mtom VARCHAR(255),
 	-- lista di tipi separati dalla virgola
-	integrazione VARCHAR(255),
+	integrazione VARCHAR(4000),
 	-- scadenza correlazione applicativa
 	scadenza_correlazione_appl VARCHAR(255),
 	-- abilitato/disabilitato
@@ -609,5 +609,26 @@ CREATE TABLE pd_transform_risp_hdr
 
 -- index
 CREATE INDEX idx_pd_trasf_hdr_resp_1 ON pd_transform_risp_hdr (id_transform_risp);
+
+
+
+CREATE SEQUENCE seq_pd_handlers start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pd_handlers
+(
+	id_porta BIGINT NOT NULL,
+	tipologia VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
+	stato VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pd_handlers') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_handlers_1 UNIQUE (id_porta,tipologia,tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_handlers_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_handlers PRIMARY KEY (id)
+);
+
 
 

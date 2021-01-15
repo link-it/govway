@@ -1,3 +1,13 @@
+2021-01-14  Andrea Poli <apoli@link.it>
+
+	Aggiunta registrazione degli handlers via console
+	- config_handlers
+	- pa_handlers
+	- pd_handlers
+
+	ALTER TABLE porte_delegate ALTER COLUMN integrazione TYPE VARCHAR(4000);
+	ALTER TABLE porte_applicative ALTER COLUMN integrazione TYPE VARCHAR(4000);
+
 2020-12-03  Andrea Poli <apoli@link.it>
 
 	Aggiunta registrazione degli archivi che realizzano i plugins:

@@ -2458,25 +2458,25 @@ public class ConnettoriHelper extends ConsoleHelper {
 					connettoriListHttp.add(TipiConnettore.HTTPS.toString());
 					de.setValues(connettoriListHttp);
 					
-					List<String> connettoriListHttpLabeles = new ArrayList<>();
-					connettoriListHttpLabeles.add(TipiConnettore.HTTP.getLabel());
-					connettoriListHttpLabeles.add(TipiConnettore.HTTPS.getLabel());
-					de.setLabels(connettoriListHttpLabeles);
+					List<String> connettoriListHttpLabels = new ArrayList<>();
+					connettoriListHttpLabels.add(TipiConnettore.HTTP.getLabel());
+					connettoriListHttpLabels.add(TipiConnettore.HTTPS.getLabel());
+					de.setLabels(connettoriListHttpLabels);
 				}
 				else {
 					de.setValues(tipoEP);
 					
-					List<String> connettoriListLabeles = new ArrayList<>();
+					List<String> connettoriListLabels = new ArrayList<>();
 					for (String tipoConnettore : tipoEP) {
 						TipiConnettore tipoC = TipiConnettore.toEnumFromName(tipoConnettore);
 						if(tipoC!=null) {
-							connettoriListLabeles.add(tipoC.getLabel());
+							connettoriListLabels.add(tipoC.getLabel());
 						}
 						else {
-							connettoriListLabeles.add(tipoConnettore);
+							connettoriListLabels.add(tipoConnettore);
 						}
 					}
-					de.setLabels(connettoriListLabeles);
+					de.setLabels(connettoriListLabels);
 				}
 				de.setSelected(endpointtype);
 				TipiConnettore tipoC = TipiConnettore.toEnumFromName(endpointtype);
@@ -2494,7 +2494,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE,
 						ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO, 
 						ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO, 
-						tipoconn, connettoreCustomHidden, dati); 				
+						tipoconn, connettoreCustomHidden, dati,
+						false); 				
 				
 				
 				de = new DataElement();

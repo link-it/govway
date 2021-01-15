@@ -45,7 +45,7 @@ CREATE TABLE porte_applicative
 	-- abilitato/disabilitato
 	validazione_contenuti_mtom VARCHAR(255),
 	-- lista di tipi separati dalla virgola
-	integrazione VARCHAR(255),
+	integrazione VARCHAR(4000),
 	-- scadenza correlazione applicativa
 	scadenza_correlazione_appl VARCHAR(255),
 	-- abilitato/disabilitato
@@ -674,5 +674,26 @@ CREATE TABLE pa_transform_risp_hdr
 
 -- index
 CREATE INDEX idx_pa_trasf_hdr_resp_1 ON pa_transform_risp_hdr (id_transform_risp);
+
+
+
+CREATE TABLE pa_handlers
+(
+	id_porta BIGINT NOT NULL,
+	tipologia VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
+	stato VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT unique_pa_handlers_1 UNIQUE (id_porta,tipologia,tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_handlers_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_handlers PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pa_handlers_1 ON pa_handlers (id_porta,tipologia,tipo);
 
 

@@ -21,6 +21,7 @@
 -- DROP INDEX INDEX_PA_SA;
 -- DROP INDEX index_porte_applicative_2;
 -- DROP INDEX index_porte_applicative_1;
+DROP TABLE pa_handlers;
 DROP TABLE pa_transform_risp_hdr;
 DROP TABLE pa_transform_risp;
 DROP TABLE pa_transform_url;
@@ -48,6 +49,7 @@ DROP TABLE pa_behaviour_props;
 DROP TABLE pa_sa_properties;
 DROP TABLE porte_applicative_sa;
 DROP TABLE porte_applicative;
+DROP SEQUENCE seq_pa_handlers;
 DROP SEQUENCE seq_pa_transform_risp_hdr;
 DROP SEQUENCE seq_pa_transform_risp;
 DROP SEQUENCE seq_pa_transform_url;

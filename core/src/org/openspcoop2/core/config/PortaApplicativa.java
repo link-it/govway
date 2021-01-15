@@ -65,6 +65,7 @@ import java.util.List;
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="trasformazioni" type="{http://www.openspcoop2.org/core/config}trasformazioni" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="behaviour" type="{http://www.openspcoop2.org/core/config}porta-applicativa-behaviour" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-handler" type="{http://www.openspcoop2.org/core/config}configurazione-porta-handler" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
@@ -127,7 +128,8 @@ import java.util.List;
   	"gestioneCors",
   	"responseCaching",
   	"trasformazioni",
-  	"behaviour"
+  	"behaviour",
+  	"configurazioneHandler"
   }
 )
 
@@ -461,6 +463,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setBehaviour(PortaApplicativaBehaviour behaviour) {
     this.behaviour = behaviour;
+  }
+
+  public ConfigurazionePortaHandler getConfigurazioneHandler() {
+    return this.configurazioneHandler;
+  }
+
+  public void setConfigurazioneHandler(ConfigurazionePortaHandler configurazioneHandler) {
+    this.configurazioneHandler = configurazioneHandler;
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -1033,6 +1043,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   @XmlElement(name="behaviour",required=false,nillable=false)
   protected PortaApplicativaBehaviour behaviour;
+
+  @XmlElement(name="configurazione-handler",required=false,nillable=false)
+  protected ConfigurazionePortaHandler configurazioneHandler;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

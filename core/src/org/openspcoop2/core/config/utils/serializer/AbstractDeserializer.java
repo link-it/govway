@@ -85,6 +85,7 @@ import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.ConfigurazionePortaHandler;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
@@ -97,6 +98,8 @@ import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.ConfigurazioneHandler;
+import org.openspcoop2.core.config.ConfigurazioneMessageHandlers;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.TrasformazioneRegola;
@@ -112,6 +115,8 @@ import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
+import org.openspcoop2.core.config.ConfigurazioneGeneraleHandler;
+import org.openspcoop2.core.config.ConfigurazioneServiceHandlers;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
@@ -4195,6 +4200,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: configurazione-porta-handler
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazionePortaHandler readConfigurazionePortaHandler(String fileName) throws DeserializerException {
+		return (ConfigurazionePortaHandler) this.xmlToObj(fileName, ConfigurazionePortaHandler.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazionePortaHandler readConfigurazionePortaHandler(File file) throws DeserializerException {
+		return (ConfigurazionePortaHandler) this.xmlToObj(file, ConfigurazionePortaHandler.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazionePortaHandler readConfigurazionePortaHandler(InputStream in) throws DeserializerException {
+		return (ConfigurazionePortaHandler) this.xmlToObj(in, ConfigurazionePortaHandler.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazionePortaHandler readConfigurazionePortaHandler(byte[] in) throws DeserializerException {
+		return (ConfigurazionePortaHandler) this.xmlToObj(in, ConfigurazionePortaHandler.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazionePortaHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazionePortaHandler readConfigurazionePortaHandlerFromString(String in) throws DeserializerException {
+		return (ConfigurazionePortaHandler) this.xmlToObj(in.getBytes(), ConfigurazionePortaHandler.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: response-caching-configurazione-regola
 	 =================================================================================
 	*/
@@ -4945,6 +5013,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public CorrelazioneApplicativaRispostaElemento readCorrelazioneApplicativaRispostaElementoFromString(String in) throws DeserializerException {
 		return (CorrelazioneApplicativaRispostaElemento) this.xmlToObj(in.getBytes(), CorrelazioneApplicativaRispostaElemento.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-handler
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneHandler readConfigurazioneHandler(String fileName) throws DeserializerException {
+		return (ConfigurazioneHandler) this.xmlToObj(fileName, ConfigurazioneHandler.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneHandler readConfigurazioneHandler(File file) throws DeserializerException {
+		return (ConfigurazioneHandler) this.xmlToObj(file, ConfigurazioneHandler.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneHandler readConfigurazioneHandler(InputStream in) throws DeserializerException {
+		return (ConfigurazioneHandler) this.xmlToObj(in, ConfigurazioneHandler.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneHandler readConfigurazioneHandler(byte[] in) throws DeserializerException {
+		return (ConfigurazioneHandler) this.xmlToObj(in, ConfigurazioneHandler.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneHandler readConfigurazioneHandlerFromString(String in) throws DeserializerException {
+		return (ConfigurazioneHandler) this.xmlToObj(in.getBytes(), ConfigurazioneHandler.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-message-handlers
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneMessageHandlers readConfigurazioneMessageHandlers(String fileName) throws DeserializerException {
+		return (ConfigurazioneMessageHandlers) this.xmlToObj(fileName, ConfigurazioneMessageHandlers.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneMessageHandlers readConfigurazioneMessageHandlers(File file) throws DeserializerException {
+		return (ConfigurazioneMessageHandlers) this.xmlToObj(file, ConfigurazioneMessageHandlers.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneMessageHandlers readConfigurazioneMessageHandlers(InputStream in) throws DeserializerException {
+		return (ConfigurazioneMessageHandlers) this.xmlToObj(in, ConfigurazioneMessageHandlers.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneMessageHandlers readConfigurazioneMessageHandlers(byte[] in) throws DeserializerException {
+		return (ConfigurazioneMessageHandlers) this.xmlToObj(in, ConfigurazioneMessageHandlers.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneMessageHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneMessageHandlers readConfigurazioneMessageHandlersFromString(String in) throws DeserializerException {
+		return (ConfigurazioneMessageHandlers) this.xmlToObj(in.getBytes(), ConfigurazioneMessageHandlers.class);
 	}	
 	
 	
@@ -5890,6 +6084,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public OpenspcoopSorgenteDati readOpenspcoopSorgenteDatiFromString(String in) throws DeserializerException {
 		return (OpenspcoopSorgenteDati) this.xmlToObj(in.getBytes(), OpenspcoopSorgenteDati.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-generale-handler
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneGeneraleHandler readConfigurazioneGeneraleHandler(String fileName) throws DeserializerException {
+		return (ConfigurazioneGeneraleHandler) this.xmlToObj(fileName, ConfigurazioneGeneraleHandler.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneGeneraleHandler readConfigurazioneGeneraleHandler(File file) throws DeserializerException {
+		return (ConfigurazioneGeneraleHandler) this.xmlToObj(file, ConfigurazioneGeneraleHandler.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneGeneraleHandler readConfigurazioneGeneraleHandler(InputStream in) throws DeserializerException {
+		return (ConfigurazioneGeneraleHandler) this.xmlToObj(in, ConfigurazioneGeneraleHandler.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneGeneraleHandler readConfigurazioneGeneraleHandler(byte[] in) throws DeserializerException {
+		return (ConfigurazioneGeneraleHandler) this.xmlToObj(in, ConfigurazioneGeneraleHandler.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneGeneraleHandler}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneGeneraleHandler readConfigurazioneGeneraleHandlerFromString(String in) throws DeserializerException {
+		return (ConfigurazioneGeneraleHandler) this.xmlToObj(in.getBytes(), ConfigurazioneGeneraleHandler.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-service-handlers
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneServiceHandlers readConfigurazioneServiceHandlers(String fileName) throws DeserializerException {
+		return (ConfigurazioneServiceHandlers) this.xmlToObj(fileName, ConfigurazioneServiceHandlers.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneServiceHandlers readConfigurazioneServiceHandlers(File file) throws DeserializerException {
+		return (ConfigurazioneServiceHandlers) this.xmlToObj(file, ConfigurazioneServiceHandlers.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneServiceHandlers readConfigurazioneServiceHandlers(InputStream in) throws DeserializerException {
+		return (ConfigurazioneServiceHandlers) this.xmlToObj(in, ConfigurazioneServiceHandlers.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneServiceHandlers readConfigurazioneServiceHandlers(byte[] in) throws DeserializerException {
+		return (ConfigurazioneServiceHandlers) this.xmlToObj(in, ConfigurazioneServiceHandlers.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneServiceHandlers}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneServiceHandlers readConfigurazioneServiceHandlersFromString(String in) throws DeserializerException {
+		return (ConfigurazioneServiceHandlers) this.xmlToObj(in.getBytes(), ConfigurazioneServiceHandlers.class);
 	}	
 	
 	

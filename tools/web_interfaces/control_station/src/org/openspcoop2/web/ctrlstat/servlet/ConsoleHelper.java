@@ -4240,7 +4240,8 @@ public class ConsoleHelper implements IConsoleHelper {
 						CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE,
 						CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM, 
 						CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM, 
-						autenticazioneCustom, autenticazioneCustomHidden, dati); 	
+						autenticazioneCustom, autenticazioneCustomHidden, dati,
+						false); 	
 				/*
 				de = new DataElement();
 				de.setLabel("");
@@ -4963,7 +4964,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE,
 					CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM, 
 					CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM, 
-					autorizzazioneCustom, autorizzazioneCustomHidden, dati); 
+					autorizzazioneCustom, autorizzazioneCustomHidden, dati,
+					false); 
 			
 //			de = new DataElement();
 //			de.setLabel("");
@@ -5653,7 +5655,8 @@ public class ConsoleHelper implements IConsoleHelper {
 						CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO,
 						CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI, 
 						CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM, 
-						autorizzazioneContenuti, autorizzazioneCustomHidden, dati); 
+						autorizzazioneContenuti, autorizzazioneCustomHidden, dati,
+						false); 
 				
 //				de = new DataElement();
 //				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
@@ -16681,10 +16684,43 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
 			String nomeParametroSelezioneTipo,
-			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati) throws Exception {
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST) throws Exception {
+		addCustomField(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				value, null, false, 
+				hidden, dati,
+				postBack_viaPOST);
+	}
+	public void addMultiSelectCustomField(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String [] value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST) throws Exception {
+		addCustomField(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				null, value, true, 
+				hidden, dati,
+				postBack_viaPOST);
+	}
+	private void addCustomField(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, 
+			String value, String [] multiValue, boolean multiSelect,
+			boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST) throws Exception {
 		
 		List<String> values = new ArrayList<String>();
-		List<String> labeles = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
 		String note = null;
 		
 		if(	this.confCore.isConfigurazionePluginsEnabled() ) {
@@ -16733,18 +16769,20 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						if(values.isEmpty()) {
 							values.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED);
-							labeles.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
+							labels.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
 						}
 						
 						values.add(plugin.getTipo());
-						labeles.add(plugin.getLabel());
+						labels.add(plugin.getLabel());
 						
-						if(plugin.getTipo().equals(value)) {
-							note = plugin.getDescrizione();
-							if(note!=null) {
-								note = note.trim();
-								if("".equals(note)) {
-									note = null;
+						if(value!=null) {
+							if(plugin.getTipo().equals(value)) {
+								note = plugin.getDescrizione();
+								if(note!=null) {
+									note = note.trim();
+									if("".equals(note)) {
+										note = null;
+									}
 								}
 							}
 						}
@@ -16755,21 +16793,23 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(values.size()==2) {
 				// se c'e' solo un plugin elimino la non selezione
 				values.remove(0);
-				labeles.remove(0);
+				labels.remove(0);
 			}
 		}
 			
 		boolean customValidType = true;
 		if(	this.confCore.isConfigurazionePluginsEnabled() ) {
 		
-			if(value!=null && !"".equals(value) && !CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(value)) {
-				customValidType = values.contains(value); // backward compatibility
-			}
-			
-			String postBackElementName = this.getPostBackElementName();
-			if(nomeParametroSelezioneTipo.equals(postBackElementName) && !customValidType) {
-				value = null;
-				customValidType = true;
+			if(!multiSelect) {
+				if(value!=null && !"".equals(value) && !CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(value)) {
+					customValidType = values.contains(value); // backward compatibility
+				}
+				
+				String postBackElementName = this.getPostBackElementName();
+				if(nomeParametroSelezioneTipo.equals(postBackElementName) && !customValidType) {
+					value = null;
+					customValidType = true;
+				}
 			}
 		}
 		else {
@@ -16778,7 +16818,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		DataElement de = new DataElement();
 		de.setName(nomeParametro);
-		de.setValue(value);
+		if(!multiSelect) {
+			de.setValue(value);
+		}
 		if (hidden)
 			de.setType(DataElementType.HIDDEN);
 		else{
@@ -16788,12 +16830,27 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else {
-				de.setType(DataElementType.SELECT);
+				if(multiSelect) {
+					de.setType(DataElementType.MULTI_SELECT);
+				}
+				else {
+					de.setType(DataElementType.SELECT);
+				}
 				de.setValues(values);
-				de.setLabels(labeles);
-				de.setSelected(value);
+				de.setLabels(labels);
+				if(multiSelect) {
+					de.setSelezionati(multiValue);
+				}
+				else {
+					de.setSelected(value);
+				}
 				de.setNote(note);
-				de.setPostBack(true);
+				if(postBack_viaPOST) {
+					de.setPostBack_viaPOST(true);
+				}
+				else {
+					de.setPostBack(true);
+				}
 				if(values.size()==1) {
 					de.setRequired(false);
 				}
