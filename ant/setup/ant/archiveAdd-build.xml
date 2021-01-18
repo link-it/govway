@@ -1,0 +1,566 @@
+<project name="setup-archive-add" basedir=".">
+
+	<description>
+		Personalizza archivi aggiuntivi con le impostazioni dell'installer
+
+		Convenzioni:
+		Gli archivi devono essere dei war o ear.
+
+		Dentro l'archivio deve esistere il file 'installer-rules.properties' che verrà eliminato e deve definire:
+		'installer_rules.addProtocols': indicazione true/false per far aggiungere i jar di protocollo
+		'installer_rules.managerArchive': indicazione true/false, se l'archivio deve finire nell'ambiente manager o runtime 
+		'installer_rules.logError': indicazione true/false, se il file di log deve essere impostato a ERROR
+		'installer_rules.config': nome del file di proprietà che definisce la configurazione generale
+		'installer_rules.dataSource.runtime': nome jndi del datasource per il runtime
+		'installer_rules.dataSource.config': nome jndi del datasource per la configurazione
+		'installer_rules.dataSource.tracce': nome jndi del datasource per le tracce
+		'installer_rules.dataSource.statistiche': nome jndi del datasource per le statistiche
+		I file di proprietà verranno ricercati, se l'archivio è un war, in:
+		-  in WEB-INF/properties
+		altrimenti
+		- in properties/
+	
+		I jar di protocollo, se l'archivio è un war, vengono aggiunti in:
+		-  in WEB-INF/lib
+		altrimenti
+		- in lib/
+	</description>
+
+	<import file="../../commons/utils.xml" />
+
+	<target name="archive-add-distrib">
+
+		<property name="deploy_archivi_add_as" value="${deploy_archivi_add}/${antinstaller_as}"/>
+		<if>
+			<available file="${deploy_archivi_add_as}/" type="dir"/>
+			<then>
+				<echo message="Add Archives [${deploy_archivi_add_as}] ..."/>
+
+				<foreach target="-archive-add-process-war" param="archiveFile" inheritall="true">
+					<path>
+						<fileset dir="${deploy_archivi_add_as}" casesensitive="yes">
+							<include name="*.war"/>
+						</fileset>
+					</path>
+				</foreach>
+
+				<foreach target="-archive-add-process-ear" param="archiveFile" inheritall="true">
+					<path>
+						<fileset dir="${deploy_archivi_add_as}" casesensitive="yes">
+							<include name="*.ear"/>
+						</fileset>
+					</path>
+				</foreach>
+
+				<echo message="Add Archives [${deploy_archivi_add_as}] completed"/>
+			</then>
+		</if>
+
+	</target>
+
+	<target name="-archive-add-process-war">							
+		<antcall target="-archive-add-process">
+			<param name="archiveFile" value="${archiveFile}"/>
+			<param name="archiveType" value="WAR"/>
+			<param name="archiveLibDir" value="WEB-INF/lib"/>
+			<param name="archivePropertiesDir" value="WEB-INF/classes"/>
+		</antcall>
+	</target>
+
+	<target name="-archive-add-process-ear">							
+		<antcall target="-archive-add-process">
+			<param name="archiveFile" value="${archiveFile}"/>
+			<param name="archiveType" value="EAR"/>
+			<param name="archiveLibDir" value="lib"/>
+			<param name="archivePropertiesDir" value="properties"/>
+		</antcall>
+	</target>
+
+	<target name="-archive-add-process">
+		<basename property="archiveFileName" file="${archiveFile}"/>
+		<echo message="Process archive [${archiveFileName}] ..."/>
+		<property name="archiveAddUnzipPath" value="${tmp_archivi}/ADD_ARCHIVE_${archiveFileName}"/>
+		<unzip src="${archiveFile}" dest="${archiveAddUnzipPath}"/>
+		<if>
+			<available file="${archiveAddUnzipPath}/installer-rules.properties" type="file"/>
+			<then>
+				<loadproperties srcFile="${archiveAddUnzipPath}/installer-rules.properties"/>
+				<delete file="${archiveAddUnzipPath}/installer-rules.properties"/>
+			</then>
+			<else>
+				<fail message="File ${archiveAddUnzipPath}/installer-rules.properties non trovato"/>
+			</else>
+		</if>
+
+		<!-- ** configure properties ** -->
+		<foreach target="-archive-add-process-config" param="configFile" inheritall="true">
+			<path>
+				<fileset dir="${archiveAddUnzipPath}/${archivePropertiesDir}" casesensitive="yes">
+					<include name="*.properties"/>
+				</fileset>
+			</path>
+		</foreach>
+
+		<!-- ** jar ** -->
+		<delete>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_*-protocol*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_utils*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_generic-project*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_core*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_message*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_monitor*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_pdd*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_protocol*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_schemi-xsd*.jar"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_security*.jar"/>
+
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_*-protocol*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_utils*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_generic-project*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_core*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_message*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_monitor*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_pdd*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_protocol*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_schemi-xsd*.jar.txt"/>
+			<fileset dir="${archiveAddUnzipPath}/${archiveLibDir}" includes="openspcoop2_security*.jar.txt"/>
+		</delete>
+
+		<!-- Ripristino jar 3parti -->
+		<antcall target="ripristina_jar">
+		    <param name="archiveFile" value="${archiveAddUnzipPath}"/>
+			<param name="as" value="${antinstaller_as}"/>
+			<param name="archiveType" value="${archiveType}"/>
+		</antcall>
+
+		<!-- Ripristino jar openspcoop2 -->
+		<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
+			<fileset dir="${deploy_sw}/jars">
+				<include name="openspcoop2_utils*.jar"/>
+				<include name="openspcoop2_generic-project*.jar"/>
+				<include name="openspcoop2_core*.jar"/>
+				<include name="openspcoop2_message*.jar"/>
+				<include name="openspcoop2_monitor*.jar"/>
+				<include name="openspcoop2_pdd*.jar"/>
+				<include name="openspcoop2_protocol*.jar"/>
+				<include name="openspcoop2_schemi-xsd*.jar"/>
+				<include name="openspcoop2_security*.jar"/>
+			</fileset>
+			<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+		</copy>
+
+		<!-- ** add jar protocollo ** -->
+		<if>
+			<and>
+				<istrue value="${installer_rules.addProtocols}"/>
+			</and>
+			<then>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<!-- Impacchetto archivio -->
+		<mkdir dir="${dist}/archivi_add"/>
+		<if>
+			<istrue value="${installer_rules.managerArchive}"/>
+			<then>
+				<property name="archiveAddOutputDir" value="${dist}/archivi_add/manager"/>
+				<mkdir dir="${archiveAddOutputDir}"/>
+			</then>
+			<else>
+				<property name="archiveAddOutputDir" value="${dist}/archivi_add/runtime"/>
+				<mkdir dir="${archiveAddOutputDir}"/>
+			</else>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${archiveType}" arg2="WAR"/>
+			</and>
+			<then>
+				<zip destfile="${archiveAddOutputDir}/${archiveFileName}" basedir="${archiveAddUnzipPath}"/>
+			</then>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${archiveType}" arg2="EAR"/>
+			</and>
+			<then>
+				<zip destfile="${archiveAddOutputDir}/${archiveFileName}" basedir="${archiveAddUnzipPath}"/>
+			</then>
+		</if>
+
+		<echo message="Process archive [${archiveFileName}] ok"/>
+	</target>
+
+	<target name="-archive-add-process-config">
+		<basename property="configFileName" file="${configFile}"/>
+
+		<if>
+			<or>
+				<matches string="${configFileName}" pattern=".*\.log4j2.properties"/>
+				<matches string="${configFileName}" pattern="log4j2.properties"/>
+			</or>
+			<then>
+				<concat destfile="${configFile}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+				</concat>
+				
+				<!-- LOG DIR -->
+				<antcall target="replace_token">
+				    <param name="file" value="${configFile}"/>
+					<param name="token" value="/var/govway/log"/>
+					<param name="value" value="${log_dir}"/>
+				</antcall>
+				
+				<!-- TIPI DI LOG -->
+				<if>
+					<istrue value="${installer_rules.logError}"/>
+					<then>
+						<antcall target="replace_token">
+						    <param name="file" value="${configFile}"/>
+							<param name="token" value="DEBUG"/>
+							<param name="value" value="ERROR"/>
+						</antcall>
+					</then>
+				</if>
+
+				<echo message="Processed config log [${configFileName}]"/>
+			</then>
+			<elseif>
+				<or>
+					<matches string="${configFileName}" pattern="daoFactory.properties"/>
+					<matches string="${configFileName}" pattern=".*\.datasource.properties"/>
+					<matches string="${configFileName}" pattern=".*\.database.properties"/>
+				</or>
+				<then>
+					<concat destfile="${configFile}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+					</concat>
+					
+					<!-- TIPO DATABASE -->
+					<antcall target="replace_token">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="postgresql"/>
+						<param name="value" value="${antinstaller_tipo_database}"/>
+					</antcall>
+					<antcall target="replace_token">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="oracle"/>
+						<param name="value" value="${antinstaller_tipo_database}"/>
+					</antcall>
+
+					<!-- Datasource runtime -->
+					<if>
+						<not>
+							<equals arg1="${installer_rules.dataSource.runtime}" arg2="$${installer_rules.dataSource.runtime}"/>
+						</not>
+						<then>
+						        <antcall target="set_property">
+							    <param name="file" value="${configFile}"/>
+								<param name="token" value="${installer_rules.dataSource.runtime}"/>
+								<param name="value" value="${datasource_pdd_name}"/>
+							</antcall>
+						</then>
+					</if>
+					<!-- Datasource config -->
+					<if>
+						<not>
+							<equals arg1="${installer_rules.dataSource.config}" arg2="$${installer_rules.dataSource.config}"/>
+						</not>
+						<then>
+						        <antcall target="set_property">
+							    <param name="file" value="${configFile}"/>
+								<param name="token" value="${installer_rules.dataSource.config}"/>
+								<param name="value" value="${datasource_console_name}"/>
+							</antcall>
+						</then>
+					</if>
+					<!-- Datasource tracce -->
+					<if>
+						<not>
+							<equals arg1="${installer_rules.dataSource.tracce}" arg2="$${installer_rules.dataSource.tracce}"/>
+						</not>
+						<then>
+							<if>
+								<equals arg1="${antinstaller_log_db}" arg2="log"/>
+								<then>
+									<antcall target="set_property">
+									    <param name="file" value="${configFile}"/>
+										<param name="token" value="${installer_rules.dataSource.tracce}"/>
+										<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+									</antcall>
+									<antcall target="set_property">
+									    <param name="file" value="${configFile}"/>
+										<param name="token" value="${installer_rules.dataSource.tracce}"/>
+										<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+									</antcall>
+								</then>
+								<elseif>
+									<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+									<equals arg1="${antinstaller_config_db}" arg2="config"/>
+									<then>
+										<antcall target="set_property">
+										    <param name="file" value="${configFile}"/>
+											<param name="token" value="${installer_rules.dataSource.tracce}"/>
+											<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+										</antcall>
+										<antcall target="set_property">
+										    <param name="file" value="${configFile}"/>
+											<param name="token" value="${installer_rules.dataSource.tracce}"/>
+											<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+										</antcall>
+									</then>
+								</elseif>
+								<else>
+									<antcall target="set_property">
+									    <param name="file" value="${configFile}"/>
+										<param name="token" value="${installer_rules.dataSource.tracce}"/>
+										<param name="value" value="${datasource_console_name}"/>
+									</antcall>
+									<antcall target="set_property">
+									    <param name="file" value="${configFile}"/>
+										<param name="token" value="${installer_rules.dataSource.tracce}"/>
+										<param name="value" value="${datasource_console_name}"/>
+									</antcall>
+								</else>
+							</if>
+						</then>
+					</if>
+					<!-- Datasource statistiche -->
+					<if>
+						<not>
+							<equals arg1="${installer_rules.dataSource.statistiche}" arg2="$${installer_rules.dataSource.statistiche}"/>
+						</not>
+						<then>
+							<if>
+								<equals arg1="${antinstaller_stats_db}" arg2="log"/>
+								<then>
+									<antcall target="set_property">
+									    <param name="file" value="${configFile}"/>
+										<param name="token" value="${installer_rules.dataSource.statistiche}"/>
+										<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+									</antcall>
+								</then>
+							</if>
+							<if>
+								<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+								<then>
+									<antcall target="set_property">
+									    <param name="file" value="${configFile}"/>
+										<param name="token" value="${installer_rules.dataSource.statistiche}"/>
+										<param name="value" value="${datasource_pdd_name}.statistiche"/>
+									</antcall>
+								</then>
+							</if>
+							<if>
+								<!-- se le statistiche sono nel database di runtime e 
+									il database delle configurazioni e' a se
+									 le applicazioni "console" dovranno usare un datasource differente -->
+								<and>
+									<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+									<equals arg1="${antinstaller_config_db}" arg2="config"/>
+								</and>
+								<then>
+									<if>
+										<equals arg1="${antinstaller_log_db}" arg2="log"/>
+										<then>
+											<antcall target="set_property">
+											    <param name="file" value="${configFile}"/>
+												<param name="token" value="${installer_rules.dataSource.statistiche}"/>
+												<param name="value" value="${datasource_pdd_name}.statistiche"/>
+											</antcall>
+										</then>
+										<else>
+											<antcall target="set_property">
+											    <param name="file" value="${configFile}"/>
+												<param name="token" value="${installer_rules.dataSource.statistiche}"/>
+												<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+											</antcall>
+										</else>
+									</if>
+								</then>
+							</if>
+						</then>
+					</if>
+
+					<echo message="Processed config database [${configFileName}]"/>
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${configFileName}" arg2="${installer_rules.config}"/>
+				<then>
+					<concat destfile="${configFile}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+					</concat>
+					
+					<!-- LOG DIR -->
+					<antcall target="replace_token">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="/var/govway/log"/>
+						<param name="value" value="${log_dir}"/>
+					</antcall>
+					
+					<!-- WORKING DIR -->
+					<antcall target="replace_token">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="confDirectory"/>
+						<param name="value" value="${work_dir}"/>
+					</antcall>
+					<antcall target="replace_token">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="/etc/govway"/>
+						<param name="value" value="${work_dir}"/>
+					</antcall>
+
+					<!-- 
+					  PROTOCOL DEFAULT
+					  se abilitati verrano scelto nell'ordine:
+					  - trasparente
+					  - modipa
+					  - spcoop
+					  - as4
+					  - sdi
+					-->
+					<if>
+						<istrue value="${antinstaller_protocollo_trasparente}"/>
+						<then>
+							<antcall target="set_property">
+							    <param name="file" value="${configFile}"/>
+								<param name="token" value="protocolloDefault"/>
+								<param name="value" value="trasparente"/>
+							</antcall>
+						</then>
+						<elseif>
+							<istrue value="${antinstaller_protocollo_modipa}"/>
+							<then>
+								<antcall target="set_property">
+								    <param name="file" value="${configFile}"/>
+									<param name="token" value="protocolloDefault"/>
+									<param name="value" value="modipa"/>
+								</antcall>
+							</then>
+						</elseif>
+						<elseif>
+							<istrue value="${antinstaller_protocollo_spcoop}"/>
+							<then>
+								<antcall target="set_property">
+								    <param name="file" value="${configFile}"/>
+									<param name="token" value="protocolloDefault"/>
+									<param name="value" value="spcoop"/>
+								</antcall>
+							</then>
+						</elseif>
+						<elseif>
+							<istrue value="${antinstaller_protocollo_as4}"/>
+							<then>
+								<antcall target="set_property">
+								    <param name="file" value="${configFile}"/>
+									<param name="token" value="protocolloDefault"/>
+									<param name="value" value="as4"/>
+								</antcall>
+							</then>
+						</elseif>
+						<elseif>
+							<istrue value="${antinstaller_protocollo_sdi}"/>
+							<then>
+								<antcall target="set_property">
+								    <param name="file" value="${configFile}"/>
+									<param name="token" value="protocolloDefault"/>
+									<param name="value" value="sdi"/>
+								</antcall>
+							</then>
+						</elseif>
+					</if>
+
+					<echo message="Processed config service [${configFileName}]"/>
+				</then>
+			</elseif>
+			<else>
+					<concat destfile="${configFile}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+					</concat>
+					
+					<!-- LOG DIR -->
+					<antcall target="replace_token">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="/var/govway/log"/>
+						<param name="value" value="${log_dir}"/>
+					</antcall>
+					
+					<!-- WORKING DIR -->
+					<antcall target="replace_token">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="/etc/govway"/>
+						<param name="value" value="${work_dir}"/>
+					</antcall>
+					
+					<echo message="Processed config [${configFileName}]"/>
+			</else>
+		</if>
+
+	</target>
+</project>

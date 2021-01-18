@@ -475,6 +475,60 @@
 						<exclude name="runtime"/>
 					</fileset>
 				</move>
+
+				<if>
+					<available file="${dist}/archivi_add/manager" type="dir"/>
+					<then>
+						<move todir="${dist}/archivi/manager">
+							<fileset dir="${dist}/archivi_add/manager">
+								<include name="*.*ar"/>
+							</fileset>
+						</move>
+						<delete dir="${dist}/archivi_add/manager"/>
+					</then>
+				</if>
+				<if>
+					<available file="${dist}/archivi_add/runtime" type="dir"/>
+					<then>
+						<move todir="${dist}/archivi/runtime">
+							<fileset dir="${dist}/archivi_add/runtime">
+								<include name="*.*ar"/>
+							</fileset>
+						</move>
+						<delete dir="${dist}/archivi_add/runtime"/>
+					</then>
+				</if>
+
+			</then>
+			<else>
+				<if>
+					<available file="${dist}/archivi_add/manager" type="dir"/>
+					<then>
+						<move todir="${dist}/archivi">
+							<fileset dir="${dist}/archivi_add/manager">
+								<include name="*.*ar"/>
+							</fileset>
+						</move>
+						<delete dir="${dist}/archivi_add/manager"/>
+					</then>
+				</if>
+				<if>
+					<available file="${dist}/archivi_add/runtime" type="dir"/>
+					<then>
+						<move todir="${dist}/archivi">
+							<fileset dir="${dist}/archivi_add/runtime">
+								<include name="*.*ar"/>
+							</fileset>
+						</move>
+						<delete dir="${dist}/archivi_add/runtime"/>
+					</then>
+				</if>
+			</else>
+		</if>
+		<if>
+			<available file="${dist}/archivi_add" type="dir"/>
+			<then>
+				<delete dir="${dist}/archivi_add"/>
 			</then>
 		</if>
 

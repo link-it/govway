@@ -516,7 +516,7 @@ public class AlarmManager {
 		ScriptInvoker invoker = new ScriptInvoker(path);
 		
 		List<String> arguments = new ArrayList<String>();
-		StringBuffer bfUtils = null;
+		StringBuilder bfUtils = null;
 		if(args!=null && !"".equals(args)){
 			String [] tmp = args.trim().split(" ");
 			for (int i = 0; i < tmp.length; i++) {
@@ -532,7 +532,7 @@ public class AlarmManager {
 							}
 						}
 						else{
-							bfUtils = new StringBuffer(s.substring(1));
+							bfUtils = new StringBuilder(s.substring(1));
 						}
 					}
 					else{

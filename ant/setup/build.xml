@@ -27,6 +27,7 @@
 	<import file="./ant/batchRuntimeRepository-build.xml" />
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/patch-build.xml" />
+	<import file="./ant/archiveAdd-build.xml" />
 	<import file="./ant/jar-build.xml" />
 	<import file="../commons/utils.xml" />
 	
@@ -36,6 +37,7 @@
 	<property name="deploy_ds" location="deploy/datasource" />
 	<property name="deploy_jms" location="deploy/jms" />
 	<property name="deploy_patch" location="deploy/patch" />
+	<property name="deploy_archivi_add" location="deploy/archivi_add" />
 	<property name="tmp_archivi" location="${build}/archivi" />
 	<property name="tmp_batch" location="${build}/batch" />
 	<property name="tmp_sql" location="${build}/sql" />
@@ -2680,6 +2682,7 @@
 	<target name="setup_finished" depends="_setup_finished"/>
 	<target name="_setup_finished">
 		<antcall target="patch-distrib"/>
+		<antcall target="archive-add-distrib"/>
 		<antcall target="make-distrib"/>
 		<delete dir="${build}"/>
 	</target>

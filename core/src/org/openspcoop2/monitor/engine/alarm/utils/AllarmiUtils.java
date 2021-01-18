@@ -279,7 +279,7 @@ public class AllarmiUtils {
 	
 	public static String costruisciNomeAllarme(ConfigurazioneAllarmeBean allarme, Logger log, Context context){
 		String nome = allarme.getPlugin().getLabel();
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		String [] tmp = nome.split(" ");
 		for (int i = 0; i < tmp.length; i++) {
