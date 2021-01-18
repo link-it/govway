@@ -16753,7 +16753,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DESCRIZIONE);
 		de.setValue(descrizione);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(3);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DESCRIZIONE);
 		de.setSize(this.getSize());
 		dati.addElement(de);
@@ -16799,8 +16800,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel("");
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_TIPO_PLUGIN);
 			de.setType(DataElementType.MULTI_SELECT);
-			de.setLabels(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin());
-			de.setValues(ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin());
+			de.setLabels(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
+			de.setValues(ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
 			de.setSelezionati(tipoPlugin);
 			dati.addElement(de);
 		}
@@ -17239,7 +17240,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					TipoPlugin tipoPlugin = TipoPlugin.toEnumConstant(registro.getTipoPlugin());
 					String tipoPluginLabel = ConfigurazionePluginsTipoPluginUtils.tipoPluginToLabel(tipoPlugin);
 					de.setValue(tipoPluginLabel);
-					de.setToolTip(tipoPluginLabel);
+					if(registro.getDescrizione()!=null && !"".equals(registro.getDescrizione())) {
+						de.setToolTip(registro.getDescrizione());
+					}
+					else {
+						de.setToolTip(tipoPluginLabel);
+					}
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_CLASSI_CHANGE, pIdRegistro);
 					e.addElement(de);
 					
@@ -17298,12 +17304,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			labels.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
 		}
-		labels.addAll(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin());
+		labels.addAll(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
 		List<String> values = new ArrayList<String>();
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			values.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED);
 		}
-		values.addAll(ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin());
+		values.addAll(ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
 		de.setLabels(labels);
 		de.setValues(values);
 		de.setType(DataElementType.SELECT);
@@ -17385,7 +17391,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_DESCRIZIONE);
 		de.setValue(descrizione);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(3);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_DESCRIZIONE);
 		de.setSize(this.getSize());
 		dati.addElement(de);
@@ -17527,8 +17534,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addFilterTipoPlugin(String tipoPlugin, boolean postBack) throws Exception{
 		try {
 			
-			List<String> valuesTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin();
-			List<String> labelsTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin();
+			List<String> valuesTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled());
+			List<String> labelsTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled());
 			
 			int length = 1;
 			if(valuesTipoPlugin!=null && valuesTipoPlugin.size()>0) {
@@ -17556,8 +17563,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addFiltriSpecificiTipoPlugin(String tipoPlugin, boolean postBack) throws Exception{
 		try {
 			
-			List<String> valuesTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin();
-			List<String> labelsTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin();
+			List<String> valuesTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled());
+			List<String> labelsTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled());
 			
 			int length = 1;
 			if(valuesTipoPlugin!=null && valuesTipoPlugin.size()>0) {

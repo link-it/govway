@@ -51,9 +51,8 @@ public class ConfigurazionePluginsTipoPluginUtils {
 	public final static boolean addTransazioni = false;
 	public final static boolean addRicerche = false;
 	public final static boolean addStatistiche = false;
-	public final static boolean addAllarmi = false;
 	
-	public static List<String> getValuesTipoPlugin() {
+	public static List<String> getValuesTipoPlugin(boolean addAllarmi) {
 		List<String> valori = new ArrayList<>();
 		
 		valori.add(TipoPlugin.AUTENTICAZIONE.toString());
@@ -89,9 +88,9 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		return valori;
 	}
 	
-	public static List<String> getLabelsTipoPlugin() {
+	public static List<String> getLabelsTipoPlugin(boolean addAllarmi) {
 		List<String> labels = new ArrayList<>();
-		List<String> values = getValuesTipoPlugin();
+		List<String> values = getValuesTipoPlugin(addAllarmi);
 		
 		for (String value : values) {
 			String label = tipoPluginToLabel(TipoPlugin.toEnumConstant(value));

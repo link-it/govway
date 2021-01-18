@@ -100,6 +100,10 @@
 				</fileset>
 			</path>
 		</foreach>
+		<antcall target="dos2unix">
+			<param name="dir" value="${archiveAddUnzipPath}/${archivePropertiesDir}"/>
+		    <param name="file" value="*.properties"/>
+		</antcall>
 
 		<!-- ** jar ** -->
 		<delete>
@@ -459,20 +463,20 @@
 					<!-- LOG DIR -->
 					<antcall target="replace_token">
 					    <param name="file" value="${configFile}"/>
-						<param name="token" value="/var/govway/log"/>
-						<param name="value" value="${log_dir}"/>
+						<param name="token" value="/var/govway/log/"/>
+						<param name="value" value="${log_dir}/"/>
 					</antcall>
 					
 					<!-- WORKING DIR -->
-					<antcall target="replace_token">
+					<antcall target="set_property">
 					    <param name="file" value="${configFile}"/>
 						<param name="token" value="confDirectory"/>
 						<param name="value" value="${work_dir}"/>
 					</antcall>
 					<antcall target="replace_token">
 					    <param name="file" value="${configFile}"/>
-						<param name="token" value="/etc/govway"/>
-						<param name="value" value="${work_dir}"/>
+						<param name="token" value="/etc/govway/"/>
+						<param name="value" value="${work_dir}/"/>
 					</antcall>
 
 					<!-- 
@@ -547,15 +551,15 @@
 					<!-- LOG DIR -->
 					<antcall target="replace_token">
 					    <param name="file" value="${configFile}"/>
-						<param name="token" value="/var/govway/log"/>
-						<param name="value" value="${log_dir}"/>
+						<param name="token" value="/var/govway/log/"/>
+						<param name="value" value="${log_dir}/"/>
 					</antcall>
 					
 					<!-- WORKING DIR -->
 					<antcall target="replace_token">
 					    <param name="file" value="${configFile}"/>
-						<param name="token" value="/etc/govway"/>
-						<param name="value" value="${work_dir}"/>
+						<param name="token" value="/etc/govway/"/>
+						<param name="value" value="${work_dir}/"/>
 					</antcall>
 					
 					<echo message="Processed config [${configFileName}]"/>

@@ -423,7 +423,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.ADD());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.ADD());
 		}  

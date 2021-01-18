@@ -168,6 +168,13 @@
 			<param name="token" value="integrationManager.enabled"/>
 			<param name="value" value="false"/>
 		</antcall>
+
+		<!-- ALLARMI CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="allarmi.configurazione"/>
+			<param name="value" value="${work_dir}/allarmi_configurazione.properties"/>
+		</antcall>
 	
 		<!-- OTHER -->
 		<antcall target="set_property">

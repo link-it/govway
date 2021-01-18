@@ -452,22 +452,46 @@ Esempi:
 		<dirname property="patchLibAddJar.dirname" file="${patchLibAdd}"/>
 		<echo message="addOrReplace '${patchLibAddJar}'"/>
 		<if>
-			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+			<matches string="${patchLibAddJar}" pattern="openspcoop2_.+_RELEASE.jar"/>
 			<then>
-				<copy todir="${patchTmpArchive}/lib" overwrite="true">
-					<fileset dir="${patchLibAddJar.dirname}">
-					    	<include name="${patchLibAddJar}"/>
-					</fileset>
-					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
-				</copy>
+				<if>
+					<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+					<then>
+						<copy todir="${patchTmpArchive}/lib" overwrite="true">
+							<fileset dir="${patchLibAddJar.dirname}">
+							    	<include name="${patchLibAddJar}"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+					<else>
+						<copy todir="${patchTmpArchive}/WEB-INF/lib" overwrite="true">
+							<fileset dir="${patchLibAddJar.dirname}">
+				                                <include name="${patchLibAddJar}"/>
+				                        </fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</else>
+				</if>	
 			</then>
 			<else>
-				<copy todir="${patchTmpArchive}/WEB-INF/lib" overwrite="true">
-					<fileset dir="${patchLibAddJar.dirname}">
-                                                <include name="${patchLibAddJar}"/>
-                                        </fileset>
-					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
-				</copy>
+				<if>
+					<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+					<then>
+						<copy todir="${patchTmpArchive}/lib" overwrite="true">
+							<fileset dir="${patchLibAddJar.dirname}">
+							    	<include name="${patchLibAddJar}"/>
+							</fileset>
+						</copy>
+					</then>
+					<else>
+						<copy todir="${patchTmpArchive}/WEB-INF/lib" overwrite="true">
+							<fileset dir="${patchLibAddJar.dirname}">
+				                                <include name="${patchLibAddJar}"/>
+				                        </fileset>
+						</copy>
+					</else>
+				</if>
 			</else>
 		</if>
 	</target>

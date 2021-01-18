@@ -167,7 +167,7 @@ public final class ConfigurazioneAllarmiDel extends Action {
 			return ServletUtils.getStrutsForward (mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI,
 					ForwardParams.DEL());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.DEL());
 		}
