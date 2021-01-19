@@ -105,6 +105,7 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizione;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione;
+import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -182,7 +183,6 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String xsd = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
 
 			String behaviour = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR);
-			String integrazione = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
 			
 			String autenticazione = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
@@ -239,11 +239,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 			}
 			
-			// length
-			if(integrazione!=null && !"".equals(integrazione)){
-				if(this.checkLength255(integrazione, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI)==false) {
+			// integrazione metadati
+			if(tipoOp == TipoOperazione.CHANGE) {
+				boolean validazioneIntegrazione = this.validaIntegrazioneMetadati();
+				if(!validazioneIntegrazione)
 					return false;
-				}
 			}
 			
 			// Controllo che non ci siano spazi nei campi di testo
@@ -1020,7 +1020,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 	public Vector<DataElement> addPorteAppToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomePorta, String descr, String soggvirt, String[] soggettiList, String[] soggettiListLabel, 
 			String servizio, String[] serviziList, String[] serviziListLabel, String azione, String[] azioniList,  String[] azioniListLabel,  String stateless, String ricsim, String ricasim, 
-			String idsogg, String idPorta, String statoValidazione, String tipoValidazione, String gestBody, String gestManifest,String integrazione,
+			String idsogg, String idPorta, String statoValidazione, String tipoValidazione, String gestBody, String gestManifest,String integrazioneStato, String integrazione,
+			String[] integrazioneGruppi, List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare, Map<String, List<String>> integrazioneGruppiValoriDeiGruppi,
 			int numCorrApp,String scadcorr,String autorizzazioneContenutiStato, String autorizzazioneContenuti, String autorizzazioneContenutiProperties, String protocollo,
 			int numSA,	 int numRuoli, String ruoloMatch,
 			String statoMessageSecurity ,String statoMTOM ,int numCorrelazioneReq , int numCorrelazioneRes, int numProprProt,String applicaMTOM,
@@ -1763,22 +1764,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		Vector<DataElement> deIntegrazione = new Vector<DataElement>();
 				
+		boolean nascondiSezioneOpzioniAvanzate = (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
+		
 		if (tipoOp.equals(TipoOperazione.CHANGE)) {
-			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI);
-			de.setValue(integrazione);
-			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
-			if(this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta) ){
-				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
-			}else{
-				de.setType(DataElementType.TEXT_EDIT);
-				de.enableTags();
-				DataElementInfo dInfo = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI);
-				dInfo.setBody(CostantiControlStation.LABEL_METADATI_INFO);
-				de.setInfo(dInfo);
-				deIntegrazione.addElement(de);
-			}
+			addIntegrazioneMetadatiToDati(dati, integrazioneStato, integrazione, integrazioneGruppi, integrazioneGruppiDaVisualizzare,	integrazioneGruppiValoriDeiGruppi, deIntegrazione, nascondiSezioneOpzioniAvanzate, false	);
 		}
 		
 		String[] tipoStateless = { 
@@ -1798,7 +1787,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValues(tipoStateless);
 			de.setSelected(stateless);
 			deIntegrazione.addElement(de);	
-		}
+		}	
 		
 				
 		de = new DataElement();
@@ -1944,7 +1933,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 		if(supportoAsincroni) {
 			de = new DataElement();
-			if ( this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+			if ( nascondiSezioneOpzioniAvanzate) {
 				de.setType(DataElementType.HIDDEN);
 			}else{
 				de.setType(DataElementType.TITLE);
@@ -1958,7 +1947,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			};
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA);
-			if (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+			if (nascondiSezioneOpzioniAvanzate) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(ricsim);
 			}else{
@@ -1975,7 +1964,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			};
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			if (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+			if (nascondiSezioneOpzioniAvanzate) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(ricsim);
 			}else{
@@ -2093,7 +2082,6 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		return dati;
 	}
-	
 
 	public List<PortaApplicativaAzioneIdentificazione> getModalitaIdentificazionePorta(String protocollo, ServiceBinding serviceBinding)
 			throws ProtocolException, DriverConfigurazioneException {

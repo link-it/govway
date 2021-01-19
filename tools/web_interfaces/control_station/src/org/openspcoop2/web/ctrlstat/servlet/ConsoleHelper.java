@@ -179,6 +179,8 @@ import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLo
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
+import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -16831,6 +16833,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			else {
 				if(multiSelect) {
+					de.setLabel(label);
 					de.setType(DataElementType.MULTI_SELECT);
 				}
 				else {
@@ -16851,7 +16854,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				else {
 					de.setPostBack(true);
 				}
-				if(values.size()==1) {
+				if(!multiSelect && values.size()==1) {
 					de.setRequired(false);
 				}
 			}
@@ -16859,5 +16862,174 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		dati.addElement(de);
 		
+	}
+	
+	public void addIntegrazioneMetadatiToDati(Vector<DataElement> dati, String integrazioneStato, String integrazione,
+			String[] integrazioneGruppi, List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare,
+			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi, Vector<DataElement> deIntegrazione,
+			boolean nascondiSezioneOpzioniAvanzate, boolean isPortaDelegata) throws Exception {
+		String ruoloConfigurazione = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : 	Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
+		
+		DataElement de;
+		// stato metadati
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+		de.setValue(integrazioneStato);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+		if(nascondiSezioneOpzioniAvanzate ){
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		} else {
+			de.setType(DataElementType.SELECT);
+			de.setValues(CostantiControlStation.VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+			de.setLabels(CostantiControlStation.LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+			de.setSelected(integrazioneStato);
+			de.setPostBack(true);
+			deIntegrazione.addElement(de);
+		}
+		
+		if(nascondiSezioneOpzioniAvanzate ){
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+			de.setValue(integrazione);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		}else{
+			// valore del campo integrazione 
+			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO)) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+				de.setValue(integrazione);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
+				de.setType(DataElementType.HIDDEN);
+				deIntegrazione.addElement(de);
+			} else if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+				de.setValue(integrazione);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
+				de.setType(DataElementType.HIDDEN);
+				deIntegrazione.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI_GRUPPO);
+				de.setSelezionati(integrazioneGruppi);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
+				de.setType(DataElementType.MULTI_SELECT);
+				de.setValues(GruppoIntegrazione.toValues());
+				de.setLabels(GruppoIntegrazione.toLabels());
+				de.setPostBack_viaPOST(true);
+				de.setRequired(true);
+				deIntegrazione.addElement(de);
+				
+				// gruppi singoli
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					String [] valoriMulti = null;
+					String valoreSingolo = null;
+					List<String> listaValori = integrazioneGruppiValoriDeiGruppi.get(group.getValue());
+					if(listaValori != null && listaValori.size() > 0) {
+						valoriMulti = listaValori.toArray(new String[listaValori.size()]);
+						if(!group.isMulti()) {
+							valoreSingolo = valoriMulti[0];
+						}
+					}
+					
+					
+					if(!group.getValue().equals(GruppoIntegrazione.PLUGIN.getValue())) {
+						de = new DataElement();
+						de.setLabel(group.getCompactLabel());
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+						
+						if(group.isMulti()) {
+							de.setType(DataElementType.MULTI_SELECT);
+							de.setSelezionati(valoriMulti);
+						} else {
+							de.setType(DataElementType.SELECT);
+							de.setSelected(valoreSingolo);
+						}
+						de.setValues(TipoIntegrazione.toValues(group));
+						de.setLabels(TipoIntegrazione.toLabels(group));
+						de.setRequired(true);
+						deIntegrazione.addElement(de);
+					} else {
+						if(group.isMulti()) {
+							this.addMultiSelectCustomField(TipoPlugin.INTEGRAZIONE, ruoloConfigurazione, null, 
+									CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO, 
+									CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue(), 
+									GruppoIntegrazione.PLUGIN.getCompactLabel(), valoriMulti, false, deIntegrazione, false);
+						} else {
+							this.addCustomField(TipoPlugin.INTEGRAZIONE, ruoloConfigurazione, null, 
+									CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO, 
+									CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue(), 
+									GruppoIntegrazione.PLUGIN.getCompactLabel(), valoreSingolo, false, deIntegrazione, false);
+						}
+					}
+				}
+			} else {
+				// quando e' default ci deve finire null					
+			}
+//			deIntegrazione.addElement(de);
+		}
+	}
+	
+	
+	public boolean validaIntegrazioneMetadati() throws Exception {
+		String integrazioneStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+		
+		if(integrazioneStato!=null && !"".equals(integrazioneStato)){
+			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
+				String[] integrazioneGruppi = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
+				
+				if(integrazioneGruppi == null || integrazioneGruppi.length == 0) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI);
+					return false;
+				}
+				
+				List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
+				
+				for (String gruppoSelezionato : integrazioneGruppi) {
+					integrazioneGruppiDaVisualizzare.add(GruppoIntegrazione.toEnumConstant(gruppoSelezionato));
+				}
+				
+				// leggere i valori selezionati per ogni gruppo selezionato
+				Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					List<String> valoriGruppoList = new ArrayList<String>();
+					if(group.isMulti()) {
+						String[] valoriGruppo = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+						if(valoriGruppo == null || valoriGruppo.length == 0) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO, group.getCompactLabel()));
+							return false;
+						}
+						
+						valoriGruppoList.addAll(Arrays.asList(valoriGruppo));
+					} else {
+						String valoreGruppo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+						if(valoreGruppo == null) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO, group.getCompactLabel()));
+							return false;
+						}
+						valoriGruppoList.add(valoreGruppo);
+					}
+					
+					integrazioneGruppiValoriDeiGruppi.put(group.getValue(), valoriGruppoList);	
+				}
+				
+				// controllo sulla lunghezza finale del campo integrazione
+				List<String> valoriFinaliIntegrazione = new ArrayList<String>();
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					valoriFinaliIntegrazione.addAll(integrazioneGruppiValoriDeiGruppi.get(group.getValue()));
+				}
+				
+				String valoreFinaleCampoItegrazione = StringUtils.join(valoriFinaliIntegrazione.toArray(new String[valoriFinaliIntegrazione.size()]), ",");
+				if(valoreFinaleCampoItegrazione!=null && valoreFinaleCampoItegrazione.length()>4000) {
+					this.pd.setMessage("L'informazione fornita nel campo '"+CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI+"' deve possedere una lunghezza minore di 4000");
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 }

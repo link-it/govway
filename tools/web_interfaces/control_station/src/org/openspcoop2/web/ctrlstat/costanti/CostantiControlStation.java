@@ -40,6 +40,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
 
@@ -299,6 +300,7 @@ public class CostantiControlStation {
 	public final static String LABEL_SOGGETTI = "Soggetti";
 	public final static String LABEL_APPLICATIVI = "Applicativi";
 	public final static String LABEL_INTEGRAZIONE = "Integrazione";
+	public final static String LABEL_INTEGRAZIONE_STATO = "Stato";
 	public final static String LABEL_METADATI = "Metadati";
 	public final static String LABEL_METADATI_INFO = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate tramite i tipi descritti di seguito<BR/>"+
 			"Il Gateway dispone di una sua configurazione di default per la generazione degli header. Tramite il campo '"+CostantiControlStation.LABEL_METADATI+"' è possibile ridefinire tale comportamento.<BR/>"+
@@ -721,6 +723,9 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_CANALE_RIDEFINITO_EROGAZIONE = "Configurazione ridefinita per l'erogazione";
 	public final static String LABEL_CONFIGURAZIONE_CANALE_RIDEFINITO_FRUIZIONE = "Configurazione ridefinita per la fruizione";
 	
+	public final static String LABEL_PARAMETRO_PORTE_METADATI = "Metadati";
+	public final static String LABEL_PARAMETRO_PORTE_METADATI_GRUPPO = "";
+	
 	
 	// POLICY RISORSA TIPO
 	
@@ -1026,6 +1031,12 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = "trReqParNome";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = "trReqParTipo";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE = "trReqParIden";
+	
+	
+	public final static String PARAMETRO_PORTE_INTEGRAZIONE_STATO = "integrazioneStato";
+	public final static String PARAMETRO_PORTE_INTEGRAZIONE = "integrazione";
+	public final static String PARAMETRO_PORTE_METADATI_GRUPPO = "metadatiGruppo";
+	public final static String PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO = "mdG_";
 	
 	/** PARAMETRI MESSAGE PAGE **/
 	
@@ -1888,6 +1899,28 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED = "-";
 	
 	
+	public final static String LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT = "default";
+	public final static String LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO = TipoIntegrazione.DISABILITATO.getValue();
+	public final static String LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO = "ridefinito";
+	
+	public final static List<String> LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO = new ArrayList<>();
+	static {
+		LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT);
+		LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO);
+		LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO);
+	}
+	
+	public final static String VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT = "default";
+	public final static String VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO = TipoIntegrazione.DISABILITATO.getValue();
+	public final static String VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO = "ridefinito";
+	
+	public final static List<String> VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO = new ArrayList<>();
+	static {
+		VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT);
+		VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO);
+		VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO);
+	}
+	
 	
 	/** MESSAGGI */
 	public static final String MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE = "Posizione della policy modificata correttamente.";
@@ -1983,6 +2016,8 @@ public class CostantiControlStation {
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrato il carattere separatore '='";
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrata l'indicazione di una risorsa, tramite espressioni dinamiche, nella linea ";
 
+	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI = "Non è stato selezionato nessun gruppo di metadati";
+	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO = "Non è stato selezionato nessun valore per il gruppo di metadati {0}";
 	/** ICONE E TOOLTIP */
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE = "&#xE3C9;";
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";

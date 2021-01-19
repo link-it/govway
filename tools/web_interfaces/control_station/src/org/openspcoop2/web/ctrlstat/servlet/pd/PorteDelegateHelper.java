@@ -78,6 +78,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -140,7 +141,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			long totAzioni,  String stateless, String localForward, String paLocalForward, String ricsim,
 			String ricasim, String statoValidazione, String tipoValidazione,
 			int numCorrApp, String scadcorr, String gestBody,
-			String gestManifest, String integrazione, 
+			String gestManifest, String integrazioneStato, String integrazione,
+			String[] integrazioneGruppi, List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare, Map<String, List<String>> integrazioneGruppiValoriDeiGruppi,
 			String autenticazioneOpzionale, TipoAutenticazionePrincipal autenticazionePrincipal, List<String> autenticazioneParametroList, String autenticazioneCustom,
 			String autorizzazioneCustom,String autorizzazioneAutenticati,String autorizzazioneRuoli,String autorizzazioneRuoliTipologia,
 			String autorizzazioneContenutiStato, String autorizzazioneContenuti, String autorizzazioneContenutiProperties, String idsogg2, String protocollo,
@@ -875,25 +877,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		Vector<DataElement> deIntegrazione = new Vector<DataElement>();
 		
-		if (tipoOp.equals(TipoOperazione.CHANGE)) {
+		boolean nascondiSezioneOpzioniAvanzate = this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta);
 
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_METADATI);
-			de.setValue(integrazione);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
-			de.setSize(alternativeSize);
-			if(this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)){
-				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
-			}else{
-				de.setType(DataElementType.TEXT_EDIT);
-				de.enableTags();
-				DataElementInfo dInfo = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_METADATI);
-				dInfo.setBody(CostantiControlStation.LABEL_METADATI_INFO);
-				de.setInfo(dInfo);
-				deIntegrazione.addElement(de);
-			}
-			
+		if (tipoOp.equals(TipoOperazione.CHANGE)) {
+			this.addIntegrazioneMetadatiToDati(dati, integrazioneStato, integrazione, integrazioneGruppi, integrazioneGruppiDaVisualizzare,	integrazioneGruppiValoriDeiGruppi, deIntegrazione, nascondiSezioneOpzioniAvanzate, true);
 		}
 
 		String[] tipoStateless = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT,
@@ -1124,7 +1111,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 		if(supportoAsincroni) {
 			de = new DataElement();
-			if ( this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+			if ( nascondiSezioneOpzioniAvanzate) {
 				de.setType(DataElementType.HIDDEN);
 			}else{
 				de.setType(DataElementType.TITLE);
@@ -1136,7 +1123,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					, PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA_DISABILITATO};
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
-			if (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+			if (nascondiSezioneOpzioniAvanzate) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(ricsim);
 			}else{
@@ -1151,7 +1138,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					, PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_DISABILITATO};
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			if (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+			if (nascondiSezioneOpzioniAvanzate) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(ricasim);
 			}else{
@@ -1702,7 +1689,6 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 			String autorizzazioneContenutiProperties = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 			
-			String integrazione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
 			
 			// Campi obbligatori
 			if (nomePD==null || nomePD.equals("")) {
@@ -1754,11 +1740,11 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// length
-			if(integrazione!=null && !"".equals(integrazione)){
-				if(this.checkLength255(integrazione, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_METADATI)==false) {
+			// integrazione metadati
+			if(tipoOp == TipoOperazione.CHANGE) {
+				boolean validazioneIntegrazione = this.validaIntegrazioneMetadati();
+				if(!validazioneIntegrazione)
 					return false;
-				}
 			}
 			
 //			// Controllo che i campi "select" abbiano uno dei valori ammessi
