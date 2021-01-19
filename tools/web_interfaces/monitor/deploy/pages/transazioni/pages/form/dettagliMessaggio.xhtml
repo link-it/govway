@@ -88,7 +88,7 @@
 							<h:outputText id="outProfCollProt" value="#{dettagliBean.dettaglio.profiloCollaborazioneProt}" rendered="#{dettagliBean.dettaglio.showProfiloCollaborazione and (not empty dettagliBean.dettaglio.profiloCollaborazioneProt)}"/>
 							<h:outputText id="outProfCollOp2" value="#{dettagliBean.dettaglio.profiloCollaborazioneOp2}" rendered="#{dettagliBean.dettaglio.showProfiloCollaborazione and (empty dettagliBean.dettaglio.profiloCollaborazioneProt and not empty dettagliBean.dettaglio.profiloCollaborazioneOp2)}"/>
 							
-							<h:outputLabel styleClass="outputFieldCollaborazione" id="outLabelCollaborazione" value="ID Collaborazione" rendered="#{not empty dettagliBean.dettaglio.idCollaborazione}"/>
+							<h:outputLabel styleClass="outputFieldCollaborazione" id="outLabelCollaborazione" value="ID Conversazione" rendered="#{not empty dettagliBean.dettaglio.idCollaborazione}"/>
 							<h:outputText id="outCollaborazione" value="#{dettagliBean.dettaglio.idCollaborazione}" rendered="#{not empty dettagliBean.dettaglio.idCollaborazione}"/>
 							
 							<h:outputLabel styleClass="outputFieldRiferimentoIdRichiesta" id="outLabelRiferimentoIdRichiesta" value="Riferimento ID Richiesta" rendered="#{not empty dettagliBean.dettaglio.idAsincrono}"/>

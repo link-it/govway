@@ -20,9 +20,12 @@
 
 package org.openspcoop2.protocol.spcoop.config;
 
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.protocol.basic.config.BasicConfiguration;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.protocol.sdk.constants.InitialIdConversationType;
 
 /**
  * Classe che implementa, in base al protocollo SPCoop, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolConfiguration} 
@@ -35,6 +38,16 @@ public class SPCoopProtocolConfiguration extends BasicConfiguration {
 
 	public SPCoopProtocolConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
+	}
+	
+	@Override
+	public InitialIdConversationType isGenerateInitialIdConversation(TipoPdD tipoPdD, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
+		if(TipoPdD.DELEGATA.equals(tipoPdD)) {
+			return InitialIdConversationType.ID_MESSAGGIO;
+		}
+		else {
+			return InitialIdConversationType.DISABILITATO;
+		}
 	}
 	
 	@Override

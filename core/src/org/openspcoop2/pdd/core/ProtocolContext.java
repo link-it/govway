@@ -64,6 +64,9 @@ public class ProtocolContext implements Serializable {
 	
 	/** Identificativo collaborazione */
 	private String collaborazione;
+	
+	/** Riferimento Asincrono */
+	private String riferimentoAsincrono;
 
 	/** Informazioni sul servizio e azione */
 	private IDAccordo idAccordo;
@@ -162,6 +165,12 @@ public class ProtocolContext implements Serializable {
 	}
 	public void setCollaborazione(String collaborazione) {
 		this.collaborazione = collaborazione;
+	}
+	public String getRiferimentoAsincrono() {
+		return this.riferimentoAsincrono;
+	}
+	public void setRiferimentoAsincrono(String riferimentoAsincrono) {
+		this.riferimentoAsincrono = riferimentoAsincrono;
 	}
 	public String getTipoServizio() {
 		return this.tipoServizio;

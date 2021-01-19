@@ -30,7 +30,7 @@ I dati da fornire sono i seguenti:
 -  *Profilo di collaborazione* del servizio, a scelta tra oneway e
    sincrono
 
--  *ID Collaborazione*. Flag per consentire di specificare nelle
+-  *ID Conversazione*. Flag per consentire di specificare nelle
    richieste un valore che identifica una conversazione.
 
 -  *Riferimento ID Richiesta*. Flag per consentire di specificare nelle
@@ -53,7 +53,7 @@ I dati da fornire sono i seguenti:
 
 -  *Profilo*. Si può scegliere se utilizzare le impostazioni già fornite
    a livello del servizio, oppure ridefinirle indicando nuovamente
-   Profilo di collaborazione, ID Collaborazione e Riferimento ID
+   Profilo di collaborazione, ID Conversazione e Riferimento ID
    Richiesta.
 
 Nel caso REST, si procede aggiungendo la nuova risorsa tramite il
@@ -77,7 +77,7 @@ I dati da fornire sono i seguenti:
 
 -  *Descrizione* della risorsa
 
--  *ID Collaborazione*. Flag per consentire di specificare nelle
+-  *ID Conversazione*. Flag per consentire di specificare nelle
    richieste un valore che identifica una conversazione.
 
 -  *Riferimento ID Richiesta*. Flag per consentire di specificare nelle

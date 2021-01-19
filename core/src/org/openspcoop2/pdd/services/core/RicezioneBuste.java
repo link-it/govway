@@ -204,6 +204,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.protocol.sdk.constants.InitialIdConversationType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
@@ -2090,6 +2091,7 @@ public class RicezioneBuste {
 				if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null 
 						&& headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio()!=null) {
 					bustaURLMapping.setRiferimentoMessaggio(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
+					this.msgContext.getProtocol().setRiferimentoAsincrono(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
 				}
 			}
 			TipoOraRegistrazione tipoOraRegistrazione = propertiesReader.getTipoTempoBusta(null);
@@ -2301,7 +2303,27 @@ public class RicezioneBuste {
 		idServizio = validatore.getIDServizio();
 		Busta bustaRichiesta = validatore.getBusta();
 		BustaRawContent<?> soapHeaderElement = validatore.getHeaderProtocollo();
-
+		
+		if(bustaRichiesta!=null) {
+			try{
+				if(infoServizio.getCollaborazione() && bustaRichiesta.getCollaborazione()==null) {
+					InitialIdConversationType initial = protocolFactory.createProtocolConfiguration().isGenerateInitialIdConversation(TipoPdD.APPLICATIVA, FunzionalitaProtocollo.COLLABORAZIONE);
+					if(InitialIdConversationType.ID_TRANSAZIONE.equals(initial)) {
+						bustaRichiesta.setCollaborazione(idTransazione);
+					}
+					else if(InitialIdConversationType.ID_MESSAGGIO.equals(initial)) {
+						bustaRichiesta.setCollaborazione(bustaRichiesta.getID());
+					}
+				}
+			}catch(Exception e){
+				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+						"setCollaborazione");
+				openspcoopstate.releaseResource();
+				return;
+			}
+		}
 		
 		
 		

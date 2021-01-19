@@ -68,14 +68,14 @@ viene fruito/erogato con profilo *eGov1.1*.
    =====================  ==========       ===============
    Filtro duplicati       true             Funzionalità di filtro delle buste duplicate (Imposta l'attributo inoltro del profilo di trasmissione al valore EGOV\_IT\_ALPIUUNAVOLTA).
    Conferma Ricezione     false            Funzionalità di consegna affidabile delle buste spcoop attraverso l'utilizzo dei riscontri (Imposta l'attributo confermaRicezione del profilo di trasmissione al valore true).
-   ID Collaborazione      false            Aggiunge un elemento Collaborazione alla busta (Diverse istanze di cooperazione possono essere correlate in un'unica conversazione).
+   ID Conversazione       false            Aggiunge un elemento Collaborazione alla busta (Diverse istanze di cooperazione possono essere correlate in un'unica conversazione).
    Consegna in ordine     false            Consegna in ordine delle buste (Richiede Filtro Duplicati e Conferma Ricezione)
    Scadenza                                Assegna una scadenza temporale alla busta SPCoop
    =====================  ==========       ===============
 
 Di seguito un esempio di creazione di un accordo di servizio che
 richiede consegna affidabile tramite riscontri, filtro duplicati e id di
-collaborazione per un servizio sincrono.
+conversazione per un servizio sincrono.
 
    .. figure:: ../_figure_console/funzionalitaEGovDeprecate.jpg
     :scale: 100%

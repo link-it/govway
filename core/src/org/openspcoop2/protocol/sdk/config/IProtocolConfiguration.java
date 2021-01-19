@@ -31,6 +31,7 @@ import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.protocol.sdk.constants.InitialIdConversationType;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -180,6 +181,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return True se la funzionalita' richiede che venga fornita l'informazione tramite i meccanismi di integrazione
 	 */
 	public boolean isIntegrationInfoRequired(TipoPdD tipoPdD, ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
+	
+	/**
+	 * Restituisce l'indicazione se generare un id di collaborazione capostipite, quando la funzionalita' è abilitata e non viene fornito un identificativo tra i meccanismi di integrazione 
+	 * 
+	 * @return True se la funzionalita' genera un id di collaborazione capostipite
+	 */
+	public InitialIdConversationType isGenerateInitialIdConversation(TipoPdD tipoPdD, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
 		
 	/**
 	 * Ritorna l'indicazione se l'autenticazione dei soggetti viene supportato dal protocollo

@@ -39,7 +39,7 @@ La sezione **Informazioni Generali** (:numref:`mon_DettaglioTransazioneInfo_fig`
 
     -  Profilo di Collaborazione: per api SOAP viene indicato il profilo di gestione (oneway o sincrono)
 
-    -  ID Collaborazione e/o Riferimento ID Richiesta: informazioni opzionali presenti solamente se attivati nella API
+    -  ID Conversazione e/o Riferimento ID Richiesta: informazioni opzionali presenti solamente se attivati nella API
 
     -  ID Applicativo Richiesta e/o Risposta: contiene l'identificativo di correlazione applicativa estratto dal Gateway, se configurato nella API
 

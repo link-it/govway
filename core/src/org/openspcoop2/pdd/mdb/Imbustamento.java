@@ -68,6 +68,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.protocol.sdk.constants.InitialIdConversationType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
@@ -338,6 +339,16 @@ public class Imbustamento extends GenericLib{
 				idCollaborazione = this.propertiesReader.isGestioneElementoCollaborazione(implementazionePdDDestinatario) && infoServizio.getCollaborazione();
 				break;
 			}
+			String idCollaborazioneCapostipite = null;
+			if(idCollaborazione) {
+				InitialIdConversationType initial = protocolFactory.createProtocolConfiguration().isGenerateInitialIdConversation(TipoPdD.DELEGATA, FunzionalitaProtocollo.COLLABORAZIONE);
+				if(InitialIdConversationType.ID_TRANSAZIONE.equals(initial)) {
+					idCollaborazioneCapostipite = idTransazione;
+				}
+				else if(InitialIdConversationType.ID_MESSAGGIO.equals(initial)) {
+					idCollaborazioneCapostipite = idMessageRequest;
+				}
+			}
 			
 			boolean idRiferimentoMessaggioRichiesta = false;
 			switch (protocolManager.getIdRiferimentoRichiesta(infoServizio)) {
@@ -554,7 +565,7 @@ public class Imbustamento extends GenericLib{
 					if(imbustamentoMsg.getIdCollaborazione()!=null)
 						busta.setCollaborazione(imbustamentoMsg.getIdCollaborazione());
 					else
-						busta.setCollaborazione(idMessageRequest);
+						busta.setCollaborazione(idCollaborazioneCapostipite);
 				}
 				
 				// RiferimentoMessaggio
@@ -618,7 +629,7 @@ public class Imbustamento extends GenericLib{
 					if(imbustamentoMsg.getIdCollaborazione()!=null)
 						busta.setCollaborazione(imbustamentoMsg.getIdCollaborazione());
 					else
-						busta.setCollaborazione(idMessageRequest);
+						busta.setCollaborazione(idCollaborazioneCapostipite);
 				}
 				
 				// RiferimentoMessaggio
@@ -724,7 +735,7 @@ public class Imbustamento extends GenericLib{
 						if(imbustamentoMsg.getIdCollaborazione()!=null)
 							busta.setCollaborazione(imbustamentoMsg.getIdCollaborazione());
 						else
-							busta.setCollaborazione(idMessageRequest);
+							busta.setCollaborazione(idCollaborazioneCapostipite);
 					}
 
 					// registrazione richiesta asincrona simmetrica
@@ -891,7 +902,7 @@ public class Imbustamento extends GenericLib{
 						if(imbustamentoMsg.getIdCollaborazione()!=null)
 							busta.setCollaborazione(imbustamentoMsg.getIdCollaborazione());
 						else
-							busta.setCollaborazione(idMessageRequest);
+							busta.setCollaborazione(idCollaborazioneCapostipite);
 					}
 
 					// registrazione richiesta asincrona asimmetrica

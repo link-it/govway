@@ -9,7 +9,7 @@ Come descritto anche nella sezione :ref:`confManuale`, durante la configurazione
 API di tipo SOAP o REST è possibile specificare i parametri descritti di
 seguito rispettivamente in un servizio/azione o in una risorsa.
 
--  *ID Collaborazione*. Flag per consentire di specificare nelle
+-  *ID Conversazione*. Flag per consentire di specificare nelle
    richieste un valore che identifica una conversazione.
 
 -  *Riferimento ID Richiesta*. Flag per consentire di specificare nelle

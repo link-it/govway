@@ -3487,6 +3487,7 @@ public class RicezioneContenutiApplicativi {
 			if (headerIntegrazioneRichiesta!=null &&
 					headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
 				riferimentoRichiesta = headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();
+				this.msgContext.getProtocol().setRiferimentoAsincrono(riferimentoRichiesta);
 			}
 			if(riferimentoRichiesta==null) {
 				StringBuilder bf = new StringBuilder();

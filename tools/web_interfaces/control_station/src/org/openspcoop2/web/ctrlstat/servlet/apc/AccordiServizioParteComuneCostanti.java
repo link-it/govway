@@ -481,7 +481,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_UTILIZZO_SENZA_AZIONE = "Utilizzo Senza Azione";
 	public final static String LABEL_PARAMETRO_APC_FILTRO_DUPLICATI = "Filtro Duplicati";
 	public final static String LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE = "Conferma Ricezione";
-	public final static String LABEL_PARAMETRO_APC_COLLABORAZIONE = "ID Collaborazione";
+	public final static String LABEL_PARAMETRO_APC_COLLABORAZIONE = "ID Conversazione";
 	public final static String LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA = "Riferimento ID Richiesta";
 	public final static String LABEL_PARAMETRO_APC_CONSEGNA_ORDINE = "Consegna in Ordine";
 	public final static String LABEL_PARAMETRO_APC_SCADENZA = "Scadenza";

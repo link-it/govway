@@ -1,3 +1,11 @@
+2021-01-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1133
+	La funzionalità 'ID Collaborazione' è stata ridenominata in 'ID Conversazione'.
+	Inoltre, se abilitata, l'header HTTP GovWay-Conversion-ID viene adesso sempre generato, anche nella richiesta capostipite della conversazione dove viene valorizzato con l'id di transazione della prima richiesta.
+	È stata infine risolta una problematica presente nel profilo 'API Gateway', relativamente alla funzionalità 'Riferimento della Richiesta', dove non veniva associata alla traccia l'identificativo correlato.
+
 2021-01-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

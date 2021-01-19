@@ -189,7 +189,7 @@ public class CostantiExport {
 	public static final String LABEL_COL_DATA_ID_MSG_RISPOSTA = "Data ID Messaggio Risposta";
 	public static final String LABEL_COL_PROFILO_COLLABORAZIONE_OP2 = "Profilo Collaborazione Op2";
 	public static final String LABEL_COL_PROFILO_COLLABORAZIONE_PROT = "Profilo Collaborazione";
-	public static final String LABEL_COL_ID_COLLABORAZIONE = "ID Collaborazione";
+	public static final String LABEL_COL_ID_COLLABORAZIONE = "ID Conversazione";
 	public static final String LABEL_COL_URI_ACCORDO_SERVIZIO = "Uri API";
 	public static final String LABEL_COL_TIPO_API = "Tipo API";
 	public static final String LABEL_COL_TAGS = "Tags";

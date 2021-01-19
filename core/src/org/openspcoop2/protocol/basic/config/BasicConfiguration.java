@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.protocol.sdk.constants.InitialIdConversationType;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -422,6 +423,11 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	@Override
 	public boolean isIntegrationInfoRequired(TipoPdD tipoPdD, ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
 		return false;
+	}
+	
+	@Override
+	public InitialIdConversationType isGenerateInitialIdConversation(TipoPdD tipoPdD, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
+		return InitialIdConversationType.ID_TRANSAZIONE;
 	}
 	
 	@Override

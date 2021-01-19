@@ -450,7 +450,7 @@ La modalità **ID Messaggio** che consente di effettuare ricerche sulla base del
    -  **Tipo**: indica il tipo di identificativo da ricercare:
 	   - *Richiesta*: identifica un messaggio di richiesta
 	   - *Risposta*: identifica un messaggio di risposta
-	   - *Collaborazione*: è possibile effettuare una ricerca per invidivuare tutte le transazioni che sono correlate attraverso il medesimo identificativo di collaborazione.
+	   - *Conversazione*: è possibile effettuare una ricerca per invidivuare tutte le transazioni che sono correlate attraverso il medesimo identificativo di conversazione.
 	   - *Riferimento Richiesta*: consente di invidivuare una transazione che è correlata ad una precedente richiesta.
 
    -  **ID**: identificativo da cercare.

@@ -933,7 +933,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					return false;
 				}
 				if ((idcollop != null) && !idcollop.equals(Costanti.CHECK_BOX_ENABLED) && !idcollop.equals(CostantiRegistroServizi.ABILITATO) && !idcollop.equals(Costanti.CHECK_BOX_DISABLED) && !idcollop.equals(CostantiRegistroServizi.DISABILITATO)) {
-					this.pd.setMessage("ID Collaborazione dev'essere selezionata o deselezionata");
+					this.pd.setMessage("ID Conversazione dev'essere selezionata o deselezionata");
 					return false;
 				}
 				if ((idRifRichiestaOp != null) && !idRifRichiestaOp.equals(Costanti.CHECK_BOX_ENABLED) && !idRifRichiestaOp.equals(CostantiRegistroServizi.ABILITATO) && !idRifRichiestaOp.equals(Costanti.CHECK_BOX_DISABLED) && !idRifRichiestaOp.equals(CostantiRegistroServizi.DISABILITATO)) {
@@ -4972,7 +4972,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				return false;
 			}
 			if ((idcoll != null) && !idcoll.equals(Costanti.CHECK_BOX_ENABLED) && !idcoll.equals(CostantiRegistroServizi.ABILITATO) && !idcoll.equals(Costanti.CHECK_BOX_DISABLED) && !idcoll.equals(CostantiRegistroServizi.DISABILITATO)) {
-				this.pd.setMessage("ID Collaborazione dev'essere selezionata o deselezionata");
+				this.pd.setMessage("ID Conversazione dev'essere selezionata o deselezionata");
 				return false;
 			}
 			if ((idRifRichiesta != null) && !idRifRichiesta.equals(Costanti.CHECK_BOX_ENABLED) && !idRifRichiesta.equals(CostantiRegistroServizi.ABILITATO) && !idRifRichiesta.equals(Costanti.CHECK_BOX_DISABLED) && !idRifRichiesta.equals(CostantiRegistroServizi.DISABILITATO)) {

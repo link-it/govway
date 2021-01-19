@@ -772,6 +772,11 @@ public class PostOutResponseHandler_TransazioneUtilities {
 						transactionDTO.setIdAsincrono(tracciaRichiesta.getBusta().getRiferimentoMessaggio());
 					}
 				}
+				if(transactionDTO.getIdAsincrono()==null) {
+					if (context.getProtocollo()!=null){
+						transactionDTO.setIdAsincrono(context.getProtocollo().getRiferimentoAsincrono());
+					}
+				}
 			}
 
 			// ** info protocollo **
