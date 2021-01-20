@@ -24,6 +24,7 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.RisultatoStato;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
 
 /**     
@@ -37,9 +38,9 @@ public interface INotify {
 
 	public boolean isNotifichePassiveAttive();
 	
-	public RisultatoStato getStato(Logger logCore, DatiTransazione datiTransazione, String idStato) throws Exception;
+	public RisultatoStato getStato(Logger logCore, DatiTransazione datiTransazione, IState state, String nomeAllarme) throws Exception;
 	
-	public void segnaloPortaRipartita(Logger logCore, boolean debug);
+	public void notificaGatewayRiavviato(Logger logCore, boolean debug);
 	
 	public void updateStatoRilevamentoCongestione(Logger logCore, boolean debug, TipoEvento tipoEvento, CodiceEventoControlloTraffico codiceEvento, String descrizione);
 	

@@ -100,7 +100,9 @@ import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManager;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.GestoreCacheControlloTraffico;
@@ -549,7 +551,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ------------- Inizializzo il sistema di Logging di OpenSPCoop --------------- */
 			boolean isInitializeLogger = false;
-			isInitializeLogger = OpenSPCoop2Logger.initialize(OpenSPCoop2Startup.log,propertiesReader.getRootDirectory(),loggerP);
+			isInitializeLogger = OpenSPCoop2Logger.initialize(OpenSPCoop2Startup.log,propertiesReader.getRootDirectory(),loggerP,
+					propertiesReader.isAllarmiEnabled());
 			if(isInitializeLogger == false){
 				return;
 			}
@@ -2895,8 +2898,29 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			
-			
-			
+			/* ------------ Evento start per ControlloTraffico ------------ */
+			try{
+				if(propertiesReader.isControlloTrafficoEnabled() && propertiesReader.isAllarmiEnabled()) {
+					
+					ConfigurazioneControlloTraffico config = propertiesReader.getConfigurazioneControlloTraffico();
+					if(config.isNotifierEnabled()) {
+					
+						INotify notifier = config.getNotifier();
+						if(notifier.isNotifichePassiveAttive()) {
+							
+							boolean debug = propertiesReader.isAllarmiDebug();
+							notifier.notificaGatewayRiavviato(OpenSPCoop2Logger.getLoggerOpenSPCoopAllarmi(debug), debug);
+							
+						}
+					}
+				}
+			}catch(Exception e){
+				String msgError = "Segnalazione gateway ripartito al controllo del traffico non riuscita: "+e.getMessage();
+				forceLogEventi.error(msgError,e);
+				msgDiag.logStartupError(e,"Segnalazione GovWayStarted ControlloTraffico");
+				return;
+			}
+					
 			
 			
 			

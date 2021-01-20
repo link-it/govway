@@ -36,6 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -133,6 +135,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
+import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
@@ -5745,6 +5748,25 @@ public class ConfigurazionePdDReader {
 	}
 	public String getPluginClassNameByFilter(Connection connectionPdD, String tipoPlugin, String tipo, NameValue ... filtri) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getPluginClassNameByFilter(connectionPdD, tipoPlugin, tipo, filtri);
+	}
+	public String getPluginTipo(Connection connectionPdD, String tipoPlugin, String className) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getPluginTipo(connectionPdD, tipoPlugin, className);
+	}
+	public String getPluginTipoByFilter(Connection connectionPdD, String tipoPlugin, String className, NameValue ... filtri) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getPluginTipoByFilter(connectionPdD, tipoPlugin, className, filtri);
+	}
+	
+	
+	/* ******** ALLARMI ******** */
+
+	public Allarme getAllarme(Connection connectionPdD, String nomeAllarme, boolean searchInCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdD.getAllarme(connectionPdD, nomeAllarme, searchInCache);
+	}
+	public List<Allarme> searchAllarmi(Connection connectionPdD, FiltroRicercaAllarmi filtroRicerca, boolean searchInCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdD.searchAllarmi(connectionPdD, filtroRicerca, searchInCache);
+	}
+	public List<IAlarm> instanceAllarmi(Connection connectionPdD, List<Allarme> listAllarmi) throws DriverConfigurazioneException {
+		return this.configurazionePdD.instanceAllarmi(connectionPdD, listAllarmi);
 	}
 
 

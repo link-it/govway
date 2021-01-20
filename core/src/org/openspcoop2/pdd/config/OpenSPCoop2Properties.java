@@ -1994,6 +1994,11 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoRetryAfterHeader_randomBackoff();
 			}
 			
+			// Allarmi
+			if(this.isAllarmiEnabled()) {
+				this.isAllarmiDebug();
+			}
+			
 			// Service Unavailable
 			this.getServiceUnavailableRetryAfterSeconds_pd();
 			this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd();
@@ -21936,6 +21941,57 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff;
 	}
 	
+	
+	
+	/* ------------- Allarmi ---------------------*/
+	
+	private static Boolean isAllarmiEnabled = null;
+	public boolean isAllarmiEnabled() {	
+		if(OpenSPCoop2Properties.isAllarmiEnabled==null){
+			try{ 
+				if(CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD())){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled' ignorata. La segnalazione degli allarmi è disabilitata sulla configurazione xml");
+					isAllarmiEnabled = false;
+				}
+				else {
+					String name = null;
+					name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.allarmi.enabled");
+					if(name==null){
+						this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled' non impostata, viene utilizzato il default=false");
+						name="false";
+					}
+					name = name.trim();
+					OpenSPCoop2Properties.isAllarmiEnabled = Boolean.parseBoolean(name);
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isAllarmiEnabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isAllarmiEnabled;
+	}
+	
+	private static Boolean isAllarmiDebug = null;
+	public boolean isAllarmiDebug() {	
+		if(OpenSPCoop2Properties.isAllarmiDebug==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.allarmi.debug");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.debug' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isAllarmiDebug = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isAllarmiDebug = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isAllarmiDebug;
+	}
 	
 	
 	

@@ -1,3 +1,9 @@
+2021-01-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto bug relativo al messaggio indicato dalla console quando non sono registrati applicativi/soggetti autorizzati: 'Controlo' invece di 'Controllo'.
+	Risolto inoltre errore segnalato nel log durante l'aggiornamento del nome di un Tag. 
+
 2021-01-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

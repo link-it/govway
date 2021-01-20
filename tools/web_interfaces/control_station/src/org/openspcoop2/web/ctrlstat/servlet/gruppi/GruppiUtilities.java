@@ -26,9 +26,9 @@ import java.util.List;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Gruppo;
-import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
-import org.openspcoop2.core.registry.beans.GruppoSintetico;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -53,15 +53,15 @@ public class GruppiUtilities {
 		List<IDAccordo> listAccordi = apcCore.getAllIdAccordiServizio(filtroRicercaAccordi);
 		if(listAccordi!=null && listAccordi.size()>0){
 			for (IDAccordo idAccordoWithGruppo : listAccordi) {
-				AccordoServizioParteComuneSintetico accordoServizioSintetico = apcCore.getAccordoServizioSintetico(idAccordoWithGruppo);
-				if(accordoServizioSintetico.getGruppo() != null) {
-					for (GruppoSintetico gruppoAccordo : accordoServizioSintetico.getGruppo()) {
+				AccordoServizioParteComune accordoServizio = apcCore.getAccordoServizioFull(idAccordoWithGruppo, false);
+				if(accordoServizio.getGruppi() != null && accordoServizio.getGruppi().sizeGruppoList()>0) {
+					for (GruppoAccordo gruppoAccordo : accordoServizio.getGruppi().getGruppoList()) {
 						if(gruppoAccordo.getNome().equals(oldIdGruppo.getNome())){
 							gruppoAccordo.setNome(gruppoNEW.getNome());
 						}
 					}
 				}
-				listOggettiDaAggiornare.add(accordoServizioSintetico);
+				listOggettiDaAggiornare.add(accordoServizio);
 			}
 
 		}

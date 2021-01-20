@@ -248,7 +248,7 @@ public class PolicyVerifier {
 				Integer statoIndicato = activePolicy.getConfigurazionePolicy().getAllarmeStato();
 				boolean notStato = activePolicy.getConfigurazionePolicy().isAllarmeNotStato();
 				try{
-					statoAttuale = gestoreCacheControlloTraffico.getStato(datiTransazione,nomeAllarme);
+					statoAttuale = gestoreCacheControlloTraffico.getStato(datiTransazione,state,nomeAllarme);
 				}catch(Exception e){
 					isApplicabile = false;
 					descrizioneNonApplicabile = "Recupero stato dell'allarme ["+nomeAllarme+"] non riuscito: "+e.getMessage();

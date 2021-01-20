@@ -718,25 +718,25 @@ public class GestoreCacheControlloTraffico {
 	
 	/* ********************** STATO ************************** */
 	
-	public RisultatoStato getStato(DatiTransazione datiTransazione, String idStato) throws Exception{
+	public RisultatoStato getStato(DatiTransazione datiTransazione, IState state, String nomeAllarme) throws Exception{
 		
 		// BuildKey
 		StringBuilder bfKey = new StringBuilder("Stato ");
-		bfKey.append(idStato);
+		bfKey.append(nomeAllarme);
 		String key = bfKey.toString();
 		
 		//System.out.println("CERCO OGGETTO CON CHIAVE ["+key+"]");
 		
 		if(GestoreCacheControlloTraffico.cache!=null){
-			return this.getStatoInCache(key, datiTransazione, idStato);
+			return this.getStatoInCache(key, datiTransazione, state, nomeAllarme);
 		}
 		else{
-			return this.datiNotifierReader.getStato(this.log, datiTransazione, idStato);
+			return this.datiNotifierReader.getStato(this.log, datiTransazione, state, nomeAllarme);
 		}
 	}
 	
-	private RisultatoStato getStatoInCache(String keyCache,DatiTransazione datiTransazione, 
-			String idStato) throws Exception{
+	private RisultatoStato getStatoInCache(String keyCache,DatiTransazione datiTransazione, IState state, 
+			String nomeAllarme) throws Exception{
 
 		RisultatoStato obj = null;
 		try{
@@ -785,7 +785,7 @@ public class GestoreCacheControlloTraffico {
 				// Effettuo le query nella mia gerarchia di registri.
 				this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
 				try{
-					obj = this.datiNotifierReader.getStato(this.log, datiTransazione, idStato);
+					obj = this.datiNotifierReader.getStato(this.log, datiTransazione, state, nomeAllarme);
 				}catch(Exception e){
 					throw e;
 				}

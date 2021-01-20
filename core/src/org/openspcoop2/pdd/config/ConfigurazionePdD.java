@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
@@ -89,6 +91,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.monitor.engine.config.base.IdPlugin;
 import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
+import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
@@ -164,6 +167,8 @@ public class ConfigurazionePdD  {
 	private ConfigurazionePdD_plugins configurazionePdD_plugins = null;
 	private ConfigurazionePdD_registroPlugins configurazionePdD_registroPlugins = null;
 
+	/** ConfigurazionePdD_allarmi */
+	private ConfigurazionePdD_allarmi configurazionePdD_allarmi = null;
 
 
 	/* --------------- Cache --------------------*/
@@ -343,6 +348,12 @@ public class ConfigurazionePdD  {
 							((DriverConfigurazioneDB)this.driverConfigurazionePdD),
 							this.useConnectionPdD);
 					this.configurazionePdD_registroPlugins = new ConfigurazionePdD_registroPlugins(this.openspcoopProperties, 
+							((DriverConfigurazioneDB)this.driverConfigurazionePdD),
+							this.useConnectionPdD);
+				}
+				
+				if(this.openspcoopProperties.isAllarmiEnabled()) {
+					this.configurazionePdD_allarmi = new ConfigurazionePdD_allarmi(this.openspcoopProperties, 
 							((DriverConfigurazioneDB)this.driverConfigurazionePdD),
 							this.useConnectionPdD);
 				}
@@ -1304,6 +1315,12 @@ public class ConfigurazionePdD  {
 											}
 											catch(DriverConfigurazioneNotFound notFound){}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											try{
+												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvFruizione));
+												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvFruizione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
 											NameValue nvErogazione = new NameValue(PluginCostanti.FILTRO_RUOLO_NOME, PluginCostanti.FILTRO_RUOLO_VALORE_EROGAZIONE);
 											try{
@@ -1312,11 +1329,82 @@ public class ConfigurazionePdD  {
 											}
 											catch(DriverConfigurazioneNotFound notFound){}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											try{
+												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvErogazione));
+												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvErogazione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										}
+										else if(TipoPlugin.MESSAGE_HANDLER.equals(tipoPlugin)){
+										
+											List<String> filtri = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA;
+											for (String valoreFiltro : filtri) {
+												NameValue nvRuolo = new NameValue(PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RICHIESTA);
+												NameValue nv = new NameValue(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME, valoreFiltro);
+												try{
+													this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvRuolo,nv));
+													this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvRuolo,nv);
+												}
+												catch(DriverConfigurazioneNotFound notFound){}
+												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+												try{
+													this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvRuolo,nv));
+													this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvRuolo,nv);
+												}
+												catch(DriverConfigurazioneNotFound notFound){}
+												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											}
+											filtri = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA;
+											for (String valoreFiltro : filtri) {
+												NameValue nvRuolo = new NameValue(PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RISPOSTA);
+												NameValue nv = new NameValue(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME, valoreFiltro);
+												try{
+													this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvRuolo,nv));
+													this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvRuolo,nv);
+												}
+												catch(DriverConfigurazioneNotFound notFound){}
+												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+												try{
+													this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvRuolo,nv));
+													this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvRuolo,nv);
+												}
+												catch(DriverConfigurazioneNotFound notFound){}
+												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											}
+											
+										}
+										else if(TipoPlugin.SERVICE_HANDLER.equals(tipoPlugin)){
+											
+											List<String> filtri = PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_CON_INTEGRATION_MANAGER;
+											for (String valoreFiltro : filtri) {
+												NameValue nv = new NameValue(PluginCostanti.FILTRO_SERVICE_HANDLER_NOME, valoreFiltro);
+												try{
+													this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nv));
+													this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nv);
+												}
+												catch(DriverConfigurazioneNotFound notFound){}
+												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+												try{
+													this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nv));
+													this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nv);
+												}
+												catch(DriverConfigurazioneNotFound notFound){}
+												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											}
+
 										}
 										else {
 											try{
 												this.cache.remove(_getKey_PluginClassName(idPlugin.getTipoPlugin(),idPlugin.getTipo()));
 												this.getPluginClassName(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo());
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											
+											try{
+												this.cache.remove(_getKey_PluginTipo(idPlugin.getTipoPlugin(),idPlugin.getClassName()));
+												this.getPluginTipo(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName());
 											}
 											catch(DriverConfigurazioneNotFound notFound){}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -1326,6 +1414,12 @@ public class ConfigurazionePdD  {
 										try{
 											this.cache.remove(_getKey_PluginClassName(idPlugin.getTipoPlugin(),idPlugin.getTipo()));
 											this.getPluginClassName(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo());
+										}
+										catch(DriverConfigurazioneNotFound notFound){}
+										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										try{
+											this.cache.remove(_getKey_PluginTipo(idPlugin.getTipoPlugin(),idPlugin.getClassName()));
+											this.getPluginTipo(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName());
 										}
 										catch(DriverConfigurazioneNotFound notFound){}
 										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -1762,6 +1856,31 @@ public class ConfigurazionePdD  {
 				}else if(classArgoments.length==4){
 					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3]);
 					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD,values[0],values[1],values[2],values[3]);
+				}else
+					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
+				break;
+			}
+			case allarmi:
+			{
+				if(this.configurazionePdD_allarmi==null) {
+					throw new Exception("Driver Allarmi non istanziato");
+				}
+				this.log.debug("invocazione metodo ["+methodName+"]...");
+				if(classArgoments==null || classArgoments.length==0){
+					Method method =  this.configurazionePdD_allarmi.getClass().getMethod(methodName, Connection.class);
+					obj = method.invoke(this.configurazionePdD_allarmi, connectionPdD);
+				}else if(classArgoments.length==1){
+					Method method =  this.configurazionePdD_allarmi.getClass().getMethod(methodName, Connection.class, classArgoments[0]);
+					obj = method.invoke(this.configurazionePdD_allarmi, connectionPdD,values[0]);
+				}else if(classArgoments.length==2){
+					Method method =  this.configurazionePdD_allarmi.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1]);
+					obj = method.invoke(this.configurazionePdD_allarmi, connectionPdD,values[0],values[1]);
+				}else if(classArgoments.length==3){
+					Method method =  this.configurazionePdD_allarmi.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2]);
+					obj = method.invoke(this.configurazionePdD_allarmi, connectionPdD,values[0],values[1],values[2]);
+				}else if(classArgoments.length==4){
+					Method method =  this.configurazionePdD_allarmi.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3]);
+					obj = method.invoke(this.configurazionePdD_allarmi, connectionPdD,values[0],values[1],values[2],values[3]);
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
 				break;
@@ -4076,7 +4195,190 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getPluginClassNameByFilter] plugin non trovato");
 	}
 	
+	public static String _getKey_PluginTipo(String tipoPlugin, String className){
+		return "PluginTipo_"+tipoPlugin+"#"+className;
+	}
+	public String getPluginTipo(Connection connectionPdD, String tipoPlugin, String className) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_PluginTipo(tipoPlugin, className);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((String) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		String tipo = null;
+		if(this.cache!=null){
+			tipo = (String) this.getObjectCache(key,"getPluginTipo",connectionPdD, ConfigurazionePdDType.plugins, tipoPlugin, className);
+		}else{
+			tipo = (String) this.getObject("getPluginTipo",connectionPdD, ConfigurazionePdDType.plugins, tipoPlugin, className);
+		}
+
+		if(tipo!=null)
+			return tipo;
+		else
+			throw new DriverConfigurazioneNotFound("[getPluginTipo] plugin non trovato");
+	}
 	
+	
+	public static String _getKey_PluginTipoByFilter(String tipoPlugin, String className, NameValue ... filtri){
+		StringBuilder sb = new StringBuilder();
+		sb.append("PluginTipoByFilter_"+tipoPlugin+"#"+className);
+		
+		if(filtri!=null && filtri.length>0) {
+			for (int i = 0; i < filtri.length; i++) {
+				NameValue filtro = filtri[i];
+				sb.append(".F").append(i).append("_").append(filtro.getName()).append("=").append(filtro.getValue());
+			}
+		}
+		
+		return sb.toString();
+	}
+	public String getPluginTipoByFilter(Connection connectionPdD, String tipoPlugin, String className, NameValue ... filtri) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_PluginTipoByFilter(tipoPlugin, className, filtri);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((String) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		String tipo = null;
+		if(this.cache!=null){
+			tipo = (String) this.getObjectCache(key,"getPluginTipoByFilter",connectionPdD, ConfigurazionePdDType.plugins, tipoPlugin, className, filtri);
+		}else{
+			tipo = (String) this.getObject("getPluginTipoByFilter",connectionPdD, ConfigurazionePdDType.plugins, tipoPlugin, className, filtri);
+		}
+
+		if(tipo!=null)
+			return tipo;
+		else
+			throw new DriverConfigurazioneNotFound("[getPluginTipoByFilter] plugin non trovato");
+	}
+	
+	
+	
+	
+	
+	/* ******** ALLARMI ******** */
+	
+	private String _getKey_getAllarme(String nomeAllarme){
+		return "allarme_"+nomeAllarme;
+	}
+	public Allarme getAllarme(Connection connectionPdD, String nomeAllarme, boolean searchInCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	
+		if(nomeAllarme==null) {
+			throw new DriverConfigurazioneException("Nome allarme non fornito");
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(searchInCache && this.cache!=null){
+			key = this._getKey_getAllarme(nomeAllarme);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return (Allarme) response.getObject();
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Allarme allarme = null;
+		if(searchInCache && this.cache!=null){
+			allarme = (Allarme) this.getObjectCache(key,"getAllarme",connectionPdD, ConfigurazionePdDType.allarmi, nomeAllarme);
+		}else{
+			allarme = (Allarme) this.getObject("getAllarme",connectionPdD, ConfigurazionePdDType.allarmi, nomeAllarme);
+		}
+
+		if(allarme!=null)
+			return allarme;
+		else
+			throw new DriverConfigurazioneNotFound("[getAllarme] Allarme '"+nomeAllarme+"' non trovato");
+		
+	}
+	
+	private String _getKey_searchAllarmi(FiltroRicercaAllarmi filtroRicerca){
+		return "searchAllarmi_"+filtroRicerca.toString("_");
+	}
+	@SuppressWarnings("unchecked")
+	public List<Allarme> searchAllarmi(Connection connectionPdD, FiltroRicercaAllarmi filtroRicerca, boolean searchInCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	
+		if(filtroRicerca==null) {
+			throw new DriverConfigurazioneException("Filtro ricerca non fornito");
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(searchInCache && this.cache!=null){
+			key = this._getKey_searchAllarmi(filtroRicerca);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((List<Allarme>) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		List<Allarme> list = null;
+		if(searchInCache && this.cache!=null){
+			list = (List<Allarme>) this.getObjectCache(key,"searchAllarmi",connectionPdD, ConfigurazionePdDType.allarmi, filtroRicerca);
+		}else{
+			list = (List<Allarme>) this.getObject("searchAllarmi",connectionPdD, ConfigurazionePdDType.allarmi, filtroRicerca);
+		}
+
+		if(list!=null && !list.isEmpty())
+			return list;
+		else
+			throw new DriverConfigurazioneNotFound("[searchAllarmi] Allarmi non trovati");
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IAlarm> instanceAllarmi(Connection connectionPdD, List<Allarme> listAllarmi) throws DriverConfigurazioneException {
+		try {
+			return (List<IAlarm>) this.getObject("instanceAllarmi",connectionPdD, ConfigurazionePdDType.allarmi, listAllarmi);
+		}catch(DriverConfigurazioneNotFound e) {
+			throw new DriverConfigurazioneException(e.getMessage(), e);
+		}
+	}
 	
 	
 	

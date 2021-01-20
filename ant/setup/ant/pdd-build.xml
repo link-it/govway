@@ -359,6 +359,11 @@
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.allarmi.debug"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.statistiche.generazione.debug"/>
 			<param name="value" value="false"/>
 		</antcall>
@@ -717,6 +722,25 @@
 			<param name="value" value="ERROR"/>
 		</antcall>
 		
+		<!-- Monitoraggio -->
+		<if>
+			<not>
+				<istrue value="${build_monitoraggio}" />
+			</not>
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="logger.govway_allarmi"/>
+					<param name="value" value="#logger.govway_allarmi"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="appender.govway_allarmi"/>
+					<param name="value" value="#appender.govway_allarmi"/>
+				</antcall>
+			</then>
+		</if>
+
 		<!-- DATASOURCE -->
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>

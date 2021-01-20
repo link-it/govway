@@ -123,6 +123,13 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 	}
 	public String getPluginClassNameByFilter(Connection connectionPdD, String tipoPlugin, String tipo, NameValue ... filtri) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
+		if(tipoPlugin==null || "".equals(tipoPlugin)) {
+			throw new DriverConfigurazioneException("tipo plugin non fornito");
+		}
+		if(tipo==null || "".equals(tipo)) {
+			throw new DriverConfigurazioneException("tipo non fornito");
+		}
+		
 		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "Plugins.getPluginClassName_"+tipoPlugin+"#"+tipo);
@@ -174,6 +181,80 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 		}
 		catch(Exception e){
 			String errorMsg = "Errore durante la lettura del Plugin (tipologia:"+tipoPlugin+" tipo:"+tipo+"): "+e.getMessage();
+			this.log.error(errorMsg,e);
+			throw new DriverConfigurazioneException(errorMsg,e);
+		}
+		finally {
+			this.releaseConnection(cr);
+		}
+
+	}
+	
+	
+	public String getPluginTipo(Connection connectionPdD, String tipoPlugin, String className) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getPluginTipoByFilter(connectionPdD, tipoPlugin, className);
+	}
+	public String getPluginTipoByFilter(Connection connectionPdD, String tipoPlugin, String className, NameValue ... filtri) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		if(tipoPlugin==null || "".equals(tipoPlugin)) {
+			throw new DriverConfigurazioneException("tipo plugin non fornito");
+		}
+		if(className==null || "".equals(className)) {
+			throw new DriverConfigurazioneException("Classname non fornito");
+		}
+		
+		ConfigurazionePdDConnectionResource cr = null;
+		try{
+			cr = this.getConnection(connectionPdD, "Plugins.getPluginTipo_"+tipoPlugin+"#"+className);
+			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager sm = 
+					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory.getInstance(this.log).
+					getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+							cr.connectionDB,this.smp,this.log);
+			
+			IPluginServiceSearch search =  sm.getPluginServiceSearch();
+			
+			IExpression expr = search.newExpression();
+			expr.equals(Plugin.model().TIPO_PLUGIN, tipoPlugin);
+			expr.equals(Plugin.model().CLASS_NAME, className);
+			
+			Plugin plugin = search.find(expr);
+			
+			if(filtri!=null && filtri.length>0) {
+				for (int i = 0; i < filtri.length; i++) {
+					NameValue filtro = filtri[i];
+					
+					if(plugin.sizePluginProprietaCompatibilitaList()>0) {
+						for (int j = 0; j < plugin.sizePluginProprietaCompatibilitaList(); j++) {
+							PluginProprietaCompatibilita ppc = plugin.getPluginProprietaCompatibilita(j);
+							if(ppc.getNome().equals(filtro.getName())) {
+								if(!ppc.getValore().equals(filtro.getValue())) {
+									
+									// gestisco caso speciale
+									boolean isCasoSpecialeQualsiasi = false;
+									if(Filtri.FILTRO_RUOLO_NOME.equals(ppc.getNome()) && Filtri.FILTRO_RUOLO_VALORE_ENTRAMBI.equals(ppc.getValore())) {
+										isCasoSpecialeQualsiasi = true;
+									}
+									if(!isCasoSpecialeQualsiasi) {									
+										throw new NotFoundException("Filtro '"+ppc.getNome()+"' non soddisfatto (atteso:"+filtro.getValue()+" trovato:"+ppc.getValore()+")");
+									}
+								}
+							}
+						}
+					}
+					
+				}
+			}
+			
+			return plugin.getClassName();
+
+		}
+		catch(NotFoundException e) {
+			String errorMsg = "Plugin (tipologia:"+tipoPlugin+" className:"+className+") non trovato: "+e.getMessage();
+			this.log.debug(errorMsg,e);
+			throw new DriverConfigurazioneNotFound(errorMsg,e);
+		}
+		catch(Exception e){
+			String errorMsg = "Errore durante la lettura del Plugin (tipologia:"+tipoPlugin+" className:"+className+"): "+e.getMessage();
 			this.log.error(errorMsg,e);
 			throw new DriverConfigurazioneException(errorMsg,e);
 		}

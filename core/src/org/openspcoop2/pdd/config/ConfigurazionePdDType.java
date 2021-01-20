@@ -29,6 +29,6 @@ package org.openspcoop2.pdd.config;
  */
 public enum ConfigurazionePdDType {
 
-	config, controlloTraffico, plugins
+	config, controlloTraffico, plugins, allarmi
 	
 }

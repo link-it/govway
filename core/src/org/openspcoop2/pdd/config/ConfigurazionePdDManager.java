@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Level;
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
@@ -94,6 +96,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
+import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -1331,7 +1334,27 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getPluginClassNameByFilter(this.getConnection(), tipoPlugin, tipo, filtri);
 	}
 	
+	public String getPluginTipo(String tipoPlugin, String className) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPluginTipo(this.getConnection(), tipoPlugin, className);
+	}
+	public String getPluginTipoByFilter(String tipoPlugin, String className, NameValue ... filtri) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPluginTipoByFilter(this.getConnection(), tipoPlugin, className, filtri);
+	}
+	
+	
+	/* ******** ALLARMI ******** */
+	
+	public Allarme getAllarme(String nomeAllarme, boolean searchInCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.getAllarme(this.getConnection(), nomeAllarme, searchInCache);
+	}
+	public List<Allarme> searchAllarmi(FiltroRicercaAllarmi filtroRicerca, boolean searchInCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.searchAllarmi(this.getConnection(), filtroRicerca, searchInCache);
+	}
+	public List<IAlarm> instanceAllarmi(List<Allarme> listAllarmi) throws DriverConfigurazioneException {
+		return this.configurazionePdDReader.instanceAllarmi(this.getConnection(), listAllarmi);
+	}
 
+	
 	/* ******** MAPPING ******** */
 
 	public List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaList(IDServizio idServizio) throws DriverConfigurazioneException{

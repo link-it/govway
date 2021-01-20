@@ -122,7 +122,15 @@ public class AlarmManager {
 	 */
 	public static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory)
 			throws AlarmException {
-
+		return getAlarm(allarme, log, daoFactory, null);
+	}
+	public static IAlarm getAlarm(Allarme allarme,Logger log, org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginSM)
+			throws AlarmException {
+		return getAlarm(allarme, log, null, pluginSM);
+	}
+	private static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginSM)
+			throws AlarmException {
+		
 		AlarmImpl alarm = null;
 		try {
 			if (allarme != null) {
@@ -146,9 +154,11 @@ public class AlarmManager {
 				alarmStatus.setDetail(allarme.getDettaglioStato());
 				alarm.setStatus(alarmStatus);
 				
-				org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginSM = 
-						(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) 
-						daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
+				if(pluginSM==null) {
+					pluginSM = 
+							(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) 
+							daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
+				}
 				TipoPlugin tipoPlugin = TipoPlugin.ALLARME;
 				IdPlugin idPlugin = new IdPlugin();
 				idPlugin.setTipoPlugin(tipoPlugin.getValue());

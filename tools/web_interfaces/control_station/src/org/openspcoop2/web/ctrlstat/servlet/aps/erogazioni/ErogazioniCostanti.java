@@ -123,9 +123,9 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP = "API attiva";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP = "Alcuni gruppi dell'API sono disabilitati";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP = "API disabilitata";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_FRUITORI = "Rilevato 'Controlo degli Accessi', con autorizzazione per richiedente, senza alcun fruitore registrato";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_RUOLI = "Rilevato 'Controlo degli Accessi', con autorizzazione per ruoli, senza alcun ruolo registrato";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_SCOPE = "Rilevato 'Controlo degli Accessi', con autorizzazione per scope, senza alcun scope registrato";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_FRUITORI = "Rilevato 'Controllo degli Accessi', con autorizzazione per richiedente, senza alcun fruitore registrato";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_RUOLI = "Rilevato 'Controllo degli Accessi', con autorizzazione per ruoli, senza alcun ruolo registrato";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_SCOPE = "Rilevato 'Controllo degli Accessi', con autorizzazione per scope, senza alcun scope registrato";
 	
 	public final static String ASPS_EROGAZIONI_ICONA_GESTIONE_CONFIGURAZIONI = "&#xE8B8;";
 	public final static String ASPS_EROGAZIONI_ICONA_GESTIONE_GRUPPI_CON_PARAMETRO = "&#xE02F;";

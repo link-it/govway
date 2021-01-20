@@ -143,6 +143,12 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per il Controllo del Traffico (sql) */
 	protected static Logger loggerOpenSPCoopControlloTrafficoSql = null;
 	protected static Logger loggerOpenSPCoopControlloTrafficoSqlError = null;
+	/**  Logger log4j utilizzato per gli Allarmi */
+	protected static Logger loggerOpenSPCoopAllarmi = null;
+	protected static Logger loggerOpenSPCoopAllarmiError = null;
+	/**  Logger log4j utilizzato per gli Allarmi (sql) */
+	protected static Logger loggerOpenSPCoopAllarmiSql = null;
+	protected static Logger loggerOpenSPCoopAllarmiSqlError = null;
 	/**  Logger log4j utilizzato per le statistiche */
 	protected static Logger loggerOpenSPCoopStatisticheOrarie = null;
 	protected static Logger loggerOpenSPCoopStatisticheOrarieError = null;
@@ -289,10 +295,13 @@ public class OpenSPCoop2Logger {
 	}
 	
 	
-	public static boolean initialize(Logger logConsole,String rootDirectory,Properties objectProperties){
-		return initialize(logConsole, rootDirectory, objectProperties, true);
+	public static boolean initialize(Logger logConsole,String rootDirectory,Properties objectProperties,
+			boolean allarmiEnabled){
+		return initialize(logConsole, rootDirectory, objectProperties, true,
+				allarmiEnabled);
 	}
-	public static boolean initialize(Logger logConsole,String rootDirectory,Properties objectProperties, boolean loadExternalConfiguration){
+	public static boolean initialize(Logger logConsole,String rootDirectory,Properties objectProperties, boolean loadExternalConfiguration,
+			boolean allarmiEnabled){
 		try{
 			
 			// Originale
@@ -541,6 +550,30 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError = LoggerWrapperFactory.getLogger("govway.controlloTraffico.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError==null)
 				throw new Exception("Logger govway.controlloTraffico.sql.error non trovato");
+			
+			if(allarmiEnabled) {
+			
+				// ALLARMI LOG
+				OpenSPCoop2Logger.loggerOpenSPCoopAllarmi = LoggerWrapperFactory.getLogger("govway.allarmi");
+				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmi==null)
+					throw new Exception("Logger govway.allarmi non trovato");
+				
+				// ALLARMI LOG (ERROR)
+				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiError = LoggerWrapperFactory.getLogger("govway.allarmi.error");
+				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiError==null)
+					throw new Exception("Logger govway.allarmi.error non trovato");
+				
+				// ALLARMI SQL LOG
+				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSql = LoggerWrapperFactory.getLogger("govway.allarmi.sql");
+				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSql==null)
+					throw new Exception("Logger govway.allarmi.sql non trovato");
+				
+				// ALLARMI SQL LOG (ERROR)
+				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSqlError = LoggerWrapperFactory.getLogger("govway.allarmi.sql.error");
+				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSqlError==null)
+					throw new Exception("Logger govway.allarmi.sql.error non trovato");
+				
+			}
 			
 			// STATISTICHE LOG 'Orarie'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarie = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione");
@@ -1220,6 +1253,24 @@ public class OpenSPCoop2Logger {
 		}
 		else {
 			return OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopAllarmi(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopAllarmi;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopAllarmiError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopAllarmiSql(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSql;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSqlError;
 		}
 	}
 	
