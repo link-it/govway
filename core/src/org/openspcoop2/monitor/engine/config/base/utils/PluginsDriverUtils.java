@@ -101,7 +101,11 @@ public class PluginsDriverUtils {
 
 		String filterTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_PLUGIN_CLASSI);
 		
+		String filterStato = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO);
+		
 		log.debug("search : " + search);
+		log.debug("filterTipoPlugin : " + filterTipoPlugin);
+		log.debug("filterStato : " + filterStato);
 		
 		List<Plugin> lista = new ArrayList<Plugin>();
 
@@ -130,6 +134,19 @@ public class PluginsDriverUtils {
 				addAnd = true;
 			}
 			
+			if(filterStato!=null && !filterStato.equals("")) {
+				if(Filtri.FILTRO_STATO_VALORE_ABILITATO.equals(filterStato) || Filtri.FILTRO_STATO_VALORE_DISABILITATO.equals(filterStato)) {
+					
+					if(addAnd) {
+						expr.and();
+					}
+					addAnd = true;
+					
+					expr.equals(Plugin.model().STATO, Filtri.FILTRO_STATO_VALORE_ABILITATO.equals(filterStato));
+					
+				}
+			}
+			
 			if(!filterTipoPlugin.equals("")) {
 				if(addAnd) {
 					expr.and();
@@ -144,7 +161,8 @@ public class PluginsDriverUtils {
 				case AUTORIZZAZIONE_CONTENUTI:
 				case INTEGRAZIONE:
 					String filtroRuolo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_RUOLO_NOME);
-				
+					log.debug("filtroRuolo : " + filtroRuolo);
+					
 					if(!filtroRuolo.equals("")) {
 						
 						expr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, PluginCostanti.FILTRO_RUOLO_NOME);
@@ -160,7 +178,8 @@ public class PluginsDriverUtils {
 					break;
 				case SERVICE_HANDLER:
 					String filtroShTipo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_SERVICE_HANDLER_NOME);
-				
+					log.debug("filtroShTipo : " + filtroShTipo);
+					
 					if(!filtroShTipo.equals("")) {
 						expr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, PluginCostanti.FILTRO_SERVICE_HANDLER_NOME)
 							.and().equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, filtroShTipo);
@@ -169,9 +188,11 @@ public class PluginsDriverUtils {
 				case MESSAGE_HANDLER:
 					// message handler e ruolo messa ge handler
 					String filtroMhRuolo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME);
+					log.debug("filtroMhRuolo : " + filtroMhRuolo);
 					boolean ruoloDefined = !filtroMhRuolo.equals("");
 					
 					String filtroMhTipo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME);
+					log.debug("filtroMhTipo : " + filtroMhTipo);
 					boolean tipoDefined = !filtroMhTipo.equals("");
 										
 					if(tipoDefined && ruoloDefined) {
@@ -200,6 +221,25 @@ public class PluginsDriverUtils {
 										
 					break;
 				case ALLARME:
+					String filtroApplicabilita = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_APPLICABILITA_NOME);
+					log.debug("filtroApplicabilita : " + filtroApplicabilita);
+					
+					if(!filtroApplicabilita.equals("")) {
+						
+						expr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME, PluginCostanti.FILTRO_APPLICABILITA_NOME);
+						expr.and();
+						
+						IExpression exprOr = pluginServiceSearch.newExpression();
+						exprOr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, filtroApplicabilita);
+						exprOr.or();
+						exprOr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, PluginCostanti.FILTRO_APPLICABILITA_VALORE_QUALSIASI);
+						if(PluginCostanti.FILTRO_APPLICABILITA_VALORE_EROGAZIONE.equals(filtroApplicabilita) || PluginCostanti.FILTRO_APPLICABILITA_VALORE_FRUIZIONE.equals(filtroApplicabilita)) {
+							exprOr.equals(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE, PluginCostanti.FILTRO_APPLICABILITA_VALORE_IMPLEMENTAZIONE_API);
+						}
+						expr.and(exprOr);
+						
+					}
+					break;
 				case BEHAVIOUR:
 				case CONNETTORE:
 				case RATE_LIMITING:

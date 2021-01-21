@@ -97,6 +97,8 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 			String mhTipo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER);
 			String mhRuolo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER);
 			
+			String applicabilita = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_APPLICABILITA);
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			long idPlugin = Long.parseLong(idPluginS);
 			Plugin oldPlugin = confCore.getPlugin(idPlugin);
@@ -135,13 +137,14 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 					shTipo = ConfigurazionePluginsTipoPluginUtils.getValoreProprieta(oldPlugin, PluginCostanti.FILTRO_SERVICE_HANDLER_NOME);
 					mhTipo = ConfigurazionePluginsTipoPluginUtils.getValoreProprieta(oldPlugin, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME); 
 					mhRuolo = ConfigurazionePluginsTipoPluginUtils.getValoreProprieta(oldPlugin, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME);
+					applicabilita = ConfigurazionePluginsTipoPluginUtils.getValoreProprieta(oldPlugin, PluginCostanti.FILTRO_APPLICABILITA_NOME);
 				}
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = confHelper.addPluginClassiToDati(TipoOperazione.CHANGE, dati, idPluginS, tipoPlugin, tipo, label, className, stato, descrizione, ruolo, shTipo, mhTipo, mhRuolo);
+				dati = confHelper.addPluginClassiToDati(TipoOperazione.CHANGE, dati, idPluginS, tipoPlugin, tipo, label, className, stato, descrizione, ruolo, shTipo, mhTipo, mhRuolo, applicabilita);
 
 				pd.setDati(dati);
 
@@ -153,7 +156,7 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.pluginClassiCheckData(TipoOperazione.CHANGE, oldPlugin, idPluginS, tipoPlugin, tipo, label, className, stato, descrizione, ruolo, shTipo, mhTipo, mhRuolo);
+			boolean isOk = confHelper.pluginClassiCheckData(TipoOperazione.CHANGE, oldPlugin, idPluginS, tipoPlugin, tipo, label, className, stato, descrizione, ruolo, shTipo, mhTipo, mhRuolo, applicabilita);
 			if (!isOk) {
 
 				// preparo i campi
@@ -161,7 +164,7 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = confHelper.addPluginClassiToDati(TipoOperazione.CHANGE, dati, idPluginS, tipoPlugin, tipo, label, className, stato, descrizione, ruolo, shTipo, mhTipo, mhRuolo);
+				dati = confHelper.addPluginClassiToDati(TipoOperazione.CHANGE, dati, idPluginS, tipoPlugin, tipo, label, className, stato, descrizione, ruolo, shTipo, mhTipo, mhRuolo, applicabilita);
 
 				pd.setDati(dati);
 
@@ -190,7 +193,7 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 			plugin.setClassName(className);
 			
 			plugin.getPluginProprietaCompatibilitaList().clear();
-			List<PluginProprietaCompatibilita> listaProprieta = ConfigurazionePluginsTipoPluginUtils.getApplicabilitaClassePlugin(tipoPlugin, ruolo, shTipo, mhTipo, mhRuolo);
+			List<PluginProprietaCompatibilita> listaProprieta = ConfigurazionePluginsTipoPluginUtils.getApplicabilitaClassePlugin(tipoPlugin, ruolo, shTipo, mhTipo, mhRuolo, applicabilita);
 			
 			if(listaProprieta.size() > 0) {
 				plugin.getPluginProprietaCompatibilitaList().addAll(listaProprieta);

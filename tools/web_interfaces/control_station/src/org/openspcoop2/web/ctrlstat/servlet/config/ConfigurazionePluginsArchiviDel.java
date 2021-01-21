@@ -91,6 +91,9 @@ public final class ConfigurazionePluginsArchiviDel extends Action {
 			Object[] oggetti = pluginToRemove.toArray(new RegistroPlugin[pluginToRemove.size()]); 
 			confCore.performDeleteOperation(userLogin, confHelper.smista(), oggetti); 
 
+			// Aggiorno classLoader interno
+			confCore.updatePluginClassLoader();
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 

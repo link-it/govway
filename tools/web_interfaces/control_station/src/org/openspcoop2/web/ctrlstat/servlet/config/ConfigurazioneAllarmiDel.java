@@ -40,7 +40,6 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -113,25 +112,27 @@ public final class ConfigurazioneAllarmiDel extends Action {
 				
 				ConfigurazioneAllarmeBean allarme = confCore.getAllarme(id);
 				
-				 if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
-						// NOTA: il tipo di allarme non è modificabile.
-					 	ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è passivo. Non viene effettuata alcuna rimozione su Allarmi.war");
-						continue;
-					}
-					if(allarme.getEnabled()==0){
-						// NOTA: il tipo di allarme non è modificabile.
-						ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è disabilitato. Non viene effettuata alcuna rimozione su Allarmi.war");
-						continue;
-					}
+				allarmeToRemove.setNome(allarme.getNome());
+				allarmiToRemove.add(allarmeToRemove);
+				
+				if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
+					// NOTA: il tipo di allarme non è modificabile.
+					ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è passivo. Non viene effettuata alcuna rimozione su Allarmi.war");
+					continue;
+				}
+				if(allarme.getEnabled()==0){
+					// NOTA: il tipo di allarme non è modificabile.
+					ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è disabilitato. Non viene effettuata alcuna rimozione su Allarmi.war");
+					continue;
+				}
 					
-					String prefixUrl = confCore.getAllarmiConfig().getAllarmiActiveServiceUrl();
-					if(prefixUrl.endsWith("/")==false){
-						prefixUrl = prefixUrl + "/";
-					}
-					prefixUrl = prefixUrl + allarme.getNome() + "?";
-					urls.add(prefixUrl + confCore.getAllarmiConfig().getAllarmiActiveServiceUrl_SuffixStopAlarm());
-
-					allarmiToRemove.add(allarmeToRemove);
+				String prefixUrl = confCore.getAllarmiConfig().getAllarmiActiveServiceUrl();
+				if(prefixUrl.endsWith("/")==false){
+					prefixUrl = prefixUrl + "/";
+				}
+				prefixUrl = prefixUrl + allarme.getNome() + "?";
+				urls.add(prefixUrl + confCore.getAllarmiConfig().getAllarmiActiveServiceUrl_SuffixStopAlarm());
+				 
 			}
 			
 			/* ******** INVIO NOTIFICHE *************** */
@@ -143,7 +144,7 @@ public final class ConfigurazioneAllarmiDel extends Action {
 			
 			
 
-			Object[] oggetti = allarmiToRemove.toArray(new Plugin[allarmiToRemove.size()]); 
+			Object[] oggetti = allarmiToRemove.toArray(new Allarme[allarmiToRemove.size()]); 
 			confCore.performDeleteOperation(userLogin, confHelper.smista(), oggetti);
 			// Preparo il menu
 			confHelper.makeMenu();
@@ -159,8 +160,6 @@ public final class ConfigurazioneAllarmiDel extends Action {
 			List<ConfigurazioneAllarmeBean> lista = confCore.allarmiList(ricerca, ruoloPorta, nomePorta); 
 			
 			confHelper.prepareAllarmiList(ricerca, lista, ruoloPorta, nomePorta, serviceBinding);
-						
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

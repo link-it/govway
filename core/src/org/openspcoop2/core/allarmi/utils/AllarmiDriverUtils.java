@@ -200,6 +200,27 @@ public class AllarmiDriverUtils {
 		} 
 	}
 	
+	public static Allarme getAllarme(String nome, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "getAllarmeByNome";
+		
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
+			
+			IAllarmeServiceSearch allarmiServiceSearch = jdbcServiceManager.getAllarmeServiceSearch();
+			
+			IdAllarme id = new IdAllarme();
+			id.setNome(nome);
+			
+			return allarmiServiceSearch.get(id);
+			
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		}
+	}
+	
 	public static Allarme getAllarme(Long id, Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "getAllarme";
 		

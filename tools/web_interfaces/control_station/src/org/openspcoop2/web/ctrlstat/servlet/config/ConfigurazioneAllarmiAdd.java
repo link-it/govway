@@ -43,6 +43,7 @@ import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -165,7 +166,17 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			
 			List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters = confHelper.readParametriFromSession(session);
 			
-			List<Plugin> listaPlugin = confCore.pluginsAllarmiList();
+			String applicabilita = Filtri.FILTRO_APPLICABILITA_VALORE_CONFIGURAZIONE;
+			if(ruoloPorta!=null) {
+				if(RuoloPorta.DELEGATA.equals(ruoloPorta)) {
+					applicabilita = Filtri.FILTRO_APPLICABILITA_VALORE_FRUIZIONE;
+				}
+				else {
+					applicabilita = Filtri.FILTRO_APPLICABILITA_VALORE_EROGAZIONE;
+				}
+			}
+			
+			List<Plugin> listaPlugin = confCore.pluginsAllarmiList(applicabilita, true);
 			int numeroPluginRegistrati = listaPlugin.size();
 			
 			Plugin plugin = confHelper.readPluginFromSession(session);

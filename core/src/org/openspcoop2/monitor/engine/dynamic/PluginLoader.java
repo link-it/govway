@@ -58,6 +58,9 @@ public class PluginLoader implements IPluginLoader {
 	public boolean isPluginManagerEnabled() {
 		return this.pluginManager!=null;
 	}
+	public void updateFromConsoleConfig(Logger log) throws Exception {
+		this.pluginManager.updateFromConsoleConfig(log);
+	}
 	
 	
 	// UTILITY

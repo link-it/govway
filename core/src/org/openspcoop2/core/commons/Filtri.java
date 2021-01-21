@@ -88,6 +88,20 @@ public final class Filtri
 	public final static String FILTRO_RUOLO_VALORE_FRUIZIONE = "Fruizione";
 	public final static String FILTRO_RUOLO_VALORE_EROGAZIONE = "Erogazione";
 	
+	public final static String FILTRO_APPLICABILITA = "filtroRuolo";
+	public final static String FILTRO_APPLICABILITA_NOME = "Applicabilita";
+	public final static String FILTRO_APPLICABILITA_VALORE_QUALSIASI = "Qualsiasi";
+	public final static String FILTRO_APPLICABILITA_VALORE_FRUIZIONE = "Fruizione";
+	public final static String FILTRO_APPLICABILITA_VALORE_EROGAZIONE = "Erogazione";
+	public final static String FILTRO_APPLICABILITA_VALORE_IMPLEMENTAZIONE_API = "ImplementazioneApi";
+	public final static String FILTRO_APPLICABILITA_VALORE_CONFIGURAZIONE = "Configurazione";
+	
+	public final static String FILTRO_STATO = "filtroStato";
+	public final static String FILTRO_STATO_NOME = "Stato";
+	public final static String FILTRO_STATO_VALORE_QUALSIASI = "Qualsiasi";
+	public final static String FILTRO_STATO_VALORE_ABILITATO = "Abilitato";
+	public final static String FILTRO_STATO_VALORE_DISABILITATO = "Disabilitato";
+	
 	public final static String FILTRO_TIPO_POLICY = "filtroTipoPolicy";
 	public final static String FILTRO_TIPO_POLICY_BUILT_IN = "built-in";
 	public final static String FILTRO_TIPO_POLICY_UTENTE = "utente";

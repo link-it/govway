@@ -69,6 +69,16 @@ public class PluginManager {
 			log.error("Update plugin image failed: "+t.getMessage(),t);
 		}
 	}
+	public void updateFromConsoleConfig(Logger log) throws Exception {
+		try {
+			if(this.expireDate!=null) {
+				Date expired = new Date(this.expireDate.getTime()+1);
+				this.update(log, expired);
+			}
+		}catch(Throwable t) {
+			log.error("Update plugin image failed: "+t.getMessage(),t);
+		}
+	}
 	private void update(Logger log, Date nowDate) throws Exception {
 		
 		boolean update = false;

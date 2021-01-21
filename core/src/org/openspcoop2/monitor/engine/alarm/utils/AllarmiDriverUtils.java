@@ -82,6 +82,17 @@ public class AllarmiDriverUtils {
 			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		}
 	}
+	public static ConfigurazioneAllarmeBean getAllarme(String nome, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "getAllarmeByNome";
+		
+		try {
+			Allarme al = org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.getAllarme(nome, con, log, tipoDB);
+			Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), al.getTipo(), true, con, log, tipoDB);
+			return new ConfigurazioneAllarmeBean(al, plugin);
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		}
+	}
 
 	public static List<ConfigurazioneAllarmeHistoryBean> allarmiHistoryList(ISearch ricerca, Long idAllarme, Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "allarmiHistoryList";

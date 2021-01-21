@@ -157,9 +157,23 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 									
 									// gestisco caso speciale
 									boolean isCasoSpecialeQualsiasi = false;
+									
 									if(Filtri.FILTRO_RUOLO_NOME.equals(ppc.getNome()) && Filtri.FILTRO_RUOLO_VALORE_ENTRAMBI.equals(ppc.getValore())) {
 										isCasoSpecialeQualsiasi = true;
 									}
+									
+									if(Filtri.FILTRO_APPLICABILITA_NOME.equals(ppc.getNome())) {
+										if(Filtri.FILTRO_APPLICABILITA_VALORE_QUALSIASI.equals(ppc.getValore())) {
+											isCasoSpecialeQualsiasi = true;
+										}
+										else if(Filtri.FILTRO_APPLICABILITA_VALORE_FRUIZIONE.equals(filtro.getValue()) && Filtri.FILTRO_APPLICABILITA_VALORE_IMPLEMENTAZIONE_API.equals(ppc.getValore())) {
+											isCasoSpecialeQualsiasi = true;
+										} 
+										else if(Filtri.FILTRO_APPLICABILITA_VALORE_EROGAZIONE.equals(filtro.getValue()) && Filtri.FILTRO_APPLICABILITA_VALORE_IMPLEMENTAZIONE_API.equals(ppc.getValore())) {
+											isCasoSpecialeQualsiasi = true;
+										} 
+									}
+									
 									if(!isCasoSpecialeQualsiasi) {									
 										throw new NotFoundException("Filtro '"+ppc.getNome()+"' non soddisfatto (atteso:"+filtro.getValue()+" trovato:"+ppc.getValore()+")");
 									}
@@ -231,9 +245,23 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 									
 									// gestisco caso speciale
 									boolean isCasoSpecialeQualsiasi = false;
+									
 									if(Filtri.FILTRO_RUOLO_NOME.equals(ppc.getNome()) && Filtri.FILTRO_RUOLO_VALORE_ENTRAMBI.equals(ppc.getValore())) {
 										isCasoSpecialeQualsiasi = true;
 									}
+									
+									if(Filtri.FILTRO_APPLICABILITA_NOME.equals(ppc.getNome())) {
+										if(Filtri.FILTRO_APPLICABILITA_VALORE_QUALSIASI.equals(ppc.getValore())) {
+											isCasoSpecialeQualsiasi = true;
+										}
+										else if(Filtri.FILTRO_APPLICABILITA_VALORE_FRUIZIONE.equals(filtro.getValue()) && Filtri.FILTRO_APPLICABILITA_VALORE_IMPLEMENTAZIONE_API.equals(ppc.getValore())) {
+											isCasoSpecialeQualsiasi = true;
+										} 
+										else if(Filtri.FILTRO_APPLICABILITA_VALORE_EROGAZIONE.equals(filtro.getValue()) && Filtri.FILTRO_APPLICABILITA_VALORE_IMPLEMENTAZIONE_API.equals(ppc.getValore())) {
+											isCasoSpecialeQualsiasi = true;
+										} 
+									}
+									
 									if(!isCasoSpecialeQualsiasi) {									
 										throw new NotFoundException("Filtro '"+ppc.getNome()+"' non soddisfatto (atteso:"+filtro.getValue()+" trovato:"+ppc.getValore()+")");
 									}

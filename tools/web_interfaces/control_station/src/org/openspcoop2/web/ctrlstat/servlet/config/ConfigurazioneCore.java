@@ -505,7 +505,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<Plugin> pluginsAllarmiList() throws DriverConfigurazioneException {
+	public List<Plugin> pluginsAllarmiList(String applicabilita, boolean soloAbilitati) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "pluginsClassiList";
 		DriverControlStationDB driver = null;
@@ -513,6 +513,10 @@ public class ConfigurazioneCore extends ControlStationCore {
 		try {
 			ISearch ricercaPlugin = new Search();
 			ricercaPlugin.addFilter( Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.ALLARME.toString());
+			ricercaPlugin.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_APPLICABILITA_NOME, applicabilita);
+			if(soloAbilitati) {
+				ricercaPlugin.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_STATO, Filtri.FILTRO_STATO_VALORE_ABILITATO);
+			}
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
@@ -2079,6 +2083,26 @@ public class ConfigurazioneCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
 			return driver.getAllarme(id);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public ConfigurazioneAllarmeBean getAllarme(String nome) throws DriverControlStationException{ 
+		String nomeMetodo = "getAllarmeByNome";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getAllarme(nome);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

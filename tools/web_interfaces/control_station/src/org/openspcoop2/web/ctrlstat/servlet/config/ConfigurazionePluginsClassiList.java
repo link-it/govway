@@ -117,11 +117,11 @@ public final class ConfigurazionePluginsClassiList extends Action {
 	private void clearFiltriByPostBackTipoPlugin(ConfigurazioneHelper confHelper, int posizioneFiltroTipoPlugin, ISearch ricerca, int idLista) throws Exception {
 		String postBackElement = confHelper.getPostBackElementName();
 		if((Costanti.PARAMETRO_FILTER_VALUE+posizioneFiltroTipoPlugin).equals(postBackElement)) {
-			// verifico se si tratta del profilo di interoperabilita.
 			ricerca.clearFilter(idLista, PluginCostanti.FILTRO_RUOLO_NOME);
 			ricerca.clearFilter(idLista, PluginCostanti.FILTRO_SERVICE_HANDLER_NOME);
 			ricerca.clearFilter(idLista, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_NOME);
 			ricerca.clearFilter(idLista, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_NOME);
+			ricerca.clearFilter(idLista, PluginCostanti.FILTRO_APPLICABILITA_NOME);
 		}
 	}
 }

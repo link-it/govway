@@ -7419,11 +7419,6 @@ public class DBOggettiInUsoUtils  {
 					msg += "utilizzato nelle Porte Inbound (Allarmi): " + formatList(messages,separator) + separator;
 				}
 				break;
-			case ALLARMI:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato negli Allarmi: " + formatList(messages,separator) + separator;
-				}
-				break;
 			case ALLARMI_MAPPING_PD:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato negli Allarmi delle Fruizioni: " + formatList(messages,separator) + separator;
@@ -7432,6 +7427,11 @@ public class DBOggettiInUsoUtils  {
 			case ALLARMI_PD:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Porte Outbound (Allarmi): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case ALLARMI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato negli Allarmi definiti nella configurazione generale: " + formatList(messages,separator) + separator;
 				}
 				break;
 				

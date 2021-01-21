@@ -16711,7 +16711,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				postBack_viaPOST);
 	}
 	private void addCustomField(TipoPlugin tipoPlugin,
-			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin (o anche configurazione per gli allarmi)
 			String fase,
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, 
@@ -16752,6 +16752,10 @@ public class ConsoleHelper implements IConsoleHelper {
 				break;
 			}
 			case ALLARME:
+				if(ruolo!=null && !"".equals(ruolo)) {
+					ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_APPLICABILITA_NOME, ruolo);
+				}
+				break;
 			case BEHAVIOUR:
 			case CONNETTORE:
 			case RATE_LIMITING:

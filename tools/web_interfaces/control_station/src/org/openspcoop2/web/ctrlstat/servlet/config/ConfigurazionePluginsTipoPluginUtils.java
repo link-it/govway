@@ -221,6 +221,19 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				sb.append(tipoMessaggio).append(" (").append(faseProcessamento).append(")");
 				return sb.toString();
 			case ALLARME:
+				// una property con nome = Applicabilita
+				for (PluginProprietaCompatibilita prop : plugin.getPluginProprietaCompatibilitaList()) {
+					if(sb.length() > 0)
+						sb.append(", ");
+					
+					if(PluginCostanti.FILTRO_APPLICABILITA_VALORE_IMPLEMENTAZIONE_API.equals(prop.getValore())) {
+						sb.append(PluginCostanti.FILTRO_APPLICABILITA_LABEL_IMPLEMENTAZIONE_API);
+					}
+					else {
+						sb.append(prop.getValore());
+					}
+				}
+				return sb.toString();
 			case BEHAVIOUR:
 			case CONNETTORE:
 			case RATE_LIMITING:
@@ -239,7 +252,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		return null;
 	}
 	
-	public static List<PluginProprietaCompatibilita> getApplicabilitaClassePlugin(TipoPlugin tipoPlugin, String ruolo, String shTipo, String mhTipo, String mhRuolo) {
+	public static List<PluginProprietaCompatibilita> getApplicabilitaClassePlugin(TipoPlugin tipoPlugin, String ruolo, String shTipo, String mhTipo, String mhRuolo, String applicabilita) {
 		List<PluginProprietaCompatibilita> lista = new ArrayList<>();
 			
 			switch (tipoPlugin) {
@@ -278,6 +291,13 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				lista.add(propMhRuolo);
 				break;
 			case ALLARME:
+				PluginProprietaCompatibilita propApplicabilita = new PluginProprietaCompatibilita();
+
+				propApplicabilita.setNome(PluginCostanti.FILTRO_APPLICABILITA_NOME);
+				propApplicabilita.setValore(applicabilita);
+				
+				lista.add(propApplicabilita);
+				break;
 			case BEHAVIOUR:
 			case CONNETTORE:
 			case RATE_LIMITING:
@@ -492,7 +512,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		
 	} 
 	
-	public static Vector<DataElement> getSezioneDinamicaClassePlugin(Vector<DataElement> dati, TipoPlugin tipoPlugin, String ruolo, String shTipo, String mhTipo, String mhRuolo,
+	public static Vector<DataElement> getSezioneDinamicaClassePlugin(Vector<DataElement> dati, TipoPlugin tipoPlugin, String ruolo, String shTipo, String mhTipo, String mhRuolo, String applicabilita,
 			boolean integrationManagerEnabled) {
 			switch (tipoPlugin) {
 			case AUTENTICAZIONE:
@@ -506,7 +526,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deRuolo.setType(DataElementType.SELECT);
 				deRuolo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO);
 				deRuolo.setSelected(ruolo);
-				deRuolo.setPostBack(true);
+				deRuolo.setPostBack(true); // serve per 'info' del className
 				dati.addElement(deRuolo);
 				
 				break;
@@ -520,7 +540,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deShTipo.setType(DataElementType.SELECT);
 				deShTipo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_SERVICE_HANDLER);
 				deShTipo.setSelected(shTipo);
-				deShTipo.setPostBack(true);
+				deShTipo.setPostBack(true); // serve per 'info' del className
 				dati.addElement(deShTipo);
 				break;
 			}
@@ -534,7 +554,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deMhRuolo.setType(DataElementType.SELECT);
 				deMhRuolo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER);
 				deMhRuolo.setSelected(mhRuolo);
-				deMhRuolo.setPostBack(true);
+				deMhRuolo.setPostBack(true); // serve per 'info' del className
 				dati.addElement(deMhRuolo);
 				
 				DataElement deMhTipo = new DataElement();
@@ -547,12 +567,25 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deMhTipo.setType(DataElementType.SELECT);
 				deMhTipo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER);
 				deMhTipo.setSelected(mhTipo);
-				deMhTipo.setPostBack(true);
+				deMhTipo.setPostBack(true); // serve per 'info' del className
 				dati.addElement(deMhTipo);
 				
 				break;
 			}
 			case ALLARME:
+				
+				DataElement deApplicabilita = new DataElement();
+				deApplicabilita.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_APPLICABILITA);
+				deApplicabilita.setLabels(PluginCostanti.FILTRO_APPLICABILITA_LABELS);
+				deApplicabilita.setValues(PluginCostanti.FILTRO_APPLICABILITA_VALORI);
+				deApplicabilita.setType(DataElementType.SELECT);
+				deApplicabilita.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_APPLICABILITA);
+				deApplicabilita.setSelected(applicabilita);
+				deApplicabilita.setPostBack(false); // non serve per 'info' del className, non cambia
+				dati.addElement(deApplicabilita);
+				
+				break;
+				
 			case BEHAVIOUR:
 			case CONNETTORE:
 			case RATE_LIMITING:
@@ -619,7 +652,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case INTEGRAZIONE:
 			String filtroRuolo = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_RUOLO_NOME);
 			addFilterTipoPlugin(pd, log, PluginCostanti.FILTRO_RUOLO_NOME, PluginCostanti.FILTRO_RUOLO_LABEL, filtroRuolo, 
-					PluginCostanti.FILTRO_RUOLO_VALORI_SENZA_ENTRAMBI, PluginCostanti.FILTRO_RUOLO_VALORI_SENZA_ENTRAMBI, false, size);
+					PluginCostanti.FILTRO_RUOLO_VALORI_SENZA_ENTRAMBI, PluginCostanti.FILTRO_RUOLO_LABELS_SENZA_ENTRAMBI, false, size);
 			break;
 		case SERVICE_HANDLER:{
 			
@@ -650,6 +683,10 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			break;
 		}
 		case ALLARME:
+			String filtroApplicabilita = SearchUtils.getFilter(ricerca, idLista, PluginCostanti.FILTRO_APPLICABILITA_NOME);
+			addFilterTipoPlugin(pd, log, PluginCostanti.FILTRO_APPLICABILITA_NOME, PluginCostanti.FILTRO_APPLICABILITA_LABEL, filtroApplicabilita, 
+					PluginCostanti.FILTRO_APPLICABILITA_VALORI_SENZA_QUALSIASI, PluginCostanti.FILTRO_APPLICABILITA_LABELS_SENZA_QUALSIASI, false, size);
+			break;
 		case BEHAVIOUR:
 		case CONNETTORE:
 		case RATE_LIMITING:

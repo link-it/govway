@@ -61,6 +61,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.utils.serialization.IOException;
@@ -441,7 +442,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// Allarme
 			else if(o instanceof Allarme) {
 				Allarme allarme = (Allarme) o;
-				String id = allarme.getNome()+"-"+allarme.getTipo();
+				String id = allarme.getNome();
 				if(this.prefix){
 					return "[Allarme] "+ id;
 				}else{
@@ -904,17 +905,6 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoDatiAutorizzazione.class.getSimpleName());
 			oggetti.add(SystemProperties.class.getSimpleName());
 			
-			// Username
-			oggetti.add(User.class.getSimpleName());
-			
-			// Auditing
-			oggetti.add("ConfigurazioneAuditing");
-			oggetti.add("FiltroAuditing");
-			oggetti.add("OperazioneRegistrataTramiteAuditing");
-			
-			// Monitoraggio Applicativo
-			oggetti.add("EliminazioneMessaggiTramiteMonitoraggio");
-			
 			// Configurazione Controllo Traffico
 			oggetti.add("ConfigurazioneControlloTraffico");
 			oggetti.add(ConfigurazionePolicy.class.getSimpleName());
@@ -926,6 +916,24 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// RegistroPlugins
 			oggetti.add(RegistroPlugin.class.getSimpleName());
 			oggetti.add(RegistroPluginArchivio.class.getSimpleName());
+			
+			// Plugin
+			oggetti.add(Plugin.class.getSimpleName());
+			
+			// Allarmi
+			oggetti.add(Allarme.class.getSimpleName());
+			oggetti.add(AllarmeHistory.class.getSimpleName());
+			
+			// Username
+			oggetti.add(User.class.getSimpleName());
+			
+			// Auditing
+			oggetti.add("ConfigurazioneAuditing");
+			oggetti.add("FiltroAuditing");
+			oggetti.add("OperazioneRegistrataTramiteAuditing");
+			
+			// Monitoraggio Applicativo
+			oggetti.add("EliminazioneMessaggiTramiteMonitoraggio");
 			
 			// IExtendedBean
 			oggetti.add("ExtendedBean");
@@ -965,17 +973,6 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoDatiAutorizzazione.class.getName());
 			oggetti.add(SystemProperties.class.getName());
 			
-			// Username
-			oggetti.add(User.class.getName());
-			
-			// Auditing
-			oggetti.add(org.openspcoop2.web.lib.audit.dao.Configurazione.class.getName());
-			oggetti.add(Filtro.class.getName());
-			oggetti.add(Operation.class.getName());
-			
-			// Monitoraggio Applicativo
-			oggetti.add(FilterSearch.class.getName());
-			
 			// Configurazione Controllo del Traffico
 			oggetti.add(ConfigurazioneGenerale.class.getName());
 			oggetti.add(ConfigurazionePolicy.class.getName());
@@ -987,6 +984,24 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// RegistroPlugins
 			oggetti.add(RegistroPlugin.class.getName());
 			oggetti.add(RegistroPluginArchivio.class.getName());
+
+			// Plugin
+			oggetti.add(Plugin.class.getName());
+			
+			// Allarmi
+			oggetti.add(Allarme.class.getName());
+			oggetti.add(AllarmeHistory.class.getName());
+			
+			// Username
+			oggetti.add(User.class.getName());
+			
+			// Auditing
+			oggetti.add(org.openspcoop2.web.lib.audit.dao.Configurazione.class.getName());
+			oggetti.add(Filtro.class.getName());
+			oggetti.add(Operation.class.getName());
+			
+			// Monitoraggio Applicativo
+			oggetti.add(FilterSearch.class.getName());
 			
 			// IExtendedBean
 			oggetti.add(IExtendedBean.class.getName());
@@ -1036,6 +1051,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 		}
 		else if(o instanceof IExtendedBean){
 			return "ExtendedBean-"+o.getClass().getSimpleName();
+		}
+		else if(o instanceof ConfigurazioneAllarmeBean){
+			return Allarme.class.getSimpleName();
 		}
 		else{
 			return o.getClass().getSimpleName();

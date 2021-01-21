@@ -742,6 +742,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ALLARME = "Allarme";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_FILTRO = "Filtro";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI = "Informazioni Generali";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_PLUGIN = "Plugin";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_STATO_ALLARME = "Stato Allarme";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI_FREQUENZA = "Frequenza";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI = "Parametri";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_EMAIL = "Notifica via Email";
@@ -1203,6 +1205,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_SERVICE_HANDLER = "pcFSH";
 	public final static String PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER = "pcFFMH";
 	public final static String PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER = "pcFRMH";
+	public final static String PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_APPLICABILITA = "pcFAppl";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_FIRST_TIME = "allFirstTime";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME = "allId";
@@ -1720,6 +1723,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ULTIMO_AGGIORNAMENTO = "Ultimo Aggiornamento";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_APPLICABILITA = "Applicabilit&agrave;";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE = "Sorgente";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ARCHIVIO = "Archivio";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN = "Classi di Plugin";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_TIPO_SORGENTE = "Tipo Sorgente";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DATA_REGISTRAZIONE = "Data Registrazione";
@@ -1763,12 +1767,13 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_SERVICE_HANDLER = PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL;
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL;
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER = PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_LABEL;
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_APPLICABILITA = PluginCostanti.FILTRO_APPLICABILITA_LABEL;
 	
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME = "Id";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO = "Tipo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO = "Abilitato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN = "Plugin";
@@ -1789,7 +1794,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI = "Archivio Stati";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED = "Acknowledge";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT = "Notifica via Email";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT_ABILITATO = "Abilitato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT_ABILITATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL = "Destinatari Email";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL_NOTE = "Indicare una o più e-mail separandole con la virgola ','";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING = "Notifica Warning";
@@ -1798,7 +1803,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT = "Subject";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY = "Body";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT = "Notifica Monitoraggio Esterno";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT_ABILITATO = "Abilitato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT_ABILITATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT = "Notifica Warning";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE = "Acknowledge";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE_NOTE = "Viene invocato lo script, ad ogni intervallo di frequenza, fino a che non viene effettuato un ack manuale dell'allarme";
@@ -2165,7 +2170,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_INTERVALLO_OSSERVAZIONE_DEFAULT = TipoPeriodoRealtime.ORARIO.getValue();
 	
 	public final static String DEFAULT_VALUE_NESSUNO = "[Nessuno]"; 
-	public final static String LABEL_DEFAULT_VALUE_NESSUNO = "[Nessuno]";
+	public final static String LABEL_DEFAULT_VALUE_NESSUNO = "-"; //"[Nessuno]";
 	
 	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA = "Attiva"; 
 	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA = "Passiva";
@@ -2198,8 +2203,8 @@ public class ConfigurazioneCostanti {
 			ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO_NO
 	};
 	
-	public final static String LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO_SI = "Si"; 
-	public final static String LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO_NO = "No";
+	public final static String LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO_SI = StatoFunzionalita.ABILITATO.getValue(); 
+	public final static String LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO_NO = StatoFunzionalita.DISABILITATO.getValue();
 	
 	public final static String[] LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO = {
 			ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO_SI,
@@ -2266,7 +2271,9 @@ public class ConfigurazioneCostanti {
 	public final static String MESSAGGIO_ERRORE_ALLARME_FREQUENZA_NON_VALIDA = "Indicare una frequenza di attivazione (maggiore di 0) per il controllo dello stato dell'allarme";
 	public final static String MESSAGGIO_ERRORE_ALLARME_EMAIL_VUOTA = "Almeno un indirizzo e-mail è obbligatorio";
 	public final static String MESSAGGIO_ERRORE_ALLARME_EMAIL_NON_VALIDO = "L''indirizzo e-mail fornito [{0}] non risulta valido";
-	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO = "Esiste gi&agrave; un allarme con questo nome.";
+	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE = "Il nome indicato è già stato associato ad un allarme registrato nella configurazione generale";
+	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_EROGAZIONE = "Il nome indicato è già stato associato ad un allarme registrato nell''erogazione {0}";
+	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_FRUIZIONE = "Il nome indicato è già stato associato ad un allarme registrato nella fruizione ${0}";
 	public final static String MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA = "Allarme {0} salvato correttamente, ma invio notifica terminato con errore: {1}";
 	public final static String MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA = "Allarmi eliminati correttamente, ma invio notifica terminato con errore: {0}";
 

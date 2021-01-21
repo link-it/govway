@@ -155,6 +155,7 @@ import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.pdd.timers.TimerState;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
@@ -17073,6 +17074,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DATA_REGISTRAZIONE);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_TIPO_SORGENTE);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ARCHIVIO);
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
@@ -17122,7 +17124,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(registro.getDir());
 						break;
 					case JAR:
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD.toLowerCase()+" '"+registro.getNome()+"'");
+						de.setValue(registro.getNome());
+						break;
+					case URL:
+						de.setValue(registro.getUrl());
+						break;
+					}
+					e.addElement(de);
+					
+					// Archivio
+					de = new DataElement();
+					switch (sorgente) {
+					case DIR:
+						de.setValue("-");
+						break;
+					case JAR:
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD.toLowerCase());
 						de.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
 								new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO,  ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ARCHIVIO_JAR),
 								new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ARCHIVIO_JAR),
@@ -17131,7 +17148,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setDisabilitaAjaxStatus();
 						break;
 					case URL:
-						de.setValue(registro.getUrl());
+						de.setValue("-");
 						break;
 					}
 					e.addElement(de);
@@ -17290,7 +17307,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	public Vector<DataElement> addPluginClassiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idPluginS,
 			TipoPlugin tipoPlugin, String tipo, String label, String className, String stato, String descrizione, String ruolo,
-			String shTipo, String mhTipo, String mhRuolo) {
+			String shTipo, String mhTipo, String mhRuolo,
+			String applicabilita) {
 		
 		DataElement dataElement = new DataElement();
 		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_CLASSI_PLUGIN);
@@ -17337,7 +17355,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// sezione dinamica
 		if(tipoPlugin!=null) {
-			dati = ConfigurazionePluginsTipoPluginUtils.getSezioneDinamicaClassePlugin(dati, tipoPlugin, ruolo, shTipo, mhTipo, mhRuolo,
+			dati = ConfigurazionePluginsTipoPluginUtils.getSezioneDinamicaClassePlugin(dati, tipoPlugin, ruolo, shTipo, mhTipo, mhRuolo, applicabilita,
 					this.confCore.isIntegrationManagerEnabled());
 		}
 		
@@ -17401,7 +17419,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	public boolean pluginClassiCheckData(TipoOperazione tipoOp, Plugin oldPlugin, String idPluginS, TipoPlugin tipoPlugin, String tipo,
-			String label, String className, String stato, String descrizione, String ruolo, String shTipo, String mhTipo, String mhRuolo) throws Exception {
+			String label, String className, String stato, String descrizione, String ruolo, String shTipo, String mhTipo, String mhRuolo, String applicabilita) throws Exception {
 		
 		try {
 			
@@ -17662,9 +17680,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// setto le label delle colonne	
 			List<String> lstLabels = new ArrayList<>();
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
+			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
+			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
@@ -17691,22 +17709,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setWidthPx(10);
 					de.setType(DataElementType.CHECKBOX);
 					if(allarme.getEnabled() == 1){
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+//						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
-					}
-					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
-					}
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
-					e.addElement(de);
-					
-					// Stato
-					de = new DataElement();
-					
-					if(allarme.getEnabled() == 1) {
 						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
 							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
@@ -17717,17 +17722,40 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 						}
-					} else {
+					}
+					else{
 						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
-					
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
 					e.addElement(de);
 					
-					// Tipo
-					de = new DataElement();
-					de.setValue(allarme.getTipo());
-					e.addElement(de);
+					// Stato
+//					de = new DataElement();
+//					
+//					if(allarme.getEnabled() == 1) {
+//						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+//						}
+//					} else {
+//						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+//					}
+//					
+//					e.addElement(de);
+					
+//					// Tipo
+//					de = new DataElement();
+//					de.setValue(allarme.getTipo());
+//					e.addElement(de);
 					
 					// Nome 
 					de = new DataElement();
@@ -17988,7 +18016,67 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// controllo esistenza allarme con lo stesso nome			
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				if (existsAllarme) {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO); 
+					
+					ConfigurazioneAllarmeBean existsAllarmeBean = this.confCore.getAllarme(allarme.getNome());
+					if(existsAllarmeBean.getFiltro()!=null && existsAllarmeBean.getFiltro().isEnabled() &&
+							existsAllarmeBean.getFiltro().getRuoloPorta()!=null &&
+							StringUtils.isNotEmpty(existsAllarmeBean.getFiltro().getNomePorta())) {
+						if(org.openspcoop2.core.allarmi.constants.RuoloPorta.APPLICATIVA.equals(existsAllarmeBean.getFiltro().getRuoloPorta())) {
+							String descrPorta = null;
+							try {
+								IDPortaApplicativa idPA = new IDPortaApplicativa();
+								idPA.setNome(existsAllarmeBean.getFiltro().getNomePorta());
+								
+								PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
+								MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+								
+								String suffixGruppo = "";
+								if(!mappingPA.isDefault()) {
+									suffixGruppo = " (Gruppo: "+mappingPA.getDescrizione()+")";
+								}
+								String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
+								descrPorta="["+NamingUtils.getLabelProtocollo(protocollo)+"] "+
+										NamingUtils.getLabelAccordoServizioParteSpecifica(protocollo, mappingPA.getIdServizio())+
+										suffixGruppo;
+							}catch(Exception e) {
+								this.log.error("Comprensione erogazione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
+								descrPorta = existsAllarmeBean.getFiltro().getNomePorta();
+							}
+							
+							this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_EROGAZIONE, descrPorta));
+						}
+						else if(org.openspcoop2.core.allarmi.constants.RuoloPorta.DELEGATA.equals(existsAllarmeBean.getFiltro().getRuoloPorta())) {
+							String descrPorta = null;
+							try {
+								IDPortaDelegata idPD = new IDPortaDelegata();
+								idPD.setNome(existsAllarmeBean.getFiltro().getNomePorta());
+								
+								PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
+								MappingFruizionePortaDelegata mappingPD = this.porteDelegateCore.getMappingFruizionePortaDelegata(pd);
+								
+								String suffixGruppo = "";
+								if(!mappingPD.isDefault()) {
+									suffixGruppo = " (Gruppo: "+mappingPD.getDescrizione()+")";
+								}
+								String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(pd.getTipoSoggettoProprietario());
+								descrPorta="["+NamingUtils.getLabelProtocollo(protocollo)+"] "+
+										NamingUtils.getLabelAccordoServizioParteSpecifica(protocollo, mappingPD.getIdServizio())+
+										" (Fruitore:"+NamingUtils.getLabelSoggetto(protocollo, new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()))+")"+
+										suffixGruppo;
+							}catch(Exception e) {
+								this.log.error("Comprensione fruizione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
+								descrPorta = existsAllarmeBean.getFiltro().getNomePorta();
+							}
+						
+							this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_FRUIZIONE, descrPorta));
+						}
+						else {
+							this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE);
+						}
+					}
+					else {
+						this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE);
+					}
 					return false;
 				}
 			}
@@ -18679,25 +18767,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
-		// nome
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
-		if(tipoOperazione.equals(TipoOperazione.ADD)){
-			de.setType(DataElementType.TEXT_EDIT);
-			if(first) {
-				de.setValue("");
-			} else {
-				de.setValue(allarme.getNome());
-			}
-			de.setRequired(true);
-		}
-		else{
-			de.setType(DataElementType.TEXT);
-			de.setValue(allarme.getNome());
-		}
-		dati.addElement(de);
-		
 		// descrizione solo output
 		if(StringUtils.isNotEmpty(allarme.getDescrizione())) {
 			de = new DataElement();
@@ -18737,18 +18806,41 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
+		// nome
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
+		if(tipoOperazione.equals(TipoOperazione.ADD)){
+			if(first || allarme.getPlugin() == null) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue("");
+			} else {
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setValue(allarme.getNome());
+			}
+			de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.TEXT);
+			de.setValue(allarme.getNome());
+		}
+		dati.addElement(de);
+				
 		// abilitato
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO); 
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
+		
 		de.setType(DataElementType.SELECT);
 		String [] abilitatoValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
 		String [] abilitatoLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
 		
 		de.setValues(abilitatoValues);
 		de.setLabels(abilitatoLabels);
+		
 		if(tipoOperazione.equals(TipoOperazione.ADD)){
-			if(first) {
+			if(first || allarme.getPlugin() == null) {
+				de.setType(DataElementType.HIDDEN);
 				de.setValue(ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO_SI);
 			} else {
 				de.setSelected(allarme.getEnabled()+"");
@@ -18808,6 +18900,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// field da visualizzare in modifica
 		if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_STATO_ALLARME);
+			dati.add(de);		
+			
 			// stato
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
@@ -18969,22 +19067,30 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		// Notifiche Email
-		de = new DataElement();
-		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_EMAIL); 
-		dati.add(de);
+		if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_EMAIL); 
+			dati.add(de);
+		}
 		
 		// abilitato inviaEmailAlert
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT_ABILITATO); 
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT);
-		de.setType(DataElementType.SELECT);
-		String [] inviaEmailAlertValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-		String [] inviaEmailAlertLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-		de.setValues(inviaEmailAlertValues);
-		de.setLabels(inviaEmailAlertLabels);
-		de.setSelected(allarme.getMail().getInviaAlert()+"");
-		de.setPostBack_viaPOST(true);
+		if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+			de.setType(DataElementType.SELECT);
+			String [] inviaEmailAlertValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+			String [] inviaEmailAlertLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+			de.setValues(inviaEmailAlertValues);
+			de.setLabels(inviaEmailAlertLabels);
+			de.setSelected(allarme.getMail().getInviaAlert()+"");
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(allarme.getMail().getInviaAlert()+"");
+		}
 		dati.addElement(de);
 		
 		if(allarme.getMail().getInviaAlert() == 1) {
@@ -18992,21 +19098,32 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
-			de.setType(DataElementType.TEXT_EDIT);
+			if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL_NOTE);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
 			de.setValue(allarme.getMail().getDestinatari());
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL_NOTE);
 			dati.addElement(de);
 			
 			// notifica warning
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING); 
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING);
-			de.setType(DataElementType.SELECT);
-			String [] notificaWarningValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-			String [] notificaWarinigLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-			de.setValues(notificaWarningValues);
-			de.setLabels(notificaWarinigLabels);
-			de.setSelected(allarme.getMail().getInviaWarning()+"");
+			if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+				de.setType(DataElementType.SELECT);
+				String [] notificaWarningValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+				String [] notificaWarinigLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+				de.setValues(notificaWarningValues);
+				de.setLabels(notificaWarinigLabels);
+				de.setSelected(allarme.getMail().getInviaWarning()+"");
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(allarme.getMail().getInviaWarning()+"");
+			}
 			dati.addElement(de);
 			
 			if(this.confCore.getAllarmiConfig().isAllarmiNotificaMailVisualizzazioneCompleta()) {
@@ -19014,20 +19131,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE); 
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE);
-				de.setType(DataElementType.SELECT);
-				String [] mailAckModeValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-				String [] mailAckModeLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-				de.setValues(mailAckModeValues);
-				de.setLabels(mailAckModeLabels);
-				de.setSelected(allarme.getMail().getAckMode()+"");
-				de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE_NOTE);
+				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+					de.setType(DataElementType.SELECT);
+					String [] mailAckModeValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+					String [] mailAckModeLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+					de.setValues(mailAckModeValues);
+					de.setLabels(mailAckModeLabels);
+					de.setSelected(allarme.getMail().getAckMode()+"");
+					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE_NOTE);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(allarme.getMail().getAckMode()+"");
+				}
 				dati.addElement(de);
 				
 				// Subject
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
-				de.setType(DataElementType.TEXT_EDIT);
+				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+					de.setType(DataElementType.TEXT_EDIT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
 				de.setValue(allarme.getMail().getSubject());
 				dati.addElement(de);
 				
@@ -19035,7 +19163,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY);
-				de.setType(DataElementType.TEXT_AREA);
+				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+					de.setType(DataElementType.TEXT_AREA);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
 				de.setValue(allarme.getMail().getBody());
 				dati.addElement(de);
 			}
@@ -19043,22 +19176,30 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		// Notifiche monitoraggio esterno
-		de = new DataElement();
-		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_MONITORAGGIO_ESTERNO); 
-		dati.add(de);
+		if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_MONITORAGGIO_ESTERNO); 
+			dati.add(de);
+		}
 		
 		// abilitato invocaScriptAlert
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT_ABILITATO); 
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT);
-		de.setType(DataElementType.SELECT);
-		String [] invocaScriptAlertValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-		String [] invocaScriptAlertLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-		de.setValues(invocaScriptAlertValues);
-		de.setLabels(invocaScriptAlertLabels);
-		de.setSelected(allarme.getScript().getInvocaAlert()+"");
-		de.setPostBack_viaPOST(true);
+		if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+			de.setType(DataElementType.SELECT);
+			String [] invocaScriptAlertValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+			String [] invocaScriptAlertLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+			de.setValues(invocaScriptAlertValues);
+			de.setLabels(invocaScriptAlertLabels);
+			de.setSelected(allarme.getScript().getInvocaAlert()+"");
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(allarme.getScript().getInvocaAlert()+"");
+		}
 		dati.addElement(de);
 		
 		if(allarme.getScript().getInvocaAlert() == 1) {
@@ -19066,12 +19207,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT); 
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT);
-			de.setType(DataElementType.SELECT);
-			String [] notificaWarningValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-			String [] notificaWarinigLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-			de.setValues(notificaWarningValues);
-			de.setLabels(notificaWarinigLabels);
-			de.setSelected(allarme.getScript().getInvocaWarning()+"");
+			if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+				de.setType(DataElementType.SELECT);
+				String [] notificaWarningValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+				String [] notificaWarinigLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+				de.setValues(notificaWarningValues);
+				de.setLabels(notificaWarinigLabels);
+				de.setSelected(allarme.getScript().getInvocaWarning()+"");
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(allarme.getScript().getInvocaWarning()+"");
+			}
 			dati.addElement(de);
 			
 			if(this.confCore.getAllarmiConfig().isAllarmiMonitoraggioEsternoVisualizzazioneCompleta()) {
@@ -19079,20 +19226,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE); 
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE);
-				de.setType(DataElementType.SELECT);
-				String [] scriptAckModeValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-				String [] scriptAckModeLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-				de.setValues(scriptAckModeValues);
-				de.setLabels(scriptAckModeLabels);
-				de.setSelected(allarme.getScript().getAckMode()+"");
-				de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE_NOTE);
+				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+					de.setType(DataElementType.SELECT);
+					String [] scriptAckModeValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+					String [] scriptAckModeLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
+					de.setValues(scriptAckModeValues);
+					de.setLabels(scriptAckModeLabels);
+					de.setSelected(allarme.getScript().getAckMode()+"");
+					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE_NOTE);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(allarme.getScript().getAckMode()+"");
+				}
 				dati.addElement(de);
 				
 				// Subject
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH);
-				de.setType(DataElementType.TEXT_EDIT);
+				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+					de.setType(DataElementType.TEXT_EDIT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
 				de.setValue(allarme.getScript().getCommand());
 				dati.addElement(de);
 				
@@ -19100,7 +19258,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS);
-				de.setType(DataElementType.TEXT_EDIT);
+				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
+					de.setType(DataElementType.TEXT_EDIT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
 				de.setValue(allarme.getScript().getArgs());
 				dati.addElement(de);
 			}

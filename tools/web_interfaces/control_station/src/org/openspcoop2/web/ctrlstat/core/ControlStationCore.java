@@ -117,6 +117,8 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
+import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
@@ -7703,6 +7705,14 @@ public class ControlStationCore {
 				}
 				
 			}
+		}
+	}
+	
+	public void updatePluginClassLoader() throws Exception {
+		// Aggiorno classLoader interno
+		PluginLoader pluginLoader = ((PluginLoader)CorePluginLoader.getInstance());
+		if(pluginLoader.isPluginManagerEnabled()) {
+			pluginLoader.updateFromConsoleConfig(log);
 		}
 	}
 }

@@ -1394,6 +1394,50 @@ public class ConfigurazionePdD  {
 											}
 
 										}
+										else if(TipoPlugin.ALLARME.equals(tipoPlugin) && this.openspcoopProperties.isAllarmiEnabled()) {
+											
+											NameValue nvFruizione = new NameValue(PluginCostanti.FILTRO_APPLICABILITA_NOME, PluginCostanti.FILTRO_APPLICABILITA_VALORE_FRUIZIONE);
+											try{
+												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvFruizione));
+												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvFruizione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											try{
+												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvFruizione));
+												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvFruizione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+
+											NameValue nvErogazione = new NameValue(PluginCostanti.FILTRO_APPLICABILITA_NOME, PluginCostanti.FILTRO_APPLICABILITA_VALORE_EROGAZIONE);
+											try{
+												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvErogazione));
+												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvErogazione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											try{
+												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvErogazione));
+												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvErogazione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											
+											NameValue nvConfigurazione = new NameValue(PluginCostanti.FILTRO_APPLICABILITA_NOME, PluginCostanti.FILTRO_APPLICABILITA_VALORE_CONFIGURAZIONE);
+											try{
+												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvConfigurazione));
+												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvConfigurazione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											try{
+												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvConfigurazione));
+												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvConfigurazione);
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										}
 										else {
 											try{
 												this.cache.remove(_getKey_PluginClassName(idPlugin.getTipoPlugin(),idPlugin.getTipo()));

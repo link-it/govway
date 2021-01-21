@@ -222,6 +222,9 @@ public final class ConfigurazionePluginsArchiviAdd extends Action {
 			
 			confCore.performCreateOperation(userLogin, confHelper.smista(), registro);
 			
+			// Aggiorno classLoader interno
+			confCore.updatePluginClassLoader();
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

@@ -100,6 +100,9 @@ public final class ConfigurazionePluginsArchiviJarDel extends Action {
 			
 			registro.setData(new Date());
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), registro);
+			
+			// Aggiorno classLoader interno
+			confCore.updatePluginClassLoader();
 
 			// Preparo il menu
 			confHelper.makeMenu();
