@@ -43,6 +43,7 @@ import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
+import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -181,7 +182,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			
 			Plugin plugin = confHelper.readPluginFromSession(session);
 			allarme.setPlugin(plugin);
-			
+						
 			// Dati Attivazione
 			String errorAttivazione = confHelper.readAllarmeFromRequest(tipoOperazione, first, allarme, alarmEngineConfig, plugin, parameters); 
 			if(errorAttivazione!=null){
@@ -254,7 +255,14 @@ public class ConfigurazioneAllarmiAdd extends Action {
 							allarme.setTipo(allarme.getPlugin().getTipo());
 							try{
 								Context context = confHelper.createAlarmContext(allarme, parameters);	
-								allarme.setNome(AllarmiUtils.getNomeSuggerito(allarme.getNome(), allarme, ControlStationCore.getLog(), context));
+								
+								allarme.setAlias(AllarmiUtils.costruisciAliasAllarme(allarme, ControlStationCore.getLog(), context));
+								
+								int counter = confCore.getFreeCounterForAlarm(allarme.getPlugin().getTipo());
+								allarme.setNome(allarme.getPlugin().getTipo()+AllarmiDriverUtils.getFreeCounterSeparatorCharForAlarm()+counter);
+								
+								allarme.setDescrizione(allarme.getPlugin().getDescrizione());
+								
 								IDynamicLoader dl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, allarme.getPlugin().getTipo(), allarme.getPlugin().getClassName(), ControlStationCore.getLog());
 								IAlarmProcessing alarm = (IAlarmProcessing) dl.newInstance();
 								switch (alarm.getAlarmType()) {

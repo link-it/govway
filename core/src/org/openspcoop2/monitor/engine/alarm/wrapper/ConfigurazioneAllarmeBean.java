@@ -103,10 +103,6 @@ public class ConfigurazioneAllarmeBean extends Allarme{
 		return tmp;
 	}
 	
-	public String getDescrizione(){
-		return this.plugin != null ? this.plugin.getDescrizione() : null;
-	}
-	
 	public String getDescrizioneAbbr(){
 		String tmp = this.getDescrizione();
 		

@@ -1212,6 +1212,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO = "allAbilitato";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO = "allStato";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME = "allNome";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS = "allAlias";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO = "allTipo";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE = "allDescr";
 	
@@ -1771,7 +1772,8 @@ public class ConfigurazioneCostanti {
 	
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME = "Id";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME = "Identificativo Unico";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO = "Stato";
@@ -2271,6 +2273,7 @@ public class ConfigurazioneCostanti {
 	public final static String MESSAGGIO_ERRORE_ALLARME_FREQUENZA_NON_VALIDA = "Indicare una frequenza di attivazione (maggiore di 0) per il controllo dello stato dell'allarme";
 	public final static String MESSAGGIO_ERRORE_ALLARME_EMAIL_VUOTA = "Almeno un indirizzo e-mail è obbligatorio";
 	public final static String MESSAGGIO_ERRORE_ALLARME_EMAIL_NON_VALIDO = "L''indirizzo e-mail fornito [{0}] non risulta valido";
+	public final static String MESSAGGIO_ERRORE_ALLARME_ALIAS_DUPLICATO = "Il nome indicato è già stato associato ad un altro allarme";
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE = "Il nome indicato è già stato associato ad un allarme registrato nella configurazione generale";
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_EROGAZIONE = "Il nome indicato è già stato associato ad un allarme registrato nell''erogazione {0}";
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_FRUIZIONE = "Il nome indicato è già stato associato ad un allarme registrato nella fruizione ${0}";

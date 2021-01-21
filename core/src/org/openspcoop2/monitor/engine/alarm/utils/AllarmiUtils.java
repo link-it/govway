@@ -277,7 +277,7 @@ public class AllarmiUtils {
 		return null;
 	}
 	
-	public static String costruisciNomeAllarme(ConfigurazioneAllarmeBean allarme, Logger log, Context context){
+	private static String normalizeLabelPlugin(ConfigurazioneAllarmeBean allarme){
 		String nome = allarme.getPlugin().getLabel();
 		StringBuilder bf = new StringBuilder();
 		
@@ -298,7 +298,16 @@ public class AllarmiUtils {
 			}
 		}
 		
-		// Ci viene Concatenato anche il Filtro
+		return bf.toString();
+	}
+	
+	public static String costruisciAliasAllarme(ConfigurazioneAllarmeBean allarme, Logger log, Context context){
+		
+		StringBuilder bf = new StringBuilder();
+		bf.append(normalizeLabelPlugin(allarme));
+		
+		// Ci viene Concatenato anche il Filtro (non dovrebbe più servire)
+		/*
 		AllarmeFiltro configurazioneFiltro = allarme.getFiltro();
 		if(AllarmiUtils.getTipoNomeMittente(configurazioneFiltro)!=null){
 			bf.append("_M-");
@@ -316,8 +325,9 @@ public class AllarmiUtils {
 			bf.append("_A-");
 			bf.append(AllarmiUtils.getAzione(configurazioneFiltro));
 		}
+		/*/
 		
-		nome = bf.toString();
+		String nome = bf.toString();
 		
 		String p = "";
 		String s = "";
@@ -342,32 +352,6 @@ public class AllarmiUtils {
 			s = "";
 		}
 		return p+nome+s;
-	}
-	
-	public static String getNomeSuggerito(String nomeSuggerito, ConfigurazioneAllarmeBean allarme, Logger log, Context context){
-		if(nomeSuggerito==null){
-			if(allarme.getId()!=null && allarme.getId()>0) {
-				// siamo in modifica, il nome non si cambia
-				return allarme.getNome();
-			}
-			if(allarme.getPlugin()!=null){
-				nomeSuggerito = AllarmiUtils.costruisciNomeAllarme(allarme, log, context);
-				allarme.setNome(nomeSuggerito);
-				
-			}
-			return nomeSuggerito;
-		}
-		else{
-			if(allarme!=null && allarme.getNome()!=null){
-				if(allarme.getNome().equals(nomeSuggerito)){
-					// rilcalcolo
-					nomeSuggerito = AllarmiUtils.costruisciNomeAllarme(allarme, log, context);
-					allarme.setNome(nomeSuggerito);
-				}
-				return allarme.getNome();
-			}
-		}
-		return null;
 	}
 	
 	public static String getLabelStato(StatoAllarme stato){

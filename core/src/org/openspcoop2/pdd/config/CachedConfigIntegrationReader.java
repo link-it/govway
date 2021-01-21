@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.config;
 
 import java.util.List;
 
+import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -254,6 +255,11 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		throw new RegistryException("Not Implemented");
 	}
 	
+	@Override
+	public List<Allarme> getAllarmi(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
 	
 	// PORTA APPLICATIVA
 	
@@ -307,6 +313,11 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		throw new RegistryException("Not Implemented");
 	}
 	
+	@Override
+	public List<Allarme> getAllarmi(IDPortaApplicativa idPortaDelegata) throws RegistryNotFound,RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
 	
 	// CONFIGURAZIONE
 	
@@ -328,6 +339,16 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public Integer getFreeCounterForGlobalPolicy(String policyId) throws RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
+	@Override
+	public List<Allarme> getAllarmiGlobali() throws RegistryNotFound,RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
+	@Override
+	public Integer getFreeCounterForAlarm(String tipoPlugin) throws RegistryException{
 		throw new RegistryException("Not Implemented");
 	}
 }

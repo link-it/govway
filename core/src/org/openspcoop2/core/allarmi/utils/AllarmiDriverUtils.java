@@ -38,6 +38,7 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
@@ -96,7 +97,7 @@ public class AllarmiDriverUtils {
 				if(addAnd)
 					expr.and();
 				
-				expr.ilike(Allarme.model().NOME, search, LikeMode.ANYWHERE);
+				expr.ilike(Allarme.model().ALIAS, search, LikeMode.ANYWHERE);
 				
 				addAnd = true;
 			}
@@ -111,7 +112,7 @@ public class AllarmiDriverUtils {
 			IPaginatedExpression pagExpr = allarmiServiceSearch.toPaginatedExpression(expr);
 			
 			pagExpr.limit(limit).offset(offset);
-			pagExpr.addOrder(Allarme.model().NOME, SortOrder.ASC);
+			pagExpr.addOrder(Allarme.model().ALIAS, SortOrder.ASC);
 
 			return allarmiServiceSearch.findAll(pagExpr);
 			
@@ -317,5 +318,61 @@ public class AllarmiDriverUtils {
 		} catch (Exception qe) {
 			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} 
+	}
+	
+	private static String FREE_COUNTER_SEPARATOR_CHAR = "-"; 
+	public static String getFreeCounterSeparatorCharForAlarm() {
+		return FREE_COUNTER_SEPARATOR_CHAR;
+	}
+	
+	public static Integer getFreeCounterForAlarm(String tipoPlugin, Connection con, Logger log, String tipoDB) throws ServiceException{
+		String nomeMetodo = "getFreeCounterForAlarm"; 
+		
+		
+		try{
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
+			
+			IPaginatedExpression pagExpr = jdbcServiceManager.getAllarmeServiceSearch().newPaginatedExpression();
+			pagExpr.and();
+			pagExpr.equals(Allarme.model().TIPO, tipoPlugin);
+			
+			// non funziona perchè :10 viene ordinato prima di :9
+			//pagExpr.addOrder(AttivazionePolicy.model().ID_ACTIVE_POLICY, SortOrder.DESC);
+			//pagExpr.limit(1);
+			// devo scorrerle tutte
+			
+			try{
+				List<Object> list = jdbcServiceManager.getAllarmeServiceSearch().select(pagExpr, Allarme.model().NOME);
+				if(list!=null && list.size()>0){
+					int found = -1;
+					for (Object r : list) {
+						if(r instanceof String){
+							String s = (String)r;
+							if(s.contains(FREE_COUNTER_SEPARATOR_CHAR)){
+								int last = s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR);
+								if(last<(s.length()-1)){
+									int value = Integer.parseInt(s.substring(s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR)+1,s.length()));
+									if(value > found) {
+										found = value;
+									}
+								}
+							}
+						}	
+					}
+					if(found>0) {
+						return found+1;
+					}
+				}
+			}catch(NotFoundException notF){
+				
+			}
+			return 1;
+			
+		} catch (Exception qe) {
+			throw new ServiceException("[" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		}
 	}
 }

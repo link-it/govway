@@ -17437,6 +17437,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO+"'");
 				return false;
 			}
+			if(tipo.contains(" ")) {
+				this.pd.setMessage("Non indicare spazi nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO+"'");
+				return false;
+			}
+			if(!this.checkSimpleName(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO)) {
+				return false;
+			}
 			if(!this.checkLength255(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO)) {
 				return false;
 			}
@@ -17454,6 +17461,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// classname
 			if(className==null || "".equals(className)) {
 				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME+"'");
+				return false;
+			}
+			if(className.contains(" ")) {
+				this.pd.setMessage("Non indicare spazi nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME+"'");
 				return false;
 			}
 			if(!this.checkLength255(className, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME)) {
@@ -17645,7 +17656,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			
-			this.pd.setSearchLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
+			this.pd.setSearchLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
 			
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
@@ -17683,7 +17694,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
@@ -17711,16 +17722,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(allarme.getEnabled() == 1){
 //						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 //						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
 							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+							de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
 							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+							de.setSelected(CheckboxStatusType.CONFIG_ERROR);
 						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
 							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+							de.setSelected(CheckboxStatusType.CONFIG_WARNING);
 						}
 					}
 					else{
@@ -17760,7 +17773,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					// Nome 
 					de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
-					de.setValue(allarme.getNome());
+					de.setValue(allarme.getAlias());
 					de.setIdToRemove(""+allarme.getId());
 					de.setToolTip(allarme.getNome()); 
 					e.addElement(de);
@@ -17882,23 +17895,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			/* ******** ELEMENTI OBBLIGATORI *************** */
+			
 			if(allarme.getTipoAllarme()==null){
 				this.log.debug("Non è stato indicato il tipo di allarme (è stato selezionato un plugin?)");
 				this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_TIPO_NON_INDICATO);
 				return false;
 			}
+			
 			if(allarme.getNome()==null || "".equals(allarme.getNome())){
 				this.log.debug("Non è stato indicato un nome identificativo dell'allarme");
 				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME+"'");
 				return false;
 			}
 			if (!this.checkNCName(allarme.getNome(), ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME)) {
-//					!RegularExpressionEngine.isMatch(allarme.getNome(),"^[\\-/_A-Za-z0-9]*$")) {
-//				String msg = "Il nome dell'allarme dev'essere formato solo da caratteri, cifre, '_' , '-' e '/'";
-//				this.log.debug(msg);
-//				MessageUtils.addErrorMsg(msg);
 				return false;
 			}
+			
+			if(allarme.getAlias()==null || "".equals(allarme.getAlias())){
+				this.log.debug("Non è stato indicato un nome per l'allarme");
+				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS+"'");
+				return false;
+			}
+			if (!this.checkNCName(allarme.getAlias(), ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS)) {
+				return false;
+			}
+			
 			if(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO)){
 				if(allarme.getPeriodo()==null){
 					this.log.debug("Non è stata indicata la frequenza di attivazione per il controllo dello stato dell'allarme");
@@ -18011,12 +18032,38 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			
-			// altri parametri???
-			boolean existsAllarme = this.confCore.existsAllarme(allarme.getNome());
-			// controllo esistenza allarme con lo stesso nome			
-			if (tipoOp.equals(TipoOperazione.ADD)) {
+			boolean porta = allarme.getFiltro()!=null && allarme.getFiltro().isEnabled() && allarme.getFiltro().getRuoloPorta()!=null && allarme.getFiltro().getNomePorta()!=null;
+			
+			
+			// Controllo alias
+			boolean existsAlias = false;
+			Search search = new Search(true);
+			List<ConfigurazioneAllarmeBean> allarmiConAlias = this.confCore.allarmiList(search, porta ? allarme.getFiltro().getRuoloPorta(): null, 
+					porta ? allarme.getFiltro().getNomePorta() : null);
+			if(allarmiConAlias!=null && !allarmiConAlias.isEmpty()) {
+				for (ConfigurazioneAllarmeBean allarmeCheck : allarmiConAlias) {
+					if(allarmeCheck.getAlias().equals(allarme.getAlias())) {
+						if (tipoOp.equals(TipoOperazione.ADD)) {
+							existsAlias = true;
+						}
+						else {
+							if(allarmeCheck.getId().longValue() != allarme.getId().longValue()) {
+								existsAlias = true;
+							}
+						}		
+					}
+				}
+			}
+			if(existsAlias) {
+				this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_ALIAS_DUPLICATO);
+				return false;
+			}
+			
+			// Controllo nome (si può solo modificare in ADD)
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				boolean existsAllarme = this.confCore.existsAllarme(allarme.getNome());
 				if (existsAllarme) {
-					
+						
 					ConfigurazioneAllarmeBean existsAllarmeBean = this.confCore.getAllarme(allarme.getNome());
 					if(existsAllarmeBean.getFiltro()!=null && existsAllarmeBean.getFiltro().isEnabled() &&
 							existsAllarmeBean.getFiltro().getRuoloPorta()!=null &&
@@ -18149,6 +18196,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			String nome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
 			allarme.setNome(nome);
+			
+			String alias = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
+			allarme.setAlias(alias);
+			
+			String descrizione = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
+			allarme.setDescrizione(descrizione);
 			
 			String tipo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
 			allarme.setTipo(tipo);
@@ -18766,17 +18819,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(allarme.getPlugin().getLabel());	
 		}
 		dati.addElement(de);
-		
-		// descrizione solo output
-		if(StringUtils.isNotEmpty(allarme.getDescrizione())) {
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
-			de.setType(DataElementType.TEXT);
-			de.setValue(allarme.getDescrizione());
-			dati.addElement(de);
-		}
-		
+						
 		// tipo
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
@@ -18815,14 +18858,39 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue("");
 			} else {
-				de.setType(DataElementType.TEXT_EDIT);
+				de.setType(DataElementType.HIDDEN);
 				de.setValue(allarme.getNome());
 			}
 			de.setRequired(true);
 		}
 		else{
-			de.setType(DataElementType.TEXT);
+			if(!this.isModalitaStandard()) {
+				de.setType(DataElementType.TEXT);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
 			de.setValue(allarme.getNome());
+		}
+		dati.addElement(de);
+		
+		// alias
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
+		if(tipoOperazione.equals(TipoOperazione.ADD)){
+			if(first || allarme.getPlugin() == null) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue("");
+			} else {
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setValue(allarme.getAlias());
+			}
+			de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setValue(allarme.getAlias());
 		}
 		dati.addElement(de);
 				
@@ -18848,6 +18916,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}else{
 			de.setSelected(allarme.getEnabled()+"");
 		}
+		dati.addElement(de);
+		
+		// descrizione
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
+		if(tipoOperazione.equals(TipoOperazione.ADD)){
+			if(first || allarme.getPlugin() == null) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setType(DataElementType.TEXT_AREA);
+				de.setRows(2);
+			}
+		}
+		else {
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(2);
+		}
+		de.setValue(allarme.getDescrizione());
 		dati.addElement(de);
 		
 		// frequenza

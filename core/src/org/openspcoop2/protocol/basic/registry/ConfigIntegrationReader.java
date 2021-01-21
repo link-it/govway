@@ -23,6 +23,9 @@ package org.openspcoop2.protocol.basic.registry;
 import java.sql.Connection;
 import java.util.List;
 
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -293,6 +296,37 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			throw new RegistryException("Not Implemented");
 		}
 	}
+	
+	@Override
+	public List<Allarme> getAllarmi(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getAllarmi(portaDelegata)");
+				
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				return AllarmiDriverUtils.allarmiList(search, RuoloPorta.DELEGATA, idPortaDelegata.getNome(),
+						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
 		
 	
 	
@@ -382,6 +416,37 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+	@Override
+	public List<Allarme> getAllarmi(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getAllarmi(portaApplicativa)");
+				
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				return AllarmiDriverUtils.allarmiList(search, RuoloPorta.APPLICATIVA, idPortaApplicativa.getNome(),
+						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	
 	
 
 	// CONFIGURAZIONE
@@ -435,9 +500,70 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
 			Connection con = null;
 			try {
-				con = driver.getConnection("getRateLimitingPolicyGlobali");
+				con = driver.getConnection("getFreeCounterForGlobalPolicy");
 				
 				return ControlloTrafficoDriverUtils.getFreeCounterForGlobalPolicy(policyId,
+						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+
+	@Override
+	public List<Allarme> getAllarmiGlobali() throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getAllarmiGlobali");
+				
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				return AllarmiDriverUtils.allarmiList(search, null, null,
+						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	
+	@Override
+	public Integer getFreeCounterForAlarm(String tipoPlugin) throws RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getFreeCounterForAlarm");
+				
+				return AllarmiDriverUtils.getFreeCounterForAlarm(tipoPlugin,
 						con, this.log, driver.getTipoDB());
 				
 			}

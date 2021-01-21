@@ -74,6 +74,20 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 				return "nome";
 			}
 		}
+		if(field.equals(Allarme.model().ALIAS)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".alias";
+			}else{
+				return "alias";
+			}
+		}
+		if(field.equals(Allarme.model().DESCRIZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".descrizione";
+			}else{
+				return "descrizione";
+			}
+		}
 		if(field.equals(Allarme.model().TIPO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".tipo";
@@ -438,6 +452,12 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(field.equals(Allarme.model().NOME)){
+			return this.toTable(Allarme.model(), returnAlias);
+		}
+		if(field.equals(Allarme.model().ALIAS)){
+			return this.toTable(Allarme.model(), returnAlias);
+		}
+		if(field.equals(Allarme.model().DESCRIZIONE)){
 			return this.toTable(Allarme.model(), returnAlias);
 		}
 		if(field.equals(Allarme.model().TIPO)){

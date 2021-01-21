@@ -41,6 +41,8 @@ public class AllarmeModel extends AbstractModel<Allarme> {
 		super();
 	
 		this.NOME = new Field("nome",java.lang.String.class,"allarme",Allarme.class);
+		this.ALIAS = new Field("alias",java.lang.String.class,"allarme",Allarme.class);
+		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"allarme",Allarme.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"allarme",Allarme.class);
 		this.TIPO_ALLARME = new Field("tipo-allarme",java.lang.String.class,"allarme",Allarme.class);
 		this.MAIL = new org.openspcoop2.core.allarmi.model.AllarmeMailModel(new Field("mail",org.openspcoop2.core.allarmi.AllarmeMail.class,"allarme",Allarme.class));
@@ -65,6 +67,8 @@ public class AllarmeModel extends AbstractModel<Allarme> {
 		super(father);
 	
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"allarme",Allarme.class);
+		this.ALIAS = new ComplexField(father,"alias",java.lang.String.class,"allarme",Allarme.class);
+		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"allarme",Allarme.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"allarme",Allarme.class);
 		this.TIPO_ALLARME = new ComplexField(father,"tipo-allarme",java.lang.String.class,"allarme",Allarme.class);
 		this.MAIL = new org.openspcoop2.core.allarmi.model.AllarmeMailModel(new ComplexField(father,"mail",org.openspcoop2.core.allarmi.AllarmeMail.class,"allarme",Allarme.class));
@@ -87,6 +91,10 @@ public class AllarmeModel extends AbstractModel<Allarme> {
 	
 
 	public IField NOME = null;
+	 
+	public IField ALIAS = null;
+	 
+	public IField DESCRIZIONE = null;
 	 
 	public IField TIPO = null;
 	 

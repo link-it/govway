@@ -61,6 +61,10 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object, "setNome", Allarme.model().NOME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome", Allarme.model().NOME.getFieldType()));
+				setParameter(object, "setAlias", Allarme.model().ALIAS.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "alias", Allarme.model().ALIAS.getFieldType()));
+				setParameter(object, "setDescrizione", Allarme.model().DESCRIZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "descrizione", Allarme.model().DESCRIZIONE.getFieldType()));
 				setParameter(object, "setTipo", Allarme.model().TIPO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "tipo", Allarme.model().TIPO.getFieldType()));
 				setParameter(object, "set_value_tipoAllarme", String.class,
@@ -195,6 +199,10 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"id"));
 				setParameter(object, "setNome", Allarme.model().NOME.getFieldType(),
 					this.getObjectFromMap(map,"nome"));
+				setParameter(object, "setAlias", Allarme.model().ALIAS.getFieldType(),
+					this.getObjectFromMap(map,"alias"));
+				setParameter(object, "setDescrizione", Allarme.model().DESCRIZIONE.getFieldType(),
+					this.getObjectFromMap(map,"descrizione"));
 				setParameter(object, "setTipo", Allarme.model().TIPO.getFieldType(),
 					this.getObjectFromMap(map,"tipo"));
 				setParameter(object, "set_value_tipoAllarme", String.class,

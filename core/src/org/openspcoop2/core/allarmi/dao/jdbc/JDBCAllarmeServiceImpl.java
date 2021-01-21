@@ -67,6 +67,8 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		// Object allarme
 		sqlQueryObjectInsert.addInsertTable(this.getAllarmeFieldConverter().toTable(Allarme.model()));
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().NOME,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALIAS,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().DESCRIZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_ALLARME,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.ACK_MODE,false),"?");
@@ -120,6 +122,8 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getAllarmeFetch().getKeyGeneratorObject(Allarme.model());
 		long id = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert, keyGenerator, jdbcProperties.isShowSql(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getNome(),Allarme.model().NOME.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getAlias(),Allarme.model().ALIAS.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getDescrizione(),Allarme.model().DESCRIZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getTipo(),Allarme.model().TIPO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getTipoAllarme(),Allarme.model().TIPO_ALLARME.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getMail().getAckMode(),Allarme.model().MAIL.ACK_MODE.getFieldType()),
@@ -234,6 +238,10 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().NOME,false), "?");
 		lstObjects.add(new JDBCObject(allarme.getNome(), Allarme.model().NOME.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALIAS,false), "?");
+		lstObjects.add(new JDBCObject(allarme.getAlias(), Allarme.model().ALIAS.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().DESCRIZIONE,false), "?");
+		lstObjects.add(new JDBCObject(allarme.getDescrizione(), Allarme.model().DESCRIZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO,false), "?");
 		lstObjects.add(new JDBCObject(allarme.getTipo(), Allarme.model().TIPO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_ALLARME,false), "?");

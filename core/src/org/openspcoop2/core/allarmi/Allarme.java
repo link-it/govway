@@ -39,6 +39,8 @@ import java.util.List;
  * &lt;complexType name="allarme"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="alias" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo-allarme" type="{http://www.openspcoop2.org/core/allarmi}tipo-allarme" minOccurs="1" maxOccurs="1" default="ATTIVO"/&gt;
  * 			&lt;element name="mail" type="{http://www.openspcoop2.org/core/allarmi}allarme-mail" minOccurs="1" maxOccurs="1"/&gt;
@@ -69,6 +71,8 @@ import java.util.List;
 @XmlType(name = "allarme", 
   propOrder = {
   	"nome",
+  	"alias",
+  	"descrizione",
   	"tipo",
   	"tipoAllarme",
   	"mail",
@@ -114,6 +118,22 @@ public class Allarme extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   public void setNome(java.lang.String nome) {
     this.nome = nome;
+  }
+
+  public java.lang.String getAlias() {
+    return this.alias;
+  }
+
+  public void setAlias(java.lang.String alias) {
+    this.alias = alias;
+  }
+
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(java.lang.String descrizione) {
+    this.descrizione = descrizione;
   }
 
   public java.lang.String getTipo() {
@@ -294,6 +314,14 @@ public class Allarme extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="alias",required=true,nillable=false)
+  protected java.lang.String alias;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="descrizione",required=false,nillable=false)
+  protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo",required=true,nillable=false)

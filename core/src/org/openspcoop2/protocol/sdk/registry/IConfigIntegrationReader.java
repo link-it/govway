@@ -21,6 +21,7 @@ package org.openspcoop2.protocol.sdk.registry;
 
 import java.util.List;
 
+import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -72,6 +73,8 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	
 	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException;
 	
+	public List<Allarme> getAllarmi(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException;
+	
 	// PORTA APPLICATIVA
 	
 	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException;
@@ -80,7 +83,9 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	
 	public List<IDPortaApplicativa> findIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException;
 	
-	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaApplicativa idPortaDelegata) throws RegistryNotFound,RegistryException;
+	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException;
+	
+	public List<Allarme> getAllarmi(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException;
 	
 	// CONFIGURAZIONE
 	
@@ -89,4 +94,8 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	public List<AttivazionePolicy> getRateLimitingPolicyGlobali() throws RegistryNotFound,RegistryException;
 	
 	public Integer getFreeCounterForGlobalPolicy(String policyId) throws RegistryException;
+	
+	public List<Allarme> getAllarmiGlobali() throws RegistryNotFound,RegistryException;
+	
+	public Integer getFreeCounterForAlarm(String tipoPlugin) throws RegistryException;
 }

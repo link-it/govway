@@ -25,10 +25,13 @@ package org.openspcoop2.protocol.basic.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.ImplementationUtils;
@@ -214,9 +217,10 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			portaApplicativa.setGestioneCors(null); // annulla la gestione Cors poiche' gestito solo nella porta di default
 			portaApplicativa.setCanale(null); // annullo il canale poiche' gestito solo nella porta di default
 			
-			// riporto Rate Limiting
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
 			idPA.setNome(portaApplicativaDaClonare.getNome());
+			
+			// riporto Rate Limiting
 			List<AttivazionePolicy> listAP = null;
 			try {
 				listAP = configIntegrationReader.getRateLimitingPolicy(idPA);
@@ -230,12 +234,12 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 						try {
 							apCloned.getFiltro().setNomePorta(nomeNuovaPortaApplicativa);
 							int counter = configIntegrationReader.getFreeCounterForGlobalPolicy(apCloned.getIdPolicy());
-							String idActive = apCloned.getIdPolicy()+":"+counter;
+							String idActive = apCloned.getIdPolicy()+ControlloTrafficoDriverUtils.getFreeCounterSeparatorCharForGlobalPolicy()+counter;
 							int limit = 0;
 							while(idPolicyCreate.contains(idActive) && limit<1000) { // provo 1000 volte
 								limit++;
 								counter++;
-								idActive = apCloned.getIdPolicy()+":"+counter;
+								idActive = apCloned.getIdPolicy()+ControlloTrafficoDriverUtils.getFreeCounterSeparatorCharForGlobalPolicy()+counter;
 							}
 							idPolicyCreate.add(idActive);
 							apCloned.setIdActivePolicy(idActive);
@@ -244,6 +248,40 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 								implementation.setRateLimitingPolicies(new ArrayList<AttivazionePolicy>());
 							}
 							implementation.getRateLimitingPolicies().add(apCloned);
+							
+						}catch(Exception e) {}
+					}
+				}
+			}
+			
+			// riporto Allarmi
+			List<Allarme> listAllarmi = null;
+			try {
+				listAllarmi = configIntegrationReader.getAllarmi(idPA);
+			}catch(Exception e) {}
+			List<String> idAllarmiCreate = new ArrayList<String>();
+			if(listAllarmi!=null && !listAllarmi.isEmpty()) {
+				for (Allarme allarme : listAllarmi) {
+					
+					Allarme allarmeCloned = (Allarme) allarme.clone();
+					if(allarmeCloned.getTipo()!=null && allarmeCloned.getFiltro()!=null && portaApplicativaDaClonare.getNome().equals(allarmeCloned.getFiltro().getNomePorta())){
+						try {
+							allarmeCloned.getFiltro().setNomePorta(nomeNuovaPortaApplicativa);
+							int counter = configIntegrationReader.getFreeCounterForAlarm(allarmeCloned.getTipo());
+							String uniqueName = allarmeCloned.getTipo()+AllarmiDriverUtils.getFreeCounterSeparatorCharForAlarm()+counter;
+							int limit = 0;
+							while(idAllarmiCreate.contains(uniqueName) && limit<1000) { // provo 1000 volte
+								limit++;
+								counter++;
+								uniqueName = allarmeCloned.getTipo()+AllarmiDriverUtils.getFreeCounterSeparatorCharForAlarm()+counter;
+							}
+							idAllarmiCreate.add(uniqueName);
+							allarmeCloned.setNome(uniqueName);
+							
+							if(implementation.getAllarmi()==null) {
+								implementation.setAllarmi(new ArrayList<Allarme>());
+							}
+							implementation.getAllarmi().add(allarmeCloned);
 							
 						}catch(Exception e) {}
 					}

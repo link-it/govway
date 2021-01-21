@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
@@ -79,6 +80,11 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
+import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -100,6 +106,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilit
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
@@ -1787,6 +1794,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 		ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
+		ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 		
 		IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 	
@@ -1820,6 +1828,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		PortaApplicativa portaApplicativa = implementation.getPortaApplicativa();
 		MappingErogazionePortaApplicativa mappingErogazione = implementation.getMapping();
 		List<AttivazionePolicy> rateLimitingPolicies = implementation.getRateLimitingPolicies();
+		List<Allarme> allarmi = implementation.getAllarmi();
 		long soggInt = soggettiCore.getIdSoggetto(idServizio2.getSoggettoErogatore().getNome(), idServizio2.getSoggettoErogatore().getTipo());
 		portaApplicativa.setIdSoggetto((long) soggInt);
 		
@@ -2133,12 +2142,47 @@ public class AccordiServizioParteSpecificaUtilities {
 				listaOggettiDaCreare.add(attivazionePolicy);
 			}
 		}
+		List<ConfigurazioneAllarmeBean> confAllarmi = new ArrayList<ConfigurazioneAllarmeBean>();
+		if(allarmi!=null && !allarmi.isEmpty()) {
+			for (Allarme allarme : allarmi) {
+				
+				Plugin plugin = confCore.getPlugin(TipoPlugin.ALLARME, allarme.getTipo(), false);
+				ConfigurazioneAllarmeBean configurazioneAllarmeBean = new ConfigurazioneAllarmeBean(allarme, plugin);
+				
+				listaOggettiDaCreare.add(configurazioneAllarmeBean);
+				
+				confAllarmi.add(configurazioneAllarmeBean);
+			}
+		}
 		
 
 		porteApplicativeCore.performCreateOperation(userLogin, apsHelper.smista(), listaOggettiDaCreare.toArray());
 		if(addSpecSicurezza) {
 			porteApplicativeCore.performUpdateOperation(userLogin, apsHelper.smista(), asps);
 		}
+		
+		
+		
+		/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO (per Allarmi) *************** */
+		
+		if(!confAllarmi.isEmpty() && !ControlStationCore.isAPIMode()) {
+			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
+			StringBuffer bfError = new StringBuffer();
+			for (ConfigurazioneAllarmeBean allarme : confAllarmi) {
+				try {
+					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), allarmiConfig);
+				} catch(Exception e) {
+					if(bfError.length()>0) {
+						bfError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					}
+					bfError.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage()));
+				}		
+			}
+			if(bfError.length()>0) {
+				apsHelper.getPd().setMessage(bfError.toString());
+			}
+		}
+		
 	}
 	
 	public static final MappingFruizionePortaDelegata getDefaultMappingPD(List<MappingFruizionePortaDelegata> listaMappingFruizione) {
@@ -2283,6 +2327,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		SoggettiCore soggettiCore = new SoggettiCore(apcCore);
+		ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 		
 		IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 	
@@ -2411,6 +2456,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		PortaDelegata portaDelegata = subscription.getPortaDelegata();
 		MappingFruizionePortaDelegata mappingFruizione = subscription.getMapping();
 		List<AttivazionePolicy> rateLimitingPolicies = subscription.getRateLimitingPolicies();
+		List<Allarme> allarmi = subscription.getAllarmi();
 		long idSoggFru = soggettiCore.getIdSoggetto(nomeSoggettoFruitore, tipoSoggettoFruitore);
 		portaDelegata.setIdSoggetto((long) idSoggFru);
 
@@ -2437,7 +2483,19 @@ public class AccordiServizioParteSpecificaUtilities {
 				listaOggettiDaCreare.add(attivazionePolicy);
 			}
 		}
-
+		List<ConfigurazioneAllarmeBean> confAllarmi = new ArrayList<ConfigurazioneAllarmeBean>();
+		if(allarmi!=null && !allarmi.isEmpty()) {
+			for (Allarme allarme : allarmi) {
+				
+				Plugin plugin = confCore.getPlugin(TipoPlugin.ALLARME, allarme.getTipo(), false);
+				ConfigurazioneAllarmeBean configurazioneAllarmeBean = new ConfigurazioneAllarmeBean(allarme, plugin);
+				
+				listaOggettiDaCreare.add(configurazioneAllarmeBean);
+				
+				confAllarmi.add(configurazioneAllarmeBean);
+			}
+		}
+		
 		porteDelegateCore.performCreateOperation(userLogin, apsHelper.smista(), listaOggettiDaCreare.toArray());
 
 		if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) || clonatoDaPDConConnettoreRidefinito) {
@@ -2446,6 +2504,26 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		if(listaOggettiDaModificare.size()>0) {
 			porteDelegateCore.performUpdateOperation(userLogin, apsHelper.smista(), listaOggettiDaModificare.toArray());
+		}
+		
+		/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO (per Allarmi) *************** */
+		
+		if(!confAllarmi.isEmpty() && !ControlStationCore.isAPIMode()) {
+			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
+			StringBuffer bfError = new StringBuffer();
+			for (ConfigurazioneAllarmeBean allarme : confAllarmi) {
+				try {
+					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), allarmiConfig);
+				} catch(Exception e) {
+					if(bfError.length()>0) {
+						bfError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					}
+					bfError.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage()));
+				}		
+			}
+			if(bfError.length()>0) {
+				apsHelper.getPd().setMessage(bfError.toString());
+			}
 		}
 	}
 	

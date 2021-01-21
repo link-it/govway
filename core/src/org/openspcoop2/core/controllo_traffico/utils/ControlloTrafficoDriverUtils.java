@@ -1147,6 +1147,11 @@ public class ControlloTrafficoDriverUtils {
 		return policy;
 	}
 	
+	private static String FREE_COUNTER_SEPARATOR_CHAR = ":"; 
+	public static String getFreeCounterSeparatorCharForGlobalPolicy() {
+		return FREE_COUNTER_SEPARATOR_CHAR;
+	}
+	
 	public static Integer getFreeCounterForGlobalPolicy(String policyId, Connection con, Logger log, String tipoDB) throws ServiceException{
 		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
 		
@@ -1173,10 +1178,10 @@ public class ControlloTrafficoDriverUtils {
 					for (Object r : list) {
 						if(r instanceof String){
 							String s = (String)r;
-							if(s.contains(":")){
-								int last = s.lastIndexOf(":");
+							if(s.contains(FREE_COUNTER_SEPARATOR_CHAR)){
+								int last = s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR);
 								if(last<(s.length()-1)){
-									int value = Integer.parseInt(s.substring(s.lastIndexOf(":")+1,s.length()));
+									int value = Integer.parseInt(s.substring(s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR)+1,s.length()));
 									if(value > found) {
 										found = value;
 									}

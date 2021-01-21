@@ -231,7 +231,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 							allarme.setTipo(allarme.getPlugin().getTipo());
 							try{
 								Context context = confHelper.createAlarmContext(allarme, parameters);	
-								allarme.setNome(AllarmiUtils.getNomeSuggerito(allarme.getNome(), allarme, ControlStationCore.getLog(), context));
+								allarme.setNome(allarme.getNome());
 								IDynamicLoader dl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, allarme.getPlugin().getTipo(), allarme.getPlugin().getClassName(), ControlStationCore.getLog());
 								IAlarmProcessing alarm = (IAlarmProcessing) dl.newInstance();
 								switch (alarm.getAlarmType()) {

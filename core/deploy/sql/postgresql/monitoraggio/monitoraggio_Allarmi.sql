@@ -6,6 +6,8 @@ CREATE TABLE allarmi
 (
 	-- Informazioni generiche
 	nome VARCHAR(255) NOT NULL,
+	alias VARCHAR(255) NOT NULL,
+	descrizione VARCHAR(255),
 	tipo VARCHAR(255) NOT NULL,
 	tipo_allarme VARCHAR(255) NOT NULL DEFAULT 'ATTIVO',
 	-- Stato allarme (0=OK, 1=Warning, 2=Allarme)
