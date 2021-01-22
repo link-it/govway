@@ -54,6 +54,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.commons.Filtri;
@@ -16695,8 +16696,24 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST);
+				postBack_viaPOST, false, null, null);
 	}
+	public void addCustomFieldConValoriDaEscludere(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
+		addCustomField(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				value, null, false, 
+				hidden, dati,
+				postBack_viaPOST, true, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati);
+	}
+	
 	public void addMultiSelectCustomField(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
@@ -16710,7 +16727,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				null, value, true, 
 				hidden, dati,
-				postBack_viaPOST);
+				postBack_viaPOST, false, null, null);
 	}
 	private void addCustomField(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
@@ -16719,7 +16736,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametro, String label, 
 			String value, String [] multiValue, boolean multiSelect,
 			boolean hidden, Vector<DataElement> dati,
-			boolean postBack_viaPOST) throws Exception {
+			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
 		
 		List<String> values = new ArrayList<String>();
 		List<String> labels = new ArrayList<String>();
@@ -16765,7 +16782,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			
 			List<Plugin> listaTmp = this.confCore.pluginsClassiList(ricerca);
+			boolean nessunValueDisponibile = false;
 			if(listaTmp!=null && !listaTmp.isEmpty()) {
+				if(listaValuesDaEscludere != null && !listaValuesDaEscludere.isEmpty()) {
+					for(int i = listaTmp.size() -1; i >= 0 ; i--) {
+						if(listaValuesDaEscludere.contains(listaTmp.get(i).getTipo())) {
+							listaTmp.remove(i);
+						}
+					}
+				}
+				
 				for (Plugin plugin : listaTmp) {
 					if(plugin.isStato()) {
 						
@@ -16790,6 +16816,16 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 					}
 				}
+			} 
+			
+			if(listaTmp ==null || listaTmp.isEmpty()) {
+				nessunValueDisponibile = true;
+			}
+			
+			// se non ci sono valori disponibili e voglio comunicarlo all'utente imposto il messaggio di info
+			if(messaggioErroreValoriDisponibiliTerminati != null && nessunValueDisponibile) {
+				this.pd.setMessage(messaggioErroreValoriDisponibiliTerminati, Costanti.MESSAGE_TYPE_INFO);
+				this.pd.disableEditMode();
 			}
 			
 			if(values.size()==2) {
@@ -16856,6 +16892,9 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				if(!multiSelect && values.size()==1) {
 					de.setRequired(false);
+				}
+				if(mostraSempreLabel) {
+					de.setLabel(label);
 				}
 			}
 		}
@@ -17031,5 +17070,146 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		return true;
+	}
+	
+	public void visualizzaLinkHandlers(Vector<DataElement> dati, boolean isConfigurazione, RuoloPorta ruoloPorta, Long idPorta, ServiceBinding serviceBinding) throws DriverConfigurazioneException {
+		DataElement de;
+		boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		List<Parameter> listaParametriComuni = new ArrayList<Parameter>();
+		
+		Parameter parRuoloPorta = null;
+		if(ruoloPorta!=null) {
+			parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA, ruoloPorta.getValue());
+			listaParametriComuni.add(parRuoloPorta);
+		}
+		Parameter parIdPorta = null;
+		if(idPorta!=null) {
+			parIdPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA, idPorta +"");
+			listaParametriComuni.add(parIdPorta);
+		}
+		Parameter parServiceBinding = null;
+		if(serviceBinding!=null) {
+			parServiceBinding = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING, serviceBinding.name());
+			listaParametriComuni.add(parServiceBinding);
+		}
+		
+		
+		// handler richiesta
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RICHIESTA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		for (int i = 0; i < PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA.size(); i++) {
+			String valueRichiesta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA.get(i);
+			String labelRichiesta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RICHIESTA.get(i);
+
+			int numeroHandlersRichiesta = this.confCore.numeroHandlersRichiesta(valueRichiesta, ruoloPorta, idPorta);
+			
+			List<Parameter> listaParametriRichiesta = new ArrayList<Parameter>();
+			if(!listaParametriComuni.isEmpty()) {
+				listaParametriRichiesta.addAll(listaParametriComuni);
+			}
+			listaParametriRichiesta.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, valueRichiesta));
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RICHIESTA_LIST, listaParametriRichiesta.toArray(new Parameter [listaParametriRichiesta.size()]));
+			if (contaListeFromSession)
+				de.setValue(labelRichiesta +" (" + numeroHandlersRichiesta + ")");
+			else
+				de.setValue(labelRichiesta);
+			dati.addElement(de);
+		}
+		
+		// handler risposta
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RISPOSTA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		for (int i = 0; i < PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA.size(); i++) {
+			String valueRisposta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA.get(i);
+			String labelRisposta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RISPOSTA.get(i);
+			
+			int numeroHandlersRisposta = this.confCore.numeroHandlersRisposta(valueRisposta, ruoloPorta, idPorta);
+			
+			List<Parameter> listaParametriRisposta = new ArrayList<Parameter>();
+			if(!listaParametriComuni.isEmpty()) {
+				listaParametriRisposta.addAll(listaParametriComuni);
+			}
+			listaParametriRisposta.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, valueRisposta));
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RISPOSTA_LIST, listaParametriRisposta.toArray(new Parameter [listaParametriRisposta.size()]));
+			if (contaListeFromSession)
+				de.setValue(labelRisposta+" (" + numeroHandlersRisposta + ")");
+			else
+				de.setValue(labelRisposta);
+			dati.addElement(de);
+		}
+		
+		if(isConfigurazione) {
+			// service handler
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_SERVIZIO);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			boolean integrationManagerEnabled = this.confCore.isIntegrationManagerEnabled();
+			
+			if(integrationManagerEnabled) {
+				for (int i = 0; i < PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_CON_INTEGRATION_MANAGER.size(); i++) {
+					String valueServizio = PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_CON_INTEGRATION_MANAGER.get(i);
+					String labelServizio = PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_CON_INTEGRATION_MANAGER.get(i);
+					
+					int numeroHandlersServizio = this.confCore.numeroHandlersServizio(valueServizio);
+					
+					List<Parameter> listaParametriServizio = new ArrayList<Parameter>();
+					if(!listaParametriComuni.isEmpty()) {
+						listaParametriServizio.addAll(listaParametriComuni);
+					}
+					listaParametriServizio.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, valueServizio));
+					
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO_LIST, listaParametriServizio.toArray(new Parameter [listaParametriServizio.size()]));
+					if (contaListeFromSession)
+						de.setValue(labelServizio +" (" + numeroHandlersServizio + ")");
+					else
+						de.setValue(labelServizio);
+					dati.addElement(de);
+				}
+			} else {
+				for (int i = 0; i < PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_SENZA_INTEGRATION_MANAGER.size(); i++) {
+					String valueServizio = PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_SENZA_INTEGRATION_MANAGER.get(i);
+					String labelServizio = PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_SENZA_INTEGRATION_MANAGER.get(i);
+					
+					int numeroHandlersServizio = this.confCore.numeroHandlersServizio(valueServizio);
+					
+					List<Parameter> listaParametriServizio = new ArrayList<Parameter>();
+					if(!listaParametriComuni.isEmpty()) {
+						listaParametriServizio.addAll(listaParametriComuni);
+					}
+					listaParametriServizio.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, valueServizio));
+					
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO_LIST, listaParametriServizio.toArray(new Parameter [listaParametriServizio.size()]));
+					if (contaListeFromSession)
+						de.setValue(labelServizio +" (" + numeroHandlersServizio + ")");
+					else
+						de.setValue(labelServizio);
+					dati.addElement(de);
+				}
+			}
+		}
 	}
 }

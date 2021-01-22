@@ -168,6 +168,10 @@ public final class Liste
     public final static int CONFIGURAZIONE_PLUGINS_CLASSI;
     public final static int CONFIGURAZIONE_ALLARMI;
     public final static int CONFIGURAZIONE_ALLARMI_HISTORY;
+    
+    public final static int CONFIGURAZIONE_HANDLERS_RICHIESTA;
+    public final static int CONFIGURAZIONE_HANDLERS_RISPOSTA;
+    public final static int CONFIGURAZIONE_HANDLERS_SERVIZIO;
 
 
     private static int numeroListe = 0;
@@ -289,6 +293,9 @@ public final class Liste
     	CONFIGURAZIONE_PLUGINS_CLASSI = numeroListe ++;
     	CONFIGURAZIONE_ALLARMI = numeroListe ++;
     	CONFIGURAZIONE_ALLARMI_HISTORY = numeroListe ++;
+    	CONFIGURAZIONE_HANDLERS_RICHIESTA = numeroListe ++;
+    	CONFIGURAZIONE_HANDLERS_RISPOSTA = numeroListe ++;
+    	CONFIGURAZIONE_HANDLERS_SERVIZIO = numeroListe ++;
     }
     
 	

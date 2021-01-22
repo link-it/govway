@@ -41,6 +41,7 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
+import org.openspcoop2.core.config.ConfigurazioneHandler;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -86,6 +87,8 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistory
 import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.config.base.utils.PluginsDriverUtils;
+import org.openspcoop2.monitor.engine.config.base.utils.handlers.ConfigurazioneHandlerBean;
+import org.openspcoop2.monitor.engine.config.base.utils.handlers.HandlersDriverUtils;
 import org.openspcoop2.protocol.engine.archive.UtilitiesMappingFruizioneErogazione;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -4712,6 +4715,253 @@ public class DriverControlStationDB  {
 		try {
 			return org.openspcoop2.monitor.engine.alarm.utils.AllarmiDriverUtils.allarmiHistoryList(ricerca, idAllarme, con, this.log, this.tipoDB);
 
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public int numeroHandlersRichiestaList(String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "numeroHandlersRichiestaList";
+		return numeroHandlersList(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.MESSAGE_HANDLER);
+	}
+	
+	public int numeroHandlersRispostaList(String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "numeroHandlersRispostaList";
+		return numeroHandlersList(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.MESSAGE_HANDLER);
+	}
+	
+	public int numeroHandlersServizioList(String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "numeroHandlersServizioList";
+		return numeroHandlersList(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.SERVICE_HANDLER);
+	}
+	
+	private int numeroHandlersList(String tipologia, RuoloPorta ruoloPorta, Long idPorta, String nomeMetodo, TipoPlugin tipoPlugin) throws DriverConfigurazioneException {
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			return HandlersDriverUtils.numeroHandlerList(tipologia, ruoloPorta, idPorta, tipoPlugin, nomeMetodo, con, this.log, this.tipoDB); 
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<ConfigurazioneHandlerBean> handlersRichiestaList(ISearch ricerca, String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "handlersRichiestaList";
+		int idLista = Liste.CONFIGURAZIONE_HANDLERS_RICHIESTA;
+		return handlersList(ricerca, tipologia, ruoloPorta, idPorta, nomeMetodo, idLista, TipoPlugin.MESSAGE_HANDLER);
+	}
+	
+	public List<ConfigurazioneHandlerBean> handlersRispostaList(ISearch ricerca, String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "handlersRispostaList";
+		int idLista = Liste.CONFIGURAZIONE_HANDLERS_RISPOSTA;
+		return handlersList(ricerca, tipologia, ruoloPorta, idPorta, nomeMetodo, idLista, TipoPlugin.MESSAGE_HANDLER);
+	}
+	
+	public List<ConfigurazioneHandlerBean> handlersServizioList(ISearch ricerca, String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "handlersServizioList";
+		int idLista = Liste.CONFIGURAZIONE_HANDLERS_SERVIZIO;
+		return handlersList(ricerca, tipologia, ruoloPorta, idPorta, nomeMetodo, idLista, TipoPlugin.SERVICE_HANDLER);
+	}
+	
+	private List<ConfigurazioneHandlerBean> handlersList(ISearch ricerca, String tipologia, RuoloPorta ruoloPorta, Long idPorta, String nomeMetodo, int idLista, TipoPlugin tipoPlugin) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			return HandlersDriverUtils.handlerList(ricerca, tipologia, ruoloPorta, idPorta, nomeMetodo, idLista, tipoPlugin, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public int getMaxPosizioneHandlersRichiesta(String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "getMaxPosizioneHandlersRichiesta";
+		return getMaxPosizioneHandlers(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.MESSAGE_HANDLER);
+	}
+	
+	public int getMaxPosizioneHandlersRisposta(String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "getMaxPosizioneHandlersRisposta";
+		return getMaxPosizioneHandlers(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.MESSAGE_HANDLER);
+	}
+	
+	public int getMaxPosizioneHandlersServizio(String tipologia, RuoloPorta ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		String nomeMetodo = "getMaxPosizioneHandlersServizio";
+		return getMaxPosizioneHandlers(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.SERVICE_HANDLER);
+	}
+	
+	private int getMaxPosizioneHandlers(String tipologia, RuoloPorta ruoloPorta, Long idPorta, String nomeMetodo, TipoPlugin tipoPlugin) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			return HandlersDriverUtils.getMaxPosizioneHandlers(tipologia, ruoloPorta, idPorta, nomeMetodo, tipoPlugin, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsHandlerRichiesta(String tipologia, RuoloPorta ruoloPorta, Long idPorta, String tipo) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsHandlerRichiesta";
+		return existsHandler(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.MESSAGE_HANDLER, tipo);
+	}
+	
+	public boolean existsHandlerRisposta(String tipologia, RuoloPorta ruoloPorta, Long idPorta, String tipo) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsHandlerRisposta";
+		return existsHandler(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.MESSAGE_HANDLER, tipo);
+	}
+	
+	public boolean existsHandlerServizio(String tipologia, RuoloPorta ruoloPorta, Long idPorta, String tipo) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsHandlerServizio";
+		return existsHandler(tipologia, ruoloPorta, idPorta, nomeMetodo, TipoPlugin.SERVICE_HANDLER, tipo);
+	}
+	
+	private boolean existsHandler(String tipologia, RuoloPorta ruoloPorta, Long idPorta, String nomeMetodo, TipoPlugin tipoPlugin, String tipo) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			return HandlersDriverUtils.existsHandler(tipologia, ruoloPorta, idPorta, nomeMetodo, tipoPlugin, tipo, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public ConfigurazioneHandlerBean getHandlerRichiesta(String tipologia, RuoloPorta ruoloPorta, Long idPorta, Long idHandler) throws DriverConfigurazioneException {
+		String nomeMetodo = "getHandlerRichiesta";
+		return getHandler(tipologia, ruoloPorta, idPorta, idHandler, nomeMetodo, TipoPlugin.MESSAGE_HANDLER);
+	}
+	
+	public ConfigurazioneHandlerBean getHandlerRisposta(String tipologia, RuoloPorta ruoloPorta, Long idPorta, Long idHandler) throws DriverConfigurazioneException {
+		String nomeMetodo = "getHandlerRisposta";
+		return getHandler(tipologia, ruoloPorta, idPorta, idHandler, nomeMetodo, TipoPlugin.MESSAGE_HANDLER);
+	}
+	
+	public ConfigurazioneHandlerBean getHandlerServizio(String tipologia, RuoloPorta ruoloPorta, Long idPorta, Long idHandler) throws DriverConfigurazioneException {
+		String nomeMetodo = "getHandlerServizio";
+		return getHandler(tipologia, ruoloPorta, idPorta, idHandler, nomeMetodo, TipoPlugin.SERVICE_HANDLER);
+	}
+	
+	private ConfigurazioneHandlerBean getHandler(String tipologia, RuoloPorta ruoloPorta, Long idPorta, Long idHandler, String nomeMetodo, TipoPlugin tipoPlugin) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			return HandlersDriverUtils.getHandler(tipologia, ruoloPorta, idPorta, idHandler, nomeMetodo, tipoPlugin, con, this.log, this.tipoDB);
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {

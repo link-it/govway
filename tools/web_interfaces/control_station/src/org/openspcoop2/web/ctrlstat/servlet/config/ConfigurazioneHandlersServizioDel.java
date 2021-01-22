@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,21 +28,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
-import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneGeneraleHandler;
+import org.openspcoop2.core.config.ConfigurazioneHandler;
+import org.openspcoop2.core.config.ConfigurazioneMessageHandlers;
+import org.openspcoop2.core.config.ConfigurazioneServiceHandlers;
+import org.openspcoop2.core.config.constants.FaseServiceHandler;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
-import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.monitor.engine.config.base.utils.handlers.ConfigurazioneHandlerBean;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -52,14 +55,14 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * ConfigurazioneAllarmiDel
+ * ConfigurazioneHandlersServizioDel
  * 
  * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 
  */
-public final class ConfigurazioneAllarmiDel extends Action {
+public final class ConfigurazioneHandlersServizioDel extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -82,94 +85,82 @@ public final class ConfigurazioneAllarmiDel extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
-			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA);
 			RuoloPorta ruoloPorta = null;
-			if(ruoloPortaParam!=null) {
-				ruoloPorta = RuoloPorta.toEnumConstant(ruoloPortaParam);
-			}
-			String nomePorta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA);
+			String idPortaS = null;
 			ServiceBinding serviceBinding = null;
-			String serviceBindingParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING);
-			if(serviceBindingParam!=null && !"".equals(serviceBindingParam)) {
-				serviceBinding = ServiceBinding.valueOf(serviceBindingParam);
+			
+			String idTab = confHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			if(!confHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
+				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
+			String fase = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE);
 
+			FaseServiceHandler faseSH = FaseServiceHandler.toEnumConstant(fase);		
+			
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			Long id = null;
-
-			List<Object> allarmiToRemove = new ArrayList<>();
+			List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+			List<ConfigurazioneHandler> listaDaAggiornare = null;
+			Configurazione configurazione = confCore.getConfigurazioneGenerale();
 			
-			List<String> urls = new ArrayList<String>();
+			if(configurazione.getConfigurazioneHandler() == null)
+				configurazione.setConfigurazioneHandler(new ConfigurazioneGeneraleHandler());
 			
-			for (int i = 0; i < idsToRemove.size(); i++) {
-
-				id = Long.parseLong(idsToRemove.get(i));
-				
-				Allarme allarmeToRemove = new Allarme();
-				allarmeToRemove.setId(id);
-				
-				ConfigurazioneAllarmeBean allarme = confCore.getAllarme(id);
-				
-				 if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
-						// NOTA: il tipo di allarme non è modificabile.
-					 	ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è passivo. Non viene effettuata alcuna rimozione su Allarmi.war");
-						continue;
+			if(configurazione.getConfigurazioneHandler().getService() == null)
+				configurazione.getConfigurazioneHandler().setService(new ConfigurazioneServiceHandlers());
+			
+			switch (faseSH) {
+			case EXIT:
+				listaDaAggiornare =configurazione.getConfigurazioneHandler().getService().getExitList();
+				break;
+			case INIT:
+				listaDaAggiornare =configurazione.getConfigurazioneHandler().getService().getInitList();
+				break;
+			case INTEGRATION_MANAGER_REQUEST:
+				listaDaAggiornare =configurazione.getConfigurazioneHandler().getService().getIntegrationManagerRequestList();
+				break;
+			case INTEGRATION_MANAGER_RESPONSE:
+				listaDaAggiornare =configurazione.getConfigurazioneHandler().getService().getIntegrationManagerResponseList();
+				break;
+			}
+			oggettiDaAggiornare.add(configurazione);
+			
+			for(int j = listaDaAggiornare.size() -1; j >= 0 ; j--) {
+				for (int i = 0; i < idsToRemove.size(); i++) {
+					if(idsToRemove.get(i).equals(listaDaAggiornare.get(j).getTipo())) {
+						listaDaAggiornare.remove(j);
 					}
-					if(allarme.getEnabled()==0){
-						// NOTA: il tipo di allarme non è modificabile.
-						ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è disabilitato. Non viene effettuata alcuna rimozione su Allarmi.war");
-						continue;
-					}
-					
-					String prefixUrl = confCore.getAllarmiConfig().getAllarmiActiveServiceUrl();
-					if(prefixUrl.endsWith("/")==false){
-						prefixUrl = prefixUrl + "/";
-					}
-					prefixUrl = prefixUrl + allarme.getNome() + "?";
-					urls.add(prefixUrl + confCore.getAllarmiConfig().getAllarmiActiveServiceUrl_SuffixStopAlarm());
-
-					allarmiToRemove.add(allarmeToRemove);
+				}
 			}
 			
-			/* ******** INVIO NOTIFICHE *************** */
-			try {
-				AllarmiUtils.sendToAllarmi(urls, ControlStationCore.getLog());
-			} catch(Exception e) {
-				pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA,e.getMessage()));
-			}
-			
-			
-
-			Object[] oggetti = allarmiToRemove.toArray(new Object[allarmiToRemove.size()]); 
-			confCore.performDeleteOperation(userLogin, confHelper.smista(), oggetti);
+			// update sul db
+			confCore.performUpdateOperation(userLogin, confHelper.smista(), oggettiDaAggiornare.toArray(new Object[oggettiDaAggiornare.size()]));
 			// Preparo il menu
 			confHelper.makeMenu();
-
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_ALLARMI;
+			int idLista = Liste.CONFIGURAZIONE_HANDLERS_SERVIZIO;
 
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
-			List<ConfigurazioneAllarmeBean> lista = confCore.allarmiList(ricerca, ruoloPorta, nomePorta); 
+			List<ConfigurazioneHandlerBean> lista = confCore.handlersServizioList(ricerca, fase); 
 			
-			confHelper.prepareAllarmiList(ricerca, lista, ruoloPorta, nomePorta, serviceBinding);
+			confHelper.prepareHandlersServizioList(ricerca, lista, ruoloPorta, idPortaS, serviceBinding, fase);
 						
 			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
-					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI,
+					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO,
 					ForwardParams.DEL());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.DEL());
+					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO, ForwardParams.DEL());
 		}
 	}
 }

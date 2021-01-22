@@ -559,7 +559,7 @@ public final class CostantiDB {
     }
     
     public static final String HANDLER_PRE_IN = "PreIn";
-    public static final String HANDLER_IN = "PreIn";
+    public static final String HANDLER_IN = "In";
     public static final String HANDLER_IN_PROTOCOL = "InProtocol";
     public static final String HANDLER_OUT = "Out";
     public static final String HANDLER_POST_OUT = "PostOut";

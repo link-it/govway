@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
@@ -953,6 +954,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 		}
 		
+		// Message Handlers
+		if (tipoOp.equals(TipoOperazione.CHANGE)) {
+			boolean visualizzaHandlers = this.confCore.isConfigurazioneHandlersEnabled();
+			if(!nascondiSezioneOpzioniAvanzate && visualizzaHandlers) {
+				this.visualizzaLinkHandlers(dati, false, RuoloPorta.DELEGATA, Long.parseLong(idPorta), serviceBinding);
+			}
+		}
 		
 		boolean localForwardDisable = !this.porteDelegateCore.isShowPortaDelegataLocalForward() || this.isModalitaStandard() || !multitenant || localForwardShow==false || (isConfigurazione && !datiAltroPorta);
 		

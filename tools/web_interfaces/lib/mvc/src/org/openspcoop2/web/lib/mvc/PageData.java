@@ -179,6 +179,9 @@ public class PageData {
 	public String getMode() {
 		return this.mode;
 	}
+	public boolean isDisableEditMode() {
+		return Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME.equals(this.mode);
+	}
 
 	public void setMessage(String s) {
 		this.setMessage(s, MessageType.ERROR); 

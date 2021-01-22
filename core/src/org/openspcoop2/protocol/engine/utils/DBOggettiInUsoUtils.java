@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7231,6 +7232,144 @@ public class DBOggettiInUsoUtils  {
 				risultato.close();
 				stmt.close();
 				
+			}else if("MESSAGE_HANDLER".equals(tipoPlugin)) {
+				List<String> messageHandlerPD_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.MESSAGE_HANDLER_MAPPING_PD);
+				List<String> messageHandlerPD_list = whereIsInUso.get(ErrorsHandlerCostant.MESSAGE_HANDLER_PD);
+				List<String> messageHandlerPA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.MESSAGE_HANDLER_MAPPING_PA);
+				List<String> messageHandlerPA_list = whereIsInUso.get(ErrorsHandlerCostant.MESSAGE_HANDLER_PA);
+				List<String> messageHandler_list = whereIsInUso.get(ErrorsHandlerCostant.MESSAGE_HANDLER);
+				
+				if (messageHandlerPD_mapping_list == null) {
+					messageHandlerPD_mapping_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER_MAPPING_PD, messageHandlerPD_mapping_list);
+				}
+				if (messageHandlerPD_list == null) {
+					messageHandlerPD_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER_PD, messageHandlerPD_list);
+				}
+				if (messageHandlerPA_mapping_list == null) {
+					messageHandlerPA_mapping_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER_MAPPING_PA, messageHandlerPA_mapping_list);
+				}
+				if (messageHandlerPA_list == null) {
+					messageHandlerPA_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER_PA, messageHandlerPA_list);
+				}
+				if (messageHandler_list == null) {
+					messageHandler_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER, messageHandler_list);
+				}
+				
+				// config handlers
+				String tabella = CostantiDB.CONFIGURAZIONE_HANDLERS;
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tabella);
+				sqlQueryObject.addSelectField(tabella +".tipologia");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(tabella +".tipo=?");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, tipo);
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					String tipologia = risultato.getString("tipologia");
+					String labelMessaggio = formatMessageHandlerFromTipologia(tipologia);
+					messageHandler_list.add(labelMessaggio);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+				
+				
+				// Porte applicative, message handlers
+				tabella = CostantiDB.PORTE_APPLICATIVE_HANDLERS;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tabella);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addSelectField(tabella +".tipologia");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE +".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(tabella+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+				sqlQueryObject.addWhereCondition(tabella+".tipo=?");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, tipo);
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					String tipologia = risultato.getString("tipologia");
+					String nome = risultato.getString("nome_porta");
+					String labelMessaggio = formatMessageHandlerFromTipologia(tipologia);
+					
+					ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+					if(resultPorta.mapping) {
+						messageHandlerPA_mapping_list.add(resultPorta.label + ": " + labelMessaggio);
+					}
+					else {
+						messageHandlerPA_list.add(resultPorta.label + ": " + labelMessaggio);
+					}
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+
+				// Porte delegate, message handlers
+				tabella = CostantiDB.PORTE_DELEGATE_HANDLERS;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tabella);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addSelectField(tabella +".tipologia");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE +".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(tabella+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+				sqlQueryObject.addWhereCondition(tabella+".tipo=?");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, tipo);
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					String tipologia = risultato.getString("tipologia");
+					String nome = risultato.getString("nome_porta");
+					String labelMessaggio = formatMessageHandlerFromTipologia(tipologia);
+					
+					ResultPorta resultPorta = formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+					if(resultPorta.mapping) {
+						messageHandlerPD_mapping_list.add(resultPorta.label + ": " + labelMessaggio);
+					}
+					else {
+						messageHandlerPD_list.add(resultPorta.label + ": " + labelMessaggio);
+					}
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+				
+			}else if("SERVICE_HANDLER".equals(tipoPlugin)) {
+				List<String> serviceHandler_list = whereIsInUso.get(ErrorsHandlerCostant.SERVICE_HANDLER);
+				
+				if (serviceHandler_list == null) {
+					serviceHandler_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.SERVICE_HANDLER, serviceHandler_list);
+				}
+				
+				// config handlers
+				String tabella = CostantiDB.CONFIGURAZIONE_HANDLERS;
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tabella);
+				sqlQueryObject.addSelectField(tabella +".tipologia");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(tabella +".tipo=?");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, tipo);
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					String tipologia = risultato.getString("tipologia");
+					String labelMessaggio = formatServiceHandlerFromTipologia(tipologia);
+					serviceHandler_list.add(labelMessaggio);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
 			}
 			
 			return isInUso;
@@ -7434,6 +7573,36 @@ public class DBOggettiInUsoUtils  {
 					msg += "utilizzato nelle Porte Outbound (Allarmi): " + formatList(messages,separator) + separator;
 				}
 				break;
+			case MESSAGE_HANDLER_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nei Message Handlers delle Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case MESSAGE_HANDLER_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Message Handlers): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case MESSAGE_HANDLER:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato nei Message Handlers: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case MESSAGE_HANDLER_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nei Message Handlers delle Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case MESSAGE_HANDLER_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Message Handlers): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case SERVICE_HANDLER:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato nei Service Handlers: " + formatList(messages,separator) + separator;
+				}
+				break;
 				
 			default:
 				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
@@ -7445,6 +7614,24 @@ public class DBOggettiInUsoUtils  {
 		return msg;
 	}
 
+	public static String formatMessageHandlerFromTipologia(String tipologia) {
+		if(tipologia.endsWith(CostantiDB.HANDLER_REQUEST_SUFFIX)) {
+			String tipologiaWS = tipologia.substring(0, tipologia.indexOf(CostantiDB.HANDLER_REQUEST_SUFFIX));
+			String template = "Fase [{0}] degli Handler di Richiesta";
+			return MessageFormat.format(template, tipologiaWS);
+		} else {
+			String tipologiaWS = tipologia.substring(0, tipologia.indexOf(CostantiDB.HANDLER_RESPONSE_SUFFIX));
+			String template = "Fase [{0}] degli Handler di Risposta";
+			return MessageFormat.format(template, tipologiaWS);
+		}
+	}
+	
+	public static String formatServiceHandlerFromTipologia(String tipologia) {
+//		String tipologiaWS = tipologia.substring(0, tipologia.indexOf(CostantiDB.HANDLER_REQUEST_SUFFIX));
+		String template = "Fase [{0}]";
+		return MessageFormat.format(template, tipologia);
+		
+	}
 }
 
 class ResultPorta {

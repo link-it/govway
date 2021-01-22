@@ -883,6 +883,12 @@ public class ControlStationCore {
 		return this.configurazionePluginsEnabled;
 	}
 	
+	/** Handlers */
+	private boolean configurazioneHandlersEnabled = false;
+	public boolean isConfigurazioneHandlersEnabled() {
+		return this.configurazioneHandlersEnabled;
+	}
+	
 	/** Configurazione Allarmi */
 	private boolean configurazioneAllarmiEnabled = false;
 	public boolean isConfigurazioneAllarmiEnabled() {
@@ -2378,6 +2384,9 @@ public class ControlStationCore {
 		this.configurazionePluginsEnabled = core.configurazionePluginsEnabled;
 		this.configurazionePluginsSeconds = core.configurazionePluginsSeconds;
 		
+		/** Handlers */
+		this.configurazioneHandlersEnabled = core.configurazioneHandlersEnabled;
+		
 		/** Configurazione Allarmi */
 		this.configurazioneAllarmiEnabled = core.configurazioneAllarmiEnabled;
 		this.allarmiConfig = core.allarmiConfig;
@@ -2746,6 +2755,7 @@ public class ControlStationCore {
 			this.isModipaFruizioniConnettoreCheckHttps = consoleProperties.isModipaFruizioniConnettoreCheckHttps();
 			this.configurazionePluginsEnabled = consoleProperties.isConfigurazionePluginsEnabled();
 			this.configurazionePluginsSeconds = consoleProperties.getPluginsSeconds();
+			this.configurazioneHandlersEnabled = consoleProperties.isConfigurazioneHandlersEnabled();
 			this.configurazioneAllarmiEnabled = consoleProperties.isConfigurazioneAllarmiEnabled();
 			this.allarmiConfig = new AllarmiConsoleConfig(consoleProperties);
 		

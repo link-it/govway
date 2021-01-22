@@ -420,5 +420,4 @@ public class PluginsDriverUtils {
 			throw new ServiceException("[" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} 
 	}
-	
 }

@@ -60,6 +60,7 @@ import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneHandler;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.GenericProperties;
@@ -78,6 +79,9 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.FaseMessageHandler;
+import org.openspcoop2.core.config.constants.FaseServiceHandler;
+import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.constants.PluginSorgenteArchivio;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
@@ -144,12 +148,14 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
 import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.monitor.engine.config.base.utils.handlers.ConfigurazioneHandlerBean;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicValidator;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.ValidationException;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
@@ -173,6 +179,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
@@ -3477,8 +3484,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola, 
 			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola, int numeroRegoleProxyPass,
 			boolean canaliEnabled, int numeroCanali, int numeroNodi, String canaliNome, String canaliDescrizione, List<CanaleConfigurazione> canaleList, String canaliDefault,		
-			int numeroArchiviPlugins, int numeroClassiPlugins
-			) throws Exception {
+			int numeroArchiviPlugins, int numeroClassiPlugins) throws Exception {
 		DataElement de = new DataElement();
 
 		// Configurazione Inoltro Buste non Riscontrate e Validazione Buste
@@ -4048,6 +4054,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		
+		// configurazione handler
+		boolean handlerAbilitati = this.core.isConfigurazioneHandlersEnabled();
+		if(!allHidden && handlerAbilitati && !this.isModalitaStandard()) {
+			this.visualizzaLinkHandlers(dati, true, null, null, null);
+		}
 		
 		// Configurazione del Profilo se il multitenant non è abilitato
 		
@@ -21140,5 +21151,552 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	
+	public void prepareHandlersRichiestaList(Search ricerca, List<ConfigurazioneHandlerBean> lista, RuoloPorta ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
+		String objectName = ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_HANDLERS_RICHIESTA;
+		String servletListURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RICHIESTA_LIST;
+		String servletChangeURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RICHIESTA_CHANGE;
+		String labelHandler = getLabelTipologiaFromFaseMessageHandler(tipologia,true);
+		String labelHandlerDi = labelHandler + " di ";
+		
+		int idLista = Liste.CONFIGURAZIONE_HANDLERS_RICHIESTA;
+		String searchLabel = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_LABEL;
+		
+		prepareHandlersList(ricerca, lista, ruoloPorta, idPortaS, serviceBinding, tipologia, objectName, servletListURL, servletChangeURL, labelHandler, labelHandlerDi, idLista, searchLabel);
+	}
+	
+	public void prepareHandlersRispostaList(Search ricerca, List<ConfigurazioneHandlerBean> lista, RuoloPorta ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
+		String objectName = ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_HANDLERS_RISPOSTA;
+		String servletListURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RISPOSTA_LIST;
+		String servletChangeURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RISPOSTA_CHANGE;
+		String labelHandler = getLabelTipologiaFromFaseMessageHandler(tipologia,false);
+		String labelHandlerDi = labelHandler + " di ";
+		
+		int idLista = Liste.CONFIGURAZIONE_HANDLERS_RISPOSTA;
+		String searchLabel = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_LABEL;
+		
+		prepareHandlersList(ricerca, lista, ruoloPorta, idPortaS, serviceBinding, tipologia, objectName, servletListURL, servletChangeURL, labelHandler, labelHandlerDi, idLista, searchLabel);
+	}
+	
+	public void prepareHandlersServizioList(Search ricerca, List<ConfigurazioneHandlerBean> lista, RuoloPorta ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String tipologia) throws Exception {
+		String objectName = ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO;
+		String servletListURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO_LIST;
+		String servletChangeURL = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO_CHANGE;
+		String labelHandler = getLabelTipologiaFromFaseServiceHandler(tipologia);
+		String labelHandlerDi = labelHandler + " di ";
+		
+		int idLista = Liste.CONFIGURAZIONE_HANDLERS_SERVIZIO;
+		String searchLabel = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_LABEL;
+		
+		prepareHandlersList(ricerca, lista, ruoloPorta, idPortaS, serviceBinding, tipologia, objectName, servletListURL, servletChangeURL, labelHandler, labelHandlerDi, idLista, searchLabel);
+	}
+	
+	
+	private void prepareHandlersList(Search ricerca, List<ConfigurazioneHandlerBean> lista, RuoloPorta ruoloPorta,
+			String idPortaS, ServiceBinding serviceBinding, String tipologia, String objectName, String servletListURL,
+			String servletChangeURL, String labelHandler, String labelHandlerDi, int idLista, String searchLabel)
+			throws Exception {
+		try {
+			List<Parameter> lstParamSession = new ArrayList<Parameter>();
+
+			Parameter parRuoloPorta = null;
+			if(ruoloPorta!=null) {
+				parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA, ruoloPorta.getValue());
+				lstParamSession.add(parRuoloPorta);
+			}
+			Parameter parIdPorta = null;
+			if(idPortaS!=null) {
+				parIdPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA, idPortaS);
+				lstParamSession.add(parIdPorta);
+			}
+			Parameter parServiceBinding = null;
+			if(serviceBinding!=null) {
+				parServiceBinding = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING, serviceBinding.name());
+				lstParamSession.add(parServiceBinding);
+			}
+			Parameter parTipologia = null;
+			if(tipologia!=null) {
+				parTipologia = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, tipologia);
+				lstParamSession.add(parTipologia);
+			}
+			
+			ServletUtils.addListElementIntoSession(this.session, objectName, lstParamSession);
+			
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			
+			List<Parameter> lstParamPorta = null;
+			if(ruoloPorta!=null) {
+				lstParamPorta = getTitleListHandler(tipologia, ruoloPorta, idPortaS, serviceBinding, null, servletListURL, labelHandlerDi, labelHandler);
+			}
+			
+			
+			this.pd.setSearchLabel(searchLabel);
+			
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+			}
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = null;
+			if(lstParamPorta!=null) {
+				lstParam = lstParamPorta;
+			} else {
+				lstParam = new ArrayList<Parameter>();
+				lstParam.add(new Parameter(labelHandler, null));
+			}
+			
+			if(ruoloPorta == null) {
+				lstParam.add(0,new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			}
+			
+			if(!search.equals("")){
+				if(lstParamSession.size() > 0) {
+					lstParam.set((lstParam.size() -1), new Parameter(labelHandler, servletListURL, lstParamSession.toArray(new Parameter[lstParamSession.size()])));
+				} else {
+					lstParam.set((lstParam.size() -1), new Parameter(labelHandler, servletListURL));
+				}
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+			}
+			
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+			
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, labelHandler, search);
+			}
+		
+			// setto le label delle colonne	
+			List<String> lstLabels = new ArrayList<>();
+			if(lista != null && lista.size() > 1)
+				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_POSIZIONE);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_LABEL);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_DESCRIZIONE);
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<ConfigurazioneHandlerBean> it = lista.iterator();
+				int numeroElementi = lista.size();
+				int i = 0;
+				while (it.hasNext()) {
+					ConfigurazioneHandlerBean handler = it.next();
+					
+					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER, handler.getId() + "");
+					List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+					lstParamEntry.add(pId);
+					if(lstParamSession.size() > 0) {
+						lstParamEntry.addAll(lstParamSession);
+					}
+					
+					Vector<DataElement> e = new Vector<DataElement>();
+					
+					// Posizione
+					if(lista.size() > 1) {
+						DataElement de = new DataElement();
+						de.setWidthPx(48);
+						de.setType(DataElementType.IMAGE);
+						DataElementImage imageUp = new DataElementImage();
+						Parameter pDirezioneSu = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU);
+						Parameter pDirezioneGiu = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU);
+						
+						List<Parameter> lstParamDirezioneSu = new ArrayList<Parameter>();
+						lstParamDirezioneSu.addAll(lstParamEntry);
+						lstParamDirezioneSu.add(pDirezioneSu);
+						List<Parameter> lstParamDirezioneGiu = new ArrayList<Parameter>();
+						lstParamDirezioneGiu.addAll(lstParamEntry);
+						lstParamDirezioneGiu.add(pDirezioneGiu);
+						
+						if(i > 0) {
+							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							imageUp.setUrl(servletListURL, lstParamDirezioneSu.toArray(new Parameter[lstParamDirezioneSu.size()])); 
+						}
+						else {
+							imageUp.setImage(CostantiControlStation.ICONA_PLACEHOLDER);
+						}
+						de.addImage(imageUp);
+						
+						if(i < numeroElementi -1) {
+							DataElementImage imageDown = new DataElementImage();
+							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							imageDown.setUrl(servletListURL, lstParamDirezioneGiu.toArray(new Parameter[lstParamDirezioneGiu.size()]));
+							de.addImage(imageDown);
+						}
+						de.setValue(handler.getPosizione()+"");
+						e.addElement(de);
+					}
+					
+					// Stato
+					DataElement de = new DataElement();
+					de.setWidthPx(10);
+					de.setType(DataElementType.CHECKBOX);
+					if(handler.getStato()==null // backward compatibility 
+							||
+							StatoFunzionalita.ABILITATO.equals(handler.getStato())){
+						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+					}
+					else{
+						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
+					}
+					e.addElement(de);
+					
+					
+					// label
+					de = new DataElement();
+					de.setIdToRemove(handler.getTipo());
+					de.setValue(handler.getNome());
+					de.setToolTip(handler.getNome());
+					de.setUrl(servletChangeURL, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+					e.addElement(de);
+
+					// descrizione
+					de = new DataElement();
+					de.setValue(handler.getDescrizioneAbbr());
+					de.setToolTip(handler.getDescrizione()); 
+					e.addElement(de);
+					
+					dati.addElement(e);
+					i++;
+				}
+			}
+			
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public List<Parameter> getTitleListHandler(String tipologia, RuoloPorta ruoloPorta, String idPortaS, ServiceBinding serviceBinding, String nomeOggetto,
+			String servletURL, String labelHandlerDi, String labelHandler) throws Exception{
+		List<Parameter> lstParamPorta = null;
+		if(ruoloPorta!=null) {
+			Long idPorta = Long.parseLong(idPortaS);
+			String labelPerPorta = null;
+			if(RuoloPorta.DELEGATA.equals(ruoloPorta)) {
+				// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+				if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+				
+				PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(idPorta);
+				String idporta = myPD.getNome();
+				
+				MappingFruizionePortaDelegata mappingPD = this.porteDelegateCore.getMappingFruizionePortaDelegata(myPD);
+				long idSoggetto = myPD.getIdSoggetto().longValue();
+				long idAsps = this.apsCore.getIdAccordoServizioParteSpecifica(mappingPD.getIdServizio());
+				long idFruizione = this.apsCore.getIdFruizioneAccordoServizioParteSpecifica(mappingPD.getIdFruitore(),mappingPD.getIdServizio());
+				
+				PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(this.request, this.pd, this.session);
+				lstParamPorta = porteDelegateHelper.getTitoloPD(parentPD,idSoggetto +"", idAsps+"", idFruizione+"");
+				
+				String labelOpzioniAvanzate = null;
+				if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+					labelOpzioniAvanzate = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI,
+							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE,
+							myPD);
+				}
+				else {
+					labelOpzioniAvanzate = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI+idporta;
+				}
+				
+				Parameter pIdPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, "" + myPD.getId());
+				Parameter pNomePD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+				Parameter pIdSoggPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, myPD.getIdSoggetto() + "");
+				Parameter pConfigurazioneAltroPorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA, Costanti.CHECK_BOX_ENABLED_TRUE);
+				Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps+"");
+				Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruizione+ "");
+				// link alle opzioni avanzate
+				lstParamPorta.add(new Parameter(labelOpzioniAvanzate, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,
+						pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta));
+				
+				labelPerPorta = labelHandler;
+			}
+			else {
+				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+				
+				PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(idPorta);
+				String idporta = myPA.getNome();
+				
+				MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(myPA);
+				long idSoggetto = myPA.getIdSoggetto().longValue();
+				long idAsps = this.apsCore.getIdAccordoServizioParteSpecifica(mappingPA.getIdServizio());
+				
+				PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(this.request, this.pd, this.session);
+				lstParamPorta = porteApplicativeHelper.getTitoloPA(parentPA, idSoggetto+"", idAsps+"");
+				
+				String labelOpzioniAvanzate = null;
+				if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+					labelOpzioniAvanzate = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE,
+							myPA);
+				}
+				else {
+					labelOpzioniAvanzate = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI+idporta;
+				}
+				
+				// link alle opzioni avanzate
+				Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, myPA.getNome());
+				Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idSoggetto + "");
+				Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+idPorta);
+				Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps+"");
+				Parameter pConfigurazioneAltroPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA, Costanti.CHECK_BOX_ENABLED_TRUE);
+
+				lstParamPorta.add(new Parameter(labelOpzioniAvanzate, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,
+						pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltroPorta));
+				
+				labelPerPorta = labelHandler;
+			}
+			
+			if(nomeOggetto==null) {
+				lstParamPorta.add(new Parameter(labelPerPorta,null));
+			}
+			else {
+				List<Parameter> list = new ArrayList<>();
+				list.add(new Parameter( ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, tipologia));
+				list.add(new Parameter( ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA, ruoloPorta.getValue()));
+				list.add(new Parameter( ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA, idPortaS));
+				if(serviceBinding!=null) {
+					list.add(new Parameter( ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING,serviceBinding.name()));
+				}
+				lstParamPorta.add(new Parameter(labelPerPorta, servletURL,	list));
+				lstParamPorta.add(new Parameter(nomeOggetto,null));
+			}
+		}
+		
+		return lstParamPorta;
+	}
+	
+	public String getLabelTipologiaFromFaseMessageHandler(String fase, boolean request) {
+		if(fase != null) {
+			return getLabelTipologiaFromFaseMessageHandler(FaseMessageHandler.toEnumConstant(fase), request);
+		}
+		return null;
+	}
+	public String getLabelTipologiaFromFaseMessageHandler(FaseMessageHandler fase, boolean request) {
+		if(fase != null) {
+			String prefix = request ? ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RICHIESTA_TITOLO : ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RISPOSTA_TITOLO;
+			
+			switch (fase) {
+			case IN:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_PRE_IN_SHORT);
+			case IN_PROTOCOL_INFO:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_IN_PROTOCOL_INFO_SHORT);
+			case OUT:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_OUT_SHORT);
+			case POST_OUT:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_POST_OUT_SHORT);
+			case PRE_IN:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_PRE_IN_SHORT);
+			}
+		}
+		
+		return null;
+	}
+	
+	public String getLabelTipologiaFromFaseServiceHandler(String fase) {
+		if(fase != null) {
+			return getLabelTipologiaFromFaseServiceHandler(FaseServiceHandler.toEnumConstant(fase));
+		}
+		return null;
+	}
+	public String getLabelTipologiaFromFaseServiceHandler(FaseServiceHandler fase) {
+		if(fase != null) {
+			String prefix = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_SERVIZIO_TITOLO;
+			switch (fase) {
+			case EXIT:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_EXIT);
+			case INIT:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_INIT);
+			case INTEGRATION_MANAGER_REQUEST:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_INTEGRATION_MANAGER_REQUEST);
+			case INTEGRATION_MANAGER_RESPONSE:
+				return MessageFormat.format(prefix, PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_INTEGRATION_MANAGER_RESPONSE);
+			}
+		}
+		
+		return null;
+	}
+
+	public void addHandlerRichiestaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
+			String stato,RuoloPorta ruoloPorta, String idPortaS,
+			ServiceBinding serviceBinding, String fase, List<String> tipiPluginGiaUtilizzati, String messaggioValoriNonDisponibili) throws Exception{
+		this.addHandlerToDati(dati, tipoOperazione, idHandlerS, nomePlugin, stato, ruoloPorta, idPortaS, 
+				serviceBinding, fase, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RICHIESTA, TipoPlugin.MESSAGE_HANDLER, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili);
+	}
+	
+	public void addHandlerRispostaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
+			String stato,  RuoloPorta ruoloPorta, String idPortaS,
+			ServiceBinding serviceBinding, String fase, List<String> tipiPluginGiaUtilizzati, String messaggioValoriNonDisponibili) throws Exception{
+		this.addHandlerToDati(dati, tipoOperazione, idHandlerS, nomePlugin, stato, ruoloPorta, idPortaS, 
+				serviceBinding, fase, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RISPOSTA, TipoPlugin.MESSAGE_HANDLER, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili);
+	}
+	
+	public void addHandlerServizioToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
+			String stato, RuoloPorta ruoloPorta, String idPortaS,
+			ServiceBinding serviceBinding, String fase, List<String> tipiPluginGiaUtilizzati, String messaggioValoriNonDisponibili) throws Exception{
+		this.addHandlerToDati(dati, tipoOperazione, idHandlerS, nomePlugin, stato, ruoloPorta, idPortaS, 
+				serviceBinding, fase, null, TipoPlugin.SERVICE_HANDLER, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili);
+	}
+
+	public void addHandlerToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
+			String stato, RuoloPorta ruoloPorta, String idPortaS,
+			ServiceBinding serviceBinding, String fase, String ruoloHandler, TipoPlugin tipoPlugin, List<String> tipiPluginGiaUtilizzati, String messaggioValoriNonDisponibili) throws Exception{
+
+		
+//		boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FIRST_TIME);
+		DataElement de;
+		
+		// id
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
+		de.setType(DataElementType.HIDDEN);
+		if(tipoOperazione.equals(TipoOperazione.ADD)) {
+			de.setValue("");
+		} else {
+			de.setValue(idHandlerS);
+		}
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA);
+		de.setValue(ruoloPorta!=null ? ruoloPorta.getValue() : null);
+		de.setType(DataElementType.HIDDEN);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA);
+		de.setValue(idPortaS);
+		de.setType(DataElementType.HIDDEN);
+		dati.addElement(de);
+		
+		if(serviceBinding!=null) {
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING);
+			de.setValue(serviceBinding.name());
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		}
+		
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE);
+		de.setValue(fase);
+		de.setType(DataElementType.HIDDEN);
+		dati.addElement(de);
+		
+		// Informazioni Generali
+		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_INFORMAZIONI_GENERALI);
+		dati.add(de);
+		
+		if(tipoOperazione.equals(TipoOperazione.ADD)) {
+		// plugin select
+		this.addCustomFieldConValoriDaEscludere(tipoPlugin, ruoloHandler, fase, "", ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN, GruppoIntegrazione.PLUGIN.getCompactLabel(),
+				nomePlugin, false, dati, false, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili);
+		} else {
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN);
+			de.setValue(nomePlugin);
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN + "txt");
+			de.setValue(nomePlugin);
+			de.setType(DataElementType.TEXT);
+			de.setLabel(GruppoIntegrazione.PLUGIN.getCompactLabel()); 
+			dati.addElement(de);
+			
+		}
+		// stato
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO); 
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO);
+		de.setType(DataElementType.SELECT);
+		String [] statoValues = CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA;
+		de.setSelected(stato);
+		de.setLabels(statoValues);
+		de.setValues(statoValues);
+		dati.add(de);
+		
+	}
+	public boolean handlerRichiestaCheckData(TipoOperazione tipoOp, ConfigurazioneHandlerBean oldHandler, String nomePlugin, String stato,
+			RuoloPorta ruoloPorta, Long idPorta, String fase, String tipo, String messaggioHandlerRichiestaDuplicato) throws Exception{
+		return handlerCheckData(tipoOp, oldHandler, nomePlugin, stato, ruoloPorta, idPorta, fase, tipo, messaggioHandlerRichiestaDuplicato);
+	}
+	
+	public boolean handlerRispostaCheckData(TipoOperazione tipoOp, ConfigurazioneHandlerBean oldHandler, String nomePlugin, String stato,
+			RuoloPorta ruoloPorta, Long idPorta, String fase, String tipo, String messaggioHandlerRichiestaDuplicato) throws Exception{
+		return handlerCheckData(tipoOp, oldHandler, nomePlugin, stato, ruoloPorta, idPorta, fase, tipo, messaggioHandlerRichiestaDuplicato);
+	}
+	
+	public boolean handlerServizioCheckData(TipoOperazione tipoOp, ConfigurazioneHandlerBean oldHandler, String nomePlugin, String stato,
+			RuoloPorta ruoloPorta, Long idPorta, String fase, String tipo, String messaggioHandlerRichiestaDuplicato) throws Exception{
+		return handlerCheckData(tipoOp, oldHandler, nomePlugin, stato, ruoloPorta, idPorta, fase, tipo, messaggioHandlerRichiestaDuplicato);
+	}
+	
+	private boolean handlerCheckData(TipoOperazione tipoOp, ConfigurazioneHandlerBean oldHandler, String nomePlugin, String stato,
+			RuoloPorta ruoloPorta, Long idPorta, String fase, String tipo, String messaggioHandlerRichiestaDuplicato) throws Exception{
+		try {
+			
+			/* ******** CONTROLLO PLUGIN *************** */
+			
+			if(nomePlugin == null || nomePlugin.equals(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED)) {
+				this.pd.setMessage("Indicare un valore nel campo '"+GruppoIntegrazione.PLUGIN.getCompactLabel()+"'");
+				return false;
+			}
+			
+			// stato
+			if(stato == null) {
+				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO+"'");
+				return false;
+			}
+
+			
+			// altri parametri
+			boolean existsHandler = this.confCore.existsHandlerRichiesta(fase, ruoloPorta, idPorta, tipo);
+			// controllo esistenza handler con lo stesso nome			
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				if (existsHandler) {
+					this.pd.setMessage(messaggioHandlerRichiestaDuplicato); 
+					return false;
+				}
+			}
+			
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	public void updateHandler(ConfigurazioneHandler handlerDestinazione, ConfigurazioneHandler handlerSorgente,
+			TipoOperazione tipoOperazione) {
+		handlerDestinazione.setPosizione(handlerSorgente.getPosizione());
+		handlerDestinazione.setStato(handlerSorgente.getStato());
+		handlerDestinazione.setTipo(handlerSorgente.getTipo());
+		//handlerDestinazione.setId(handlerSorgente.getId());
 	}
 }
