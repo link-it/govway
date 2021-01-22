@@ -2307,7 +2307,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		if(!confAllarmi.isEmpty() && !ControlStationCore.isAPIMode()) {
 			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-			StringBuffer bfError = new StringBuffer();
+			StringBuilder bfError = new StringBuilder();
 			for (ConfigurazioneAllarmeBean allarme : confAllarmi) {
 				try {
 					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), allarmiConfig);
@@ -2650,7 +2650,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		if(!confAllarmi.isEmpty() && !ControlStationCore.isAPIMode()) {
 			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-			StringBuffer bfError = new StringBuffer();
+			StringBuilder bfError = new StringBuilder();
 			for (ConfigurazioneAllarmeBean allarme : confAllarmi) {
 				try {
 					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), allarmiConfig);
