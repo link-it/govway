@@ -54,6 +54,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.commons.Filtri;
@@ -6139,6 +6141,26 @@ public class ConsoleHelper implements IConsoleHelper {
 									return false;
 								}
 							}
+							
+							if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+								ricercaAll = new Search(true);
+								List<ConfigurazioneAllarmeBean> allarmi = this.confCore.allarmiList(ricercaAll, RuoloPorta.DELEGATA, pd.getNome());
+								if(allarmi!=null && !allarmi.isEmpty()) {
+									StringBuilder sb = new StringBuilder();
+									for(ConfigurazioneAllarmeBean allarme: allarmi) {
+										if(allarme.getFiltro()!= null && allarme.getFiltro().getServizioApplicativoFruitore()!=null) {
+											sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+											sb.append("- ");
+											sb.append(allarme.getAlias()!=null ? allarme.getAlias() : allarme.getNome());
+										}
+									}
+									
+									if(sb.length() > 0) {
+										this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_ALLARMI_AUTENTICAZIONE_MODIFICATA + sb.toString());
+										return false;
+									}
+								}
+							}
 						}
 					}
 					
@@ -6282,6 +6304,27 @@ public class ConsoleHelper implements IConsoleHelper {
 								if(sb.length() > 0) {
 									this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_RATE_LIMITING_AUTENTICAZIONE_MODIFICATA + sb.toString());
 									return false;
+								}
+							}
+							
+							if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+								ricercaAll = new Search(true);
+								List<ConfigurazioneAllarmeBean> allarmi = this.confCore.allarmiList(ricercaAll, RuoloPorta.APPLICATIVA, pa.getNome());
+								if(allarmi!=null && !allarmi.isEmpty()) {
+									StringBuilder sb = new StringBuilder();
+									for(ConfigurazioneAllarmeBean policyRT: allarmi) {
+										if(policyRT.getFiltro()!= null && 
+												(policyRT.getFiltro().getServizioApplicativoFruitore()!=null || policyRT.getFiltro().getNomeFruitore()!=null)) {
+											sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+											sb.append("- ");
+											sb.append(policyRT.getAlias()!=null ? policyRT.getAlias() : policyRT.getNome());
+										}
+									}
+									
+									if(sb.length() > 0) {
+										this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_ALLARMI_AUTENTICAZIONE_MODIFICATA + sb.toString());
+										return false;
+									}
 								}
 							}
 						}
@@ -8795,7 +8838,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
-		if(checkAzioniUtilizzateErogazioneRateLimiting(list, azionis)==false) {
+		if(checkAzioniUtilizzateErogazione(list, azionis)==false) {
 			return false;
 		}
 		
@@ -8817,7 +8860,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
-		if(checkAzioniUtilizzateFruizioneRateLimiting(list, azionis)==false) {
+		if(checkAzioniUtilizzateFruizione(list, azionis)==false) {
 			return false;
 		}
 		
@@ -9732,6 +9775,45 @@ public class ConsoleHelper implements IConsoleHelper {
 			String label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO;
 
 			this.pd.addFilter(Filtri.FILTRO_TIPO_CREDENZIALI, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterStato(String stato, boolean addStatiAllarme, boolean postBack) throws Exception{
+		try {
+			String [] statiValues = new String[addStatiAllarme?5:2];
+			statiValues[0] = Filtri.FILTRO_STATO_VALORE_ABILITATO;
+			statiValues[1] = Filtri.FILTRO_STATO_VALORE_DISABILITATO;
+			if(addStatiAllarme) {
+				statiValues[2] = Filtri.FILTRO_STATO_VALORE_OK;
+				statiValues[3] = Filtri.FILTRO_STATO_VALORE_WARNING;
+				statiValues[4] = Filtri.FILTRO_STATO_VALORE_ERROR;
+			}
+			String [] statiLabel = new String[addStatiAllarme?5:2];
+			statiLabel[0] = Filtri.FILTRO_STATO_VALORE_ABILITATO;
+			statiLabel[1] = Filtri.FILTRO_STATO_VALORE_DISABILITATO;
+			if(addStatiAllarme) {
+				statiLabel[2] = Filtri.FILTRO_STATO_VALORE_OK;
+				statiLabel[3] = Filtri.FILTRO_STATO_VALORE_WARNING;
+				statiLabel[4] = Filtri.FILTRO_STATO_VALORE_ERROR;
+			}
+			String [] values = new String[statiValues.length + 1];
+			String [] labels = new String[statiValues.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_STATO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_STATO_QUALSIASI;
+			for (int i =0; i < statiValues.length ; i ++) {
+				labels[i+1] = statiLabel[i];
+				values[i+1] = statiValues[i];
+			}
+			
+			String selectedValue = stato != null ? stato : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_STATO_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_STATO;
+			
+			this.pd.addFilter(Filtri.FILTRO_STATO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -15625,11 +15707,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		return de;
 	}
 	
-	public boolean checkAzioniUtilizzateErogazioneRateLimiting(AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo, String [] azioni) throws Exception {
+	public boolean checkAzioniUtilizzateErogazione(AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo, String [] azioni) throws Exception {
 		List<MappingErogazionePortaApplicativa> list = mappingInfo.getListaMappingErogazione();
-		return checkAzioniUtilizzateErogazioneRateLimiting(list, azioni);
+		return checkAzioniUtilizzateErogazione(list, azioni);
 	}
-	public boolean checkAzioniUtilizzateErogazioneRateLimiting(List<MappingErogazionePortaApplicativa> list, String [] azioni) throws Exception {
+	public boolean checkAzioniUtilizzateErogazione(List<MappingErogazionePortaApplicativa> list, String [] azioni) throws Exception {
 		if(azioni==null || azioni.length<=0) {
 			return true;
 		}
@@ -15637,8 +15719,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : list) {
 				IDPortaApplicativa idPA = mappingErogazionePortaApplicativa.getIdPortaApplicativa();
 				List<AttivazionePolicy> listPolicies = this.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, idPA.getNome());
+				List<ConfigurazioneAllarmeBean> listAllarmi = null;
+				if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+					listAllarmi = this.confCore.allarmiList(new Search(true), RuoloPorta.APPLICATIVA, idPA.getNome());
+				}
 				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
-				if(this._checkAzioniUtilizzateRateLimiting(listPolicies, pa.getTrasformazioni(), azioni, 
+				if(this._checkAzioniUtilizzate(listPolicies, listAllarmi, pa.getTrasformazioni(), azioni, 
 						mappingErogazionePortaApplicativa.getDescrizione(), list.size())==false) {
 					return false;
 				}
@@ -15648,11 +15734,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkAzioniUtilizzateFruizioneRateLimiting(AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo, String [] azioni) throws Exception {
+	public boolean checkAzioniUtilizzateFruizione(AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo, String [] azioni) throws Exception {
 		List<MappingFruizionePortaDelegata> list = mappingInfo.getListaMappingFruizione();
-		return this.checkAzioniUtilizzateFruizioneRateLimiting(list, azioni);
+		return this.checkAzioniUtilizzateFruizione(list, azioni);
 	}
-	public boolean checkAzioniUtilizzateFruizioneRateLimiting(List<MappingFruizionePortaDelegata> list, String [] azioni) throws Exception {
+	public boolean checkAzioniUtilizzateFruizione(List<MappingFruizionePortaDelegata> list, String [] azioni) throws Exception {
 		if(azioni==null || azioni.length<=0) {
 			return true;
 		}
@@ -15660,8 +15746,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : list) {
 				IDPortaDelegata idPD = mappingFruizionePortaDelegata.getIdPortaDelegata();
 				List<AttivazionePolicy> listPolicies = this.confCore.attivazionePolicyList(null, RuoloPolicy.DELEGATA, idPD.getNome());
+				List<ConfigurazioneAllarmeBean> listAllarmi = null;
+				if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+					listAllarmi = this.confCore.allarmiList(new Search(true), RuoloPorta.DELEGATA, idPD.getNome());
+				}
 				PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
-				if(this._checkAzioniUtilizzateRateLimiting(listPolicies, pd.getTrasformazioni(), azioni, 
+				if(this._checkAzioniUtilizzate(listPolicies, listAllarmi, pd.getTrasformazioni(), azioni, 
 						mappingFruizionePortaDelegata.getDescrizione(), list.size())==false) {
 					return false;
 				}
@@ -15671,7 +15761,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	private boolean _checkAzioniUtilizzateRateLimiting(List<AttivazionePolicy> listPolicies, Trasformazioni trasformazioni, String [] azioni, String descrizioneGruppo, int sizeGruppi) {
+	private boolean _checkAzioniUtilizzate(List<AttivazionePolicy> listPolicies, List<ConfigurazioneAllarmeBean> listAllarmi, Trasformazioni trasformazioni, String [] azioni, String descrizioneGruppo, int sizeGruppi) {
+		
+		// verifico rate limiting
 		if(listPolicies!=null && !listPolicies.isEmpty()) {
 			for (AttivazionePolicy policy : listPolicies) {
 				if(policy.getFiltro()!=null && policy.getFiltro().getAzione()!=null) {
@@ -15682,11 +15774,11 @@ public class ConsoleHelper implements IConsoleHelper {
 								nomePolicy = policy.getIdActivePolicy();
 							}
 							if(sizeGruppi>1) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_GRUPPO, 
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING_GRUPPO, 
 										azioneTmp, nomePolicy, descrizioneGruppo));
 							}
 							else {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE, 
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING, 
 										azioneTmp, nomePolicy, descrizioneGruppo));
 							}
 							return false;	
@@ -15695,6 +15787,33 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 		}
+		
+		// verifico allarmi
+		if(listAllarmi!=null && !listAllarmi.isEmpty()) {
+			for (Allarme allarme : listAllarmi) {
+				if(allarme.getFiltro()!=null && allarme.getFiltro().getAzione()!=null) {
+					for (String azioneTmp : azioni) {
+						if(azioneTmp.equals(allarme.getFiltro().getAzione())) {
+							String nomeAllarme = allarme.getAlias();
+							if(nomeAllarme==null || "".equals(nomeAllarme)) {
+								nomeAllarme = allarme.getNome();
+							}
+							if(sizeGruppi>1) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME_GRUPPO, 
+										azioneTmp, nomeAllarme, descrizioneGruppo));
+							}
+							else {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME, 
+										azioneTmp, nomeAllarme, descrizioneGruppo));
+							}
+							return false;	
+						}
+					}
+				}
+			}
+		}
+		
+		// verifico trasformazioni
 		List<TrasformazioneRegola> trasformazione = null;
 		if(trasformazioni!=null) {
 			trasformazione = trasformazioni.getRegolaList();

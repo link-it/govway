@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.TrasformazioneRegola;
@@ -38,6 +39,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -133,6 +135,17 @@ public class ErogazioniUtilities {
 			}
 		}
 		
+		if(confCore.isConfigurazioneAllarmiEnabled()) {
+			List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.DELEGATA, pd.getNome());
+			if(listAllarmi!=null && !listAllarmi.isEmpty()) {
+				for (ConfigurazioneAllarmeBean allarme : listAllarmi) {
+					if(allarme.getFiltro()!=null && allarme.getFiltro().isEnabled() && allarme.getFiltro().getAzione()!=null) {
+						return false;
+					}
+				}
+			}
+		}
+		
 		return true;
 	}
 	
@@ -153,6 +166,17 @@ public class ErogazioniUtilities {
 			for (AttivazionePolicy attivazionePolicy : list) {
 				if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().isEnabled() && attivazionePolicy.getFiltro().getAzione()!=null) {
 					return false;
+				}
+			}
+		}
+		
+		if(confCore.isConfigurazioneAllarmiEnabled()) {
+			List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.APPLICATIVA, pa.getNome());
+			if(listAllarmi!=null && !listAllarmi.isEmpty()) {
+				for (ConfigurazioneAllarmeBean allarme : listAllarmi) {
+					if(allarme.getFiltro()!=null && allarme.getFiltro().isEnabled() && allarme.getFiltro().getAzione()!=null) {
+						return false;
+					}
 				}
 			}
 		}

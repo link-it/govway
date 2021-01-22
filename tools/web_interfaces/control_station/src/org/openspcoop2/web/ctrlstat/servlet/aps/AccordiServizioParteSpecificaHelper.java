@@ -246,10 +246,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean gestioneFruitori, boolean gestioneErogatori) throws Exception {
 		List<String> erogazione_listTrasformazioniPredefinito = null;
 		List<String> erogazione_listRateLimitingPredefinito = null;
+		List<String> erogazione_listAllarmePredefinito = null;
 		HashMap<String, List<String>> erogazione_mapGruppi = new HashMap<String, List<String>>();
 		
 		HashMap<String, List<String>> fruizione_listTrasformazioniPredefinito = null;
 		HashMap<String, List<String>> fruizione_listRateLimitingPredefinito = null;
+		HashMap<String, List<String>> fruizione_listAllarmePredefinito = null;
 		HashMap<String,HashMap<String, List<String>>> fruizione_mapGruppi = new HashMap<String,HashMap<String, List<String>>>();
 		
 		
@@ -300,6 +302,30 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 											if(!erogazione_listRateLimitingPredefinito.contains(az)) {
 												erogazione_listRateLimitingPredefinito.add(az);
 											}	
+										}
+									}
+								}
+							}
+						}
+						if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+							List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+							try {
+								Search ricercaPolicies = new Search(true);
+								listaAllarmi = this.confCore.allarmiList(ricercaPolicies, RuoloPorta.APPLICATIVA, pa.getNome());
+							}catch(Exception e) {}
+							if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+								for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+									if(allarme.getFiltro()!=null && allarme.getFiltro().getAzione()!=null) {
+										String [] tmp = allarme.getFiltro().getAzione().split(",");
+										if(tmp!=null && tmp.length>0) {
+											if(erogazione_listAllarmePredefinito==null) {
+												erogazione_listAllarmePredefinito = new ArrayList<String>();
+											}
+											for (String az : tmp) {
+												if(!erogazione_listAllarmePredefinito.contains(az)) {
+													erogazione_listAllarmePredefinito.add(az);
+												}	
+											}
 										}
 									}
 								}
@@ -388,6 +414,37 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										fruizione_listRateLimitingPredefinito.put(labelFruitore, list);
 									}
 								}
+								if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+									List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+									try {
+										Search ricercaPolicies = new Search(true);
+										listaAllarmi = this.confCore.allarmiList(ricercaPolicies, RuoloPorta.DELEGATA, pd.getNome());
+									}catch(Exception e) {}
+									if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+										List<String> list = null;
+										for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+											if(allarme.getFiltro()!=null && allarme.getFiltro().getAzione()!=null) {
+												String [] tmp = allarme.getFiltro().getAzione().split(",");
+												if(tmp!=null && tmp.length>0) {
+													if(list==null) {
+														list = new ArrayList<String>();
+													}
+													for (String az : tmp) {
+														if(!list.contains(az)) {
+															list.add(az);
+														}	
+													}
+												}
+											}
+										}
+										if(list!=null) {
+											if(fruizione_listAllarmePredefinito==null) {
+												fruizione_listAllarmePredefinito = new HashMap<String, List<String>>();
+											}
+											fruizione_listAllarmePredefinito.put(labelFruitore, list);
+										}
+									}
+								}
 							}
 							else {
 								if(pd.getAzione()!=null && pd.getAzione().sizeAzioneDelegataList()>0) {
@@ -409,8 +466,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		StringBuilder sbError = new StringBuilder();
 		
 		AccordoServizioParteComuneSintetico asSintetico = null;
-		boolean azioniInErogazione = !erogazione_mapGruppi.isEmpty() || erogazione_listRateLimitingPredefinito!=null || erogazione_listTrasformazioniPredefinito!=null;
-		boolean azioniInFruizione = !fruizione_mapGruppi.isEmpty() || fruizione_listRateLimitingPredefinito!=null || fruizione_listTrasformazioniPredefinito!=null;
+		boolean azioniInErogazione = !erogazione_mapGruppi.isEmpty() || erogazione_listRateLimitingPredefinito!=null || erogazione_listAllarmePredefinito!=null || erogazione_listTrasformazioniPredefinito!=null;
+		boolean azioniInFruizione = !fruizione_mapGruppi.isEmpty() || fruizione_listRateLimitingPredefinito!=null || fruizione_listAllarmePredefinito!=null || fruizione_listTrasformazioniPredefinito!=null;
 		if( azioniInErogazione
 				||
 				azioniInFruizione )
@@ -464,6 +521,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						sbError.append("<BR/>");
 					}
 					sbError.append("Policy di RateLimiting del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Erogazione): "+azioniNonTrovate);
+				}
+			}
+			
+			if(erogazione_listAllarmePredefinito!=null && !erogazione_listAllarmePredefinito.isEmpty()) {
+				List<String> azioniNonTrovate = new ArrayList<String>();
+				for (String az : erogazione_listAllarmePredefinito) {
+					if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
+						azioniNonTrovate.add(az);
+					}
+				}
+				if(!azioniNonTrovate.isEmpty()) {
+					if(sbError.length()>0) {
+						sbError.append("<BR/>");
+					}
+					sbError.append("Allarme del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Erogazione): "+azioniNonTrovate);
 				}
 			}
 			
@@ -528,6 +600,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							sbError.append("<BR/>");
 						}
 						sbError.append("Policy di RateLimiting del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
+					}
+				}
+			}
+			
+			if(fruizione_listAllarmePredefinito!=null && !fruizione_listAllarmePredefinito.isEmpty()) {
+				for (String labelFruitore : fruizione_listAllarmePredefinito.keySet()) {
+					List<String> l = fruizione_listAllarmePredefinito.get(labelFruitore);
+					List<String> azioniNonTrovate = new ArrayList<String>();
+					for (String az : l) {
+						if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
+							azioniNonTrovate.add(az);
+						}
+					}
+					if(!azioniNonTrovate.isEmpty()) {
+						if(sbError.length()>0) {
+							sbError.append("<BR/>");
+						}
+						sbError.append("Allarme del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
 					}
 				}
 			}
@@ -9134,7 +9224,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 		}
 		
-		if(checkAzioniUtilizzateErogazioneRateLimiting(mappingInfo, azioni)==false) {
+		if(checkAzioniUtilizzateErogazione(mappingInfo, azioni)==false) {
 			return false;
 		}
 		
@@ -9256,7 +9346,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 		}
 		
-		if(checkAzioniUtilizzateFruizioneRateLimiting(mappingInfo, azioni)==false) {
+		if(checkAzioniUtilizzateFruizione(mappingInfo, azioni)==false) {
 			return false;
 		}
 		

@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
@@ -158,6 +160,14 @@ public final class PorteApplicativeDel extends Action {
 				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, pa.getNome());
 				if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 					listPerformOperations.addAll(listAttivazione);
+				}
+				
+				if(confCore.isConfigurazioneAllarmiEnabled()) {
+					// cancello allarmi associati alla porta se esistono
+					List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.APPLICATIVA, pa.getNome());
+					if(listAllarmi!=null && !listAllarmi.isEmpty()) {
+						listPerformOperations.addAll(listAllarmi);
+					}
 				}
 				
 				// cancellazione della porta

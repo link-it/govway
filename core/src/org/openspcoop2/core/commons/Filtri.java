@@ -101,6 +101,9 @@ public final class Filtri
 	public final static String FILTRO_STATO_VALORE_QUALSIASI = "Qualsiasi";
 	public final static String FILTRO_STATO_VALORE_ABILITATO = "Abilitato";
 	public final static String FILTRO_STATO_VALORE_DISABILITATO = "Disabilitato";
+	public final static String FILTRO_STATO_VALORE_OK = "Ok";
+	public final static String FILTRO_STATO_VALORE_WARNING = "Warning";
+	public final static String FILTRO_STATO_VALORE_ERROR = "Error";
 	
 	public final static String FILTRO_TIPO_POLICY = "filtroTipoPolicy";
 	public final static String FILTRO_TIPO_POLICY_BUILT_IN = "built-in";

@@ -250,6 +250,25 @@ public class RegistroCore {
 		return getServizi(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tag);
 	}
 	public static List<IDServizio> getServizi(JDBCServiceManager manager,  List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tag) throws Exception{
+		return getServizi(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tag,
+				null, null, null);
+	}
+	
+	public static List<IDServizio> getServizi(JDBCServiceManager manager, String protocollo, String tipoServizio, String nomeServizio, Integer versioneServizio, String tag) throws Exception{
+		List<String> protocolli = null;
+		if(protocollo!=null) {
+			protocolli = new ArrayList<>();
+			protocolli.add(protocollo);
+		}
+		return getServizi(manager, protocolli, tipoServizio, nomeServizio, versioneServizio, tag);
+	}
+	public static List<IDServizio> getServizi(JDBCServiceManager manager,  List<String> protocolli, String tipoServizio, String nomeServizio, Integer versioneServizio, String tag) throws Exception{
+		return getServizi(manager, protocolli, null, null, tag,
+				tipoServizio, nomeServizio, versioneServizio);
+	}
+	
+	private static List<IDServizio> getServizi(JDBCServiceManager manager,  List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tag,
+			String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
 		List<IDServizio> list = new ArrayList<IDServizio>();
 		
 		IAccordoServizioParteSpecificaServiceSearch aspsServiceSearch = manager.getAccordoServizioParteSpecificaServiceSearch();
@@ -267,6 +286,12 @@ public class RegistroCore {
 		if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null){
 			pag.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO, tipoSoggettoErogatore);
 			pag.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeSoggettoErogatore);
+		}
+		
+		if(tipoServizio!=null && nomeServizio!=null && versioneServizio!=null){
+			pag.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio);
+			pag.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio);
+			pag.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio);
 		}
 		
 		if(tag!=null) {

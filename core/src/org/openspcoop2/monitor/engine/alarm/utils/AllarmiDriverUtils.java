@@ -28,6 +28,9 @@ import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
@@ -113,5 +116,40 @@ public class AllarmiDriverUtils {
 		} catch (Exception qe) {
 			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		}
+	}
+	
+	public static List<ConfigurazioneAllarmeBean> configurazioneAllarmiList(ISearch ricerca, RuoloPorta ruoloPorta, String nomePorta, 
+			Connection con, Logger log, String tipoDB,
+			String nomeMetodo, 
+			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
+			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
+			IDServizio filtroServizioAzione, String filtroRuolo) throws ServiceException{
+		
+		List<ConfigurazioneAllarmeBean> lista = new ArrayList<ConfigurazioneAllarmeBean>();
+		
+		try {
+			
+			List<Allarme> findAll = org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.configurazioneAllarmiList(ricerca, ruoloPorta, nomePorta, 
+					con, log, tipoDB,
+					nomeMetodo, 
+					filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
+					filtroSoggettoErogatore, filtroRuoloErogatore,
+					filtroServizioAzione, filtroRuolo);
+			
+			if(findAll != null && findAll.size() > 0){
+				
+				for (Allarme al : findAll) {
+					
+					Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), al.getTipo(), true, con, log, tipoDB);
+					
+					lista.add(new ConfigurazioneAllarmeBean(al, plugin));
+				}
+			}
+
+			return lista;
+
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} 
 	}
 }

@@ -3453,6 +3453,45 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
+	public List<IDServizio> getServizi(String protocolloSelezionato,List<String> protocolliSupportati, 
+			String tipoServizio, String nomeServizio, Integer versioneServizio, String tag) throws DriverControlStationException{
+		String nomeMetodo = "getServizi"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getServizi(serviceManager, protocolloSelezionato, tipoServizio, nomeServizio, versioneServizio, tag);
+			}
+			else{
+				return RegistroCore.getServizi(serviceManager, protocolliSupportati, tipoServizio, nomeServizio, versioneServizio, tag);
+			}
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 	public List<String> getAzioni(String protocolloSelezionato,List<String> protocolliSupportati, 
 			String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverControlStationException{
 		String nomeMetodo = "getAzioni"; 
@@ -4793,5 +4832,71 @@ public class DriverControlStationDB  {
 				// ignore exception
 			}
 		}
+	}
+	
+	public List<ConfigurazioneAllarmeBean> configurazioneAllarmiList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{
+		return this._configurazioneAllarmiList(ricerca, ruoloPorta, nomePorta, 
+				"configurazioneControlloTrafficoAttivazionePolicyList",
+				null, null, null,
+				null, null,
+				null, null);
+	}
+	public List<ConfigurazioneAllarmeBean> configurazioneAllarmiListByFilter(Search ricerca, RuoloPorta ruoloPorta, String nomePorta,
+			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
+			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
+			IDServizio filtroServizioAzione, String filtroRuolo) throws DriverControlStationException{
+		return this._configurazioneAllarmiList(ricerca, ruoloPorta, nomePorta, 
+				"configurazioneControlloTrafficoAttivazionePolicyListByFilter",
+				filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
+				filtroSoggettoErogatore, filtroRuoloErogatore,
+				filtroServizioAzione, filtroRuolo);
+	}
+	private List<ConfigurazioneAllarmeBean> _configurazioneAllarmiList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta, String nomeMetodo,
+			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
+			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
+			IDServizio filtroServizioAzione, String filtroRuolo) throws DriverControlStationException{
+		// ritorna la configurazione controllo del traffico della PdD
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+		
+		try {
+		
+			listaAllarmi = org.openspcoop2.monitor.engine.alarm.utils.AllarmiDriverUtils.configurazioneAllarmiList(ricerca, ruoloPorta, nomePorta, 
+					con, this.log, this.tipoDB,
+					nomeMetodo, 
+					filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
+					filtroSoggettoErogatore, filtroRuoloErogatore,
+					filtroServizioAzione, filtroRuolo);
+						
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listaAllarmi;
+		
 	}
 }

@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -67,6 +68,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
@@ -903,7 +905,8 @@ public class SoggettoUpdateUtilities {
 
 		// aggiorno le porte delegate
 		
-		Hashtable<String, AttivazionePolicy> listaPolicyPA = new Hashtable<String, AttivazionePolicy>();
+		Hashtable<String, AttivazionePolicy> listaPolicyPD = new Hashtable<String, AttivazionePolicy>();
+		Hashtable<String, ConfigurazioneAllarmeBean> listaAllarmiPD = new Hashtable<String, ConfigurazioneAllarmeBean>();
 		
 		Enumeration<PortaDelegata> en = listaPD.elements();
 		while (en.hasMoreElements()) {
@@ -934,11 +937,38 @@ public class SoggettoUpdateUtilities {
 						
 						_updateFiltroSoggetto(ap);
 														
-						listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+						listaPolicyPD.put(ap.getIdActivePolicy(), ap);
 					}
 				}
 			}
 			// fine Controllo policy di Rate Limiting
+			
+			if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+				// Controllo allarmi
+				Search ricercaAllarmi = new Search(true);
+				List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+				oldNomePorta = portaDelegata.getNome();
+				try {
+					if(portaDelegata.getOldIDPortaDelegataForUpdate()!=null && portaDelegata.getOldIDPortaDelegataForUpdate().getNome()!=null) {
+						oldNomePorta = portaDelegata.getOldIDPortaDelegataForUpdate().getNome();
+					}
+					listaAllarmi = this.confCore.allarmiList(ricercaAllarmi, RuoloPorta.DELEGATA, oldNomePorta);
+				}catch(Exception e) {}
+				if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+					for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+						if(allarme.getFiltro()!=null && oldNomePorta.equals(allarme.getFiltro().getNomePorta())) {
+							
+							// aggiorno nome porta
+							allarme.getFiltro().setNomePorta(portaDelegata.getNome());
+							
+							_updateFiltroSoggetto(allarme);
+															
+							listaAllarmiPD.put(allarme.getNome(), allarme);
+						}
+					}
+				}
+				// fine Controllo allarmi
+			}
 			
 		}
 		
@@ -959,7 +989,7 @@ public class SoggettoUpdateUtilities {
 		}catch(Exception e) {}
 		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 			for (AttivazionePolicy ap : listaPolicies) {
-				if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+				if(listaPolicyPD.containsKey(ap.getIdActivePolicy())) {
 					continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
 				}
 				listPolicyDaVerificare.add(ap);
@@ -977,7 +1007,7 @@ public class SoggettoUpdateUtilities {
 		}catch(Exception e) {}
 		if(listaPolicies!=null && !listaPolicies.isEmpty()) {
 			for (AttivazionePolicy ap : listaPolicies) {
-				if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+				if(listaPolicyPD.containsKey(ap.getIdActivePolicy())) {
 					continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
 				}
 				listPolicyDaVerificare.add(ap);
@@ -987,7 +1017,7 @@ public class SoggettoUpdateUtilities {
 		if(listPolicyDaVerificare!=null && !listPolicyDaVerificare.isEmpty()) {
 			for (AttivazionePolicy ap : listPolicyDaVerificare) {
 				
-				if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+				if(listaPolicyPD.containsKey(ap.getIdActivePolicy())) {
 					continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
 				}
 			
@@ -995,18 +1025,87 @@ public class SoggettoUpdateUtilities {
 					
 					_updateFiltroSoggetto(ap);
 													
-					listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+					listaPolicyPD.put(ap.getIdActivePolicy(), ap);
 				}
 			}
 		}
 		// fine Controllo policy di Rate Limiting
 		
 		
-		// aggiorno le policy di rate limiting associate alle porte applicative
-		Enumeration<AttivazionePolicy> enPolicy = listaPolicyPA.elements();
+		// aggiorno le policy di rate limiting associate alle porte delegate
+		Enumeration<AttivazionePolicy> enPolicy = listaPolicyPD.elements();
 		while (enPolicy.hasMoreElements()) {
 			AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
 			this.oggettiDaAggiornare.add(ap);
+		}
+		
+		
+		if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+			
+			// Controllo policy di Rate Limiting di altre porte delegate che utilizzano il soggetto solamente nel filtro.
+			
+			List<ConfigurazioneAllarmeBean> listAllarmiDaVerificare = new ArrayList<ConfigurazioneAllarmeBean>();
+			
+			filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+			Search ricercaAllarmi = new Search(true);
+			List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+			try {
+				listaAllarmi = this.confCore.allarmiListByFilter(ricercaAllarmi, RuoloPorta.DELEGATA, null,
+						filtroSoggettoFruitore, null, null,
+						null, null,
+						null, null);
+			}catch(Exception e) {}
+			if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+				for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+					if(listaAllarmiPD.containsKey(allarme.getNome())) {
+						continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+					}
+					listAllarmiDaVerificare.add(allarme);
+				}
+			}
+			
+			filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+			ricercaAllarmi = new Search(true);
+			listaAllarmi = null;
+			try {
+				listaAllarmi = this.confCore.allarmiListByFilter(ricercaAllarmi, RuoloPorta.DELEGATA, null,
+						null, null, null,
+						filtroSoggettoErogatore, null,
+						null, null);
+			}catch(Exception e) {}
+			if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+				for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+					if(listaAllarmiPD.containsKey(allarme.getNome())) {
+						continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+					}
+					listAllarmiDaVerificare.add(allarme);
+				}
+			}
+			
+			if(listAllarmiDaVerificare!=null && !listAllarmiDaVerificare.isEmpty()) {
+				for (ConfigurazioneAllarmeBean allarme : listAllarmiDaVerificare) {
+					
+					if(listaAllarmiPD.containsKey(allarme.getNome())) {
+						continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+					}
+				
+					if(allarme.getFiltro()!=null) {
+						
+						_updateFiltroSoggetto(allarme);
+														
+						listaAllarmiPD.put(allarme.getNome(), allarme);
+					}
+				}
+			}
+			// fine Controllo policy di Rate Limiting
+			
+			
+			// aggiorno gli allarmi associati alle porte delegate
+			Enumeration<ConfigurazioneAllarmeBean> enAllarme = listaAllarmiPD.elements();
+			while (enAllarme.hasMoreElements()) {
+				ConfigurazioneAllarmeBean allarme = (ConfigurazioneAllarmeBean) enAllarme.nextElement();
+				this.oggettiDaAggiornare.add(allarme);
+			}
 		}
 	}
 
@@ -1040,6 +1139,7 @@ public class SoggettoUpdateUtilities {
 			Hashtable<String, PortaApplicativa> listaPA = new Hashtable<String, PortaApplicativa>();
 			Hashtable<String, ServizioApplicativo> listaPA_SA = new Hashtable<String, ServizioApplicativo>();
 			Hashtable<String, AttivazionePolicy> listaPolicyPA = new Hashtable<String, AttivazionePolicy>();
+			Hashtable<String, ConfigurazioneAllarmeBean> listaAllarmiPA = new Hashtable<String, ConfigurazioneAllarmeBean>();
 
 			
 			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
@@ -1291,6 +1391,31 @@ public class SoggettoUpdateUtilities {
 						}
 					}
 					// fine Controllo policy di Rate Limiting
+					
+					if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+						// Controllo allarmi
+						Search ricercaAllarmi = new Search(true);
+						List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+						try {
+							listaAllarmi = this.confCore.allarmiList(ricercaAllarmi, RuoloPorta.APPLICATIVA, nomeAttuale);
+						}catch(Exception e) {}
+						if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+							for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+								if(allarme.getFiltro()!=null && nomeAttuale.equals(allarme.getFiltro().getNomePorta())) {
+									
+									// aggiorno nome porta
+									if(newNome!=null) {
+										allarme.getFiltro().setNomePorta(newNome);
+									}
+									
+									_updateFiltroSoggetto(allarme);
+																	
+									listaAllarmiPA.put(allarme.getNome(), allarme);
+								}
+							}
+						}
+						// fine Controllo allarmi
+					}
 				}
 
 				// ** Fine Verifica per soggetto proprietario ** // 
@@ -1437,6 +1562,65 @@ public class SoggettoUpdateUtilities {
 				}
 				// fine Controllo policy di Rate Limiting
 				
+				if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+					// Controllo allarmi
+					
+					List<ConfigurazioneAllarmeBean> listAllarmiDaVerificare = new ArrayList<ConfigurazioneAllarmeBean>();
+					
+					filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+					Search ricercaAllarmi = new Search(true);
+					List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+					try {
+						listaAllarmi = this.confCore.allarmiListByFilter(ricercaAllarmi, RuoloPorta.APPLICATIVA, null,
+								filtroSoggettoFruitore, null, null,
+								null, null,
+								null, null);
+					}catch(Exception e) {}
+					if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+						for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+							if(listaAllarmiPA.containsKey(allarme.getNome())) {
+								continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+							}
+							listAllarmiDaVerificare.add(allarme);
+						}
+					}
+					
+					filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+					ricercaAllarmi = new Search(true);
+					listaAllarmi = null;
+					try {
+						listaAllarmi = this.confCore.allarmiListByFilter(ricercaAllarmi, RuoloPorta.APPLICATIVA, null,
+								null, null, null,
+								filtroSoggettoErogatore, null,
+								null, null);
+					}catch(Exception e) {}
+					if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+						for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+							if(listaAllarmiPA.containsKey(allarme.getNome())) {
+								continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+							}
+							listAllarmiDaVerificare.add(allarme);
+						}
+					}
+					
+					if(listAllarmiDaVerificare!=null && !listAllarmiDaVerificare.isEmpty()) {
+						for (ConfigurazioneAllarmeBean allarme : listAllarmiDaVerificare) {
+							
+							if(listaAllarmiPA.containsKey(allarme.getNome())) {
+								continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+							}
+						
+							if(allarme.getFiltro()!=null) {
+								
+								_updateFiltroSoggetto(allarme);
+																
+								listaAllarmiPA.put(allarme.getNome(), allarme);
+							}
+						}
+					}
+					// fine Controllo allarmi
+				}
+				
 				// ** Fine Verifica per soggetto proprietario differente da quello modificato ** // 
 			}			
 
@@ -1457,6 +1641,14 @@ public class SoggettoUpdateUtilities {
 			while (enPolicy.hasMoreElements()) {
 				AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
 				this.oggettiDaAggiornare.add(ap);
+			}
+			if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+				// aggiorno gli allarmi associati alle porte applicative
+				Enumeration<ConfigurazioneAllarmeBean> enAllarme = listaAllarmiPA.elements();
+				while (enAllarme.hasMoreElements()) {
+					ConfigurazioneAllarmeBean allarme = (ConfigurazioneAllarmeBean) enAllarme.nextElement();
+					this.oggettiDaAggiornare.add(allarme);
+				}
 			}
 		}
 	}
@@ -1546,6 +1738,29 @@ public class SoggettoUpdateUtilities {
 						this.oldnomeprov.equals(ap.getFiltro().getNomeErogatore())) {
 					ap.getFiltro().setTipoErogatore(this.tipoprov);
 					ap.getFiltro().setNomeErogatore(this.nomeprov);
+				}
+			}
+			
+		}
+	}
+	private void _updateFiltroSoggetto(ConfigurazioneAllarmeBean allarme) {
+		if(allarme.getFiltro()!=null) {
+			
+			// aggiorno soggetto fruitore
+			if(allarme.getFiltro().getTipoFruitore()!=null && allarme.getFiltro().getNomeFruitore()!=null) {
+				if (this.oldtipoprov.equals(allarme.getFiltro().getTipoFruitore()) && 
+						this.oldnomeprov.equals(allarme.getFiltro().getNomeFruitore())) {
+					allarme.getFiltro().setTipoFruitore(this.tipoprov);
+					allarme.getFiltro().setNomeFruitore(this.nomeprov);
+				}
+			}
+			
+			// aggiorno soggetto erogatore
+			if(allarme.getFiltro().getTipoErogatore()!=null && allarme.getFiltro().getNomeErogatore()!=null) {
+				if (this.oldtipoprov.equals(allarme.getFiltro().getTipoErogatore()) && 
+						this.oldnomeprov.equals(allarme.getFiltro().getNomeErogatore())) {
+					allarme.getFiltro().setTipoErogatore(this.tipoprov);
+					allarme.getFiltro().setNomeErogatore(this.nomeprov);
 				}
 			}
 			

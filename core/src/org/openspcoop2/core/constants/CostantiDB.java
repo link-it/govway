@@ -187,6 +187,7 @@ public final class CostantiDB {
     public static final String REGISTRO_CLASSI_COMPATIBILITA_AZIONE = "plugins_azioni_comp";
     public static final String REGISTRO_CLASSI_COMPATIBILITA_PROPRIETA = "plugins_props_comp";
     
+    public static boolean ALLARMI_ENABLED = false;
     public static final String ALLARMI = "allarmi";
     public static final String ALLARMI_PARAMETRI = "allarmi_parametri";
     public static final String ALLARMI_HISTORY = "allarmi_history";

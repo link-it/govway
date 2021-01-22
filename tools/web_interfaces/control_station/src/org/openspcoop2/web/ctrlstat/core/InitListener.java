@@ -33,6 +33,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.XMLDiff;
 import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
@@ -334,6 +335,7 @@ public class InitListener implements ServletContextListener {
 				AllarmiConsoleConfig allarmiConsoleConfig = new AllarmiConsoleConfig(consoleProperties);
 				AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(InitListener.log, allarmiConsoleConfig.getAllarmiConfigurazione());
 				AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
+				CostantiDB.ALLARMI_ENABLED=true;
 			}
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del loader dei plugins: " + e.getMessage();

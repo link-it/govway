@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -43,6 +44,7 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -203,6 +205,14 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 						List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, mypd.getNome());
 						if(listAttivazione!=null && !listAttivazione.isEmpty()) {
 							listaOggettiDaEliminare.addAll(listAttivazione);
+						}
+						
+						if(confCore.isConfigurazioneAllarmiEnabled()) {
+							// cancello allarmi associati alla porta se esistono
+							List<ConfigurazioneAllarmeBean> listAllarmi = confCore.allarmiList(new Search(true), RuoloPorta.DELEGATA, mypd.getNome());
+							if(listAllarmi!=null && !listAllarmi.isEmpty()) {
+								listaOggettiDaEliminare.addAll(listAllarmi);
+							}
 						}
 						
 						// cancello la porta

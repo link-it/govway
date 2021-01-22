@@ -1122,6 +1122,9 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_STATO_QUALSIASI = "";
+	public final static String LABEL_PARAMETRO_STATO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_DEFAULT = "D";
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "SOAP_11";
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_12 = "SOAP_12";
@@ -1952,6 +1955,7 @@ public class CostantiControlStation {
 //	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima eliminare i soggetti associati alle trasformazioni:";
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima eliminare gli applicativi associati alle trasformazioni:";
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_RATE_LIMITING_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima eliminare gli applicativi associati alle politiche di Rate Limiting:";
+	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_ALLARMI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima eliminare gli applicativi associati agli allarmi:";
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima eliminare i soggetti associati alle trasformazioni:";
 	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY = "Validazione XSD dev'essere abilitato, disabilitato o warningOnly";
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO = "Valore del campo {0} non valido.";
@@ -1971,8 +1975,10 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME = "&Egrave; gi&agrave; presente una regola di trasformazione con il nome indicato.";
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_APPLICATIVO = "&Egrave; gi&agrave; presente una regola di trasformazione, con gli stessi parametri di applicabilit&agrave; e l'applicativo selezionato.";
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_SOGGETTO = "&Egrave; gi&agrave; presente una regola di trasformazione, con gli stessi parametri di applicabilit&agrave; e il soggetto selezionato.";
-	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE = "Operazione {0} non assegnabile poich&egrave; utilizzata come filtro della policy di rate limiting ''{1}''";
-	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_GRUPPO = "Operazione {0} non assegnabile poich&egrave; utilizzata come filtro della policy di rate limiting ''{1}'' (gruppo: {2})";
+	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING = "Operazione {0} non assegnabile poich&egrave; utilizzata come filtro della policy di rate limiting ''{1}''";
+	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING_GRUPPO = "Operazione {0} non assegnabile poich&egrave; utilizzata come filtro della policy di rate limiting ''{1}'' (gruppo: {2})";
+	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME = "Operazione {0} non assegnabile poich&egrave; utilizzata come filtro dell'allarme ''{1}''";
+	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME_GRUPPO = "Operazione {0} non assegnabile poich&egrave; utilizzata come filtro dell'allarme ''{1}'' (gruppo: {2})";
 	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE = "Operazione {0} non assegnabile poich&egrave; utilizzata nel criterio di applicabilità della regola di trasformazione ''{1}''";
 	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE_GRUPPO = "Operazione {0} non assegnabile poich&egrave; utilizzata nel criterio di applicabilità della regola di trasformazione ''{1}'' (gruppo: {2})";
 

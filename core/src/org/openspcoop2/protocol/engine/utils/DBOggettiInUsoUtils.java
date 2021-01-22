@@ -80,7 +80,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  */
 public class DBOggettiInUsoUtils  {
 
-
+	
 	private static String getProtocolPrefix(String protocollo) throws UtilsException {
 		try {
 			return "["+NamingUtils.getLabelProtocollo(protocollo)+"] ";
@@ -724,10 +724,20 @@ public class DBOggettiInUsoUtils  {
 			boolean isInUso = false;
 			
 			List<String> accordi_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_ACCORDI);
-				
+			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);	
+			
 			if (accordi_list == null) {
 				accordi_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_ACCORDI, accordi_list);
+			}
+			if (ct_list == null) {
+				ct_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
+			}
+			if (allarme_list == null) {
+				allarme_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			
 			
@@ -802,6 +812,99 @@ public class DBOggettiInUsoUtils  {
 				risultato.close();
 				stmt.close();
 			}
+			
+			// Controllo che il soggetto non sia associato a policy di controllo del traffico o allarmi
+			if(config){
+				
+				int max = 2;
+				if(!CostantiDB.ALLARMI_ENABLED) {
+					max=1;
+				}
+				
+				for (int i = 0; i < max; i++) {
+					
+					String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+					String identificativo_column = "active_policy_id";
+					String alias_column = "policy_alias";
+					List<String> list = ct_list;
+					String oggetto = "Policy";
+					if(i==1) {
+						tabella = CostantiDB.ALLARMI;
+						identificativo_column = "nome";
+						alias_column = "alias";
+						list = allarme_list;
+						oggetto = "Allarme";
+					}
+				
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(tabella);
+					sqlQueryObject.addSelectField(identificativo_column);
+					sqlQueryObject.addSelectField(alias_column);
+					sqlQueryObject.addSelectField("filtro_ruolo");
+					sqlQueryObject.addSelectField("filtro_porta");
+					sqlQueryObject.setANDLogicOperator(false); // OR
+					sqlQueryObject.addWhereCondition(true, 
+							tabella+".filtro_tag = ?");
+					queryString = sqlQueryObject.createSQLQuery();
+					sqlQueryObject.addOrderBy("filtro_ruolo");
+					sqlQueryObject.addOrderBy("filtro_porta");
+					stmt = con.prepareStatement(queryString);
+					int index = 1;
+					stmt.setString(index++, idGruppo.getNome());
+					risultato = stmt.executeQuery();
+					while (risultato.next()) {
+						
+						String alias = risultato.getString(alias_column);
+						if(alias== null || "".equals(alias)) {
+							alias = risultato.getString(identificativo_column);
+						}
+						
+						String nomePorta = risultato.getString("filtro_porta");
+						String filtro_ruolo = risultato.getString("filtro_ruolo");
+						if(nomePorta!=null) {
+							String tipo = null;
+							String label = null;
+							if("delegata".equals(filtro_ruolo)) {
+								try {
+									ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										label = "Fruizione di Servizio "+ resultPorta.label;
+									}
+								}catch(Exception e) {
+									tipo = "Outbound";
+								}
+							}
+							else if("applicativa".equals(filtro_ruolo)) {
+								try {
+									ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										label = "Erogazione di Servizio "+ resultPorta.label;
+									}
+								}catch(Exception e) {
+									tipo = "Inbound";
+								}
+							}
+							else {
+								tipo = filtro_ruolo;
+							}
+							if(label==null) {
+								list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+							}
+							else {
+								list.add(oggetto+" '"+alias+"' attiva nella "+label);
+							}
+						}
+						else {
+							list.add(oggetto+" '"+alias+"'");
+						}
+		
+						isInUso = true;
+					}
+					risultato.close();
+					stmt.close();
+					
+				}
+			}
 
 			return isInUso;
 
@@ -853,6 +956,16 @@ public class DBOggettiInUsoUtils  {
 			case IN_USO_IN_ACCORDI:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "associato all'API: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case CONTROLLO_TRAFFICO:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato in Policy di Rate Limiting: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case ALLARMI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato in Allarmi: " + formatList(messages,separator) + separator;
 				}
 				break;
 			default:
@@ -915,6 +1028,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> mappingErogazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
 			List<String> mappingFruizionePD_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD);
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			
 			if (soggetti_list == null) {
 				soggetti_list = new ArrayList<String>();
@@ -943,6 +1057,10 @@ public class DBOggettiInUsoUtils  {
 			if (ct_list == null) {
 				ct_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
+			}
+			if (allarme_list == null) {
+				allarme_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			
 			
@@ -1077,77 +1195,101 @@ public class DBOggettiInUsoUtils  {
 				stmt.close();
 			}
 			
-			// Controllo che il soggetto non sia associato a policy di controllo del traffico
+			// Controllo che il soggetto non sia associato a policy di controllo del traffico o allarmi
 			if(config){
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY);
-				sqlQueryObject.addSelectField("active_policy_id");
-				sqlQueryObject.addSelectField("policy_alias");
-				sqlQueryObject.addSelectField("filtro_ruolo");
-				sqlQueryObject.addSelectField("filtro_porta");
-				sqlQueryObject.setANDLogicOperator(false); // OR
-				sqlQueryObject.addWhereCondition(true, 
-						CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_ruolo_fruitore = ?");
-				sqlQueryObject.addWhereCondition(true, 
-						CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_ruolo_erogatore = ?");
-				queryString = sqlQueryObject.createSQLQuery();
-				sqlQueryObject.addOrderBy("filtro_ruolo");
-				sqlQueryObject.addOrderBy("filtro_porta");
-				stmt = con.prepareStatement(queryString);
-				int index = 1;
-				stmt.setString(index++, idRuolo.getNome());
-				stmt.setString(index++, idRuolo.getNome());
-				risultato = stmt.executeQuery();
-				while (risultato.next()) {
-					
-					String alias = risultato.getString("policy_alias");
-					if(alias== null || "".equals(alias)) {
-						alias = risultato.getString("active_policy_id");
-					}
-					
-					String nomePorta = risultato.getString("filtro_porta");
-					String filtro_ruolo = risultato.getString("filtro_ruolo");
-					if(nomePorta!=null) {
-						String tipo = null;
-						String label = null;
-						if("delegata".equals(filtro_ruolo)) {
-							try {
-								ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
-								if(resultPorta.mapping) {
-									label = "Fruizione di Servizio "+ resultPorta.label;
-								}
-							}catch(Exception e) {
-								tipo = "Outbound";
-							}
-						}
-						else if("applicativa".equals(filtro_ruolo)) {
-							try {
-								ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
-								if(resultPorta.mapping) {
-									label = "Erogazione di Servizio "+ resultPorta.label;
-								}
-							}catch(Exception e) {
-								tipo = "Inbound";
-							}
-						}
-						else {
-							tipo = filtro_ruolo;
-						}
-						if(label==null) {
-							ct_list.add("Policy '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-						}
-						else {
-							ct_list.add("Policy '"+alias+"' attiva nella "+label);
-						}
-					}
-					else {
-						ct_list.add("Policy '"+alias+"'");
-					}
-	
-					isInUso = true;
+				
+				int max = 2;
+				if(!CostantiDB.ALLARMI_ENABLED) {
+					max=1;
 				}
-				risultato.close();
-				stmt.close();
+				
+				for (int i = 0; i < max; i++) {
+					
+					String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+					String identificativo_column = "active_policy_id";
+					String alias_column = "policy_alias";
+					List<String> list = ct_list;
+					String oggetto = "Policy";
+					if(i==1) {
+						tabella = CostantiDB.ALLARMI;
+						identificativo_column = "nome";
+						alias_column = "alias";
+						list = allarme_list;
+						oggetto = "Allarme";
+					}
+				
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(tabella);
+					sqlQueryObject.addSelectField(identificativo_column);
+					sqlQueryObject.addSelectField(alias_column);
+					sqlQueryObject.addSelectField("filtro_ruolo");
+					sqlQueryObject.addSelectField("filtro_porta");
+					sqlQueryObject.setANDLogicOperator(false); // OR
+					sqlQueryObject.addWhereCondition(true, 
+							tabella+".filtro_ruolo_fruitore = ?");
+					sqlQueryObject.addWhereCondition(true, 
+							tabella+".filtro_ruolo_erogatore = ?");
+					queryString = sqlQueryObject.createSQLQuery();
+					sqlQueryObject.addOrderBy("filtro_ruolo");
+					sqlQueryObject.addOrderBy("filtro_porta");
+					stmt = con.prepareStatement(queryString);
+					int index = 1;
+					stmt.setString(index++, idRuolo.getNome());
+					stmt.setString(index++, idRuolo.getNome());
+					risultato = stmt.executeQuery();
+					while (risultato.next()) {
+						
+						String alias = risultato.getString(alias_column);
+						if(alias== null || "".equals(alias)) {
+							alias = risultato.getString(identificativo_column);
+						}
+						
+						String nomePorta = risultato.getString("filtro_porta");
+						String filtro_ruolo = risultato.getString("filtro_ruolo");
+						if(nomePorta!=null) {
+							String tipo = null;
+							String label = null;
+							if("delegata".equals(filtro_ruolo)) {
+								try {
+									ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										label = "Fruizione di Servizio "+ resultPorta.label;
+									}
+								}catch(Exception e) {
+									tipo = "Outbound";
+								}
+							}
+							else if("applicativa".equals(filtro_ruolo)) {
+								try {
+									ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										label = "Erogazione di Servizio "+ resultPorta.label;
+									}
+								}catch(Exception e) {
+									tipo = "Inbound";
+								}
+							}
+							else {
+								tipo = filtro_ruolo;
+							}
+							if(label==null) {
+								list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+							}
+							else {
+								list.add(oggetto+" '"+alias+"' attiva nella "+label);
+							}
+						}
+						else {
+							list.add(oggetto+" '"+alias+"'");
+						}
+		
+						isInUso = true;
+					}
+					risultato.close();
+					stmt.close();
+					
+				}
+				
 			}
 			
 			return isInUso;
@@ -1224,6 +1366,11 @@ public class DBOggettiInUsoUtils  {
 			case CONTROLLO_TRAFFICO:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "utilizzato in Policy di Rate Limiting: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case ALLARMI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato in Allarmi: " + formatList(messages,separator) + separator;
 				}
 				break;
 			default:
@@ -1492,6 +1639,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> partecipanti_list = whereIsInUso.get(ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE);
 			List<String> utenti_list = whereIsInUso.get(ErrorsHandlerCostant.UTENTE);
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			List<String> autorizzazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING);
 			List<String> autorizzazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE);
 			List<String> trasformazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
@@ -1545,6 +1693,10 @@ public class DBOggettiInUsoUtils  {
 			if (ct_list == null) {
 				ct_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
+			}
+			if (allarme_list == null) {
+				allarme_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			if (autorizzazionePA_mapping_list == null) {
 				autorizzazionePA_mapping_list = new ArrayList<String>();
@@ -1877,80 +2029,104 @@ public class DBOggettiInUsoUtils  {
 			risultato.close();
 			stmt.close();
 			
-			// Controllo che il soggetto non sia associato a policy di controllo del traffico
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY);
-			sqlQueryObject.addSelectField("active_policy_id");
-			sqlQueryObject.addSelectField("policy_alias");
-			sqlQueryObject.addSelectField("filtro_ruolo");
-			sqlQueryObject.addSelectField("filtro_porta");
-			sqlQueryObject.setANDLogicOperator(false); // OR
-			sqlQueryObject.addWhereCondition(true, 
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_tipo_fruitore = ?", 
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_nome_fruitore = ?");
-			sqlQueryObject.addWhereCondition(true, 
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_tipo_erogatore = ?", 
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_nome_erogatore = ?");
-			sqlQueryObject.addOrderBy("filtro_ruolo");
-			sqlQueryObject.addOrderBy("filtro_porta");
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			int index = 1;
-			stmt.setString(index++, tipoSoggetto);
-			stmt.setString(index++, nomeSoggetto);
-			stmt.setString(index++, tipoSoggetto);
-			stmt.setString(index++, nomeSoggetto);
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				
-				String alias = risultato.getString("policy_alias");
-				if(alias== null || "".equals(alias)) {
-					alias = risultato.getString("active_policy_id");
-				}
-				
-				String nomePorta = risultato.getString("filtro_porta");
-				String filtro_ruolo = risultato.getString("filtro_ruolo");
-				if(nomePorta!=null) {
-					String tipo = null;
-					String label = null;
-					if("delegata".equals(filtro_ruolo)) {
-						try {
-							ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
-							if(resultPorta.mapping) {
-								label = "Fruizione di Servizio "+ resultPorta.label;
-							}
-						}catch(Exception e) {
-							tipo = "Outbound";
-						}
-					}
-					else if("applicativa".equals(filtro_ruolo)) {
-						try {
-							ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
-							if(resultPorta.mapping) {
-								label = "Erogazione di Servizio "+ resultPorta.label;
-							}
-						}catch(Exception e) {
-							tipo = "Inbound";
-						}
-					}
-					else {
-						tipo = filtro_ruolo;
-					}
-					if(label==null) {
-						ct_list.add("Policy '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-					}
-					else {
-						ct_list.add("Policy '"+alias+"' attiva nella "+label);
-					}
-				}
-				else {
-					ct_list.add("Policy '"+alias+"'");
-				}
-
-				isInUso = true;
+			
+			
+			
+			// Controllo che il soggetto non sia associato a policy di controllo del traffico o allarmi
+			
+			int max = 2;
+			if(!CostantiDB.ALLARMI_ENABLED) {
+				max=1;
 			}
-			risultato.close();
-			stmt.close();
+			for (int i = 0; i < max; i++) {
+				
+				String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+				String identificativo_column = "active_policy_id";
+				String alias_column = "policy_alias";
+				List<String> list = ct_list;
+				String oggetto = "Policy";
+				if(i==1) {
+					tabella = CostantiDB.ALLARMI;
+					identificativo_column = "nome";
+					alias_column = "alias";
+					list = allarme_list;
+					oggetto = "Allarme";
+				}
+			
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tabella);
+				sqlQueryObject.addSelectField(identificativo_column);
+				sqlQueryObject.addSelectField(alias_column);
+				sqlQueryObject.addSelectField("filtro_ruolo");
+				sqlQueryObject.addSelectField("filtro_porta");
+				sqlQueryObject.setANDLogicOperator(false); // OR
+				sqlQueryObject.addWhereCondition(true, 
+						tabella+".filtro_tipo_fruitore = ?", 
+						tabella+".filtro_nome_fruitore = ?");
+				sqlQueryObject.addWhereCondition(true, 
+						tabella+".filtro_tipo_erogatore = ?", 
+						tabella+".filtro_nome_erogatore = ?");
+				sqlQueryObject.addOrderBy("filtro_ruolo");
+				sqlQueryObject.addOrderBy("filtro_porta");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				int index = 1;
+				stmt.setString(index++, tipoSoggetto);
+				stmt.setString(index++, nomeSoggetto);
+				stmt.setString(index++, tipoSoggetto);
+				stmt.setString(index++, nomeSoggetto);
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					
+					String alias = risultato.getString(alias_column);
+					if(alias== null || "".equals(alias)) {
+						alias = risultato.getString(identificativo_column);
+					}
+					
+					String nomePorta = risultato.getString("filtro_porta");
+					String filtro_ruolo = risultato.getString("filtro_ruolo");
+					if(nomePorta!=null) {
+						String tipo = null;
+						String label = null;
+						if("delegata".equals(filtro_ruolo)) {
+							try {
+								ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									label = "Fruizione di Servizio "+ resultPorta.label;
+								}
+							}catch(Exception e) {
+								tipo = "Outbound";
+							}
+						}
+						else if("applicativa".equals(filtro_ruolo)) {
+							try {
+								ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									label = "Erogazione di Servizio "+ resultPorta.label;
+								}
+							}catch(Exception e) {
+								tipo = "Inbound";
+							}
+						}
+						else {
+							tipo = filtro_ruolo;
+						}
+						if(label==null) {
+							list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+						}
+						else {
+							list.add(oggetto+" '"+alias+"' attiva nella "+label);
+						}
+					}
+					else {
+						list.add(oggetto+" '"+alias+"'");
+					}
+	
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			}
 
 			
 			// controllo se in uso in porte applicative nell'autorizzazione
@@ -2135,6 +2311,11 @@ public class DBOggettiInUsoUtils  {
 			case CONTROLLO_TRAFFICO:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "utilizzato in policy di Rate Limiting: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case ALLARMI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato in Allarmi: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case AUTORIZZAZIONE_MAPPING:
@@ -2935,6 +3116,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> trasformazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
 			
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			
 			if (correlazione_list == null) {
 				correlazione_list = new ArrayList<String>();
@@ -2978,6 +3160,10 @@ public class DBOggettiInUsoUtils  {
 			if (ct_list == null) {
 				ct_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
+			}
+			if (allarme_list == null) {
+				allarme_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			
 			
@@ -3301,78 +3487,97 @@ public class DBOggettiInUsoUtils  {
 										stmt.close();
 										
 										
-										// ** Controllo che non sia associato a policy di controllo del traffico **
+										// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
 										
-										sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-										sqlQueryObject.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY);
-										sqlQueryObject.addSelectField("active_policy_id");
-										sqlQueryObject.addSelectField("policy_alias");
-										sqlQueryObject.addSelectField("filtro_ruolo");
-										sqlQueryObject.addSelectField("filtro_porta");
-										sqlQueryObject.setANDLogicOperator(true);
-										sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_ruolo=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_porta=?");
-										
-										// condizione di controllo
-										sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
-										sqlQueryObjectOr.setANDLogicOperator(false);
-										// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
-										// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione = ?");
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", idRisorsa.getNome(), false , false);
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", idRisorsa.getNome()+",", LikeConfig.startsWith(false));
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+idRisorsa.getNome(), LikeConfig.endsWith(false));
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+idRisorsa.getNome()+",", true , false);
-										sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
-										
-										sqlQueryObject.addOrderBy("filtro_ruolo");
-										sqlQueryObject.addOrderBy("filtro_porta");
-										queryString = sqlQueryObject.createSQLQuery();
-										stmt = con.prepareStatement(queryString);
-										stmt.setString(1, "delegata");
-										stmt.setString(2, mapping.getIdPortaDelegata().getNome());
-										// CLOB stmt.setString(3, idRisorsa.getNome());
-										risultato = stmt.executeQuery();
-										while (risultato.next()) {
+										int max = 2;
+										if(!CostantiDB.ALLARMI_ENABLED) {
+											max=1;
+										}
+										for (int i = 0; i < max; i++) {
 											
-											String alias = risultato.getString("policy_alias");
-											if(alias== null || "".equals(alias)) {
-												alias = risultato.getString("active_policy_id");
+											String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+											String identificativo_column = "active_policy_id";
+											String alias_column = "policy_alias";
+											List<String> list = ct_list;
+											String oggetto = "Policy";
+											if(i==1) {
+												tabella = CostantiDB.ALLARMI;
+												identificativo_column = "nome";
+												alias_column = "alias";
+												list = allarme_list;
+												oggetto = "Allarme";
 											}
+										
+											sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+											sqlQueryObject.addFromTable(tabella);
+											sqlQueryObject.addSelectField(identificativo_column);
+											sqlQueryObject.addSelectField(alias_column);
+											sqlQueryObject.addSelectField("filtro_ruolo");
+											sqlQueryObject.addSelectField("filtro_porta");
+											sqlQueryObject.setANDLogicOperator(true);
+											sqlQueryObject.addWhereCondition(tabella+".filtro_ruolo=?");
+											sqlQueryObject.addWhereCondition(tabella+".filtro_porta=?");
 											
-											String nomePorta = risultato.getString("filtro_porta");
-											String filtro_ruolo = risultato.getString("filtro_ruolo");
-											if(nomePorta!=null) {
-												String tipo = null;
-												String label = null;
-												if("delegata".equals(filtro_ruolo)) {
-													try {
-														ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
-														if(resultPorta.mapping) {
-															label = "Fruizione di Servizio "+ resultPorta.label;
+											// condizione di controllo
+											sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+											sqlQueryObjectOr.setANDLogicOperator(false);
+											// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+											// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione = ?");
+											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idRisorsa.getNome(), false , false);
+											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idRisorsa.getNome()+",", LikeConfig.startsWith(false));
+											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idRisorsa.getNome(), LikeConfig.endsWith(false));
+											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idRisorsa.getNome()+",", true , false);
+											sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+											
+											sqlQueryObject.addOrderBy("filtro_ruolo");
+											sqlQueryObject.addOrderBy("filtro_porta");
+											queryString = sqlQueryObject.createSQLQuery();
+											stmt = con.prepareStatement(queryString);
+											stmt.setString(1, "delegata");
+											stmt.setString(2, mapping.getIdPortaDelegata().getNome());
+											// CLOB stmt.setString(3, idRisorsa.getNome());
+											risultato = stmt.executeQuery();
+											while (risultato.next()) {
+												
+												String alias = risultato.getString(alias_column);
+												if(alias== null || "".equals(alias)) {
+													alias = risultato.getString(identificativo_column);
+												}
+												
+												String nomePorta = risultato.getString("filtro_porta");
+												String filtro_ruolo = risultato.getString("filtro_ruolo");
+												if(nomePorta!=null) {
+													String tipo = null;
+													String label = null;
+													if("delegata".equals(filtro_ruolo)) {
+														try {
+															ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+															if(resultPorta.mapping) {
+																label = "Fruizione di Servizio "+ resultPorta.label;
+															}
+														}catch(Exception e) {
+															tipo = "Outbound";
 														}
-													}catch(Exception e) {
-														tipo = "Outbound";
+													}
+													else {
+														tipo = filtro_ruolo;
+													}
+													if(label==null) {
+														list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+													}
+													else {
+														list.add(oggetto+" '"+alias+"' attiva nella "+label);
 													}
 												}
 												else {
-													tipo = filtro_ruolo;
+													list.add(oggetto+" '"+alias+"'");
 												}
-												if(label==null) {
-													ct_list.add("Policy '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-												}
-												else {
-													ct_list.add("Policy '"+alias+"' attiva nella "+label);
-												}
+								
+												isInUso = true;
 											}
-											else {
-												ct_list.add("Policy '"+alias+"'");
-											}
-							
-											isInUso = true;
+											risultato.close();
+											stmt.close();
 										}
-										risultato.close();
-										stmt.close();
-										
 									}
 								}
 							}
@@ -3464,84 +3669,233 @@ public class DBOggettiInUsoUtils  {
 								stmt.close();
 								
 								
-								// ** Controllo che non sia associato a policy di controllo del traffico **
+								// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
 								
-								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-								sqlQueryObject.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY);
-								sqlQueryObject.addSelectField("active_policy_id");
-								sqlQueryObject.addSelectField("policy_alias");
-								sqlQueryObject.addSelectField("filtro_ruolo");
-								sqlQueryObject.addSelectField("filtro_porta");
-								sqlQueryObject.setANDLogicOperator(true);
-								sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_ruolo=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_porta=?");
-								
-								// condizione di controllo
-								sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
-								sqlQueryObjectOr.setANDLogicOperator(false);
-								// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
-								// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione = ?");
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", idRisorsa.getNome(), false , false);
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", idRisorsa.getNome()+",", LikeConfig.startsWith(false));
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+idRisorsa.getNome(), LikeConfig.endsWith(false));
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+idRisorsa.getNome()+",", true , false);
-								sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
-								
-								sqlQueryObject.addOrderBy("filtro_ruolo");
-								sqlQueryObject.addOrderBy("filtro_porta");
-								queryString = sqlQueryObject.createSQLQuery();
-								stmt = con.prepareStatement(queryString);
-								stmt.setString(1, "applicativa");
-								stmt.setString(2, mapping.getIdPortaApplicativa().getNome());
-								// CLOB stmt.setString(3, idRisorsa.getNome());
-								risultato = stmt.executeQuery();
-								while (risultato.next()) {
+								int max = 2;
+								if(!CostantiDB.ALLARMI_ENABLED) {
+									max=1;
+								}
+								for (int i = 0; i < max; i++) {
 									
-									String alias = risultato.getString("policy_alias");
-									if(alias== null || "".equals(alias)) {
-										alias = risultato.getString("active_policy_id");
+									String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+									String identificativo_column = "active_policy_id";
+									String alias_column = "policy_alias";
+									List<String> list = ct_list;
+									String oggetto = "Policy";
+									if(i==1) {
+										tabella = CostantiDB.ALLARMI;
+										identificativo_column = "nome";
+										alias_column = "alias";
+										list = allarme_list;
+										oggetto = "Allarme";
 									}
+								
+									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+									sqlQueryObject.addFromTable(tabella);
+									sqlQueryObject.addSelectField(identificativo_column);
+									sqlQueryObject.addSelectField(alias_column);
+									sqlQueryObject.addSelectField("filtro_ruolo");
+									sqlQueryObject.addSelectField("filtro_porta");
+									sqlQueryObject.setANDLogicOperator(true);
+									sqlQueryObject.addWhereCondition(tabella+".filtro_ruolo=?");
+									sqlQueryObject.addWhereCondition(tabella+".filtro_porta=?");
 									
-									String nomePorta = risultato.getString("filtro_porta");
-									String filtro_ruolo = risultato.getString("filtro_ruolo");
-									if(nomePorta!=null) {
-										String tipo = null;
-										String label = null;
-										if("applicativa".equals(filtro_ruolo)) {
-											try {
-												ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
-												if(resultPorta.mapping) {
-													label = "Erogazione di Servizio "+ resultPorta.label;
+									// condizione di controllo
+									sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+									sqlQueryObjectOr.setANDLogicOperator(false);
+									// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+									// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione = ?");
+									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idRisorsa.getNome(), false , false);
+									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idRisorsa.getNome()+",", LikeConfig.startsWith(false));
+									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idRisorsa.getNome(), LikeConfig.endsWith(false));
+									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idRisorsa.getNome()+",", true , false);
+									sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+									
+									sqlQueryObject.addOrderBy("filtro_ruolo");
+									sqlQueryObject.addOrderBy("filtro_porta");
+									queryString = sqlQueryObject.createSQLQuery();
+									stmt = con.prepareStatement(queryString);
+									stmt.setString(1, "applicativa");
+									stmt.setString(2, mapping.getIdPortaApplicativa().getNome());
+									// CLOB stmt.setString(3, idRisorsa.getNome());
+									risultato = stmt.executeQuery();
+									while (risultato.next()) {
+										
+										String alias = risultato.getString(alias_column);
+										if(alias== null || "".equals(alias)) {
+											alias = risultato.getString(identificativo_column);
+										}
+										
+										String nomePorta = risultato.getString("filtro_porta");
+										String filtro_ruolo = risultato.getString("filtro_ruolo");
+										if(nomePorta!=null) {
+											String tipo = null;
+											String label = null;
+											if("applicativa".equals(filtro_ruolo)) {
+												try {
+													ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+													if(resultPorta.mapping) {
+														label = "Erogazione di Servizio "+ resultPorta.label;
+													}
+												}catch(Exception e) {
+													tipo = "Inbound";
 												}
-											}catch(Exception e) {
-												tipo = "Inbound";
+											}
+											else {
+												tipo = filtro_ruolo;
+											}
+											if(label==null) {
+												list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+											}
+											else {
+												list.add(oggetto+" '"+alias+"' attiva nella "+label);
 											}
 										}
 										else {
-											tipo = filtro_ruolo;
+											list.add(oggetto+" '"+alias+"'");
 										}
-										if(label==null) {
-											ct_list.add("Policy '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-										}
-										else {
-											ct_list.add("Policy '"+alias+"' attiva nella "+label);
-										}
+						
+										isInUso = true;
 									}
-									else {
-										ct_list.add("Policy '"+alias+"'");
-									}
-					
-									isInUso = true;
+									risultato.close();
+									stmt.close();
 								}
-								risultato.close();
-								stmt.close();
-								
 							}
 						}
 					}
 				}
 			}
 			
+			
+			
+			
+			
+			
+			// ** Controllo che non sia associato a policy di controllo del traffico o allarmi generali **
+			
+			long idAccordoServizioParteComune = DBUtils.getIdAccordoServizioParteComune(idRisorsa.getIdAccordo(), con, tipoDB);
+			if(idAccordoServizioParteComune<=0){
+				throw new UtilsException("Accordi di Servizio Parte Comune con id ["+idRisorsa.getIdAccordo().toString()+"] non trovato");
+			}
+			
+			// Recupero servizi che implementano l'accordo
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_accordo = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idAccordoServizioParteComune);
+			risultato = stmt.executeQuery();
+			List<IDServizio> listIDServizio = new ArrayList<>();
+			while (risultato.next()){
+				String tipoSoggettoErogatore = risultato.getString("tipo_soggetto");
+				String nomeSoggettoErogatore = risultato.getString("nome_soggetto");
+				String tipoServizio = risultato.getString("tipo_servizio");
+				String nomeServizio = risultato.getString("nome_servizio");
+				int versioneServizio = risultato.getInt("versione_servizio");
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, 
+						tipoSoggettoErogatore, nomeSoggettoErogatore, versioneServizio);
+				listIDServizio.add(idServizio);
+			}
+			risultato.close();
+			stmt.close();
+			
+			if(!listIDServizio.isEmpty()) {
+			
+				for (IDServizio idServizio : listIDServizio) {
+					
+					int max = 2;
+					if(!CostantiDB.ALLARMI_ENABLED) {
+						max=1;
+					}
+					for (int i = 0; i < max; i++) {
+						
+						String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+						String identificativo_column = "active_policy_id";
+						String alias_column = "policy_alias";
+						List<String> list = ct_list;
+						String oggetto = "Policy";
+						if(i==1) {
+							tabella = CostantiDB.ALLARMI;
+							identificativo_column = "nome";
+							alias_column = "alias";
+							list = allarme_list;
+							oggetto = "Allarme";
+						}
+					
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(tabella);
+						sqlQueryObject.setSelectDistinct(true);
+						sqlQueryObject.addSelectField(identificativo_column);
+						sqlQueryObject.addSelectField(alias_column);
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQueryObject.addWhereIsNullCondition(tabella+".filtro_porta");
+						
+						ISQLQueryObject sqlQueryObjectServizioCompleto = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_tipo_erogatore=?");
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_nome_erogatore=?");
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_tipo_servizio=?");
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_nome_servizio=?");
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_versione_servizio=?");
+						
+						ISQLQueryObject sqlQueryObjectServizioParziale = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectServizioParziale.addWhereIsNullCondition(tabella+".filtro_tipo_erogatore");
+						sqlQueryObjectServizioParziale.addWhereIsNullCondition(tabella+".filtro_nome_erogatore");
+						sqlQueryObjectServizioParziale.addWhereCondition(tabella+".filtro_tipo_servizio=?");
+						sqlQueryObjectServizioParziale.addWhereCondition(tabella+".filtro_nome_servizio=?");
+						sqlQueryObjectServizioParziale.addWhereCondition(tabella+".filtro_versione_servizio=?");
+						
+						sqlQueryObject.addWhereCondition(false,false, sqlQueryObjectServizioCompleto.createSQLConditions(), sqlQueryObjectServizioParziale.createSQLConditions());
+						
+						// condizione di controllo
+						ISQLQueryObject sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectOr.setANDLogicOperator(false);
+						// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+						// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione = ?");
+						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idRisorsa.getNome(), false , false);
+						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idRisorsa.getNome()+",", LikeConfig.startsWith(false));
+						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idRisorsa.getNome(), LikeConfig.endsWith(false));
+						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idRisorsa.getNome()+",", true , false);
+						sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+						
+						sqlQueryObject.addOrderBy(alias_column);
+						sqlQueryObject.addOrderBy(identificativo_column);
+						queryString = sqlQueryObject.createSQLQuery();
+						stmt = con.prepareStatement(queryString);
+						int index = 1;
+						stmt.setString(index++, idServizio.getSoggettoErogatore().getTipo());
+						stmt.setString(index++, idServizio.getSoggettoErogatore().getNome());
+						stmt.setString(index++, idServizio.getTipo());
+						stmt.setString(index++, idServizio.getNome());
+						stmt.setInt(index++, idServizio.getVersione());
+						stmt.setString(index++, idServizio.getTipo());
+						stmt.setString(index++, idServizio.getNome());
+						stmt.setInt(index++, idServizio.getVersione());
+						// CLOB stmt.setString(index++, idRisorsa.getNome());
+						risultato = stmt.executeQuery();
+						while (risultato.next()) {
+							
+							String alias = risultato.getString(alias_column);
+							if(alias== null || "".equals(alias)) {
+								alias = risultato.getString(identificativo_column);
+							}
+							
+							String oggettoTrovato = oggetto+" '"+alias+"'";
+							if(!list.contains(oggettoTrovato)) {
+								list.add(oggettoTrovato);
+							}
+			
+							isInUso = true;
+						}
+						risultato.close();
+						stmt.close();
+					}
+				}
+			}
 			
 			
 
@@ -3640,6 +3994,12 @@ public class DBOggettiInUsoUtils  {
 					msg += "utilizzata in Policy di Rate Limiting: " + formatList(messages,separator) + separator;
 				}
 				break;
+			case ALLARMI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato in Allarmi: " + formatList(messages,separator) + separator;
+				}
+				break;
+				
 			default:
 				msg += "utilizzata in oggetto non codificato ("+key+")"+separator;
 				break;
@@ -4116,6 +4476,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> urlInvocazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_PA);
 			
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			
 			if (correlazione_list == null) {
 				correlazione_list = new ArrayList<String>();
@@ -4176,6 +4537,10 @@ public class DBOggettiInUsoUtils  {
 			if (ct_list == null) {
 				ct_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
+			}
+			if (allarme_list == null) {
+				allarme_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			
 			
@@ -4575,77 +4940,97 @@ public class DBOggettiInUsoUtils  {
 										stmt.close();
 										
 										
-										// ** Controllo che non sia associato a policy di controllo del traffico **
+										// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
 										
-										sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-										sqlQueryObject.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY);
-										sqlQueryObject.addSelectField("active_policy_id");
-										sqlQueryObject.addSelectField("policy_alias");
-										sqlQueryObject.addSelectField("filtro_ruolo");
-										sqlQueryObject.addSelectField("filtro_porta");
-										sqlQueryObject.setANDLogicOperator(true);
-										sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_ruolo=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_porta=?");
-										
-										// condizione di controllo
-										sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
-										sqlQueryObjectOr.setANDLogicOperator(false);
-										// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
-										// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione = ?");
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", idOperazione.getNome(), false , false);
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
-										sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
-										
-										sqlQueryObject.addOrderBy("filtro_ruolo");
-										sqlQueryObject.addOrderBy("filtro_porta");
-										queryString = sqlQueryObject.createSQLQuery();
-										stmt = con.prepareStatement(queryString);
-										stmt.setString(1, "delegata");
-										stmt.setString(2, mapping.getIdPortaDelegata().getNome());
-										// CLOB stmt.setString(3, idRisorsa.getNome());
-										risultato = stmt.executeQuery();
-										while (risultato.next()) {
+										int max = 2;
+										if(!CostantiDB.ALLARMI_ENABLED) {
+											max=1;
+										}
+										for (int i = 0; i < max; i++) {
 											
-											String alias = risultato.getString("policy_alias");
-											if(alias== null || "".equals(alias)) {
-												alias = risultato.getString("active_policy_id");
+											String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+											String identificativo_column = "active_policy_id";
+											String alias_column = "policy_alias";
+											List<String> list = ct_list;
+											String oggetto = "Policy";
+											if(i==1) {
+												tabella = CostantiDB.ALLARMI;
+												identificativo_column = "nome";
+												alias_column = "alias";
+												list = allarme_list;
+												oggetto = "Allarme";
 											}
+										
+											sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+											sqlQueryObject.addFromTable(tabella);
+											sqlQueryObject.addSelectField(identificativo_column);
+											sqlQueryObject.addSelectField(alias_column);
+											sqlQueryObject.addSelectField("filtro_ruolo");
+											sqlQueryObject.addSelectField("filtro_porta");
+											sqlQueryObject.setANDLogicOperator(true);
+											sqlQueryObject.addWhereCondition(tabella+".filtro_ruolo=?");
+											sqlQueryObject.addWhereCondition(tabella+".filtro_porta=?");
 											
-											String nomePorta = risultato.getString("filtro_porta");
-											String filtro_ruolo = risultato.getString("filtro_ruolo");
-											if(nomePorta!=null) {
-												String tipo = null;
-												String label = null;
-												if("delegata".equals(filtro_ruolo)) {
-													try {
-														ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
-														if(resultPorta.mapping) {
-															label = "Fruizione di Servizio "+ resultPorta.label;
+											// condizione di controllo
+											sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+											sqlQueryObjectOr.setANDLogicOperator(false);
+											// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+											// CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");
+											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome(), false , false);
+											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
+											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
+											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
+											sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+											
+											sqlQueryObject.addOrderBy("filtro_ruolo");
+											sqlQueryObject.addOrderBy("filtro_porta");
+											queryString = sqlQueryObject.createSQLQuery();
+											stmt = con.prepareStatement(queryString);
+											stmt.setString(1, "delegata");
+											stmt.setString(2, mapping.getIdPortaDelegata().getNome());
+											// CLOB stmt.setString(3, idRisorsa.getNome());
+											risultato = stmt.executeQuery();
+											while (risultato.next()) {
+												
+												String alias = risultato.getString(alias_column);
+												if(alias== null || "".equals(alias)) {
+													alias = risultato.getString(identificativo_column);
+												}
+												
+												String nomePorta = risultato.getString("filtro_porta");
+												String filtro_ruolo = risultato.getString("filtro_ruolo");
+												if(nomePorta!=null) {
+													String tipo = null;
+													String label = null;
+													if("delegata".equals(filtro_ruolo)) {
+														try {
+															ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+															if(resultPorta.mapping) {
+																label = "Fruizione di Servizio "+ resultPorta.label;
+															}
+														}catch(Exception e) {
+															tipo = "Outbound";
 														}
-													}catch(Exception e) {
-														tipo = "Outbound";
+													}
+													else {
+														tipo = filtro_ruolo;
+													}
+													if(label==null) {
+														list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+													}
+													else {
+														list.add(oggetto+" '"+alias+"' attiva nella "+label);
 													}
 												}
 												else {
-													tipo = filtro_ruolo;
+													list.add(oggetto+" '"+alias+"'");
 												}
-												if(label==null) {
-													ct_list.add("Policy '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-												}
-												else {
-													ct_list.add("Policy '"+alias+"' attiva nella "+label);
-												}
+								
+												isInUso = true;
 											}
-											else {
-												ct_list.add("Policy '"+alias+"'");
-											}
-							
-											isInUso = true;
+											risultato.close();
+											stmt.close();
 										}
-										risultato.close();
-										stmt.close();
 									}
 								}
 							}
@@ -4779,83 +5164,235 @@ public class DBOggettiInUsoUtils  {
 								stmt.close();
 								
 								
-								// ** Controllo che non sia associato a policy di controllo del traffico **
+								// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
 								
-								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-								sqlQueryObject.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY);
-								sqlQueryObject.addSelectField("active_policy_id");
-								sqlQueryObject.addSelectField("policy_alias");
-								sqlQueryObject.addSelectField("filtro_ruolo");
-								sqlQueryObject.addSelectField("filtro_porta");
-								sqlQueryObject.setANDLogicOperator(true);
-								sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_ruolo=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_porta=?");
-								
-								// condizione di controllo
-								sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
-								sqlQueryObjectOr.setANDLogicOperator(false);
-								// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
-								// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione = ?");
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", idOperazione.getNome(), false , false);
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
-								sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
-								
-								sqlQueryObject.addOrderBy("filtro_ruolo");
-								sqlQueryObject.addOrderBy("filtro_porta");
-								queryString = sqlQueryObject.createSQLQuery();
-								stmt = con.prepareStatement(queryString);
-								stmt.setString(1, "applicativa");
-								stmt.setString(2, mapping.getIdPortaApplicativa().getNome());
-								// CLOB stmt.setString(3, idRisorsa.getNome());
-								risultato = stmt.executeQuery();
-								while (risultato.next()) {
+								int max = 2;
+								if(!CostantiDB.ALLARMI_ENABLED) {
+									max=1;
+								}
+								for (int i = 0; i < max; i++) {
 									
-									String alias = risultato.getString("policy_alias");
-									if(alias== null || "".equals(alias)) {
-										alias = risultato.getString("active_policy_id");
+									String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+									String identificativo_column = "active_policy_id";
+									String alias_column = "policy_alias";
+									List<String> list = ct_list;
+									String oggetto = "Policy";
+									if(i==1) {
+										tabella = CostantiDB.ALLARMI;
+										identificativo_column = "nome";
+										alias_column = "alias";
+										list = allarme_list;
+										oggetto = "Allarme";
 									}
+								
+									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+									sqlQueryObject.addFromTable(tabella);
+									sqlQueryObject.addSelectField(identificativo_column);
+									sqlQueryObject.addSelectField(alias_column);
+									sqlQueryObject.addSelectField("filtro_ruolo");
+									sqlQueryObject.addSelectField("filtro_porta");
+									sqlQueryObject.setANDLogicOperator(true);
+									sqlQueryObject.addWhereCondition(tabella+".filtro_ruolo=?");
+									sqlQueryObject.addWhereCondition(tabella+".filtro_porta=?");
 									
-									String nomePorta = risultato.getString("filtro_porta");
-									String filtro_ruolo = risultato.getString("filtro_ruolo");
-									if(nomePorta!=null) {
-										String tipo = null;
-										String label = null;
-										if("applicativa".equals(filtro_ruolo)) {
-											try {
-												ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
-												if(resultPorta.mapping) {
-													label = "Erogazione di Servizio "+ resultPorta.label;
+									// condizione di controllo
+									sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+									sqlQueryObjectOr.setANDLogicOperator(false);
+									// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+									// CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");
+									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome(), false , false);
+									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
+									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
+									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
+									sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+									
+									sqlQueryObject.addOrderBy("filtro_ruolo");
+									sqlQueryObject.addOrderBy("filtro_porta");
+									queryString = sqlQueryObject.createSQLQuery();
+									stmt = con.prepareStatement(queryString);
+									stmt.setString(1, "applicativa");
+									stmt.setString(2, mapping.getIdPortaApplicativa().getNome());
+									// CLOB stmt.setString(3, idRisorsa.getNome());
+									risultato = stmt.executeQuery();
+									while (risultato.next()) {
+										
+										String alias = risultato.getString(alias_column);
+										if(alias== null || "".equals(alias)) {
+											alias = risultato.getString(identificativo_column);
+										}
+										
+										String nomePorta = risultato.getString("filtro_porta");
+										String filtro_ruolo = risultato.getString("filtro_ruolo");
+										if(nomePorta!=null) {
+											String tipo = null;
+											String label = null;
+											if("applicativa".equals(filtro_ruolo)) {
+												try {
+													ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+													if(resultPorta.mapping) {
+														label = "Erogazione di Servizio "+ resultPorta.label;
+													}
+												}catch(Exception e) {
+													tipo = "Inbound";
 												}
-											}catch(Exception e) {
-												tipo = "Inbound";
+											}
+											else {
+												tipo = filtro_ruolo;
+											}
+											if(label==null) {
+												list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+											}
+											else {
+												list.add(oggetto+" '"+alias+"' attiva nella "+label);
 											}
 										}
 										else {
-											tipo = filtro_ruolo;
+											list.add(oggetto+" '"+alias+"'");
 										}
-										if(label==null) {
-											ct_list.add("Policy '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-										}
-										else {
-											ct_list.add("Policy '"+alias+"' attiva nella "+label);
-										}
+						
+										isInUso = true;
 									}
-									else {
-										ct_list.add("Policy '"+alias+"'");
-									}
-					
-									isInUso = true;
+									risultato.close();
+									stmt.close();
 								}
-								risultato.close();
-								stmt.close();
 							}
 						}
 					}
 				}
 			}
 						
+			
+			
+			
+			// ** Controllo che non sia associato a policy di controllo del traffico o allarmi generali **
+			
+			long idAccordoServizioParteComune = DBUtils.getIdAccordoServizioParteComune(idOperazione.getIdPortType().getIdAccordo(), con, tipoDB);
+			if(idAccordoServizioParteComune<=0){
+				throw new UtilsException("Accordi di Servizio Parte Comune con id ["+idOperazione.getIdPortType().getIdAccordo().toString()+"] non trovato");
+			}
+			
+			// Recupero servizi che implementano l'accordo
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_accordo = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idAccordoServizioParteComune);
+			risultato = stmt.executeQuery();
+			List<IDServizio> listIDServizio = new ArrayList<>();
+			while (risultato.next()){
+				String tipoSoggettoErogatore = risultato.getString("tipo_soggetto");
+				String nomeSoggettoErogatore = risultato.getString("nome_soggetto");
+				String tipoServizio = risultato.getString("tipo_servizio");
+				String nomeServizio = risultato.getString("nome_servizio");
+				int versioneServizio = risultato.getInt("versione_servizio");
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, 
+						tipoSoggettoErogatore, nomeSoggettoErogatore, versioneServizio);
+				listIDServizio.add(idServizio);
+			}
+			risultato.close();
+			stmt.close();
+			
+			if(!listIDServizio.isEmpty()) {
+			
+				for (IDServizio idServizio : listIDServizio) {
+			
+					int max = 2;
+					if(!CostantiDB.ALLARMI_ENABLED) {
+						max=1;
+					}
+					for (int i = 0; i < max; i++) {
+						
+						String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+						String identificativo_column = "active_policy_id";
+						String alias_column = "policy_alias";
+						List<String> list = ct_list;
+						String oggetto = "Policy";
+						if(i==1) {
+							tabella = CostantiDB.ALLARMI;
+							identificativo_column = "nome";
+							alias_column = "alias";
+							list = allarme_list;
+							oggetto = "Allarme";
+						}
+					
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(tabella);
+						sqlQueryObject.setSelectDistinct(true);
+						sqlQueryObject.addSelectField(identificativo_column);
+						sqlQueryObject.addSelectField(alias_column);
+						sqlQueryObject.addSelectField("filtro_ruolo");
+						sqlQueryObject.addSelectField("filtro_porta");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQueryObject.addWhereIsNullCondition(tabella+".filtro_porta");
+						
+						ISQLQueryObject sqlQueryObjectServizioCompleto = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_tipo_erogatore=?");
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_nome_erogatore=?");
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_tipo_servizio=?");
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_nome_servizio=?");
+						sqlQueryObjectServizioCompleto.addWhereCondition(tabella+".filtro_versione_servizio=?");
+						
+						ISQLQueryObject sqlQueryObjectServizioParziale = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectServizioParziale.addWhereIsNullCondition(tabella+".filtro_tipo_erogatore");
+						sqlQueryObjectServizioParziale.addWhereIsNullCondition(tabella+".filtro_nome_erogatore");
+						sqlQueryObjectServizioParziale.addWhereCondition(tabella+".filtro_tipo_servizio=?");
+						sqlQueryObjectServizioParziale.addWhereCondition(tabella+".filtro_nome_servizio=?");
+						sqlQueryObjectServizioParziale.addWhereCondition(tabella+".filtro_versione_servizio=?");
+						
+						sqlQueryObject.addWhereCondition(false,false, sqlQueryObjectServizioCompleto.createSQLConditions(), sqlQueryObjectServizioParziale.createSQLConditions());
+						
+						// condizione di controllo
+						sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectOr.setANDLogicOperator(false);
+						// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+						// CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");
+						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome(), false , false);
+						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
+						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
+						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
+						sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+						
+						sqlQueryObject.addOrderBy("filtro_ruolo");
+						sqlQueryObject.addOrderBy("filtro_porta");
+						queryString = sqlQueryObject.createSQLQuery();
+						stmt = con.prepareStatement(queryString);
+						index = 1;
+						stmt.setString(index++, idServizio.getSoggettoErogatore().getTipo());
+						stmt.setString(index++, idServizio.getSoggettoErogatore().getNome());
+						stmt.setString(index++, idServizio.getTipo());
+						stmt.setString(index++, idServizio.getNome());
+						stmt.setInt(index++, idServizio.getVersione());
+						stmt.setString(index++, idServizio.getTipo());
+						stmt.setString(index++, idServizio.getNome());
+						stmt.setInt(index++, idServizio.getVersione());
+						// CLOB stmt.setString(index++, idRisorsa.getNome());
+						risultato = stmt.executeQuery();
+						while (risultato.next()) {
+							
+							String alias = risultato.getString(alias_column);
+							if(alias== null || "".equals(alias)) {
+								alias = risultato.getString(identificativo_column);
+							}
+							
+							String oggettoTrovato = oggetto+" '"+alias+"'";
+							if(!list.contains(oggettoTrovato)) {
+								list.add(oggettoTrovato);
+							}
+								
+							isInUso = true;
+						}
+						risultato.close();
+						stmt.close();
+					}
+				}
+			}
+			
+			
 			
 			return isInUso;
 
@@ -4973,6 +5510,12 @@ public class DBOggettiInUsoUtils  {
 					msg += "utilizzata in Policy di Rate Limiting: " + formatList(messages,separator) + separator;
 				}
 				break;
+			case ALLARMI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato in Allarmi: " + formatList(messages,separator) + separator;
+				}
+				break;
+				
 			default:
 				msg += "utilizzata in oggetto non codificato ("+key+")"+separator;
 				break;
@@ -5019,6 +5562,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> mappingFruizionePD_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD);
 			List<String> utenti_list = whereIsInUso.get(ErrorsHandlerCostant.UTENTE);
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 
 			if (porteApplicative_list == null) {
 				porteApplicative_list = new ArrayList<String>();
@@ -5051,6 +5595,10 @@ public class DBOggettiInUsoUtils  {
 			if (ct_list == null) {
 				ct_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
+			}
+			if (allarme_list == null) {
+				allarme_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 
 			
@@ -5443,8 +5991,8 @@ public class DBOggettiInUsoUtils  {
 			
 			
 			
-			// Controllo che il soggetto non sia associato a policy di controllo del traffico
-			
+			// Controllo che il servizio non sia associato a policy di controllo del traffico o allarmi
+							
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
@@ -5468,79 +6016,100 @@ public class DBOggettiInUsoUtils  {
 			stmt.close();
 			
 			if(idServizio!=null) {
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY);
-				sqlQueryObject.addSelectField("active_policy_id");
-				sqlQueryObject.addSelectField("policy_alias");
-				sqlQueryObject.addSelectField("filtro_ruolo");
-				sqlQueryObject.addSelectField("filtro_porta");
-				sqlQueryObject.setANDLogicOperator(true); // OR
-				sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_tipo_erogatore = ?");
-				sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_nome_erogatore = ?");
-				sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_tipo_servizio = ?");
-				sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_nome_servizio = ?");
-				sqlQueryObject.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_versione_servizio = ?");
-				sqlQueryObject.addOrderBy("filtro_ruolo");
-				sqlQueryObject.addOrderBy("filtro_porta");
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				index = 1;
-				stmt.setString(index++, idServizio.getSoggettoErogatore().getTipo());
-				stmt.setString(index++, idServizio.getSoggettoErogatore().getNome());
-				stmt.setString(index++, idServizio.getTipo());
-				stmt.setString(index++, idServizio.getNome());
-				stmt.setInt(index++, idServizio.getVersione());
-				risultato = stmt.executeQuery();
-				while (risultato.next()) {
-					
-					String alias = risultato.getString("policy_alias");
-					if(alias== null || "".equals(alias)) {
-						alias = risultato.getString("active_policy_id");
-					}
-					
-					String nomePorta = risultato.getString("filtro_porta");
-					String filtro_ruolo = risultato.getString("filtro_ruolo");
-					if(nomePorta!=null) {
-						String tipo = null;
-						String label = null;
-						if("delegata".equals(filtro_ruolo)) {
-							try {
-								ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
-								if(resultPorta.mapping) {
-									label = "Fruizione di Servizio "+ resultPorta.label;
-								}
-							}catch(Exception e) {
-								tipo = "Outbound";
-							}
-						}
-						else if("applicativa".equals(filtro_ruolo)) {
-							try {
-								ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
-								if(resultPorta.mapping) {
-									label = "Erogazione di Servizio "+ resultPorta.label;
-								}
-							}catch(Exception e) {
-								tipo = "Inbound";
-							}
-						}
-						else {
-							tipo = filtro_ruolo;
-						}
-						if(label==null) {
-							ct_list.add("Policy '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-						}
-						else {
-							ct_list.add("Policy '"+alias+"' attiva nella "+label);
-						}
-					}
-					else {
-						ct_list.add("Policy '"+alias+"'");
-					}
-	
-					isInUso = true;
+				
+				int max = 2;
+				if(!CostantiDB.ALLARMI_ENABLED) {
+					max=1;
 				}
-				risultato.close();
-				stmt.close();
+				for (int i = 0; i < max; i++) {
+					
+					String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+					String identificativo_column = "active_policy_id";
+					String alias_column = "policy_alias";
+					List<String> list = ct_list;
+					String oggetto = "Policy";
+					if(i==1) {
+						tabella = CostantiDB.ALLARMI;
+						identificativo_column = "nome";
+						alias_column = "alias";
+						list = allarme_list;
+						oggetto = "Allarme";
+					}
+				
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(tabella);
+					sqlQueryObject.addSelectField(identificativo_column);
+					sqlQueryObject.addSelectField(alias_column);
+					sqlQueryObject.addSelectField("filtro_ruolo");
+					sqlQueryObject.addSelectField("filtro_porta");
+					sqlQueryObject.setANDLogicOperator(true); // OR
+					sqlQueryObject.addWhereCondition(tabella+".filtro_tipo_erogatore = ?");
+					sqlQueryObject.addWhereCondition(tabella+".filtro_nome_erogatore = ?");
+					sqlQueryObject.addWhereCondition(tabella+".filtro_tipo_servizio = ?");
+					sqlQueryObject.addWhereCondition(tabella+".filtro_nome_servizio = ?");
+					sqlQueryObject.addWhereCondition(tabella+".filtro_versione_servizio = ?");
+					sqlQueryObject.addOrderBy("filtro_ruolo");
+					sqlQueryObject.addOrderBy("filtro_porta");
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					index = 1;
+					stmt.setString(index++, idServizio.getSoggettoErogatore().getTipo());
+					stmt.setString(index++, idServizio.getSoggettoErogatore().getNome());
+					stmt.setString(index++, idServizio.getTipo());
+					stmt.setString(index++, idServizio.getNome());
+					stmt.setInt(index++, idServizio.getVersione());
+					risultato = stmt.executeQuery();
+					while (risultato.next()) {
+						
+						String alias = risultato.getString(alias_column);
+						if(alias== null || "".equals(alias)) {
+							alias = risultato.getString(identificativo_column);
+						}
+						
+						String nomePorta = risultato.getString("filtro_porta");
+						String filtro_ruolo = risultato.getString("filtro_ruolo");
+						if(nomePorta!=null) {
+							String tipo = null;
+							String label = null;
+							if("delegata".equals(filtro_ruolo)) {
+								try {
+									ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										label = "Fruizione di Servizio "+ resultPorta.label;
+									}
+								}catch(Exception e) {
+									tipo = "Outbound";
+								}
+							}
+							else if("applicativa".equals(filtro_ruolo)) {
+								try {
+									ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										label = "Erogazione di Servizio "+ resultPorta.label;
+									}
+								}catch(Exception e) {
+									tipo = "Inbound";
+								}
+							}
+							else {
+								tipo = filtro_ruolo;
+							}
+							if(label==null) {
+								list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+							}
+							else {
+								list.add(oggetto+" '"+alias+"' attiva nella "+label);
+							}
+						}
+						else {
+							list.add(oggetto+" '"+alias+"'");
+						}
+		
+						isInUso = true;
+					}
+					risultato.close();
+					stmt.close();
+				}
 			}
 			
 
@@ -5667,6 +6236,11 @@ public class DBOggettiInUsoUtils  {
 					msg += "utilizzato in policy di Rate Limiting: " + formatList(messages,separator) + separator;
 				}
 				break;
+			case ALLARMI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato in Allarmi: " + formatList(messages,separator) + separator;
+				}
+				break;
 			default:
 				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
 				break;
@@ -5717,6 +6291,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
 			List<String> porte_applicative_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			List<String> trasformazionePD_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD);
 			List<String> trasformazionePD_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PD);
 			List<String> trasformazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
@@ -5749,6 +6324,10 @@ public class DBOggettiInUsoUtils  {
 			if (ct_list == null) {
 				ct_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
+			}
+			if (allarme_list == null) {
+				allarme_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			if (trasformazionePD_mapping_list == null) {
 				trasformazionePD_mapping_list = new ArrayList<String>();
@@ -5849,84 +6428,111 @@ public class DBOggettiInUsoUtils  {
 			stmt.close();
 
 			
-			// Controllo che il soggetto non sia associato a policy di controllo del traffico
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY);
-			sqlQueryObject.addSelectField("active_policy_id");
-			sqlQueryObject.addSelectField("policy_alias");
-			sqlQueryObject.addSelectField("filtro_ruolo");
-			sqlQueryObject.addSelectField("filtro_porta");
-			sqlQueryObject.setANDLogicOperator(false); // OR
-			sqlQueryObject.addWhereCondition(true, 
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_tipo_fruitore = ?", 
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_nome_fruitore = ?",
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_sa_fruitore = ?");
-			sqlQueryObject.addWhereCondition(true, 
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_tipo_erogatore = ?", 
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_nome_erogatore = ?",
-					CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_sa_erogatore = ?");
-			sqlQueryObject.addOrderBy("filtro_ruolo");
-			sqlQueryObject.addOrderBy("filtro_porta");
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			int index = 1;
-			stmt.setString(index++, idServizioApplicativo.getIdSoggettoProprietario().getTipo());
-			stmt.setString(index++, idServizioApplicativo.getIdSoggettoProprietario().getNome());
-			stmt.setString(index++, idServizioApplicativo.getNome());
-			stmt.setString(index++, idServizioApplicativo.getIdSoggettoProprietario().getTipo());
-			stmt.setString(index++, idServizioApplicativo.getIdSoggettoProprietario().getNome());
-			stmt.setString(index++, idServizioApplicativo.getNome());
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				
-				String alias = risultato.getString("policy_alias");
-				if(alias== null || "".equals(alias)) {
-					alias = risultato.getString("active_policy_id");
-				}
-				
-				String nomePorta = risultato.getString("filtro_porta");
-				String filtro_ruolo = risultato.getString("filtro_ruolo");
-				if(nomePorta!=null) {
-					String tipo = null;
-					String label = null;
-					if("delegata".equals(filtro_ruolo)) {
-						try {
-							ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
-							if(resultPorta.mapping) {
-								label = "Fruizione di Servizio "+ resultPorta.label;
-							}
-						}catch(Exception e) {
-							tipo = "Outbound";
-						}
-					}
-					else if("applicativa".equals(filtro_ruolo)) {
-						try {
-							ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
-							if(resultPorta.mapping) {
-								label = "Erogazione di Servizio "+ resultPorta.label;
-							}
-						}catch(Exception e) {
-							tipo = "Inbound";
-						}
-					}
-					else {
-						tipo = filtro_ruolo;
-					}
-					if(label==null) {
-						ct_list.add("Policy '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-					}
-					else {
-						ct_list.add("Policy '"+alias+"' attiva nella "+label);
-					}
-				}
-				else {
-					ct_list.add("Policy '"+alias+"'");
-				}
-
-				isInUso = true;
+			// Controllo che il servizio aplicativo non sia associato a policy di controllo del traffico o allarmi
+			
+			int max = 2;
+			if(!CostantiDB.ALLARMI_ENABLED) {
+				max=1;
 			}
-			risultato.close();
-			stmt.close();
+			for (int i = 0; i < max; i++) {
+				
+				String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+				String identificativo_column = "active_policy_id";
+				String alias_column = "policy_alias";
+				List<String> list = ct_list;
+				String oggetto = "Policy";
+				boolean allarmi = false;
+				if(i==1) {
+					tabella = CostantiDB.ALLARMI;
+					identificativo_column = "nome";
+					alias_column = "alias";
+					list = allarme_list;
+					oggetto = "Allarme";
+					allarmi=true;
+				}
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(tabella);
+				sqlQueryObject.addSelectField(identificativo_column);
+				sqlQueryObject.addSelectField(alias_column);
+				sqlQueryObject.addSelectField("filtro_ruolo");
+				sqlQueryObject.addSelectField("filtro_porta");
+				sqlQueryObject.setANDLogicOperator(false); // OR
+				sqlQueryObject.addWhereCondition(true, 
+						tabella+".filtro_tipo_fruitore = ?", 
+						tabella+".filtro_nome_fruitore = ?",
+						tabella+".filtro_sa_fruitore = ?");
+				if(!allarmi) {
+					sqlQueryObject.addWhereCondition(true, 
+							tabella+".filtro_tipo_erogatore = ?", 
+							tabella+".filtro_nome_erogatore = ?",
+							tabella+".filtro_sa_erogatore = ?");
+				}
+				sqlQueryObject.addOrderBy("filtro_ruolo");
+				sqlQueryObject.addOrderBy("filtro_porta");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				int index = 1;
+				stmt.setString(index++, idServizioApplicativo.getIdSoggettoProprietario().getTipo());
+				stmt.setString(index++, idServizioApplicativo.getIdSoggettoProprietario().getNome());
+				stmt.setString(index++, idServizioApplicativo.getNome());
+				if(!allarmi) {
+					stmt.setString(index++, idServizioApplicativo.getIdSoggettoProprietario().getTipo());
+					stmt.setString(index++, idServizioApplicativo.getIdSoggettoProprietario().getNome());
+					stmt.setString(index++, idServizioApplicativo.getNome());
+				}
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					
+					String alias = risultato.getString(alias_column);
+					if(alias== null || "".equals(alias)) {
+						alias = risultato.getString(identificativo_column);
+					}
+					
+					String nomePorta = risultato.getString("filtro_porta");
+					String filtro_ruolo = risultato.getString("filtro_ruolo");
+					if(nomePorta!=null) {
+						String tipo = null;
+						String label = null;
+						if("delegata".equals(filtro_ruolo)) {
+							try {
+								ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									label = "Fruizione di Servizio "+ resultPorta.label;
+								}
+							}catch(Exception e) {
+								tipo = "Outbound";
+							}
+						}
+						else if("applicativa".equals(filtro_ruolo)) {
+							try {
+								ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									label = "Erogazione di Servizio "+ resultPorta.label;
+								}
+							}catch(Exception e) {
+								tipo = "Inbound";
+							}
+						}
+						else {
+							tipo = filtro_ruolo;
+						}
+						if(label==null) {
+							list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+						}
+						else {
+							list.add(oggetto+" '"+alias+"' attiva nella "+label);
+						}
+					}
+					else {
+						list.add(oggetto+" '"+alias+"'");
+					}
+	
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			}
 			
 			
 			
@@ -6086,6 +6692,11 @@ public class DBOggettiInUsoUtils  {
 			case CONTROLLO_TRAFFICO:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "utilizzato in policy di Rate Limiting: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case ALLARMI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato in Allarmi: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case TRASFORMAZIONE_MAPPING_PD:

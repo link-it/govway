@@ -21,12 +21,16 @@
 package org.openspcoop2.core.allarmi.utils;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IAllarmeService;
@@ -34,8 +38,14 @@ import org.openspcoop2.core.allarmi.dao.IAllarmeServiceSearch;
 import org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.allarmi.dao.jdbc.converter.AllarmeFieldConverter;
 import org.openspcoop2.core.allarmi.dao.jdbc.converter.AllarmeHistoryFieldConverter;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -46,6 +56,8 @@ import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.LikeConfig;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
 
 /**
@@ -68,9 +80,10 @@ public class AllarmiDriverUtils {
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
-//		String filterTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_PLUGIN_CLASSI);
+		String filterStato = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO);
 		
 		log.debug("search : " + search);
+		log.debug("filterStato : " + filterStato);
 				
 		try {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
@@ -98,6 +111,40 @@ public class AllarmiDriverUtils {
 					expr.and();
 				
 				expr.ilike(Allarme.model().ALIAS, search, LikeMode.ANYWHERE);
+				
+				addAnd = true;
+			}
+			
+			if (!filterStato.equals("") && filterStato!=null) {
+				if(addAnd)
+					expr.and();
+				
+				if(Filtri.FILTRO_STATO_VALORE_ABILITATO.equals(filterStato)) {
+					expr.equals(Allarme.model().ENABLED, 1);
+					addAnd = true;
+				}
+				else if(Filtri.FILTRO_STATO_VALORE_DISABILITATO.equals(filterStato)) {
+					expr.equals(Allarme.model().ENABLED, 0);
+					addAnd = true;
+				}
+				else if(Filtri.FILTRO_STATO_VALORE_OK.equals(filterStato)) {
+					expr.equals(Allarme.model().ENABLED, 1);
+					expr.and();
+					expr.equals(Allarme.model().STATO, AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
+					addAnd = true;
+				}
+				else if(Filtri.FILTRO_STATO_VALORE_WARNING.equals(filterStato)) {
+					expr.equals(Allarme.model().ENABLED, 1);
+					expr.and();
+					expr.equals(Allarme.model().STATO, AllarmiConverterUtils.toIntegerValue(StatoAllarme.WARNING));
+					addAnd = true;
+				}
+				else if(Filtri.FILTRO_STATO_VALORE_ERROR.equals(filterStato)) {
+					expr.equals(Allarme.model().ENABLED, 1);
+					expr.and();
+					expr.equals(Allarme.model().STATO, AllarmiConverterUtils.toIntegerValue(StatoAllarme.ERROR));
+					addAnd = true;
+				}
 				
 				addAnd = true;
 			}
@@ -373,6 +420,294 @@ public class AllarmiDriverUtils {
 			
 		} catch (Exception qe) {
 			throw new ServiceException("[" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		}
+	}
+	
+	public static List<Allarme> configurazioneAllarmiList(ISearch ricerca, RuoloPorta ruoloPorta, String nomePorta, 
+			Connection con, Logger log, String tipoDB,
+			String nomeMetodo, 
+			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
+			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
+			IDServizio filtroServizioAzione, String filtroRuolo) throws ServiceException{
+		// ritorna la configurazione allarmi
+		int idLista = Liste.CONFIGURAZIONE_ALLARMI;
+		String search = null;
+		int offset = 0;
+		int limit =0 ;
+
+		if(ricerca != null) {
+			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+			limit = ricerca.getPageSize(idLista);
+			offset = ricerca.getIndexIniziale(idLista);
+		}
+		if (limit == 0) // con limit
+			limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+		
+		log.debug("search : " + search);
+		
+		List<Allarme> listaAllarmi = new ArrayList<Allarme>();
+		
+		long count = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			if(ricerca!=null) {
+
+				ISQLQueryObject sqlQueryObject = _prepareSqlQueryObjectAllarmi(tipoDB,ruoloPorta, nomePorta, search, 
+						filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
+						filtroSoggettoErogatore, filtroRuoloErogatore,
+						filtroServizioAzione, filtroRuolo);
+				sqlQueryObject.addSelectCountField("nome", "allarmi");
+				String query = sqlQueryObject.createSQLQuery();
+				pstmt = con.prepareStatement(query);
+				_prepareStatementAllarmi(tipoDB,pstmt, ruoloPorta, nomePorta, search, 
+						filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
+						filtroSoggettoErogatore, filtroRuoloErogatore,
+						filtroServizioAzione, filtroRuolo);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					count = rs.getLong("allarmi");
+				}
+				rs.close();
+				pstmt.close();
+				
+			}
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager serviceManager = new JDBCServiceManager(con, properties, log);
+			
+			
+			ISQLQueryObject sqlQueryObject = _prepareSqlQueryObjectAllarmi(tipoDB,ruoloPorta, nomePorta, search, 
+					filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
+					filtroSoggettoErogatore, filtroRuoloErogatore,
+					filtroServizioAzione, filtroRuolo);
+			sqlQueryObject.addSelectField(CostantiDB.ALLARMI, "nome");
+			sqlQueryObject.setOffset(offset);
+			sqlQueryObject.setLimit(limit);
+			//sqlQueryObject.addOrderBy("policy_alias", true);
+			//sqlQueryObject.addOrderBy("policy_id", true);
+			sqlQueryObject.addOrderBy(CostantiDB.ALLARMI+".nome", true);
+			String query = sqlQueryObject.createSQLQuery();
+			pstmt = con.prepareStatement(query);
+			_prepareStatementAllarmi(tipoDB,pstmt, ruoloPorta, nomePorta, search, 
+					filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
+					filtroSoggettoErogatore, filtroRuoloErogatore,
+					filtroServizioAzione, filtroRuolo);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				
+				String nomeAllarme = rs.getString("nome");
+				
+				IdAllarme idAllarmeAsObject = new IdAllarme();
+				idAllarmeAsObject.setNome(nomeAllarme);
+				Allarme allarme = serviceManager.getAllarmeServiceSearch().get(idAllarmeAsObject);
+				listaAllarmi.add(allarme);
+				
+			}
+			rs.close();
+			pstmt.close();
+						
+		} catch (Exception qe) {
+			throw new ServiceException("[" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		if(ricerca!=null) {
+			ricerca.setNumEntries(idLista,(int) count);
+		}
+		
+		return listaAllarmi;
+		
+	}
+	private static ISQLQueryObject _prepareSqlQueryObjectAllarmi(
+			String tipoDB,
+			RuoloPorta ruoloPorta, String nomePorta,
+			String search, 
+			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
+			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
+			IDServizio filtroServizioAzione, String filtroRuolo) throws Exception {
+		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sqlQueryObject.setANDLogicOperator(true);
+		sqlQueryObject.addFromTable(CostantiDB.ALLARMI);
+		if(ruoloPorta!=null && nomePorta!=null) {
+			sqlQueryObject.addWhereCondition("filtro_ruolo=?");
+			sqlQueryObject.addWhereCondition("filtro_porta=?");
+		}
+		else if(ruoloPorta!=null) {
+			sqlQueryObject.addWhereCondition("filtro_ruolo=?"); // se passo solo ruolo porta, voglio tutte le policy con quel ruolo. Altrimenti finisco nelle policy globali
+		}
+		else {
+			sqlQueryObject.addWhereIsNullCondition("filtro_porta");
+		}
+		if(search != null  && !"".equals(search)){
+			// fix: oramai l'alias e' obbligatorio
+			sqlQueryObject.addWhereCondition(false, 
+					//sqlQueryObject.getWhereLikeCondition("active_policy_id", search, false, true, true),
+					sqlQueryObject.getWhereLikeCondition("alias", search, false, true, true));
+		}
+		if(filtroSoggettoFruitore!=null) {
+			if(filtroSoggettoFruitore.getTipo()!=null) {
+				sqlQueryObject.addWhereCondition("filtro_tipo_fruitore=?");
+			}
+			if(filtroSoggettoFruitore.getNome()!=null) {
+				sqlQueryObject.addWhereCondition("filtro_nome_fruitore=?");
+			}
+		}
+		if(filtroApplicativoFruitore!=null) {
+			if(filtroApplicativoFruitore.getIdSoggettoProprietario()!=null) {
+				if(filtroApplicativoFruitore.getIdSoggettoProprietario().getTipo()!=null) {
+					sqlQueryObject.addWhereCondition("filtro_tipo_fruitore=?");
+				}
+				if(filtroApplicativoFruitore.getIdSoggettoProprietario().getNome()!=null) {
+					sqlQueryObject.addWhereCondition("filtro_nome_fruitore=?");
+				}
+			}
+			if(filtroApplicativoFruitore.getNome()!=null) {
+				sqlQueryObject.addWhereCondition("filtro_sa_fruitore=?");
+			}
+		}
+		if(filtroRuoloFruitore!=null) {
+			sqlQueryObject.addWhereCondition("filtro_ruolo_fruitore=?");
+		}
+		if(filtroSoggettoErogatore!=null) {
+			if(filtroSoggettoErogatore.getTipo()!=null) {
+				sqlQueryObject.addWhereCondition("filtro_tipo_erogatore=?");
+			}
+			if(filtroSoggettoErogatore.getNome()!=null) {
+				sqlQueryObject.addWhereCondition("filtro_nome_erogatore=?");
+			}
+		}
+		if(filtroRuoloErogatore!=null) {
+			sqlQueryObject.addWhereCondition("filtro_ruolo_erogatore=?");
+		}
+		if(filtroServizioAzione!=null) {
+			if(filtroServizioAzione.getSoggettoErogatore()!=null) {
+				if(filtroServizioAzione.getSoggettoErogatore().getTipo()!=null) {
+					sqlQueryObject.addWhereCondition("filtro_tipo_erogatore=?");
+				}
+				if(filtroServizioAzione.getSoggettoErogatore().getNome()!=null) {
+					sqlQueryObject.addWhereCondition("filtro_nome_erogatore=?");
+				}
+			}
+			if(filtroServizioAzione.getTipo()!=null) {
+				sqlQueryObject.addWhereCondition("filtro_tipo_servizio=?");
+			}
+			if(filtroServizioAzione.getNome()!=null) {
+				sqlQueryObject.addWhereCondition("filtro_nome_servizio=?");
+			}
+			if(filtroServizioAzione.getVersione()!=null) {
+				sqlQueryObject.addWhereCondition("filtro_versione_servizio=?");
+			}
+			if(filtroServizioAzione.getAzione()!=null) {
+				// condizione di controllo
+				ISQLQueryObject sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObjectOr.setANDLogicOperator(false);
+				// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+				// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione = ?");
+				sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", filtroServizioAzione.getAzione(), false , false);
+				sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", filtroServizioAzione.getAzione()+",", LikeConfig.startsWith(false));
+				sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+filtroServizioAzione.getAzione(), LikeConfig.endsWith(false));
+				sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY+".filtro_azione", ","+filtroServizioAzione.getAzione()+",", true , false);
+				sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+			}
+		}
+		if(filtroRuolo!=null) {
+			sqlQueryObject.addWhereCondition(false, "filtro_ruolo_fruitore=?", "filtro_ruolo_erogatore=?");
+		}
+		return sqlQueryObject;
+	}
+	private static void _prepareStatementAllarmi(
+			String tipoDB,
+			PreparedStatement pstmt,
+			RuoloPorta ruoloPorta, String nomePorta,
+			String search, 
+			IDSoggetto filtroSoggettoFruitore, IDServizioApplicativo filtroApplicativoFruitore,String filtroRuoloFruitore,
+			IDSoggetto filtroSoggettoErogatore, String filtroRuoloErogatore,
+			IDServizio filtroServizioAzione, String filtroRuolo) throws Exception {
+		int index = 1;
+		if(ruoloPorta!=null && nomePorta!=null) {
+			pstmt.setString(index++, ruoloPorta.getValue());
+			pstmt.setString(index++, nomePorta);
+		}
+		else if(ruoloPorta!=null) {
+			pstmt.setString(index++, ruoloPorta.getValue());
+		}
+		if(filtroSoggettoFruitore!=null) {
+			if(filtroSoggettoFruitore.getTipo()!=null) {
+				pstmt.setString(index++, filtroSoggettoFruitore.getTipo());
+			}
+			if(filtroSoggettoFruitore.getNome()!=null) {
+				pstmt.setString(index++, filtroSoggettoFruitore.getNome());
+			}
+		}
+		if(filtroApplicativoFruitore!=null) {
+			if(filtroApplicativoFruitore.getIdSoggettoProprietario()!=null) {
+				if(filtroApplicativoFruitore.getIdSoggettoProprietario().getTipo()!=null) {
+					pstmt.setString(index++, filtroApplicativoFruitore.getIdSoggettoProprietario().getTipo());
+				}
+				if(filtroApplicativoFruitore.getIdSoggettoProprietario().getNome()!=null) {
+					pstmt.setString(index++, filtroApplicativoFruitore.getIdSoggettoProprietario().getNome());
+				}
+			}
+			if(filtroApplicativoFruitore.getNome()!=null) {
+				pstmt.setString(index++, filtroApplicativoFruitore.getNome());
+			}
+		}
+		if(filtroRuoloFruitore!=null) {
+			pstmt.setString(index++, filtroRuoloFruitore);
+		}
+		if(filtroSoggettoErogatore!=null) {
+			if(filtroSoggettoErogatore.getTipo()!=null) {
+				pstmt.setString(index++, filtroSoggettoErogatore.getTipo());
+			}
+			if(filtroSoggettoErogatore.getNome()!=null) {
+				pstmt.setString(index++, filtroSoggettoErogatore.getNome());
+			}
+		}
+		if(filtroRuoloErogatore!=null) {
+			pstmt.setString(index++, filtroRuoloErogatore);
+		}
+		if(filtroServizioAzione!=null) {
+			if(filtroServizioAzione.getSoggettoErogatore()!=null) {
+				if(filtroServizioAzione.getSoggettoErogatore().getTipo()!=null) {
+					pstmt.setString(index++, filtroServizioAzione.getSoggettoErogatore().getTipo());
+				}
+				if(filtroServizioAzione.getSoggettoErogatore().getNome()!=null) {
+					pstmt.setString(index++, filtroServizioAzione.getSoggettoErogatore().getNome());
+				}
+			}
+			if(filtroServizioAzione.getTipo()!=null) {
+				pstmt.setString(index++, filtroServizioAzione.getTipo());
+			}
+			if(filtroServizioAzione.getNome()!=null) {
+				pstmt.setString(index++, filtroServizioAzione.getNome());
+			}
+			if(filtroServizioAzione.getVersione()!=null) {
+				pstmt.setInt(index++, filtroServizioAzione.getVersione());
+			}
+			if(filtroServizioAzione.getAzione()!=null) {
+				// inserito direttamente nella preparazione
+			}
+		}
+		if(filtroRuolo!=null) {
+			pstmt.setString(index++, filtroRuolo);
+			pstmt.setString(index++, filtroRuolo);
 		}
 	}
 }

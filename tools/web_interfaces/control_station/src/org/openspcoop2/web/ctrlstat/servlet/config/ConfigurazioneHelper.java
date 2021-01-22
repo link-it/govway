@@ -13491,6 +13491,43 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				List<String> azioni = null;
 				Map<String,String> azioniConLabel = null;
 				if(configurazione && datiIdentificativiServizioSelezionatoValue!=null) {
+					if(StringUtils.isNotEmpty(policy.getFiltro().getTipoServizio()) &&
+							StringUtils.isNotEmpty(policy.getFiltro().getNomeServizio()) &&
+							policy.getFiltro().getVersioneServizio()!=null && policy.getFiltro().getVersioneServizio()>0) {
+						if(StringUtils.isNotEmpty(policy.getFiltro().getTipoErogatore()) && 
+								StringUtils.isNotEmpty(policy.getFiltro().getNomeErogatore())) {
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), 
+									policy.getFiltro().getTipoErogatore(), policy.getFiltro().getNomeErogatore(), 
+									policy.getFiltro().getVersioneServizio());
+							AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizio,false);
+							AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+							azioniConLabel = this.porteDelegateCore.getAzioniConLabel(asps, aspc, false, true, null);
+						}
+						else {
+							List<IDServizio> listServizi = this.confCore.getServizi(protocolloSelezionatoValue, protocolliValue, 
+									policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), policy.getFiltro().getVersioneServizio(), null);
+							List<String> uris = new ArrayList<String>();
+							AccordoServizioParteSpecifica aspsRiferimento = null;
+							if(listServizi!=null && !listServizi.isEmpty()) {
+								for (IDServizio idS : listServizi) {
+									AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idS,false);
+									if(!uris.contains(asps.getAccordoServizioParteComune())) {
+										uris.add(asps.getAccordoServizioParteComune());
+										if(aspsRiferimento==null) {
+											aspsRiferimento = asps;
+										}
+									}
+									if(uris.size()>1) {
+										break;
+									}
+								}
+							}
+							if(uris.size()==1) {
+								AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(uris.get(0)));
+								azioniConLabel = this.porteDelegateCore.getAzioniConLabel(aspsRiferimento, aspc, false, true, null);
+							}
+						}
+					}
 					azioni = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
 							policy.getFiltro().getTipoErogatore(), policy.getFiltro().getNomeErogatore(), 
 							policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), policy.getFiltro().getVersioneServizio());
@@ -17645,6 +17682,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			String filterStato = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO);
+			this.addFilterStato(filterStato, true, false);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -19703,6 +19743,43 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				List<String> azioni = null;
 				Map<String,String> azioniConLabel = null;
 				if(configurazione && datiIdentificativiServizioSelezionatoValue!=null) {
+					if(StringUtils.isNotEmpty(allarme.getFiltro().getTipoServizio()) &&
+							StringUtils.isNotEmpty(allarme.getFiltro().getNomeServizio()) &&
+							allarme.getFiltro().getVersioneServizio()!=null && allarme.getFiltro().getVersioneServizio()>0) {
+						if(StringUtils.isNotEmpty(allarme.getFiltro().getTipoErogatore()) && 
+								StringUtils.isNotEmpty(allarme.getFiltro().getNomeErogatore())) {
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(allarme.getFiltro().getTipoServizio(), allarme.getFiltro().getNomeServizio(), 
+									allarme.getFiltro().getTipoErogatore(), allarme.getFiltro().getNomeErogatore(), 
+									allarme.getFiltro().getVersioneServizio());
+							AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizio,false);
+							AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+							azioniConLabel = this.porteDelegateCore.getAzioniConLabel(asps, aspc, false, true, null);
+						}
+						else {
+							List<IDServizio> listServizi = this.confCore.getServizi(protocolloSelezionatoValue, protocolliValue, 
+									allarme.getFiltro().getTipoServizio(), allarme.getFiltro().getNomeServizio(), allarme.getFiltro().getVersioneServizio(), null);
+							List<String> uris = new ArrayList<String>();
+							AccordoServizioParteSpecifica aspsRiferimento = null;
+							if(listServizi!=null && !listServizi.isEmpty()) {
+								for (IDServizio idS : listServizi) {
+									AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idS,false);
+									if(!uris.contains(asps.getAccordoServizioParteComune())) {
+										uris.add(asps.getAccordoServizioParteComune());
+										if(aspsRiferimento==null) {
+											aspsRiferimento = asps;
+										}
+									}
+									if(uris.size()>1) {
+										break;
+									}
+								}
+							}
+							if(uris.size()==1) {
+								AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(uris.get(0)));
+								azioniConLabel = this.porteDelegateCore.getAzioniConLabel(aspsRiferimento, aspc, false, true, null);
+							}
+						}
+					}
 					azioni = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
 							allarme.getFiltro().getTipoErogatore(), allarme.getFiltro().getNomeErogatore(), 
 							allarme.getFiltro().getTipoServizio(), allarme.getFiltro().getNomeServizio(), allarme.getFiltro().getVersioneServizio());
@@ -20166,6 +20243,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			filtroEnabled = filtroAbilitatoAPI;
 		}
 		
+		if(!filtroEnabled && ruoloPorta!=null) {
+			// Protocollo
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
+			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		}
+		
 		if(filtroEnabled){ 
 		
 			// Ruolo PdD
@@ -20531,7 +20618,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			else {
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_RICHIEDENTE);
 			//}
-			if(datiIdentificativiFruitoreSelezionatoValue!=null || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
+			if((datiIdentificativiFruitoreSelezionatoValue!=null && !delegata) || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
@@ -20773,9 +20860,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			boolean showServizio = false;
 			
-			boolean showAzione = allarme.getFiltro()==null || 
-					allarme.getFiltro().isEnabled()==false || 
-					allarme.getFiltro().getAzione()==null;
+			boolean showAzione =  allarme.getFiltro()==null || 
+					allarme.getFiltro().isEnabled()==false ||
+					allarme.getFiltro().getAzione()==null ||
+					"".equals(allarme.getFiltro().getAzione()) ||
+					allarme.getFiltro().getAzione().contains(",");
 			
 //			boolean showSAErogatore = false;
 			
@@ -20826,20 +20915,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 				
 			// Azione
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_AZIONE);
+			if(serviceBinding!=null) {
+				de.setLabel(getLabelAzione(serviceBinding));
+			}
+			else {
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_AZIONE);
+			}
 			if( showAzione ){
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_AZIONE);
-				if(serviceBinding!=null) {
-					de.setLabel(getLabelAzione(serviceBinding));
-				}
-				else {
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_AZIONE);
-				}
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(allarme.getGroupBy().isAzione());
-				de.setValue(allarme.getGroupBy().isAzione()+"");
-				dati.addElement(de);
 			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setValue(allarme.getGroupBy().isAzione()+"");
+			dati.addElement(de);
+			
 				
 			// Servizio Applicativo Erogatore
 //			if(configurazione) {
