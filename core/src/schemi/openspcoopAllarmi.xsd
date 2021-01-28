@@ -175,7 +175,12 @@
 	<xsd:complexType name="id-allarme">
 		<xsd:sequence>
 			<xsd:element name="nome" type="xsd:string"/>
+			<!-- informazione aggiuntiva -->
 			<xsd:element name="tipo" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="enabled" type="xsd:integer" minOccurs="0" />
+			<xsd:element name="alias" type="xsd:string" minOccurs="0" />
+			<xsd:element name="filtro-ruolo-porta" type="ruolo-porta" minOccurs="0" />
+			<xsd:element name="filtro-nome-porta" type="xsd:string" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

@@ -53,6 +53,8 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -116,7 +118,7 @@ import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
@@ -3573,6 +3575,13 @@ public class ControlStationCore {
 
 						doSetDati = false;
 					}
+					// ConfigurazioneUrlInvocazioneRegola
+					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
+						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
+						driver.getDriverConfigurazioneDB().createUrlInvocazioneRegola(regola);
+	
+						doSetDati = false;
+					}
 
 					/***********************************************************
 					 * Operazioni su Registro *
@@ -4113,6 +4122,28 @@ public class ControlStationCore {
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().updateSystemPropertiesPdD(sps);
+						doSetDati = false;
+					}
+					// ConfigurazioneUrlInvocazioneRegola
+					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
+						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
+						driver.getDriverConfigurazioneDB().updateUrlInvocazioneRegola(regola);
+						doSetDati = false;
+					}
+					// ConfigurazioneUrlInvocazione
+					if (oggetto instanceof ConfigurazioneUrlInvocazione) {
+						ConfigurazioneUrlInvocazione confConfigurazioneUrlInvocazione = (ConfigurazioneUrlInvocazione) oggetto;
+						
+						Configurazione config = driver.getDriverConfigurazioneDB().getConfigurazioneGenerale();
+						if(config.getUrlInvocazione()==null) {
+							config.setUrlInvocazione(confConfigurazioneUrlInvocazione);
+						}
+						else {
+							config.getUrlInvocazione().setBaseUrl(confConfigurazioneUrlInvocazione.getBaseUrl());
+							config.getUrlInvocazione().setBaseUrlFruizione(confConfigurazioneUrlInvocazione.getBaseUrlFruizione());
+						}
+						
+						driver.getDriverConfigurazioneDB().updateConfigurazione(config);
 						doSetDati = false;
 					}
 
@@ -4687,6 +4718,12 @@ public class ControlStationCore {
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().deleteSystemPropertiesPdD(sps);
+						doSetDati = false;
+					}
+					// ConfigurazioneUrlInvocazioneRegola
+					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
+						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
+						driver.getDriverConfigurazioneDB().deleteUrlInvocazioneRegola(regola);
 						doSetDati = false;
 					}
 

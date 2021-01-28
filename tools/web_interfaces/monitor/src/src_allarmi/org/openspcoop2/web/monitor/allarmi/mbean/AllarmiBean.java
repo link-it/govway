@@ -58,7 +58,7 @@ import org.openspcoop2.monitor.engine.alarm.AlarmStatusWithAck;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.AlarmStateValues;

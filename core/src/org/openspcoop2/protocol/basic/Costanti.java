@@ -426,14 +426,24 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR = "configurazione";
 	public static final String OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_FILE_NAME = "configurazione.xml";
 	
+	public static final String OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_DIR = "configUrlInvocazione";
+	public static final String OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_CONFIG_FILE_NAME = "configurazione.xml";
+	public static final String OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_REGOLE_DIR = "regole";
+	
 	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_DIR = "controlloTraffico";
 	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_FILE_NAME = "configurazione.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_CONFIG_POLICY_DIR = "configPolicies";
 	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_ACTIVE_POLICY_DIR = "policies"; // devo utilizzare un nome che in ordine lessicografico venga dopo configPolicies
 	
+	public static final String OPENSPCOOP2_ARCHIVE_ALLARMI_DIR = "allarmi";
+	
 	public static final String OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_DIR = "tokenPolicy";
 	public static final String OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_VALIDATION_DIR = "validation";
 	public static final String OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_RETRIEVE_DIR = "retrieve"; 
+	
+	public static final String OPENSPCOOP2_ARCHIVE_PLUGINS_DIR = "plugins";
+	public static final String OPENSPCOOP2_ARCHIVE_PLUGINS_CLASSI_DIR = "classi";
+	public static final String OPENSPCOOP2_ARCHIVE_PLUGINS_ARCHIVI_DIR = "archivi"; 
 	
 	public static final String OPENSPCOOP2_ARCHIVE_PORTE_DOMINIO_DIR = "porteDominio";
 

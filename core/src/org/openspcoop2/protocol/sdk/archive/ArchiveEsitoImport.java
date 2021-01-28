@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.sdk.archive;
 
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 
 /**
  *  ArchiveEsitoImport
@@ -62,8 +63,16 @@ public class ArchiveEsitoImport {
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloTraffico_configurationPolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloTraffico_activePolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> allarmi = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> token_validation_policies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> token_retrieve_policies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> plugin_classi = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> plugin_archivi = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	
+	private ArchiveEsitoImportDetailConfigurazione<ConfigurazioneUrlInvocazione> configurazionePdD_urlInvocazione;
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> configurazionePdD_urlInvocazione_regole = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
 	private ArchiveEsitoImportDetailConfigurazione<Configurazione> configurazionePdD;
 
@@ -156,6 +165,10 @@ public class ArchiveEsitoImport {
 		return this.controlloTraffico_activePolicies;
 	}
 	
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getAllarmi() {
+		return this.allarmi;
+	}
+	
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getToken_validation_policies() {
 		return this.token_validation_policies;
 	}
@@ -164,6 +177,27 @@ public class ArchiveEsitoImport {
 		return this.token_retrieve_policies;
 	}
 	
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPlugin_classi() {
+		return this.plugin_classi;
+	}
+
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPlugin_archivi() {
+		return this.plugin_archivi;
+	}
+
+	public ArchiveEsitoImportDetailConfigurazione<ConfigurazioneUrlInvocazione> getConfigurazionePdD_urlInvocazione() {
+		return this.configurazionePdD_urlInvocazione;
+	}
+
+	public void setConfigurazionePdD_urlInvocazione(
+			ArchiveEsitoImportDetailConfigurazione<ConfigurazioneUrlInvocazione> configurazionePdD_urlInvocazione) {
+		this.configurazionePdD_urlInvocazione = configurazionePdD_urlInvocazione;
+	}
+
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getConfigurazionePdD_urlInvocazione_regole() {
+		return this.configurazionePdD_urlInvocazione_regole;
+	}
+
 	public ArchiveEsitoImportDetailConfigurazione<Configurazione> getConfigurazionePdD() {
 		return this.configurazionePdD;
 	}
@@ -171,4 +205,5 @@ public class ArchiveEsitoImport {
 	public void setConfigurazionePdD(ArchiveEsitoImportDetailConfigurazione<Configurazione> configurazionePdD) {
 		this.configurazionePdD = configurazionePdD;
 	}
+	
 }

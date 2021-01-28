@@ -59,10 +59,10 @@ import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
-import org.openspcoop2.monitor.engine.config.base.IdPlugin;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
-import org.openspcoop2.monitor.engine.config.base.dao.IPluginServiceSearch;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
@@ -96,7 +96,7 @@ public class AllarmiService implements IAllarmiService {
 	private IAllarmeServiceSearch allarmeSearchDAO;
 	private IAllarmeHistoryServiceSearch allarmeHistorySearchDAO;
 	private IAllarmeHistoryService allarmeHistoryDAO;
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseServiceManager;
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseServiceManager;
 	private IPluginServiceSearch pluginsServiceSearchDAO;
 
 	private AllarmiSearchForm searchForm;
@@ -116,8 +116,8 @@ public class AllarmiService implements IAllarmiService {
 					this.pluginsServiceManager.getAllarmeHistoryService();
 
 			// init Service Manager plugins
-			this.pluginsBaseServiceManager = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory
-					.getInstance(AllarmiService.log).getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),AllarmiService.log);
+			this.pluginsBaseServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance(AllarmiService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),AllarmiService.log);
 			this.pluginsServiceSearchDAO = this.pluginsBaseServiceManager.getPluginServiceSearch();
 
 			this.LIMIT_SEARCH = pddMonitorProperties.getSearchFormLimit();

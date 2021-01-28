@@ -39,7 +39,7 @@ import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.monitor.engine.config.base.utils.FilterUtils;
+import org.openspcoop2.core.plugins.utils.FilterUtils;
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.monitor.engine.exceptions.EngineException;
 import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;

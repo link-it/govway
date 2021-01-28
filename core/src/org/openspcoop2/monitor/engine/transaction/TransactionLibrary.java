@@ -97,8 +97,8 @@ public class TransactionLibrary {
 			
 			org.openspcoop2.core.transazioni.dao.IServiceManager serviceManagerTransazioni = (org.openspcoop2.core.transazioni.dao.IServiceManager) 
 					daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager serviceManagerPluginsBase = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) 
-					daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
+			org.openspcoop2.core.plugins.dao.IServiceManager serviceManagerPluginsBase = (org.openspcoop2.core.plugins.dao.IServiceManager) 
+					daoFactory.getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance());
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager serviceManagerPluginsTransazioni = (org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) 
 					daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance());
 			org.openspcoop2.core.commons.search.dao.IServiceManager serviceManagerUtils = (org.openspcoop2.core.commons.search.dao.IServiceManager) 

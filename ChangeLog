@@ -1,3 +1,9 @@
+Export Regole di proxy pass
+Export ...TokenPolicy
+Export 
+
+Add filtro per tag sul controllo del traffico
+
 2021-01-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

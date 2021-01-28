@@ -21,23 +21,27 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
+import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -48,6 +52,8 @@ import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.slf4j.Logger;
 
 /**
  * ArchiveEngine
@@ -64,9 +70,14 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	
 	public ArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,
 			DriverConfigurazioneDB driverConfigurazione,
-			JDBCServiceManager serviceManagerControlloTraffico,
+			org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager serviceManagerPlugins,
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManagerControlloTraffico, 
+			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager serviceManagerAllarmi,
 			ArchiviCore archiviCore,boolean smista,String userLogin) {
-		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloTraffico);
+		super(driverRegistroServizi, driverConfigurazione, 
+				serviceManagerPlugins,
+				serviceManagerControlloTraffico, 
+				serviceManagerAllarmi);
 		this.archiviCore = archiviCore;
 		this.smista = smista;
 		this.userLogin = userLogin;
@@ -601,7 +612,8 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	// --- Controllo Traffico (AttivazionePolicy) ---
 	
 	@Override
-	public void createControlloTraffico_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+	public void createControlloTraffico_activePolicy(AttivazionePolicy policy, Logger log) throws DriverConfigurazioneException {
+		updatePosizioneBeforeCreate(policy, log);		
 		try{
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){
@@ -626,6 +638,40 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	// --- Allarmi ---
+	
+	@Override
+	public void createAllarme(Allarme allarme) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, allarme);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void updateAllarme(Allarme allarme) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, allarme);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteAllarme(Allarme allarme) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, allarme);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
 	
 	
 	// --- Token Policy ---
@@ -656,6 +702,122 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	
+	
+	// Plugin Classe
+	
+	@Override
+	public void createPluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void updatePluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deletePluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	// --- Plugin Archivio ---
+	
+	private boolean archiviUpdated = false;
+	
+	@Override
+	public void createPluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		updatePosizioneBeforeCreate(rp);
+		try {
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, rp);
+			this.archiviUpdated = true;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void updatePluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rp);
+			this.archiviUpdated = true;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deletePluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, rp);
+			this.archiviUpdated = true;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	// --- Url Invocazione Regole ---
+	
+	@Override
+	public void createUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		updatePosizioneBeforeCreate(regola);
+		try {
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void updateUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deleteUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	// --- Configurazione (Url Invocazione) ---
+	
+	@Override
+	public void updateConfigurazione_UrlInvocazione(ConfigurazioneUrlInvocazione configurazione) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, configurazione);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
 	// --- ConfigurazionePdD ---
 	
 	@Override
@@ -673,6 +835,33 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, configurazione);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	// --- Finalize ---
+	
+	@Override
+	public void finalizeImport(Archive archive) throws DriverConfigurazioneException{
+		if(this.archiviUpdated) {
+			// 	Aggiorno classLoader interno
+			try {
+				this.archiviCore.updatePluginClassLoader();
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}
+	}
+	@Override
+	public void finalizeDelete(Archive archive) throws DriverConfigurazioneException{
+		if(this.archiviUpdated) {
+			// 	Aggiorno classLoader interno
+			try {
+				this.archiviCore.updatePluginClassLoader();
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
 		}
 	}
 }

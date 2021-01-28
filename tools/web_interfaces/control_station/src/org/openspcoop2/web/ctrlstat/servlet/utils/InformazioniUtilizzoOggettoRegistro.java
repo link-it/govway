@@ -48,7 +48,7 @@ import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.monitor.engine.config.base.IdPlugin;
+import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -205,7 +205,7 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				}
 				break;
 			case RATE_LIMITING_POLICY:
-				identificativi = exporterUtils.getIdsRateLimitingPolicy(identificativoOggetto);
+				identificativi = exporterUtils.getIdsControlloTrafficoConfigPolicy(identificativoOggetto);
 				for (Object object : identificativi) {
 					IdPolicy idRP = (IdPolicy)object;
 					risultatiRicerca.add(confCore.getDettagliRateLimitingPolicyInUso(idRP));

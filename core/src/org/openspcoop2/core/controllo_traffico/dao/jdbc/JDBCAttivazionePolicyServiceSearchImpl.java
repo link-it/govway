@@ -105,6 +105,7 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		
 		// opzionali
 		idAttivazionePolicy.setIdPolicy(attivazionePolicy.getIdPolicy());
+		idAttivazionePolicy.setAlias(attivazionePolicy.getAlias());
 		idAttivazionePolicy.setEnabled(attivazionePolicy.isEnabled());
 		idAttivazionePolicy.setUpdateTime(attivazionePolicy.getUpdateTime());
 		idAttivazionePolicy.setPosizione(attivazionePolicy.getPosizione());
@@ -686,6 +687,7 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		// Object _attivazionePolicy
 		sqlQueryObjectGet.addFromTable(this.getAttivazionePolicyFieldConverter().toTable(AttivazionePolicy.model()));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ID_ACTIVE_POLICY,true));
+		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ALIAS,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ID_POLICY,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ENABLED,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().UPDATE_TIME,true));
@@ -702,11 +704,14 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		};
 		List<Class<?>> listaFieldIdReturnType_attivazionePolicy = new ArrayList<Class<?>>();
 		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().ID_ACTIVE_POLICY.getFieldType());
+		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().ALIAS.getFieldType());
 		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().ID_POLICY.getFieldType());
 		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().ENABLED.getFieldType());
 		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().UPDATE_TIME.getFieldType());
 		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().POSIZIONE.getFieldType());
 		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().CONTINUA_VALUTAZIONE.getFieldType());
+		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().FILTRO.RUOLO_PORTA.getFieldType());
+		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType());
 		org.openspcoop2.core.controllo_traffico.IdActivePolicy id_attivazionePolicy = null;
 		List<Object> listaFieldId_attivazionePolicy = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_attivazionePolicy, searchParams_attivazionePolicy);
@@ -719,15 +724,16 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 			// set _attivazionePolicy
 			id_attivazionePolicy = new org.openspcoop2.core.controllo_traffico.IdActivePolicy();
 			id_attivazionePolicy.setNome((String)listaFieldId_attivazionePolicy.get(0));
-			id_attivazionePolicy.setIdPolicy((String)listaFieldId_attivazionePolicy.get(1));
-			id_attivazionePolicy.setEnabled((Boolean)listaFieldId_attivazionePolicy.get(2));
-			id_attivazionePolicy.setUpdateTime((Date)listaFieldId_attivazionePolicy.get(3));
-			Object posizione = listaFieldId_attivazionePolicy.get(4);
+			id_attivazionePolicy.setAlias((String)listaFieldId_attivazionePolicy.get(1));
+			id_attivazionePolicy.setIdPolicy((String)listaFieldId_attivazionePolicy.get(2));
+			id_attivazionePolicy.setEnabled((Boolean)listaFieldId_attivazionePolicy.get(3));
+			id_attivazionePolicy.setUpdateTime((Date)listaFieldId_attivazionePolicy.get(4));
+			Object posizione = listaFieldId_attivazionePolicy.get(5);
 			if(posizione instanceof Integer) {
 				id_attivazionePolicy.setPosizione((Integer)posizione);
 			}
-			id_attivazionePolicy.setContinuaValutazione((Boolean)listaFieldId_attivazionePolicy.get(5));
-			Object ruoloPorta = listaFieldId_attivazionePolicy.get(6);
+			id_attivazionePolicy.setContinuaValutazione((Boolean)listaFieldId_attivazionePolicy.get(6));
+			Object ruoloPorta = listaFieldId_attivazionePolicy.get(7);
 			if(ruoloPorta!=null) {
 				if(ruoloPorta instanceof RuoloPolicy) {
 					id_attivazionePolicy.setFiltroRuoloPorta((RuoloPolicy)ruoloPorta);
@@ -736,7 +742,7 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 					id_attivazionePolicy.setFiltroRuoloPorta(RuoloPolicy.toEnumConstant((String)ruoloPorta));
 				}
 			}
-			Object nomePorta = listaFieldId_attivazionePolicy.get(7);
+			Object nomePorta = listaFieldId_attivazionePolicy.get(8);
 			if(nomePorta!=null) {
 				if(nomePorta instanceof String) {
 					id_attivazionePolicy.setFiltroNomePorta((String)nomePorta);

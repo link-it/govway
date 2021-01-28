@@ -93,9 +93,9 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	
 	public List<AttivazionePolicy> getRateLimitingPolicyGlobali() throws RegistryNotFound,RegistryException;
 	
-	public Integer getFreeCounterForGlobalPolicy(String policyId) throws RegistryException;
+	public String getNextPolicyInstanceSerialId(String policyId) throws RegistryException;
 	
 	public List<Allarme> getAllarmiGlobali() throws RegistryNotFound,RegistryException;
 	
-	public Integer getFreeCounterForAlarm(String tipoPlugin) throws RegistryException;
+	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws RegistryException;
 }

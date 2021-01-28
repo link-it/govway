@@ -11902,9 +11902,341 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	
 	
 
+	
+	@Override
+	public ConfigurazioneUrlInvocazioneRegola getUrlInvocazioneRegola(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
 
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getUrlInvocazioneRegola");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getUrlInvocazioneRegola] Exception accedendo al datasource :" + e.getMessage(),e);
 
+			}
+		} else
+			con = this.globalConnection;
 
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		ConfigurazioneUrlInvocazioneRegola regola = null;
+		
+		try {
+			
+			if(nome==null) {
+				throw new DriverConfigurazioneException("Nome regola non indicato");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_REGOLE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);	
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			rs = stm.executeQuery();
+			while(rs.next()){
+				
+				regola = new ConfigurazioneUrlInvocazioneRegola();
+				readRegola(regola, rs);
+				
+			}
+			rs.close();
+			stm.close();
+
+	
+		}catch (DriverConfigurazioneNotFound notFound) {
+			throw notFound;
+		}catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getUrlInvocazioneRegola]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getUrlInvocazioneRegolas]  Exception: " + se.getMessage(),se);
+		}
+		finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		if(regola!=null) {
+			return regola;
+		}
+		throw new DriverConfigurazioneNotFound("Regola '"+nome+"' non esistente");
+	}
+	
+	public boolean existsUrlInvocazioneRegola(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("existsUrlInvocazioneRegola");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[existsUrlInvocazioneRegola] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			
+			if(nome==null) {
+				throw new DriverConfigurazioneException("Nome regola non indicato");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_REGOLE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);	
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			rs = stm.executeQuery();
+			while(rs.next()){
+				
+				return true;
+				
+			}
+			rs.close();
+			stm.close();
+
+	
+		}catch (SQLException se) {
+			throw new DriverConfigurazioneException("[existsUrlInvocazioneRegola]  SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[existsUrlInvocazioneRegola]  Exception: " + se.getMessage(),se);
+		}
+		finally {
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		return false;
+	}
+
+	private void readRegola(ConfigurazioneUrlInvocazioneRegola regola, ResultSet rs) throws Exception {
+		regola.setId(rs.getLong("id"));
+		regola.setNome(rs.getString("nome"));
+		regola.setPosizione(rs.getInt("posizione"));
+		regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato")));
+		regola.setDescrizione(rs.getString("descrizione"));
+		if(rs.getInt("regexpr") == CostantiDB.TRUE) {
+			regola.setRegexpr(true);
+		}else {
+			regola.setRegexpr(false);
+		}
+		regola.setRegola(rs.getString("regola"));
+		// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
+		String s = rs.getString("contesto_esterno");
+		if(CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO.equals(s)) {
+			s = "";
+		}
+		regola.setContestoEsterno(s);
+		regola.setBaseUrl(rs.getString("base_url"));
+		regola.setProtocollo(rs.getString("protocollo"));
+		regola.setRuolo(DriverConfigurazioneDB_LIB.getEnumRuoloContesto(rs.getString("ruolo")));
+		regola.setServiceBinding(DriverConfigurazioneDB_LIB.getEnumServiceBinding(rs.getString("service_binding")));
+		String tipoSoggetto = rs.getString("tipo_soggetto");
+		String nomeSoggetto = rs.getString("nome_soggetto");
+		if(tipoSoggetto!=null && !"".equals(tipoSoggetto) && nomeSoggetto!=null && !"".equals(nomeSoggetto)) {
+			regola.setSoggetto(new IdSoggetto(new IDSoggetto(tipoSoggetto, nomeSoggetto)));
+		}
+	}
+
+	@Override
+	public void createUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("createUrlInvocazioneRegola");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createUrlInvocazioneRegola] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDUrlInvocazioneRegola type = 1");
+			DriverConfigurazioneDB_LIB.CRUDUrlInvocazioneRegola(1, regola, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createUrlInvocazioneRegola] Errore durante la create : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	@Override
+	public void updateUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("updateUrlInvocazioneRegola");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateUrlInvocazioneRegola] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDUrlInvocazioneRegola type = 2");
+			DriverConfigurazioneDB_LIB.CRUDUrlInvocazioneRegola(2, regola, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateUrlInvocazioneRegola] Errore durante l'aggiornamento : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	@Override
+	public void deleteUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("deleteUrlInvocazioneRegola");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteUrlInvocazioneRegola] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDUrlInvocazioneRegola type = 3");
+			DriverConfigurazioneDB_LIB.CRUDUrlInvocazioneRegola(3, regola, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteUrlInvocazioneRegola] Errore durante l'eliminazione : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Restituisce la configurazione generale della Porta di Dominio
 	 * 
@@ -12037,32 +12369,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					}
 					
 					ConfigurazioneUrlInvocazioneRegola regola = new ConfigurazioneUrlInvocazioneRegola();
-					regola.setId(rs1.getLong("id"));
-					regola.setNome(rs1.getString("nome"));
-					regola.setPosizione(rs1.getInt("posizione"));
-					regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("stato")));
-					regola.setDescrizione(rs1.getString("descrizione"));
-					if(rs1.getInt("regexpr") == CostantiDB.TRUE) {
-						regola.setRegexpr(true);
-					}else {
-						regola.setRegexpr(false);
-					}
-					regola.setRegola(rs1.getString("regola"));
-					// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
-					String s = rs1.getString("contesto_esterno");
-					if(CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO.equals(s)) {
-						s = "";
-					}
-					regola.setContestoEsterno(s);
-					regola.setBaseUrl(rs1.getString("base_url"));
-					regola.setProtocollo(rs1.getString("protocollo"));
-					regola.setRuolo(DriverConfigurazioneDB_LIB.getEnumRuoloContesto(rs1.getString("ruolo")));
-					regola.setServiceBinding(DriverConfigurazioneDB_LIB.getEnumServiceBinding(rs1.getString("service_binding")));
-					String tipoSoggetto = rs1.getString("tipo_soggetto");
-					String nomeSoggetto = rs1.getString("nome_soggetto");
-					if(tipoSoggetto!=null && !"".equals(tipoSoggetto) && nomeSoggetto!=null && !"".equals(nomeSoggetto)) {
-						regola.setSoggetto(new IdSoggetto(new IDSoggetto(tipoSoggetto, nomeSoggetto)));
-					}
+					readRegola(regola, rs1);
 					config.getUrlInvocazione().addRegola(regola);
 				}
 				rs1.close();

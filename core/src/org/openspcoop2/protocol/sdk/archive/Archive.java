@@ -20,6 +20,7 @@
 package org.openspcoop2.protocol.sdk.archive;
 
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.protocol.information_missing.Openspcoop2;
 
 
@@ -58,10 +59,25 @@ public class Archive {
 	private ArchiveSortedMap<ArchiveActivePolicy> controlloTraffico_activePolicies = new ArchiveSortedMap<ArchiveActivePolicy>();
 	private org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico_configurazione;
 	
+	private ArchiveSortedMap<ArchiveAllarme> allarmi = new ArchiveSortedMap<ArchiveAllarme>();
+	
 	private ArchiveSortedMap<ArchiveTokenPolicy> token_validation_policies = new ArchiveSortedMap<ArchiveTokenPolicy>();
 	private ArchiveSortedMap<ArchiveTokenPolicy> token_retrieve_policies = new ArchiveSortedMap<ArchiveTokenPolicy>();
 	
+	private ArchiveSortedMap<ArchivePluginClasse> plugin_classi = new ArchiveSortedMap<ArchivePluginClasse>();
+	private ArchiveSortedMap<ArchivePluginArchivio> plugin_archivi = new ArchiveSortedMap<ArchivePluginArchivio>();
+	
+	private ConfigurazioneUrlInvocazione configurazionePdD_urlInvocazione;
+	private ArchiveSortedMap<ArchiveUrlInvocazioneRegola> configurazionePdD_urlInvocazione_regole = new ArchiveSortedMap<ArchiveUrlInvocazioneRegola>();
+	
 	private Configurazione configurazionePdD;
+		
+	public ConfigurazioneUrlInvocazione getConfigurazionePdD_urlInvocazione() {
+		return this.configurazionePdD_urlInvocazione;
+	}
+	public void setConfigurazionePdD_urlInvocazione(ConfigurazioneUrlInvocazione configurazionePdD_urlInvocazione) {
+		this.configurazionePdD_urlInvocazione = configurazionePdD_urlInvocazione;
+	}
 	
 	public org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale getControlloTraffico_configurazione() {
 		return this.controlloTraffico_configurazione;
@@ -70,13 +86,14 @@ public class Archive {
 			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico_configurazione) {
 		this.controlloTraffico_configurazione = controlloTraffico_configurazione;
 	}
-	
+		
 	public Configurazione getConfigurazionePdD() {
 		return this.configurazionePdD;
 	}
 	public void setConfigurazionePdD(Configurazione configurazionePdD) {
 		this.configurazionePdD = configurazionePdD;
 	}
+	
 	public ArchiveSortedMap<ArchivePdd> getPdd() {
 		return this.pdd;
 	}
@@ -128,10 +145,22 @@ public class Archive {
 	public ArchiveSortedMap<ArchiveActivePolicy> getControlloTraffico_activePolicies() {
 		return this.controlloTraffico_activePolicies;
 	}
+	public ArchiveSortedMap<ArchiveAllarme> getAllarmi() {
+		return this.allarmi;
+	}
 	public ArchiveSortedMap<ArchiveTokenPolicy> getToken_validation_policies() {
 		return this.token_validation_policies;
 	}
 	public ArchiveSortedMap<ArchiveTokenPolicy> getToken_retrieve_policies() {
 		return this.token_retrieve_policies;
+	}
+	public ArchiveSortedMap<ArchivePluginClasse> getPlugin_classi() {
+		return this.plugin_classi;
+	}
+	public ArchiveSortedMap<ArchivePluginArchivio> getPlugin_archivi() {
+		return this.plugin_archivi;
+	}
+	public ArchiveSortedMap<ArchiveUrlInvocazioneRegola> getConfigurazionePdD_urlInvocazione_regole() {
+		return this.configurazionePdD_urlInvocazione_regole;
 	}
 }

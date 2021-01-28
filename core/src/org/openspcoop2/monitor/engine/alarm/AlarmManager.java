@@ -38,9 +38,9 @@ import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.monitor.engine.config.base.IdPlugin;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
@@ -124,11 +124,11 @@ public class AlarmManager {
 			throws AlarmException {
 		return getAlarm(allarme, log, daoFactory, null);
 	}
-	public static IAlarm getAlarm(Allarme allarme,Logger log, org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginSM)
+	public static IAlarm getAlarm(Allarme allarme,Logger log, org.openspcoop2.core.plugins.dao.IServiceManager pluginSM)
 			throws AlarmException {
 		return getAlarm(allarme, log, null, pluginSM);
 	}
-	private static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginSM)
+	private static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.core.plugins.dao.IServiceManager pluginSM)
 			throws AlarmException {
 		
 		AlarmImpl alarm = null;
@@ -156,8 +156,8 @@ public class AlarmManager {
 				
 				if(pluginSM==null) {
 					pluginSM = 
-							(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) 
-							daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
+							(org.openspcoop2.core.plugins.dao.IServiceManager) 
+							daoFactory.getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance());
 				}
 				TipoPlugin tipoPlugin = TipoPlugin.ALLARME;
 				IdPlugin idPlugin = new IdPlugin();

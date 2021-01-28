@@ -32,15 +32,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.core.allarmi.IdAllarme;
+import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -56,6 +61,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostan
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
@@ -125,6 +131,7 @@ public class ArchiviExporter extends HttpServlet {
 			
 			// Cascade
 			String cascadePolicyConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG);
+			String cascadePluginConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG);
 			String cascade = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 			String cascadePdd = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
 			String cascadeGruppi = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_GRUPPI);
@@ -223,6 +230,7 @@ public class ArchiviExporter extends HttpServlet {
 				}
 			}
 			cascadeConfig.setCascadePolicyConfigurazione(ServletUtils.isCheckBoxEnabled(cascadePolicyConfig));
+			cascadeConfig.setCascadePluginConfigurazione(ServletUtils.isCheckBoxEnabled(cascadePluginConfig));
 						
 			
 			// Recuperi eventuali identificativi logici degli oggetti
@@ -286,6 +294,34 @@ public class ArchiviExporter extends HttpServlet {
 				identificativi = exporterUtils.getIdsScope(objToExport);
 				redirect = ScopeCostanti.SERVLET_NAME_SCOPE_LIST;
 				break;
+			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY:
+				identificativi = exporterUtils.getIdsControlloTrafficoConfigPolicy(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST;
+				break;
+			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY:
+				identificativi = exporterUtils.getIdsControlloTrafficoActivePolicy(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST;
+				break;
+			case ALLARME:
+				identificativi = exporterUtils.getIdsAllarmi(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST;
+				break;
+			case CONFIGURAZIONE_TOKEN_POLICY:
+				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
+				break;
+			case CONFIGURAZIONE_PLUGIN_CLASSE:
+				identificativi = exporterUtils.getIdsPluginClassi(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_CLASSI_LIST;
+				break;
+			case CONFIGURAZIONE_PLUGIN_ARCHVIO:
+				identificativi = exporterUtils.getIdsPluginArchivi(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_LIST;
+				break;
+			case CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA:
+				identificativi = exporterUtils.getIdsUrlInvocazioneRegole(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST;
+				break;
 			default:
 				// altri tipi che non prevedono la lista degli identificativi schermata di errore
 				redirect = LoginCostanti.SERVLET_NAME_MESSAGE_PAGE;
@@ -348,7 +384,7 @@ public class ArchiviExporter extends HttpServlet {
 					fileName = prefix+"Soggetti."+ext;
 				}else{
 					IDSoggetto idSoggetto = ((IDSoggetto)identificativi.get(0));
-					fileName = idSoggetto.getTipo()+idSoggetto.getNome()+"."+extSingleArchive;
+					fileName = prefix+"Soggetto_"+idSoggetto.getTipo()+idSoggetto.getNome()+"."+extSingleArchive;
 				}
 				break;
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
@@ -357,7 +393,7 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				else{
 					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
-					fileName = idAccordo.getNome();
+					fileName = prefix+"API_"+idAccordo.getNome();
 					if(idAccordo.getSoggettoReferente()!=null){
 						fileName+="_"+idAccordo.getSoggettoReferente().getTipo()+idAccordo.getSoggettoReferente().getNome();
 	                }
@@ -373,7 +409,7 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				else{
 					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
-					fileName = idAccordo.getNome();
+					fileName = prefix+"AccordiServizioComposto_"+idAccordo.getNome();
 					if(idAccordo.getSoggettoReferente()!=null){
 						fileName+="_"+idAccordo.getSoggettoReferente().getTipo()+idAccordo.getSoggettoReferente().getNome();
 	                }
@@ -389,7 +425,7 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				else{
 					IDServizio idServizio = ((IDServizio)identificativi.get(0));
-					fileName = idServizio.getTipo()+idServizio.getNome();
+					fileName = prefix+"Servizio_"+idServizio.getTipo()+idServizio.getNome();
 					fileName+="_"+idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome();
 	                if(idServizio.getVersione()!=null && !"".equals(idServizio.getVersione())){
 	                	fileName+="_"+idServizio.getVersione();
@@ -403,7 +439,7 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				else{
 					IDAccordoCooperazione idAccordo = ((IDAccordoCooperazione)identificativi.get(0));
-					fileName = idAccordo.getNome();
+					fileName = prefix+"AccordiCooperazione_"+idAccordo.getNome();
 					if(idAccordo.getSoggettoReferente()!=null){
 						fileName+="_"+idAccordo.getSoggettoReferente().getTipo()+idAccordo.getSoggettoReferente().getNome();
 	                }
@@ -419,7 +455,7 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				else{
 					IDServizio idServizio = ((IDServizio)identificativi.get(0));
-					fileName = idServizio.getTipo()+idServizio.getNome();
+					fileName = prefix+"Erogazione_"+idServizio.getTipo()+idServizio.getNome();
 					fileName+="_"+idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome();
 	                if(idServizio.getVersione()!=null && !"".equals(idServizio.getVersione())){
 	                	fileName+="_"+idServizio.getVersione();
@@ -434,7 +470,7 @@ public class ArchiviExporter extends HttpServlet {
 				else{
 					IDFruizione idFruizione = ((IDFruizione)identificativi.get(0));
 					IDServizio idServizio = idFruizione.getIdServizio();
-					fileName = idFruizione.getIdFruitore().getTipo()+idFruizione.getIdFruitore().getNome();
+					fileName = prefix+"Fruizione_"+idFruizione.getIdFruitore().getTipo()+idFruizione.getIdFruitore().getNome();
 					fileName+="_"+idServizio.getTipo()+idServizio.getNome();
 					fileName+="_"+idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome();
 	                if(idServizio.getVersione()!=null && !"".equals(idServizio.getVersione())){
@@ -448,7 +484,7 @@ public class ArchiviExporter extends HttpServlet {
 					fileName = prefix+"Applicativi."+ext;
 				}else{
 					IDServizioApplicativo idServizioApplicativo = ((IDServizioApplicativo)identificativi.get(0));
-					fileName = idServizioApplicativo.getIdSoggettoProprietario().getTipo()+idServizioApplicativo.getIdSoggettoProprietario().getNome()+
+					fileName = prefix+"Applicativo_"+idServizioApplicativo.getIdSoggettoProprietario().getTipo()+idServizioApplicativo.getIdSoggettoProprietario().getNome()+
 							"_"+
 							idServizioApplicativo.getNome()+
 							"."+extSingleArchive;
@@ -456,10 +492,10 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case GRUPPO:
 				if(identificativi.size()>1){
-					fileName = prefix+"Gruppi."+ext;
+					fileName = prefix+"Tags."+ext;
 				}else{
 					IDGruppo idGruppo = ((IDGruppo)identificativi.get(0));
-					fileName = idGruppo.getNome()+"."+extSingleArchive;
+					fileName = prefix+"Tag_"+idGruppo.getNome()+"."+extSingleArchive;
 				}
 				break;
 			case RUOLO:
@@ -467,7 +503,7 @@ public class ArchiviExporter extends HttpServlet {
 					fileName = prefix+"Ruoli."+ext;
 				}else{
 					IDRuolo idRuolo = ((IDRuolo)identificativi.get(0));
-					fileName = idRuolo.getNome()+"."+extSingleArchive;
+					fileName = prefix+"Ruolo_"+idRuolo.getNome()+"."+extSingleArchive;
 				}
 				break;
 			case SCOPE:
@@ -475,12 +511,71 @@ public class ArchiviExporter extends HttpServlet {
 					fileName = prefix+"Scope."+ext;
 				}else{
 					IDScope idScope = ((IDScope)identificativi.get(0));
-					fileName = idScope.getNome()+"."+extSingleArchive;
+					fileName = prefix+"Scope_"+idScope.getNome()+"."+extSingleArchive;
 				}
+				break;
+			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY:
+				if(identificativi.size()>1){
+					fileName = prefix+"ControlloTrafficoPolicy."+ext;
+				}else{
+					IdPolicy idPolicy = ((IdPolicy)identificativi.get(0));
+					fileName = prefix+"ControlloTrafficoPolicy_"+idPolicy.getNome()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY:
+				if(identificativi.size()>1){
+					fileName = prefix+"RateLimitingPolicy."+ext;
+				}else{
+					IdActivePolicy idActivePolicy = ((IdActivePolicy)identificativi.get(0));
+					fileName = prefix+"RateLimitingPolicy_"+idActivePolicy.getAlias()+"."+extSingleArchive;
+				}
+				break;
+			case ALLARME:
+				if(identificativi.size()>1){
+					fileName = prefix+"Allarmi."+ext;
+				}else{
+					IdAllarme idAllarme = ((IdAllarme)identificativi.get(0));
+					fileName = prefix+"Allarme_"+idAllarme.getAlias()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_TOKEN_POLICY:
+				if(identificativi.size()>1){
+					fileName = prefix+"TokenPolicy."+ext;
+				}else{
+					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
+					fileName = prefix+"TokenPolicy_"+idPolicy.getTipologia()+"_"+idPolicy.getNome()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_PLUGIN_CLASSE:
+				if(identificativi.size()>1){
+					fileName = prefix+"PluginClassi."+ext;
+				}else{
+					IdPlugin idPlugin = ((IdPlugin)identificativi.get(0));
+					fileName = prefix+"Plugin_"+idPlugin.getTipoPlugin()+"_"+idPlugin.getTipo()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_PLUGIN_ARCHVIO:
+				if(identificativi.size()>1){
+					fileName = prefix+"PluginArchivi."+ext;
+				}else{
+					String idPlugin = ((String)identificativi.get(0));
+					fileName = prefix+"ArchivioPlugins_"+idPlugin+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA:
+				if(identificativi.size()>1){
+					fileName = prefix+"RegoleProxyPass."+ext;
+				}else{
+					String idRegola = ((String)identificativi.get(0));
+					fileName = prefix+"RegolaProxyPass_"+idRegola+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_URL_INVOCAZIONE:
+				fileName = prefix+"ConfigurazioneUrlInvocazione."+extSingleArchive;
 				break;
 			default:
 				// altri tipi che non prevedono la lista degli identificativi: e' la configurazione
-				fileName = prefix+"Config."+extSingleArchive;
+				fileName = prefix+"Configurazione."+extSingleArchive;
 			}
 			
 			// Setto Proprietà Export File

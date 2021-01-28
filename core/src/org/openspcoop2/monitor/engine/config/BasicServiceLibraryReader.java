@@ -21,12 +21,12 @@ package org.openspcoop2.monitor.engine.config;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryException;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.base.IdConfigurazioneServizio;
-import org.openspcoop2.monitor.engine.config.base.IdConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
-import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioServiceSearch;
+import org.openspcoop2.core.plugins.ConfigurazioneServizio;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.IdConfigurazioneServizio;
+import org.openspcoop2.core.plugins.IdConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioServiceSearch;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteSpecificaServiceSearch;
@@ -60,7 +60,7 @@ public class BasicServiceLibraryReader {
 	private ServiceManagerProperties daoFactoryServiceManagerPropertiesUtils = null;
 	private Logger daoFactoryLogger = null;
 	
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager serviceManagerPluginsBase;
+	private org.openspcoop2.core.plugins.dao.IServiceManager serviceManagerPluginsBase;
 	private org.openspcoop2.core.commons.search.dao.IServiceManager serviceManagerUtils;
 	
 	private boolean debug;
@@ -77,7 +77,7 @@ public class BasicServiceLibraryReader {
 		this.daoFactoryLogger = daoFactoryLogger;
 		this.debug = debug;
 	}
-	public BasicServiceLibraryReader(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager jdbcServiceManagerPluginsBase, 
+	public BasicServiceLibraryReader(org.openspcoop2.core.plugins.dao.IServiceManager jdbcServiceManagerPluginsBase, 
 			org.openspcoop2.core.commons.search.dao.IServiceManager jdbcServiceManagerUtils,
 			boolean debug){
 		this.serviceManagerPluginsBase = jdbcServiceManagerPluginsBase;
@@ -233,14 +233,14 @@ public class BasicServiceLibraryReader {
 		
 		boolean autoCommit = true;
 		
-		org.openspcoop2.monitor.engine.config.base.dao.IServiceManager serviceManager = this.serviceManagerPluginsBase;
+		org.openspcoop2.core.plugins.dao.IServiceManager serviceManager = this.serviceManagerPluginsBase;
 		if(serviceManager==null){
-			serviceManager = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(
-					org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+			serviceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) this.daoFactory.getServiceManager(
+					org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 					this.connection, autoCommit,
 						this.daoFactoryServiceManagerPropertiesPlugins, this.daoFactoryLogger);
-			if(serviceManager instanceof org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager)
-				((org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager)serviceManager).getJdbcProperties().setShowSql(this.debug);
+			if(serviceManager instanceof org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager)
+				((org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager)serviceManager).getJdbcProperties().setShowSql(this.debug);
 		}
 		
 		IConfigurazioneServizioServiceSearch search = serviceManager.getConfigurazioneServizioServiceSearch();
@@ -253,14 +253,14 @@ public class BasicServiceLibraryReader {
 		
 		boolean autoCommit = true;
 		
-		org.openspcoop2.monitor.engine.config.base.dao.IServiceManager serviceManager = this.serviceManagerPluginsBase;
+		org.openspcoop2.core.plugins.dao.IServiceManager serviceManager = this.serviceManagerPluginsBase;
 		if(serviceManager==null){
-			serviceManager = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(
-					org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+			serviceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) this.daoFactory.getServiceManager(
+					org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 					this.connection, autoCommit,
 						this.daoFactoryServiceManagerPropertiesPlugins, this.daoFactoryLogger);
-			if(serviceManager instanceof org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager)
-				((org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager)serviceManager).getJdbcProperties().setShowSql(this.debug);
+			if(serviceManager instanceof org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager)
+				((org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager)serviceManager).getJdbcProperties().setShowSql(this.debug);
 		}
 		
 		IConfigurazioneServizioServiceSearch search = serviceManager.getConfigurazioneServizioServiceSearch();
@@ -284,14 +284,14 @@ public class BasicServiceLibraryReader {
 		
 		boolean autoCommit = true;
 		
-		org.openspcoop2.monitor.engine.config.base.dao.IServiceManager serviceManager = this.serviceManagerPluginsBase;
+		org.openspcoop2.core.plugins.dao.IServiceManager serviceManager = this.serviceManagerPluginsBase;
 		if(serviceManager==null){
-			serviceManager = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(
-					org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+			serviceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) this.daoFactory.getServiceManager(
+					org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 					this.connection, autoCommit,
 					this.daoFactoryServiceManagerPropertiesPlugins, this.daoFactoryLogger);
-			if(serviceManager instanceof org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager)
-				((org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager)serviceManager).getJdbcProperties().setShowSql(this.debug);
+			if(serviceManager instanceof org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager)
+				((org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager)serviceManager).getJdbcProperties().setShowSql(this.debug);
 		}
 		
 		IConfigurazioneServizioServiceSearch serviceSearch = serviceManager.getConfigurazioneServizioServiceSearch();

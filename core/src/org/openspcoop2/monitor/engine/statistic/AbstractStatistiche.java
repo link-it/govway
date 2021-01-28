@@ -100,7 +100,7 @@ public abstract class AbstractStatistiche {
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
 	private ITransazioneServiceSearch transazioneSearchDAO = null;
 	private org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM = null;
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM;
 	@SuppressWarnings("unused")
@@ -119,7 +119,7 @@ public abstract class AbstractStatistiche {
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM,
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM,
+			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM){
 		if(logger!=null){
@@ -160,7 +160,7 @@ public abstract class AbstractStatistiche {
 				this.utilsSM = utilsSM;
 				
 				if(pluginsBaseSM==null){
-					throw new ServiceException("ServiceManager ["+org.openspcoop2.monitor.engine.config.base.dao.IServiceManager.class.getName()+"] non inizializzato");
+					throw new ServiceException("ServiceManager ["+org.openspcoop2.core.plugins.dao.IServiceManager.class.getName()+"] non inizializzato");
 				}
 				this.pluginsBaseSM = pluginsBaseSM;
 				

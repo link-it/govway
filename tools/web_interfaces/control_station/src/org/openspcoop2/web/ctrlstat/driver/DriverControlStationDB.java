@@ -84,9 +84,9 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
-import org.openspcoop2.monitor.engine.config.base.utils.PluginsDriverUtils;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
 import org.openspcoop2.protocol.engine.archive.UtilitiesMappingFruizioneErogazione;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -145,7 +145,7 @@ public class DriverControlStationDB  {
 	private DriverAudit auditDB = null;
 	private DriverAuditDBAppender auditDBappender = null;
 	private JDBCServiceManager jdbcServiceManagerControlloTraffico = null;
-	private org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager jdbcServiceManagerMonitorEngineConfig;
+	private org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager jdbcServiceManagerPlugins;
 	private org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager jdbcServiceManagerAllarmi;
 
 	private IDAccordoFactory idAccordoFactory = null;
@@ -180,8 +180,8 @@ public class DriverControlStationDB  {
 		return this.jdbcServiceManagerControlloTraffico;
 	}
 	
-	public org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager getJdbcServiceManagerMonitorEngineConfig() {
-		return this.jdbcServiceManagerMonitorEngineConfig;
+	public org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager getJdbcServiceManagerPlugins() {
+		return this.jdbcServiceManagerPlugins;
 	}
 	
 	public org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager getJdbcServiceManagerAllarmi() {
@@ -223,7 +223,7 @@ public class DriverControlStationDB  {
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
 			this.jdbcServiceManagerControlloTraffico = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
-			this.jdbcServiceManagerMonitorEngineConfig = new org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
+			this.jdbcServiceManagerPlugins = new org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
 			this.jdbcServiceManagerAllarmi = new org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
 			this.idAccordoFactory = IDAccordoFactory.getInstance();
 			this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
@@ -2591,6 +2591,46 @@ public class DriverControlStationDB  {
 		return listaPolicy;
 	}
 
+	public void updatePosizioneAttivazionePolicy(InfoPolicy infoPolicy, AttivazionePolicy policy,
+			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException{
+		String nomeMetodo = "updatePosizioneAttivazionePolicy";
+		// ritorna la configurazione controllo del traffico della PdD
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			ControlloTrafficoDriverUtils.updatePosizioneAttivazionePolicy(infoPolicy, policy,
+					ruoloPorta, nomePorta, 
+					con, this.log, this.tipoDB);	
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException{
 		return (List<AttivazionePolicy>) this._configurazioneControlloTrafficoAttivazionePolicyList(ricerca, ruoloPorta, nomePorta, 
@@ -3194,8 +3234,8 @@ public class DriverControlStationDB  {
 		return policy;
 	}
 	
-	public Integer getFreeCounterForGlobalPolicy(String policyId) throws DriverControlStationException{
-		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
+	public String getNextPolicyInstanceSerialId(String policyId) throws DriverControlStationException{
+		String nomeMetodo = "getNextPolicyInstanceSerialId"; 
 		Connection con = null;
 		if (this.atomica) {
 			try {
@@ -3213,7 +3253,7 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		
 		try{
-			return ControlloTrafficoDriverUtils.getFreeCounterForGlobalPolicy(policyId, con, this.log, this.tipoDB);		
+			return ControlloTrafficoDriverUtils.getNextPolicyInstanceSerialId(policyId, con, this.log, this.tipoDB);		
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
@@ -4470,9 +4510,7 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
 		try {
-			return PluginsDriverUtils.isPluginInUso(className, label, tipoPlugin, tipo,
-					whereIsInUso, normalizeObjectIds, 
-					con, this.log, this.tipoDB);
+			return DBOggettiInUsoUtils.isPluginInUso(con, this.tipoDB, className, label, tipoPlugin, tipo, whereIsInUso, normalizeObjectIds);
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
@@ -4696,6 +4734,75 @@ public class DriverControlStationDB  {
 		}
 	}
 
+	
+	public Allarme getAllarmeSenzaPlugin(Long id) throws DriverConfigurazioneException {
+		String nomeMetodo = "getAllarmeSenzaPlugin";
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.getAllarme(id, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public Allarme getAllarmeSenzaPlugin(String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "getAllarmeSenzaPluginByNome";
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.getAllarme(nome, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 	public ConfigurazioneAllarmeBean getAllarme(Long id) throws DriverConfigurazioneException {
 		String nomeMetodo = "getAllarme";
 		Connection con = null;
@@ -4800,8 +4907,8 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public Integer getFreeCounterForAlarm(String tipoPlugin) throws DriverControlStationException{
-		String nomeMetodo = "getFreeCounterForAlarm"; 
+	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws DriverControlStationException{
+		String nomeMetodo = "getNextAlarmInstanceSerialId"; 
 		Connection con = null;
 		if (this.atomica) {
 			try {
@@ -4819,7 +4926,7 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		
 		try{
-			return AllarmiDriverUtils.getFreeCounterForAlarm(tipoPlugin, con, this.log, this.tipoDB);		
+			return AllarmiDriverUtils.getNextAlarmInstanceSerialId(tipoPlugin, con, this.log, this.tipoDB);		
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {

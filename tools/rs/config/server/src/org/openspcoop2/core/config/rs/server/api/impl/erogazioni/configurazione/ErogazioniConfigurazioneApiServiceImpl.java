@@ -117,6 +117,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -604,8 +605,8 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			// Questo lo prendo paro paro dal codice della console.
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
-			int counter = env.confCore.getFreeCounterForGlobalPolicy(infoPolicy.getIdPolicy());
-			policy.setIdActivePolicy(infoPolicy.getIdPolicy()+":"+counter);
+			String serialId = env.confCore.getNextPolicyInstanceSerialId(infoPolicy.getIdPolicy());
+			policy.setIdActivePolicy(ControlloTrafficoDriverUtils.buildIdActivePolicy(infoPolicy.getIdPolicy(), serialId));
 			
 			ErogazioniApiHelper.override(body, env.protocolFactory.getProtocol(), env.idSoggetto.toIDSoggetto(), env.requestWrapper);
 			

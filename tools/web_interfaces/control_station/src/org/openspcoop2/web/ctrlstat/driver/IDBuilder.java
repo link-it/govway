@@ -31,6 +31,8 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -40,6 +42,7 @@ import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -62,7 +65,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.utils.serialization.IOException;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -326,7 +329,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				RegistroPlugin plugin = (RegistroPlugin) o;
 				String id = plugin.getNome();
 				if(this.prefix){
-					return "[RegistroPlugin] "+ id;
+					return "[ArchivioPlugins] "+ id;
 				}else{
 					return id;
 				}
@@ -334,10 +337,20 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				RegistroPluginArchivio plugin = (RegistroPluginArchivio) o;
 				String id = plugin.getNome();
 				if(this.prefix){
-					return "[RegistroPluginArchivio] "+ plugin.getNomePlugin()+"-"+id;
+					return "[ArchivioPluginsJarEntry] "+ plugin.getNomePlugin()+"-"+id;
 				}else{
 					return id;
 				}
+			}else if(o instanceof ConfigurazioneUrlInvocazioneRegola){
+				ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) o;
+				String id = regola.getNome();
+				if(this.prefix){
+					return "[UrlInvocazioneRegola] "+ id;
+				}else{
+					return id;
+				}
+			}else if(o instanceof ConfigurazioneUrlInvocazione){ 
+				return "Configurazione UrlInvocazione";
 			}
 			
 			
@@ -422,7 +435,15 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				GenericProperties genericProperties = (GenericProperties) o;
 				String id = genericProperties.getNome();
 				if(this.prefix){
-					return "[GenericProperties] "+ id;
+					if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(genericProperties.getTipologia())) {
+						return "[TokenPolicyValidazione] "+ id;
+					}
+					else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(genericProperties.getTipologia())) {
+						return "[TokenPolicyNegoziazione] "+ id;
+					}
+					else {
+						return "[GenericProperties] "+ id;
+					}
 				}else{
 					return id;
 				}
@@ -739,11 +760,24 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 				String id = plugin.getOldNome();
 				if(this.prefix){
-					return "[RegistroPlugin] "+ id;
+					return "[ArchivioPlugins] "+ id;
 				}else{
 					return id;
 				}
 			}else if(o instanceof RegistroPluginArchivio){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof ConfigurazioneUrlInvocazioneRegola){
+				ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) o;
+				if(regola.getOldNome()==null) {
+					return null; // non lancio un errore
+				}
+				String id = regola.getOldNome();
+				if(this.prefix){
+					return "[UrlInvocazioneRegola] "+ id;
+				}else{
+					return id;
+				}
+			}else if(o instanceof ConfigurazioneUrlInvocazione){ 
 				return null; // oggetto non modificabile nei dati identificativi
 			}
 			
@@ -897,13 +931,15 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(PortaApplicativa.class.getSimpleName());
 			oggetti.add(RoutingTable.class.getSimpleName());
 			oggetti.add(GestioneErrore.class.getSimpleName());
-			oggetti.add("ConfigurazionePdD");
+			oggetti.add("Configurazione");
 			oggetti.add(AccessoRegistro.class.getSimpleName());
 			// non serve come simple name: oggetti.add(AccessoRegistroRegistro.class.getName());
 			oggetti.add(AccessoConfigurazione.class.getSimpleName());
 			oggetti.add(AccessoDatiAutenticazione.class.getSimpleName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getSimpleName());
 			oggetti.add(SystemProperties.class.getSimpleName());
+			oggetti.add("RegolaProxyPass");
+			oggetti.add("ConfigurazioneUrlInvocazione");
 			
 			// Configurazione Controllo Traffico
 			oggetti.add("ConfigurazioneControlloTraffico");
@@ -911,11 +947,13 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AttivazionePolicy.class.getSimpleName());
 			
 			// Generic Properties
+			oggetti.add("TokenPolicyValidazione");
+			oggetti.add("TokenPolicyNegoziazione");
 			oggetti.add(GenericProperties.class.getSimpleName());
 			
 			// RegistroPlugins
-			oggetti.add(RegistroPlugin.class.getSimpleName());
-			oggetti.add(RegistroPluginArchivio.class.getSimpleName());
+			oggetti.add("ArchivioPlugins");
+			oggetti.add("ArchivioPluginsJarEntry");
 			
 			// Plugin
 			oggetti.add(Plugin.class.getSimpleName());
@@ -972,6 +1010,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoConfigurazione.class.getName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getName());
 			oggetti.add(SystemProperties.class.getName());
+			oggetti.add(ConfigurazioneUrlInvocazioneRegola.class.getName());
+			oggetti.add(ConfigurazioneUrlInvocazione.class.getName());
 			
 			// Configurazione Controllo del Traffico
 			oggetti.add(ConfigurazioneGenerale.class.getName());
@@ -1029,7 +1069,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			return Soggetto.class.getSimpleName();
 		}
 		else if(o instanceof Configurazione){
-			return "ConfigurazionePdD";
+			return "Configurazione";
 		}
 		else if(o instanceof AccessoRegistroRegistro){
 			return AccessoRegistro.class.getSimpleName();
@@ -1054,6 +1094,30 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 		}
 		else if(o instanceof ConfigurazioneAllarmeBean){
 			return Allarme.class.getSimpleName();
+		}
+		else if(o instanceof ConfigurazioneUrlInvocazioneRegola) {
+			return "RegolaProxyPass";
+		}
+		else if(o instanceof ConfigurazioneUrlInvocazione) {
+			return "ConfigurazioneUrlInvocazione";
+		}
+		else if(o instanceof GenericProperties) {
+			GenericProperties  genericProperties = (GenericProperties) o;
+			if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(genericProperties.getTipologia())) {
+				return "TokenPolicyValidazione";
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(genericProperties.getTipologia())) {
+				return "TokenPolicyNegoziazione";
+			}
+			else {
+				return o.getClass().getSimpleName();
+			}
+		}
+		else if(o instanceof RegistroPlugin) {
+			return "ArchivioPlugins";
+		}
+		else if(o instanceof RegistroPluginArchivio) {
+			return "ArchivioPluginsJarEntry";
 		}
 		else{
 			return o.getClass().getSimpleName();

@@ -54,7 +54,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.monitor.engine.config.base.utils.FilterUtils;
+import org.openspcoop2.core.plugins.utils.FilterUtils;
 import org.openspcoop2.monitor.sdk.condition.FilterFactory;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;

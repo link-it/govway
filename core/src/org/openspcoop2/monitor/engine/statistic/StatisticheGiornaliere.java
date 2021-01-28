@@ -58,7 +58,7 @@ public class StatisticheGiornaliere extends AbstractStatistiche {
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM,
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM,
+			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM) {
 		super(logger,logQuery,generazioneStatisticheCustom,analisiTransazioniCustom,

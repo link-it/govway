@@ -27,6 +27,7 @@ import java.util.Map;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.IdAllarme;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.dao.jdbc.converter.AllarmeFieldConverter;
 import org.openspcoop2.core.allarmi.dao.jdbc.fetch.AllarmeFetch;
 import org.openspcoop2.generic_project.beans.CustomField;
@@ -101,7 +102,15 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 	
 		IdAllarme idAllarme = new IdAllarme();
 		idAllarme.setNome(allarme.getNome());
+		
+		// opzionali
 		idAllarme.setTipo(allarme.getTipo());
+		idAllarme.setEnabled(allarme.getEnabled());
+		idAllarme.setAlias(allarme.getAlias());
+		if(allarme.getFiltro()!=null) {
+			idAllarme.setFiltroRuoloPorta(allarme.getFiltro().getRuoloPorta());
+			idAllarme.setFiltroNomePorta(allarme.getFiltro().getNomePorta());
+		}
 		
 		return idAllarme;
 	}
@@ -770,6 +779,10 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 		sqlQueryObjectGet.addFromTable(this.getAllarmeFieldConverter().toTable(Allarme.model()));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().NOME,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO,true));
+		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ENABLED,true));
+		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALIAS,true));
+		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().FILTRO.RUOLO_PORTA,true));
+		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().FILTRO.NOME_PORTA,true));
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -778,8 +791,12 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_allarme = new ArrayList<Class<?>>();
-		listaFieldIdReturnType_allarme.add(String.class);
-		listaFieldIdReturnType_allarme.add(String.class);
+		listaFieldIdReturnType_allarme.add(Allarme.model().NOME.getFieldType());
+		listaFieldIdReturnType_allarme.add(Allarme.model().TIPO.getFieldType());
+		listaFieldIdReturnType_allarme.add(Allarme.model().ENABLED.getFieldType());
+		listaFieldIdReturnType_allarme.add(Allarme.model().ALIAS.getFieldType());
+		listaFieldIdReturnType_allarme.add(Allarme.model().FILTRO.RUOLO_PORTA.getFieldType());
+		listaFieldIdReturnType_allarme.add(Allarme.model().FILTRO.NOME_PORTA.getFieldType());
 		org.openspcoop2.core.allarmi.IdAllarme id_allarme = null;
 		List<Object> listaFieldId_allarme = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_allarme, searchParams_allarme);
@@ -793,6 +810,23 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 			id_allarme = new org.openspcoop2.core.allarmi.IdAllarme();
 			id_allarme.setNome((String)listaFieldId_allarme.get(0));
 			id_allarme.setTipo((String)listaFieldId_allarme.get(1));
+			id_allarme.setEnabled((Integer)listaFieldId_allarme.get(2));
+			id_allarme.setAlias((String)listaFieldId_allarme.get(3));
+			Object ruoloPorta = listaFieldId_allarme.get(4);
+			if(ruoloPorta!=null) {
+				if(ruoloPorta instanceof RuoloPorta) {
+					id_allarme.setFiltroRuoloPorta((RuoloPorta)ruoloPorta);
+				}
+				else if(ruoloPorta instanceof String) {
+					id_allarme.setFiltroRuoloPorta(RuoloPorta.toEnumConstant((String)ruoloPorta));
+				}
+			}
+			Object nomePorta = listaFieldId_allarme.get(5);
+			if(nomePorta!=null) {
+				if(nomePorta instanceof String) {
+					id_allarme.setFiltroNomePorta((String)nomePorta);
+				}
+			}
 		}
 		
 		return id_allarme;

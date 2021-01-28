@@ -8939,6 +8939,142 @@ public class DriverConfigurazioneDB_LIB {
 	}
 	
 	
+	private static void _createUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola, Connection con) throws Exception {
+		PreparedStatement updateStmt = null;
+		
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			sqlQueryObject.addInsertTable(CostantiDB.CONFIG_URL_REGOLE);
+			sqlQueryObject.addInsertField("nome", "?");
+			sqlQueryObject.addInsertField("posizione", "?");
+			sqlQueryObject.addInsertField("stato", "?");
+			sqlQueryObject.addInsertField("descrizione", "?");
+			sqlQueryObject.addInsertField("regexpr", "?");
+			sqlQueryObject.addInsertField("regola", "?");
+			sqlQueryObject.addInsertField("contesto_esterno", "?");
+			sqlQueryObject.addInsertField("base_url", "?");
+			sqlQueryObject.addInsertField("protocollo", "?");
+			sqlQueryObject.addInsertField("ruolo", "?");
+			sqlQueryObject.addInsertField("service_binding", "?");
+			sqlQueryObject.addInsertField("tipo_soggetto", "?");
+			sqlQueryObject.addInsertField("nome_soggetto", "?");
+			String updateQuery = sqlQueryObject.createSQLInsert();
+			updateStmt = con.prepareStatement(updateQuery);
+			int indexP = 1;
+			updateStmt.setString(indexP++, regola.getNome());
+			updateStmt.setInt(indexP++, regola.getPosizione());
+			updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(regola.getStato()));
+			updateStmt.setString(indexP++, regola.getDescrizione());
+			updateStmt.setInt(indexP++, regola.isRegexpr() ? CostantiDB.TRUE : CostantiDB.FALSE);
+			updateStmt.setString(indexP++, regola.getRegola());
+			// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
+			String s = regola.getContestoEsterno();
+			if("".equals(s)) {
+				s = CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO;
+			}
+			updateStmt.setString(indexP++, s);
+			updateStmt.setString(indexP++, regola.getBaseUrl());
+			updateStmt.setString(indexP++, regola.getProtocollo());
+			updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(regola.getRuolo()));
+			updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(regola.getServiceBinding()));
+			updateStmt.setString(indexP++, regola.getSoggetto()!=null ? regola.getSoggetto().getTipo() : null);
+			updateStmt.setString(indexP++, regola.getSoggetto()!=null ? regola.getSoggetto().getNome() : null);
+			updateStmt.executeUpdate();
+			updateStmt.close();
+			
+		} finally {
+
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public static void CRUDUrlInvocazioneRegola(int type, ConfigurazioneUrlInvocazioneRegola regola, Connection con) throws DriverConfigurazioneException {
+		if (regola == null)
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDUrlInvocazioneRegola] La regola non può essere NULL");
+		PreparedStatement updateStmt = null;
+		String updateQuery = "";
+		PreparedStatement selectStmt = null;
+		//String selectQuery = "";
+		ResultSet selectRS = null;
+		
+
+		try {
+			
+			if(regola.getNome()==null) {
+				throw new DriverConfigurazioneException("Nome non fornito");
+			}
+			
+			// Recupero id generic properties
+			long idParent = -1;
+			if(type == CostantiDB.UPDATE || type == CostantiDB.DELETE) {
+				
+				String oldNome = regola.getNome();
+				if(type == CostantiDB.UPDATE && regola.getOldNome()!=null) {
+					oldNome = regola.getOldNome();
+				}
+				
+				idParent = DBUtils.getUrlInvocazioneRegola(oldNome, con, DriverConfigurazioneDB_LIB.tipoDB);
+				if(idParent<=0) {
+					throw new DriverConfigurazioneException("Regola con nome '"+regola.getNome()+"' non trovata");
+				}
+
+				// delete
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_URL_REGOLE);
+				sqlQueryObject.addWhereCondition("id=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idParent);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+			}
+			
+
+			switch (type) {
+			case CREATE:
+			case UPDATE:
+		
+				// insert
+
+				_createUrlInvocazioneRegola(regola, con);
+
+				break;
+			case DELETE:
+				// non rimuovo in quanto gia fatto sopra.
+				break;
+			}
+
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDRegistroPlugin] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDRegistroPlugin] Exception [" + se.getMessage() + "].",se);
+		} finally {
+
+			try {
+				if(selectRS!=null)selectRS.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(selectStmt!=null)selectStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
+	
 	
 	
 	
@@ -9722,46 +9858,7 @@ public class DriverConfigurazioneDB_LIB {
 					if(config.getUrlInvocazione().sizeRegolaList()>0){
 						for(int k=0; k<config.getUrlInvocazione().sizeRegolaList();k++){
 							ConfigurazioneUrlInvocazioneRegola configUrlInvocazioneRegola = config.getUrlInvocazione().getRegola(k);
-							
-							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-							sqlQueryObject.addInsertTable(CostantiDB.CONFIG_URL_REGOLE);
-							sqlQueryObject.addInsertField("nome", "?");
-							sqlQueryObject.addInsertField("posizione", "?");
-							sqlQueryObject.addInsertField("stato", "?");
-							sqlQueryObject.addInsertField("descrizione", "?");
-							sqlQueryObject.addInsertField("regexpr", "?");
-							sqlQueryObject.addInsertField("regola", "?");
-							sqlQueryObject.addInsertField("contesto_esterno", "?");
-							sqlQueryObject.addInsertField("base_url", "?");
-							sqlQueryObject.addInsertField("protocollo", "?");
-							sqlQueryObject.addInsertField("ruolo", "?");
-							sqlQueryObject.addInsertField("service_binding", "?");
-							sqlQueryObject.addInsertField("tipo_soggetto", "?");
-							sqlQueryObject.addInsertField("nome_soggetto", "?");
-							updateQuery = sqlQueryObject.createSQLInsert();
-							updateStmt = con.prepareStatement(updateQuery);
-							indexP = 1;
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getNome());
-							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.getPosizione());
-							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getStato()));
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getDescrizione());
-							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.isRegexpr() ? CostantiDB.TRUE : CostantiDB.FALSE);
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getRegola());
-							// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
-							String s = configUrlInvocazioneRegola.getContestoEsterno();
-							if("".equals(s)) {
-								s = CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO;
-							}
-							updateStmt.setString(indexP++, s);
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getBaseUrl());
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getProtocollo());
-							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getRuolo()));
-							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getServiceBinding()));
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getSoggetto()!=null ? configUrlInvocazioneRegola.getSoggetto().getTipo() : null);
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getSoggetto()!=null ? configUrlInvocazioneRegola.getSoggetto().getNome() : null);
-							updateStmt.executeUpdate();
-							updateStmt.close();
-	
+							_createUrlInvocazioneRegola(configUrlInvocazioneRegola, con);
 						}
 					}
 				}
@@ -10394,46 +10491,7 @@ public class DriverConfigurazioneDB_LIB {
 					if(config.getUrlInvocazione().sizeRegolaList()>0){
 						for(int k=0; k<config.getUrlInvocazione().sizeRegolaList();k++){
 							ConfigurazioneUrlInvocazioneRegola configUrlInvocazioneRegola = config.getUrlInvocazione().getRegola(k);
-							
-							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-							sqlQueryObject.addInsertTable(CostantiDB.CONFIG_URL_REGOLE);
-							sqlQueryObject.addInsertField("nome", "?");
-							sqlQueryObject.addInsertField("posizione", "?");
-							sqlQueryObject.addInsertField("stato", "?");
-							sqlQueryObject.addInsertField("descrizione", "?");
-							sqlQueryObject.addInsertField("regexpr", "?");
-							sqlQueryObject.addInsertField("regola", "?");
-							sqlQueryObject.addInsertField("contesto_esterno", "?");
-							sqlQueryObject.addInsertField("base_url", "?");
-							sqlQueryObject.addInsertField("protocollo", "?");
-							sqlQueryObject.addInsertField("ruolo", "?");
-							sqlQueryObject.addInsertField("service_binding", "?");
-							sqlQueryObject.addInsertField("tipo_soggetto", "?");
-							sqlQueryObject.addInsertField("nome_soggetto", "?");
-							updateQuery = sqlQueryObject.createSQLInsert();
-							updateStmt = con.prepareStatement(updateQuery);
-							indexP = 1;
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getNome());
-							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.getPosizione());
-							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getStato()));
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getDescrizione());
-							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.isRegexpr() ? CostantiDB.TRUE : CostantiDB.FALSE);
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getRegola());
-							// Fix stringa vuota in Oracle, impostato dalla console e non accettato da Oracle che lo traduce in null e fa schiantare per via del NOT NULL sul db
-							String s = configUrlInvocazioneRegola.getContestoEsterno();
-							if("".equals(s)) {
-								s = CostantiConfigurazione.REGOLA_PROXY_PASS_CONTESTO_VUOTO;
-							}
-							updateStmt.setString(indexP++, s);
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getBaseUrl());
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getProtocollo());
-							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getRuolo()));
-							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getServiceBinding()));
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getSoggetto()!=null ? configUrlInvocazioneRegola.getSoggetto().getTipo() : null);
-							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getSoggetto()!=null ? configUrlInvocazioneRegola.getSoggetto().getNome() : null);
-							updateStmt.executeUpdate();
-							updateStmt.close();
-	
+							_createUrlInvocazioneRegola(configUrlInvocazioneRegola, con);
 						}
 					}
 				}

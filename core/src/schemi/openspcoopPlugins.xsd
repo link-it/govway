@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/plugins"
+	targetNamespace="http://www.openspcoop2.org/core/plugins"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	
+	
+
+	
+	<!-- ********* PLUGIN DEI SERVIZI PER PERSONALIZZAZIONI ************* -->
+	
+	<xsd:simpleType name="tipo-plugin">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="TRANSAZIONE"/>
+			<xsd:enumeration value="RICERCA"/>
+			<xsd:enumeration value="STATISTICA"/>
+			<xsd:enumeration value="ALLARME"/>
+			<xsd:enumeration value="CONNETTORE"/>
+			<xsd:enumeration value="AUTENTICAZIONE"/>
+			<xsd:enumeration value="AUTORIZZAZIONE"/>
+			<xsd:enumeration value="AUTORIZZAZIONE_CONTENUTI"/>
+			<xsd:enumeration value="INTEGRAZIONE"/>
+			<xsd:enumeration value="MESSAGE_HANDLER"/>
+			<xsd:enumeration value="SERVICE_HANDLER"/>
+			<xsd:enumeration value="BEHAVIOUR"/>
+			<xsd:enumeration value="RATE_LIMITING"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:element name="plugin">
+		<xsd:complexType>
+			<xsd:sequence>
+				<!-- Dati -->
+				<xsd:element name="tipo-plugin" type="xsd:string"/>
+				<xsd:element name="class-name" type="xsd:string" />
+				<xsd:element name="tipo" type="xsd:string" />
+				<xsd:element name="descrizione" type="xsd:string" minOccurs="0" />
+				<xsd:element name="label" type="xsd:string" />
+				<xsd:element name="stato" type="xsd:boolean" default="true" minOccurs="0" />
+				<!-- Compatibilità (Per Transazione, Ricerca e Statistica) -->
+				<xsd:element name="plugin-servizio-compatibilita"
+					type="plugin-servizio-compatibilita" minOccurs="0" maxOccurs="unbounded" />
+				<!-- Compatibilità -->
+				<xsd:element name="plugin-proprieta-compatibilita"
+					type="plugin-proprieta-compatibilita" minOccurs="0" maxOccurs="unbounded"/>				
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+	
+	<xsd:complexType name="plugin-servizio-compatibilita">
+		<xsd:sequence>
+			<xsd:element name="uri-accordo" type="xsd:string" minOccurs="0"/>
+			<!-- Nome del port type (in caso di SOAP) -->
+			<xsd:element name="servizio" type="xsd:string" minOccurs="0" />
+			<!-- Personalizzazioni delle singole azioni di un servizio -->
+			<xsd:element name="plugin-servizio-azione-compatibilita"
+				type="plugin-servizio-azione-compatibilita" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="plugin-servizio-azione-compatibilita">
+		<xsd:sequence>
+			<xsd:element name="azione" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="plugin-proprieta-compatibilita">
+		<xsd:sequence>
+			<!-- Regole di match -->
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="valore" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>	
+	
+	
+	
+	
+	
+	
+	
+	<!-- ********* CONFIGURAZIONE DEI SERVIZI PER PERSONALIZZAZIONI ************* -->
+	
+	<xsd:element name="configurazione-servizio">
+		<xsd:complexType>
+			<xsd:sequence>
+				<!-- Dati dell'accordo di servizio -->
+				<xsd:element name="accordo" type="xsd:string" />
+				<xsd:element name="tipo-soggetto-referente" type="xsd:string" />
+				<xsd:element name="nome-soggetto-referente" type="xsd:string" />
+				<xsd:element name="versione" type="xsd:unsignedInt" default="1" />
+				<!-- Nome del port type (in caso SOAP) -->
+				<xsd:element name="servizio" type="xsd:string" minOccurs="0" />
+				<!-- Personalizzazioni delle singole azioni di un servizio -->
+				<xsd:element name="configurazione-servizio-azione"
+					type="id-configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+	<xsd:element name="configurazione-servizio-azione">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="azione" type="xsd:string" />
+				<xsd:element name="id-configurazione-servizio" type="id-configurazione-servizio" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- ********* CONFIGURAZIONE FILTRO PER PERSONALIZZAZIONI ************* -->
+	
+	<xsd:element name="configurazione-filtro">
+		<xsd:complexType>
+			<xsd:sequence>
+				<!-- Dati Identificativi Regola -->
+				<xsd:element name="nome" type="xsd:string" />
+				<xsd:element name="descrizione" type="xsd:string" minOccurs="0" />
+				
+				<!-- Regole di match -->
+				<xsd:element name="tipo-mittente" type="xsd:string" minOccurs="0" />
+				<xsd:element name="nome-mittente" type="xsd:string" minOccurs="0" />
+				<xsd:element name="idporta-mittente" type="xsd:string" minOccurs="0" />
+				<xsd:element name="tipo-destinatario" type="xsd:string" minOccurs="0" />
+				<xsd:element name="nome-destinatario" type="xsd:string" minOccurs="0" />
+				<xsd:element name="idporta-destinatario" type="xsd:string" minOccurs="0" />
+				<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0" />
+				<xsd:element name="nome-servizio" type="xsd:string" minOccurs="0" />
+				<xsd:element name="versione-servizio" type="xsd:unsignedInt" default="1" minOccurs="0" />
+				<xsd:element name="azione" type="xsd:string" minOccurs="0" />
+
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+	
+	
+	
+	
+	
+	<!-- ********* Identificativi / Tipi / Enumerations ************* -->
+	
+	<!-- ID -->
+	
+	<xsd:complexType name="id-plugin">
+		<xsd:sequence>
+			<xsd:element name="tipo-plugin" type="xsd:string" /> <!-- lascio stringa libera per future aggiunte type="tipo-plugin" -->
+			<xsd:element name="tipo" type="xsd:string" />
+			<xsd:element name="class-name" type="xsd:string" />
+			<xsd:element name="label" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<xsd:complexType name="id-configurazione-servizio">
+		<xsd:sequence>
+			<!-- Dati dell'accordo di servizio -->
+			<xsd:element name="accordo" type="xsd:string"/>
+			<xsd:element name="tipo-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="nome-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="versione" type="xsd:unsignedInt" default="1" minOccurs="0"/>
+			<!-- Nome del port type -->
+			<xsd:element name="servizio" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-servizio-azione">
+		<!-- Relazioni definite dove viene utilizzato l'id, poiche' i nome delle foreign key differiscono da caso a caso -->
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio" type="id-configurazione-servizio"/>
+			<xsd:element name="azione" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-filtro">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+
+
+
+
+	<!-- Raccoglitori -->
+	
+	<xsd:element name="elenco-plugin">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="plugin" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="elenco-id-plugin">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-plugin" type="id-plugin" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="elenco-configurazione-servizio">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="configurazione-servizio" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="elenco-id-configurazione-servizio">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-configurazione-servizio" type="id-configurazione-servizio" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="elenco-configurazione-filtro">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="configurazione-filtro" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="elenco-id-configurazione-filtro">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-configurazione-filtro" type="id-configurazione-filtro" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+	
+	
+</xsd:schema>

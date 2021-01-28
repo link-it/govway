@@ -32,7 +32,7 @@ public class StatisticsLibrary {
 	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM;
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM;
 	private org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM;
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM;
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM;
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM;
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM;
 	
@@ -40,7 +40,7 @@ public class StatisticsLibrary {
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM,
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM,
+			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM){
 		this.config = config;

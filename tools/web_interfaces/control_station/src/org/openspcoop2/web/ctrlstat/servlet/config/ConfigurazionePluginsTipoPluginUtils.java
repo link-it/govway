@@ -29,9 +29,9 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.constants.PluginCostanti;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.PluginProprietaCompatibilita;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.PluginProprietaCompatibilita;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
@@ -628,6 +628,12 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				}
 				return null;
 			case ALLARME:
+				// una property con nome = Applicabilita
+				for (PluginProprietaCompatibilita prop : plugin.getPluginProprietaCompatibilitaList()) {
+					if(prop.getNome().equals(nome))
+						return prop.getValore();
+				}
+				return null;
 			case BEHAVIOUR:
 			case CONNETTORE:
 			case RATE_LIMITING:

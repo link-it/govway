@@ -494,15 +494,15 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public Integer getFreeCounterForGlobalPolicy(String policyId) throws RegistryException{
+	public String getNextPolicyInstanceSerialId(String policyId) throws RegistryException{
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
 			Connection con = null;
 			try {
-				con = driver.getConnection("getFreeCounterForGlobalPolicy");
+				con = driver.getConnection("getNextPolicyInstanceSerialId");
 				
-				return ControlloTrafficoDriverUtils.getFreeCounterForGlobalPolicy(policyId,
+				return ControlloTrafficoDriverUtils.getNextPolicyInstanceSerialId(policyId,
 						con, this.log, driver.getTipoDB());
 				
 			}
@@ -555,15 +555,15 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public Integer getFreeCounterForAlarm(String tipoPlugin) throws RegistryException{
+	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws RegistryException{
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
 			Connection con = null;
 			try {
-				con = driver.getConnection("getFreeCounterForAlarm");
+				con = driver.getConnection("getNextAlarmInstanceSerialId");
 				
-				return AllarmiDriverUtils.getFreeCounterForAlarm(tipoPlugin,
+				return AllarmiDriverUtils.getNextAlarmInstanceSerialId(tipoPlugin,
 						con, this.log, driver.getTipoDB());
 				
 			}

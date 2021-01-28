@@ -225,9 +225,9 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "Allarmi.instanceAllarmi");
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager sm = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory.getInstance(this.log).
-					getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+			org.openspcoop2.core.plugins.dao.IServiceManager sm = 
+					(org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory.getInstance(this.log).
+					getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							cr.connectionDB,this.smp,this.log);
 			
 			if(listAllarmi==null || listAllarmi.isEmpty()) {

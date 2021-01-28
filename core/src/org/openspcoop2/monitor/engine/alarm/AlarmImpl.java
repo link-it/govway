@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;

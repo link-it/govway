@@ -21,8 +21,8 @@ package org.openspcoop2.monitor.engine.config;
 
 import java.io.Serializable;
 
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.ConfigurazioneServizio;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;

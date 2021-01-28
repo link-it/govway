@@ -1145,7 +1145,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.SOGGETTO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -1665,7 +1665,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.SOGGETTO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

@@ -23,19 +23,17 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.core.commons.Filtri;
-import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.utils.ConfigurazionePdDUtils;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
-import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -172,21 +170,11 @@ public class ConfigurazioneUtilities {
 	
 	public static void updatePosizioneAttivazionePolicy(ConfigurazioneCore confCore, InfoPolicy infoPolicy, AttivazionePolicy policy,
 			RuoloPolicy ruoloPorta, String nomePorta) throws Exception {
-		// calcolo prossima posizione
-		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
-		
-		Search ricercaRipoRisorsa = new Search(true);
-		TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(infoPolicy.getTipoRisorsa(),infoPolicy.isCheckRichiesteSimultanee());
-		ricercaRipoRisorsa.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, tipoRisorsaPolicyAttiva.getValue());
-		List<AttivazionePolicy> listaPolicyConTipoRisorsa = confCore.attivazionePolicyList(ricercaRipoRisorsa, ruoloPorta, nomePorta);
-		int posizione = 1;
-		if(listaPolicyConTipoRisorsa!=null && !listaPolicyConTipoRisorsa.isEmpty()) {
-			for (AttivazionePolicy check : listaPolicyConTipoRisorsa) {
-				if(check.getPosizione()>=posizione) {
-					posizione = check.getPosizione()+1;
-				}
-			}
-		}
-		policy.setPosizione(posizione);
+		confCore.updatePosizioneAttivazionePolicy(infoPolicy, policy,
+				ruoloPorta, nomePorta);
+	}
+	
+	public static int getProssimaPosizioneUrlInvocazioneRegola(Configurazione config) {
+		return ConfigurazionePdDUtils.getProssimaPosizioneUrlInvocazioneRegola(config);
 	}
 }

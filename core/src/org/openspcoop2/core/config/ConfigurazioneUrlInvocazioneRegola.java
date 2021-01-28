@@ -88,6 +88,19 @@ public class ConfigurazioneUrlInvocazioneRegola extends org.openspcoop2.utils.be
 		this.id=Long.valueOf(-1);
   }
 
+  public String getOldNome() {
+    if(this.oldNome!=null && ("".equals(this.oldNome)==false)){
+		return this.oldNome.trim();
+	}else{
+		return null;
+	}
+
+  }
+
+  public void setOldNome(String oldNome) {
+    this.oldNome=oldNome;
+  }
+
   public IdSoggetto getSoggetto() {
     return this.soggetto;
   }
@@ -230,6 +243,9 @@ public class ConfigurazioneUrlInvocazioneRegola extends org.openspcoop2.utils.be
   private Long id;
 
 
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected String oldNome;
 
   @XmlElement(name="soggetto",required=false,nillable=false)
   protected IdSoggetto soggetto;

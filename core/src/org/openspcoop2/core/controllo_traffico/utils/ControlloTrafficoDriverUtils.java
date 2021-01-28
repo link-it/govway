@@ -29,9 +29,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -54,6 +56,8 @@ import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyServic
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.generic_project.beans.Function;
+import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -1147,13 +1151,38 @@ public class ControlloTrafficoDriverUtils {
 		return policy;
 	}
 	
-	private static String FREE_COUNTER_SEPARATOR_CHAR = ":"; 
-	public static String getFreeCounterSeparatorCharForGlobalPolicy() {
-		return FREE_COUNTER_SEPARATOR_CHAR;
+	// OLD private static String FREE_COUNTER_SEPARATOR_CHAR = ":";
+	// Modifico per implementare nuovo meccanismo di ordinamento
+	private static String FREE_COUNTER_SEPARATOR_CHAR = "#";
+	private static int FREE_COUNTER_SEPARATOR_CHAR_PAD = 10; 
+	public static String buildIdActivePolicy(String idPolicy, String serialId) {
+		String idActive = idPolicy+ControlloTrafficoDriverUtils.FREE_COUNTER_SEPARATOR_CHAR+serialId;
+		return idActive;
 	}
 	
-	public static Integer getFreeCounterForGlobalPolicy(String policyId, Connection con, Logger log, String tipoDB) throws ServiceException{
-		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
+	private static String normalizePolicyInstanceSerialId(int value) {
+		return StringUtils.leftPad(value+"", FREE_COUNTER_SEPARATOR_CHAR_PAD, "0");
+	}
+	public static String incrementPolicyInstanceSerialId(String value) {
+		int valueInt = 0;
+		if(value!=null && !"".equals(value)) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < value.length(); i++) {
+				char c = value.charAt(i);
+				if('0' == c && sb.length()<=0) {
+					continue;
+				}
+				sb.append(c);
+			}
+			valueInt = Integer.valueOf(sb.toString());
+		}
+		valueInt++;
+		return StringUtils.leftPad(valueInt+"", FREE_COUNTER_SEPARATOR_CHAR_PAD, "0");
+	}
+	
+	//public static Integer getFreeCounterForGlobalPolicy(String policyId, Connection con, Logger log, String tipoDB) throws ServiceException{
+	public static String getNextPolicyInstanceSerialId(String policyId, Connection con, Logger log, String tipoDB) throws ServiceException{
+		String nomeMetodo = "getNextPolicyInstanceSerialId"; 
 		
 		
 		try{
@@ -1162,7 +1191,7 @@ public class ControlloTrafficoDriverUtils {
 			properties.setShowSql(true);
 			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, log);
 			
-			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().newPaginatedExpression();
+			IExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
 			pagExpr.and();
 			pagExpr.equals(AttivazionePolicy.model().ID_POLICY, policyId);
 			
@@ -1171,7 +1200,9 @@ public class ControlloTrafficoDriverUtils {
 			//pagExpr.limit(1);
 			// devo scorrerle tutte
 			
+			/*
 			try{
+				// inefficente
 				List<Object> list = serviceManager.getAttivazionePolicyServiceSearch().select(pagExpr, AttivazionePolicy.model().ID_ACTIVE_POLICY);
 				if(list!=null && list.size()>0){
 					int found = -1;
@@ -1197,6 +1228,27 @@ public class ControlloTrafficoDriverUtils {
 				
 			}
 			return 1;
+			*/
+			
+			FunctionField ff = new FunctionField(AttivazionePolicy.model().ID_ACTIVE_POLICY, Function.MAX, "maxIdActivePolicy");
+			Object maxValue = null;
+			try {
+				maxValue = serviceManager.getAttivazionePolicyServiceSearch().aggregate(pagExpr, ff);
+			}catch(NotFoundException notFound) {
+			}
+			if(maxValue!=null){
+				if(maxValue instanceof String){
+					String s = (String)maxValue;
+					if(s.contains(FREE_COUNTER_SEPARATOR_CHAR)){
+						int last = s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR);
+						if(last<(s.length()-1)){
+							String actualMaxValue = s.substring(s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR)+1,s.length());
+							return incrementPolicyInstanceSerialId(actualMaxValue);
+						}
+					}
+				}	
+			}
+			return normalizePolicyInstanceSerialId(1);
 			
 		} catch (Exception qe) {
 			throw new ServiceException("[" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
@@ -1527,4 +1579,27 @@ public class ControlloTrafficoDriverUtils {
 		
 	}
 	
+	public static void updatePosizioneAttivazionePolicy(InfoPolicy infoPolicy, AttivazionePolicy policy,
+			RuoloPolicy ruoloPorta, String nomePorta, 
+			Connection con, Logger log, String tipoDB) throws Exception {
+		// calcolo prossima posizione
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
+		
+		Search ricercaTipoRisorsa = new Search(true);
+		TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(infoPolicy.getTipoRisorsa(),infoPolicy.isCheckRichiesteSimultanee());
+		ricercaTipoRisorsa.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, tipoRisorsaPolicyAttiva.getValue());
+		
+		List<AttivazionePolicy> listaPolicyConTipoRisorsa = ControlloTrafficoDriverUtils.configurazioneControlloTrafficoAttivazionePolicyList(ricercaTipoRisorsa, ruoloPorta, nomePorta, 
+				con, log, tipoDB);
+		
+		int posizione = 1;
+		if(listaPolicyConTipoRisorsa!=null && !listaPolicyConTipoRisorsa.isEmpty()) {
+			for (AttivazionePolicy check : listaPolicyConTipoRisorsa) {
+				if(check.getPosizione()>=posizione) {
+					posizione = check.getPosizione()+1;
+				}
+			}
+		}
+		policy.setPosizione(posizione);
+	}
 }

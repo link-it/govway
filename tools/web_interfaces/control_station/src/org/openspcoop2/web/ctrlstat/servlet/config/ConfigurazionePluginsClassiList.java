@@ -34,7 +34,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.constants.PluginCostanti;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;

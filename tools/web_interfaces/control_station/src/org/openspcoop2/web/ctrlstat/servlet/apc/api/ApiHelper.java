@@ -357,10 +357,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					boolean exists = false;
 					if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
-						exists = exporterUtils.existsAtLeastOneExportMpde(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.session);
 					}
 					else{
-						exists = exporterUtils.existsAtLeastOneExportMpde(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.session);
 					}
 					if(exists){
 

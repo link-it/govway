@@ -25,13 +25,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.IdAllarme;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -40,13 +49,15 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.config.utils.ConfigurazionePdDUtils;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
+import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDGenericProperties;
@@ -61,6 +72,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -80,8 +93,11 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.slf4j.Logger;
@@ -105,17 +121,40 @@ public abstract class AbstractArchiveEngine {
 		return this.driverConfigurazione;
 	}
 
-	private JDBCServiceManager serviceManagerControlloTraffico;
-	public JDBCServiceManager getServiceManagerControlloTraffico() {
+	private org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager serviceManagerPlugins;
+	public org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager getServiceManagerPlugins() {
+		return this.serviceManagerPlugins;
+	}
+	
+	private org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManagerControlloTraffico;
+	public org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager getServiceManagerControlloTraffico() {
 		return this.serviceManagerControlloTraffico;
+	}
+	
+	private org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager serviceManagerAllarmi;
+	public org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager getServiceManagerAllarmi() {
+		return this.serviceManagerAllarmi;
 	}
 
 	public AbstractArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,DriverConfigurazioneDB driverConfigurazione,
-			JDBCServiceManager serviceManagerControlloTraffico){
+			org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager serviceManagerPlugins,
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManagerControlloTraffico, 
+			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager serviceManagerAllarmi){
 		this.driverRegistroServizi = driverRegistroServizi;
 		this.driverConfigurazione = driverConfigurazione;
+		this.serviceManagerPlugins = serviceManagerPlugins;
 		this.serviceManagerControlloTraffico = serviceManagerControlloTraffico;
+		this.serviceManagerAllarmi = serviceManagerAllarmi;
 	}
+	
+
+	public void finalizeImport(Archive archive) throws DriverConfigurazioneException{
+		
+	}
+	public void finalizeDelete(Archive archive) throws DriverConfigurazioneException{
+		
+	}
+	
 	
 	// --- Users ---
 	
@@ -1362,24 +1401,28 @@ public abstract class AbstractArchiveEngine {
 	
 	// --- Controllo Traffico (AttivazionePolicy) ---
 	
-	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_globali() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return _getAllIdControlloTraffico_activePolicies(true);
+	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_globali(String tag) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdControlloTraffico_activePolicies(true, tag);
 	}
-	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_erogazioniFruizioni() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return _getAllIdControlloTraffico_activePolicies(false);
+	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_erogazioniFruizioni(String tag) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdControlloTraffico_activePolicies(false, tag);
 	}
-	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_all() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return _getAllIdControlloTraffico_activePolicies(null);
+	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_all(String tag) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdControlloTraffico_activePolicies(null, tag);
 	}
-	private List<IdActivePolicy> _getAllIdControlloTraffico_activePolicies(Boolean globali) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	private List<IdActivePolicy> _getAllIdControlloTraffico_activePolicies(Boolean globali, String tag) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try {
 			IPaginatedExpression pagExpr = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().newPaginatedExpression();
+			pagExpr.and();
 			if(globali!=null) {
 				if(globali) {
 					pagExpr.isNull(org.openspcoop2.core.controllo_traffico.AttivazionePolicy.model().FILTRO.NOME_PORTA);
 				}else {
 					pagExpr.isNotNull(org.openspcoop2.core.controllo_traffico.AttivazionePolicy.model().FILTRO.NOME_PORTA);
 				}
+			}
+			if(StringUtils.isNotEmpty(tag)) {
+				pagExpr.equals(org.openspcoop2.core.controllo_traffico.AttivazionePolicy.model().FILTRO.TAG, tag);
 			}
 			List<IdActivePolicy> l = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().findAllIds(pagExpr);
 			if(l==null || l.size()<=0) {
@@ -1394,12 +1437,12 @@ public abstract class AbstractArchiveEngine {
 	}
 	
 	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_fruizione(String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return _getAllIdControlloTraffico_activePolicies(RuoloPolicy.DELEGATA, nomePorta);
+		return _getAllIdControlloTraffico_activePolicies_porta(RuoloPolicy.DELEGATA, nomePorta);
 	}
 	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_erogazione(String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{	
-		return _getAllIdControlloTraffico_activePolicies(RuoloPolicy.APPLICATIVA, nomePorta);
+		return _getAllIdControlloTraffico_activePolicies_porta(RuoloPolicy.APPLICATIVA, nomePorta);
 	}
-	private List<IdActivePolicy> _getAllIdControlloTraffico_activePolicies(RuoloPolicy ruoloPorta, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	private List<IdActivePolicy> _getAllIdControlloTraffico_activePolicies_porta(RuoloPolicy ruoloPorta, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try {
 			IPaginatedExpression pagExpr = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().newPaginatedExpression();
 			pagExpr.equals(org.openspcoop2.core.controllo_traffico.AttivazionePolicy.model().FILTRO.RUOLO_PORTA,ruoloPorta.getValue());
@@ -1417,35 +1460,145 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	public AttivazionePolicy getControlloTraffico_activePolicy(String IdActivePolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		IdActivePolicy IdActivePolicyObject = new IdActivePolicy();
-		IdActivePolicyObject.setNome(IdActivePolicy);
-		return this.getControlloTraffico_activePolicy(IdActivePolicyObject);
-	}
-	public AttivazionePolicy getControlloTraffico_activePolicy(IdActivePolicy IdActivePolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	// Pericoloso: l'id è dinamico e dipende dal sistema dove viene usato.
+//	public AttivazionePolicy getControlloTraffico_activePolicy(String IdActivePolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+//		IdActivePolicy IdActivePolicyObject = new IdActivePolicy();
+//		IdActivePolicyObject.setNome(IdActivePolicy);
+//		return this.getControlloTraffico_activePolicy(IdActivePolicyObject);
+//	}
+//	public AttivazionePolicy getControlloTraffico_activePolicy(IdActivePolicy IdActivePolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+//		try {
+//			return this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().get(IdActivePolicy);
+//		}catch(NotFoundException e) {
+//			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+//		}catch(Exception e) {
+//			throw new DriverConfigurazioneException(e.getMessage(),e);
+//		}
+//	}
+	public AttivazionePolicy getControlloTraffico_activePolicy(RuoloPolicy ruoloPorta, String nomePorta, String alias) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		try {
-			return this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().get(IdActivePolicy);
-		}catch(NotFoundException e) {
+			IExpression expr = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().newExpression();
+			
+			expr.and();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expr.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+			}
+			
+			expr.equals(AttivazionePolicy.model().ALIAS, alias);
+			
+			AttivazionePolicy att = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().find(expr);
+			return att;
+		}
+		catch(NotFoundException e) {
 			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
-		}catch(Exception e) {
+		}
+		catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
 	
-	public boolean existsControlloTraffico_activePolicy(String IdActivePolicy) throws DriverConfigurazioneException {
-		IdActivePolicy IdActivePolicyObject = new IdActivePolicy();
-		IdActivePolicyObject.setNome(IdActivePolicy);
-		return this.existsControlloTraffico_activePolicy(IdActivePolicyObject);
-	}
-	public boolean existsControlloTraffico_activePolicy(IdActivePolicy IdActivePolicy) throws DriverConfigurazioneException {
+	// Pericoloso: l'id è dinamico e dipende dal sistema dove viene usato.
+//	public boolean existsControlloTraffico_activePolicy(String IdActivePolicy) throws DriverConfigurazioneException {
+//		IdActivePolicy IdActivePolicyObject = new IdActivePolicy();
+//		IdActivePolicyObject.setNome(IdActivePolicy);
+//		return this.existsControlloTraffico_activePolicy(IdActivePolicyObject);
+//	}
+//	public boolean existsControlloTraffico_activePolicy(IdActivePolicy IdActivePolicy) throws DriverConfigurazioneException {
+//		try {
+//			return this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().exists(IdActivePolicy);
+//		}catch(Exception e) {
+//			throw new DriverConfigurazioneException(e.getMessage(),e);
+//		}
+//	}
+	public boolean existsControlloTraffico_activePolicy(RuoloPolicy ruoloPorta, String nomePorta, String alias) throws DriverConfigurazioneException {
 		try {
-			return this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().exists(IdActivePolicy);
-		}catch(Exception e) {
+			IExpression expr = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().newExpression();
+			
+			expr.and();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expr.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+			}
+			
+			expr.equals(AttivazionePolicy.model().ALIAS, alias);
+			
+			AttivazionePolicy att = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().find(expr);
+			return att!=null;
+		}
+		catch(NotFoundException notFound) {
+			return false;
+		}
+		catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
+	public String getNextPolicyInstanceSerialId(String policyId, Logger log) throws RegistryException{
+			
+		Connection con = null;
+		try {
+			con = this.driverConfigurazione.getConnection("getNextPolicyInstanceSerialId");
+			
+			return ControlloTrafficoDriverUtils.getNextPolicyInstanceSerialId(policyId,
+					con, log, this.driverConfigurazione.getTipoDB());
+			
+		}
+		catch(Exception e) {
+			throw new RegistryException(e.getMessage(),e);
+		}
+		finally {
+			try {
+				if(con!=null) {
+					this.driverConfigurazione.releaseConnection(con);
+				}
+			}catch(Exception eClose) {}
+		}
+		
+	}
 	
-	public void createControlloTraffico_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+	protected void updatePosizioneBeforeCreate(AttivazionePolicy policy, Logger log) throws DriverConfigurazioneException{
+		Connection con = null;
+		try {
+			con = this.driverConfigurazione.getConnection("updatePosizioneAttivazionePolicy");
+			
+			RuoloPolicy ruoloPorta=null;
+			String nomePorta=null;
+			if(policy.getFiltro()!=null) {
+				ruoloPorta = policy.getFiltro().getRuoloPorta();
+				nomePorta = policy.getFiltro().getNomePorta();
+			}
+		
+			List<InfoPolicy> lst = ControlloTrafficoDriverUtils.getInfoPolicyList(null, policy.getIdPolicy(),
+					con, log, this.driverConfigurazione.getTipoDB()); 
+			InfoPolicy infoPolicy = (lst != null && lst.size() > 0) ? lst.get(0) : null;
+			if(infoPolicy==null) {
+				throw new Exception("Policy '"+policy.getIdPolicy()+"' non trovata");
+			}
+			ControlloTrafficoDriverUtils.updatePosizioneAttivazionePolicy(infoPolicy, policy,
+					ruoloPorta, nomePorta, 
+					con, log, this.driverConfigurazione.getTipoDB());			
+		}
+		catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		finally {
+			try {
+				if(con!=null) {
+					this.driverConfigurazione.releaseConnection(con);
+				}
+			}catch(Exception eClose) {}
+		}
+	}
+	public void createControlloTraffico_activePolicy(AttivazionePolicy policy, Logger log) throws DriverConfigurazioneException {
+		updatePosizioneBeforeCreate(policy, log);		
 		try {
 			this.serviceManagerControlloTraffico.getAttivazionePolicyService().create(policy);
 		}catch(Exception e) {
@@ -1474,14 +1627,215 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	public boolean isControlloTraffico_activePolicyInUso(String IdActivePolicy, List<String> whereIsInUso) throws DriverRegistroServiziException {
-		IdActivePolicy IdActivePolicyObject = new IdActivePolicy();
-		IdActivePolicyObject.setNome(IdActivePolicy);
-		return this.isControlloTraffico_configurationPolicyInUso(IdActivePolicyObject,whereIsInUso);
-	}
-	public boolean isControlloTraffico_configurationPolicyInUso(IdActivePolicy IdActivePolicy, List<String> whereIsInUso) throws DriverRegistroServiziException {
+	public boolean isControlloTraffico_activePolicyInUso(RuoloPolicy ruoloPorta, String nomePorta, String alias, List<String> whereIsInUso) throws DriverRegistroServiziException {
 		return false;
 	}
+	
+	
+	
+	
+	
+	
+	
+	// --- Allarmi ---
+	
+	public List<IdAllarme> getAllIdAllarmi_globali(String tag) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdAllarmi(true, tag);
+	}
+	public List<IdAllarme> getAllIdAllarmi_erogazioniFruizioni(String tag) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdAllarmi(false, tag);
+	}
+	public List<IdAllarme> getAllIdAllarmi_all(String tag) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdAllarmi(null, tag);
+	}
+	private List<IdAllarme> _getAllIdAllarmi(Boolean globali, String tag) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			IPaginatedExpression pagExpr = this.serviceManagerAllarmi.getAllarmeServiceSearch().newPaginatedExpression();
+			pagExpr.and();
+			if(globali!=null) {
+				if(globali) {
+					pagExpr.isNull(org.openspcoop2.core.allarmi.Allarme.model().FILTRO.NOME_PORTA);
+				}else {
+					pagExpr.isNotNull(org.openspcoop2.core.allarmi.Allarme.model().FILTRO.NOME_PORTA);
+				}
+			}
+			if(StringUtils.isNotEmpty(tag)) {
+				pagExpr.equals(org.openspcoop2.core.allarmi.Allarme.model().FILTRO.TAG, tag);
+			}
+			List<IdAllarme> l = this.serviceManagerAllarmi.getAllarmeServiceSearch().findAllIds(pagExpr);
+			if(l==null || l.size()<=0) {
+				throw new NotFoundException("Non esistono allarmi");
+			}
+			return l;
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public List<IdAllarme> getAllIdAllarmi_fruizione(String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdAllarmi_porta(RuoloPorta.DELEGATA, nomePorta);
+	}
+	public List<IdAllarme> getAllIdAllarmi_erogazione(String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{	
+		return _getAllIdAllarmi_porta(RuoloPorta.APPLICATIVA, nomePorta);
+	}
+	private List<IdAllarme> _getAllIdAllarmi_porta(RuoloPorta ruoloPorta, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			IPaginatedExpression pagExpr = this.serviceManagerAllarmi.getAllarmeServiceSearch().newPaginatedExpression();
+			pagExpr.equals(org.openspcoop2.core.allarmi.Allarme.model().FILTRO.RUOLO_PORTA,ruoloPorta.getValue());
+			pagExpr.and();
+			pagExpr.equals(org.openspcoop2.core.allarmi.Allarme.model().FILTRO.NOME_PORTA,nomePorta);
+			List<IdAllarme> l = this.serviceManagerAllarmi.getAllarmeServiceSearch().findAllIds(pagExpr);
+			if(l==null || l.size()<=0) {
+				throw new NotFoundException("Non esistono allarmi");
+			}
+			return l;
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	// Pericoloso: l'id è dinamico e dipende dal sistema dove viene usato.
+//	public Allarme getAllarme(String IdAllarme) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+//		IdAllarme IdAllarmeObject = new IdAllarme();
+//		IdAllarmeObject.setNome(IdAllarme);
+//		return this.getAllarme(IdAllarmeObject);
+//	}
+//	public Allarme getAllarme(IdAllarme IdAllarme) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+//		try {
+//			return this.serviceManagerAllarmi.getAllarmeServiceSearch().get(IdAllarme);
+//		}catch(NotFoundException e) {
+//			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+//		}catch(Exception e) {
+//			throw new DriverConfigurazioneException(e.getMessage(),e);
+//		}
+//	}
+	public Allarme getAllarme(RuoloPorta ruoloPorta, String nomePorta, String alias) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		try {
+			IExpression expr = this.serviceManagerAllarmi.getAllarmeServiceSearch().newExpression();
+			
+			expr.and();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(Allarme.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expr.equals(Allarme.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expr.isNull(Allarme.model().FILTRO.NOME_PORTA);
+			}
+			
+			expr.equals(Allarme.model().ALIAS, alias);
+			
+			Allarme att = this.serviceManagerAllarmi.getAllarmeServiceSearch().find(expr);
+			return att;
+		}
+		catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}
+		catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	// Pericoloso: l'id è dinamico e dipende dal sistema dove viene usato.
+//	public boolean existsAllarme(String IdAllarme) throws DriverConfigurazioneException {
+//		IdAllarme IdAllarmeObject = new IdAllarme();
+//		IdAllarmeObject.setNome(IdAllarme);
+//		return this.existsAllarme(IdAllarmeObject);
+//	}
+//	public boolean existsAllarme(IdAllarme IdAllarme) throws DriverConfigurazioneException {
+//		try {
+//			return this.serviceManagerAllarmi.getAllarmeServiceSearch().exists(IdAllarme);
+//		}catch(Exception e) {
+//			throw new DriverConfigurazioneException(e.getMessage(),e);
+//		}
+//	}
+	public boolean existsAllarme(RuoloPorta ruoloPorta, String nomePorta, String alias) throws DriverConfigurazioneException {
+		try {
+			IExpression expr = this.serviceManagerAllarmi.getAllarmeServiceSearch().newExpression();
+			
+			expr.and();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(Allarme.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expr.equals(Allarme.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expr.isNull(Allarme.model().FILTRO.NOME_PORTA);
+			}
+			
+			expr.equals(Allarme.model().ALIAS, alias);
+			
+			Allarme att = this.serviceManagerAllarmi.getAllarmeServiceSearch().find(expr);
+			return att!=null;
+		}
+		catch(NotFoundException notFound) {
+			return false;
+		}
+		catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public String getNextAlarmInstanceSerialId(String policyId, Logger log) throws RegistryException{
+			
+		Connection con = null;
+		try {
+			con = this.driverConfigurazione.getConnection("getNextAlarmInstanceSerialId");
+			
+			return AllarmiDriverUtils.getNextAlarmInstanceSerialId(policyId,
+					con, log, this.driverConfigurazione.getTipoDB());
+			
+		}
+		catch(Exception e) {
+			throw new RegistryException(e.getMessage(),e);
+		}
+		finally {
+			try {
+				if(con!=null) {
+					this.driverConfigurazione.releaseConnection(con);
+				}
+			}catch(Exception eClose) {}
+		}
+		
+	}
+	
+	
+	public void createAllarme(Allarme allarme) throws DriverConfigurazioneException {
+		try {
+			this.serviceManagerAllarmi.getAllarmeService().create(allarme);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void updateAllarme(Allarme allarme) throws DriverConfigurazioneException {
+		try {
+			IdAllarme oldId = new IdAllarme();
+			oldId.setNome(allarme.getNome());
+//			if(allarme.get!=null && allarme.getOldIdAllarme().getNome()!=null) {
+//				oldId.setNome(allarme.getOldIdAllarme().getNome());
+//			}
+			this.serviceManagerAllarmi.getAllarmeService().update(oldId, allarme);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void deleteAllarme(Allarme policy) throws DriverConfigurazioneException {
+		try {
+			this.serviceManagerAllarmi.getAllarmeService().delete(policy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean isAllarmeInUso(RuoloPorta ruoloPorta, String nomePorta, String alias, List<String> whereIsInUso) throws DriverRegistroServiziException {
+		return false;
+	}
+	
 	
 	
 	
@@ -1620,6 +1974,347 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	// Plugin Classe
+	
+	public List<IdPlugin> getAllIdPluginClasse() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdPluginClasse(null);
+	}
+	private List<IdPlugin> _getAllIdPluginClasse(String tipoPlugin) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			IPaginatedExpression pagExpr = this.serviceManagerPlugins.getPluginServiceSearch().newPaginatedExpression();
+			if(tipoPlugin!=null) {
+				pagExpr.equals(org.openspcoop2.core.plugins.Plugin.model().TIPO_PLUGIN, tipoPlugin);
+			}
+			List<IdPlugin> l = this.serviceManagerPlugins.getPluginServiceSearch().findAllIds(pagExpr);
+			if(l==null || l.size()<=0) {
+				throw new NotFoundException("Non esistono plugins");
+			}
+			return l;
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public Plugin getPluginClasse(String tipoPlugin, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		IdPlugin idPluginObject = new IdPlugin();
+		idPluginObject.setTipoPlugin(tipoPlugin);
+		idPluginObject.setTipo(tipo);
+		return this.getPluginClasse(idPluginObject);
+	}
+	public Plugin getPluginClasse(IdPlugin idPlugin) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		try {
+			return this.serviceManagerPlugins.getPluginServiceSearch().get(idPlugin);
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+//		try {
+//			IExpression expr = this.serviceManagerPlugins.getPluginServiceSearch().newExpression();
+//			expr.equals(org.openspcoop2.core.plugins.Plugin.model().TIPO_PLUGIN, idPlugin.getTipoPlugin());
+//			expr.equals(org.openspcoop2.core.plugins.Plugin.model().TIPO, idPlugin.getTipo());
+//			return this.serviceManagerPlugins.getPluginServiceSearch().find(expr);
+//		}catch(NotFoundException e) {
+//			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+//		}catch(Exception e) {
+//			throw new DriverConfigurazioneException(e.getMessage(),e);
+//		}
+	}
+	
+	public boolean existsPluginClasse(String tipoPlugin, String tipo) throws DriverConfigurazioneException {
+		IdPlugin idPluginObject = new IdPlugin();
+		idPluginObject.setTipoPlugin(tipoPlugin);
+		idPluginObject.setTipo(tipo);
+		return this.existsPluginClasse(idPluginObject);
+	}
+	public boolean existsPluginClasse(IdPlugin idPlugin) throws DriverConfigurazioneException {
+		try {
+			return this.serviceManagerPlugins.getPluginServiceSearch().exists(idPlugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+//		try {
+//			IExpression expr = this.serviceManagerPlugins.getPluginServiceSearch().newExpression();
+//			expr.equals(org.openspcoop2.core.plugins.Plugin.model().TIPO_PLUGIN, idPlugin.getTipoPlugin());
+//			expr.equals(org.openspcoop2.core.plugins.Plugin.model().TIPO, idPlugin.getTipo());
+//			NonNegativeNumber nn = this.serviceManagerPlugins.getPluginServiceSearch().count(expr);
+//			if(nn!=null) {
+//				if(nn.longValue()>1) {
+//					throw new MultipleResultException("Trovate "+nn.longValue()+" occorrenze");
+//				}
+//				else if(nn.longValue()==1) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		}catch(Exception e) {
+//			throw new DriverConfigurazioneException(e.getMessage(),e);
+//		}
+	}
+	
+	
+	public void createPluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			this.serviceManagerPlugins.getPluginService().create(plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void updatePluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			IdPlugin oldId = new IdPlugin();
+			oldId.setTipoPlugin(plugin.getTipoPlugin());
+			oldId.setTipo(plugin.getTipo());
+			if(plugin.getOldIdPlugin()!=null && plugin.getOldIdPlugin().getTipoPlugin()!=null) {
+				oldId.setTipoPlugin(plugin.getOldIdPlugin().getTipoPlugin());
+			}
+			if(plugin.getOldIdPlugin()!=null && plugin.getOldIdPlugin().getTipo()!=null) {
+				oldId.setTipo(plugin.getOldIdPlugin().getTipo());
+			}
+			this.serviceManagerPlugins.getPluginService().update(oldId, plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void deletePluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			this.serviceManagerPlugins.getPluginService().delete(plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean isPluginClasseInUso(IdPlugin idPlugin, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+		Connection con = null;
+		try{
+			con = this.driverConfigurazione.getConnection("archive.isPluginClasseInUso");
+			return DBOggettiInUsoUtils.isPluginInUso(con, this.driverRegistroServizi.getTipoDB(), 
+					idPlugin.getClassName(), idPlugin.getLabel(), idPlugin.getTipoPlugin(), idPlugin.getTipo(), 
+					whereIsInUso, normalizeObjectIds);
+		}
+		catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverConfigurazione.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// --- Plugin Archivio ---
+	
+	public List<String> getAllIdPluginArchivio() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			RegistroPlugins registroPlugins = this.driverConfigurazione.getRegistroPlugins();
+			List<String> l = new ArrayList<String>();
+			if(registroPlugins!=null && registroPlugins.sizePluginList()>0) {
+				for (RegistroPlugin registroPlugin : registroPlugins.getPluginList()) {
+					l.add(registroPlugin.getNome());
+				}
+			}
+			if(l==null || l.isEmpty()) {
+				throw new DriverConfigurazioneNotFound();
+			}
+			return l;
+		}catch(DriverConfigurazioneNotFound e) {
+			throw e;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public RegistroPlugin getPluginArchivio(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		try {
+			RegistroPlugins registroPlugins = this.driverConfigurazione.getRegistroPlugins();
+			RegistroPlugin rp = null;
+			if(registroPlugins!=null && registroPlugins.sizePluginList()>0) {
+				for (RegistroPlugin registroPlugin : registroPlugins.getPluginList()) {
+					if(nome.equals(registroPlugin.getNome())) {
+						rp = registroPlugin;
+						break;
+					}
+				}
+			}
+			if(rp==null) {
+				throw new DriverConfigurazioneNotFound();
+			}
+			return rp;
+		}catch(DriverConfigurazioneNotFound e) {
+			throw e;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean existsPluginArchivio(String nome) throws DriverConfigurazioneException {
+		try {
+			RegistroPlugin rp = getPluginArchivio(nome);
+			return rp!=null;
+		}catch(DriverConfigurazioneNotFound e) {
+			return false;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+
+	protected void updatePosizioneBeforeCreate(RegistroPlugin rp) throws DriverConfigurazioneException{
+		try {
+			// calcolo prossima posizione
+			int posizione = this.driverConfigurazione.getMaxPosizioneRegistroPlugin() + 1;
+			rp.setPosizione(posizione);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public void createPluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		updatePosizioneBeforeCreate(rp);
+		try {
+			this.driverConfigurazione.createRegistroPlugin(rp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public void updatePluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		try {
+			this.driverConfigurazione.updateRegistroPlugin(rp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public void deletePluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		try {
+			this.driverConfigurazione.deleteRegistroPlugin(rp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean isPluginArchivioInUso(String nome, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+		return false;
+	}
+	
+	
+	
+	
+	
+	
+	// --- Url Invocazione Regole ---
+	
+	public List<String> getAllIdUrlInvocazioneRegola() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = this.driverConfigurazione.getConfigurazioneGenerale().getUrlInvocazione();
+			List<String> l = new ArrayList<String>();
+			if(configurazioneUrlInvocazione!=null && configurazioneUrlInvocazione.sizeRegolaList()>0) {
+				for (ConfigurazioneUrlInvocazioneRegola regola : configurazioneUrlInvocazione.getRegolaList()) {
+					l.add(regola.getNome());
+				}
+			}
+			if(l==null || l.isEmpty()) {
+				throw new DriverConfigurazioneNotFound();
+			}
+			return l;
+		}catch(DriverConfigurazioneNotFound e) {
+			throw e;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public ConfigurazioneUrlInvocazioneRegola getUrlInvocazioneRegola(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		try {
+			return this.driverConfigurazione.getUrlInvocazioneRegola(nome);
+		}catch(DriverConfigurazioneNotFound e) {
+			throw e;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean existsUrlInvocazioneRegola(String nome) throws DriverConfigurazioneException {
+		try {
+			return this.driverConfigurazione.existsUrlInvocazioneRegola(nome);
+		}catch(DriverConfigurazioneNotFound e) {
+			return false;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+
+	protected void updatePosizioneBeforeCreate(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		try {
+			// calcolo prossima posizione
+			int posizione = ConfigurazionePdDUtils.getProssimaPosizioneUrlInvocazioneRegola(this.driverConfigurazione.getConfigurazioneGenerale());
+			regola.setPosizione(posizione);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public void createUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		updatePosizioneBeforeCreate(regola);
+		try {
+			this.driverConfigurazione.createUrlInvocazioneRegola(regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public void updateUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		try {
+			this.driverConfigurazione.updateUrlInvocazioneRegola(regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public void deleteUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		try {
+			this.driverConfigurazione.deleteUrlInvocazioneRegola(regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean isUrlInvocazioneRegolaInUso(String nome, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+		return false;
+	}
+	
+	
+	
+	
+	
+	// --- Configurazione (Url Invocazione) ---
+	
+	public void updateConfigurazione_UrlInvocazione(ConfigurazioneUrlInvocazione configurazione) throws DriverConfigurazioneException{
+		try {
+			Configurazione config = this.driverConfigurazione.getConfigurazioneGenerale();
+			if(config.getUrlInvocazione()==null) {
+				config.setUrlInvocazione(configurazione);
+			}
+			else {
+				config.getUrlInvocazione().setBaseUrl(configurazione.getBaseUrl());
+				config.getUrlInvocazione().setBaseUrlFruizione(configurazione.getBaseUrlFruizione());
+			}
+			this.driverConfigurazione.updateConfigurazione(config);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
 	
 	
 	

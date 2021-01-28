@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.monitor.engine.dynamic;
 
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.slf4j.Logger;
 

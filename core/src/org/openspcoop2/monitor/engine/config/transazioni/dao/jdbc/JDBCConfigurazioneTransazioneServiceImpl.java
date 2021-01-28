@@ -25,9 +25,9 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
 
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCConfigurazioneServizioAzioneBaseLib;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCPluginsBaseLib;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.dao.jdbc.JDBCConfigurazioneServizioAzioneBaseLib;
+import org.openspcoop2.core.plugins.dao.jdbc.JDBCPluginsBaseLib;
 
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceCRUDWithId;
 import org.openspcoop2.monitor.engine.config.transazioni.IdConfigurazioneTransazione;

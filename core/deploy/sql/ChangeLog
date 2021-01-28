@@ -33,6 +33,9 @@
 	Aggiunto filtro per 'tag' sul controllo del traffico
 	ALTER TABLE ct_active_policy ADD COLUMN filtro_tag VARCHAR(255);
 
+	Adeguata dimensione colonna id_active_policy in ct_active_policy a 275 (255 id policy + 20 serial):
+	ALTER TABLE ct_active_policy ALTER COLUMN active_policy_id TYPE VARCHAR(275); 
+
 	Aggiunte tabelle per gestione allarmistica:
 	- allarmi
 	- allarmi_parametri

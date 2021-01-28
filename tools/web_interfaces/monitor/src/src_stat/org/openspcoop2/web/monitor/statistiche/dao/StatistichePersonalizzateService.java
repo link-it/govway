@@ -41,15 +41,15 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.base.IdConfigurazioneServizio;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.PluginServizioAzioneCompatibilita;
-import org.openspcoop2.monitor.engine.config.base.PluginServizioCompatibilita;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
-import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
-import org.openspcoop2.monitor.engine.config.base.dao.IDBConfigurazioneServizioAzioneServiceSearch;
-import org.openspcoop2.monitor.engine.config.base.dao.IPluginServiceSearch;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.IdConfigurazioneServizio;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.PluginServizioAzioneCompatibilita;
+import org.openspcoop2.core.plugins.PluginServizioCompatibilita;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.core.plugins.dao.IDBConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.engine.config.statistiche.IdConfigurazioneServizioAzione;
 import org.openspcoop2.monitor.engine.config.statistiche.IdConfigurazioneStatistica;
@@ -96,7 +96,7 @@ IStatisticaPersonalizzataService {
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
 
 	private org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager statistichePluginsServiceManager;
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager basePluginsServiceManager;
+	private org.openspcoop2.core.plugins.dao.IServiceManager basePluginsServiceManager;
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager transazioniPluginsServiceManager;
 
 	private IConfigurazioneStatisticaService statisticaDAO;
@@ -121,13 +121,13 @@ IStatisticaPersonalizzataService {
 
 		try {
 			// init Service Manager plugins
-			this.basePluginsServiceManager = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory
+			this.basePluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
 					.getInstance(StatistichePersonalizzateService.log).getServiceManager(
-							org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),StatistichePersonalizzateService.log);
+							org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),StatistichePersonalizzateService.log);
 			this.confServAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 			this.pluginsServiceSearchDAO = this.basePluginsServiceManager.getPluginServiceSearch();
-			this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.basePluginsServiceManager),
+			this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((org.openspcoop2.core.plugins.dao.IServiceManager) this.basePluginsServiceManager),
 					((org.openspcoop2.core.commons.search.dao.IServiceManager) this.utilsServiceManager), true);
 			
 			// init Service Manager utils

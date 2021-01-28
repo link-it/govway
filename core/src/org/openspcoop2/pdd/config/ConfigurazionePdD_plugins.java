@@ -32,10 +32,10 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-import org.openspcoop2.monitor.engine.config.base.IdPlugin;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.PluginProprietaCompatibilita;
-import org.openspcoop2.monitor.engine.config.base.dao.IPluginServiceSearch;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.PluginProprietaCompatibilita;
+import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.NameValue;
 
@@ -67,9 +67,9 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "Plugins.countPlugins");
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager sm = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory.getInstance(this.log).
-					getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+			org.openspcoop2.core.plugins.dao.IServiceManager sm = 
+					(org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory.getInstance(this.log).
+					getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							cr.connectionDB,this.smp,this.log);
 			
 			IPluginServiceSearch search =  sm.getPluginServiceSearch();
@@ -92,9 +92,9 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "Plugins.findAllPluginIds_"+offset+"_"+limit);
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager sm = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory.getInstance(this.log).
-					getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+			org.openspcoop2.core.plugins.dao.IServiceManager sm = 
+					(org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory.getInstance(this.log).
+					getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							cr.connectionDB,this.smp,this.log);
 			
 			IPluginServiceSearch search =  sm.getPluginServiceSearch();
@@ -133,9 +133,9 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "Plugins.getPluginClassName_"+tipoPlugin+"#"+tipo);
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager sm = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory.getInstance(this.log).
-					getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+			org.openspcoop2.core.plugins.dao.IServiceManager sm = 
+					(org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory.getInstance(this.log).
+					getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							cr.connectionDB,this.smp,this.log);
 			
 			IPluginServiceSearch search =  sm.getPluginServiceSearch();
@@ -220,9 +220,9 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "Plugins.getPluginTipo_"+tipoPlugin+"#"+className);
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager sm = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory.getInstance(this.log).
-					getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+			org.openspcoop2.core.plugins.dao.IServiceManager sm = 
+					(org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory.getInstance(this.log).
+					getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							cr.connectionDB,this.smp,this.log);
 			
 			IPluginServiceSearch search =  sm.getPluginServiceSearch();

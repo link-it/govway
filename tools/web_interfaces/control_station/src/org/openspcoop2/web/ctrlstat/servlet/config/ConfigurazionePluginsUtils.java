@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 
 /**

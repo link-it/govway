@@ -74,7 +74,7 @@
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-mapping name="nome"/>
+								<linkit:sql-column-mapping name="nome" varchar="275"/> <!-- 255 + 20 caratteri per contenere il seriale progressivo --> 
 								<linkit:sql-column-comment><![CDATA[Informazioni generiche]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Identificativo univoco dell'allarme]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
@@ -877,7 +877,57 @@
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="nome" type="xsd:string"/>
-			<xsd:element name="tipo" type="xsd:string" minOccurs="0"/>
+			<!-- informazione aggiuntiva -->
+			<xsd:element name="tipo" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping generate="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="enabled" type="xsd:integer" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping generate="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="alias" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping generate="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-ruolo-porta" type="ruolo-porta" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping generate="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-nome-porta" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping generate="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 	

@@ -30,6 +30,7 @@ import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
@@ -39,7 +40,6 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -66,7 +66,7 @@ public class ConditionalUtils  {
 	public static ConditionalFilterResult filter(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
 			MsgDiagnostico msgDiag, Logger log,
-			BehaviourType behaviourType) throws BehaviourException, BehaviourEmitDiagnosticException {
+			TipoBehaviour behaviourType) throws BehaviourException, BehaviourEmitDiagnosticException {
 		
 		if(isConfigurazioneCondizionale(pa, log)==false) {
 			return null; // non vi è da fare alcun filtro condizionale
@@ -309,7 +309,7 @@ public class ConditionalUtils  {
 								"connettoriMultipli.consegnaCondizionale.identificazioneFallita.info");
 					}
 					
-					if(BehaviourType.CONSEGNA_LOAD_BALANCE.equals(behaviourType)) {
+					if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.equals(behaviourType)) {
 						// li usero tutti senza filtro sulla condizionalità
 						
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
@@ -323,7 +323,7 @@ public class ConditionalUtils  {
 					nomeConnettoreDaUsare = config.getCondizioneNonIdentificata().getNomeConnettore();
 					if(nomeConnettoreDaUsare==null || "".equals(nomeConnettoreDaUsare)) {
 						
-						if(BehaviourType.CONSEGNA_MULTIPLA.equals(behaviourType)) {
+						if(TipoBehaviour.CONSEGNA_MULTIPLA.equals(behaviourType)) {
 							
 							msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 									"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
@@ -331,11 +331,11 @@ public class ConditionalUtils  {
 							result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
 							return result;
 						}
-						else if(BehaviourType.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
+						else if(TipoBehaviour.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
 							// non può succedere
 							throw new BehaviourException("Connettore da utilizzare in caso di identificazione fallita non indicato");
 						}
-						else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
+						else if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 							
 							msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 									"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
@@ -345,7 +345,7 @@ public class ConditionalUtils  {
 						} 
 												
 					}
-					else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && 
+					else if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && 
 							Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(nomeConnettoreDaUsare)) {
 													
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
@@ -362,7 +362,7 @@ public class ConditionalUtils  {
 					}
 					
 					msgDiag.addKeyword(CostantiPdD.KEY_NOME_CONNETTORE, nomeConnettoreDaUsare);
-					if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 								"connettoriMultipli.consegnaCondizionale.connettoreNotificaDefault");
 					}
@@ -389,7 +389,7 @@ public class ConditionalUtils  {
 		List<PortaApplicativaServizioApplicativo> l = filter(pa.getServizioApplicativoList(), config.isByFilter(), conditionFinal);
 		if(!l.isEmpty()) {
 			
-			if(BehaviourType.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
+			if(TipoBehaviour.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
 				if(l.size()>1) {
 					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 							"connettoriMultipli.servizioSincrono.consegnaVersoNServiziApplicativi");
@@ -432,7 +432,7 @@ public class ConditionalUtils  {
 					}
 				}
 				
-				if(BehaviourType.CONSEGNA_LOAD_BALANCE.equals(behaviourType)) {
+				if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.equals(behaviourType)) {
 					// li usero tutti senza filtro sulla condizionalità
 					
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
@@ -446,7 +446,7 @@ public class ConditionalUtils  {
 				nomeConnettoreDaUsare = config.getNessunConnettoreTrovato().getNomeConnettore();
 				if(nomeConnettoreDaUsare==null || "".equals(nomeConnettoreDaUsare)) {
 					
-					if(BehaviourType.CONSEGNA_MULTIPLA.equals(behaviourType)) {
+					if(TipoBehaviour.CONSEGNA_MULTIPLA.equals(behaviourType)) {
 						
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 								"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
@@ -454,11 +454,11 @@ public class ConditionalUtils  {
 						result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
 						return result;
 					}
-					else if(BehaviourType.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
+					else if(TipoBehaviour.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
 						// non può succedere
 						throw new BehaviourException("Connettore da utilizzare in caso di identificazione del connettore fallita non indicato");
 					}
-					else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
+					else if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 						
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 								"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
@@ -468,7 +468,7 @@ public class ConditionalUtils  {
 					} 
 											
 				}
-				else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && 
+				else if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && 
 						Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(nomeConnettoreDaUsare)) {
 												
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
@@ -485,7 +485,7 @@ public class ConditionalUtils  {
 				}
 				
 				msgDiag.addKeyword(CostantiPdD.KEY_NOME_CONNETTORE, nomeConnettoreDaUsare);
-				if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
+				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 							"connettoriMultipli.consegnaCondizionale.connettoreNotificaDefault");
 				}

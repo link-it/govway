@@ -158,6 +158,7 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI = "validazioneDocumenti";
 	public final static String PARAMETRO_ARCHIVI_UPDATE_ENABLED = "updateEnabled";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED = "policyConfigEnabled";
+	public final static String PARAMETRO_ARCHIVI_IMPORT_DELETE_PLUGIN_CONFIG_ENABLED = "pluginConfigEnabled";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED = "configEnabled";
 	public final static String PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO = "tipologiaArchivio";
 	
@@ -187,7 +188,8 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_HIDDEN = "ProprietaInputHidden_";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_VALUE = "ProprietaInputValue_";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_TIPO = "tipoExport";
-	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG = "cascadeConfig";
+	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG = "cascadePolicyConfig";
+	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG = "cascadePluginConfig";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE = "cascade";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "tipoDump";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD = "cascadePdd";
@@ -218,6 +220,13 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_DELETE_POLICY;
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting) presenti nell'archivio verranno importate";
 	public final static String LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting) presenti nell'archivio verranno eliminate";
+	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CON_ALLARMI_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting, Allarmi) presenti nell'archivio verranno importate";
+	public final static String LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CON_ALLARMI_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting, Allarmi) presenti nell'archivio verranno eliminate";
+	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_PLUGIN_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_PLUGIN;
+	public final static String LABEL_PARAMETRO_ARCHIVI_DELETE_PLUGIN_CONFIG_LEFT = EsitoUtils.LABEL_DELETE_PLUGIN;
+	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_PLUGIN_CONFIG_RIGHT = "Eventuali plugins (Classi, Archivi) presenti nell'archivio verranno importati";
+	public final static String LABEL_PARAMETRO_ARCHIVI_DELETE_PLUGIN_CONFIG_RIGHT = "Eventuali plugins (Classi, Archivi) presenti nell'archivio verranno eliminati";
+	
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_CONFIGURAZIONE;
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_RIGHT = "Una eventuale configurazione presente nell'archivio verrà importata";
 	public final static String LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO = "Tipologia archivio";
@@ -244,7 +253,10 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT = "AccordoCooperazione";
 	
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_POLICY;
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_CON_ALLARMI_RIGHT = "Vengono incluse le policy globali (Token, Rate Limiting, Allarmi)";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT = "Vengono incluse le policy globali (Token, Rate Limiting)";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_PLUGIN;
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_RIGHT = "Vengono inclusi i plugins (Classi, Archivi)";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT = "Elementi di Registro";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT = "Vengono inclusi gli elementi riferiti";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SEZIONE = "Configurazione 'Cascade'";

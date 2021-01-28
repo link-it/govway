@@ -56,8 +56,8 @@ import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -258,8 +258,8 @@ public class ConfigurazioneAllarmiAdd extends Action {
 								
 								allarme.setAlias(AllarmiUtils.costruisciAliasAllarme(allarme, ControlStationCore.getLog(), context));
 								
-								int counter = confCore.getFreeCounterForAlarm(allarme.getPlugin().getTipo());
-								allarme.setNome(allarme.getPlugin().getTipo()+AllarmiDriverUtils.getFreeCounterSeparatorCharForAlarm()+counter);
+								String serialId = confCore.getNextAlarmInstanceSerialId(allarme.getPlugin().getTipo());
+								allarme.setNome(AllarmiDriverUtils.buildIdAlarm(allarme.getPlugin().getTipo(), serialId));
 								
 								allarme.setDescrizione(allarme.getPlugin().getDescrizione());
 								

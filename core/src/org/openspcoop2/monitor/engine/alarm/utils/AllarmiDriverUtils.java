@@ -34,9 +34,9 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
-import org.openspcoop2.monitor.engine.config.base.utils.PluginsDriverUtils;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
 import org.slf4j.Logger;
 
 /**

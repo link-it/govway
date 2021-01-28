@@ -46,3 +46,6 @@ CREATE INDEX index_registro_plug_jar_1 ON registro_plug_jar (id_plugin);
 
 -- Aggiunto filtro per tag sul controllo del traffico
 ALTER TABLE ct_active_policy ADD COLUMN filtro_tag VARCHAR(255);
+
+-- Modificata dimensione colonna id_active_policy
+ALTER TABLE ct_active_policy MODIFY COLUMN active_policy_id VARCHAR(275); 

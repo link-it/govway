@@ -122,6 +122,8 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -142,8 +144,6 @@ import org.openspcoop2.monitor.engine.alarm.AlarmContext;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicValidator;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -158,6 +158,8 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
+import org.openspcoop2.protocol.sdk.archive.ExportMode;
+import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -175,11 +177,13 @@ import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -3939,6 +3943,34 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else
 				de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS);
 			dati.addElement(de);
+			
+
+			String send = ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT+"?"+
+					ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE.name();
+			List<String> protocolli = this.confCore.getProtocolli(this.session, true);
+			String protocollo = protocolli.get(0);
+			if(protocollo!=null && !"".equals(protocollo)){
+				send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO+"="+ protocollo;
+			}
+			ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+			List<ExportMode> exportModes = exporterUtils.getExportModesCompatibleWithAllProtocol(protocolli, ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE);
+			String exportMode = null;
+			if(exportModes!=null) {
+				if(exportModes.contains(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE)){
+					exportMode = org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.toString();
+				}else{
+					exportMode = exportModes.get(0).toString();
+				}
+			}
+			if(exportMode!=null && !"".equals(exportMode)){
+				send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO+"="+ exportMode;
+			}
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(send);
+			de.setValue(ConfigurazioneCostanti.LABEL_ESPORTA_URL_INVOCAZIONE);
+			dati.addElement(de);
+			
 		}
 		
 		
@@ -8075,6 +8107,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -8607,6 +8666,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport() && (nomePorta==null || StringUtils.isEmpty(nomePorta))) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -15687,6 +15773,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -15972,6 +16085,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -16730,6 +16870,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -17337,6 +17504,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -17830,6 +18024,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()  && (nomePorta==null || StringUtils.isEmpty(nomePorta))) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.ALLARME, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_ALLARMI_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_ALLARMI_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -17947,7 +18168,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME+"'");
 				return false;
 			}
-			if (!this.checkNCName(allarme.getNome(), ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME)) {
+			if (!this.checkNCNameAndSerial(allarme.getNome(), ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME)) {
 				return false;
 			}
 			

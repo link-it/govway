@@ -233,13 +233,13 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 					if(apCloned.getIdPolicy()!=null && apCloned.getFiltro()!=null && portaApplicativaDaClonare.getNome().equals(apCloned.getFiltro().getNomePorta())){
 						try {
 							apCloned.getFiltro().setNomePorta(nomeNuovaPortaApplicativa);
-							int counter = configIntegrationReader.getFreeCounterForGlobalPolicy(apCloned.getIdPolicy());
-							String idActive = apCloned.getIdPolicy()+ControlloTrafficoDriverUtils.getFreeCounterSeparatorCharForGlobalPolicy()+counter;
+							String serialId = configIntegrationReader.getNextPolicyInstanceSerialId(apCloned.getIdPolicy());
+							String idActive = ControlloTrafficoDriverUtils.buildIdActivePolicy(apCloned.getIdPolicy(), serialId);
 							int limit = 0;
 							while(idPolicyCreate.contains(idActive) && limit<1000) { // provo 1000 volte
 								limit++;
-								counter++;
-								idActive = apCloned.getIdPolicy()+ControlloTrafficoDriverUtils.getFreeCounterSeparatorCharForGlobalPolicy()+counter;
+								serialId = ControlloTrafficoDriverUtils.incrementPolicyInstanceSerialId(serialId);
+								idActive = ControlloTrafficoDriverUtils.buildIdActivePolicy(apCloned.getIdPolicy(), serialId);
 							}
 							idPolicyCreate.add(idActive);
 							apCloned.setIdActivePolicy(idActive);
@@ -267,13 +267,13 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 					if(allarmeCloned.getTipo()!=null && allarmeCloned.getFiltro()!=null && portaApplicativaDaClonare.getNome().equals(allarmeCloned.getFiltro().getNomePorta())){
 						try {
 							allarmeCloned.getFiltro().setNomePorta(nomeNuovaPortaApplicativa);
-							int counter = configIntegrationReader.getFreeCounterForAlarm(allarmeCloned.getTipo());
-							String uniqueName = allarmeCloned.getTipo()+AllarmiDriverUtils.getFreeCounterSeparatorCharForAlarm()+counter;
+							String serialId = configIntegrationReader.getNextAlarmInstanceSerialId(allarmeCloned.getTipo());
+							String uniqueName = AllarmiDriverUtils.buildIdAlarm(allarmeCloned.getTipo(), serialId);
 							int limit = 0;
 							while(idAllarmiCreate.contains(uniqueName) && limit<1000) { // provo 1000 volte
 								limit++;
-								counter++;
-								uniqueName = allarmeCloned.getTipo()+AllarmiDriverUtils.getFreeCounterSeparatorCharForAlarm()+counter;
+								serialId = AllarmiDriverUtils.incrementAlarmInstanceSerialId(serialId);
+								uniqueName = AllarmiDriverUtils.buildIdAlarm(allarmeCloned.getTipo(), serialId);
 							}
 							idAllarmiCreate.add(uniqueName);
 							allarmeCloned.setNome(uniqueName);

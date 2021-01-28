@@ -338,7 +338,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public Integer getFreeCounterForGlobalPolicy(String policyId) throws RegistryException{
+	public String getNextPolicyInstanceSerialId(String policyId) throws RegistryException{
 		throw new RegistryException("Not Implemented");
 	}
 	
@@ -348,7 +348,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public Integer getFreeCounterForAlarm(String tipoPlugin) throws RegistryException{
+	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws RegistryException{
 		throw new RegistryException("Not Implemented");
 	}
 }

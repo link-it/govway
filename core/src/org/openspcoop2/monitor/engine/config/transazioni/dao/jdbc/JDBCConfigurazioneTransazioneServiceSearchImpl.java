@@ -30,10 +30,10 @@ import org.slf4j.Logger;
 
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
-import org.openspcoop2.monitor.engine.config.base.IdConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCConfigurazioneServizioAzioneBaseLib;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCPluginsBaseLib;
+import org.openspcoop2.core.plugins.IdConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.dao.jdbc.JDBCConfigurazioneServizioAzioneBaseLib;
+import org.openspcoop2.core.plugins.dao.jdbc.JDBCPluginsBaseLib;
 
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;

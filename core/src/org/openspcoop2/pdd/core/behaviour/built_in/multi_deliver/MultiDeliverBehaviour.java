@@ -25,6 +25,7 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -41,7 +42,6 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -59,8 +59,8 @@ import org.slf4j.Logger;
  */
 public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehaviour {
 
-	private BehaviourType bt;
-	public MultiDeliverBehaviour(BehaviourType bt) {
+	private TipoBehaviour bt;
+	public MultiDeliverBehaviour(TipoBehaviour bt) {
 		this.bt = bt;
 	}
 	
@@ -88,7 +88,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
 						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {
 					
-					if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(this.bt)) {
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(this.bt)) {
 					
 						String nomeConnettore =  org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
 						if(servizioApplicativo.getDatiConnettore()!=null) {
@@ -193,7 +193,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 					throw new BehaviourException(e.getMessage(), e);
 				}
 				
-				if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(this.bt) || BehaviourType.CONSEGNA_CONDIZIONALE.equals(this.bt)) {
+				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(this.bt) || TipoBehaviour.CONSEGNA_CONDIZIONALE.equals(this.bt)) {
 					if(!uniqueSA_connettore) {
 						if(uniqueSA_integrationManager) {
 							throw new BehaviourEmitDiagnosticException(this.msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 

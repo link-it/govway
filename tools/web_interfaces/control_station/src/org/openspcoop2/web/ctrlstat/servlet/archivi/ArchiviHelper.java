@@ -125,7 +125,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			List<String> protocolliSelectList,String protocollo,
 			List<ExportMode> exportModes,String exportMode,
 			ArchiveType servletSourceExport, String objToExport, 
-			String cascadePolicyConfig, String cascade,String configurazioneType,
+			String cascadePolicyConfig, String cascadePluginConfig, String cascade,String configurazioneType,
 			String cascadePdd,String cascadeRuoli,String cascadeScope, String cascadeSoggetti,
 			String cascadeServiziApplicativi, String cascadePorteDelegate, String cascadePorteApplicative,
 			String cascadeAc, String cascadeAspc, String cascadeAsc, String cascadeAsps, String cascadeFruizioni) throws Exception{
@@ -238,32 +238,110 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 		}
 		
+		
+		boolean showPolicyConfigOption = true;
+		if(ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_TOKEN_POLICY.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO.equals(servletSourceExport)){
+			showPolicyConfigOption = false;
+		}
 		de = new DataElement();
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG);
-		if(cascadeEnabled){
+		if(cascadeEnabled && showPolicyConfigOption){
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
+			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT);
+			if(this.archiviCore.isConfigurazioneAllarmiEnabled()) {
+				de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_CON_ALLARMI_RIGHT);
+			}
+			else {
+				de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT);
+			}
+			de.setSelected(ServletUtils.isCheckBoxEnabled(cascadePolicyConfig));
 		}
-		else
+		else {
 			de.setType(DataElementType.HIDDEN);
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT);
-		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT);
-		de.setSelected(ServletUtils.isCheckBoxEnabled(cascadePolicyConfig));
-		de.setValue(cascadePolicyConfig);
+		}
+		if(showPolicyConfigOption) {
+			de.setValue(cascadePolicyConfig);
+		}
+		else {
+			de.setValue(Costanti.CHECK_BOX_DISABLED);
+		}
 		dati.addElement(de);
 		
+		
+		boolean showPluginConfigOption = this.archiviCore.isConfigurazionePluginsEnabled();
+		if(ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_TOKEN_POLICY.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO.equals(servletSourceExport)){
+			showPluginConfigOption = false;
+		}
 		de = new DataElement();
-		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
-		if(cascadeEnabled){
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG);
+		if(cascadeEnabled && showPluginConfigOption){
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
+			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_LEFT);
+			de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_RIGHT);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(cascadePluginConfig));
 		}
-		else
+		else {
 			de.setType(DataElementType.HIDDEN);
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT);
-		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT);
-		de.setSelected(ServletUtils.isCheckBoxEnabled(cascade));
-		de.setValue(cascade);
+		}
+		if(showPluginConfigOption) {
+			de.setValue(cascadePluginConfig);
+		}
+		else {
+			de.setValue(Costanti.CHECK_BOX_DISABLED);
+		}
+		dati.addElement(de);
+		
+		
+		boolean showIncludiElementiRiferitiOption = true;
+		if(ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_TOKEN_POLICY.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.equals(servletSourceExport)
+				||
+				ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO.equals(servletSourceExport)){
+			showIncludiElementiRiferitiOption = false;
+		}
+		de = new DataElement();
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
+		if(cascadeEnabled && showIncludiElementiRiferitiOption){
+			de.setType(DataElementType.CHECKBOX);
+			de.setPostBack(true);
+			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT);
+			de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(cascade));
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		if(showIncludiElementiRiferitiOption) {
+			de.setValue(cascade);
+		}
+		else {
+			de.setValue(Costanti.CHECK_BOX_DISABLED);
+		}
 		dati.addElement(de);
 		
 		if(!this.archiviCore.isExportArchive_servizi_standard() && 
@@ -716,7 +794,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 	public void addImportToDati(Vector<DataElement> dati,
 			boolean validazioneDocumenti,boolean updateEnabled,
-			boolean importDeletePolicyConfig, boolean importConfig,
+			boolean importDeletePolicyConfig, 
+			boolean importDeletePluginConfig,
+			boolean importConfig,
 			boolean showProtocols, List<String> protocolliSelectList,String protocollo,
 			List<ImportMode> importModes,String importMode,
 			List<ArchiveModeType> importTypes,String importType,
@@ -836,7 +916,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		de = new DataElement();
 		de.setLabel(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_LEFT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_LEFT);
-		de.setLabelRight(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_RIGHT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT);
+		if(this.archiviCore.isConfigurazioneAllarmiEnabled()) {
+			de.setLabelRight(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CON_ALLARMI_CONFIG_RIGHT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CON_ALLARMI_CONFIG_RIGHT);
+		}
+		else {
+			de.setLabelRight(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_RIGHT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT);
+		}
 		de.setValue(""+importDeletePolicyConfig);
 		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 //		if(deleter){
@@ -850,6 +935,25 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		//	de.setType("hidden");
 		//}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_PLUGIN_CONFIG_LEFT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_PLUGIN_CONFIG_LEFT);
+		de.setLabelRight(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_PLUGIN_CONFIG_RIGHT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_PLUGIN_CONFIG_RIGHT);
+		de.setValue(""+importDeletePluginConfig);
+		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+//		if(deleter){
+//			de.setType(DataElementType.HIDDEN);
+//		}else{
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(importDeletePluginConfig);
+//		}
+		//}
+		//else{
+		//	de.setType("hidden");
+		//}
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_PLUGIN_CONFIG_ENABLED);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		
@@ -1415,7 +1519,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 	public void addImportInformationMissingToDati(Vector<DataElement> dati,ImporterUtils importerUtils, FormFile ff,
 			String protocolloSelect,String inputMode,String protocolloEffettivo,String inputType,
 			boolean validazioneDocumenti,boolean updateEnabled,
-			boolean importDeletePolicyConfig, boolean importConfig,
+			boolean importDeletePolicyConfig, 
+			boolean importDeletePluginConfig,
+			boolean importConfig,
 			ImportInformationMissingCollection importInformationMissingCollection,
 			ImportInformationMissingException importInformationMissingException,
 			String modalitaAcquisizioneInformazioniProtocollo,List<PortType> portTypesOpenSPCoop,
@@ -1554,6 +1660,13 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setValue(""+importDeletePolicyConfig);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(""+importDeletePluginConfig);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_PLUGIN_CONFIG_ENABLED);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		

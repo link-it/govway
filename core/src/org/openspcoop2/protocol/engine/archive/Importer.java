@@ -20,9 +20,7 @@
 
 package org.openspcoop2.protocol.engine.archive;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.basic.registry.ConfigIntegrationReader;
 import org.openspcoop2.protocol.basic.registry.RegistryReader;
@@ -37,6 +35,7 @@ import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  *  Importer
@@ -81,7 +80,9 @@ public class Importer {
 		// updateAbilitato
 		boolean updateAbilitato = Boolean.parseBoolean(args[8]); 
 		boolean importPolicyConfig = Boolean.parseBoolean(args[9]); 
-		boolean importConfig = Boolean.parseBoolean(args[10]); 
+		boolean importPluginConfig = Boolean.parseBoolean(args[10]);
+		boolean checkExistsPluginConfig = Boolean.parseBoolean(args[11]);
+		boolean importConfig = Boolean.parseBoolean(args[12]); 
 
 		// other
 		boolean isShowCorrelazioneAsincronaInAccordi = true;
@@ -100,7 +101,9 @@ public class Importer {
 		// Inizializzo Reader
 		DriverRegistroServiziDB driverRegistroServizi = null; 
 		DriverConfigurazioneDB driverConfigurazione = null;
-		JDBCServiceManager serviceManager = null;
+		org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager serviceManagerPlugins = null;
+		org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManagerControlloTraffico = null;
+		org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager serviceManagerAllarmi = null;
 		// TODO INIT
 		RegistryReader archiveRegistryReader = new RegistryReader(driverRegistroServizi,log);
 		ConfigIntegrationReader archiveConfigIntegrationReader = new ConfigIntegrationReader(driverConfigurazione,log);
@@ -121,11 +124,16 @@ public class Importer {
 		
 		
 		// Import
-		ArchiveEngine importerEngine = new ArchiveEngine(driverRegistroServizi, driverConfigurazione, serviceManager);
+		ArchiveEngine importerEngine = new ArchiveEngine(driverRegistroServizi, driverConfigurazione, 
+				serviceManagerPlugins,
+				serviceManagerControlloTraffico, 
+				serviceManagerAllarmi);
 		ImporterArchiveUtils importerArchiveUtils = 
 				new ImporterArchiveUtils(importerEngine, log, userLogin, nomePddOperativa, tipoPddDefault,
 						isShowGestioneWorkflowStatoDocumenti, updateAbilitato,
-						importPolicyConfig, importConfig);
+						importPolicyConfig, 
+						importPluginConfig, checkExistsPluginConfig,
+						importConfig);
 		ArchiveEsitoImport result = importerArchiveUtils.importArchive(archive, userLogin, 
 				isShowAccordiColonnaAzioni,
 				isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto, 

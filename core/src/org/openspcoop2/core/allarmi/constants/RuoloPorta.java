@@ -26,7 +26,7 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
- * Enumeration dell'elemento filtro.ruolo-porta xsd (tipo:string) 
+ * Enumeration dell'elemento id-allarme.filtro-ruolo-porta xsd (tipo:string) 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$

@@ -157,7 +157,7 @@ public class Generator {
 						logSql);
 			
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM = null;
+			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
 			
@@ -168,9 +168,9 @@ public class Generator {
 						org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance(), 
 							logSql);
 				
-				pluginsBaseSM = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) 
+				pluginsBaseSM = (org.openspcoop2.core.plugins.dao.IServiceManager) 
 					daoFactory.getServiceManager(
-						org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+						org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							logSql);
 				
 				utilsSM = (org.openspcoop2.core.commons.search.dao.IServiceManager) 

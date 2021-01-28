@@ -43,6 +43,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -735,6 +736,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE = "Intervallo Osservazione";
 	
 	public final static String LABEL_REGOLE_PROXY_PASS = "Regole Proxy Pass";
+	public final static String LABEL_ESPORTA_URL_INVOCAZIONE = "Esporta Configurazione";
 	
 	
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI = "Allarmi";
@@ -2155,6 +2157,27 @@ public class ConfigurazioneCostanti {
 			ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPO_PERIODO_GIORNALIERO
 	};
 		
+	
+	public final static String LABEL_ALLARMI_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_ALLARMI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ALLARME.name()+"')";
+	
+	public final static String LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_TOKEN_POLICY.name()+"')";
+	
+	public final static String LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.name()+"')";
+	public final static String LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO.name()+"')";
+
+	public final static String LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY.name()+"')";
+	public final static String LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY.name()+"')";
+	
+	public final static String LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.name()+"')";
+	
+	
 	// DEFAULT:
 	public final static TipoRisorsa RISORSA_DEFAULT = TipoRisorsa.NUMERO_RICHIESTE;
 	public final static TipoLatenza TIPO_LATENZA_DEFAULT = TipoLatenza.SERVIZIO;

@@ -1819,6 +1819,7 @@
 	</xsd:complexType>
 
 	<!-- Configurazione URL Invocazione -->
+	<xsd:element name="configurazione-url-invocazione" type="configurazione-url-invocazione" />
 	<xsd:complexType name="configurazione-url-invocazione">
 		<xsd:sequence>
 			<xsd:element name="regola" type="configurazione-url-invocazione-regola" maxOccurs="unbounded" minOccurs="0"/>
@@ -1826,6 +1827,7 @@
 		<xsd:attribute name="base-url" type="xsd:string" use="required"/>
 		<xsd:attribute name="base-url-fruizione" type="xsd:string" use="optional"/>
 	</xsd:complexType>
+	<xsd:element name="configurazione-url-invocazione-regola" type="configurazione-url-invocazione-regola" />
 	<xsd:complexType name="configurazione-url-invocazione-regola">
 		<xsd:sequence>
 			<xsd:element name="soggetto" type="id-soggetto" maxOccurs="1" minOccurs="0"/> <!-- è possibile indicare un soggetto operativo per il quale la regola verrà applicata -->
@@ -2153,6 +2155,7 @@
 			<xsd:element name="plugin" type="registro-plugin" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
+	<xsd:element name="registro-plugin" type="registro-plugin" />
 	<xsd:complexType name="registro-plugin">
 		<xsd:sequence>
 			<xsd:element name="archivio" type="registro-plugin-archivio" maxOccurs="unbounded" minOccurs="0"/>

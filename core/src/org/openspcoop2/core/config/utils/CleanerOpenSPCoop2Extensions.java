@@ -67,6 +67,18 @@ public class CleanerOpenSPCoop2Extensions {
 		
 	}
 
+	public void clean(org.openspcoop2.core.config.ConfigurazioneUrlInvocazione configUrlInvocazione) {
+		
+	}
+	
+	public void clean(org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola configUrlInvocazioneRegola) {
+		
+	}
+	
+	public void clean(org.openspcoop2.core.config.RegistroPlugin plugin) {
+		
+	}
+	
 	public void clean(org.openspcoop2.core.config.GenericProperties policy) {
 		
 	}

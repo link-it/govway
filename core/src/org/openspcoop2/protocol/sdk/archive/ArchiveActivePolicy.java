@@ -19,38 +19,54 @@
  */
 package org.openspcoop2.protocol.sdk.archive;
 
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
- * ArchiveSoggetto
+ * ArchiveActivePolicy
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ArchiveActivePolicy implements IArchiveObject {
+public class ArchiveActivePolicy implements IPositionArchiveObject {
 
-	public static String buildKey(String idPolicy) throws ProtocolException{
+	public static String buildKey(RuoloPolicy ruoloPorta, String nomePorta, String aliasPolicy) throws ProtocolException{
 		
-		if(idPolicy==null){
-			throw new ProtocolException("idPolicy non fornito");
+		if(aliasPolicy==null){
+			throw new ProtocolException("aliasPolicy non fornito");
 		}
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append("ControlloTraffico_ActivePolicy_");
-		bf.append(idPolicy);
+		bf.append(aliasPolicy);
+		if(ruoloPorta!=null && nomePorta!=null) {
+			bf.append("#");
+			bf.append(ruoloPorta.toString());
+			bf.append("_");
+			bf.append(nomePorta);
+		}
 		return bf.toString();
 	}
 	
 	@Override
 	public String key() throws ProtocolException {
-		return ArchiveActivePolicy.buildKey(this.idPolicy);
+		return ArchiveActivePolicy.buildKey(this.ruoloPorta, this.nomePorta, this.aliasPolicy);
+	}
+	
+	@Override
+	public int position() throws ProtocolException {
+		return this.posizione;
 	}
 	
 	
-	
-	private String idPolicy;
+	private RuoloPolicy ruoloPorta;
+	private String nomePorta;
+	private String aliasPolicy;
 	private org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy;
+	private boolean policyGlobale;
+	
+	private int posizione;
 	
 	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 
@@ -59,22 +75,40 @@ public class ArchiveActivePolicy implements IArchiveObject {
 		if(policy==null){
 			throw new ProtocolException("Policy non fornito");
 		}
-		if(policy.getIdActivePolicy()==null){
-			throw new ProtocolException("Policy.idActivePolicy non definito");
+		if(policy.getAlias()==null){
+			throw new ProtocolException("Policy.alias non definito");
 		}
-		this.idPolicy = policy.getIdActivePolicy();
+		this.aliasPolicy = policy.getAlias();
+		if(policy!=null && policy.getFiltro()!=null) {
+			this.ruoloPorta = policy.getFiltro().getRuoloPorta();
+			this.nomePorta = policy.getFiltro().getNomePorta();
+		}
 		this.policy = policy;
 		
+		this.posizione = policy.getPosizione();
+		
+		this.policyGlobale = policy.getFiltro()==null || policy.getFiltro().getNomePorta()==null || "".equals(policy.getFiltro().getNomePorta());
+				
 		this.idCorrelazione = idCorrelazione;
 		
 	}
 	
 	
-	public String getNomePolicy() {
-		return this.idPolicy;
+	public String getAliasPolicy() {
+		return this.aliasPolicy;
+	}
+	public RuoloPolicy getRuoloPorta() {
+		return this.ruoloPorta;
+	}
+	public String getNomePorta() {
+		return this.nomePorta;
 	}
 	public org.openspcoop2.core.controllo_traffico.AttivazionePolicy getPolicy() {
 		return this.policy;
+	}
+	
+	public boolean isPolicyGlobale() {
+		return this.policyGlobale;
 	}
 	
 	public ArchiveIdCorrelazione getIdCorrelazione() {

@@ -60,7 +60,7 @@ public class TimerStatisticheThread extends Thread{
 	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = null;
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
 	private org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM;
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM;
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM;
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM;
 	
@@ -236,18 +236,18 @@ public class TimerStatisticheThread extends Thread{
 				}
 				
 				if(this.ds!=null){
-					this.pluginsBaseSM = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(
-							org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+					this.pluginsBaseSM = (org.openspcoop2.core.plugins.dao.IServiceManager) this.daoFactory.getServiceManager(
+							org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							this.ds);
 				}
 				else if(this.connection!=null){
-					this.pluginsBaseSM = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(
-							org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),
+					this.pluginsBaseSM = (org.openspcoop2.core.plugins.dao.IServiceManager) this.daoFactory.getServiceManager(
+							org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							this.connection);
 				}
 				else{
-					this.pluginsBaseSM = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(
-							org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
+					this.pluginsBaseSM = (org.openspcoop2.core.plugins.dao.IServiceManager) this.daoFactory.getServiceManager(
+							org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance());
 				}
 				
 				if(this.ds!=null){

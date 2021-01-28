@@ -3,7 +3,7 @@
 CREATE TABLE allarmi
 (
 	-- Informazioni generiche
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR(275) NOT NULL,
 	alias VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	tipo VARCHAR(255) NOT NULL,

@@ -21,10 +21,10 @@ package org.openspcoop2.pdd.core.behaviour;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerBehaviour;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverBehaviour;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -49,7 +49,7 @@ public class BehaviourLoader {
 		IBehaviour behaviourImpl = null;
 		String tipoDiagBehaviour = null;
 		try {
-			BehaviourType bt = BehaviourType.toEnumConstant(behaviour.getNome(), false);
+			TipoBehaviour bt = TipoBehaviour.toEnumConstant(behaviour.getNome(), false);
 			switch (bt) {
 			case CONSEGNA_MULTIPLA:
 			case CONSEGNA_CONDIZIONALE:

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.allarmi.Allarme;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.utils.beans.BeanUtils;
 import org.openspcoop2.utils.beans.BlackListElement;
 
